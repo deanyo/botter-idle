@@ -7,6 +7,9 @@ const STAIRS_DOWN_TEX := preload("res://assets/tiles/gateways/stairs_down.png")
 const DOOR_PLAIN := preload("res://assets/tiles/features/closed_door.png")
 const DOOR_RUNED := preload("res://assets/tiles/features/runed_door.png")
 const DOOR_SEALED := preload("res://assets/tiles/features/sealed_door.png")
+const TERRAIN_LAVA := preload("res://assets/tiles/terrain/lava.png")
+const TERRAIN_WATER := preload("res://assets/tiles/terrain/water.png")
+const TERRAIN_ICE := preload("res://assets/tiles/terrain/ice.png")
 # Biome → door texture preference. Falls back to DOOR_PLAIN for unlisted biomes.
 const DOOR_BY_BIOME := {
 	"crypt":     "runed",
@@ -88,6 +91,12 @@ func render(g: Array, rs: Array, biome: Dictionary, rng: RandomNumberGenerator, 
 				tex = _pick_wall_tile(x, y, wall_patches, wall_primary, wall_accent, rng)
 			elif cell == C.T_FLOOR or cell == C.T_STAIRS_DOWN or cell == C.T_DOOR:
 				tex = _pick_floor_tile(x, y, floor_patches, floor_primary, floor_accent, rng)
+			elif cell == C.T_LAVA:
+				tex = TERRAIN_LAVA
+			elif cell == C.T_WATER:
+				tex = TERRAIN_WATER
+			elif cell == C.T_ICE:
+				tex = TERRAIN_ICE
 			if tex:
 				_place(tex, x, y)
 				if cell == C.T_WALL:

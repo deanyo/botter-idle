@@ -19,6 +19,9 @@ var path_index: int = 0
 var is_alive: bool = true
 var attack_cooldown: float = 0.0
 const ATTACK_INTERVAL := 0.6
+# Optional reference to the dungeon grid for per-cell terrain effects
+# (e.g. water slow). Set externally; nil means no terrain modifiers.
+var terrain_grid: Array = []
 
 var sprite: Sprite2D
 var fx: SpriteFX
@@ -101,6 +104,13 @@ func step_movement(delta: float) -> void:
 	var dir: Vector2 = goal - position
 	var dist: float = dir.length()
 	var step: float = move_speed * C.TILE_SIZE * delta
+	# Water slows us down (50% speed). Lava is full-speed (we want to cross
+	# quickly), ice is full-speed for v1.
+	if not terrain_grid.is_empty() and cell.y >= 0 and cell.y < terrain_grid.size():
+		var row_size: int = terrain_grid[0].size() if terrain_grid.size() > 0 else 0
+		if cell.x >= 0 and cell.x < row_size:
+			if terrain_grid[cell.y][cell.x] == C.T_WATER:
+				step *= 0.5
 	if dist <= step:
 		position = goal
 		cell = Vector2i(int(goal.x / C.TILE_SIZE), int(goal.y / C.TILE_SIZE))

@@ -16,7 +16,15 @@ func build(grid: Array) -> void:
 	for y in h:
 		for x in w:
 			var cell: int = grid[y][x]
-			astar.set_point_solid(Vector2i(x, y), cell == C.T_WALL)
+			var p := Vector2i(x, y)
+			astar.set_point_solid(p, cell == C.T_WALL)
+			# Discourage but don't block hazardous terrain. Lava costs 4× to
+			# walk over (avoid if any safe path exists). Water costs 2× (slow
+			# but acceptable). Ice is normal cost.
+			if cell == C.T_LAVA:
+				astar.set_point_weight_scale(p, 4.0)
+			elif cell == C.T_WATER:
+				astar.set_point_weight_scale(p, 2.0)
 
 func path(from_cell: Vector2i, to_cell: Vector2i) -> PackedVector2Array:
 	if astar == null:

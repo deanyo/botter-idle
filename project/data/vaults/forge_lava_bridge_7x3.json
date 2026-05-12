@@ -1,0 +1,16 @@
+{
+  "name": "forge_lava_bridge_7x3",
+  "size": [7, 3],
+  "orient": "float",
+  "categories": ["decor"],
+  "themes": ["dungeon", "forge"],
+  "floor_range": [3, 10],
+  "weight": 5,
+  "tags": ["transparent", "no_monster_gen", "no_item_gen", "allow_dup"],
+  "grid": [
+    "LLLLLLL",
+    "...*...",
+    "LLLLLLL"
+  ],
+  "spawns": {}
+}

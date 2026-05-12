@@ -104,6 +104,24 @@ static func try_stamp(grid: Array, rooms: Array, vault: Dictionary, rng: RandomN
 		results["placed_in_room"] = room_idx
 		results["placement_orient"] = "float"
 		return true
+	# Debug-jump force path: when we explicitly request a specific vault and
+	# rooms are unavailable (caves layout), try one open-region scan fallback
+	# so the screenshot skill can still verify the vault. Outside debug-jump,
+	# we skip the fallback to avoid littering caves layouts with rectangular
+	# patches.
+	if DebugJump.active and DebugJump.vault_name != "" \
+			and String(vault.get("name", "")) == DebugJump.vault_name:
+		var gh: int = grid.size()
+		var gw: int = grid[0].size() if gh > 0 else 0
+		for attempt in 60:
+			var ox2: int = rng.randi_range(2, gw - vw - 2)
+			var oy2: int = rng.randi_range(2, gh - vh - 2)
+			if ox2 < 0 or oy2 < 0:
+				continue
+			if _placement_safe(grid, vault, ox2, oy2):
+				_apply(grid, vault, ox2, oy2, results)
+				results["placement_orient"] = "float_debug_fallback"
+				return true
 	return false
 
 static func _placement_safe(grid: Array, vault: Dictionary, ox: int, oy: int) -> bool:
@@ -169,6 +187,12 @@ static func _apply(grid: Array, vault: Dictionary, ox: int, oy: int, results: Di
 					_set_cell(grid, cell, C.T_WALL)
 				".", "+":
 					_set_cell(grid, cell, C.T_FLOOR)
+				"L", "l":
+					_set_cell(grid, cell, C.T_LAVA)
+				"W", "w":
+					_set_cell(grid, cell, C.T_WATER)
+				"I":
+					_set_cell(grid, cell, C.T_ICE)
 				"T":
 					_set_cell(grid, cell, C.T_FLOOR)
 					fountains.append(cell)

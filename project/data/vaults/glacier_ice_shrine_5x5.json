@@ -1,0 +1,18 @@
+{
+  "name": "glacier_ice_shrine_5x5",
+  "size": [5, 5],
+  "orient": "float",
+  "categories": ["decor"],
+  "themes": ["dungeon", "glacier"],
+  "floor_range": [2, 10],
+  "weight": 5,
+  "tags": ["transparent", "no_monster_gen", "no_item_gen", "allow_dup"],
+  "grid": [
+    "..I..",
+    ".I.I.",
+    "I.A.I",
+    ".I.I.",
+    "..I.."
+  ],
+  "spawns": {}
+}

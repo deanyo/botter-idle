@@ -1,0 +1,16 @@
+{
+  "name": "crypt_blood_pool_3x3",
+  "size": [3, 3],
+  "orient": "float",
+  "categories": ["decor"],
+  "themes": ["dungeon", "crypt"],
+  "floor_range": [2, 10],
+  "weight": 4,
+  "tags": ["transparent", "no_monster_gen", "no_item_gen", "allow_dup"],
+  "grid": [
+    ".W.",
+    "W*W",
+    ".W."
+  ],
+  "spawns": {}
+}

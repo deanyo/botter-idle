@@ -129,6 +129,30 @@ Wired to biomes:
 The renderer reads `biome.edge_overlay = {"prefix": "grass", "density": 0.85,
 "patch_density": 0.06}`.
 
+## Special-feature terrain (lava / water / ice)
+
+Three new walkable-with-effect cell types:
+- `T_LAVA` — walkable but damages bot 5% max-hp every 0.5s on the cell.
+  Pathfinder weight 4.0 (avoid if any safe path exists).
+- `T_WATER` — walkable, halves move_speed while bot is on the cell.
+  Pathfinder weight 2.0. Affects enemies symmetrically.
+- `T_ICE` — visual-only for v1 (slip mechanic deferred).
+
+Wired via VaultStamper glyphs `L`/`l` (lava), `W`/`w` (water), `I` (ice).
+Six mini-vaults in `project/data/vaults/`:
+`forge_lava_pit_5x5`, `forge_lava_bridge_7x3`, `shoals_tide_pool_5x5`,
+`swamp_bog_5x5`, `glacier_ice_shrine_5x5`, `crypt_blood_pool_3x3`.
+All authored as **irregular organic shapes** — no rectangular blobs.
+
+Sprites in `project/assets/tiles/terrain/{lava, water, ice}.png`.
+
+The vault-stamping system has a debug-only fallback: if `DebugJump.vault_name`
+matches the vault being stamped AND no rooms are available (caves layout),
+the stamper does a bounded random-region scan to place it for screenshot
+verification. Outside debug mode, vaults strictly require BSP rooms.
+
+JSON sidecar exposes `floor.terrain_cells: {lava: N, water: N, ice: N}`.
+
 ## Doors
 
 Vault `+` glyph renders as `closed_door`/`runed_door`/`sealed_door` based

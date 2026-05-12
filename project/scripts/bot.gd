@@ -134,7 +134,10 @@ func gain_xp(amount: int) -> void:
 		atk += 1
 		if level % 3 == 0:
 			defense += 1
-		hp = max_hp
+		# Level-up grants the new HP slice (the +8 from this level), but does
+		# NOT fully heal — full-heal-on-level-up made HP feel infinite once
+		# enemies were dropping fast enough to chain level-ups in combat.
+		hp = mini(max_hp, hp + 8)
 		_update_hp_bar()
 
 func xp_to_next() -> int:

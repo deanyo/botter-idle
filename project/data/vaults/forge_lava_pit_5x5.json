@@ -1,0 +1,18 @@
+{
+  "name": "forge_lava_pit_5x5",
+  "size": [5, 5],
+  "orient": "float",
+  "categories": ["decor"],
+  "themes": ["dungeon", "forge"],
+  "floor_range": [3, 10],
+  "weight": 4,
+  "tags": ["transparent", "no_monster_gen", "no_item_gen", "allow_dup"],
+  "grid": [
+    "..L..",
+    ".LLL.",
+    ".LL..",
+    "LLL..",
+    "..L.."
+  ],
+  "spawns": {}
+}

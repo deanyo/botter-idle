@@ -37,19 +37,18 @@ test = `min(chebyshev to any creature cell)`. Render: parent sprite at
 head, child sprites at offsets. Spawn validates an N-cell open
 "footprint" before placement.
 
-## Active — HP scaling investigation
+## HP scaling — DONE (root cause identified + fixed)
 
-User flagged HP looks buggy. The new `[floor] hp_lost=` log field was added
-to help. Most floors show 0 HP lost despite 20+ enemies. Likely either:
+Root cause: `Bot.gain_xp` was setting `hp = max_hp` on every level-up, fully
+healing the bot every time it levelled. With 50% xp boost (Sif Muna) or
+chained kills, level-ups happened mid-floor, so HP never appeared to drop.
+Fix: level-up grants only the +8 max_hp slice (`hp = mini(max_hp, hp + 8)`),
+no full heal.
 
-- Bot's stats are wildly above enemy scaling (it has 2851 max HP at level
-  247 in current saves — bot has been over-leveled by repeated grind runs).
-- Enemy attacks aren't hitting because of some defense calculation bug.
-- HP regen is silently topping the bot off between floors.
-
-Diagnose: run a fresh save with cleared SaveState, watch `[floor]` lines
-for hp_lost across floors. Then walk through `bot.gd` `take_damage` and
-the enemy attack tick.
+Combined with save-state isolation (level-1 fresh start instead of grind-
+inflated bot at lvl 247), the dungeon now correctly tests as hard. Bots
+die at floor 2-3 unequipped; will need to playtest gear progression to
+balance.
 
 ---
 
@@ -77,9 +76,12 @@ The "1.5 variety pass" originally listed as 9 sub-stages. Status:
   biomes + multi-tile compositions via vault `decor_overlays` field. The
   `decor_overlays` system is general — reusable for future multi-tile
   decor (zot generators, abyss chaos rings, hive honeycomb patterns).
-- ⬜ **1.5e Special features** — vault glyphs `t` / `L` / `W` / `I` / `B` /
-  `M`. Some are partially done (KFEAT supports altar/fountain/stairs);
-  terrain types (lava-as-floor with damage, water-as-slow-floor) are not.
+- ✅ **1.5e Special features (terrain)** — `L`/`l` (lava, 5%/0.5s damage),
+  `W`/`w` (water, 50% move speed), `I` (ice visual-only). Six mini-vaults
+  for forge/shoals/swamp/glacier/crypt with irregular organic shapes.
+  Pathfinder weight 4.0 lava / 2.0 water. JSON sidecar exposes counts.
+  Still TODO: `t` (tree), `B` (bones), `M` (mushroom) impassable decor;
+  ice-slip mechanic.
 - ✅ **1.5f Door tiles** — vault `+` glyph renders as closed/runed/sealed
   door per biome (3 sprites, mapping in MapRenderer.DOOR_BY_BIOME).
 - ✅ **1.5g Combat effects** — Effects helper class. Biome-themed kill

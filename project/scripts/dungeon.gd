@@ -233,6 +233,7 @@ func _build_floor() -> void:
 		fog_overlay.set_darkness(1.0)
 		fog_overlay.set_visibility_grid(fog)
 
+	bot.terrain_grid = grid
 	bot.place_at(data.spawn)
 	_mark_room_visited_at(bot.cell)
 	_center_camera_on_bot()
@@ -386,6 +387,9 @@ func _collect_render_manifest(img: Image, png_path: String, ts: int) -> Dictiona
 	var wall_count: int = 0
 	var door_count: int = 0
 	var stair_count: int = 0
+	var lava_count: int = 0
+	var water_count: int = 0
+	var ice_count: int = 0
 	for y in h:
 		for x in w:
 			var v: int = grid[y][x]
@@ -393,6 +397,9 @@ func _collect_render_manifest(img: Image, png_path: String, ts: int) -> Dictiona
 			elif v == C.T_WALL: wall_count += 1
 			elif v == C.T_DOOR: door_count += 1
 			elif v == C.T_STAIRS_DOWN: stair_count += 1
+			elif v == C.T_LAVA: lava_count += 1
+			elif v == C.T_WATER: water_count += 1
+			elif v == C.T_ICE: ice_count += 1
 
 	var floor_primary: Array = BiomeData.load_floor_primary(current_biome)
 	var floor_accent: Array = BiomeData.load_floor_accent(current_biome)
@@ -556,6 +563,11 @@ func _collect_render_manifest(img: Image, png_path: String, ts: int) -> Dictiona
 			"wall_cells": wall_count,
 			"door_cells": door_count,
 			"stair_cells": stair_count,
+			"terrain_cells": {
+				"lava": lava_count,
+				"water": water_count,
+				"ice": ice_count,
+			},
 			"rooms": room_list,
 			"spawn_cell": [int(bot.cell.x), int(bot.cell.y)] if is_instance_valid(bot) else [],
 			"stairs_cell": [int(stairs_cell.x), int(stairs_cell.y)],
@@ -1030,10 +1042,25 @@ func _process(delta: float) -> void:
 
 const AGGRO_ENGAGE_RANGE := 5
 
+var _lava_tick_accum: float = 0.0
+
 func _tick_bot(delta: float) -> void:
 	_mark_room_visited_at(bot.cell)
 	_refresh_fog()
 	_check_stuck()
+	# Lava damage: if bot is standing on a lava cell, deal 5% max_hp
+	# every 0.5 seconds. Tick accumulator avoids per-frame damage spam.
+	_lava_tick_accum += delta
+	if _lava_tick_accum >= 0.5:
+		_lava_tick_accum = 0.0
+		if bot.cell.y >= 0 and bot.cell.y < grid.size() \
+				and bot.cell.x >= 0 and bot.cell.x < grid[0].size() \
+				and grid[bot.cell.y][bot.cell.x] == C.T_LAVA \
+				and bot.is_alive:
+			var dmg: int = max(1, int(round(bot.max_hp * 0.05)))
+			bot.take_damage(dmg)
+			# Visual feedback for the burn.
+			Effects.fire_flash(actor_layer, bot.position + Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5))
 	# Standing on stairs and no enemies nearby? Descend immediately.
 	if bot.cell == stairs_cell and _nearest_enemy() == null:
 		_descend()
