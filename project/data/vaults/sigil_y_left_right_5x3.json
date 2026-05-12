@@ -1,0 +1,22 @@
+{
+  "name": "sigil_y_left_right_5x3",
+  "size": [5, 3],
+  "orient": "float",
+  "categories": ["decor"],
+  "themes": ["dungeon", "tomb", "vaults"],
+  "floor_range": [4, 10],
+  "weight": 4,
+  "tags": ["transparent", "no_monster_gen", "no_item_gen", "allow_dup"],
+  "grid": [
+    "l...r",
+    ".sas.",
+    "l...r"
+  ],
+  "decor_overlays": {
+    "l": "sigil_y_left",
+    "r": "sigil_y_right",
+    "s": "sigil_straight_east_west",
+    "a": "sigil_algiz_left"
+  },
+  "spawns": {}
+}

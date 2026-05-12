@@ -1,0 +1,26 @@
+{
+  "name": "sigil_compass_3x3",
+  "size": [3, 3],
+  "orient": "float",
+  "categories": ["decor"],
+  "themes": ["dungeon", "elf", "vaults", "temple"],
+  "floor_range": [2, 10],
+  "weight": 5,
+  "tags": ["transparent", "no_monster_gen", "no_item_gen", "allow_dup"],
+  "grid": [
+    "abc",
+    "d.e",
+    "fgh"
+  ],
+  "decor_overlays": {
+    "a": "sigil_curve_north_west",
+    "c": "sigil_curve_north_east",
+    "f": "sigil_curve_south_west",
+    "h": "sigil_curve_south_east",
+    "b": "sigil_straight_east_west",
+    "g": "sigil_straight_east_west",
+    "d": "sigil_straight_north_south",
+    "e": "sigil_straight_north_south"
+  },
+  "spawns": {}
+}

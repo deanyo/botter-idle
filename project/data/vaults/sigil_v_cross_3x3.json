@@ -1,0 +1,22 @@
+{
+  "name": "sigil_v_cross_3x3",
+  "size": [3, 3],
+  "orient": "float",
+  "categories": ["decor"],
+  "themes": ["dungeon", "vaults", "crypt", "tomb", "elf"],
+  "floor_range": [2, 10],
+  "weight": 5,
+  "tags": ["transparent", "no_monster_gen", "no_item_gen", "allow_dup"],
+  "grid": [
+    ".n.",
+    "w.e",
+    ".s."
+  ],
+  "decor_overlays": {
+    "n": "v-shaped_north",
+    "s": "v-shaped_south",
+    "e": "v-shaped_east",
+    "w": "v-shaped_west"
+  },
+  "spawns": {}
+}

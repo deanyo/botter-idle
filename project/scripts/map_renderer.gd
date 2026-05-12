@@ -17,22 +17,31 @@ var cell_sprites: Dictionary = {}
 var wall_cells: Dictionary = {}
 var cell_target_alpha: Dictionary = {}
 var cell_current_alpha: Dictionary = {}
+# Sigil placements — each entry is {cell: Vector2i, texture_path: String}.
+# Populated by _stamp_room_sigils, exposed in the screenshot JSON sidecar.
+var sigil_marks: Array = []
+# Vault decor overlays applied via decor_overlays JSON field. Each entry is
+# {cell: Vector2i, texture_path: String}.
+var decor_marks: Array = []
 # 0.4s full fade. Needs to be > the bot's per-cell move time so consecutive
 # cell-flip reveal waves overlap into one continuous-looking emanation. With
 # < cell-time, tiles complete fading then "hold" until the next cell crossing
 # triggers another wave — that's the visible tick.
 const FADE_RATE := 2.5
 
-func render(g: Array, rs: Array, biome: Dictionary, rng: RandomNumberGenerator) -> void:
+func render(g: Array, rs: Array, biome: Dictionary, rng: RandomNumberGenerator, vault_results: Dictionary = {}) -> void:
 	for child in get_children():
 		child.queue_free()
 	cell_sprites.clear()
 	wall_cells.clear()
 	cell_target_alpha.clear()
 	cell_current_alpha.clear()
+	sigil_marks.clear()
+	decor_marks.clear()
 	grid = g
 	rooms = rs
 	set_process(true)
+	var protected_cells: Dictionary = vault_results.get("protected_cells", {})
 
 	var floor_primary: Array = BiomeData.load_floor_primary(biome)
 	var floor_accent: Array = BiomeData.load_floor_accent(biome)
@@ -80,6 +89,66 @@ func render(g: Array, rs: Array, biome: Dictionary, rng: RandomNumberGenerator) 
 			# directionally so e.g. grass tufts spill in from the wall side.
 			if not edge_overlay.is_empty() and (cell == C.T_FLOOR or cell == C.T_DOOR or cell == C.T_STAIRS_DOWN):
 				_apply_edge_overlay(x, y, w, h, edge_overlay, rng)
+
+	# Vault decor overlays: per-cell texture stamps from vault decor_overlays
+	# fields (e.g. multi-tile sigil compositions). These stamp on top of floor
+	# cells without changing terrain.
+	_stamp_decor_marks(vault_results, rng)
+
+	# Room sigils: 1-2 random rune marks stamped per BSP room, biome-specific.
+	# Skipped for caves layouts (rooms is empty) and biomes without a sigil_set.
+	var sigil_set: Array = BiomeData.load_sigil_set(biome)
+	var density: Vector2i = BiomeData.sigil_density(biome)
+	if not sigil_set.is_empty() and density.y > 0 and not rooms.is_empty():
+		_stamp_room_sigils(sigil_set, density, protected_cells, rng)
+
+func _stamp_decor_marks(vault_results: Dictionary, _rng: RandomNumberGenerator) -> void:
+	var decor: Array = vault_results.get("decor_marks", [])
+	for entry in decor:
+		var cell: Vector2i = entry.cell
+		if cell.y < 0 or cell.y >= grid.size() or cell.x < 0 or cell.x >= grid[0].size():
+			continue
+		if grid[cell.y][cell.x] != C.T_FLOOR and grid[cell.y][cell.x] != C.T_STAIRS_DOWN:
+			continue
+		var tex_name: String = String(entry.get("texture", ""))
+		if tex_name == "":
+			continue
+		var path: String = "res://assets/tiles/sigils/" + tex_name + ".png"
+		if not ResourceLoader.exists(path):
+			continue
+		var tex: Texture2D = load(path)
+		_place(tex, cell.x, cell.y)
+		decor_marks.append({"cell": cell, "texture": tex_name})
+
+func _stamp_room_sigils(sigil_set: Array, density: Vector2i, protected: Dictionary, rng: RandomNumberGenerator) -> void:
+	for r in rooms:
+		var rect: Rect2i = r as Rect2i
+		# Tiny rooms (<= 4 cells interior) skip — sigils need breathing room.
+		if rect.size.x < 3 or rect.size.y < 3:
+			continue
+		var lo: int = max(0, density.x)
+		var hi: int = max(lo, density.y)
+		var n: int = lo if lo == hi else rng.randi_range(lo, hi)
+		var attempts: int = 0
+		var placed: int = 0
+		# Cap attempts to avoid infinite loops on tiny / dense rooms.
+		while placed < n and attempts < n * 6:
+			attempts += 1
+			var cx: int = rect.position.x + rng.randi_range(1, max(1, rect.size.x - 2))
+			var cy: int = rect.position.y + rng.randi_range(1, max(1, rect.size.y - 2))
+			var cell := Vector2i(cx, cy)
+			if protected.has(cell):
+				continue
+			if cy < 0 or cy >= grid.size() or cx < 0 or cx >= grid[0].size():
+				continue
+			if grid[cy][cx] != C.T_FLOOR:
+				continue
+			var idx: int = _hash_idx(cx, cy, 41, rng.seed) % sigil_set.size()
+			var tex: Texture2D = sigil_set[idx]
+			_place(tex, cx, cy)
+			var path: String = String(tex.resource_path) if tex and tex.resource_path else ""
+			sigil_marks.append({"cell": cell, "texture_path": path})
+			placed += 1
 
 func _apply_edge_overlay(x: int, y: int, w: int, h: int, overlay: Dictionary, rng: RandomNumberGenerator) -> void:
 	# Determine which cardinals are walls (treat out-of-bounds as wall too —

@@ -1,0 +1,17 @@
+{
+  "name": "sigil_straight_line_5x1",
+  "size": [5, 1],
+  "orient": "float",
+  "categories": ["decor"],
+  "themes": ["dungeon", "crypt", "tomb", "vaults", "depths"],
+  "floor_range": [2, 10],
+  "weight": 4,
+  "tags": ["transparent", "no_monster_gen", "no_item_gen", "allow_dup"],
+  "grid": [
+    "sssss"
+  ],
+  "decor_overlays": {
+    "s": "sigil_straight_east_west"
+  },
+  "spawns": {}
+}

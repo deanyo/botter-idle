@@ -209,6 +209,7 @@ func _new_vault_results() -> Dictionary:
 		"fountains": [], "statues": [], "loot_marks": [], "chest_marks": [],
 		"altar_marks": [], "stair_marks": [], "spawn_overrides": {},
 		"placed_vaults": [], "no_spawn_zones": [], "protected_cells": {},
+		"decor_marks": [],
 	}
 
 func _carve_layout(layout_id: String, w: int, h: int, floor_num: int) -> Dictionary:
@@ -604,6 +605,9 @@ func _stamp_float_vaults(theme: String, floor_num: int, results: Dictionary) -> 
 		attempts = 1
 	if rng.randf() < 0.25 and floor_num < 10:
 		attempts = 0
+	# Debug-jump always attempts the forced vault.
+	if DebugJump.active and DebugJump.vault_name != "":
+		attempts = max(attempts, 1)
 	for i in attempts:
 		var candidates: Array = VaultLibrary.float_candidates_multi(_themes_or(theme), floor_num, placed_names)
 		if candidates.is_empty():

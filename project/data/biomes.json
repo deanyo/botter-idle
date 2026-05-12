@@ -706,6 +706,23 @@
           "id": "caves_open",
           "weight": 1
         }
+      ],
+      "sigil_set": [
+        "sigil_circle",
+        "sigil_cross",
+        "sigil_rhombus",
+        "sigil_algiz_left",
+        "sigil_algiz_right",
+        "sigil_curve_north_east",
+        "sigil_curve_north_west",
+        "sigil_curve_south_east",
+        "sigil_curve_south_west",
+        "sigil_straight_east_west",
+        "sigil_straight_north_south"
+      ],
+      "sigil_density": [
+        1,
+        2
       ]
     },
     "crypt": {
@@ -781,6 +798,18 @@
           "id": "caves_tight",
           "weight": 2
         }
+      ],
+      "sigil_set": [
+        "sigil_cross",
+        "sigil_rhombus",
+        "sigil_algiz_left",
+        "sigil_algiz_right",
+        "sigil_curve_north_east",
+        "sigil_curve_south_west"
+      ],
+      "sigil_density": [
+        1,
+        1
       ]
     },
     "tomb": {
@@ -842,6 +871,19 @@
           "id": "caves_tight",
           "weight": 1
         }
+      ],
+      "sigil_set": [
+        "sigil_algiz_left",
+        "sigil_algiz_right",
+        "sigil_y_north",
+        "sigil_y_south",
+        "sigil_y_east",
+        "sigil_y_west",
+        "sigil_rhombus"
+      ],
+      "sigil_density": [
+        1,
+        2
       ]
     },
     "forge": {
@@ -1176,6 +1218,17 @@
           "id": "caves_tight",
           "weight": 2
         }
+      ],
+      "sigil_set": [
+        "sigil_straight_east_west",
+        "sigil_straight_north_south",
+        "sigil_straight_northeast_southwest",
+        "sigil_straight_northwest_southeast",
+        "x-shaped"
+      ],
+      "sigil_density": [
+        1,
+        2
       ]
     },
     "abyss": {
@@ -1297,6 +1350,18 @@
           "id": "basic",
           "weight": 1
         }
+      ],
+      "sigil_set": [
+        "sigil_circle",
+        "sigil_cross",
+        "sigil_algiz_left",
+        "sigil_algiz_right",
+        "sigil_y_left",
+        "sigil_y_right"
+      ],
+      "sigil_density": [
+        2,
+        3
       ]
     },
     "zot": {
@@ -1359,6 +1424,23 @@
           "id": "caves_open",
           "weight": 1
         }
+      ],
+      "sigil_set": [
+        "sigil_circle",
+        "sigil_cross",
+        "sigil_rhombus",
+        "sigil_y_east",
+        "sigil_y_west",
+        "sigil_y_north",
+        "sigil_y_south",
+        "sigil_y_left",
+        "sigil_y_right",
+        "sigil_algiz_left",
+        "sigil_algiz_right"
+      ],
+      "sigil_density": [
+        2,
+        3
       ]
     },
     "elf": {
@@ -1417,6 +1499,17 @@
           "id": "caves_open",
           "weight": 1
         }
+      ],
+      "sigil_set": [
+        "sigil_circle",
+        "sigil_curve_north_east",
+        "sigil_curve_north_west",
+        "sigil_curve_south_east",
+        "sigil_curve_south_west"
+      ],
+      "sigil_density": [
+        1,
+        2
       ]
     },
     "spider": {
@@ -1522,6 +1615,15 @@
           "id": "caves_open",
           "weight": 1
         }
+      ],
+      "sigil_set": [
+        "sigil_cross",
+        "sigil_circle",
+        "sigil_rhombus"
+      ],
+      "sigil_density": [
+        1,
+        2
       ]
     },
     "depths": {
@@ -1584,6 +1686,19 @@
           "id": "caves",
           "weight": 1
         }
+      ],
+      "sigil_set": [
+        "sigil_straight_east_west",
+        "sigil_straight_north_south",
+        "sigil_y_east",
+        "sigil_y_west",
+        "sigil_y_north",
+        "sigil_y_south",
+        "sigil_circle"
+      ],
+      "sigil_density": [
+        1,
+        2
       ]
     }
   },

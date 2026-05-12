@@ -128,6 +128,29 @@ Wired to biomes:
 The renderer reads `biome.edge_overlay = {"prefix": "grass", "density": 0.85,
 "patch_density": 0.06}`.
 
+## Sigil floor decorations
+
+Two systems, both shipping in `project/assets/tiles/sigils/` (70 PNGs).
+
+**Single-tile room sigils** (`MapRenderer._stamp_room_sigils`): each BSP
+room in stone-tier biomes gets 1-2 random sigil rune marks (`sigil_circle`,
+`sigil_cross`, `sigil_algiz_*`, `sigil_y_*`, etc). Per-biome `sigil_set`
+array + `sigil_density: [min, max]` field in biomes.json. Wired biomes:
+vaults, crypt, tomb, elf, temple, depths, zot, labyrinth, pandemonium.
+Skips cells in `vault_results.protected_cells` so vault-stamped features
+aren't covered. Caves layouts (rooms == []) skip the pass.
+
+**Multi-tile sigil compositions** via vault `decor_overlays` field. Six
+mini-vaults in `data/vaults/sigil_*.json` (3×3 cross, 3×3 pinwheel, 5×1
+straight line, 3×3 compass, 5×5 runed circle, 5×3 paired-Y) compose
+several pieces into pre-arranged shapes. Stamper writes `decor_marks` to
+results, renderer stamps the named texture over the floor cell. Pure
+cosmetic, no terrain impact, system reusable for future multi-tile decor
+beyond sigils.
+
+Both systems expose their placements in the screenshot JSON sidecar's
+`entities.sigils_stamped` and `entities.decor_marks` arrays.
+
 ## Logging — structured per-floor + per-run
 
 In `GrindLog.log_line`. Tags:

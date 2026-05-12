@@ -129,6 +129,12 @@ static func float_candidates(theme: String, floor_num: int, placed_names: Dictio
 
 static func float_candidates_multi(themes: Array, floor_num: int, placed_names: Dictionary) -> Array:
 	_ensure_loaded()
+	# Debug-jump force path also applies to float vaults (e.g. for verifying
+	# decor_overlays compositions on a small mini-vault).
+	if DebugJump.active and DebugJump.vault_name != "":
+		var forced: Dictionary = find_by_name(DebugJump.vault_name)
+		if not forced.is_empty() and String(forced.get("orient", "float")).to_lower() == "float":
+			return [forced]
 	var out: Array = []
 	for v in _vaults:
 		var o: String = String(v.get("orient", "float")).to_lower()

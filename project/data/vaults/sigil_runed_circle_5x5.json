@@ -1,0 +1,29 @@
+{
+  "name": "sigil_runed_circle_5x5",
+  "size": [5, 5],
+  "orient": "float",
+  "categories": ["decor"],
+  "themes": ["dungeon", "vaults", "pandemonium", "zot"],
+  "floor_range": [4, 10],
+  "weight": 4,
+  "tags": ["transparent", "no_monster_gen", "no_item_gen", "allow_dup"],
+  "grid": [
+    "..a..",
+    ".b.c.",
+    "d.r.e",
+    ".f.g.",
+    "..h.."
+  ],
+  "decor_overlays": {
+    "r": "sigil_circle",
+    "a": "sigil_y_north",
+    "h": "sigil_y_south",
+    "d": "sigil_y_west",
+    "e": "sigil_y_east",
+    "b": "sigil_curve_north_west",
+    "c": "sigil_curve_north_east",
+    "f": "sigil_curve_south_west",
+    "g": "sigil_curve_south_east"
+  },
+  "spawns": {}
+}

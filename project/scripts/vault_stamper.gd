@@ -138,6 +138,8 @@ static func _apply(grid: Array, vault: Dictionary, ox: int, oy: int, results: Di
 	var kfeat: Dictionary = vault.get("kfeat", {})
 	var kmons: Dictionary = vault.get("kmons", {})
 	var kitem: Dictionary = vault.get("kitem", {})
+	var decor_overlays: Dictionary = vault.get("decor_overlays", {})
+	var decor_marks: Array = results.get("decor_marks", [])
 	var tags: Array = vault.get("tags", [])
 
 	for y in grid_arr.size():
@@ -150,6 +152,16 @@ static func _apply(grid: Array, vault: Dictionary, ox: int, oy: int, results: Di
 			# KFEAT override always wins for terrain glyphs.
 			if kfeat.has(ch):
 				_apply_kfeat_full(grid, cell, String(kfeat[ch]), results)
+				protected[cell] = true
+				continue
+			# Decor overlay glyphs are purely cosmetic — set the cell to floor
+			# and queue the texture name for the renderer to stamp on top.
+			# Used for multi-tile sigil compositions and similar pure-decor
+			# vaults. Cell is protected so other passes (sigils, edge overlays)
+			# don't double-stamp.
+			if decor_overlays.has(ch):
+				_set_cell(grid, cell, C.T_FLOOR)
+				decor_marks.append({"cell": cell, "texture": String(decor_overlays[ch])})
 				protected[cell] = true
 				continue
 			match ch:
@@ -202,6 +214,7 @@ static func _apply(grid: Array, vault: Dictionary, ox: int, oy: int, results: Di
 	results["stair_marks"] = stair_marks
 	results["spawn_overrides"] = spawn_overrides
 	results["protected_cells"] = protected
+	results["decor_marks"] = decor_marks
 	if tags.has("no_monster_gen") or tags.has("no_item_gen"):
 		var bbox := Rect2i(ox, oy, vault.get("size", [0, 0])[0], vault.get("size", [0, 0])[1])
 		var no_spawn_zones: Array = results.get("no_spawn_zones", [])

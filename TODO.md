@@ -7,22 +7,7 @@ the durable rules in `CLAUDE.md`. Update this file when committing.
 
 ## Active — directional tiles continuation
 
-The edge-overlay autotile system shipped (lair grass, slime drips, swamp
-dirt, shoals shoreline). The two remaining bites of the directional pass:
-
-### Sigil floor decorations
-
-Stamp DCSS sigil tile sets as room features.
-
-- Single-tile sigils (`sigil_circle`, `sigil_*` standalone) on small rooms
-  (~10% of empty rooms get one).
-- Multi-tile sigil sets (`sigil_wide_*`, `sigil_y_*`, `sigil_curve_*`,
-  `v-shaped_*`, `y-shaped_*`) span 4-6 cells in larger rooms — Vaults / Crypt
-  / Tomb / Elf — for "this is a special room" punctuation.
-- Rule: max 1 sigil per room (per the "one feature per room" guideline).
-
-Atlas locator: `category=floor && variant_set in [sigil_circle, sigil_wide,
-sigil_y, sigil_straight, sigil_curve, v-shaped, y-shaped]`.
+Edge overlays and sigils both shipped. Remaining: multi-tile creatures.
 
 ### Multi-tile creatures
 
@@ -73,6 +58,10 @@ The "1.5 variety pass" originally listed as 9 sub-stages. Status:
   (per atlas). Many enemy pools now use 6-15 candidates per biome.
 - ✅ **1.5d Artefact items** — legendaries pull from `item/weapon/artefact/`
   and `item/armor/artefact/` pools via `tile_override`.
+- ✅ **Sigils + multi-tile decor** — single-tile room sigils on stone-tier
+  biomes + multi-tile compositions via vault `decor_overlays` field. The
+  `decor_overlays` system is general — reusable for future multi-tile
+  decor (zot generators, abyss chaos rings, hive honeycomb patterns).
 - ⬜ **1.5e Special features** — vault glyphs `t` / `L` / `W` / `I` / `B` /
   `M`. Some are partially done (KFEAT supports altar/fountain/stairs);
   terrain types (lava-as-floor with damage, water-as-slow-floor) are not.

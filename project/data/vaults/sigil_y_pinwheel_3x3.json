@@ -1,0 +1,23 @@
+{
+  "name": "sigil_y_pinwheel_3x3",
+  "size": [3, 3],
+  "orient": "float",
+  "categories": ["decor"],
+  "themes": ["dungeon", "vaults", "tomb", "zot", "depths"],
+  "floor_range": [3, 10],
+  "weight": 5,
+  "tags": ["transparent", "no_monster_gen", "no_item_gen", "allow_dup"],
+  "grid": [
+    ".n.",
+    "wco",
+    ".s."
+  ],
+  "decor_overlays": {
+    "n": "sigil_y_north",
+    "s": "sigil_y_south",
+    "w": "sigil_y_west",
+    "o": "sigil_y_east",
+    "c": "sigil_circle"
+  },
+  "spawns": {}
+}

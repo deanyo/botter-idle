@@ -5,6 +5,7 @@ const BIOMES_PATH := "res://data/biomes.json"
 const FLOOR_DIR := "res://assets/tiles/floor/"
 const WALL_DIR := "res://assets/tiles/wall/"
 const OVERLAY_DIR := "res://assets/tiles/overlays/"
+const SIGIL_DIR := "res://assets/tiles/sigils/"
 
 static var _biomes: Dictionary = {}
 static var _run_plans: Array = []
@@ -202,6 +203,27 @@ static func load_edge_overlay(biome: Dictionary) -> Dictionary:
 	out["density"] = float(spec.get("density", 0.7))
 	out["patch_density"] = float(spec.get("patch_density", 0.04))
 	return out
+
+# Per-biome sigil tile pool. Biome JSON declares `sigil_set: ["sigil_circle",
+# "sigil_cross", ...]` (filenames in res://assets/tiles/sigils/, no ext) and
+# `sigil_density: [min, max]` rooms per BSP room. Empty array disables sigils.
+static func load_sigil_set(biome: Dictionary) -> Array:
+	var names: Array = biome.get("sigil_set", [])
+	if names.is_empty():
+		return []
+	var out: Array = []
+	for n in names:
+		var path: String = SIGIL_DIR + String(n) + ".png"
+		if ResourceLoader.exists(path):
+			out.append(load(path))
+	return out
+
+# Returns Vector2i(min_per_room, max_per_room). Default [0, 0] = disabled.
+static func sigil_density(biome: Dictionary) -> Vector2i:
+	var d: Array = biome.get("sigil_density", [0, 0])
+	var lo: int = int(d[0]) if d.size() > 0 else 0
+	var hi: int = int(d[1]) if d.size() > 1 else lo
+	return Vector2i(lo, hi)
 
 # Roll a layout id from the biome's weighted layouts table. Falls back to the
 # legacy single 'layout' field, then to 'basic', so older biome entries still work.

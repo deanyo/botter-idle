@@ -225,7 +225,7 @@ func _build_floor() -> void:
 	for child in map_layer.get_children():
 		child.queue_free()
 	map_layer.add_child(renderer)
-	renderer.render(grid, rooms, current_biome, rng)
+	renderer.render(grid, rooms, current_biome, rng, vr)
 	current_renderer = renderer
 	fog = FogSystem.new()
 	fog.setup(grid[0].size(), grid.size(), grid)
@@ -359,6 +359,21 @@ func _capture_debug_screenshot() -> void:
 		wf.close()
 	print("[debug-screenshot] saved %s + %s" % [path, sidecar_path])
 	get_tree().quit()
+
+func _serialize_marks(marks: Array) -> Array:
+	# Convert renderer marks (Vector2i cells) to JSON-friendly [x,y] arrays.
+	var out: Array = []
+	for m in marks:
+		var d: Dictionary = {}
+		if m is Dictionary:
+			for k in m.keys():
+				var v = m[k]
+				if v is Vector2i:
+					d[String(k)] = [int(v.x), int(v.y)]
+				else:
+					d[String(k)] = v
+		out.append(d)
+	return out
 
 func _collect_render_manifest(img: Image, png_path: String, ts: int) -> Dictionary:
 	# Comprehensive render manifest. Everything that informs what a Claude
@@ -550,6 +565,8 @@ func _collect_render_manifest(img: Image, png_path: String, ts: int) -> Dictiona
 			"interactables": inter_list,
 			"vault_decor_sprite_count": vault_decor_sprites.size(),
 			"ambient_decor_node_count": ambient_decor_nodes.size(),
+			"sigils_stamped": _serialize_marks(current_renderer.sigil_marks if current_renderer and "sigil_marks" in current_renderer else []),
+			"decor_marks": _serialize_marks(current_renderer.decor_marks if current_renderer and "decor_marks" in current_renderer else []),
 		},
 		"render": {
 			"image_width": img.get_width(),
