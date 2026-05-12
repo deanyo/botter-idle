@@ -224,6 +224,16 @@ ambient settings, modulate values.
 Logs land in `logs/screenshots/<timestamp>_<biome>_<vault>_<floor>.log`.
 Screenshots in `~/Library/Application Support/Godot/app_userdata/Botter/debug_screenshots/`.
 
+### Save-state isolation
+
+When `AUTO_GRIND.txt` or `DEBUG_FLOOR.txt` markers are present, `main.gd`
+sets `SaveState.debug_mode = true`. SaveState then reads/writes
+`user://botter_save_debug.json` instead of `user://botter_save.json`.
+Live playtest save is untouched by benchmark or screenshot runs.
+
+To reset the debug save: delete `botter_save_debug.json` from the user
+data dir. To reset live: delete `botter_save.json`.
+
 ### Auto-grind — headless N-run benchmark
 
 ```

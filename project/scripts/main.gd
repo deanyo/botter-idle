@@ -68,6 +68,10 @@ func _ready() -> void:
 	if DebugJump.active:
 		auto_grind = false
 		Engine.time_scale = 1.0
+	# Save-state isolation: benchmark and screenshot runs use a separate save
+	# slot so they don't bake the playtest bot into a level-300 god.
+	if auto_grind or DebugJump.active:
+		SaveState.debug_mode = true
 	# Screenshot mode: set up audit-resolution window FROM SCENE START so the
 	# Dungeon can render once at the right size without mid-capture mutations.
 	# 1024x1024 is the practical sweet spot for Claude's image pipeline (no

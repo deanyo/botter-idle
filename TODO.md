@@ -193,18 +193,11 @@ Add common Godot/git/grep/find paths to `.claude/settings.json` so Claude
 doesn't prompt on every launch. Audit a session's prompt log; stuff
 recurring patterns into the allowlist. ~30+ clicks saved per session.
 
-### Save-state isolation for grind / screenshot
+### Save-state isolation — DONE
 
-`/grind` and `/screenshot` currently use the same `user://botter_save.json`
-slot as live playtest. After a 100-run benchmark, the playtest bot is
-level 247 with 141k gold. Pollution.
-
-Fix options (pick one):
-- Add a `--save-slot=debug` flag honored by `SaveState.load_state()` /
-  `save_state()` and read from a marker field. Auto-grind + screenshot
-  pass this flag.
-- Or simpler: when the AUTO_GRIND/DEBUG_FLOOR markers are present, use
-  `user://botter_save_debug.json` exclusively. Live playtest is untouched.
+Shipped: `SaveState.debug_mode = true` when AUTO_GRIND or DEBUG_FLOOR
+markers are present, routing IO to `user://botter_save_debug.json`. Live
+`botter_save.json` is untouched by benchmark/screenshot runs.
 
 ### class_name refresh wrapper
 

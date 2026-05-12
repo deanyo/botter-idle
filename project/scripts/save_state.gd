@@ -1,12 +1,21 @@
 class_name SaveState
 extends RefCounted
 
-const SAVE_PATH := "user://botter_save.json"
+const LIVE_PATH := "user://botter_save.json"
+const DEBUG_PATH := "user://botter_save_debug.json"
+
+# Set by main.gd when auto-grind / debug-jump markers are present so benchmark
+# and screenshot runs don't pollute the live playtest save.
+static var debug_mode: bool = false
+
+static func _path() -> String:
+	return DEBUG_PATH if debug_mode else LIVE_PATH
 
 static func load_state() -> Dictionary:
-	if not FileAccess.file_exists(SAVE_PATH):
+	var path: String = _path()
+	if not FileAccess.file_exists(path):
 		return _default()
-	var f := FileAccess.open(SAVE_PATH, FileAccess.READ)
+	var f := FileAccess.open(path, FileAccess.READ)
 	if f == null:
 		return _default()
 	var parsed: Variant = JSON.parse_string(f.get_as_text())
@@ -34,7 +43,7 @@ static func _migrate(state: Dictionary) -> void:
 				eq[slot] = {"base_id": v, "instance_id": "legacy_eq_%s" % slot, "affixes": []}
 
 static func save_state(state: Dictionary) -> void:
-	var f := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
+	var f := FileAccess.open(_path(), FileAccess.WRITE)
 	if f == null:
 		return
 	f.store_string(JSON.stringify(state, "  "))
