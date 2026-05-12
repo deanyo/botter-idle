@@ -450,6 +450,8 @@ func _collect_render_manifest(img: Image, png_path: String, ts: int) -> Dictiona
 			"max_hp": int(e.max_hp) if "max_hp" in e else 0,
 			"is_boss": bool(e.is_boss) if "is_boss" in e else false,
 			"is_miniboss": bool(e.is_miniboss) if "is_miniboss" in e else false,
+			"visual_scale": float(e.visual_scale) if "visual_scale" in e else 1.0,
+			"visual_anchor": String(e.visual_anchor) if "visual_anchor" in e else "centre",
 		})
 
 	# Every interactable
@@ -760,8 +762,11 @@ func _spawn_miniboss(id: String, at_cell: Vector2i) -> void:
 	var tex: Texture2D = load(ENEMY_TILE_DIR + def.tile)
 	if tex:
 		e.set_texture(tex)
+		# Miniboss visual = base creature scale x 1.4, capped at 2.5.
+		var base_scale: float = float(def.get("visual_scale", 1.0))
+		var anchor: String = String(def.get("visual_anchor", "centre"))
+		e.apply_visual_scale(base_scale * 1.4, anchor, 2)
 		if e.sprite:
-			e.sprite.scale = Vector2(1.4, 1.4)
 			e.sprite.modulate = Color(1.2, 0.85, 0.85)
 			e.fx = SpriteFX.new(e.sprite)
 	e.place_at(at_cell)
@@ -789,8 +794,13 @@ func _spawn_specific(id: String, at_cell: Vector2i) -> void:
 	var tex: Texture2D = load(ENEMY_TILE_DIR + def.tile)
 	if tex:
 		e.set_texture(tex)
+		# Data-driven visual scale. Champion variants stack on top of base.
+		var base_scale: float = float(def.get("visual_scale", 1.0))
+		var anchor: String = String(def.get("visual_anchor", "centre"))
+		var vz: int = int(def.get("visual_z", 1 if base_scale > 1.0 else 0))
+		var champ_visual: float = 1.25 if is_champion else 1.0
+		e.apply_visual_scale(base_scale * champ_visual, anchor, vz)
 		if is_champion and e.sprite:
-			e.sprite.scale = Vector2(1.25, 1.25)
 			e.sprite.modulate = Color(1.0, 0.85, 1.3)
 			e.fx = SpriteFX.new(e.sprite)
 			LightSpec.attach(e, "sigil")

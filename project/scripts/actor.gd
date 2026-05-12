@@ -24,6 +24,10 @@ var sprite: Sprite2D
 var fx: SpriteFX
 var hp_bar: ColorRect
 var hp_bar_bg: ColorRect
+# Visual scaling for "big" creatures. Logical layer (cell, hp, attack) is
+# unaffected — these only modify how the sprite renders.
+var visual_scale: float = 1.0
+var visual_anchor: String = "centre"
 
 func _ready() -> void:
 	hp = max_hp
@@ -55,6 +59,27 @@ func set_texture(tex: Texture2D) -> void:
 	sprite.texture = tex
 	if fx == null:
 		fx = SpriteFX.new(sprite)
+
+func apply_visual_scale(scale: float, anchor: String = "centre", z: int = 0) -> void:
+	# Caller-provided scale already accounts for miniboss/champion compounding.
+	# We cap here as a safety net.
+	scale = clampf(scale, 0.5, 2.5)
+	visual_scale = scale
+	visual_anchor = anchor
+	if sprite == null:
+		return
+	sprite.scale = Vector2(scale, scale)
+	# Default sprite is centred at (TILE_SIZE/2, TILE_SIZE/2). For ground anchor
+	# we shift up by half the visual overflow so the sprite's bottom edge stays
+	# pinned to the cell's bottom — looks natural for upright creatures.
+	if anchor == "ground":
+		var half_tile: float = C.TILE_SIZE * 0.5
+		var overflow: float = (scale - 1.0) * half_tile
+		sprite.position = Vector2(half_tile, half_tile - overflow)
+	else:
+		sprite.position = Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5)
+	if z != 0:
+		sprite.z_index = z
 
 func place_at(c: Vector2i) -> void:
 	cell = c

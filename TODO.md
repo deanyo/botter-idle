@@ -9,18 +9,33 @@ the durable rules in `CLAUDE.md`. Update this file when committing.
 
 Edge overlays and sigils both shipped. Remaining: multi-tile creatures.
 
-### Multi-tile creatures
+### Multi-tile creatures (deferred)
 
-Big enemies that occupy more than a 1×1 footprint — vine_segment (28 pieces,
-Lair walls), starspawn_tentacle / kraken_tentacle (8 pieces each, boss
-floors), serpent_of_hell (variant per Hell branch).
+Visual scaling shipped — see HANDOVER.md "Big-creature visual scaling".
+32 creatures (dragons, giants, sphinx, mummies, jellies, etc) render at
+1.3-1.6× scale with proper anchor + z-ordering. Logical layer still 1
+cell per creature.
 
-Architectural: Enemy class needs an optional `multi_tile_layout` array of
-relative cell offsets so pathing AND visual rendering both treat it as N
-cells. Pathfinder must mark every occupied cell solid against other actors.
-Render: parent sprite at the head, child sprites at offsets.
+True multi-cell mechanics (vine_segment chains, kraken with 4 tentacle
+cells, serpent_of_hell) deferred because:
 
-May be punted if it gets messy — single-tile creatures are working fine.
+- Shipped CC0 DCSS pack is 32×32 only. The 32×64 unique-monster sprites
+  DCSS uses for big creatures are not in our pack. Custom 32×64 art or
+  bigger sprites would be needed.
+- Pathfinding (AStarGrid2D) doesn't natively support multi-cell shape
+  obstacles. Enemy class would need a `multi_tile_layout` of relative
+  cell offsets; pathfinder must mark all occupied cells solid; bot
+  attack-target picker needs nearest-cell-of-creature math; spawn
+  validation needs N-cell open-region check.
+- Tentacle chain solver (per-frame chain physics or grid-based tail
+  follow) is its own beat.
+
+Architectural sketch when we revisit: Enemy gets optional
+`multi_tile_layout: Array[Vector2i]` (offsets from head). Pathfinder
+treats all occupied cells as solid against other enemies. Bot adjacency
+test = `min(chebyshev to any creature cell)`. Render: parent sprite at
+head, child sprites at offsets. Spawn validates an N-cell open
+"footprint" before placement.
 
 ## Active — HP scaling investigation
 

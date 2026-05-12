@@ -128,6 +128,27 @@ Wired to biomes:
 The renderer reads `biome.edge_overlay = {"prefix": "grass", "density": 0.85,
 "patch_density": 0.06}`.
 
+## Big-creature visual scaling
+
+In `Actor.apply_visual_scale(scale, anchor, z)`. 32 creatures in
+`enemies.json` carry optional `visual_scale` / `visual_anchor` /
+`visual_z` fields. Dragons, giants, sphinxes, mummies render at 1.5x
+ground-anchored (sprite bottom pinned to cell bottom, body extends up).
+Jellies/oozes/spiders render at 1.4x centre-anchored (sprawls outward).
+Champion variants stack on top (1.5 × 1.25 = 1.875). Miniboss variants
+stack to 1.5 × 1.4 = 2.1, capped at 2.5.
+
+Logical layer (cell, hp, attack adjacency, pathfinding) untouched —
+every creature still occupies one cell. The visual scale is purely
+sprite-render. Z-ordering means big creatures draw over decor and
+adjacent smaller enemies. Screenshot JSON sidecar exposes
+`entities.enemies[].visual_scale` and `visual_anchor`.
+
+True multi-cell creatures and tentacle-segment chains are deferred —
+the shipped CC0 DCSS pack only contains 32×32 sprites; multi-cell
+mechanics need 32×64 art we don't have plus pathfinding/collision
+rewrites.
+
 ## Sigil floor decorations
 
 Two systems, both shipping in `project/assets/tiles/sigils/` (70 PNGs).
