@@ -1,0 +1,50 @@
+{
+  "name": "des_nicolae_orc_stalacmites",
+  "size": [
+    15,
+    23
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "mines",
+    "orc"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "xxxxxx........x",
+    "x........xxxxxx",
+    "xxxxx........x ",
+    " x........xxxx ",
+    " xxx........x  ",
+    "  x........xx  ",
+    "  x........xx  ",
+    " xxx........x  ",
+    " x........xxxx ",
+    "xxxxx........x ",
+    "x........xxxxxx",
+    "xxxxxx........x",
+    "x........xxxxxx",
+    "xxxxx........x ",
+    " x........xxxx ",
+    " xxx........x  ",
+    "  x........xx  ",
+    "  x........xx  ",
+    " xxx........x  ",
+    " x........xxxx ",
+    "xxxxx........x ",
+    "x........xxxxxx",
+    "xxxxxx........x"
+  ],
+  "spawns": {}
+}

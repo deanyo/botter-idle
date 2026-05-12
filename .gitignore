@@ -1,0 +1,34 @@
+# Big trees not to ship — re-fetch as needed
+# DCSS source: GPLv2+ research-only clone (132 MB)
+dcss-source/
+# DCSS raw tile pack: CC0 art, but 35 MB — only the curated subset under
+# project/assets/tiles/ is shipped with the game.
+dcss/
+
+# macOS metadata
+.DS_Store
+**/.DS_Store
+
+# Godot build artifacts and editor cache
+project/.godot/
+project/.import/
+project/export.cfg
+project/export_presets.cfg
+project/exports/
+*.translation
+
+# IDE / editor scratch
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Python build dirs from atlas builder
+__pycache__/
+*.pyc
+
+# Local-only debug + grind scratch
+/tmp/
+
+# Project-local Claude config (only commit settings.json shared cfg if you want)
+.claude/settings.local.json

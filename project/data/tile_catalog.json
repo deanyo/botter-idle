@@ -1,0 +1,586 @@
+{
+  "tile_root": "dcss/Dungeon Crawl Stone Soup Full",
+  "generated": "2026-05-11",
+  "purpose": "Folder-level survey of available DCSS tiles to inform biome palette design. Counts are approximate (variants like _new/_old/_0..N collapsed where useful).",
+  "categories": {
+    "floor": {
+      "total_files": 541,
+      "groups": [
+        { "prefix": "cobble_blood_", "count": 24, "biome_hint": "dungeon_dark", "sample": "dungeon/floor/cobble_blood_0.png" },
+        { "prefix": "pebble_brown_", "count": 18, "biome_hint": "dungeon", "sample": "dungeon/floor/pebble_brown_0.png" },
+        { "prefix": "mosaic_", "count": 16, "biome_hint": "vaults", "sample": "dungeon/floor/mosaic_0.png" },
+        { "prefix": "grey_dirt_", "count": 16, "biome_hint": "dungeon", "sample": "dungeon/floor/grey_dirt_0_new.png" },
+        { "prefix": "infernal_", "count": 15, "biome_hint": "forge", "sample": "dungeon/floor/infernal_0.png" },
+        { "prefix": "floor_vines_", "count": 14, "biome_hint": "lair", "sample": "dungeon/floor/floor_vines_0.png" },
+        { "prefix": "frozen_", "count": 13, "biome_hint": "glacier", "sample": "dungeon/floor/frozen_0.png" },
+        { "prefix": "lair_", "count": 12, "biome_hint": "lair", "sample": "dungeon/floor/lair_0.png" },
+        { "prefix": "green_bones_", "count": 12, "biome_hint": "crypt", "sample": "dungeon/floor/green_bones_0.png" },
+        { "prefix": "floor_nerves_", "count": 12, "biome_hint": "abyss", "sample": "dungeon/floor/floor_nerves_0.png" },
+        { "prefix": "black_cobalt_", "count": 12, "biome_hint": "vaults", "sample": "dungeon/floor/black_cobalt_0.png" },
+        { "prefix": "white_marble_", "count": 10, "biome_hint": "vaults", "sample": "dungeon/floor/white_marble_0.png" },
+        { "prefix": "sandstone_floor_", "count": 10, "biome_hint": "tomb", "sample": "dungeon/floor/sandstone_floor_0.png" },
+        { "prefix": "limestone_", "count": 10, "biome_hint": "dungeon", "sample": "dungeon/floor/limestone_0.png" },
+        { "prefix": "crypt_domino_", "count": 10, "biome_hint": "crypt", "sample": "dungeon/floor/crypt_domino_0.png" },
+        { "prefix": "demonic_red_", "count": 9, "biome_hint": "forge", "sample": "dungeon/floor/demonic_red_0.png" },
+        { "prefix": "tomb_", "count": 8, "biome_hint": "tomb", "sample": "dungeon/floor/tomb_0.png" },
+        { "prefix": "swamp_", "count": 8, "biome_hint": "swamp", "sample": "dungeon/floor/swamp_0.png" },
+        { "prefix": "sand_", "count": 8, "biome_hint": "tomb", "sample": "dungeon/floor/sand_0.png" },
+        { "prefix": "rect_gray_", "count": 8, "biome_hint": "dungeon", "sample": "dungeon/floor/rect_gray_0.png" },
+        { "prefix": "orc_", "count": 8, "biome_hint": "orc", "sample": "dungeon/floor/orc_0.png" },
+        { "prefix": "mesh_", "count": 8, "biome_hint": "dungeon", "sample": "dungeon/floor/mesh_0.png" },
+        { "prefix": "ice_", "count": 8, "biome_hint": "glacier", "sample": "dungeon/floor/ice_0.png" },
+        { "prefix": "floor_sand_stone_", "count": 8, "biome_hint": "tomb", "sample": "dungeon/floor/floor_sand_stone_0.png" },
+        { "prefix": "bog_green_", "count": 8, "biome_hint": "lair", "sample": "dungeon/floor/bog_green_0.png" },
+        { "prefix": "volcanic_floor_", "count": 7, "biome_hint": "forge", "sample": "dungeon/floor/volcanic_floor_0.png" },
+        { "prefix": "marble_floor_", "count": 6, "biome_hint": "vaults", "sample": "dungeon/floor/marble_floor_0.png" },
+        { "prefix": "etched_", "count": 6, "biome_hint": "vaults", "sample": "dungeon/floor/etched_0.png" },
+        { "prefix": "dirt_", "count": 6, "biome_hint": "dungeon", "sample": "dungeon/floor/dirt_0.png" },
+        { "prefix": "crystal_floor_", "count": 6, "biome_hint": "crypt", "sample": "dungeon/floor/crystal_floor_0.png" },
+        { "prefix": "cage_", "count": 6, "biome_hint": "dungeon_dark", "sample": "dungeon/floor/cage_0.png" },
+        { "prefix": "snake_", "count": 16, "biome_hint": "snake", "sample": "dungeon/floor/snake_0.png", "note": "split across snake/snake-a/snake-c/snake-d" },
+        { "prefix": "mud_", "count": 4, "biome_hint": "swamp", "sample": "dungeon/floor/mud_0.png" },
+        { "prefix": "moss_", "count": 4, "biome_hint": "lair", "sample": "dungeon/floor/moss_0.png" },
+        { "prefix": "lava_", "count": 5, "biome_hint": "forge", "sample": "dungeon/floor/lava_0.png", "note": "lava as floor (impassable)" },
+        { "prefix": "labyrinth_", "count": 4, "biome_hint": "labyrinth", "sample": "dungeon/floor/labyrinth_0.png" },
+        { "prefix": "hive_", "count": 4, "biome_hint": "hive", "sample": "dungeon/floor/hive_0.png" },
+        { "prefix": "rough_red_", "count": 4, "biome_hint": "forge", "sample": "dungeon/floor/rough_red_0.png" },
+        { "prefix": "acidic_floor_", "count": 4, "biome_hint": "slime", "sample": "dungeon/floor/acidic_floor_0.png" },
+        { "prefix": "pedestal_", "count": 9, "biome_hint": "vaults", "sample": "dungeon/floor/pedestal_full.png", "note": "directional set + full" },
+        { "prefix": "slime_overlay_", "count": 8, "biome_hint": "slime", "sample": "dungeon/floor/slime_overlay_north.png", "note": "directional overlay" },
+        { "prefix": "sigil_", "count": 35, "biome_hint": "vaults", "sample": "dungeon/floor/sigil_circle.png", "note": "decorative sigils for special rooms" }
+      ]
+    },
+    "wall": {
+      "total_files": 494,
+      "groups": [
+        { "prefix": "catacombs_", "count": 16, "biome_hint": "crypt", "sample": "dungeon/wall/catacombs_0.png" },
+        { "prefix": "crystal_wall_", "count": 14, "biome_hint": "crypt", "sample": "dungeon/wall/crystal_wall_0.png" },
+        { "prefix": "stone_brick_", "count": 12, "biome_hint": "dungeon", "sample": "dungeon/wall/stone_brick_0.png" },
+        { "prefix": "stone_", "count": 12, "biome_hint": "dungeon", "sample": "dungeon/wall/stone_0.png" },
+        { "prefix": "slime_", "count": 12, "biome_hint": "slime", "sample": "dungeon/wall/slime_0.png" },
+        { "prefix": "orc_", "count": 12, "biome_hint": "orc", "sample": "dungeon/wall/orc_0.png" },
+        { "prefix": "marble_wall_", "count": 12, "biome_hint": "vaults", "sample": "dungeon/wall/marble_wall_0.png" },
+        { "prefix": "cobalt_stone_", "count": 12, "biome_hint": "vaults", "sample": "dungeon/wall/cobalt_stone_0.png" },
+        { "prefix": "hell_", "count": 11, "biome_hint": "forge", "sample": "dungeon/wall/hell_0.png" },
+        { "prefix": "snake_", "count": 10, "biome_hint": "snake", "sample": "dungeon/wall/snake_0.png" },
+        { "prefix": "sandstone_wall_", "count": 10, "biome_hint": "tomb", "sample": "dungeon/wall/sandstone_wall_0.png" },
+        { "prefix": "beehives_", "count": 10, "biome_hint": "hive", "sample": "dungeon/wall/beehives_0.png" },
+        { "prefix": "stone_black_marked_", "count": 9, "biome_hint": "dungeon_dark", "sample": "dungeon/wall/stone_black_marked_0.png" },
+        { "prefix": "zot_blue_", "count": 8, "biome_hint": "zot", "sample": "dungeon/wall/zot_blue_0.png" },
+        { "prefix": "pebble_red_", "count": 8, "biome_hint": "forge", "sample": "dungeon/wall/pebble_red_0.png" },
+        { "prefix": "lair_", "count": 8, "biome_hint": "lair", "sample": "dungeon/wall/lair_0.png" },
+        { "prefix": "emerald_", "count": 8, "biome_hint": "crypt", "sample": "dungeon/wall/emerald_0.png" },
+        { "prefix": "brick_brown_", "count": 8, "biome_hint": "dungeon", "sample": "dungeon/wall/brick_brown_0.png" },
+        { "prefix": "bars_red_", "count": 8, "biome_hint": "dungeon_dark", "sample": "dungeon/wall/bars_red_0.png" },
+        { "prefix": "wall_vines_", "count": 7, "biome_hint": "lair", "sample": "dungeon/wall/wall_vines_0.png" },
+        { "prefix": "wall_flesh_", "count": 7, "biome_hint": "abyss", "sample": "dungeon/wall/wall_flesh_0.png" },
+        { "prefix": "volcanic_wall_", "count": 7, "biome_hint": "forge", "sample": "dungeon/wall/volcanic_wall_0.png" },
+        { "prefix": "lab-metal_", "count": 7, "biome_hint": "labyrinth", "sample": "dungeon/wall/lab-metal_0.png" },
+        { "prefix": "brick_dark_", "count": 7, "biome_hint": "dungeon_dark", "sample": "dungeon/wall/brick_dark_0.png" },
+        { "prefix": "lab-stone_", "count": 6, "biome_hint": "labyrinth", "sample": "dungeon/wall/lab-stone_0.png" },
+        { "prefix": "church_", "count": 5, "biome_hint": "vaults", "sample": "dungeon/wall/church_0.png" },
+        { "prefix": "tomb_", "count": 4, "biome_hint": "tomb", "sample": "dungeon/wall/tomb_0.png" },
+        { "prefix": "vault_", "count": 4, "biome_hint": "vaults", "sample": "dungeon/wall/vault_0.png" },
+        { "prefix": "undead_", "count": 8, "biome_hint": "crypt", "sample": "dungeon/wall/undead_0.png", "note": "undead + undead_brown variants" },
+        { "prefix": "shoals_wall_", "count": 4, "biome_hint": "shoals", "sample": "dungeon/wall/shoals_wall_0.png" },
+        { "prefix": "lab-rock_", "count": 4, "biome_hint": "labyrinth", "sample": "dungeon/wall/lab-rock_0.png" },
+        { "prefix": "hive_", "count": 4, "biome_hint": "hive", "sample": "dungeon/wall/hive_0.png" },
+        { "prefix": "wall_yellow_rock_", "count": 4, "biome_hint": "tomb", "sample": "dungeon/wall/wall_yellow_rock_0.png" },
+        { "prefix": "crystal_wall_color_", "count": 14, "biome_hint": "crypt", "sample": "dungeon/wall/crystal_wall_red.png", "note": "named color variants (red/blue/green/etc)" },
+        { "prefix": "metal_wall_", "count": 4, "biome_hint": "labyrinth", "sample": "dungeon/wall/metal_wall.png" },
+        { "prefix": "shadow_", "count": 16, "biome_hint": "any", "sample": "dungeon/wall/shadow_north.png", "note": "directional shadow overlays for any biome" }
+      ]
+    },
+    "monster": {
+      "total_files": 1282,
+      "groups": [
+        { "folder": "animals/", "count": 160, "tier_hint": "1-2", "biome_hint": "lair", "note": "rats, frogs, snakes, bats, dogs, bears, butterflies, scorpions" },
+        { "folder": "fungi_plants/", "count": 17, "tier_hint": "1-2", "biome_hint": "lair", "note": "plants, oklob, fungus, briar, deathcap" },
+        { "folder": "aquatic/", "count": 9, "tier_hint": "2-3", "biome_hint": "swamp", "note": "fish, jellyfish, kraken-adjacent" },
+        { "folder": "eyes/", "count": 9, "tier_hint": "2-3", "biome_hint": "dungeon", "note": "great eye, shining eye, etc" },
+        { "folder": "amorphous/", "count": 8, "tier_hint": "2-3", "biome_hint": "slime", "note": "oozes, slimes, jellies" },
+        { "folder": "abyss/", "count": 8, "tier_hint": "3-4", "biome_hint": "abyss" },
+        { "folder": "draconic/", "count": 32, "tier_hint": "3-4", "biome_hint": "any", "note": "humanoid dragon-folk variants by color" },
+        { "folder": "spriggan/", "count": 5, "tier_hint": "3-4", "biome_hint": "lair" },
+        { "folder": "demonspawn/", "count": 11, "tier_hint": "3-4", "biome_hint": "forge" },
+        { "folder": "vault/", "count": 19, "tier_hint": "3-4", "biome_hint": "vaults", "note": "vault guards, sentinels, warden" },
+        { "folder": "holy/", "count": 15, "tier_hint": "3-4", "biome_hint": "vaults", "note": "angels, daevas, ophan, seraph" },
+        { "folder": "tentacles/", "count": 108, "tier_hint": "3-4", "biome_hint": "swamp", "note": "kraken/octopode tentacle segments — tile heavy, gameplay light" },
+        { "folder": "undead/", "count": 157, "tier_hint": "3-4", "biome_hint": "crypt", "note": "vampires, wights, wraiths, liches, ghouls, mummies; sub: skeletons/, zombies/, simulacra/, spectrals/" },
+        { "folder": "undead/skeletons/", "count": null, "tier_hint": "2-4", "biome_hint": "crypt", "note": "subfolder under undead/" },
+        { "folder": "undead/zombies/", "count": null, "tier_hint": "2-4", "biome_hint": "crypt", "note": "subfolder under undead/" },
+        { "folder": "dragons/", "count": 17, "tier_hint": "4-5", "biome_hint": "forge", "note": "actual quadruped dragons by color" },
+        { "folder": "demons/", "count": 91, "tier_hint": "4-5", "biome_hint": "forge", "note": "1-5 tier demons + abominations" },
+        { "folder": "nonliving/", "count": 65, "tier_hint": "3-5", "biome_hint": "vaults", "note": "golems, statues, animated weapons" },
+        { "folder": "unique/", "count": 177, "tier_hint": "boss", "biome_hint": "any", "note": "named unique monsters — ideal as floor bosses" },
+        { "folder": "statues/", "count": 53, "tier_hint": "3-4", "biome_hint": "vaults", "note": "monster statue variants (animated)" },
+        { "folder": "aberration/", "count": 2, "tier_hint": "3-4", "biome_hint": "abyss" },
+        { "folder": "(top-level)/", "count": 215, "tier_hint": "1-5", "biome_hint": "any", "note": "humanoids: kobolds, orcs, goblins, ogres, trolls, elves, dwarves, nagas, merfolk, giants, yaktaurs — primary roster" }
+      ]
+    },
+    "item_weapon": {
+      "total_files": 351,
+      "groups": [
+        { "folder": "weapon/(top-level)", "count": 227, "note": "melee variants — multi-art per weapon (5-9 sprites each)" },
+        { "folder": "weapon/ranged/", "count": 40, "note": "bows, crossbows, slings, blowguns" },
+        { "folder": "weapon/artefact/", "count": 84, "note": "named/unique artefact weapon sprites for legendaries" }
+      ],
+      "top_weapon_families": [
+        { "prefix": "spear_", "count": 10 },
+        { "prefix": "morningstar_", "count": 9 },
+        { "prefix": "falchion_", "count": 9 },
+        { "prefix": "eveningstar_", "count": 9 },
+        { "prefix": "short_sword_", "count": 8 },
+        { "prefix": "executioner_axe_", "count": 8 },
+        { "prefix": "cutlass_", "count": 8 },
+        { "prefix": "long_sword_", "count": 7 },
+        { "prefix": "mace_", "count": 7 },
+        { "prefix": "flail_", "count": 7 },
+        { "prefix": "broad_axe_", "count": 7 },
+        { "prefix": "battle_axe_", "count": 7 },
+        { "prefix": "greatsword_", "count": 6 },
+        { "prefix": "war_axe_", "count": 6 },
+        { "prefix": "scythe_", "count": 5 },
+        { "prefix": "hammer_", "count": 5 },
+        { "prefix": "hand_axe_", "count": 5 },
+        { "prefix": "halberd_", "count": 4 },
+        { "prefix": "scimitar_", "count": 4 },
+        { "prefix": "bardiche_", "count": 4 },
+        { "prefix": "rapier_", "count": 3 },
+        { "prefix": "katana_", "count": 3 },
+        { "prefix": "claymore_", "count": 3 },
+        { "prefix": "dagger_", "count": 3 },
+        { "prefix": "trident_", "count": 2 }
+      ],
+      "top_ranged_families": [
+        { "prefix": "longbow_", "count": 4 },
+        { "prefix": "shortbow_", "count": 3 },
+        { "prefix": "hand_crossbow_", "count": 3 },
+        { "prefix": "arbalest_", "count": 3 },
+        { "prefix": "crossbow_", "count": 2 },
+        { "prefix": "bow_", "count": 2 },
+        { "prefix": "blowgun_", "count": 2 },
+        { "prefix": "sling_", "count": 2 }
+      ]
+    },
+    "item_armor": {
+      "total_files": 222,
+      "groups": [
+        { "folder": "armor/torso/", "count": 83, "note": "scale_mail, robe, ring_mail, leather, chain, plate, splint, banded, animal_skin, dragon_hide variants" },
+        { "folder": "armor/artefact/", "count": 38, "note": "unique/legendary armor sprites" },
+        { "folder": "armor/shields/", "count": 30, "note": "shield, large_shield, buckler + named legendaries (Donald, Louise)" },
+        { "folder": "armor/headgear/", "count": 29, "note": "helmet, hat, wizard_hat, cap, plumed, crested, elven_leather_helm" },
+        { "folder": "armor/hands/", "count": 11, "note": "gloves + gauntlets variants" },
+        { "folder": "armor/feet/", "count": 8, "note": "boots variants + low_boots" },
+        { "folder": "armor/bardings/", "count": 8, "note": "naga/centaur bardings" },
+        { "folder": "armor/back/", "count": 4, "note": "cloaks" }
+      ]
+    },
+    "item_consumable": {
+      "total_files": 261,
+      "groups": [
+        { "folder": "potion/", "count": 43, "note": "color-coded potion bottles (red/blue/green/etc, _new/_old)" },
+        { "folder": "scroll/", "count": 11, "note": "scroll-{color} + scroll_new/old + blank_paper" },
+        { "folder": "wand/", "count": 27, "note": "wand variants" },
+        { "folder": "ring/", "count": 49, "note": "ring sprites (color/material variants)" },
+        { "folder": "amulet/", "count": 41, "note": "amulet sprites" },
+        { "folder": "book/", "count": 75, "note": "spellbook sprites" },
+        { "folder": "food/", "count": 39, "note": "meat, bread, fruit, chunks" },
+        { "folder": "rod/", "count": 21, "note": "magic rods" },
+        { "folder": "staff/", "count": 10, "note": "magic staves" },
+        { "folder": "misc/", "count": 64, "note": "misc evokers, decks, orbs, runes" },
+        { "folder": "gold/", "count": 15, "note": "gold pile sprites by size" }
+      ]
+    },
+    "feature": {
+      "specials": [
+        {
+          "subtype": "altar",
+          "count": 80,
+          "gods_present": 23,
+          "note": "all major DCSS gods covered, multi-frame animated for several (jiyva, cheibriados)",
+          "paths": [
+            "dungeon/altars/altar_zin.png",
+            "dungeon/altars/altar_shining_one.png",
+            "dungeon/altars/altar_kikubaaqudgha.png",
+            "dungeon/altars/altar_yredelemnul.png",
+            "dungeon/altars/altar_xom.png",
+            "dungeon/altars/altar_vehumet.png",
+            "dungeon/altars/altar_okawaru.png",
+            "dungeon/altars/altar_makhleb_flame.png",
+            "dungeon/altars/altar_sif_muna.png",
+            "dungeon/altars/altar_trog.png",
+            "dungeon/altars/altar_nemelex_xobeh.png",
+            "dungeon/altars/altar_elyvilon.png",
+            "dungeon/altars/altar_lugonu.png",
+            "dungeon/altars/altar_beogh.png",
+            "dungeon/altars/altar_jiyva_0.png",
+            "dungeon/altars/altar_fedhas.png",
+            "dungeon/altars/altar_cheibriados.png",
+            "dungeon/altars/altar_ashenzari.png",
+            "dungeon/altars/altar_dithmenos.png",
+            "dungeon/altars/altar_gozag.png",
+            "dungeon/altars/altar_qazlal.png",
+            "dungeon/altars/altar_ru.png",
+            "dungeon/altars/altar_unknown.png",
+            "dungeon/altars/altar_misc_altar.png",
+            "dungeon/altars/altar_base.png"
+          ]
+        },
+        {
+          "subtype": "fountain",
+          "count": 7,
+          "paths": [
+            "dungeon/sparkling_fountain.png",
+            "dungeon/sparkling_fountain_2.png",
+            "dungeon/blue_fountain.png",
+            "dungeon/blue_fountain_2.png",
+            "dungeon/blood_fountain.png",
+            "dungeon/blood_fountain_2.png",
+            "dungeon/dry_fountain.png"
+          ]
+        },
+        {
+          "subtype": "chest",
+          "count": 3,
+          "paths": [
+            "dungeon/chest.png",
+            "dungeon/chest_2_closed.png",
+            "dungeon/chest_2_open.png"
+          ]
+        },
+        {
+          "subtype": "sarcophagus",
+          "count": 4,
+          "paths": [
+            "dungeon/sarcophagus_open.png",
+            "dungeon/vaults/sarcophagus_pedestal_left.png",
+            "dungeon/vaults/sarcophagus_pedestal_right.png",
+            "dungeon/vaults/sarcophagus_sealed.png"
+          ]
+        },
+        {
+          "subtype": "shop",
+          "count": 12,
+          "paths": [
+            "dungeon/shops/enter_shop.png",
+            "dungeon/shops/abandoned_shop.png",
+            "dungeon/shops/shop_armor.png",
+            "dungeon/shops/shop_weapon.png",
+            "dungeon/shops/shop_potions.png",
+            "dungeon/shops/shop_scrolls.png",
+            "dungeon/shops/shop_wands.png",
+            "dungeon/shops/shop_jewellery.png",
+            "dungeon/shops/shop_books.png",
+            "dungeon/shops/shop_food.png",
+            "dungeon/shops/shop_general.png",
+            "dungeon/shops/shop_gadgets.png"
+          ]
+        },
+        {
+          "subtype": "door",
+          "count": 30,
+          "note": "closed/open/runed/sealed for door, gate (3-tile horizontal), vgate (3-tile vertical), plus orifice and detected_secret",
+          "paths": [
+            "dungeon/doors/closed_door.png",
+            "dungeon/doors/open_door.png",
+            "dungeon/doors/runed_door.png",
+            "dungeon/doors/sealed_door.png",
+            "dungeon/doors/detected_secret_door.png",
+            "dungeon/doors/fleshy_orifice_closed.png",
+            "dungeon/doors/gate_closed_left.png",
+            "dungeon/doors/gate_closed_middle.png",
+            "dungeon/doors/gate_closed_right.png",
+            "dungeon/doors/gate_open_left.png",
+            "dungeon/doors/gate_open_middle.png",
+            "dungeon/doors/gate_open_right.png",
+            "dungeon/doors/gate_runed_left.png",
+            "dungeon/doors/gate_runed_middle.png",
+            "dungeon/doors/gate_runed_right.png",
+            "dungeon/doors/gate_sealed_left.png",
+            "dungeon/doors/gate_sealed_middle.png",
+            "dungeon/doors/gate_sealed_right.png",
+            "dungeon/doors/vgate_closed_up.png",
+            "dungeon/doors/vgate_closed_middle.png",
+            "dungeon/doors/vgate_closed_down.png"
+          ]
+        },
+        {
+          "subtype": "stairs_down",
+          "paths": [
+            "dungeon/gateways/stone_stairs_down.png",
+            "dungeon/gateways/rock_stairs_down.png",
+            "dungeon/gateways/sealed_stairs_down.png",
+            "dungeon/gateways/escape_hatch_down.png",
+            "dungeon/gateways/abyssal_stair.png"
+          ]
+        },
+        {
+          "subtype": "stairs_up",
+          "paths": [
+            "dungeon/gateways/stone_stairs_up.png",
+            "dungeon/gateways/rock_stairs_up.png",
+            "dungeon/gateways/sealed_stairs_up.png",
+            "dungeon/gateways/escape_hatch_up.png"
+          ]
+        },
+        {
+          "subtype": "branch_entrance",
+          "count": 13,
+          "note": "use as themed gateways for biome transitions — lair, orc, snake, spider, crypt, depths, labyrinth, tomb, abyss, hells",
+          "paths": [
+            "dungeon/gateways/branch_stairs.png",
+            "dungeon/gateways/enter_lair.png",
+            "dungeon/gateways/enter_orc.png",
+            "dungeon/gateways/enter_snake.png",
+            "dungeon/gateways/enter_spider.png",
+            "dungeon/gateways/enter_crypt.png",
+            "dungeon/gateways/enter_depths.png",
+            "dungeon/gateways/enter_labyrinth.png",
+            "dungeon/gateways/enter_tomb.png",
+            "dungeon/gateways/enter_abyss.png",
+            "dungeon/gateways/enter_hell.png",
+            "dungeon/gateways/enter_pandemonium_new.png",
+            "dungeon/gateways/bazaar_portal.png"
+          ]
+        },
+        {
+          "subtype": "trap",
+          "count": 24,
+          "paths": [
+            "dungeon/traps/trap_alarm.png",
+            "dungeon/traps/trap_arrow.png",
+            "dungeon/traps/trap_axe.png",
+            "dungeon/traps/trap_blade.png",
+            "dungeon/traps/trap_bolt.png",
+            "dungeon/traps/trap_dart.png",
+            "dungeon/traps/trap_magical.png",
+            "dungeon/traps/trap_mechanical.png",
+            "dungeon/traps/trap_needle.png",
+            "dungeon/traps/trap_net.png",
+            "dungeon/traps/trap_shaft.png",
+            "dungeon/traps/trap_spear.png",
+            "dungeon/traps/trap_teleport.png",
+            "dungeon/traps/trap_zot.png",
+            "dungeon/traps/gas_trap.png",
+            "dungeon/traps/pressure_plate.png",
+            "dungeon/traps/passage_of_golubria.png",
+            "dungeon/traps/teleport_permanent.png",
+            "dungeon/traps/shadow.png",
+            "dungeon/traps/zot.png"
+          ]
+        },
+        {
+          "subtype": "tree",
+          "count": 9,
+          "note": "tree (red/yellow/lightred autumn variants) + mangrove for swamp",
+          "paths": [
+            "dungeon/trees/tree_1_red.png",
+            "dungeon/trees/tree_1_yellow.png",
+            "dungeon/trees/tree_1_lightred.png",
+            "dungeon/trees/tree_2_red.png",
+            "dungeon/trees/tree_2_yellow.png",
+            "dungeon/trees/tree_2_lightred.png",
+            "dungeon/trees/mangrove_1.png",
+            "dungeon/trees/mangrove_2.png",
+            "dungeon/trees/mangrove_3.png"
+          ]
+        },
+        {
+          "subtype": "boulder",
+          "paths": [
+            "dungeon/boulder.png",
+            "dungeon/large_box.png",
+            "dungeon/zot_pillar.png"
+          ]
+        },
+        {
+          "subtype": "lava",
+          "count": 5,
+          "paths": [
+            "dungeon/floor/lava_0.png",
+            "dungeon/floor/lava_1.png",
+            "dungeon/floor/lava_2.png",
+            "dungeon/floor/lava_3.png",
+            "dungeon/floor/lava_old.png"
+          ]
+        },
+        {
+          "subtype": "water",
+          "count": 121,
+          "note": "deep water + murky + extensive directional wave-edge tiles for shorelines",
+          "paths": [
+            "dungeon/water/deep_water.png",
+            "dungeon/water/deep_water_2.png",
+            "dungeon/water/deep_water_murky.png",
+            "dungeon/water/deep_water_murky_2.png",
+            "dungeon/water/deep_water_wave_north.png",
+            "dungeon/water/deep_water_wave_east.png",
+            "dungeon/water/deep_water_wave_corner_northeast.png"
+          ]
+        },
+        {
+          "subtype": "mold",
+          "count": 4,
+          "paths": [
+            "dungeon/mold_large_1.png",
+            "dungeon/mold_large_2.png",
+            "dungeon/mold_large_3.png",
+            "dungeon/mold_large_4.png"
+          ]
+        },
+        {
+          "subtype": "statue",
+          "count": 41,
+          "note": "decorative statues for all biomes — angels, dragons, demons, archers, cats, centaurs, cerebov, granite, orcish_idol, columns",
+          "paths": [
+            "dungeon/statues/granite_statue.png",
+            "dungeon/statues/granite_stump_new.png",
+            "dungeon/statues/orcish_idol_new.png",
+            "dungeon/statues/statue_angel.png",
+            "dungeon/statues/statue_dragon.png",
+            "dungeon/statues/statue_demonic_bust.png",
+            "dungeon/statues/statue_archer.png",
+            "dungeon/statues/statue_centaur.png",
+            "dungeon/statues/statue_cat.png",
+            "dungeon/statues/statue_cerebov.png",
+            "dungeon/statues/statue_dwarf.png",
+            "dungeon/statues/statue_ancient_evil.png",
+            "dungeon/statues/statue_ancient_hero.png",
+            "dungeon/statues/elephant_statue.png",
+            "dungeon/statues/pedestal.png",
+            "dungeon/statues/crumbled_column.png"
+          ]
+        },
+        {
+          "subtype": "vault_decor",
+          "count": 15,
+          "note": "vault-themed flair: golden statues, disco_ball, grate, machine_tukima, teleporter pads",
+          "paths": [
+            "dungeon/vaults/golden_statue_1.png",
+            "dungeon/vaults/golden_statue_2.png",
+            "dungeon/vaults/disco_ball.png",
+            "dungeon/vaults/dimension_edge.png",
+            "dungeon/vaults/grate.png",
+            "dungeon/vaults/machine_tukima.png",
+            "dungeon/vaults/the_teleporter_vaults.png",
+            "dungeon/vaults/the_teleporter_ice_cave.png",
+            "dungeon/vaults/statue_iron_golem.png",
+            "dungeon/vaults/statue_elephant_jade.png"
+          ]
+        },
+        {
+          "subtype": "exit_portal",
+          "paths": [
+            "dungeon/gateways/exit.png",
+            "dungeon/gateways/exit_flickering.png",
+            "dungeon/gateways/exit_abyss_new.png",
+            "dungeon/gateways/exit_pandemonium.png",
+            "dungeon/gateways/volcano_exit.png"
+          ]
+        }
+      ]
+    },
+    "effect": {
+      "total_files": 238,
+      "note": "Projectiles, beams, status effects. Useful for combat VFX once we add ranged/spell visuals.",
+      "groups": [
+        { "prefix": "javelin_", "count": 14 },
+        { "prefix": "tomahawk_", "count": 8 },
+        { "prefix": "throwing_net_", "count": 8 },
+        { "prefix": "stone_arrow_", "count": 8 },
+        { "prefix": "poison_arrow_", "count": 8 },
+        { "prefix": "needle_", "count": 8 },
+        { "prefix": "magic_bolt_", "count": 8 },
+        { "prefix": "iron_shot_", "count": 8 },
+        { "prefix": "icicle_", "count": 8 },
+        { "prefix": "dart_", "count": 8 },
+        { "prefix": "crystal_spear_", "count": 8 },
+        { "prefix": "crossbow_bolt_", "count": 8 },
+        { "prefix": "arrow_", "count": 8 },
+        { "prefix": "searing_ray_", "count": 6 },
+        { "prefix": "magic_dart_", "count": 6 },
+        { "prefix": "drain_", "count": 6 }
+      ]
+    },
+    "player": {
+      "total_files": 975,
+      "note": "Layered paper-doll system (base, body, legs, hand_left/right, head, hair, beard, gloves, boots, cloak, halo, transform, mutations, draconic_head, draconic_wing, felids). Overkill for MVP but lets us assemble custom bot looks later.",
+      "subfolders": ["base", "body", "legs", "head", "hair", "beard", "hand_left", "hand_right", "gloves", "boots", "cloak", "barding", "halo", "enchantment", "transform", "mutations", "draconic_head", "draconic_wing", "felids"]
+    },
+    "misc": {
+      "total_files": 582,
+      "note": "Cursors, halos, item-on-floor decorators, banner/icon set. Mostly UI. Skipped per-tile listing."
+    },
+    "gui": {
+      "total_files": null,
+      "note": "Icons for spells, abilities, invocations, skills, commands, tabs, startup. Useful for ability bar / UI when we add it.",
+      "subfolders": ["spells", "abilities", "invocations", "skills", "commands", "tabs", "startup"]
+    },
+    "emissaries": {
+      "total_files": 12,
+      "note": "Two-tile (top/bottom) god avatars: trog, okawaru, vehumet, elyvilon, tso. Could power deity-themed boss intros."
+    }
+  },
+  "summary": {
+    "total_categorized_files": 6500,
+    "biome_palettes_supported": [
+      "dungeon",
+      "dungeon_dark",
+      "lair",
+      "swamp",
+      "snake",
+      "shoals",
+      "orc",
+      "vaults",
+      "crypt",
+      "tomb",
+      "forge",
+      "glacier",
+      "slime",
+      "hive",
+      "labyrinth",
+      "abyss",
+      "zot",
+      "pandemonium"
+    ],
+    "biome_palette_recipes": {
+      "dungeon":      { "floor": ["pebble_brown", "grey_dirt", "limestone", "rect_gray", "mesh", "dirt"], "wall": ["stone_brick", "stone", "brick_brown"] },
+      "dungeon_dark": { "floor": ["cobble_blood", "cage"], "wall": ["stone_black_marked", "brick_dark", "bars_red"] },
+      "lair":         { "floor": ["lair", "grass", "moss", "floor_vines", "bog_green"], "wall": ["lair", "wall_vines"] },
+      "swamp":        { "floor": ["swamp", "mud", "bog_green"], "wall": ["shoals_wall"], "extras": ["mangrove tree", "shallow_water"] },
+      "snake":        { "floor": ["snake", "snake-a", "snake-c", "snake-d"], "wall": ["snake"] },
+      "shoals":       { "floor": ["sand", "floor_sand_stone", "floor_sand_rock"], "wall": ["shoals_wall"], "extras": ["deep_water + waves"] },
+      "orc":          { "floor": ["orc"], "wall": ["orc"], "extras": ["orcish_idol statue"] },
+      "vaults":       { "floor": ["mosaic", "white_marble", "marble_floor", "black_cobalt", "etched", "pedestal"], "wall": ["marble_wall", "cobalt_stone", "vault", "church"] },
+      "crypt":        { "floor": ["crypt_domino", "green_bones", "crystal_floor"], "wall": ["catacombs", "crystal_wall", "emerald", "undead"] },
+      "tomb":         { "floor": ["tomb", "sand", "sandstone_floor"], "wall": ["tomb", "sandstone_wall", "wall_yellow_rock"] },
+      "forge":        { "floor": ["lava", "infernal", "demonic_red", "volcanic_floor", "rough_red"], "wall": ["hell", "volcanic_wall", "pebble_red"] },
+      "glacier":      { "floor": ["ice", "frozen"], "wall": ["crystal_wall_white", "crystal_wall_lightblue"] },
+      "slime":        { "floor": ["acidic_floor", "slime_overlay"], "wall": ["slime", "slime_stone"] },
+      "hive":         { "floor": ["hive"], "wall": ["hive", "beehives"] },
+      "labyrinth":    { "floor": ["labyrinth"], "wall": ["lab-metal", "lab-stone", "lab-rock", "metal_wall"] },
+      "abyss":        { "floor": ["floor_nerves"], "wall": ["wall_flesh", "abyss"] },
+      "zot":          { "floor": ["mosaic"], "wall": ["zot_blue"] }
+    },
+    "notable_finds": [
+      "All 16+ DCSS gods have altars (23 distinct altar names, 80 sprites incl. animation frames) — easily supports an altar/blessing mechanic",
+      "121 water tiles incl. directional wave-edge variants — proper shoreline rendering is feasible",
+      "11 themed branch-entrance gateways (lair, orc, snake, spider, crypt, depths, labyrinth, tomb, abyss, hell, pandemonium) — perfect as biome-portal sprites",
+      "84 artefact weapon + 38 artefact armor sprites — enough unique art for a legendary tier without reusing common art",
+      "177 unique-monster sprites — far more than enough for floor-boss variety across the MVP run",
+      "Player paper-doll has 975 layerable sprites across 19 body slots — overkill for MVP but unlocks custom bot builds later",
+      "16 directional shadow tiles + 8 slime-overlay tiles + 35 sigil tiles for room-edge polish",
+      "Tentacle folder has 108 tiles (kraken segments) — gameplay overhead probably not worth using",
+      "Branch theming: marble_wall + mosaic floor (vaults), catacombs + crystal_wall (crypt), volcanic + lava (forge), beehives + hive (hive)"
+    ],
+    "skipped": [
+      "per-tile listing of player paper-doll subfolders (975 files, layered system, defer until we want custom bot art)",
+      "per-tile listing of misc/ (582 files, mostly UI cursors/halos)",
+      "per-tile listing of gui/ (icons for skills/spells/etc — relevant once we add ability bar)",
+      "per-tile listing of effect/ projectile frames (covered by group prefixes)",
+      "subfolder breakdown of monster/animals (160 files, all suit lair tier 1-2)",
+      "tile_root resolution: catalog references DCSS source paths but project code MUST only reference project/assets/tiles/ per CLAUDE.md"
+    ]
+  }
+}

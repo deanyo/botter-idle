@@ -1,0 +1,33 @@
+{
+  "name": "des_swamp_pool_1_2",
+  "size": [
+    8,
+    7
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "swamp"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 1500,
+  "tags": [
+    "allow_dup"
+  ],
+  "grid": [
+    "   ..   ",
+    " .....  ",
+    "....... ",
+    "........",
+    "....... ",
+    " .....  ",
+    "  ...   "
+  ],
+  "spawns": {}
+}

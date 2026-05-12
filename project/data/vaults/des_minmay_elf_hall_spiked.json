@@ -1,0 +1,51 @@
+{
+  "name": "des_minmay_elf_hall_spiked",
+  "size": [
+    42,
+    26
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "elf",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "xxxxxxxxxxxxxxxxxxx....xxxxxxxxxxxxxxxxxxx",
+    "xxxxxx......xxxxxxx....xxxxxxx......xxxxxx",
+    "x.............xxxxx..5.xxxxx....*.*......x",
+    "x...........*.xxxxx..3.xxxxx.*...*.*.*.*.x",
+    "x.+.......*.*.......5........*..*.*.*..+.x",
+    "x..2.....*....5................*.*.....5.x",
+    "x.......................2....3......1....x",
+    "x......7...........3..................1..x",
+    "xx..5.......1...........................xx",
+    "xx......3....4.................5.....3..xx",
+    "xxx....................................xxx",
+    "xxx....1.....................5.........xxx",
+    "xxx...................3................xxx",
+    "xxx...2............5........3........7.xxx",
+    "xx.........5.....................2......xx",
+    "xx............3..............4..........xx",
+    "x...........6.....2..2.............5.....x",
+    "x.....................2...6............3.x",
+    "x..2...xxxx....................xxxx......x",
+    "x....xxxxxxxx.+............+.xxxxxxxx....x",
+    "xxxxxxxxxxxxx.*.....*.**.....xxxxxxxxxxxxx",
+    "xxxxxxxxxxxxx..*...*.*.......xxxxxxxxxxxxx",
+    "xxxxxxxxxxxxxx.....**.......xxxxxxxxxxxxxx",
+    "xxxxxxxxxxxxxxxx.....*....xxxxxxxxxxxxxxxx",
+    "xxxxxxxxxxxxxxxxxxx....xxxxxxxxxxxxxxxxxxx",
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+  ],
+  "spawns": {}
+}

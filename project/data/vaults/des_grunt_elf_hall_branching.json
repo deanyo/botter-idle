@@ -1,0 +1,56 @@
+{
+  "name": "des_grunt_elf_hall_branching",
+  "size": [
+    29,
+    31
+  ],
+  "orient": "north",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "elf",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "xxxxxxxxxxxx...............  ",
+    "xxxxxxxxxxx...*.........*... ",
+    "xxxxxxxxxx...*.*.......*.*...",
+    "xxxxxxxxxx..*...+.....+...*..",
+    "xxxxxxxxxx.*...3.......2...*.",
+    "xxxxxxxxxx..*.27.......63.*..",
+    "xxxxxxxxxx...+.1...3...1.+...",
+    "xxxxxxxxxx......5.....4......",
+    "xxxxxxxxxxxxxx.4.......5.xxxx",
+    "xxxxxxxxxxxxxx.....2.....xxxx",
+    "xxxx........xx...4...5...xxxx",
+    "xxx.....3.....x.........xxxxx",
+    "xxx....+...........2....xxxxx",
+    "xxx..*..2..4.....3...3.......",
+    "xxx.*.*.......5..............",
+    "xxx..*..........2.....2......",
+    "xxx.*.*.......4..............",
+    "xxx..*..3..5.....3...3.......",
+    "xxx....+...........2....xxxxx",
+    "xxx.....2.....x.........xxxxx",
+    "xxxx........xx...5...4...xxxx",
+    "xxxxxxxxxxxxxx.....3.....xxxx",
+    "xxxxxxxxxxxxxx.5.......4.xxxx",
+    "xxxxxxxxxx......4.....5......",
+    "xxxxxxxxxx...+.1...2...1.+...",
+    "xxxxxxxxxx..*.36.......72.*..",
+    "xxxxxxxxxx.*...2.......3...*.",
+    "xxxxxxxxxx..*...+.....+...*..",
+    "xxxxxxxxxx...*.*.......*.*...",
+    "xxxxxxxxxxx...*.........*... ",
+    "xxxxxxxxxxxx...............  "
+  ],
+  "spawns": {}
+}

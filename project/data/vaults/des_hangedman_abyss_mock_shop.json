@@ -1,0 +1,39 @@
+{
+  "name": "des_hangedman_abyss_mock_shop",
+  "size": [
+    7,
+    13
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "abyss",
+    "dungeon"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "no_monster_gen"
+  ],
+  "grid": [
+    "  xxx  ",
+    "  x.x  ",
+    " .x2x. ",
+    " .x.x. ",
+    " xx.xx ",
+    ".x1.1x.",
+    " ..... ",
+    ".x1.1x.",
+    " xx.xx ",
+    " .x.x. ",
+    " .x2x. ",
+    "  x.x  ",
+    "  xxx  "
+  ],
+  "spawns": {}
+}

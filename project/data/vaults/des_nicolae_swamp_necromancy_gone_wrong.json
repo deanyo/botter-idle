@@ -1,0 +1,38 @@
+{
+  "name": "des_nicolae_swamp_necromancy_gone_wrong",
+  "size": [
+    10,
+    14
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "swamp"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    " ... . .. ",
+    "..........",
+    ". xx.xx...",
+    " .........",
+    "..x...+...",
+    " .........",
+    ". xx.xx...",
+    "..........",
+    "..........",
+    "......... ",
+    "........  ",
+    ".......   ",
+    "......    ",
+    "  ...     "
+  ],
+  "spawns": {}
+}

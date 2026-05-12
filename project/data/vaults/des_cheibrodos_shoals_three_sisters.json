@@ -1,0 +1,49 @@
+{
+  "name": "des_cheibrodos_shoals_three_sisters",
+  "size": [
+    16,
+    22
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "shoals"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "no_item_gen",
+    "no_monster_gen"
+  ],
+  "grid": [
+    "  ........      ",
+    "  .xxxxxx.      ",
+    "  .x....x.      ",
+    "  .x....x.......",
+    "  .x....x.xxxxx.",
+    "  .xx..xx.x...x.",
+    " .........x...x.",
+    " .........x.+.x.",
+    "..........x...x.",
+    "..........x...x.",
+    "..........+...x.",
+    "..........+...x.",
+    "..........x...x.",
+    "..........x...x.",
+    " .........x.+.x.",
+    " .........x...x.",
+    "  .xx..xx.x...x.",
+    "  .x....x.xxxxx.",
+    "  .x....x.......",
+    "  .x....x.      ",
+    "  .xxxxxx.      ",
+    "  ........      "
+  ],
+  "spawns": {}
+}

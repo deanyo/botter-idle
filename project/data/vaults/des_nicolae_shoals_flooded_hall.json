@@ -1,0 +1,40 @@
+{
+  "name": "des_nicolae_shoals_flooded_hall",
+  "size": [
+    20,
+    14
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "shoals"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "     .......        ",
+    "   ...xxxxx...      ",
+    "  ....x.3.x.....    ",
+    " ....xx.2.xx........",
+    "..xxxx.....xxxxxxxx.",
+    ".xx..2.....2..1..1..",
+    ".x.1................",
+    ".x.1................",
+    ".xx..2.....2..1..1..",
+    "..xxxx.....xxxxxxxx.",
+    " ....xx.2.xx........",
+    "  ....x.3.x.....    ",
+    "   ...xxxxx...      ",
+    "     .......        "
+  ],
+  "spawns": {}
+}

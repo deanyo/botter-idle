@@ -1,0 +1,53 @@
+{
+  "name": "des_lemuel_ratsnest",
+  "size": [
+    41,
+    22
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "lair"
+  ],
+  "floor_range": [
+    5,
+    8
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "xx...................xx.xxxx.............",
+    "xx...................xx.xxxx.............",
+    "xx...................x.x.xxx.............",
+    "xx...................xx.x.xx.............",
+    "xx...................xxx.xxx.............",
+    "xxxxxxxxxxxxxxxxxxxxxxxxx.xx.............",
+    "xxxxxxxxxxxxxxxxxxxx.xxxx.xxxxxxxx.......",
+    "xxxxxxxxxxxxxxxxxxx.x.x..xx..xxxxx.......",
+    "xxxxxxxxxxxxxxxxxxx.xx.x.xx.x..xxx.......",
+    "xxxxxxxxxxxxxxxxxx.xxx.x.x.xxx..xx.......",
+    "xxxxxxxxxxxxxxxxxx.xxxx.111xxxxx.xxxxxxxx",
+    "xxxxxxxxxxxxxxxx...xxx.x122xxxx.x.xxxxxxx",
+    "xxxxxxxxxxxxxxxx.xxxx.xx33x.xxx.x...xxxxx",
+    "xxxxxxxxxxxxx.x....xx.x.xx.x..x.xxx.xxxxx",
+    "xxxxxxxxxxx..........xx.xxxxxx.x.xx..xxxx",
+    "xxxxxxxx......x..11111.xxxxxxxxxx..111.xx",
+    "xxxxx...111.xxx.111111..xxxxxxxxx..111..x",
+    "xxx...1111xxxxxx224422..xxxxxxxx...222.xx",
+    "xx...32xxxxxxxxx334433.xxxxxxxx.xx.343xxx",
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxxx...xxxxxxxxxx",
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+  ],
+  "spawns": {
+    "1": {
+      "enemy_pool": [
+        "rat",
+        "quokka"
+      ]
+    }
+  }
+}

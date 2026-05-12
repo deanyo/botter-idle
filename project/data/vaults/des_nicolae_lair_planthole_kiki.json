@@ -1,0 +1,39 @@
+{
+  "name": "des_nicolae_lair_planthole_kiki",
+  "size": [
+    9,
+    13
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "lair"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "   ......",
+    " ....xx..",
+    " ..xx..x.",
+    "..x....x.",
+    "..x...x..",
+    ".x....x..",
+    ".x.....x.",
+    "..x....x.",
+    "..x...x..",
+    ".x....x..",
+    ".x..xx.. ",
+    "..xx.... ",
+    "......   "
+  ],
+  "spawns": {}
+}

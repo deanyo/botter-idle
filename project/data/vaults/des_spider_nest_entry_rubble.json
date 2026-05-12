@@ -1,0 +1,38 @@
+{
+  "name": "des_spider_nest_entry_rubble",
+  "size": [
+    11,
+    11
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "spider"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "no_monster_gen",
+    "transparent"
+  ],
+  "grid": [
+    "   xxxxx   ",
+    " xxxxxxxxx ",
+    " xxxxxxxxx ",
+    "xxxxxxxxxxx",
+    "xxxxxx1xxxx",
+    "xxxxx.xxxxx",
+    "xxxx.xxxxxx",
+    "xxx.xxxxxxx",
+    " x.xxxxxxx ",
+    " .xxxxxxxx ",
+    "   xxxxx   "
+  ],
+  "spawns": {}
+}

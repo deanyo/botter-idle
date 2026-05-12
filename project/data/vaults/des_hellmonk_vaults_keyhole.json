@@ -1,0 +1,44 @@
+{
+  "name": "des_hellmonk_vaults_keyhole",
+  "size": [
+    7,
+    18
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "no_monster_gen"
+  ],
+  "grid": [
+    "xxxxxxx",
+    "xxxxxxx",
+    "xxxxxxx",
+    "xx...xx",
+    "x..2..x",
+    ".......",
+    ".2...2.",
+    ".......",
+    " ..2.. ",
+    "  ...  ",
+    "  ...  ",
+    " ..... ",
+    " ..... ",
+    ".......",
+    ".......",
+    ".......",
+    "..+++..",
+    "  ...  "
+  ],
+  "spawns": {}
+}

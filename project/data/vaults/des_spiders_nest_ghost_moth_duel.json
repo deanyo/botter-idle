@@ -1,0 +1,49 @@
+{
+  "name": "des_spiders_nest_ghost_moth_duel",
+  "size": [
+    16,
+    16
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "spider"
+  ],
+  "floor_range": [
+    3,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "no_item_gen",
+    "no_monster_gen"
+  ],
+  "grid": [
+    "    ........    ",
+    "   ..xxxxxx..   ",
+    "  ..xx....xx..  ",
+    " ..xx......xx.. ",
+    "..xx....1...xx..",
+    ".xx..........xx.",
+    ".x.22..xx..22.x.",
+    ".x.2..xxxx..2.x.",
+    ".x....xxxx....x.",
+    ".x.....xx.....x.",
+    ".xx..........xx.",
+    "..xx........xx..",
+    " ..xx......xx.. ",
+    "  ..xx....xx..  ",
+    "   ..xx..xx..   ",
+    "    ........    "
+  ],
+  "spawns": {
+    "1": {
+      "enemy_pool": [
+        "giant_spider"
+      ]
+    }
+  }
+}

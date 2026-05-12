@@ -1,0 +1,38 @@
+{
+  "name": "des_nicolae_shoals_dead_sea_scrolls",
+  "size": [
+    13,
+    14
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "shoals"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "       ....  ",
+    "      ...... ",
+    "     xx......",
+    "  xxxx.......",
+    "  xxx........",
+    " xxx.........",
+    " xxx.........",
+    " xx..........",
+    "xx...........",
+    "x.xxx........",
+    "xx..x....xxx ",
+    "xx..xx..xxxx ",
+    "xxxxxxxxxxx  ",
+    " xxxxxxxxx   "
+  ],
+  "spawns": {}
+}

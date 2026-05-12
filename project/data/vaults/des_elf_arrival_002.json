@@ -1,0 +1,44 @@
+{
+  "name": "des_elf_arrival_002",
+  "size": [
+    12,
+    19
+  ],
+  "orient": "south",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "elf",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "xxxxxxxxxxxx",
+    "xxx......xxx",
+    "xx........xx",
+    "xx1.......xx",
+    "x.......1..x",
+    "x...........",
+    "x..........x",
+    "x..........x",
+    "x..........x",
+    "x........1..",
+    "x..........x",
+    "x..........x",
+    "x..........x",
+    "x...........",
+    "x.......1..x",
+    "xx1.......xx",
+    "xx........xx",
+    "xxx......xxx",
+    "xxxxxxxxxxxx"
+  ],
+  "spawns": {}
+}

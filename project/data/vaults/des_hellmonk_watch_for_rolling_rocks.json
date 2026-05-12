@@ -1,0 +1,51 @@
+{
+  "name": "des_hellmonk_watch_for_rolling_rocks",
+  "size": [
+    11,
+    18
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "spider"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 5,
+  "tags": [
+    "no_item_gen",
+    "no_monster_gen"
+  ],
+  "grid": [
+    "    xxxxx  ",
+    "    x1.2x  ",
+    "    x.x.x  ",
+    "    x.x*x  ",
+    "    x.xxx  ",
+    "   xx1x    ",
+    "   x..x    ",
+    "   x..x    ",
+    "   xx.x    ",
+    "    x1x    ",
+    "  xxx.xxx  ",
+    " xx.....xx ",
+    "xx.1.....xx",
+    "xx.......xx",
+    "xx.......xx",
+    " xx..x..xx ",
+    "  x+xxxxx  ",
+    "   .       "
+  ],
+  "spawns": {
+    "1": {
+      "enemy_pool": [
+        "jumping_spider"
+      ]
+    }
+  }
+}

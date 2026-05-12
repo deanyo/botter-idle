@@ -1,0 +1,43 @@
+{
+  "name": "des_nicolae_lair_lakeside_cave",
+  "size": [
+    26,
+    17
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "lair"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "                 .......  ",
+    " ...........     ........ ",
+    "..xxxxxxxxxxx    .........",
+    ".xxx........xx    ......x.",
+    ".xx..........xx    .....x.",
+    ".x...........xxxxxxx....x.",
+    ".x..............xx......x.",
+    ".x......................x.",
+    ".x......................x.",
+    ".x.....................xx.",
+    ".x.........xxx......xxxx..",
+    ".x.........+.xxxxxxxxxxx. ",
+    ".x........1x......xxxxx.. ",
+    ".xx......1.x......xxxx..  ",
+    "..xx......xx....xxxx...   ",
+    " ..xxxxxxxxxxxxxxx...     ",
+    "  .................       "
+  ],
+  "spawns": {}
+}

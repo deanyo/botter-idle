@@ -1,0 +1,39 @@
+{
+  "name": "des_nicolae_orc_bridge_out",
+  "size": [
+    12,
+    14
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "mines",
+    "orc"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "  x..xx     ",
+    " xx...xxx   ",
+    " xxx..xxxx  ",
+    "xxxxx..xxx  ",
+    "xxx.....xxxx",
+    "xxx......xxx",
+    "xx........xx",
+    " x........xx",
+    " xx.......x ",
+    " xxx.....xx ",
+    "  xxx..xxxx ",
+    "  xxxx..xx  ",
+    "   xxxx..x  ",
+    "    xxx..x  "
+  ],
+  "spawns": {}
+}

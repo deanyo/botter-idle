@@ -1,0 +1,38 @@
+{
+  "name": "des_hellmonk_narrow_tunnel",
+  "size": [
+    10,
+    12
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "spider"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "xxxxxxxxxx",
+    "....xx....",
+    "xxx.xx.xxx",
+    "xx..xx..xx",
+    "xxx.xx.xxx",
+    "xx..xx..xx",
+    "xxx.xx.xxx",
+    "xx..xx..xx",
+    "xxx.xx.xxx",
+    " xx....xx ",
+    "  xxxxxx  ",
+    "   xxxx   "
+  ],
+  "spawns": {}
+}

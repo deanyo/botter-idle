@@ -1,0 +1,47 @@
+{
+  "name": "des_nicolae_spider_orb_run",
+  "size": [
+    15,
+    21
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "spider"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "   xxxxxxxx.   ",
+    "  xx.x.x.x..x  ",
+    " xx.........xx ",
+    " xx.........xx ",
+    " xx.xxxxxxxxxx ",
+    "xxx.x.x.x.xxxxx",
+    "x.............x",
+    "x1...........1x",
+    "x.............x",
+    "x.xxx.x.x.x.x.x",
+    "x>xxxxxxxxx.x>x",
+    "x.xxx.x.x.x.x.x",
+    "x.............x",
+    "x1...........1x",
+    "x.............x",
+    "xxx.x.x.x.xxxxx",
+    " xx.xxxxxxxxxx ",
+    " xx.........xx ",
+    " xx.........xx ",
+    "  xx.x.x.x..x  ",
+    "   xxxxxxxx.   "
+  ],
+  "spawns": {}
+}

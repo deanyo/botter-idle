@@ -1,0 +1,41 @@
+{
+  "name": "des_hangedman_elf_targeted_burst",
+  "size": [
+    14,
+    14
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "elf",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "          ..x.",
+    "      .......x",
+    "     x....x...",
+    " ....x.....x..",
+    " x......x.... ",
+    " ...xxx..x... ",
+    " ..x......... ",
+    " .x.....x.... ",
+    "x.x.....x.xx  ",
+    " .x.....x..   ",
+    " ..x...x...   ",
+    " ...xxx....   ",
+    " x.......x.   ",
+    "     x        "
+  ],
+  "spawns": {}
+}

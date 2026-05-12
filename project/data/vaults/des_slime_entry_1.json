@@ -1,0 +1,28 @@
+{
+  "name": "des_slime_entry_1",
+  "size": [
+    3,
+    4
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "slime"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 40,
+  "tags": [],
+  "grid": [
+    "...",
+    "...",
+    "...",
+    "..."
+  ],
+  "spawns": {}
+}

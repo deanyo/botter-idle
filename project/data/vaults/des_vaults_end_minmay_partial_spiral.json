@@ -1,0 +1,51 @@
+{
+  "name": "des_vaults_end_minmay_partial_spiral",
+  "size": [
+    23,
+    27
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "  xxxxxxxxxxxxxxxxxxx  ",
+    " ....................  ",
+    "x.....................x",
+    "x..x99xxxxxxxxxxxxxx..x",
+    "x..x............9..9..x",
+    "x..x............9..9..x",
+    "x..x99x99xxxxxxxx..x..x",
+    "x..x..x......9..9..x..x",
+    "x..x..x......9..9..x..x",
+    "x..x..x99xxxxx..x..x..x",
+    "x..x..x..x***x..x..x..x",
+    "x..x..x..x***x..x..x..x",
+    "x..x..x..x.*.x..x..x..x",
+    "x..x..x..x*.*x..x..x..x",
+    "x..x..x..x.*.x..x..x..x",
+    "x..x..x..x***x..x..x..x",
+    "x..x..x..x***x..x..x..x",
+    "x..x..x..xx+xx..x..x..x",
+    "x..x..9..9...x..x..x..x",
+    "x..x..9..9...x..x..x..x",
+    "x..x..xxxxxxxx99x..x..x",
+    "x..9..9.........x..x..x",
+    "x..9..9.........x..x..x",
+    "x..xxxxxxxxxxx99x99x..x",
+    "x.....................x",
+    " ..................... ",
+    "  xxxxxxxxxxxxxxxxxxx  "
+  ],
+  "spawns": {}
+}

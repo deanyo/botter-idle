@@ -1,0 +1,41 @@
+{
+  "name": "des_guppyfry_spider_mini_3",
+  "size": [
+    12,
+    11
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "spider"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "............",
+    "x..........x",
+    ".x........x.",
+    "..x......x..",
+    "...1....1...",
+    "....1111....",
+    "...1....1...",
+    "..x......x..",
+    ".x........x.",
+    "x..........x",
+    "............"
+  ],
+  "spawns": {
+    "1": {
+      "enemy_pool": [
+        "jumping_spider"
+      ]
+    }
+  }
+}

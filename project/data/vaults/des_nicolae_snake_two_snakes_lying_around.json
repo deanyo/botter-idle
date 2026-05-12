@@ -1,0 +1,37 @@
+{
+  "name": "des_nicolae_snake_two_snakes_lying_around",
+  "size": [
+    12,
+    11
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "snake"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    " .......... ",
+    "............",
+    "............",
+    "............",
+    "............",
+    "............",
+    "............",
+    "............",
+    "............",
+    "............",
+    " .......... "
+  ],
+  "spawns": {}
+}

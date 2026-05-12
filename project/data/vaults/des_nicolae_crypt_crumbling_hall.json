@@ -1,0 +1,50 @@
+{
+  "name": "des_nicolae_crypt_crumbling_hall",
+  "size": [
+    26,
+    24
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "crypt",
+    "dungeon"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "        xx..........      ",
+    "       xx.......x... xx   ",
+    "      .x.....++.....xxx   ",
+    "      xx........x...xx    ",
+    "     .xxx.........xxx.    ",
+    "  .   .x...x.x...xxxxx.   ",
+    " .x..............xxxxxx...",
+    ".xxx.........x..xxxxxxx...",
+    " .xx.......x....xxxxx.....",
+    " .xx.....xx...............",
+    "  .......x................",
+    "  ..+....xx............+..",
+    "  ..+.....x...........xx..",
+    "  .........x..........xxx.",
+    "  ..................xxxxx.",
+    "  .................xxxx...",
+    "  .xxx..xx.x...x..xxxx....",
+    "  ..xx....xx.....xxxx.....",
+    "   xxx  ..xx.....xxxxxx.  ",
+    "   xxxx ..........x..xxxx ",
+    "   .xxx.......xxx...  xxx ",
+    "    .xx......++.....    . ",
+    "       .............      ",
+    "        ............      "
+  ],
+  "spawns": {}
+}

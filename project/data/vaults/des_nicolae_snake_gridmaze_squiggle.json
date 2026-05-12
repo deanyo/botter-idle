@@ -1,0 +1,50 @@
+{
+  "name": "des_nicolae_snake_gridmaze_squiggle",
+  "size": [
+    24,
+    24
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "snake"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "........................",
+    "..xxxxxxxx....xxxxxxxx..",
+    ".xxxxxxxxxx..xxxxxxxxxx.",
+    ".xx......xx..xx......xx.",
+    ".xx......xx..x.......xx.",
+    ".xxxxx...xx.......xxxxx.",
+    "..xxxxx..xx......xxxxx..",
+    ".....xx..xx..x...xx.....",
+    ".....xx...x..x...xx.....",
+    "..xxxxx..........xxxxx..",
+    ".xxxxx............xxxxx.",
+    ".xx..........x.......xx.",
+    ".xx......xx..........xx.",
+    ".xxxxx...xx.......xxxxx.",
+    "..xxxxx..xx......xxxxx..",
+    ".....xx..xxxxx...xx.....",
+    ".....xx...xxxxx..xx.....",
+    "..xxxxx......xx..xxxxx..",
+    ".xxxxx.......xx...xxxxx.",
+    ".xx.......x..xx......xx.",
+    ".xx......xx..xx......xx.",
+    ".xxxxxxxxxx..xxxxxxxxxx.",
+    "..xxxxxxxx....xxxxxxxx..",
+    "........................"
+  ],
+  "spawns": {}
+}

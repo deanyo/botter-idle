@@ -1,0 +1,104 @@
+{
+  "items": [
+
+    { "id": "rusty_dagger",        "name": "Rusty Dagger",        "slot": "weapon", "rarity": "common",    "tile": "weapon_dagger.png",   "atk": 16, "def": 0, "hp": 2 },
+    { "id": "iron_shortsword",     "name": "Iron Shortsword",     "slot": "weapon", "rarity": "common",    "tile": "weapon_sword.png",    "atk": 22, "def": 0, "hp": 4 },
+    { "id": "chipped_claymore",    "name": "Chipped Claymore",    "slot": "weapon", "rarity": "common",    "tile": "weapon_claymore.png", "atk": 28, "def": 0, "hp": 5 },
+
+    { "id": "honed_dagger",        "name": "Honed Dagger",        "slot": "weapon", "rarity": "uncommon",  "tile": "weapon_dagger.png",   "atk": 24, "def": 0, "hp": 3 },
+    { "id": "steel_sword",         "name": "Steel Sword",         "slot": "weapon", "rarity": "uncommon",  "tile": "weapon_sword.png",    "atk": 33, "def": 0, "hp": 6 },
+    { "id": "bearded_axe",         "name": "Bearded Axe",         "slot": "weapon", "rarity": "uncommon",  "tile": "weapon_axe.png",      "atk": 40, "def": 0, "hp": 8 },
+
+    { "id": "fanged_dirk",         "name": "Fanged Dirk",         "slot": "weapon", "rarity": "rare",      "tile": "weapon_dagger.png",   "atk": 36, "def": 0, "hp": 4 },
+    { "id": "mithril_blade",       "name": "Mithril Blade",       "slot": "weapon", "rarity": "rare",      "tile": "weapon_sword.png",    "atk": 48, "def": 0, "hp": 9 },
+    { "id": "highland_claymore",   "name": "Highland Claymore",   "slot": "weapon", "rarity": "rare",      "tile": "weapon_claymore.png", "atk": 60, "def": 0, "hp": 11 },
+
+    { "id": "shadowfang",          "name": "Shadowfang",          "slot": "weapon", "rarity": "epic",      "tile": "weapon_dagger.png",   "atk": 52, "def": 0, "hp": 6 },
+    { "id": "runed_warsword",      "name": "Runed Warsword",      "slot": "weapon", "rarity": "epic",      "tile": "weapon_sword.png",    "atk": 70, "def": 0, "hp": 12 },
+    { "id": "thunder_cleaver",     "name": "Thunder Cleaver",     "slot": "weapon", "rarity": "epic",      "tile": "weapon_axe.png",      "atk": 86, "def": 0, "hp": 16 },
+
+    { "id": "voidpiercer",         "name": "Voidpiercer",         "slot": "weapon", "rarity": "legendary", "tile": "weapon_dagger.png",   "atk": 72, "def": 0, "hp": 8 },
+    { "id": "dawnbreaker",         "name": "Dawnbreaker",         "slot": "weapon", "rarity": "legendary", "tile": "weapon_sword.png",    "atk": 100, "def": 0, "hp": 18 },
+    { "id": "worldsplitter",       "name": "Worldsplitter",       "slot": "weapon", "rarity": "legendary", "tile": "weapon_claymore.png", "atk": 130, "def": 0, "hp": 22 },
+
+    { "id": "tattered_hide",       "name": "Tattered Hide",       "slot": "armor",  "rarity": "common",    "tile": "armor_leather.png",   "atk": 0, "def": 3, "hp": 45 },
+    { "id": "leather_jerkin",      "name": "Leather Jerkin",      "slot": "armor",  "rarity": "common",    "tile": "armor_chain.png",     "atk": 0, "def": 5, "hp": 62 },
+    { "id": "iron_brigandine",     "name": "Iron Brigandine",     "slot": "armor",  "rarity": "common",    "tile": "armor_plate.png",     "atk": 0, "def": 7, "hp": 80 },
+
+    { "id": "studded_leather",     "name": "Studded Leather",     "slot": "armor",  "rarity": "uncommon",  "tile": "armor_leather.png",   "atk": 0, "def": 5, "hp": 70 },
+    { "id": "fine_chainmail",      "name": "Fine Chainmail",      "slot": "armor",  "rarity": "uncommon",  "tile": "armor_chain.png",     "atk": 0, "def": 8, "hp": 95 },
+    { "id": "steel_plate",         "name": "Steel Plate",         "slot": "armor",  "rarity": "uncommon",  "tile": "armor_plate.png",     "atk": 0, "def": 11, "hp": 120 },
+
+    { "id": "drakehide_armor",     "name": "Drakehide Armor",     "slot": "armor",  "rarity": "rare",      "tile": "armor_leather.png",   "atk": 0, "def": 7, "hp": 100 },
+    { "id": "elven_chainmail",     "name": "Elven Chainmail",     "slot": "armor",  "rarity": "rare",      "tile": "armor_chain.png",     "atk": 0, "def": 11, "hp": 138 },
+    { "id": "mithril_plate",       "name": "Mithril Plate",       "slot": "armor",  "rarity": "rare",      "tile": "armor_plate.png",     "atk": 0, "def": 16, "hp": 175 },
+
+    { "id": "shadowweave_garb",    "name": "Shadowweave Garb",    "slot": "armor",  "rarity": "epic",      "tile": "armor_leather.png",   "atk": 0, "def": 10, "hp": 145 },
+    { "id": "wyrmscale_hauberk",   "name": "Wyrmscale Hauberk",   "slot": "armor",  "rarity": "epic",      "tile": "armor_chain.png",     "atk": 0, "def": 16, "hp": 200 },
+    { "id": "dwarven_juggernaut",  "name": "Dwarven Juggernaut",  "slot": "armor",  "rarity": "epic",      "tile": "armor_plate.png",     "atk": 0, "def": 22, "hp": 250 },
+
+    { "id": "stormveil_robes",     "name": "Stormveil Robes",     "slot": "armor",  "rarity": "legendary", "tile": "armor_leather.png",   "atk": 0, "def": 14, "hp": 200 },
+    { "id": "godforged_mail",      "name": "Godforged Mail",      "slot": "armor",  "rarity": "legendary", "tile": "armor_chain.png",     "atk": 0, "def": 22, "hp": 280 },
+    { "id": "aegis_of_titans",     "name": "Aegis of Titans",     "slot": "armor",  "rarity": "legendary", "tile": "armor_plate.png",     "atk": 0, "def": 32, "hp": 360 },
+
+    { "id": "leather_cap",         "name": "Leather Cap",         "slot": "helm",   "rarity": "common",    "tile": "helm_cap.png",        "atk": 0, "def": 1, "hp": 22 },
+    { "id": "iron_skullcap",       "name": "Iron Skullcap",       "slot": "helm",   "rarity": "common",    "tile": "helm_cap.png",        "atk": 0, "def": 2, "hp": 33 },
+    { "id": "plumed_helm",         "name": "Plumed Helm",         "slot": "helm",   "rarity": "common",    "tile": "helm_crested.png",    "atk": 0, "def": 3, "hp": 42 },
+
+    { "id": "padded_coif",         "name": "Padded Coif",         "slot": "helm",   "rarity": "uncommon",  "tile": "helm_cap.png",        "atk": 0, "def": 2, "hp": 36 },
+    { "id": "knights_helm",        "name": "Knight's Helm",       "slot": "helm",   "rarity": "uncommon",  "tile": "helm_crested.png",    "atk": 0, "def": 3, "hp": 50 },
+    { "id": "great_basinet",       "name": "Great Basinet",       "slot": "helm",   "rarity": "uncommon",  "tile": "helm_crested.png",    "atk": 0, "def": 5, "hp": 64 },
+
+    { "id": "rangers_hood",        "name": "Ranger's Hood",       "slot": "helm",   "rarity": "rare",      "tile": "helm_cap.png",        "atk": 0, "def": 3, "hp": 50 },
+    { "id": "champions_helm",      "name": "Champion's Helm",     "slot": "helm",   "rarity": "rare",      "tile": "helm_crested.png",    "atk": 0, "def": 5, "hp": 73 },
+    { "id": "warlords_crown",      "name": "Warlord's Crown",     "slot": "helm",   "rarity": "rare",      "tile": "helm_crested.png",    "atk": 0, "def": 7, "hp": 92 },
+
+    { "id": "spectres_cowl",       "name": "Spectre's Cowl",      "slot": "helm",   "rarity": "epic",      "tile": "helm_cap.png",        "atk": 0, "def": 4, "hp": 72 },
+    { "id": "dragonbone_helm",     "name": "Dragonbone Helm",     "slot": "helm",   "rarity": "epic",      "tile": "helm_crested.png",    "atk": 0, "def": 7, "hp": 105 },
+    { "id": "kings_diadem",        "name": "King's Diadem",       "slot": "helm",   "rarity": "epic",      "tile": "helm_crested.png",    "atk": 0, "def": 10, "hp": 134 },
+
+    { "id": "shroud_of_whispers",  "name": "Shroud of Whispers",  "slot": "helm",   "rarity": "legendary", "tile": "helm_cap.png",        "atk": 0, "def": 6, "hp": 100 },
+    { "id": "crown_of_valor",      "name": "Crown of Valor",      "slot": "helm",   "rarity": "legendary", "tile": "helm_crested.png",    "atk": 0, "def": 10, "hp": 150 },
+    { "id": "halo_of_ascension",   "name": "Halo of Ascension",   "slot": "helm",   "rarity": "legendary", "tile": "helm_crested.png",    "atk": 0, "def": 14, "hp": 190 },
+
+    { "id": "worn_sandals",        "name": "Worn Sandals",        "slot": "boots",  "rarity": "common",    "tile": "boots_brown.png",     "atk": 0, "def": 1, "hp": 13 },
+    { "id": "leather_boots",       "name": "Leather Boots",       "slot": "boots",  "rarity": "common",    "tile": "boots_brown.png",     "atk": 0, "def": 2, "hp": 20 },
+    { "id": "studded_boots",       "name": "Studded Boots",       "slot": "boots",  "rarity": "common",    "tile": "boots_brown.png",     "atk": 0, "def": 3, "hp": 26 },
+
+    { "id": "scouts_treads",       "name": "Scout's Treads",      "slot": "boots",  "rarity": "uncommon",  "tile": "boots_brown.png",     "atk": 0, "def": 2, "hp": 22 },
+    { "id": "soldiers_greaves",    "name": "Soldier's Greaves",   "slot": "boots",  "rarity": "uncommon",  "tile": "boots_brown.png",     "atk": 0, "def": 3, "hp": 30 },
+    { "id": "ironshod_boots",      "name": "Ironshod Boots",      "slot": "boots",  "rarity": "uncommon",  "tile": "boots_brown.png",     "atk": 0, "def": 4, "hp": 40 },
+
+    { "id": "swiftstep_boots",     "name": "Swiftstep Boots",     "slot": "boots",  "rarity": "rare",      "tile": "boots_brown.png",     "atk": 0, "def": 3, "hp": 32 },
+    { "id": "sentinel_greaves",    "name": "Sentinel Greaves",    "slot": "boots",  "rarity": "rare",      "tile": "boots_brown.png",     "atk": 0, "def": 4, "hp": 44 },
+    { "id": "dwarven_stompers",    "name": "Dwarven Stompers",    "slot": "boots",  "rarity": "rare",      "tile": "boots_brown.png",     "atk": 0, "def": 6, "hp": 58 },
+
+    { "id": "stormrunner_boots",   "name": "Stormrunner Boots",   "slot": "boots",  "rarity": "epic",      "tile": "boots_brown.png",     "atk": 0, "def": 4, "hp": 46 },
+    { "id": "vanguard_sabatons",   "name": "Vanguard Sabatons",   "slot": "boots",  "rarity": "epic",      "tile": "boots_brown.png",     "atk": 0, "def": 6, "hp": 64 },
+    { "id": "earthshaker_treads",  "name": "Earthshaker Treads",  "slot": "boots",  "rarity": "epic",      "tile": "boots_brown.png",     "atk": 0, "def": 8, "hp": 84 },
+
+    { "id": "windwalkers",         "name": "Windwalkers",         "slot": "boots",  "rarity": "legendary", "tile": "boots_brown.png",     "atk": 0, "def": 6, "hp": 65 },
+    { "id": "march_of_kings",      "name": "March of Kings",      "slot": "boots",  "rarity": "legendary", "tile": "boots_brown.png",     "atk": 0, "def": 8, "hp": 90 },
+    { "id": "treads_of_apocalypse","name": "Treads of Apocalypse","slot": "boots",  "rarity": "legendary", "tile": "boots_brown.png",     "atk": 0, "def": 11, "hp": 118 },
+
+    { "id": "wooden_buckler",      "name": "Wooden Buckler",      "slot": "shield", "rarity": "common",    "tile": "shield_buckler.png",  "atk": 0, "def": 4, "hp": 28 },
+    { "id": "iron_buckler",        "name": "Iron Buckler",        "slot": "shield", "rarity": "common",    "tile": "shield_buckler.png",  "atk": 0, "def": 6, "hp": 40 },
+    { "id": "kite_shield",         "name": "Kite Shield",         "slot": "shield", "rarity": "common",    "tile": "shield_buckler.png",  "atk": 0, "def": 8, "hp": 52 },
+
+    { "id": "reinforced_buckler",  "name": "Reinforced Buckler",  "slot": "shield", "rarity": "uncommon",  "tile": "shield_buckler.png",  "atk": 0, "def": 6, "hp": 42 },
+    { "id": "tower_shield",        "name": "Tower Shield",        "slot": "shield", "rarity": "uncommon",  "tile": "shield_buckler.png",  "atk": 0, "def": 9, "hp": 60 },
+    { "id": "knights_bulwark",     "name": "Knight's Bulwark",    "slot": "shield", "rarity": "uncommon",  "tile": "shield_buckler.png",  "atk": 0, "def": 12, "hp": 78 },
+
+    { "id": "spellward_shield",    "name": "Spellward Shield",    "slot": "shield", "rarity": "rare",      "tile": "shield_buckler.png",  "atk": 0, "def": 9, "hp": 62 },
+    { "id": "dragoncrest_shield",  "name": "Dragoncrest Shield",  "slot": "shield", "rarity": "rare",      "tile": "shield_buckler.png",  "atk": 0, "def": 13, "hp": 88 },
+    { "id": "fortress_wall",       "name": "Fortress Wall",       "slot": "shield", "rarity": "rare",      "tile": "shield_buckler.png",  "atk": 0, "def": 18, "hp": 114 },
+
+    { "id": "phantom_aegis",       "name": "Phantom Aegis",       "slot": "shield", "rarity": "epic",      "tile": "shield_buckler.png",  "atk": 0, "def": 13, "hp": 90 },
+    { "id": "lions_bulwark",       "name": "Lion's Bulwark",      "slot": "shield", "rarity": "epic",      "tile": "shield_buckler.png",  "atk": 0, "def": 19, "hp": 128 },
+    { "id": "warding_colossus",    "name": "Warding Colossus",    "slot": "shield", "rarity": "epic",      "tile": "shield_buckler.png",  "atk": 0, "def": 26, "hp": 165 },
+
+    { "id": "sunshard_aegis",      "name": "Sunshard Aegis",      "slot": "shield", "rarity": "legendary", "tile": "shield_buckler.png",  "atk": 0, "def": 18, "hp": 128 },
+    { "id": "bulwark_of_eternity", "name": "Bulwark of Eternity", "slot": "shield", "rarity": "legendary", "tile": "shield_buckler.png",  "atk": 0, "def": 26, "hp": 180 },
+    { "id": "aegis_of_the_world",  "name": "Aegis of the World",  "slot": "shield", "rarity": "legendary", "tile": "shield_buckler.png",  "atk": 0, "def": 36, "hp": 234 }
+  ]
+}

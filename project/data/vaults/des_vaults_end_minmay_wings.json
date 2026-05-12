@@ -1,0 +1,47 @@
+{
+  "name": "des_vaults_end_minmay_wings",
+  "size": [
+    27,
+    23
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "  xxxxxxxxxxxxxxxxxxxxxxx  ",
+    " ........9.......9........ ",
+    "x........9.......9........x",
+    "xxxxx9999xx.....xx9999xxxxx",
+    "x**xx....xx.....xx....xx**x",
+    "x*..xx....xx...xx....xx..*x",
+    "x...xx....xx...xx....xx...x",
+    "x....xx....xx.xx....xx....x",
+    "x....xx....xx.xx....xx....x",
+    "x.....xx....xxx....xx.....x",
+    "x.....xx....xxx....xx.....x",
+    "x.....99....9*9....99.....x",
+    "x.....xx....x.x....xx.....x",
+    "x.....xx....x.x....xx.....x",
+    "x....xx....xx.xx....xx....x",
+    "x....xx....xx.xx....xx....x",
+    "x...xx....xx...xx....xx...x",
+    "x**.xx....xx...xx....xx.**x",
+    "x**xx....xx.....xx....xx**x",
+    "xxxxx9999xx.....xx9999xxxxx",
+    "x............9............x",
+    "  ...........9............ ",
+    "  xxxxxxxxxxxxxxxxxxxxxxx  "
+  ],
+  "spawns": {}
+}

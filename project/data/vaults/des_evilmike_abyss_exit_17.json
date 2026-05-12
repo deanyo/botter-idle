@@ -1,0 +1,35 @@
+{
+  "name": "des_evilmike_abyss_exit_17",
+  "size": [
+    9,
+    9
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "abyss",
+    "dungeon"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "allow_dup"
+  ],
+  "grid": [
+    "..xx.xx..",
+    "...xxx...",
+    "x...x...x",
+    "xx.....xx",
+    ".xx...xx.",
+    "xx.....xx",
+    "x...x...x",
+    "...xxx...",
+    "..xx.xx.."
+  ],
+  "spawns": {}
+}

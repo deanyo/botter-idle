@@ -1,0 +1,33 @@
+{
+  "name": "des_nicolae_crypt_little_mausoleum",
+  "size": [
+    5,
+    6
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "crypt",
+    "dungeon"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent",
+    "allow_dup"
+  ],
+  "grid": [
+    ".....",
+    ".x+x.",
+    "xx.xx",
+    "x...x",
+    "x...x",
+    "xxxxx"
+  ],
+  "spawns": {}
+}

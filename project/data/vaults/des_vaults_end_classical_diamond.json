@@ -1,0 +1,47 @@
+{
+  "name": "des_vaults_end_classical_diamond",
+  "size": [
+    27,
+    23
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "  ..xxxxxxxxxxxxxxxxxxx..  ",
+    " ..x.x.x.x.x.x.x.x.x.x.x.  ",
+    "..x.x.x.x.x.x.x.x.x.x.x.x..",
+    ".x.x.x.x.x.x.x.x.x.x.x.x.x.",
+    "x.x.x.x.x.x.x.x.x.x.x.x.x.x",
+    "xx.x.x.x.x.x.x.x.x.x.x.x.xx",
+    "x.x.x.x.x.x.x.x.x.x.x.x.x.x",
+    "xx.x.x.x.x.x.x.x.x.x.x.x.xx",
+    "x.x.x.x.x.x.x.x.x.x.x.x.x.x",
+    "xx.x.x.x.x.x.x.x.x.x.x.x.xx",
+    "x.x.x.x.x.x.x.x.x.x.x.x.x.x",
+    "xx.x.x.x.x.x...x.x.x.x.x.xx",
+    "x.x.x.x.x.x.x.x.x.x.x.x.x.x",
+    "xx.x.x.x.x.x.x.x.x.x.x.x.xx",
+    "x.x.x.x.x.x.x.x.x.x.x.x.x.x",
+    "xx.x.x.x.x.x.x.x.x.x.x.x.xx",
+    "x.x.x.x.x.x.x.x.x.x.x.x.x.x",
+    "xx.x.x.x.x.x.x.x.x.x.x.x.xx",
+    "x.x.x.x.x.x.x.x.x.x.x.x.x.x",
+    ".x.x.x.x.x.x.x.x.x.x.x.x.x.",
+    "..x.x.x.x.x.x.x.x.x.x.x.x..",
+    " ..x.x.x.x.x.x.x.x.x.x.x.. ",
+    "  ..xxxxxxxxxxxxxxxxxxx..  "
+  ],
+  "spawns": {}
+}

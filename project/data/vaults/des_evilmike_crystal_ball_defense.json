@@ -1,0 +1,45 @@
+{
+  "name": "des_evilmike_crystal_ball_defense",
+  "size": [
+    25,
+    19
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "zot"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 5,
+  "tags": [
+    "no_monster_gen"
+  ],
+  "grid": [
+    "xxxxxxxxxxxxxxxxxxxxxxxxx",
+    "...x......3.3.3......x...",
+    "...x.................x...",
+    ".xx3.................3xx.",
+    ".x..xxxxxxxx.xxxxxxxx..x.",
+    ".x..xxxxxxxx2xxxxxxxx..x.",
+    ".x..xxxxxxxx.xxxxxxxx..x.",
+    ".x..xxxxxxx...xxxxxxx..x.",
+    ".x..xxxxx.x...x.xxxxx..x.",
+    ".x.3xxxxxx..1..xxxxxx3.x.",
+    ".x..xxxxx1.....1xxxxx..x.",
+    "xx...xx.....>.....xx...xx",
+    "xxx.....1.......1.....xxx",
+    "xxxxxxx...........xxxxxxx",
+    "xxxxxxxxx1.....1xxxxxxxxx",
+    "        xx..1..xx        ",
+    "        x.x...x.x        ",
+    "        xxx.2.xxx        ",
+    "        xxxxxxxxx        "
+  ],
+  "spawns": {}
+}

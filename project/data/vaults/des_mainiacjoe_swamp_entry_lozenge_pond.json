@@ -1,0 +1,38 @@
+{
+  "name": "des_mainiacjoe_swamp_entry_lozenge_pond",
+  "size": [
+    11,
+    11
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "swamp"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent",
+    "no_monster_gen"
+  ],
+  "grid": [
+    "   ......  ",
+    " ........  ",
+    " ........  ",
+    ".........  ",
+    ".......... ",
+    "...........",
+    "...........",
+    "...........",
+    "...........",
+    "    .......",
+    "     ......"
+  ],
+  "spawns": {}
+}

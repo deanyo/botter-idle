@@ -1,0 +1,47 @@
+{
+  "name": "des_regret_index_lairdec_dancing_grid",
+  "size": [
+    17,
+    21
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "lair"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    " ..........      ",
+    " xxx...C...      ",
+    " x..C...xx.      ",
+    " ..........      ",
+    "                 ",
+    "                 ",
+    "                 ",
+    "         ........",
+    " T S .   .......x",
+    "         .......x",
+    "         ........",
+    "........         ",
+    "x.......         ",
+    "x.......   . S T ",
+    "........         ",
+    "                 ",
+    "                 ",
+    "      .......... ",
+    "      .xx...C..x ",
+    "      ...C...xxx ",
+    "      .......... "
+  ],
+  "spawns": {}
+}

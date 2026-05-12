@@ -1,0 +1,31 @@
+{
+  "name": "des_hellmonk_deceptive_appearances",
+  "size": [
+    17,
+    5
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "spider"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    " xxxx       xxxx ",
+    "xx..xx     xx..xx",
+    "x2.............1x",
+    "xx..xx     xx..xx",
+    " xxxx       xxxx "
+  ],
+  "spawns": {}
+}

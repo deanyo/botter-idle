@@ -1,0 +1,27 @@
+{
+  "name": "des_spicy_abyss_rude_harpoons",
+  "size": [
+    5,
+    3
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "abyss",
+    "dungeon"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    ".....",
+    ".....",
+    "....."
+  ],
+  "spawns": {}
+}

@@ -1,0 +1,53 @@
+{
+  "name": "des_nicolae_shoals_deep_elves_summer_vacation",
+  "size": [
+    28,
+    27
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "shoals"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "             xxxxxxx        ",
+    "          xxxxxxxxxxxxxx    ",
+    "        xxxx....xxxxx..xxxx ",
+    "      xxxxxx....xxxx.....xxx",
+    "     xxxx..x....xxxx......xx",
+    "    xxxx......+..xx...xx..xx",
+    "   xxxx..1.............x...x",
+    "   ........1...1.......xx...",
+    " ........1........1...xxx.. ",
+    "............1...1.....xxx.  ",
+    "..............1....1.xxxx   ",
+    " ...........1........xxx    ",
+    "   ..............1....xx    ",
+    "   ..................1.xx   ",
+    "    ...........1...1...xxx  ",
+    "      .................xxxx ",
+    "      ...............1..xxx ",
+    "       ...........1.....xxx ",
+    "         ...............xx  ",
+    "         ............1.xxx  ",
+    "          .............xx   ",
+    "            ...........xx   ",
+    "            ........xxxx    ",
+    "             .......xxx     ",
+    "               ....         ",
+    "               ....         ",
+    "                ..          "
+  ],
+  "spawns": {}
+}

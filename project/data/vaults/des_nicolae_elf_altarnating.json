@@ -1,0 +1,34 @@
+{
+  "name": "des_nicolae_elf_altarnating",
+  "size": [
+    5,
+    5
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "elf",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 5,
+  "tags": [
+    "transparent",
+    "no_monster_gen",
+    "no_item_gen"
+  ],
+  "grid": [
+    "xxxxx",
+    "x111x",
+    "x1.1x",
+    "x111x",
+    "xx+xx"
+  ],
+  "spawns": {}
+}

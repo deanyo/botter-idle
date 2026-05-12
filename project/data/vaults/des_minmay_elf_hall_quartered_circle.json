@@ -1,0 +1,58 @@
+{
+  "name": "des_minmay_elf_hall_quartered_circle",
+  "size": [
+    33,
+    33
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "elf",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "xxxxxxxxxxx...........xxxxxxxxxxx",
+    "xxxxxxxxx.......+.*.....xxxxxxxxx",
+    "xxxxxxx......7...*...*....xxxxxxx",
+    "xxxxxx.....5...1....*......xxxxxx",
+    "xxxxx..................*....xxxxx",
+    "xxxx.....3...5..+.**.........xxxx",
+    "xxx...............*.***....*..xxx",
+    "xxx.3...............**....*...xxx",
+    "xx..............6......**...*..xx",
+    "xx.....................*.*...*.xx",
+    "x.........2..4....6.....*...*...x",
+    "x.3.....4...........1...**....*.x",
+    "x....1.......................*..x",
+    "...........5.........5.1..**..*.x",
+    ".........................*......x",
+    "..........................+...+.x",
+    "....3...........................x",
+    "xxx....5.............7..........x",
+    "xxxx...................3.6......x",
+    "xxxx.......3..................1.x",
+    "xxxx.....5.................3....x",
+    "xxxx.........................6.xx",
+    "xxxxx.......5......4......5....xx",
+    "xxxxxx........................xxx",
+    "xxxxxx....1.....1.............xxx",
+    "xxxxxxx..............4.......xxxx",
+    "xxxxxxxxx...1...............xxxxx",
+    "xxxxxxxxxx.....23..........xxxxxx",
+    "xxxxxxxxxxxxxx........2...xxxxxxx",
+    "xxxxxxxxxxxxxxx.....2...xxxxxxxxx",
+    "xxxxxxxxxxxxxxx.......xxxxxxxxxxx",
+    "xxxxxxxxxxxxxxx....xxxxxxxxxxxxxx"
+  ],
+  "spawns": {}
+}

@@ -1,0 +1,45 @@
+{
+  "name": "des_hangedman_shoals_cup_caves",
+  "size": [
+    25,
+    9
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "shoals"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    " xxxx        xxxxx  xxxx ",
+    "xxx.xxxx...xxxx.xxxxx.xxx",
+    "x.....x.....x.414.x.....x",
+    ".....2x.....x.....x.5....",
+    "...C.1...C.....C...1.C...",
+    ".....2x3...3x.....x.5....",
+    "x.....x..1..x.....x.....x",
+    "xxx.xxxxx.xxxx...xxxx.xxx",
+    " xxxx  xxxxx        xxxx "
+  ],
+  "spawns": {
+    "1": {
+      "enemy_pool": [
+        "cyclops"
+      ]
+    },
+    "2": {
+      "enemy_pool": [
+        "snapping_turtle",
+        "centaur"
+      ]
+    }
+  }
+}

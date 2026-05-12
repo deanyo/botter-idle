@@ -1,0 +1,43 @@
+{
+  "name": "des_nicolae_elf_m_pinch",
+  "size": [
+    17,
+    15
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "elf",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent",
+    "allow_dup"
+  ],
+  "grid": [
+    "xxxxxxxxxxxxxxxxx",
+    "xxx...xxxxx...xxx",
+    "xx.....xxx.....xx",
+    "x.......x.......x",
+    ".................",
+    ".................",
+    ".................",
+    ".................",
+    ".................",
+    ".................",
+    ".................",
+    "x.......x.......x",
+    "xx.....xxx.....xx",
+    "xxx...xxxxx...xxx",
+    "xxxxxxxxxxxxxxxxx"
+  ],
+  "spawns": {}
+}

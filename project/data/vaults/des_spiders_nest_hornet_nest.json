@@ -1,0 +1,34 @@
+{
+  "name": "des_spiders_nest_hornet_nest",
+  "size": [
+    10,
+    10
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "spider"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "  ......  ",
+    " ........ ",
+    "..........",
+    "....111...",
+    "...1111...",
+    "...1111...",
+    "....11....",
+    "..........",
+    " ........ ",
+    "  ......  "
+  ],
+  "spawns": {}
+}

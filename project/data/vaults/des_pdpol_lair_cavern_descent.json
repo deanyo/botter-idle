@@ -1,0 +1,38 @@
+{
+  "name": "des_pdpol_lair_cavern_descent",
+  "size": [
+    13,
+    14
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "lair"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "  xxxxxxx    ",
+    " xx.....xx   ",
+    "xx....x..xx  ",
+    "x..xx.xx..xx ",
+    "x.xx.....**x ",
+    "x........**x ",
+    "xx.........xx",
+    "x.........xx.",
+    "x.xx......x..",
+    "x..xx....xx.x",
+    "xx..xxx..x..x",
+    " xx.........x",
+    "  xxx.xxx.xxx",
+    "    xxx xxx  "
+  ],
+  "spawns": {}
+}

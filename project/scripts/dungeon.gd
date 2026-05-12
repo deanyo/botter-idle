@@ -1,0 +1,1447 @@
+extends Node2D
+
+const C := preload("res://scripts/constants.gd")
+const DungeonGen := preload("res://scripts/dungeon_generator.gd")
+const Path := preload("res://scripts/pathfinding.gd")
+
+signal floor_started(floor_num: int)
+signal floor_cleared(floor_num: int)
+signal run_ended(victory: bool, report: Dictionary)
+
+const ENEMIES_PATH := "res://data/enemies.json"
+const ITEMS_PATH := "res://data/items.json"
+const ENEMY_TILE_DIR := "res://assets/tiles/enemies/"
+
+var enemy_data: Dictionary = {}
+var items_db: Dictionary = {}
+var pathing: Path
+var grid: Array
+var rooms: Array
+var bot: Bot
+var enemies: Array[Enemy] = []
+var current_floor: int = 1
+var rng := RandomNumberGenerator.new()
+var loot_log: Array[String] = []
+var kills: Dictionary = {}
+var dropped_items: Array = []
+var visited_rooms: Array[bool] = []
+var stairs_cell: Vector2i = Vector2i.ZERO
+var journal: Array = []
+var loot_drops: Array[LootDrop] = []
+var interactables: Array[Interactable] = []
+var bot_interacting: bool = false
+var interact_target: Interactable = null
+var interact_timer: float = 0.0
+var vault_spawn_overrides: Dictionary = {}
+var vault_decor_sprites: Array[Node2D] = []
+var run_plan: Array = []
+var current_biome: Dictionary = {}
+var ambient_modulate: CanvasModulate = null
+var fog: FogSystem = null
+var current_renderer: MapRenderer = null
+var bot_light: PointLight2D = null
+var world_env: WorldEnvironment = null
+var fog_overlay: FogOverlay = null
+var ambient_decor_nodes: Array = []
+var portal_active: bool = false
+var portal_kind: String = ""
+var portal_biome_override: Dictionary = {}
+var portal_loot_bias: int = 0
+var bot_target_cell: Vector2i = Vector2i(-1, -1)
+var bot_target_kind: String = ""
+var dist_to_stairs: Array = []
+var ticks_without_move: int = 0
+const MAX_TICKS_WITHOUT_MOVE := 30
+var hud_layer: CanvasLayer = null
+var hud_name_label: Label = null
+var hud_place_label: Label = null
+var hud_hp_label: Label = null
+var hud_hp_bar: ColorRect = null
+var hud_hp_bar_bg: ColorRect = null
+var hud_xp_label: Label = null
+var hud_gold_label: Label = null
+var hud_atk_label: Label = null
+var hud_def_label: Label = null
+
+@onready var map_layer: Node2D = $MapLayer
+@onready var actor_layer: Node2D = $ActorLayer
+@onready var camera: Camera2D = $Camera
+
+func _ready() -> void:
+	rng.randomize()
+	enemy_data = _load_json(ENEMIES_PATH)
+	items_db = _load_items(ITEMS_PATH)
+	_start_run()
+
+func _start_run() -> void:
+	current_floor = 1
+	loot_log.clear()
+	kills.clear()
+	journal.clear()
+	run_plan = BiomeData.roll_run_plan(rng)
+	if ambient_modulate == null:
+		ambient_modulate = CanvasModulate.new()
+		add_child(ambient_modulate)
+	if world_env == null:
+		world_env = WorldEnvironment.new()
+		var env := Environment.new()
+		env.background_mode = Environment.BG_CANVAS
+		env.glow_enabled = true
+		env.glow_intensity = 0.9
+		env.glow_strength = 1.2
+		env.glow_bloom = 0.2
+		env.glow_blend_mode = Environment.GLOW_BLEND_MODE_SOFTLIGHT
+		env.glow_hdr_threshold = 1.0
+		world_env.environment = env
+		add_child(world_env)
+	if fog_overlay == null and camera != null:
+		fog_overlay = FogOverlay.new()
+		add_child(fog_overlay)
+		var view_size: Vector2 = get_viewport().get_visible_rect().size
+		fog_overlay.setup(camera, view_size)
+	var save: Dictionary = SaveState.load_state()
+	bot = Bot.new()
+	actor_layer.add_child(bot)
+	bot.level = int(save.get("level", 1))
+	bot.xp = int(save.get("xp", 0))
+	bot.gold = int(save.get("gold", 0))
+	bot.clear_blessings()
+	bot.apply_gear(items_db, save.get("equipped", {}))
+	_build_floor()
+
+func _build_floor() -> void:
+	for e in enemies:
+		if is_instance_valid(e):
+			e.queue_free()
+	enemies.clear()
+	for d in loot_drops:
+		if is_instance_valid(d):
+			d.queue_free()
+	loot_drops.clear()
+	for inter in interactables:
+		if is_instance_valid(inter):
+			inter.queue_free()
+	interactables.clear()
+	for s in vault_decor_sprites:
+		if is_instance_valid(s):
+			s.queue_free()
+	vault_decor_sprites.clear()
+	for n in ambient_decor_nodes:
+		if is_instance_valid(n):
+			n.queue_free()
+	ambient_decor_nodes.clear()
+	bot_target_cell = Vector2i(-1, -1)
+	bot_target_kind = ""
+	_stall_snapshot_taken = false
+	_stuck_ticks = 0
+	_last_bot_cell = Vector2i(-99, -99)
+	vault_spawn_overrides.clear()
+	bot_interacting = false
+	interact_target = null
+	interact_timer = 0.0
+
+	if DebugJump.active and DebugJump.biome_id != "":
+		# Replace the run plan with a 10-floor stretch of the debug biome so
+		# branch label, biome content, and run-plan all agree.
+		run_plan = []
+		for i in 10:
+			run_plan.append(DebugJump.biome_id)
+		current_floor = DebugJump.floor_num if DebugJump.floor_num > 0 else current_floor
+		print("[debug-jump] _build_floor biome=%s floor=%d" % [DebugJump.biome_id, current_floor])
+	current_biome = BiomeData.biome_for_floor(run_plan, current_floor)
+	if DebugJump.active and DebugJump.biome_id != "":
+		var override: Dictionary = BiomeData.get_biome(DebugJump.biome_id)
+		if not override.is_empty():
+			current_biome = override
+			print("[debug-jump] override applied id=%s" % current_biome.get("id", "?"))
+	if portal_active and not portal_biome_override.is_empty():
+		current_biome = portal_biome_override
+	if ambient_modulate:
+		ambient_modulate.color = BiomeData.modulate_for(current_biome)
+	var vault_themes: Array = current_biome.get("vault_themes", ["dungeon"])
+
+	var seed_val: int = rng.randi()
+	var gen := DungeonGen.new(seed_val)
+	var layout_id: String = BiomeData.roll_layout(current_biome, rng)
+	# Biome may override map size (e.g. portal vaults need bigger floors).
+	var size_arr: Array = current_biome.get("map_size", [C.MAP_W, C.MAP_H])
+	var map_w: int = int(size_arr[0]) if size_arr.size() >= 2 else C.MAP_W
+	var map_h: int = int(size_arr[1]) if size_arr.size() >= 2 else C.MAP_H
+	var data: Dictionary = gen.generate_themed(map_w, map_h, vault_themes, current_floor, layout_id, String(current_biome.get("id", "")))
+	grid = data.grid
+	rooms = data.rooms
+	stairs_cell = data.get("stairs_down", _find_stairs_cell())
+	dist_to_stairs = data.get("dist_to_stairs", [])
+	_apply_vault_results(data.get("vault_results", {}))
+
+	visited_rooms = []
+	visited_rooms.resize(rooms.size())
+	for i in rooms.size():
+		visited_rooms[i] = false
+
+	pathing = Path.new()
+	pathing.build(grid)
+
+	var renderer := MapRenderer.new()
+	for child in map_layer.get_children():
+		child.queue_free()
+	map_layer.add_child(renderer)
+	renderer.render(grid, rooms, current_biome, rng)
+	current_renderer = renderer
+	fog = FogSystem.new()
+	fog.setup(grid[0].size(), grid.size(), grid)
+	if fog_overlay:
+		fog_overlay.set_darkness(1.0)
+		fog_overlay.set_visibility_grid(fog)
+
+	bot.place_at(data.spawn)
+	_mark_room_visited_at(bot.cell)
+	_center_camera_on_bot()
+	_scatter_ambient_decor()
+
+	var biome_name: String = String(current_biome.get("display_name", "the Dungeon"))
+	var branch_label: String = BiomeData.branch_depth_label(run_plan, current_floor)
+	var floor_label: String = "%s (%s)" % [branch_label, biome_name]
+	if portal_active:
+		floor_label = "%s Portal" % Portal.PORTAL_KINDS.get(portal_kind, {}).get("name", "Portal")
+	elif _is_final_boss_floor():
+		floor_label = "%s — Boss" % floor_label
+	elif _is_miniboss_floor(current_floor):
+		floor_label = "%s — Elite" % floor_label
+	journal.append({
+		"floor": current_floor,
+		"biome": floor_label,
+		"events": [],
+	})
+
+	_spawn_enemies()
+	_update_biome_hud()
+	floor_started.emit(current_floor)
+
+	# Debug-jump screenshot mode: after a short settle delay, save the
+	# viewport to disk and quit. Lets Claude self-verify biomes/vaults
+	# without needing an interactive screenshot MCP.
+	if DebugJump.active and DebugJump.screenshot:
+		_schedule_debug_screenshot()
+
+func _schedule_debug_screenshot() -> void:
+	# Wait for fog to settle + sprites to fade in, then capture and quit.
+	var t := get_tree().create_timer(DebugJump.screenshot_delay)
+	t.timeout.connect(_capture_debug_screenshot)
+
+func _capture_debug_screenshot() -> void:
+	# Reveal the whole map for vault inspection — fog defeats the purpose of
+	# screenshot debugging, since the bot's tiny LoS hides 95% of every vault.
+	if fog and grid.size() > 0:
+		var w: int = grid[0].size()
+		var h: int = grid.size()
+		for y in h:
+			for x in w:
+				fog.visibility[y][x] = fog.VIS_VISIBLE
+		fog._update_texture()
+		if current_renderer:
+			current_renderer.apply_visibility(fog)
+		# Snap renderer to fully-visible without waiting for fade.
+		if current_renderer:
+			for key in current_renderer.cell_target_alpha.keys():
+				current_renderer.cell_current_alpha[key] = 1.0
+				current_renderer.cell_target_alpha[key] = 1.0
+				for s in current_renderer.cell_sprites[key]:
+					if is_instance_valid(s):
+						s.modulate = Color(1, 1, 1, 1)
+		# Disable fog shader entirely so the whole map is fully bright.
+		if fog_overlay:
+			fog_overlay.set_darkness(0.0)
+		# Also disable ambient modulate so walls aren't tinted dim.
+		if ambient_modulate:
+			ambient_modulate.color = Color(1, 1, 1, 1)
+		# Boost the bot's torch radius dramatically and disable shadow casting
+		# so the entire vault is lit without occlusion.
+		if bot_light:
+			bot_light.shadow_enabled = false
+			bot_light.texture_scale = 50.0
+			bot_light.energy = 2.5
+		# Bump viewport to 1920x1920 so the screenshot captures fine vault
+		# detail at zoom-out. Mobile portrait 540x960 is too cramped for audit.
+		# Disable content scaling entirely so 1 viewport pixel == 1 screen pixel.
+		var win: Window = get_window()
+		if win:
+			win.content_scale_mode = Window.CONTENT_SCALE_MODE_DISABLED
+			win.size = Vector2i(1920, 1920)
+		# Reveal all entities (interactables, decor) since they're normally
+		# fog-gated.
+		for inter in interactables:
+			if is_instance_valid(inter):
+				inter.visible = true
+		for d in loot_drops:
+			if is_instance_valid(d):
+				d.visible = true
+		for s in vault_decor_sprites:
+			if is_instance_valid(s):
+				s.visible = true
+		for n in ambient_decor_nodes:
+			if is_instance_valid(n):
+				n.visible = true
+		# Pan the camera to the map center and zoom out to fit the whole vault.
+		# Need a frame for the window resize to propagate before computing zoom.
+		await get_tree().process_frame
+		if camera and grid.size() > 0:
+			camera.position = Vector2(w * C.TILE_SIZE * 0.5, h * C.TILE_SIZE * 0.5)
+			var view_size: Vector2 = get_viewport().get_visible_rect().size
+			var map_w_px: float = float(w * C.TILE_SIZE)
+			var map_h_px: float = float(h * C.TILE_SIZE)
+			var zoom_x: float = view_size.x / max(1.0, map_w_px)
+			var zoom_y: float = view_size.y / max(1.0, map_h_px)
+			var zoom: float = minf(zoom_x, zoom_y) * 0.92
+			camera.zoom = Vector2(zoom, zoom)
+		await get_tree().process_frame
+		await get_tree().process_frame
+	var img: Image = get_viewport().get_texture().get_image()
+	var dir := DirAccess.open("user://")
+	if dir != null and not dir.dir_exists("debug_screenshots"):
+		dir.make_dir("debug_screenshots")
+	# Each screenshot gets a unique millisecond-precision filename so the
+	# external Read tool can never serve stale content from a previous run.
+	# A separate manifest file always points at the latest screenshot path
+	# for the most-recently-screenshot biome — Claude reads the manifest,
+	# extracts the path, then Reads that uniquely-named PNG.
+	var name: String = DebugJump.biome_id
+	if DebugJump.vault_name != "":
+		name += "_" + DebugJump.vault_name
+	var ts: int = Time.get_ticks_msec()
+	var path := "user://debug_screenshots/%s_%d.png" % [name, ts]
+	img.save_png(path)
+	# Manifest: latest path for this name, plus a global "last" path.
+	var manifest_path := "user://debug_screenshots/_manifest.txt"
+	var existing: Dictionary = {}
+	if FileAccess.file_exists(manifest_path):
+		var rf := FileAccess.open(manifest_path, FileAccess.READ)
+		if rf:
+			for line in rf.get_as_text().split("\n"):
+				if "=" in line:
+					var p: PackedStringArray = line.split("=", true, 1)
+					existing[p[0].strip_edges()] = p[1].strip_edges()
+	existing[name] = path
+	existing["LAST"] = path
+	var wf := FileAccess.open(manifest_path, FileAccess.WRITE)
+	if wf:
+		var keys: Array = existing.keys()
+		keys.sort()
+		for k in keys:
+			wf.store_line("%s=%s" % [k, existing[k]])
+	print("[debug-screenshot] saved %s (size=%dx%d)" % [path, img.get_width(), img.get_height()])
+	get_tree().quit()
+
+func _ensure_hud() -> void:
+	if hud_layer != null:
+		return
+	hud_layer = CanvasLayer.new()
+	hud_layer.layer = 10
+	add_child(hud_layer)
+	var bg := ColorRect.new()
+	bg.color = Color(0, 0, 0, 0.78)
+	bg.position = Vector2(0, 0)
+	bg.size = Vector2(360, 240)
+	hud_layer.add_child(bg)
+	var amber := Color(0.92, 0.78, 0.45)
+	var dim := Color(0.7, 0.6, 0.4)
+	hud_name_label = _hud_label("Bot the Adventurer", Vector2(10, 6), amber)
+	hud_place_label = _hud_label("Place: D:1", Vector2(10, 38), dim)
+	hud_hp_label = _hud_label("HP:   0/  0", Vector2(10, 70), Color(0.6, 1.0, 0.55))
+	hud_hp_bar_bg = ColorRect.new()
+	hud_hp_bar_bg.color = Color(0.18, 0.05, 0.05, 0.9)
+	hud_hp_bar_bg.position = Vector2(10, 100)
+	hud_hp_bar_bg.size = Vector2(340, 10)
+	hud_layer.add_child(hud_hp_bar_bg)
+	hud_hp_bar = ColorRect.new()
+	hud_hp_bar.color = Color(0.45, 0.85, 0.4, 1.0)
+	hud_hp_bar.position = Vector2(10, 100)
+	hud_hp_bar.size = Vector2(340, 10)
+	hud_layer.add_child(hud_hp_bar)
+	hud_atk_label = _hud_label("ATK: 0", Vector2(10, 118), amber)
+	hud_def_label = _hud_label("DEF: 0", Vector2(170, 118), amber)
+	hud_xp_label = _hud_label("XL: 1", Vector2(10, 150), dim)
+	hud_gold_label = _hud_label("Gold: 0", Vector2(10, 184), Color(1.0, 0.85, 0.3))
+
+func _hud_label(text: String, pos: Vector2, color: Color) -> Label:
+	var lbl := Label.new()
+	lbl.text = text
+	lbl.position = pos
+	lbl.add_theme_color_override("font_color", color)
+	lbl.add_theme_color_override("font_outline_color", Color(0, 0, 0))
+	lbl.add_theme_constant_override("outline_size", 3)
+	lbl.add_theme_font_size_override("font_size", 22)
+	hud_layer.add_child(lbl)
+	return lbl
+
+func _update_biome_hud() -> void:
+	_ensure_hud()
+	var biome_id: String = String(current_biome.get("id", "?"))
+	var branch: String = BiomeData.branch_depth_label(run_plan, current_floor)
+	hud_place_label.text = "Place: %s  (%s)" % [branch, biome_id]
+	if is_instance_valid(bot):
+		hud_hp_label.text = "HP: %3d/%3d" % [bot.hp, bot.max_hp]
+		var hp_pct: float = clampf(float(bot.hp) / maxf(1.0, float(bot.max_hp)), 0.0, 1.0)
+		hud_hp_bar.size = Vector2(100.0 * hp_pct, 10)
+		hud_atk_label.text = "ATK: %d" % bot.atk
+		hud_def_label.text = "DEF: %d" % bot.defense
+		hud_xp_label.text = "XL: %d" % bot.level
+		hud_gold_label.text = "Gold: %d" % bot.gold
+
+func _spawn_enemies() -> void:
+	var pool: Array = []
+	var is_boss_floor: bool = current_floor >= C.BOSS_FLOOR
+	var biome_pool: Array = current_biome.get("enemy_pool", [])
+	for id in enemy_data.keys():
+		var def: Dictionary = enemy_data[id]
+		if def.boss:
+			continue
+		if biome_pool.has(id) and def.min_floor <= current_floor:
+			pool.append(id)
+	if pool.is_empty():
+		for id in enemy_data.keys():
+			var def2: Dictionary = enemy_data[id]
+			if not def2.boss and def2.min_floor <= current_floor:
+				pool.append(id)
+	if pool.is_empty():
+		pool.append("rat")
+
+	if is_boss_floor:
+		for id in enemy_data.keys():
+			if enemy_data[id].boss:
+				_spawn_specific(id, _pick_boss_room())
+				break
+	elif _is_miniboss_floor(current_floor):
+		var elite_id: String = _pick_miniboss_id(pool)
+		_spawn_miniboss(elite_id, _pick_boss_room())
+
+	for cell in vault_spawn_overrides.keys():
+		var spec: Variant = vault_spawn_overrides[cell]
+		if typeof(spec) != TYPE_DICTIONARY:
+			continue
+		var enemy_pool: Array = spec.get("enemy_pool", [])
+		if enemy_pool.is_empty():
+			continue
+		var enemy_id: String = String(enemy_pool[rng.randi_range(0, enemy_pool.size() - 1)])
+		_spawn_specific(enemy_id, cell)
+
+	var count: int = 4 + current_floor * 2
+	for i in count:
+		var id: String = pool[rng.randi_range(0, pool.size() - 1)]
+		var cell: Vector2i = _random_walkable_cell_far_from_bot()
+		_spawn_specific(id, cell)
+
+	var chest_count: int = 1 + (1 if rng.randf() < 0.5 else 0)
+	if _is_miniboss_floor(current_floor):
+		chest_count = 2
+	if is_boss_floor:
+		chest_count = 3
+	if portal_active:
+		chest_count += 1 + portal_loot_bias
+	for i in chest_count:
+		var chest_cell: Vector2i = _random_walkable_cell_far_from_bot()
+		var bias: int = 0
+		if rng.randf() < 0.2:
+			bias = 1
+		if rng.randf() < 0.05 or is_boss_floor:
+			bias = 2
+		if portal_active:
+			bias = max(bias, portal_loot_bias)
+		_spawn_chest(chest_cell, rng.randi_range(1, 3), bias)
+
+	if rng.randf() < 0.35:
+		var fountain_cell: Vector2i = _random_walkable_cell_far_from_bot()
+		var kind_roll: float = rng.randf()
+		var fountain_kind: String = "blue"
+		if kind_roll < 0.15:
+			fountain_kind = "sparkling"
+		elif kind_roll < 0.30:
+			fountain_kind = "blood"
+		_spawn_fountain(fountain_cell, fountain_kind)
+
+	if not is_boss_floor and rng.randf() < 0.25:
+		var altar_cell: Vector2i = _random_walkable_cell_far_from_bot()
+		_spawn_altar(altar_cell)
+
+	# Portals: stepping on one swaps the floor to a themed mini-floor with
+	# bumped loot. Skip on portal floors themselves and on the boss/floor 1.
+	if not is_boss_floor and not portal_active and current_floor >= 2 and current_floor <= C.FLOORS_PER_RUN - 1:
+		if rng.randf() < 0.15:
+			var portal_cell: Vector2i = _random_walkable_cell_far_from_bot()
+			_spawn_portal(portal_cell)
+
+func _is_miniboss_floor(f: int) -> bool:
+	return f != C.BOSS_FLOOR and f in C.MINIBOSS_FLOORS
+
+func _is_final_boss_floor() -> bool:
+	return current_floor >= C.BOSS_FLOOR
+
+func _log(msg: String) -> void:
+	if journal.is_empty():
+		return
+	journal.back().events.append(msg)
+
+func _pick_miniboss_id(pool: Array) -> String:
+	if pool.is_empty():
+		return "rat"
+	var ranked: Array = pool.duplicate()
+	ranked.sort_custom(func(a, b): return float(enemy_data[a].hp) > float(enemy_data[b].hp))
+	return ranked[0]
+
+func _spawn_miniboss(id: String, at_cell: Vector2i) -> void:
+	if not enemy_data.has(id):
+		return
+	var def: Dictionary = enemy_data[id]
+	var e := Enemy.new()
+	actor_layer.add_child(e)
+	e.enemy_id = id + "_elite"
+	e.display_name = "Greater " + str(def.name)
+	e.xp_reward = int(def.xp) * 4
+	e.is_boss = false
+	e.is_miniboss = true
+	var floor_mult: float = pow(1.10, current_floor - 1)
+	e.max_hp = int(round(float(def.hp) * floor_mult * 1.8))
+	e.atk = int(round(float(def.atk) * floor_mult * 1.4))
+	e.defense = int(round(float(def.def) * floor_mult * 1.3))
+	e.hp = e.max_hp
+	e.move_speed = float(def.speed) * 4.0
+	var tex: Texture2D = load(ENEMY_TILE_DIR + def.tile)
+	if tex:
+		e.set_texture(tex)
+		if e.sprite:
+			e.sprite.scale = Vector2(1.4, 1.4)
+			e.sprite.modulate = Color(1.2, 0.85, 0.85)
+			e.fx = SpriteFX.new(e.sprite)
+	e.place_at(at_cell)
+	e.died.connect(_on_enemy_died)
+	enemies.append(e)
+
+func _spawn_specific(id: String, at_cell: Vector2i) -> void:
+	if not enemy_data.has(id):
+		return
+	var def: Dictionary = enemy_data[id]
+	var e := Enemy.new()
+	actor_layer.add_child(e)
+	var is_champion: bool = (not def.boss) and rng.randf() < 0.012
+	e.enemy_id = id
+	e.display_name = ("Champion " + str(def.name)) if is_champion else def.name
+	e.xp_reward = int(def.xp) * (3 if is_champion else 1)
+	e.is_boss = bool(def.boss)
+	var floor_mult: float = pow(1.10, current_floor - 1)
+	var champ_mult: float = 1.5 if is_champion else 1.0
+	e.max_hp = int(round(float(def.hp) * floor_mult * champ_mult))
+	e.atk = int(round(float(def.atk) * floor_mult * champ_mult))
+	e.defense = int(round(float(def.def) * floor_mult * (1.2 if is_champion else 1.0)))
+	e.hp = e.max_hp
+	e.move_speed = float(def.speed) * 4.0
+	var tex: Texture2D = load(ENEMY_TILE_DIR + def.tile)
+	if tex:
+		e.set_texture(tex)
+		if is_champion and e.sprite:
+			e.sprite.scale = Vector2(1.25, 1.25)
+			e.sprite.modulate = Color(1.0, 0.85, 1.3)
+			e.fx = SpriteFX.new(e.sprite)
+			LightSpec.attach(e, "sigil")
+	e.place_at(at_cell)
+	e.died.connect(_on_enemy_died)
+	enemies.append(e)
+
+func _on_enemy_died(actor: Actor) -> void:
+	var e := actor as Enemy
+	if e == null or not is_instance_valid(e):
+		return
+	bot.gain_xp(e.xp_reward)
+	var gold_drop: int = rng.randi_range(1, 5) + current_floor
+	bot.gold += gold_drop
+	kills[e.enemy_id] = kills.get(e.enemy_id, 0) + 1
+	loot_log.append("%s slain (+%d gold, +%d xp)" % [e.display_name, gold_drop, e.xp_reward])
+	if e.is_boss:
+		_log("Slew %s. (+%d gold, +%d xp)" % [e.display_name, gold_drop, e.xp_reward])
+	elif e.is_miniboss:
+		_log("Vanquished %s! (+%d gold, +%d xp)" % [e.display_name, gold_drop, e.xp_reward])
+	else:
+		_log("Slew a %s." % e.display_name)
+	_maybe_drop_item(e)
+	enemies.erase(e)
+	if e.is_boss:
+		_end_run(true)
+		return
+
+func _maybe_drop_item(e: Enemy) -> void:
+	var roll: float = rng.randf()
+	var threshold: float = 0.15
+	if e.is_miniboss:
+		threshold = 1.0
+	elif e.is_boss:
+		threshold = 1.0
+	if roll > threshold:
+		return
+	var rarity: String = _roll_rarity(e.is_boss or e.is_miniboss)
+	var pool: Array = []
+	for id in items_db.keys():
+		if items_db[id].rarity == rarity:
+			pool.append(id)
+	if pool.is_empty():
+		return
+	var picked: String = pool[rng.randi_range(0, pool.size() - 1)]
+	var instance: Dictionary = _create_item_instance(picked)
+	_spawn_loot_drop(instance, e.cell)
+
+func _create_item_instance(base_id: String) -> Dictionary:
+	var base: Dictionary = items_db.get(base_id, {})
+	var affixes: Array = AffixSystem.roll_affixes_for(base, rng)
+	var inst: Dictionary = {
+		"base_id": base_id,
+		"instance_id": _gen_instance_id(),
+		"affixes": affixes,
+	}
+	if String(base.get("rarity", "")) == "legendary":
+		var slot: String = String(base.get("slot", "armor"))
+		var artefact: String = ArtefactPool.pick_for_slot(slot, rng)
+		if artefact != "":
+			inst["tile_override"] = "artefacts/" + artefact
+	return inst
+
+func _gen_instance_id() -> String:
+	return "%d_%d" % [Time.get_unix_time_from_system(), rng.randi()]
+
+func _spawn_loot_drop(instance: Dictionary, at_cell: Vector2i) -> void:
+	var base_id: String = String(instance.get("base_id", ""))
+	if not items_db.has(base_id):
+		return
+	var drop := LootDrop.new()
+	drop.setup_instance(instance, items_db[base_id], at_cell)
+	actor_layer.add_child(drop)
+	loot_drops.append(drop)
+	interactables.append(drop)
+
+func _spawn_chest(at_cell: Vector2i, drops: int = 2, bias: int = 0) -> void:
+	var chest := Chest.new()
+	chest.setup(at_cell, drops, bias)
+	actor_layer.add_child(chest)
+	interactables.append(chest)
+	chest.opened.connect(_on_chest_opened)
+
+func _spawn_fountain(at_cell: Vector2i, kind: String) -> void:
+	var fountain := Fountain.new()
+	fountain.setup(at_cell, kind)
+	actor_layer.add_child(fountain)
+	interactables.append(fountain)
+	fountain.drank.connect(_on_fountain_drank)
+
+func _on_fountain_drank(_fountain: Fountain, heal: int, kind: String) -> void:
+	_log("Drank from a %s fountain (+%d HP)." % [kind, heal])
+
+func _apply_vault_results(results: Dictionary) -> void:
+	if results.is_empty():
+		return
+	var fountains: Array = results.get("fountains", [])
+	for entry in fountains:
+		if typeof(entry) == TYPE_DICTIONARY:
+			_spawn_fountain(entry.cell, String(entry.get("kind", "blue")))
+		else:
+			_spawn_fountain(entry, "blue")
+	var chest_marks: Array = results.get("chest_marks", [])
+	for cell in chest_marks:
+		_spawn_chest(cell, rng.randi_range(2, 3), 1)
+	var loot_marks: Array = results.get("loot_marks", [])
+	for entry in loot_marks:
+		var cell: Vector2i = entry.cell if typeof(entry) == TYPE_DICTIONARY else entry
+		var rarity: String = _roll_rarity(false)
+		var pool: Array = []
+		for id in items_db.keys():
+			if items_db[id].rarity == rarity:
+				pool.append(id)
+		if pool.is_empty():
+			continue
+		var picked: String = pool[rng.randi_range(0, pool.size() - 1)]
+		var inst: Dictionary = _create_item_instance(picked)
+		_spawn_loot_drop(inst, cell)
+	var statues: Array = results.get("statues", [])
+	for cell in statues:
+		_place_statue(cell)
+	var altar_marks: Array = results.get("altar_marks", [])
+	for entry in altar_marks:
+		if typeof(entry) == TYPE_DICTIONARY:
+			_spawn_altar(entry.cell)
+		else:
+			_spawn_altar(entry)
+	vault_spawn_overrides = results.get("spawn_overrides", {})
+	var placed: Array = results.get("placed_vaults", [])
+	if not placed.is_empty():
+		_log("Notable: %s." % ", ".join(placed))
+
+func _place_statue(cell: Vector2i) -> void:
+	var tex: Texture2D = load("res://assets/tiles/features/statue_granite.png")
+	if tex == null:
+		return
+	var s := Sprite2D.new()
+	s.texture = tex
+	s.centered = false
+	s.position = Vector2(cell.x * C.TILE_SIZE, cell.y * C.TILE_SIZE)
+	s.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	map_layer.add_child(s)
+	vault_decor_sprites.append(s)
+	var occ := LightOccluder2D.new()
+	occ.occluder = MapRenderer._occluder_poly()
+	occ.position = Vector2(cell.x * C.TILE_SIZE, cell.y * C.TILE_SIZE)
+	map_layer.add_child(occ)
+	vault_decor_sprites.append(occ)
+	if pathing and pathing.astar:
+		pathing.astar.set_point_solid(cell, true)
+
+func _spawn_altar(at_cell: Vector2i) -> void:
+	var altar := Altar.new()
+	altar.setup(at_cell)
+	actor_layer.add_child(altar)
+	interactables.append(altar)
+	altar.blessed.connect(_on_altar_blessed)
+
+func _on_altar_blessed(_altar: Altar, blessing: Dictionary) -> void:
+	var bname: String = String(blessing.get("name", "blessing"))
+	var bdesc: String = String(blessing.get("desc", ""))
+	_log("Received %s — %s" % [bname, bdesc])
+
+func _spawn_portal(at_cell: Vector2i) -> void:
+	var portal := Portal.new()
+	portal.setup(at_cell, Portal.random_kind(rng))
+	actor_layer.add_child(portal)
+	interactables.append(portal)
+	portal.entered.connect(_on_portal_entered)
+
+func _on_portal_entered(_portal: Portal, kind: String, biome_id: String, loot_bias: int) -> void:
+	var override: Dictionary = BiomeData.get_biome(biome_id)
+	if override.is_empty():
+		return
+	var def: Dictionary = Portal.PORTAL_KINDS.get(kind, {})
+	var portal_name: String = String(def.get("name", "Portal"))
+	_log("Stepped through a %s portal." % portal_name)
+	portal_active = true
+	portal_kind = kind
+	portal_biome_override = override
+	portal_loot_bias = loot_bias
+	# Rebuild the floor in-place using the portal biome. Floor counter does
+	# not advance — descending the portal's stairs continues the run normally.
+	_build_floor()
+
+func _roll_rarity(is_boss: bool) -> String:
+	if is_boss:
+		var boss_roll: float = rng.randf()
+		if boss_roll < 0.5: return "legendary"
+		if boss_roll < 0.85: return "epic"
+		return "rare"
+	var floor_bonus: float = float(current_floor - 1) * 0.05
+	var blessing_bonus: float = bot.loot_rarity_bonus / 100.0 if is_instance_valid(bot) else 0.0
+	var r: float = rng.randf() - floor_bonus - blessing_bonus
+	if r < 0.02: return "legendary"
+	if r < 0.10: return "epic"
+	if r < 0.25: return "rare"
+	if r < 0.55: return "uncommon"
+	return "common"
+
+func _process(delta: float) -> void:
+	if not is_instance_valid(bot) or not bot.is_alive:
+		return
+	_tick_bot(delta)
+	_tick_enemies(delta)
+	_center_camera_on_bot()
+	_update_biome_hud()
+
+const AGGRO_ENGAGE_RANGE := 5
+
+func _tick_bot(delta: float) -> void:
+	_mark_room_visited_at(bot.cell)
+	_refresh_fog()
+	_check_stuck()
+	# Standing on stairs and no enemies nearby? Descend immediately.
+	if bot.cell == stairs_cell and _nearest_enemy() == null:
+		_descend()
+		return
+	if fog_overlay:
+		fog_overlay.update_lights(_gather_lights(), delta)
+	if bot_light == null and is_instance_valid(bot):
+		bot_light = PointLight2D.new()
+		bot_light.texture = _make_radial_light(128)
+		bot_light.texture_scale = 5.5
+		bot_light.offset = Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5)
+		bot_light.energy = 1.15
+		bot_light.color = Color(1.0, 0.95, 0.8)
+		bot_light.range_z_min = -1024
+		bot_light.range_z_max = 1024
+		bot_light.shadow_enabled = true
+		bot_light.shadow_filter = Light2D.SHADOW_FILTER_PCF5
+		bot_light.shadow_filter_smooth = 1.5
+		bot.add_child(bot_light)
+		var t := bot_light.create_tween().set_loops()
+		t.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		t.tween_property(bot_light, "energy", 1.0, 0.7)
+		t.tween_property(bot_light, "energy", 1.2, 0.7)
+
+	if bot_interacting:
+		_tick_interaction(delta)
+		return
+
+	for inter in interactables:
+		if is_instance_valid(inter) and inter.can_interact() and not inter.should_skip(bot) and inter.cell == bot.cell:
+			_begin_interaction(inter)
+			return
+
+	# Logging: dump state every ~120 ticks if we're not making progress.
+	if Engine.get_process_frames() % 240 == 0:
+		GrindLog.log_line("[grind-debug] bot=%s target=%s kind=%s path_idx=%d/%d enemies=%d alive_adjacent=%d" % [
+			str(bot.cell), str(bot_target_cell), bot_target_kind, bot.path_index, bot.path.size(),
+			enemies.size(), _count_alive_adjacent_enemies(),
+		])
+
+	# If ANY enemy is adjacent, attack it. Don't switch targets while in melee.
+	var adjacent_enemy: Enemy = null
+	for e in enemies:
+		if not is_instance_valid(e) or not e.is_alive:
+			continue
+		if _chebyshev(bot.cell, e.cell) <= 1:
+			adjacent_enemy = e
+			break
+	if adjacent_enemy != null:
+		bot.path = PackedVector2Array()
+		bot.attempt_attack(adjacent_enemy, delta)
+		bot_target_cell = adjacent_enemy.cell
+		bot_target_kind = "enemy"
+		return
+
+	var nearby_enemy: Enemy = _nearest_enemy()
+
+	# Sticky target: keep walking the existing path until it's consumed. Only
+	# re-pick a target when path is fully done OR target is invalid.
+	var has_path: bool = bot.path.size() > 0 and bot.path_index < bot.path.size()
+	if has_path:
+		# Check target is still valid; if not, drop path and re-pick.
+		var still_valid: bool = false
+		match bot_target_kind:
+			"enemy":
+				for e in enemies:
+					if is_instance_valid(e) and e.is_alive and _chebyshev(e.cell, bot_target_cell) <= 2:
+						bot_target_cell = e.cell
+						still_valid = true
+						break
+			"interactable":
+				for inter in interactables:
+					if is_instance_valid(inter) and inter.cell == bot_target_cell and inter.can_interact() and not inter.should_skip(bot):
+						still_valid = true
+						break
+			"room", "stairs":
+				still_valid = true
+		if still_valid:
+			# Mark rooms as we pass through them (early credit).
+			if bot_target_kind == "room":
+				_mark_room_visited_at(bot.cell)
+			bot.step_movement(delta)
+			return
+		# Target invalid — drop path so we re-pick.
+		bot.path = PackedVector2Array()
+		bot_target_cell = Vector2i(-1, -1)
+		bot_target_kind = ""
+
+	# Path consumed. Did we reach our target?
+	if bot_target_kind == "stairs" and bot.cell == stairs_cell:
+		_descend()
+		return
+	if bot_target_kind == "room":
+		_mark_room_visited_at(bot.cell)
+
+	bot_target_cell = Vector2i(-1, -1)
+	bot_target_kind = ""
+
+	# Need a new target.
+	bot_target_cell = Vector2i(-1, -1)
+	bot_target_kind = ""
+
+	if nearby_enemy != null:
+		var p_enemy: PackedVector2Array = pathing.path(bot.cell, nearby_enemy.cell)
+		if p_enemy.size() > 1:
+			bot.set_path(p_enemy.slice(1))
+			bot_target_cell = nearby_enemy.cell
+			bot_target_kind = "enemy"
+			bot.step_movement(delta)
+			return
+
+	var nearest_inter: Interactable = _nearest_interactable()
+	if nearest_inter != null:
+		var p_int: PackedVector2Array = pathing.path(bot.cell, nearest_inter.cell)
+		if p_int.size() > 1:
+			bot.set_path(p_int.slice(1))
+			bot_target_cell = nearest_inter.cell
+			bot_target_kind = "interactable"
+			bot.step_movement(delta)
+			return
+
+	# Explore: head to nearest unvisited room before descending. The sticky-target
+	# system keeps us locked to one room until we arrive — no oscillation.
+	var room_target: Vector2i = _nearest_unvisited_room_center()
+	if room_target.x >= 0:
+		var p_room: PackedVector2Array = pathing.path(bot.cell, room_target)
+		if p_room.size() > 1:
+			bot.set_path(p_room.slice(1))
+			bot_target_cell = room_target
+			bot_target_kind = "room"
+			bot.step_movement(delta)
+			return
+
+	# Nothing left to explore — head to stairs.
+	if bot.cell == stairs_cell:
+		_descend()
+		return
+	var p_stairs: PackedVector2Array = pathing.path(bot.cell, stairs_cell)
+	if p_stairs.size() > 1:
+		bot.set_path(p_stairs.slice(1))
+		bot_target_cell = stairs_cell
+		bot_target_kind = "stairs"
+		bot.step_movement(delta)
+		return
+
+	# Hard fallback: pathing failed for every priority. Walk the BFS distance
+	# gradient toward stairs. Floor was pre-validated as connected, so a
+	# downhill neighbor exists from any reachable cell.
+	if dist_to_stairs.size() > 0 and bot.cell.y >= 0 and bot.cell.y < dist_to_stairs.size() and bot.cell.x >= 0 and bot.cell.x < dist_to_stairs[0].size():
+		var current_d: int = dist_to_stairs[bot.cell.y][bot.cell.x]
+		var best_neighbor := Vector2i(-1, -1)
+		var best_d: int = current_d
+		for d in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+			var n: Vector2i = bot.cell + d
+			if n.x < 0 or n.y < 0 or n.y >= dist_to_stairs.size() or n.x >= dist_to_stairs[0].size():
+				continue
+			var nd: int = dist_to_stairs[n.y][n.x]
+			if nd < 0:
+				continue
+			if nd < best_d:
+				best_d = nd
+				best_neighbor = n
+		if best_neighbor.x >= 0:
+			bot.set_path(PackedVector2Array([Vector2(best_neighbor.x * C.TILE_SIZE, best_neighbor.y * C.TILE_SIZE)]))
+			bot_target_cell = best_neighbor
+			bot_target_kind = "stairs"
+
+	bot.step_movement(delta)
+
+var _last_bot_cell: Vector2i = Vector2i(-99, -99)
+var _stuck_ticks: int = 0
+const STUCK_THRESHOLD := 120
+const STUCK_RECOVERY_THRESHOLD := 360
+var _stall_snapshot_taken: bool = false
+
+func _check_stuck() -> void:
+	if bot.cell == _last_bot_cell:
+		_stuck_ticks += 1
+		if _stuck_ticks == STUCK_THRESHOLD:
+			GrindLog.log_line("[grind] STALL %dt bot=%s target=%s kind=%s stairs=%s grid_at_stairs=%d enemies=%d interactables=%d unvisited_rooms=%d alive_adjacent=%d" % [
+				_stuck_ticks, str(bot.cell), str(bot_target_cell), bot_target_kind,
+				str(stairs_cell), grid[stairs_cell.y][stairs_cell.x] if stairs_cell.y >= 0 and stairs_cell.y < grid.size() and stairs_cell.x >= 0 and stairs_cell.x < grid[0].size() else -1,
+				enemies.size(), interactables.size(),
+				_count_unvisited_rooms(),
+				_count_alive_adjacent_enemies(),
+			])
+		if _stuck_ticks == STUCK_RECOVERY_THRESHOLD:
+			if not _stall_snapshot_taken:
+				_dump_stall_snapshot()
+				_stall_snapshot_taken = true
+			GrindLog.log_line("[grind] HARD-RECOVERY teleporting bot from %s to %s and descending" % [str(bot.cell), str(stairs_cell)])
+			if stairs_cell.x >= 0 and stairs_cell.y >= 0 and stairs_cell.y < grid.size() and stairs_cell.x < grid[0].size():
+				bot.place_at(stairs_cell)
+				_descend()
+			_stuck_ticks = 0
+	else:
+		_stuck_ticks = 0
+	_last_bot_cell = bot.cell
+
+func _dump_stall_snapshot() -> void:
+	var path := "user://stall_snapshot_floor%d.txt" % current_floor
+	var f := FileAccess.open(path, FileAccess.WRITE)
+	if f == null:
+		return
+	f.store_line("# stall snapshot floor %d biome %s layout %s" % [current_floor, String(current_biome.get("id", "?")), String(current_biome.get("layout", "?"))])
+	f.store_line("# bot=%s stairs=%s enemies=%d interactables=%d" % [str(bot.cell), str(stairs_cell), enemies.size(), interactables.size()])
+	f.store_line("# legend: . floor   # wall   > stairs   B bot   E enemy   I interactable")
+	var w: int = grid[0].size()
+	var h: int = grid.size()
+	for y in h:
+		var row: String = ""
+		for x in w:
+			var cell := Vector2i(x, y)
+			if cell == bot.cell:
+				row += "B"
+				continue
+			if cell == stairs_cell:
+				row += ">"
+				continue
+			var enemy_here: bool = false
+			for e in enemies:
+				if is_instance_valid(e) and e.is_alive and e.cell == cell:
+					enemy_here = true
+					break
+			if enemy_here:
+				row += "E"
+				continue
+			var inter_here: bool = false
+			for inter in interactables:
+				if is_instance_valid(inter) and inter.cell == cell:
+					inter_here = true
+					break
+			if inter_here:
+				row += "I"
+				continue
+			match grid[y][x]:
+				C.T_FLOOR: row += "."
+				C.T_WALL:  row += "#"
+				C.T_STAIRS_DOWN: row += ">"
+				_: row += "?"
+		f.store_line(row)
+	f.close()
+	GrindLog.log_line("[grind] stall snapshot written to %s" % path)
+
+func _count_unvisited_rooms() -> int:
+	var n: int = 0
+	for v in visited_rooms:
+		if not v:
+			n += 1
+	return n
+
+func _count_alive_adjacent_enemies() -> int:
+	var n: int = 0
+	for e in enemies:
+		if is_instance_valid(e) and e.is_alive and _chebyshev(bot.cell, e.cell) <= 1:
+			n += 1
+	return n
+
+func _nearest_interactable() -> Interactable:
+	var best: Interactable = null
+	var best_d: int = 9999
+	for i in interactables:
+		if not is_instance_valid(i) or not i.can_interact():
+			continue
+		if i.should_skip(bot):
+			continue
+		var dist: int = _chebyshev(bot.cell, i.cell)
+		if dist < best_d:
+			best_d = dist
+			best = i
+	return best
+
+func _begin_interaction(inter: Interactable) -> void:
+	bot_interacting = true
+	interact_target = inter
+	interact_timer = inter.interact_duration
+	bot.path = PackedVector2Array()
+	if bot.fx:
+		bot.fx.kneel(inter.interact_duration)
+	inter.on_interact_start(bot)
+
+func _tick_interaction(delta: float) -> void:
+	interact_timer -= delta
+	if interact_timer > 0.0:
+		return
+	var inter: Interactable = interact_target
+	bot_interacting = false
+	interact_target = null
+	if not is_instance_valid(inter) or inter.consumed:
+		return
+	if inter is LootDrop:
+		_complete_loot_pickup(inter)
+	else:
+		inter.on_interact_complete(bot)
+
+func _complete_loot_pickup(drop: LootDrop) -> void:
+	var inst: Dictionary = drop.instance
+	var item: Dictionary = drop.item
+	var display_name: String = AffixSystem.format_item_name(String(item.name), inst.get("affixes", []))
+	dropped_items.append(inst)
+	loot_log.append("Looted: [%s] %s" % [item.rarity, display_name])
+	_log("Found: %s [%s]" % [display_name, item.rarity])
+	loot_drops.erase(drop)
+	interactables.erase(drop)
+	drop.consumed = true
+	if bot.fx:
+		bot.fx.loot_pop()
+	drop.play_pickup_then_free()
+
+func _on_chest_opened(chest: Chest, n: int, bias: int) -> void:
+	var chest_world: Vector2 = chest.position + Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5)
+	for i in n:
+		var rarity: String = _roll_rarity_with_bias(bias)
+		var pool: Array = []
+		for id in items_db.keys():
+			if items_db[id].rarity == rarity:
+				pool.append(id)
+		if pool.is_empty():
+			continue
+		var picked: String = pool[rng.randi_range(0, pool.size() - 1)]
+		var inst: Dictionary = _create_item_instance(picked)
+		var spawn_cell: Vector2i = _adjacent_walkable_cell(chest.cell, i + 1)
+		var drop := _spawn_loot_drop_get(inst, spawn_cell)
+		if drop:
+			drop.arc_from(chest_world, 0.45 + i * 0.05)
+	interactables.erase(chest)
+	_log("Opened a chest!")
+	var fade := chest.create_tween()
+	fade.tween_interval(2.0)
+	fade.tween_property(chest, "modulate:a", 0.0, 0.5)
+	fade.tween_callback(chest.queue_free)
+
+func _spawn_loot_drop_get(instance: Dictionary, at_cell: Vector2i) -> LootDrop:
+	var base_id: String = String(instance.get("base_id", ""))
+	if not items_db.has(base_id):
+		return null
+	var drop := LootDrop.new()
+	drop.setup_instance(instance, items_db[base_id], at_cell)
+	actor_layer.add_child(drop)
+	loot_drops.append(drop)
+	interactables.append(drop)
+	return drop
+
+func _roll_rarity_with_bias(bias: int) -> String:
+	var floor_bonus: float = float(current_floor - 1) * 0.05
+	var bias_bonus: float = float(bias) * 0.10
+	var r: float = rng.randf() - floor_bonus - bias_bonus
+	if r < 0.02: return "legendary"
+	if r < 0.10: return "epic"
+	if r < 0.25: return "rare"
+	if r < 0.55: return "uncommon"
+	return "common"
+
+func _adjacent_walkable_cell(center: Vector2i, idx: int) -> Vector2i:
+	var offsets: Array[Vector2i] = [
+		Vector2i(0, 0), Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1),
+		Vector2i(1, 1), Vector2i(-1, 1), Vector2i(1, -1), Vector2i(-1, -1)
+	]
+	for i in offsets.size():
+		var probe: Vector2i = offsets[(i + idx) % offsets.size()]
+		var c: Vector2i = center + probe
+		if c.y >= 0 and c.y < grid.size() and c.x >= 0 and c.x < grid[0].size():
+			if grid[c.y][c.x] == C.T_FLOOR:
+				return c
+	return center
+
+func _tick_enemies(delta: float) -> void:
+	for e in enemies:
+		if not is_instance_valid(e) or not e.is_alive:
+			continue
+		var dist: int = _chebyshev(e.cell, bot.cell)
+		if dist > e.aggro_range:
+			continue
+		if dist <= 1:
+			e.path = PackedVector2Array()
+			e.attempt_attack(bot, delta)
+			if not bot.is_alive:
+				_log("Slain by %s on floor %d." % [e.display_name, current_floor])
+				_end_run(false)
+				return
+		else:
+			e.repath_timer -= delta
+			if e.path.is_empty() or e.path_index >= e.path.size() or e.repath_timer <= 0.0:
+				e.repath_timer = 0.8
+				var p: PackedVector2Array = pathing.path(e.cell, bot.cell)
+				if p.size() > 1:
+					e.set_path(p.slice(1))
+			e.step_movement(delta)
+
+func _mark_room_visited_at(cell: Vector2i) -> void:
+	for i in rooms.size():
+		var r: Rect2i = rooms[i]
+		if cell.x >= r.position.x and cell.x < r.position.x + r.size.x \
+				and cell.y >= r.position.y and cell.y < r.position.y + r.size.y:
+			visited_rooms[i] = true
+			return
+
+func _nearest_unvisited_room_center() -> Vector2i:
+	var best := Vector2i(-1, -1)
+	var best_d: int = 999999
+	for i in rooms.size():
+		if visited_rooms[i]:
+			continue
+		var center: Vector2i = _room_center(rooms[i])
+		var d: int = _chebyshev(bot.cell, center)
+		if d < best_d:
+			best_d = d
+			best = center
+	return best
+
+func _room_center(r: Rect2i) -> Vector2i:
+	return Vector2i(r.position.x + int(r.size.x / 2.0), r.position.y + int(r.size.y / 2.0))
+
+func _descend() -> void:
+	floor_cleared.emit(current_floor)
+	if portal_active:
+		# Portal stairs return to the run's main progression on the NEXT floor.
+		_log("Returned from %s portal." % portal_kind)
+		portal_active = false
+		portal_kind = ""
+		portal_biome_override = {}
+		portal_loot_bias = 0
+	_log("Descended to floor %d." % (current_floor + 1))
+	if current_floor >= C.FLOORS_PER_RUN:
+		_end_run(true)
+		return
+	current_floor += 1
+	_build_floor()
+
+func _end_run(victory: bool) -> void:
+	var save: Dictionary = SaveState.load_state()
+	save.gold = bot.gold
+	save.level = bot.level
+	save.xp = bot.xp
+	var inv: Array = save.get("inventory", [])
+	var kept: Array = []
+	if victory:
+		kept = dropped_items.duplicate(true)
+	else:
+		for it in dropped_items:
+			if rng.randf() < 0.5:
+				kept.append(it.duplicate(true))
+	for it in kept:
+		inv.append(it)
+	save.inventory = inv
+	save.runs_completed = int(save.get("runs_completed", 0)) + 1
+	save.highest_floor = maxi(int(save.get("highest_floor", 0)), current_floor)
+	SaveState.save_state(save)
+
+	var report: Dictionary = {
+		"victory": victory,
+		"floor": current_floor,
+		"level": bot.level,
+		"xp": bot.xp,
+		"gold": bot.gold,
+		"hp": bot.hp,
+		"max_hp": bot.max_hp,
+		"kills": kills.duplicate(),
+		"loot_log": loot_log.duplicate(),
+		"dropped": dropped_items.duplicate(),
+		"kept": kept,
+		"journal": journal.duplicate(true),
+		"items_db": items_db,
+	}
+	run_ended.emit(victory, report)
+
+func _nearest_enemy() -> Enemy:
+	var best: Enemy = null
+	var best_d: int = 9999
+	for e in enemies:
+		if not is_instance_valid(e) or not e.is_alive:
+			continue
+		var d: int = _chebyshev(bot.cell, e.cell)
+		if d < best_d:
+			best_d = d
+			best = e
+	return best
+
+func _chebyshev(a: Vector2i, b: Vector2i) -> int:
+	return maxi(abs(a.x - b.x), abs(a.y - b.y))
+
+func _random_walkable_cell_far_from_bot() -> Vector2i:
+	for _i in 200:
+		var x: int
+		var y: int
+		if rooms.is_empty():
+			x = rng.randi_range(1, grid[0].size() - 2)
+			y = rng.randi_range(1, grid.size() - 2)
+		else:
+			var rm: Rect2i = rooms[rng.randi_range(0, rooms.size() - 1)]
+			x = rng.randi_range(rm.position.x, rm.position.x + rm.size.x - 1)
+			y = rng.randi_range(rm.position.y, rm.position.y + rm.size.y - 1)
+		if y < 0 or y >= grid.size() or x < 0 or x >= grid[0].size():
+			continue
+		if grid[y][x] != C.T_FLOOR:
+			continue
+		var cell := Vector2i(x, y)
+		if _chebyshev(cell, bot.cell) > 6:
+			return cell
+	# fallback: any walkable cell
+	for y in grid.size():
+		for x in grid[0].size():
+			if grid[y][x] == C.T_FLOOR and Vector2i(x, y) != bot.cell:
+				return Vector2i(x, y)
+	return bot.cell
+
+func _pick_boss_room() -> Vector2i:
+	if not rooms.is_empty():
+		var rm: Rect2i = rooms[rooms.size() - 1]
+		return Vector2i(rm.position.x + int(rm.size.x / 2.0), rm.position.y + int(rm.size.y / 2.0))
+	# fallback: farthest floor cell from bot
+	return _random_walkable_cell_far_from_bot()
+
+func _find_stairs_cell() -> Vector2i:
+	for y in grid.size():
+		for x in grid[0].size():
+			if grid[y][x] == C.T_STAIRS_DOWN:
+				return Vector2i(x, y)
+	return bot.cell
+
+func _center_camera_on_bot() -> void:
+	if camera and is_instance_valid(bot):
+		camera.position = bot.position + Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5)
+
+func _scatter_ambient_decor() -> void:
+	var density: float = BiomeData.ambient_density_for(current_biome)
+	if density <= 0.0:
+		return
+	for y in grid.size():
+		var row: Array = grid[y]
+		for x in row.size():
+			if row[x] != C.T_FLOOR:
+				continue
+			if rng.randf() > density:
+				continue
+			var decor_id: String = BiomeData.pick_ambient_decor(current_biome, rng)
+			if decor_id == "":
+				continue
+			var decor := AmbientDecor.new()
+			decor.setup(decor_id, Vector2i(x, y))
+			actor_layer.add_child(decor)
+			ambient_decor_nodes.append(decor)
+
+func _world_light_sources() -> Array:
+	# Returns [{cell, position, radius_px, intensity, color}] for every
+	# world light source. Each source feeds both LoS computation and the
+	# fog shader tint. Bot is appended separately by callers.
+	var out: Array = []
+	for inter in interactables:
+		if not is_instance_valid(inter) or inter.consumed:
+			continue
+		var spec_id: String = ""
+		if inter is Chest:
+			spec_id = "chest_orange" if inter.rarity_bias >= 2 else "chest_gold"
+		elif inter is Fountain:
+			spec_id = "fountain_" + (inter as Fountain).kind
+		elif inter is Altar:
+			spec_id = "altar_" + (inter as Altar).god
+		elif inter is LootDrop:
+			var rarity: String = String((inter as LootDrop).item.get("rarity", "common"))
+			if rarity != "common":
+				spec_id = "loot_" + rarity
+		if spec_id == "":
+			continue
+		var spec: Dictionary = LightSpec.SPECS.get(spec_id, {})
+		if spec.is_empty():
+			continue
+		var radius_tiles: float = float(spec.get("range", 3.0))
+		out.append({
+			"cell": inter.cell,
+			"position": inter.position + Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5),
+			"radius": int(ceil(radius_tiles)),
+			"radius_px": C.TILE_SIZE * radius_tiles,
+			"intensity": float(spec.get("energy", 0.7)),
+			"color": spec.get("color", Color(1, 1, 1)),
+		})
+	for n in ambient_decor_nodes:
+		if not is_instance_valid(n) or not (n is AmbientDecor):
+			continue
+		var decor := n as AmbientDecor
+		if decor.light_spec_id == "":
+			continue
+		var spec2: Dictionary = LightSpec.SPECS.get(decor.light_spec_id, {})
+		if spec2.is_empty():
+			continue
+		var radius_tiles2: float = float(spec2.get("range", 3.0))
+		out.append({
+			"cell": decor.cell,
+			"position": decor.position + Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5),
+			"radius": int(ceil(radius_tiles2)),
+			"radius_px": C.TILE_SIZE * radius_tiles2,
+			"intensity": float(spec2.get("energy", 0.6)),
+			"color": spec2.get("color", Color(1, 1, 1)),
+		})
+	return out
+
+func _refresh_fog() -> void:
+	if fog == null or not is_instance_valid(bot):
+		return
+	# Recompute every tick — the per-tile fade in MapRenderer smooths the
+	# transition so cells gently appear/disappear at LoS rim instead of
+	# popping when the bot crosses cell boundaries.
+	var sources: Array = _world_light_sources()
+	fog.recompute(bot.cell, sources)
+	if current_renderer:
+		current_renderer.apply_visibility(fog)
+	_apply_visibility_to_actors()
+	if fog_overlay:
+		fog_overlay.set_visibility_grid(fog)
+
+func _apply_visibility_to_actors() -> void:
+	if fog == null:
+		return
+	for e in enemies:
+		if not is_instance_valid(e):
+			continue
+		e.visible = fog.is_visible(e.cell)
+	for d in loot_drops:
+		if not is_instance_valid(d):
+			continue
+		d.visible = fog.is_visible(d.cell)
+	for inter in interactables:
+		if not is_instance_valid(inter):
+			continue
+		if inter is LootDrop:
+			continue
+		inter.visible = fog.is_visible(inter.cell)
+	for s in vault_decor_sprites:
+		if not is_instance_valid(s):
+			continue
+		var sc := Vector2i(int(s.position.x / C.TILE_SIZE), int(s.position.y / C.TILE_SIZE))
+		s.visible = fog.is_visible(sc)
+	for n in ambient_decor_nodes:
+		if not is_instance_valid(n):
+			continue
+		var nc: Vector2i = (n as AmbientDecor).cell if n is AmbientDecor else Vector2i(int(n.position.x / C.TILE_SIZE), int(n.position.y / C.TILE_SIZE))
+		n.visible = fog.is_visible(nc)
+
+func _gather_lights() -> Array:
+	# Lights consumed by the fog shader. Bot light is unconditional. World
+	# lights only contribute if their source cell is currently visible — this
+	# stops a torch in an unexplored room from bleeding warmth into the
+	# corridor outside it.
+	var out: Array = []
+	if is_instance_valid(bot):
+		out.append({
+			"position": bot.position + Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5),
+			"radius": C.TILE_SIZE * 7.5,
+			"intensity": 1.1,
+			"color": Color(1.0, 0.92, 0.78, 1.0),
+		})
+	for src in _world_light_sources():
+		if fog and not fog.is_visible(src.cell):
+			continue
+		out.append({
+			"position": src.position,
+			"radius": src.radius_px,
+			"intensity": src.intensity,
+			"color": src.color,
+		})
+	return out
+
+func _make_radial_light(size_px: int) -> Texture2D:
+	var img := Image.create(size_px, size_px, false, Image.FORMAT_RGBA8)
+	var center := Vector2(size_px * 0.5, size_px * 0.5)
+	var max_d: float = size_px * 0.5
+	for y in size_px:
+		for x in size_px:
+			var d: float = Vector2(x, y).distance_to(center)
+			var t: float = clampf(1.0 - d / max_d, 0.0, 1.0)
+			var a: float = t * t
+			img.set_pixel(x, y, Color(1, 1, 1, a))
+	return ImageTexture.create_from_image(img)
+
+func _load_json(path: String) -> Dictionary:
+	var f := FileAccess.open(path, FileAccess.READ)
+	if f == null:
+		push_error("Failed to open %s" % path)
+		return {}
+	var text: String = f.get_as_text()
+	var parsed: Variant = JSON.parse_string(text)
+	if typeof(parsed) != TYPE_DICTIONARY:
+		push_error("Failed to parse %s" % path)
+		return {}
+	return parsed
+
+func _load_items(path: String) -> Dictionary:
+	var raw: Dictionary = _load_json(path)
+	var by_id: Dictionary = {}
+	for it in raw.get("items", []):
+		by_id[it.id] = it
+	return by_id

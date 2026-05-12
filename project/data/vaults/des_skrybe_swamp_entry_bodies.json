@@ -1,0 +1,33 @@
+{
+  "name": "des_skrybe_swamp_entry_bodies",
+  "size": [
+    7,
+    7
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "swamp"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    " ..... ",
+    ".......",
+    ".......",
+    ".......",
+    ".......",
+    ".......",
+    " ..... "
+  ],
+  "spawns": {}
+}

@@ -1,0 +1,37 @@
+{
+  "name": "des_zot_minivault_7",
+  "size": [
+    21,
+    11
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "zot"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 5,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    " xxxxxxxxx.xxxxxxxxx ",
+    "xx.................xx",
+    "x.......xxxxx.......x",
+    "x..xxxxxx...xxxxxx..x",
+    "x......x.....x......x",
+    "x.........>.........x",
+    "x......x.....x......x",
+    "x..xxxxxx...xxxxxx..x",
+    "x.......xxxxx.......x",
+    "xx.................xx",
+    " xxxxxxxxx.xxxxxxxxx "
+  ],
+  "spawns": {}
+}

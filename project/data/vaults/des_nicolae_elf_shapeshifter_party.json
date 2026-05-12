@@ -1,0 +1,41 @@
+{
+  "name": "des_nicolae_elf_shapeshifter_party",
+  "size": [
+    13,
+    13
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "elf",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent",
+    "no_monster_gen"
+  ],
+  "grid": [
+    "    xxxxx    ",
+    "   xx...xx   ",
+    "  xx.....xx  ",
+    " xx.......xx ",
+    "xx.T.......xx",
+    "x...........x",
+    "+...........+",
+    "x...........x",
+    "xx.......T.xx",
+    " xx.......xx ",
+    "  xx.....xx  ",
+    "   xx...xx   ",
+    "    xxxxx    "
+  ],
+  "spawns": {}
+}

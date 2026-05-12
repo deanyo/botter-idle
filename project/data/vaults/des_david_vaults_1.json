@@ -1,0 +1,46 @@
+{
+  "name": "des_david_vaults_1",
+  "size": [
+    9,
+    14
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    ".........",
+    ".2.111.2.",
+    ".........",
+    ".........",
+    "....+....",
+    ".........",
+    "...121...",
+    "....1....",
+    "x+xxxxxxx",
+    "x.......x",
+    "x.......x",
+    "x..xxxx+x",
+    "x.......x",
+    "xxxx.xxxx"
+  ],
+  "spawns": {
+    "1": {
+      "enemy_pool": [
+        "troll"
+      ]
+    }
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "name": "des_nicolae_crypt_remembering",
+  "size": [
+    6,
+    7
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "crypt",
+    "dungeon",
+    "forge"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "xxxxxx",
+    "x....x",
+    "x....x",
+    "x.*...",
+    "x....x",
+    "x....x",
+    "xxxxxx"
+  ],
+  "spawns": {}
+}

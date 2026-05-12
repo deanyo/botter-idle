@@ -1,0 +1,73 @@
+{
+  "name": "des_minmay_snake_end_coiled",
+  "size": [
+    42,
+    43
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "snake"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "xxxxxxxxxxxxxxxxxx......xxxxxxxxxxxxxxxxxx",
+    "xxxxxxxxxxxxxxxxxx......xxxxxxxxxxxxxxxxxx",
+    "xxxxxxxxxxxxxxxxx........xxxxxxxxxxxxxxxxx",
+    "xxxxxxxxxxxxxxxxx........xxxxxxxxxxxxxxxxx",
+    "xxxxxxxxxxxxxxxxx...1.1..xxxxxxxxxxxxxxxxx",
+    "xxxxxxxxxxxxxxxxx....2...xxx........xxxxxx",
+    "xxxxxxxxxxxx..........................xxxx",
+    "xxxxxxxx........2.......2.......1.........",
+    "xxxxx...............4............1........",
+    "xxx..............2..x..2.........2........",
+    "xx.................2.2..........1.........",
+    "xx.....4..................................",
+    "x.....1.......xxx........xxxx........xxxxx",
+    "x....x.....xxxxxx...1.1..xxxxxxxxxxxxxxxxx",
+    "x.....4....xxxxxx....x...xxxxxxxxxxxxxxxxx",
+    "x......1......xxx....2...xxxxxxxxxxxxxxxxx",
+    "xx............................xxxxxxxxxxxx",
+    "xx................................xxxxxxxx",
+    "xxx........4....C....................xxxxx",
+    "xxxxx.......1...C..4x..................xxx",
+    "xxxxxxxx.............x4........1........xx",
+    "xxxxxxxxxxxx............................xx",
+    "xxxxxxxxxxxxxxxxx........xxx......1......x",
+    "xxxxxxxxxxxxxxxxx...1....xxxxxx.....x....x",
+    "xxxxxxxxxxxxxxxxx...x21..xxxxxx.....4....x",
+    "xxxxxxxxxxxxxxxxx...1....xxx......1......x",
+    "xxxxxxxxxxxx............................xx",
+    "xxxxxxxx.............4.........4........xx",
+    "xxxxx...............1x...C...2.........xxx",
+    "xxx..................4...C...........xxxxx",
+    "xx................................xxxxxxxx",
+    "xx.....1.2...........1........xxxxxxxxxxxx",
+    "x....4........xxx...1....xxxxxxxxxxxxxxxxx",
+    "x...1x.....xxxxxx....2...xxxxxxxxxxxxxxxxx",
+    "x....4.....xxxxxx...1x...xxxxxxxxxxxxxxxxx",
+    "x.............xxx....1...xxxxxxxxxxxxxxxxx",
+    "xx.....1.2..........2.........xxxxxxxxxxxx",
+    "xx...................1.....4......xxxxxxxx",
+    "xxx...........1.C...4........14......xxxxx",
+    "xxxxx......4.2x4.C...1......12x.4......xxx",
+    "xxxxxxxx......1.....2........1....4....xxx",
+    "xxxxxxxxxxxx...........................xxx",
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+  ],
+  "spawns": {
+    "1": {
+      "enemy_pool": [
+        "naga"
+      ]
+    }
+  }
+}

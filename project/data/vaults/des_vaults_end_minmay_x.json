@@ -1,0 +1,51 @@
+{
+  "name": "des_vaults_end_minmay_x",
+  "size": [
+    23,
+    27
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "  xxxxxxxxxxxxxxxxxxx  ",
+    "  .................... ",
+    "x.....................x",
+    "x.xx9.............9xx.x",
+    "x.xxx.............xxx.x",
+    "x.9xxx...........xxx9.x",
+    "x...xxx.........xxx...x",
+    "x....xxx9999999xxx....x",
+    "x.....xxx**.**xxx.....x",
+    "x......xxx***xxx......x",
+    "x......9xxx.xxx9......x",
+    "x......9*xxxxx*9......x",
+    "x......9**xxx**9......x",
+    "x......9.*.x.*.9......x",
+    "x......9**xxx**9......x",
+    "x......9*xxxxx*9......x",
+    "x......9xxx.xxx9......x",
+    "x......xxx***xxx......x",
+    "x.....xxx**.**xxx.....x",
+    "x....xxx9999999xxx....x",
+    "x...xxx.........xxx...x",
+    "x.9xxx...........xxx9.x",
+    "x.xxx.............xxx.x",
+    "x.xx9.............9xx.x",
+    "x.....................x",
+    " ..................... ",
+    "  xxxxxxxxxxxxxxxxxxx  "
+  ],
+  "spawns": {}
+}

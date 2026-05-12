@@ -1,0 +1,29 @@
+{
+  "name": "des_spicy_abyss_planar_alliance",
+  "size": [
+    11,
+    5
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "abyss",
+    "dungeon"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "   .....   ",
+    ". ....... .",
+    "...........",
+    ". ....... .",
+    "   .....   "
+  ],
+  "spawns": {}
+}

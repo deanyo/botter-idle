@@ -1,0 +1,153 @@
+extends Node
+
+const DUNGEON_SCENE := preload("res://scenes/dungeon.tscn")
+const REPORT_SCENE := preload("res://scenes/run_report.tscn")
+const GARAGE_SCENE := preload("res://scenes/garage.tscn")
+
+var current_screen: Node = null
+var auto_grind: bool = false
+var auto_grind_speed: float = 16.0
+var auto_grind_max_runs: int = 999
+var auto_grind_runs: int = 0
+var auto_grind_floors: Dictionary = {}
+var auto_grind_start_time: int = 0
+
+func _ready() -> void:
+	for arg in OS.get_cmdline_args():
+		if arg == "--auto-grind" or arg == "auto-grind":
+			auto_grind = true
+		elif arg.begins_with("--max-runs="):
+			auto_grind_max_runs = int(arg.substr(11))
+		elif arg.begins_with("--speed="):
+			auto_grind_speed = float(arg.substr(8))
+	if OS.has_environment("BOTTER_AUTO_GRIND"):
+		auto_grind = true
+	if OS.has_environment("BOTTER_SPEED"):
+		auto_grind_speed = float(OS.get_environment("BOTTER_SPEED"))
+	if OS.has_environment("BOTTER_MAX_RUNS"):
+		auto_grind_max_runs = int(OS.get_environment("BOTTER_MAX_RUNS"))
+
+	# Fallback: marker file in user:// triggers auto-grind. Lets Claude drive without
+	# needing to pass CLI args through Godot MCP run_project.
+	if FileAccess.file_exists("user://AUTO_GRIND.txt"):
+		var f := FileAccess.open("user://AUTO_GRIND.txt", FileAccess.READ)
+		if f:
+			var contents: String = f.get_as_text().strip_edges()
+			auto_grind = true
+			# Format: "speed,max_runs" e.g. "16,3"
+			if contents != "":
+				var parts: PackedStringArray = contents.split(",")
+				if parts.size() >= 1:
+					auto_grind_speed = float(parts[0])
+				if parts.size() >= 2:
+					auto_grind_max_runs = int(parts[1])
+
+	# Debug-jump: marker file user://DEBUG_FLOOR.txt with format
+	#   biome_id[,vault_name][,floor_num]
+	# When set, the dungeon scene forces that biome on floor 1 (or the given
+	# floor_num) and optionally forces a specific vault to stamp. Lets us
+	# validate biome/vault rendering in seconds without grinding 10 floors.
+	if FileAccess.file_exists("user://DEBUG_FLOOR.txt"):
+		var df := FileAccess.open("user://DEBUG_FLOOR.txt", FileAccess.READ)
+		if df:
+			var contents: String = df.get_as_text().strip_edges()
+			if contents != "":
+				var parts: PackedStringArray = contents.split(",")
+				DebugJump.biome_id = parts[0].strip_edges()
+				if parts.size() >= 2 and parts[1].strip_edges() != "" and parts[1].strip_edges() != "_":
+					DebugJump.vault_name = parts[1].strip_edges()
+				if parts.size() >= 3 and parts[2].strip_edges() != "" and parts[2].strip_edges() != "_":
+					DebugJump.floor_num = int(parts[2].strip_edges())
+				if parts.size() >= 4 and parts[3].strip_edges() != "":
+					DebugJump.screenshot = true
+				DebugJump.active = true
+				print("[debug-jump] biome=%s vault=%s floor=%d screenshot=%s" % [DebugJump.biome_id, DebugJump.vault_name, DebugJump.floor_num, str(DebugJump.screenshot)])
+
+	# Debug-jump always takes priority over auto-grind so screenshots aren't
+	# polluted by speed-scaled floor descents.
+	if DebugJump.active:
+		auto_grind = false
+		Engine.time_scale = 1.0
+	if auto_grind:
+		GrindLog.enable()
+		_log("auto-grind ENABLED speed=%sx max_runs=%d" % [str(auto_grind_speed), auto_grind_max_runs])
+		Engine.time_scale = auto_grind_speed
+		auto_grind_start_time = Time.get_ticks_msec()
+		_on_deploy()
+	elif DebugJump.active:
+		# Skip the garage; jump straight into the dungeon.
+		_on_deploy()
+	else:
+		_show_garage()
+
+func _show_garage() -> void:
+	_swap(GARAGE_SCENE.instantiate())
+	current_screen.deploy_pressed.connect(_on_deploy)
+
+func _on_deploy() -> void:
+	var dungeon: Node = DUNGEON_SCENE.instantiate()
+	_swap(dungeon)
+	dungeon.run_ended.connect(_on_run_ended)
+	if auto_grind:
+		dungeon.floor_started.connect(_on_floor_started)
+		dungeon.floor_cleared.connect(_on_floor_cleared)
+
+func _on_floor_started(floor_num: int) -> void:
+	if not auto_grind:
+		return
+	var d: Node = current_screen
+	if d == null:
+		return
+	var biome_id: String = "?"
+	var layout: String = "?"
+	if "current_biome" in d:
+		biome_id = String(d.current_biome.get("id", "?"))
+		layout = String(d.current_biome.get("layout", "?"))
+	var room_count: int = 0
+	if "rooms" in d:
+		room_count = d.rooms.size()
+	var enemy_count: int = 0
+	if "enemies" in d:
+		enemy_count = d.enemies.size()
+	var inter_count: int = 0
+	if "interactables" in d:
+		inter_count = d.interactables.size()
+	_log("floor %d  biome=%s  layout=%s  rooms=%d  enemies=%d  interactables=%d" % [floor_num, biome_id, layout, room_count, enemy_count, inter_count])
+	auto_grind_floors[floor_num] = {
+		"biome": biome_id,
+		"layout": layout,
+		"rooms": room_count,
+		"enemies": enemy_count,
+	}
+
+func _on_floor_cleared(floor_num: int) -> void:
+	if auto_grind:
+		_log("floor %d CLEARED" % floor_num)
+
+func _on_run_ended(victory: bool, report: Dictionary) -> void:
+	if auto_grind:
+		auto_grind_runs += 1
+		var elapsed_ms: int = Time.get_ticks_msec() - auto_grind_start_time
+		_log("RUN %d ENDED  victory=%s  floor=%d  level=%d  gold=%d  elapsed=%.1fs" % [
+			auto_grind_runs, str(victory), int(report.floor), int(report.level), int(report.gold), elapsed_ms / 1000.0
+		])
+		if auto_grind_runs >= auto_grind_max_runs:
+			_log("auto-grind COMPLETE — %d runs done" % auto_grind_runs)
+			get_tree().quit()
+			return
+		_on_deploy()
+		return
+	var rpt: Node = REPORT_SCENE.instantiate()
+	_swap(rpt)
+	rpt.show_report(victory, report)
+	rpt.deploy_again.connect(_on_deploy)
+	rpt.back_to_garage.connect(_show_garage)
+
+func _swap(scene: Node) -> void:
+	if current_screen:
+		current_screen.queue_free()
+	current_screen = scene
+	add_child(scene)
+
+func _log(msg: String) -> void:
+	GrindLog.log_line("[grind] " + msg)

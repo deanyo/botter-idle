@@ -1,0 +1,29 @@
+{
+  "name": "des_evilmike_abyss_exit_glass",
+  "size": [
+    5,
+    5
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "abyss",
+    "dungeon"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    " ....",
+    "..1..",
+    ".....",
+    ".....",
+    " ... "
+  ],
+  "spawns": {}
+}

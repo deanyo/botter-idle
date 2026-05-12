@@ -1,0 +1,37 @@
+{
+  "name": "des_evilmike_abyss_rune_ettins",
+  "size": [
+    14,
+    13
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "abyss",
+    "dungeon"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "   .......    ",
+    "  ..xxxxx.... ",
+    " ..xx.x.xxxx. ",
+    "..xx.x.x.x.x. ",
+    ".xx.xxxxx.xx..",
+    ".xxx.xx4xx.xx.",
+    ".xx.xx2.1xx.x.",
+    ".xx.x.x3xx.xx.",
+    ".x.xx.xxx.xx..",
+    ".xx.xx.x.x.x. ",
+    "..xx1xx.xxxx. ",
+    " ..xx.xxx.... ",
+    "  ........    "
+  ],
+  "spawns": {}
+}

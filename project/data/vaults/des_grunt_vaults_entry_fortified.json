@@ -1,0 +1,52 @@
+{
+  "name": "des_grunt_vaults_entry_fortified",
+  "size": [
+    21,
+    19
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "no_monster_gen",
+    "transparent"
+  ],
+  "grid": [
+    "xxxxxxxxxxxxxxxx..   ",
+    "xxxxxxx............  ",
+    "xxxxxxx.*.....2..... ",
+    "xxxxxxx....+...1.....",
+    "xxxxxxx........1.....",
+    "xxxxxxx..............",
+    "xxxxxxx.3...xxx......",
+    "xxx..................",
+    "xxx.T2T........+.....",
+    "xxx....+.2...11+.....",
+    "xxx.T2T........+.....",
+    "xxx..................",
+    "xxxxxxx.3...xxx......",
+    "xxxxxxx..............",
+    "xxxxxxx........1.....",
+    "xxxxxxx....+...1.....",
+    "xxxxxxx.*.....2..... ",
+    "xxxxxxx............  ",
+    "xxxxxxxxxxxxxxxx..   "
+  ],
+  "spawns": {
+    "2": {
+      "enemy_pool": [
+        "orc_knight"
+      ]
+    }
+  }
+}

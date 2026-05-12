@@ -1,0 +1,31 @@
+{
+  "name": "des_overgrown_hall",
+  "size": [
+    11,
+    7
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "shoals"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 5,
+  "tags": [],
+  "grid": [
+    "xxxxxxxxxxx",
+    "x.........x",
+    "x.........x",
+    "+....4....+",
+    "x.........x",
+    "x.........x",
+    "xxxxxxxxxxx"
+  ],
+  "spawns": {}
+}

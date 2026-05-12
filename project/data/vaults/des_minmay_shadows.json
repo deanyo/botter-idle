@@ -1,0 +1,48 @@
+{
+  "name": "des_minmay_shadows",
+  "size": [
+    30,
+    24
+  ],
+  "orient": "centre",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "crypt",
+    "dungeon"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "xx.........xxx2.2xxx.........x",
+    "xx....1....xxx...xxx....1....x",
+    "xx.........xxx2.2xxx.........x",
+    "xx...xxx...xxx...xxx...xxx...x",
+    "xx...xxx...xxx.1.xxx...xxx...x",
+    "xx...xxx.2.xxx3.3xxx.2.xxx...x",
+    "xx1..xxx....1.....1....xxx..1x",
+    "xx...xxx...............xxx...x",
+    "xx...xxx.......1.......xxx...x",
+    "xx...xxxxxxxxxxxxxxxxxxxxx...x",
+    "xx.2.xxxxxxxxxxxxxxxxxxxxx.2.x",
+    "xx...xxxxxxxxxxxxxxxxxxxxx...x",
+    "xx...xxx...............xxx...x",
+    "xx...xxx..1.........1..xxx...x",
+    "xx1..xxx...............xxx..1x",
+    "xx...xxx...xxx...xxx...xxx...x",
+    "xx.C.xxx...xxx.1.xxx...xxx.C.x",
+    "xx...xxx...xxx...xxx...xxx...x",
+    "xx.........xxx1.1xxx.........x",
+    "xx....1....xxx...xxx....1....x",
+    "xx.........xxx...xxx.........x",
+    "xxxxxxxxxxxxxx...xxxxxxxxxxxxx"
+  ],
+  "spawns": {}
+}

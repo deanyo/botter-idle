@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Botter — DCSS Tile Atlas Viewer</title>
+<style>
+  :root {
+    --bg: #1a1a1f;
+    --panel: #25252e;
+    --border: #3a3a45;
+    --text: #e4e4e8;
+    --muted: #888;
+    --accent: #6cb0ff;
+    --tile-bg: #0c0c10;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 13px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+  header {
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+    padding: 8px 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  header h1 {
+    font-size: 14px;
+    margin: 0;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .control-group {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  label {
+    color: var(--muted);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  select, input[type="text"] {
+    background: var(--bg);
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 4px 6px;
+    border-radius: 3px;
+    font: inherit;
+    min-width: 80px;
+  }
+  input[type="text"] { min-width: 160px; }
+  .stats {
+    margin-left: auto;
+    color: var(--muted);
+    font-size: 11px;
+  }
+  main {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px;
+  }
+  .group {
+    margin-bottom: 24px;
+  }
+  .group-header {
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 3px;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .group-header .count {
+    color: var(--muted);
+    font-weight: 400;
+    font-size: 11px;
+  }
+  .tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+    gap: 4px;
+  }
+  .tile {
+    background: var(--tile-bg);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 4px;
+    text-align: center;
+    position: relative;
+    cursor: pointer;
+    overflow: hidden;
+  }
+  .tile img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: contain;
+    image-rendering: pixelated;
+    background: #000;
+  }
+  .tile .name {
+    font-size: 9px;
+    color: var(--muted);
+    margin-top: 3px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .tile.dim { opacity: 0.25; }
+  .tile.directional::after {
+    content: "↻";
+    position: absolute;
+    top: 1px;
+    right: 3px;
+    font-size: 9px;
+    color: #ffaa55;
+  }
+  .tile.variant::before {
+    content: "v";
+    position: absolute;
+    top: 1px;
+    left: 3px;
+    font-size: 8px;
+    color: #66c;
+    font-weight: bold;
+  }
+  #detail {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--panel);
+    border-top: 2px solid var(--accent);
+    padding: 12px;
+    max-height: 40vh;
+    overflow-y: auto;
+    display: none;
+  }
+  #detail.open { display: block; }
+  #detail img {
+    width: 64px;
+    aspect-ratio: 1;
+    image-rendering: pixelated;
+    float: left;
+    margin-right: 12px;
+    background: #000;
+    border: 1px solid var(--border);
+  }
+  #detail pre {
+    font-family: ui-monospace, monospace;
+    font-size: 11px;
+    margin: 0;
+    white-space: pre-wrap;
+  }
+  #detail .close {
+    float: right;
+    cursor: pointer;
+    color: var(--muted);
+    padding: 4px 8px;
+  }
+  .empty {
+    color: var(--muted);
+    text-align: center;
+    padding: 40px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>DCSS Atlas</h1>
+
+  <div class="control-group">
+    <label>Category</label>
+    <select id="filter-category"><option value="">all</option></select>
+  </div>
+
+  <div class="control-group">
+    <label>Group by</label>
+    <select id="group-by">
+      <option value="subdir">subfolder</option>
+      <option value="biome">biome tag</option>
+      <option value="subcategory">subcategory</option>
+      <option value="class">class hint</option>
+      <option value="variant_set">variant set</option>
+      <option value="none">none</option>
+    </select>
+  </div>
+
+  <div class="control-group">
+    <label>Biome</label>
+    <select id="filter-biome"><option value="">any</option></select>
+  </div>
+
+  <div class="control-group">
+    <label>Class</label>
+    <select id="filter-class"><option value="">any</option></select>
+  </div>
+
+  <div class="control-group">
+    <label>Subcat</label>
+    <select id="filter-subcategory"><option value="">any</option></select>
+  </div>
+
+  <div class="control-group">
+    <label>Search</label>
+    <input id="search" type="text" placeholder="filename / enum">
+  </div>
+
+  <div class="control-group">
+    <label><input type="checkbox" id="hide-directional"> Hide directional</label>
+  </div>
+
+  <div class="stats" id="stats">loading…</div>
+</header>
+
+<main id="main">
+  <div class="empty">Loading atlas…</div>
+</main>
+
+<div id="detail">
+  <span class="close" onclick="closeDetail()">close ✕</span>
+  <img id="detail-img" alt="">
+  <pre id="detail-text"></pre>
+</div>
+
+<script>
+const ATLAS_PATH = "../project/data/tile_atlas.json";
+const TILE_BASE = "../dcss/Dungeon Crawl Stone Soup Full/";
+const TILE_BASE_SUPP = "../dcss/Dungeon Crawl Stone Soup Supplemental/";
+
+let atlas = {};
+let entries = [];
+
+async function load() {
+  try {
+    const res = await fetch(ATLAS_PATH);
+    atlas = await res.json();
+  } catch (e) {
+    document.getElementById("main").innerHTML = `<div class="empty">Failed to load atlas: ${e.message}<br>Open this page via a local web server (e.g. <code>python3 -m http.server</code> from <code>/Users/dyo/claude/botter</code>).</div>`;
+    return;
+  }
+  entries = Object.entries(atlas).map(([k,v]) => ({...v, _key: k}));
+  populateFilters();
+  render();
+}
+
+function populateFilters() {
+  const cats = new Set();
+  const biomes = new Set();
+  const classes = new Set();
+  const subs = new Set();
+  for (const e of entries) {
+    if (e.category) cats.add(e.category);
+    for (const b of e.biome_tags || []) biomes.add(b);
+    for (const c of e.class_hints || []) classes.add(c);
+    if (e.subcategory) subs.add(e.subcategory);
+  }
+  fillSelect("filter-category", cats);
+  fillSelect("filter-biome", biomes);
+  fillSelect("filter-class", classes);
+  fillSelect("filter-subcategory", subs);
+}
+
+function fillSelect(id, set) {
+  const sel = document.getElementById(id);
+  for (const v of [...set].sort()) {
+    const o = document.createElement("option");
+    o.value = v;
+    o.textContent = v;
+    sel.appendChild(o);
+  }
+}
+
+function filteredEntries() {
+  const cat = document.getElementById("filter-category").value;
+  const biome = document.getElementById("filter-biome").value;
+  const cls = document.getElementById("filter-class").value;
+  const sub = document.getElementById("filter-subcategory").value;
+  const q = document.getElementById("search").value.toLowerCase();
+  const hideDir = document.getElementById("hide-directional").checked;
+
+  return entries.filter(e => {
+    if (cat && e.category !== cat) return false;
+    if (biome && !(e.biome_tags || []).includes(biome)) return false;
+    if (cls && !(e.class_hints || []).includes(cls)) return false;
+    if (sub && e.subcategory !== sub) return false;
+    if (hideDir && e.directional) return false;
+    if (q) {
+      const blob = (e._key + " " + (e.enum || "") + " " + (e.filename || "")).toLowerCase();
+      if (!blob.includes(q)) return false;
+    }
+    return true;
+  });
+}
+
+function groupKey(e, mode) {
+  switch (mode) {
+    case "subdir": {
+      const parts = e._key.split("/");
+      return parts.slice(0, -1).join("/") || "(root)";
+    }
+    case "biome":
+      return (e.biome_tags || ["(untagged)"]).join(", ");
+    case "subcategory":
+      return e.subcategory || "(none)";
+    case "class":
+      return (e.class_hints || ["(untagged)"]).join(", ");
+    case "variant_set":
+      return e.variant_set || "(single)";
+    default:
+      return "all";
+  }
+}
+
+function render() {
+  const filtered = filteredEntries();
+  const mode = document.getElementById("group-by").value;
+  document.getElementById("stats").textContent = `${filtered.length.toLocaleString()} of ${entries.length.toLocaleString()} tiles`;
+
+  const main = document.getElementById("main");
+  main.innerHTML = "";
+
+  if (mode === "none") {
+    const div = document.createElement("div");
+    div.className = "group";
+    const head = document.createElement("div");
+    head.className = "group-header";
+    head.innerHTML = `<span>all</span><span class="count">${filtered.length}</span>`;
+    div.appendChild(head);
+    div.appendChild(renderTiles(filtered));
+    main.appendChild(div);
+    return;
+  }
+
+  const groups = new Map();
+  for (const e of filtered) {
+    const k = groupKey(e, mode);
+    if (!groups.has(k)) groups.set(k, []);
+    groups.get(k).push(e);
+  }
+
+  const sortedGroups = [...groups.entries()].sort((a,b) => b[1].length - a[1].length);
+  for (const [k, list] of sortedGroups) {
+    const div = document.createElement("div");
+    div.className = "group";
+    const head = document.createElement("div");
+    head.className = "group-header";
+    head.innerHTML = `<span>${escape(k)}</span><span class="count">${list.length}</span>`;
+    div.appendChild(head);
+    div.appendChild(renderTiles(list.slice(0, 500))); // hard cap per group
+    if (list.length > 500) {
+      const more = document.createElement("div");
+      more.className = "empty";
+      more.textContent = `… ${list.length - 500} more (refine filter)`;
+      div.appendChild(more);
+    }
+    main.appendChild(div);
+  }
+}
+
+function renderTiles(list) {
+  const wrap = document.createElement("div");
+  wrap.className = "tiles";
+  for (const e of list) {
+    const cell = document.createElement("div");
+    cell.className = "tile";
+    if (e.directional) cell.classList.add("directional");
+    if (e.is_variant) cell.classList.add("variant");
+    cell.title = e._key;
+    const img = document.createElement("img");
+    img.src = TILE_BASE + e._key;
+    img.onerror = () => { img.src = TILE_BASE_SUPP + e._key; img.onerror = () => cell.classList.add("dim"); };
+    img.alt = e.filename || "";
+    img.loading = "lazy";
+    cell.appendChild(img);
+    const name = document.createElement("div");
+    name.className = "name";
+    name.textContent = e.filename || "?";
+    cell.appendChild(name);
+    cell.onclick = () => showDetail(e);
+    wrap.appendChild(cell);
+  }
+  return wrap;
+}
+
+function showDetail(e) {
+  document.getElementById("detail-img").src = TILE_BASE + e._key;
+  document.getElementById("detail-text").textContent = JSON.stringify(e, null, 2);
+  document.getElementById("detail").classList.add("open");
+}
+function closeDetail() {
+  document.getElementById("detail").classList.remove("open");
+}
+
+function escape(s) {
+  return String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));
+}
+
+for (const id of ["filter-category","filter-biome","filter-class","filter-subcategory","group-by","hide-directional"]) {
+  document.getElementById(id).addEventListener("change", render);
+}
+let searchTO;
+document.getElementById("search").addEventListener("input", () => {
+  clearTimeout(searchTO);
+  searchTO = setTimeout(render, 200);
+});
+
+load();
+</script>
+</body>
+</html>

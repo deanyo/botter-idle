@@ -1,0 +1,36 @@
+{
+  "name": "des_eino_elf_arrival_customs",
+  "size": [
+    9,
+    11
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "elf",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "xxxxxxxxx",
+    "+.2.....x",
+    "x..x1.x.x",
+    "x.xxx1..x",
+    "x..x2.x.x",
+    "x.1..1..x",
+    "x..x..x.x",
+    "x.xxx...x",
+    "x..x..x.x",
+    "x.....+.x",
+    "xxxxxxxxx"
+  ],
+  "spawns": {}
+}

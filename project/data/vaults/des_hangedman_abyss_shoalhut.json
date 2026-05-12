@@ -1,0 +1,33 @@
+{
+  "name": "des_hangedman_abyss_shoalhut",
+  "size": [
+    9,
+    9
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "abyss",
+    "dungeon"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "   . .   ",
+    " .xx.xx. ",
+    " xx.1.xx ",
+    ".x.1.1.x.",
+    " .1...1+ ",
+    ".x.1.1.x.",
+    " xx.1.xx ",
+    " .xx.xx. ",
+    "   . .   "
+  ],
+  "spawns": {}
+}

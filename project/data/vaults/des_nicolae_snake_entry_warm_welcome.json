@@ -1,0 +1,35 @@
+{
+  "name": "des_nicolae_snake_entry_warm_welcome",
+  "size": [
+    10,
+    9
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "snake"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "  xxxxxx  ",
+    " xx....xx ",
+    "xx......xx",
+    "x........x",
+    ".........x",
+    "x........x",
+    "xx......xx",
+    " xx....xx ",
+    "  xxxxxx  "
+  ],
+  "spawns": {}
+}

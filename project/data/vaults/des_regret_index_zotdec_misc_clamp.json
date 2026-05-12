@@ -1,0 +1,46 @@
+{
+  "name": "des_regret_index_zotdec_misc_clamp",
+  "size": [
+    28,
+    20
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "zot"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "......x.x.x.x.x......       ",
+    " ....................       ",
+    "......x.x.x...x......       ",
+    " ....................       ",
+    " .....xxxxx...x.xxxx        ",
+    "C.C.C.xxxx......xxxx        ",
+    " .....xxxxx.x.x.xxxxxx      ",
+    "C.C.C.xxxx......xxxxxxxx    ",
+    "xxxxxxxxxx.x.x.xxxxxxxxxxxxx",
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "xxxxxxxxxxxxx.x.x.xxxxxxxxxx",
+    "    xxxxxxxx......xxxx.C.C.C",
+    "      xxxxxx.x.x.xxxxx..... ",
+    "        xxxx......xxxx.C.C.C",
+    "        xxxx.x...xxxxx..... ",
+    "       .................... ",
+    "       ......x...x.x.x......",
+    "       .................... ",
+    "       ......x.x.x.x.x......"
+  ],
+  "spawns": {}
+}

@@ -1,0 +1,63 @@
+{
+  "name": "des_erik_orc_3",
+  "size": [
+    23,
+    19
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "mines",
+    "orc"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "no_item_gen"
+  ],
+  "grid": [
+    "xx.xxxxxxxxxxxxxxxxxxxx",
+    "xx..x..xxx.xx...xxxx..x",
+    "xxx..x..xxx.x.11.....xx",
+    "xx.....xxxx..xxx.x..x..",
+    "xx..1x.2x...4.x.x.1..xx",
+    "xxxx...x.xx.xx..xx..xxx",
+    "x..x.xx...x.2xx....2..x",
+    "xxx.1.1.x.x.x...xxx..xx",
+    "x..1.x1.x.....x.xx.xx.x",
+    "xx.x.xx..x...x.x...x.xx",
+    "xx.x...x..x......x....x",
+    "xx.xx.x..x....x..x..xxx",
+    "xx..x.x.1.1.x.x21....xx",
+    "xx..1x.x..x.x......x.xx",
+    "...x.x.1..2.xxx..x...xx",
+    "x...xx12.x.xx1x.x..x.xx",
+    "xxx31....xxx.1..xxx..xx",
+    "xxx.xx..xxx.xx.x.x..xxx",
+    "xxxxxxxxxxxxxxxxxxx.xxx"
+  ],
+  "spawns": {
+    "1": {
+      "enemy_pool": [
+        "orc"
+      ]
+    },
+    "3": {
+      "enemy_pool": [
+        "ogre",
+        "wolf"
+      ]
+    },
+    "2": {
+      "enemy_pool": [
+        "orc_priest"
+      ]
+    }
+  }
+}

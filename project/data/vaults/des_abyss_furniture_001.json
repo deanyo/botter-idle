@@ -1,0 +1,29 @@
+{
+  "name": "des_abyss_furniture_001",
+  "size": [
+    3,
+    3
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "abyss",
+    "dungeon"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "allow_dup"
+  ],
+  "grid": [
+    "...",
+    "...",
+    "..."
+  ],
+  "spawns": {}
+}

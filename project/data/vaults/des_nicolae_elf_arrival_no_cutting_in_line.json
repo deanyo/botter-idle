@@ -1,0 +1,39 @@
+{
+  "name": "des_nicolae_elf_arrival_no_cutting_in_line",
+  "size": [
+    15,
+    14
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "elf",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "x...xxxxxxxxxxx",
+    "x.............x",
+    "x.T.........T.x",
+    "x.............x",
+    "xxxxx.....x...x",
+    "x...x11.22x...x",
+    "x....11.22....x",
+    "x....11.22....x",
+    "x...x11.22x...x",
+    "x...x.....xxxxx",
+    "x.............x",
+    "x.T...........x",
+    "x.............x",
+    "xxxxxxxxxxxxxxx"
+  ],
+  "spawns": {}
+}

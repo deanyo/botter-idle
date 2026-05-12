@@ -1,0 +1,70 @@
+{
+  "name": "des_snake_pit",
+  "size": [
+    34,
+    40
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "snake"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "xxxxxxxxxxxxxxxxx......xxxxxxxxxxx",
+    "xxxxxxxxxxxx......133.......xxxxxx",
+    "xxxxxxxxxx.....................xxx",
+    "xxxxxxxxxx......................xx",
+    "xxxxxxxxx.......................xx",
+    "xxxxxxxxx........................x",
+    "xxxxxxxxx.................2......x",
+    "xxxxxxxx................343.222..x",
+    "xxxxxxxx...............334x.2....x",
+    "xxxxxxxx...............3443......x",
+    "xxxxxxxx.13............4.4........",
+    "xxxxxxxx.3.......1................",
+    "xxxxxxx...........................",
+    "xxxxxxx...........................",
+    "xxxxxxx........33.................",
+    "xxxxxxx........33.1..............2",
+    "xxxxxxx........33...4.4...........",
+    "xxxxxxx........331...1....T.......",
+    "xxxxxxx........33...4.4..........2",
+    "xxxxxxx........33.1...............",
+    "xxxxxxx........33.................",
+    "xxxxxxxx..........................",
+    "xxxxxxxx...........2..............",
+    "xxxxxxxx.........1................",
+    "xxxxxxxx.3..............x.........",
+    "xxxxxxxx.13............4434......x",
+    "xxxxxxxx...............3434......x",
+    "xxxxxxxxx..............3.343.32..x",
+    "xxxxxxxxx..............3..4323..xx",
+    "xxxxxxxxxx......................xx",
+    "xxxxxxxxxxxx......133.........xxxx",
+    "xxxxxxxxxxxxxxxxx..........xxxxxxx",
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+  ],
+  "spawns": {
+    "1": {
+      "enemy_pool": [
+        "naga"
+      ]
+    }
+  }
+}

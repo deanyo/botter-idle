@@ -1,0 +1,33 @@
+{
+  "name": "des_elwin_shoals_entry_stream",
+  "size": [
+    15,
+    7
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "shoals"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "+xxx       xxx+",
+    "+..xxx   xxx..+",
+    "x....xxxxx....x",
+    "x.............x",
+    "xxx...x.x...xxx",
+    "  xxx.....xxx  ",
+    "    xxxxxxx    "
+  ],
+  "spawns": {}
+}

@@ -1,0 +1,37 @@
+{
+  "name": "des_hellmonk_elf_help",
+  "size": [
+    11,
+    9
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "elf",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent",
+    "no_item_gen"
+  ],
+  "grid": [
+    "  xxxxxxx  ",
+    " xx.....xx ",
+    " x.....8.xx",
+    ".+........x",
+    ".+........x",
+    ".+........x",
+    " x.....8.xx",
+    " xx.....xx ",
+    "  xxxxxxx  "
+  ],
+  "spawns": {}
+}

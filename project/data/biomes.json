@@ -1,0 +1,1712 @@
+{
+  "biomes": {
+    "dungeon": {
+      "display_name": "the Dungeon",
+      "floor_primary": [
+        "dungeon"
+      ],
+      "floor_accent": [
+        "dungeon_alt"
+      ],
+      "wall_primary": "dungeon",
+      "wall_accent": [
+        "dungeon_alt"
+      ],
+      "modulate": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "darkness": 0.15,
+      "enemy_pool": [
+        "rat",
+        "bat",
+        "grey_rat",
+        "quokka",
+        "goblin",
+        "kobold",
+        "hobgoblin",
+        "big_kobold",
+        "jackal",
+        "giant_cockroach",
+        "skeleton",
+        "orc"
+      ],
+      "vault_themes": [
+        "dungeon"
+      ],
+      "ambient_decor": [
+        {
+          "id": "lantern",
+          "weight": 100
+        },
+        {
+          "id": "flame_0",
+          "weight": 30
+        }
+      ],
+      "ambient_density": 0.012,
+      "layout": "basic",
+      "layouts": [
+        {
+          "id": "basic",
+          "weight": 5
+        },
+        {
+          "id": "caves",
+          "weight": 1
+        }
+      ]
+    },
+    "dungeon_dark": {
+      "display_name": "the Dark Dungeon",
+      "floor_primary": [
+        "dungeon_dark"
+      ],
+      "floor_accent": [
+        "dungeon_dark_alt",
+        "dungeon_dark_blood"
+      ],
+      "wall_primary": "dungeon_dark",
+      "wall_accent": [
+        "dungeon_dark_alt"
+      ],
+      "modulate": [
+        0.78,
+        0.74,
+        0.85,
+        1.0
+      ],
+      "darkness": 0.4,
+      "enemy_pool": [
+        "skeleton",
+        "zombie",
+        "wraith",
+        "kobold",
+        "goblin",
+        "orc",
+        "orc_warrior",
+        "death_knight",
+        "wolf",
+        "hell_hound"
+      ],
+      "vault_themes": [
+        "dungeon",
+        "crypt"
+      ],
+      "ambient_decor": [
+        {
+          "id": "lantern",
+          "weight": 60
+        },
+        {
+          "id": "flame_0",
+          "weight": 50
+        }
+      ],
+      "ambient_density": 0.018,
+      "layout": "basic",
+      "layouts": [
+        {
+          "id": "basic",
+          "weight": 4
+        },
+        {
+          "id": "caves_tight",
+          "weight": 1
+        }
+      ]
+    },
+    "mines": {
+      "display_name": "the Orcish Mines",
+      "floor_primary": [
+        "mines"
+      ],
+      "floor_accent": [],
+      "wall_primary": "mines",
+      "wall_accent": [],
+      "modulate": [
+        1.05,
+        0.95,
+        0.85,
+        1.0
+      ],
+      "darkness": 0.35,
+      "enemy_pool": [
+        "orc",
+        "goblin",
+        "kobold",
+        "hobgoblin",
+        "gnoll",
+        "big_kobold",
+        "dwarf",
+        "orc_warrior",
+        "ogre"
+      ],
+      "vault_themes": [
+        "dungeon",
+        "mines",
+        "orc"
+      ],
+      "ambient_decor": [
+        {
+          "id": "lantern",
+          "weight": 70
+        },
+        {
+          "id": "sparkles_1",
+          "weight": 30
+        }
+      ],
+      "ambient_density": 0.014,
+      "layout": "caves",
+      "layouts": [
+        {
+          "id": "caves",
+          "weight": 4
+        },
+        {
+          "id": "basic",
+          "weight": 2
+        },
+        {
+          "id": "caves_open",
+          "weight": 1
+        }
+      ]
+    },
+    "lair": {
+      "display_name": "the Lair",
+      "floor_primary": [
+        "lair"
+      ],
+      "floor_accent": [
+        "lair_alt"
+      ],
+      "wall_primary": "lair",
+      "wall_accent": [
+        "lair_alt"
+      ],
+      "wall_alternates": [
+        {
+          "prefix": "tree_1_yellow",
+          "weight": 25
+        },
+        {
+          "prefix": "tree_2_yellow",
+          "weight": 25
+        },
+        {
+          "prefix": "shallow_water_2",
+          "weight": 10
+        },
+        {
+          "prefix": "mold_1",
+          "weight": 10
+        },
+        {
+          "prefix": "mold_2",
+          "weight": 10
+        }
+      ],
+      "modulate": [
+        0.9,
+        1.05,
+        0.85,
+        1.0
+      ],
+      "darkness": 0.2,
+      "enemy_pool": [
+        "rat",
+        "giant_rat",
+        "jackal",
+        "wolf",
+        "black_bear",
+        "grizzly_bear",
+        "wyvern",
+        "komodo_dragon",
+        "hippogriff",
+        "yak",
+        "death_yak"
+      ],
+      "vault_themes": [
+        "dungeon",
+        "lair"
+      ],
+      "ambient_decor": [
+        {
+          "id": "mold_1",
+          "weight": 60
+        },
+        {
+          "id": "mold_2",
+          "weight": 60
+        },
+        {
+          "id": "flame_0",
+          "weight": 20
+        }
+      ],
+      "ambient_density": 0.018,
+      "layout": "caves_open",
+      "layouts": [
+        {
+          "id": "caves_open",
+          "weight": 4
+        },
+        {
+          "id": "caves",
+          "weight": 2
+        },
+        {
+          "id": "basic",
+          "weight": 1
+        }
+      ]
+    },
+    "forest": {
+      "display_name": "the Forest",
+      "floor_primary": [
+        "forest"
+      ],
+      "floor_accent": [
+        "forest_alt"
+      ],
+      "wall_primary": "forest",
+      "wall_accent": [
+        "forest_alt"
+      ],
+      "wall_alternates": [
+        {
+          "prefix": "tree_1_lightred",
+          "weight": 30
+        },
+        {
+          "prefix": "tree_2_lightred",
+          "weight": 25
+        },
+        {
+          "prefix": "tree_1_red",
+          "weight": 15
+        },
+        {
+          "prefix": "tree_2_red",
+          "weight": 15
+        },
+        {
+          "prefix": "mold_3",
+          "weight": 5
+        }
+      ],
+      "modulate": [
+        0.85,
+        1.05,
+        0.85,
+        1.0
+      ],
+      "darkness": 0.3,
+      "enemy_pool": [
+        "rat",
+        "bat",
+        "wolf_spider",
+        "wolf",
+        "elf",
+        "centaur",
+        "deep_elf_knight",
+        "manticore",
+        "dryad",
+        "black_bear"
+      ],
+      "vault_themes": [
+        "dungeon",
+        "forest",
+        "lair"
+      ],
+      "ambient_decor": [
+        {
+          "id": "mold_1",
+          "weight": 50
+        },
+        {
+          "id": "mold_2",
+          "weight": 50
+        },
+        {
+          "id": "flame_0",
+          "weight": 15
+        }
+      ],
+      "ambient_density": 0.014,
+      "layout": "caves_open",
+      "layouts": [
+        {
+          "id": "caves_open",
+          "weight": 5
+        },
+        {
+          "id": "caves",
+          "weight": 1
+        }
+      ]
+    },
+    "swamp": {
+      "display_name": "the Swamp",
+      "floor_primary": [
+        "swamp"
+      ],
+      "floor_accent": [
+        "swamp_alt"
+      ],
+      "wall_primary": "swamp",
+      "wall_accent": [],
+      "wall_alternates": [
+        {
+          "prefix": "deep_water_murky_0",
+          "weight": 25
+        },
+        {
+          "prefix": "deep_water_0",
+          "weight": 15
+        },
+        {
+          "prefix": "mangrove_1",
+          "weight": 15
+        },
+        {
+          "prefix": "mangrove_2",
+          "weight": 15
+        },
+        {
+          "prefix": "mangrove_3",
+          "weight": 10
+        }
+      ],
+      "modulate": [
+        0.85,
+        1.0,
+        0.8,
+        1.0
+      ],
+      "darkness": 0.4,
+      "enemy_pool": [
+        "swamp_dragon",
+        "hydra",
+        "crocodile",
+        "slime_creature",
+        "ghost",
+        "wraith",
+        "necrophage",
+        "rotting_devil"
+      ],
+      "vault_themes": [
+        "dungeon",
+        "swamp",
+        "lair"
+      ],
+      "ambient_decor": [
+        {
+          "id": "mold_1",
+          "weight": 80
+        },
+        {
+          "id": "mold_2",
+          "weight": 50
+        },
+        {
+          "id": "flame_0",
+          "weight": 10
+        }
+      ],
+      "ambient_density": 0.02,
+      "layout": "caves",
+      "layouts": [
+        {
+          "id": "caves",
+          "weight": 4
+        },
+        {
+          "id": "caves_open",
+          "weight": 2
+        }
+      ]
+    },
+    "snake": {
+      "display_name": "the Snake Pit",
+      "floor_primary": [
+        "snake"
+      ],
+      "floor_accent": [],
+      "wall_primary": "snake",
+      "wall_accent": [],
+      "modulate": [
+        1.0,
+        1.0,
+        0.85,
+        1.0
+      ],
+      "darkness": 0.25,
+      "enemy_pool": [
+        "adder",
+        "water_moccasin",
+        "black_mamba",
+        "anaconda",
+        "naga",
+        "salamander",
+        "komodo_dragon",
+        "hippogriff",
+        "sphinx"
+      ],
+      "vault_themes": [
+        "dungeon",
+        "snake",
+        "lair"
+      ],
+      "ambient_decor": [
+        {
+          "id": "orb",
+          "weight": 50
+        },
+        {
+          "id": "orb_glow_0",
+          "weight": 40
+        }
+      ],
+      "ambient_density": 0.012,
+      "layout": "caves_tight",
+      "layouts": [
+        {
+          "id": "caves_tight",
+          "weight": 4
+        },
+        {
+          "id": "caves",
+          "weight": 1
+        }
+      ]
+    },
+    "shoals": {
+      "display_name": "the Shoals",
+      "floor_primary": [
+        "shoals"
+      ],
+      "floor_accent": [
+        "shoals_alt",
+        "shoals_rocks"
+      ],
+      "wall_primary": "shoals",
+      "wall_accent": [],
+      "wall_alternates": [
+        {
+          "prefix": "deep_water_0",
+          "weight": 35
+        },
+        {
+          "prefix": "deep_water_1",
+          "weight": 25
+        },
+        {
+          "prefix": "shallow_water_2",
+          "weight": 15
+        }
+      ],
+      "modulate": [
+        1.0,
+        1.05,
+        1.1,
+        1.0
+      ],
+      "darkness": 0.1,
+      "enemy_pool": [
+        "snapping_turtle",
+        "alligator_snapping_turtle",
+        "crocodile",
+        "manticore",
+        "hippogriff",
+        "cyclops",
+        "stone_giant",
+        "frost_giant"
+      ],
+      "vault_themes": [
+        "dungeon",
+        "shoals",
+        "lair"
+      ],
+      "ambient_decor": [
+        {
+          "id": "crystal_orb",
+          "weight": 50
+        },
+        {
+          "id": "orb_glow_1",
+          "weight": 30
+        }
+      ],
+      "ambient_density": 0.01,
+      "layout": "caves_open",
+      "layouts": [
+        {
+          "id": "caves_open",
+          "weight": 4
+        },
+        {
+          "id": "caves",
+          "weight": 1
+        }
+      ]
+    },
+    "orc": {
+      "display_name": "the Orc Hold",
+      "floor_primary": [
+        "orc"
+      ],
+      "floor_accent": [],
+      "wall_primary": "orc",
+      "wall_accent": [],
+      "modulate": [
+        1.0,
+        0.95,
+        0.85,
+        1.0
+      ],
+      "darkness": 0.3,
+      "enemy_pool": [
+        "orc",
+        "goblin",
+        "kobold",
+        "hobgoblin",
+        "big_kobold",
+        "gnoll",
+        "orc_warrior",
+        "orc_priest",
+        "orc_knight",
+        "ogre",
+        "two_headed_ogre",
+        "troll"
+      ],
+      "vault_themes": [
+        "dungeon",
+        "orc",
+        "mines"
+      ],
+      "ambient_decor": [
+        {
+          "id": "lantern",
+          "weight": 80
+        },
+        {
+          "id": "flame_0",
+          "weight": 40
+        },
+        {
+          "id": "flame_1",
+          "weight": 40
+        }
+      ],
+      "ambient_density": 0.02,
+      "layout": "basic",
+      "layouts": [
+        {
+          "id": "basic",
+          "weight": 4
+        },
+        {
+          "id": "caves",
+          "weight": 2
+        },
+        {
+          "id": "caves_open",
+          "weight": 1
+        }
+      ]
+    },
+    "vaults": {
+      "display_name": "the Vaults",
+      "floor_primary": [
+        "vaults"
+      ],
+      "floor_accent": [
+        "vaults_pattern"
+      ],
+      "wall_primary": "vaults",
+      "wall_accent": [
+        "vaults_alt",
+        "vaults_alt2"
+      ],
+      "modulate": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "darkness": 0.1,
+      "enemy_pool": [
+        "orc_knight",
+        "orc_warlord",
+        "death_knight",
+        "deep_elf_knight",
+        "centaur_warrior",
+        "manticore",
+        "anubis_guard",
+        "vampire_knight",
+        "iron_dragon",
+        "stone_giant"
+      ],
+      "vault_themes": [
+        "dungeon",
+        "vaults"
+      ],
+      "ambient_decor": [
+        {
+          "id": "lantern",
+          "weight": 80
+        },
+        {
+          "id": "magic_lamp",
+          "weight": 50
+        },
+        {
+          "id": "orb",
+          "weight": 30
+        }
+      ],
+      "ambient_density": 0.014,
+      "layout": "basic",
+      "layouts": [
+        {
+          "id": "basic",
+          "weight": 5
+        },
+        {
+          "id": "caves_open",
+          "weight": 1
+        }
+      ]
+    },
+    "crypt": {
+      "display_name": "the Crypt",
+      "floor_primary": [
+        "crypt"
+      ],
+      "floor_accent": [
+        "crypt_alt",
+        "crypt_alt2"
+      ],
+      "wall_primary": "crypt",
+      "wall_accent": [
+        "crypt_alt"
+      ],
+      "wall_alternates": [
+        {
+          "prefix": "crumbled_column",
+          "weight": 15
+        },
+        {
+          "prefix": "boulder",
+          "weight": 10
+        }
+      ],
+      "modulate": [
+        0.7,
+        0.7,
+        0.85,
+        1.0
+      ],
+      "darkness": 0.55,
+      "enemy_pool": [
+        "skeleton",
+        "zombie",
+        "wraith",
+        "ghost",
+        "death_knight",
+        "vampire_knight",
+        "lich",
+        "mummy"
+      ],
+      "vault_themes": [
+        "dungeon",
+        "crypt"
+      ],
+      "ambient_decor": [
+        {
+          "id": "flame_0",
+          "weight": 70
+        },
+        {
+          "id": "flame_1",
+          "weight": 60
+        },
+        {
+          "id": "flame_2",
+          "weight": 40
+        },
+        {
+          "id": "orb_glow_0",
+          "weight": 30
+        }
+      ],
+      "ambient_density": 0.022,
+      "layout": "basic",
+      "layouts": [
+        {
+          "id": "basic",
+          "weight": 5
+        },
+        {
+          "id": "caves_tight",
+          "weight": 2
+        }
+      ]
+    },
+    "tomb": {
+      "display_name": "the Tomb",
+      "floor_primary": [
+        "tomb"
+      ],
+      "floor_accent": [
+        "tomb_alt"
+      ],
+      "wall_primary": "tomb",
+      "wall_accent": [
+        "tomb_alt"
+      ],
+      "modulate": [
+        1.05,
+        1.0,
+        0.75,
+        1.0
+      ],
+      "darkness": 0.2,
+      "enemy_pool": [
+        "skeleton",
+        "zombie",
+        "mummy",
+        "greater_mummy",
+        "sphinx",
+        "anubis_guard",
+        "wraith",
+        "lich"
+      ],
+      "vault_themes": [
+        "dungeon",
+        "tomb",
+        "crypt"
+      ],
+      "ambient_decor": [
+        {
+          "id": "lantern",
+          "weight": 60
+        },
+        {
+          "id": "magic_lamp",
+          "weight": 50
+        },
+        {
+          "id": "flame_0",
+          "weight": 30
+        }
+      ],
+      "ambient_density": 0.014,
+      "layout": "basic",
+      "layouts": [
+        {
+          "id": "basic",
+          "weight": 5
+        },
+        {
+          "id": "caves_tight",
+          "weight": 1
+        }
+      ]
+    },
+    "forge": {
+      "display_name": "the Forge",
+      "floor_primary": [
+        "forge"
+      ],
+      "floor_accent": [
+        "forge_alt",
+        "forge_alt2"
+      ],
+      "wall_primary": "forge",
+      "wall_accent": [
+        "forge_alt"
+      ],
+      "wall_alternates": [
+        {
+          "prefix": "lava_0",
+          "weight": 20
+        },
+        {
+          "prefix": "lava_1",
+          "weight": 15
+        },
+        {
+          "prefix": "lava_2",
+          "weight": 10
+        },
+        {
+          "prefix": "boulder",
+          "weight": 10
+        }
+      ],
+      "modulate": [
+        1.15,
+        0.9,
+        0.7,
+        1.0
+      ],
+      "darkness": 0.5,
+      "enemy_pool": [
+        "hell_hound",
+        "fire_giant",
+        "fire_dragon",
+        "manticore",
+        "cyclops",
+        "ogre",
+        "troll",
+        "deep_troll",
+        "balrug"
+      ],
+      "vault_themes": [
+        "dungeon",
+        "forge",
+        "zot"
+      ],
+      "ambient_decor": [
+        {
+          "id": "flame_0",
+          "weight": 100
+        },
+        {
+          "id": "flame_1",
+          "weight": 80
+        },
+        {
+          "id": "flame_2",
+          "weight": 60
+        }
+      ],
+      "ambient_density": 0.03,
+      "layout": "caves_open",
+      "layouts": [
+        {
+          "id": "caves_open",
+          "weight": 3
+        },
+        {
+          "id": "caves",
+          "weight": 2
+        },
+        {
+          "id": "basic",
+          "weight": 1
+        }
+      ]
+    },
+    "glacier": {
+      "display_name": "the Glacier",
+      "floor_primary": [
+        "glacier"
+      ],
+      "floor_accent": [
+        "glacier_alt"
+      ],
+      "wall_primary": "glacier",
+      "wall_accent": [
+        "glacier_alt"
+      ],
+      "modulate": [
+        0.85,
+        0.95,
+        1.15,
+        1.0
+      ],
+      "darkness": 0.15,
+      "enemy_pool": [
+        "ice_beast",
+        "ice_dragon",
+        "wraith",
+        "frost_giant",
+        "skeleton",
+        "lich",
+        "deep_troll"
+      ],
+      "vault_themes": [
+        "dungeon",
+        "glacier",
+        "crypt"
+      ],
+      "ambient_decor": [
+        {
+          "id": "crystal_orb",
+          "weight": 80
+        },
+        {
+          "id": "orb_glow_1",
+          "weight": 60
+        },
+        {
+          "id": "orb",
+          "weight": 40
+        }
+      ],
+      "ambient_density": 0.018,
+      "layout": "caves_open",
+      "layouts": [
+        {
+          "id": "caves_open",
+          "weight": 3
+        },
+        {
+          "id": "caves",
+          "weight": 2
+        },
+        {
+          "id": "basic",
+          "weight": 1
+        }
+      ]
+    },
+    "slime": {
+      "display_name": "the Slime Pits",
+      "floor_primary": [
+        "dungeon"
+      ],
+      "floor_accent": [],
+      "wall_primary": "slime",
+      "wall_accent": [],
+      "wall_alternates": [
+        {
+          "prefix": "deep_water_murky_0",
+          "weight": 25
+        },
+        {
+          "prefix": "mold_1",
+          "weight": 15
+        },
+        {
+          "prefix": "mold_2",
+          "weight": 15
+        }
+      ],
+      "modulate": [
+        0.85,
+        1.05,
+        0.7,
+        1.0
+      ],
+      "darkness": 0.4,
+      "enemy_pool": [
+        "slime_creature",
+        "jelly",
+        "ooze",
+        "acid_blob",
+        "death_ooze",
+        "azure_jelly"
+      ],
+      "vault_themes": [
+        "dungeon",
+        "slime"
+      ],
+      "ambient_decor": [
+        {
+          "id": "mold_1",
+          "weight": 80
+        },
+        {
+          "id": "mold_2",
+          "weight": 80
+        },
+        {
+          "id": "orb_glow_0",
+          "weight": 30
+        }
+      ],
+      "ambient_density": 0.025,
+      "layout": "caves",
+      "layouts": [
+        {
+          "id": "caves",
+          "weight": 3
+        },
+        {
+          "id": "caves_open",
+          "weight": 1
+        },
+        {
+          "id": "caves_tight",
+          "weight": 1
+        }
+      ]
+    },
+    "hive": {
+      "display_name": "the Hive",
+      "floor_primary": [
+        "hive"
+      ],
+      "floor_accent": [],
+      "wall_primary": "hive",
+      "wall_accent": [],
+      "modulate": [
+        1.05,
+        1.0,
+        0.7,
+        1.0
+      ],
+      "darkness": 0.25,
+      "enemy_pool": [
+        "butterfly",
+        "wolf_spider",
+        "giant_cockroach",
+        "wolf",
+        "centaur"
+      ],
+      "vault_themes": [
+        "dungeon",
+        "hive",
+        "lair"
+      ],
+      "ambient_decor": [
+        {
+          "id": "lantern",
+          "weight": 50
+        },
+        {
+          "id": "sparkles_1",
+          "weight": 50
+        }
+      ],
+      "ambient_density": 0.018,
+      "layout": "caves_tight",
+      "layouts": [
+        {
+          "id": "caves_tight",
+          "weight": 4
+        },
+        {
+          "id": "caves",
+          "weight": 1
+        }
+      ]
+    },
+    "labyrinth": {
+      "display_name": "the Labyrinth",
+      "floor_primary": [
+        "labyrinth"
+      ],
+      "floor_accent": [],
+      "wall_primary": "labyrinth",
+      "wall_accent": [
+        "labyrinth_alt"
+      ],
+      "modulate": [
+        0.95,
+        0.9,
+        0.85,
+        1.0
+      ],
+      "darkness": 0.45,
+      "enemy_pool": [
+        "centaur_warrior",
+        "manticore",
+        "death_knight",
+        "vampire_knight",
+        "cyclops",
+        "deep_troll",
+        "iron_dragon"
+      ],
+      "vault_themes": [
+        "dungeon",
+        "vaults"
+      ],
+      "ambient_decor": [
+        {
+          "id": "magic_lamp",
+          "weight": 80
+        },
+        {
+          "id": "zot_pillar",
+          "weight": 30
+        }
+      ],
+      "ambient_density": 0.012,
+      "layout": "basic",
+      "layouts": [
+        {
+          "id": "basic",
+          "weight": 6
+        },
+        {
+          "id": "caves_tight",
+          "weight": 2
+        }
+      ]
+    },
+    "abyss": {
+      "display_name": "the Abyss",
+      "floor_primary": [
+        "abyss"
+      ],
+      "floor_accent": [],
+      "wall_primary": "abyss",
+      "wall_accent": [],
+      "modulate": [
+        1.0,
+        0.7,
+        0.85,
+        1.0
+      ],
+      "darkness": 0.55,
+      "enemy_pool": [
+        "wraith",
+        "lich",
+        "vampire_knight",
+        "death_knight",
+        "deep_troll",
+        "balrug",
+        "iron_dragon"
+      ],
+      "vault_themes": [
+        "dungeon",
+        "abyss",
+        "pandemonium",
+        "zot"
+      ],
+      "ambient_decor": [
+        {
+          "id": "orb_glow_0",
+          "weight": 80
+        },
+        {
+          "id": "orb_glow_1",
+          "weight": 80
+        },
+        {
+          "id": "magic_lamp",
+          "weight": 40
+        }
+      ],
+      "ambient_density": 0.02,
+      "layout": "caves",
+      "layouts": [
+        {
+          "id": "caves",
+          "weight": 3
+        },
+        {
+          "id": "caves_open",
+          "weight": 2
+        },
+        {
+          "id": "basic",
+          "weight": 1
+        }
+      ]
+    },
+    "pandemonium": {
+      "display_name": "Pandemonium",
+      "floor_primary": [
+        "pandemonium"
+      ],
+      "floor_accent": [],
+      "wall_primary": "pandemonium",
+      "wall_accent": [],
+      "modulate": [
+        1.1,
+        0.75,
+        0.75,
+        1.0
+      ],
+      "darkness": 0.5,
+      "enemy_pool": [
+        "balrug",
+        "fire_giant",
+        "fire_dragon",
+        "lich",
+        "vampire_knight",
+        "deep_troll"
+      ],
+      "vault_themes": [
+        "dungeon",
+        "pandemonium",
+        "abyss",
+        "zot"
+      ],
+      "ambient_decor": [
+        {
+          "id": "flame_0",
+          "weight": 80
+        },
+        {
+          "id": "flame_2",
+          "weight": 60
+        },
+        {
+          "id": "zot_pillar",
+          "weight": 30
+        }
+      ],
+      "ambient_density": 0.025,
+      "layout": "caves_open",
+      "layouts": [
+        {
+          "id": "caves_open",
+          "weight": 3
+        },
+        {
+          "id": "caves",
+          "weight": 2
+        },
+        {
+          "id": "basic",
+          "weight": 1
+        }
+      ]
+    },
+    "zot": {
+      "display_name": "the Realm of Zot",
+      "floor_primary": [
+        "zot"
+      ],
+      "floor_accent": [],
+      "wall_primary": "zot",
+      "wall_accent": [],
+      "modulate": [
+        0.95,
+        0.9,
+        1.15,
+        1.0
+      ],
+      "darkness": 0.4,
+      "enemy_pool": [
+        "lich",
+        "death_knight",
+        "golden_dragon",
+        "iron_dragon",
+        "quicksilver_dragon",
+        "shadow_dragon",
+        "fire_giant",
+        "frost_giant",
+        "stone_giant",
+        "ettin",
+        "minotaur",
+        "ancient_lich"
+      ],
+      "vault_themes": [
+        "dungeon",
+        "zot",
+        "vaults",
+        "depths"
+      ],
+      "ambient_decor": [
+        {
+          "id": "zot_pillar",
+          "weight": 100
+        },
+        {
+          "id": "magic_lamp",
+          "weight": 60
+        },
+        {
+          "id": "crystal_orb",
+          "weight": 50
+        }
+      ],
+      "ambient_density": 0.025,
+      "layout": "basic",
+      "layouts": [
+        {
+          "id": "basic",
+          "weight": 5
+        },
+        {
+          "id": "caves_open",
+          "weight": 1
+        }
+      ]
+    },
+    "elf": {
+      "display_name": "the Elven Halls",
+      "floor_primary": [
+        "elf"
+      ],
+      "floor_accent": [
+        "elf_frame"
+      ],
+      "wall_primary": "elf",
+      "wall_accent": [],
+      "modulate": [
+        1.05,
+        1.0,
+        1.15,
+        1.0
+      ],
+      "darkness": 0.18,
+      "enemy_pool": [
+        "deep_elf_knight",
+        "deep_elf_mage",
+        "deep_elf_pyromancer",
+        "deep_elf_sorcerer",
+        "centaur_warrior",
+        "sphinx",
+        "manticore"
+      ],
+      "vault_themes": [
+        "dungeon",
+        "elf",
+        "vaults"
+      ],
+      "ambient_decor": [
+        {
+          "id": "lantern_gold",
+          "weight": 70
+        },
+        {
+          "id": "orb_glow_1",
+          "weight": 30
+        },
+        {
+          "id": "magic_lamp",
+          "weight": 25
+        }
+      ],
+      "ambient_density": 0.018,
+      "layout": "basic",
+      "layouts": [
+        {
+          "id": "basic",
+          "weight": 5
+        },
+        {
+          "id": "caves_open",
+          "weight": 1
+        }
+      ]
+    },
+    "spider": {
+      "display_name": "the Spider Nest",
+      "floor_primary": [
+        "spider"
+      ],
+      "floor_accent": [],
+      "wall_primary": "spider",
+      "wall_accent": [],
+      "wall_alternates": [
+        {
+          "prefix": "tree",
+          "weight": 8
+        }
+      ],
+      "modulate": [
+        0.9,
+        0.95,
+        0.85,
+        1.0
+      ],
+      "darkness": 0.55,
+      "enemy_pool": [
+        "redback",
+        "jumping_spider",
+        "wolf_spider",
+        "orb_spider",
+        "giant_spider",
+        "steam_dragon"
+      ],
+      "vault_themes": [
+        "dungeon",
+        "spider",
+        "lair"
+      ],
+      "ambient_decor": [
+        {
+          "id": "mold_1",
+          "weight": 50
+        },
+        {
+          "id": "mold_2",
+          "weight": 40
+        }
+      ],
+      "ambient_density": 0.014,
+      "layout": "caves",
+      "layouts": [
+        {
+          "id": "caves",
+          "weight": 3
+        },
+        {
+          "id": "caves_tight",
+          "weight": 2
+        }
+      ]
+    },
+    "temple": {
+      "display_name": "the Ecumenical Temple",
+      "floor_primary": [
+        "temple"
+      ],
+      "floor_accent": [],
+      "wall_primary": "temple",
+      "wall_accent": [],
+      "modulate": [
+        1.05,
+        1.05,
+        0.95,
+        1.0
+      ],
+      "darkness": 0.05,
+      "enemy_pool": [],
+      "vault_themes": [
+        "dungeon",
+        "vaults"
+      ],
+      "ambient_decor": [
+        {
+          "id": "lantern",
+          "weight": 100
+        },
+        {
+          "id": "lantern_gold",
+          "weight": 60
+        }
+      ],
+      "ambient_density": 0.022,
+      "layout": "basic",
+      "layouts": [
+        {
+          "id": "basic",
+          "weight": 5
+        },
+        {
+          "id": "caves_open",
+          "weight": 1
+        }
+      ]
+    },
+    "depths": {
+      "display_name": "the Depths",
+      "floor_primary": [
+        "depths"
+      ],
+      "floor_accent": [
+        "depths_alt"
+      ],
+      "wall_primary": "depths",
+      "wall_accent": [],
+      "modulate": [
+        0.85,
+        0.85,
+        1.05,
+        1.0
+      ],
+      "darkness": 0.45,
+      "enemy_pool": [
+        "deep_troll",
+        "fire_giant",
+        "frost_giant",
+        "stone_giant",
+        "iron_dragon",
+        "golden_dragon",
+        "quicksilver_dragon",
+        "shadow_dragon",
+        "death_knight",
+        "lich"
+      ],
+      "vault_themes": [
+        "dungeon",
+        "depths",
+        "vaults",
+        "zot"
+      ],
+      "ambient_decor": [
+        {
+          "id": "crystal_orb",
+          "weight": 60
+        },
+        {
+          "id": "orb_glow_0",
+          "weight": 40
+        },
+        {
+          "id": "lantern_gold",
+          "weight": 30
+        }
+      ],
+      "ambient_density": 0.014,
+      "layout": "basic",
+      "layouts": [
+        {
+          "id": "basic",
+          "weight": 4
+        },
+        {
+          "id": "caves",
+          "weight": 1
+        }
+      ]
+    }
+  },
+  "run_plans": [
+    {
+      "name": "classic",
+      "weight": 6,
+      "floors": [
+        "dungeon",
+        "dungeon",
+        "mines",
+        "lair",
+        "lair",
+        "swamp",
+        "crypt",
+        "crypt",
+        "vaults",
+        "zot"
+      ]
+    },
+    {
+      "name": "ascent",
+      "weight": 4,
+      "floors": [
+        "dungeon",
+        "mines",
+        "lair",
+        "forest",
+        "snake",
+        "swamp",
+        "tomb",
+        "vaults",
+        "crypt",
+        "zot"
+      ]
+    },
+    {
+      "name": "the_descent",
+      "weight": 4,
+      "floors": [
+        "dungeon",
+        "dungeon",
+        "lair",
+        "swamp",
+        "orc",
+        "crypt",
+        "forge",
+        "forge",
+        "abyss",
+        "zot"
+      ]
+    },
+    {
+      "name": "frozen_path",
+      "weight": 3,
+      "floors": [
+        "dungeon",
+        "lair",
+        "shoals",
+        "snake",
+        "tomb",
+        "glacier",
+        "glacier",
+        "vaults",
+        "crypt",
+        "zot"
+      ]
+    },
+    {
+      "name": "infernal",
+      "weight": 3,
+      "floors": [
+        "dungeon",
+        "dungeon_dark",
+        "mines",
+        "orc",
+        "lair",
+        "slime",
+        "forge",
+        "forge",
+        "pandemonium",
+        "zot"
+      ]
+    },
+    {
+      "name": "labyrinthine",
+      "weight": 2,
+      "floors": [
+        "dungeon",
+        "lair",
+        "swamp",
+        "snake",
+        "vaults",
+        "labyrinth",
+        "labyrinth",
+        "tomb",
+        "crypt",
+        "zot"
+      ]
+    },
+    {
+      "name": "broken",
+      "weight": 1,
+      "floors": [
+        "dungeon",
+        "hive",
+        "lair",
+        "slime",
+        "swamp",
+        "abyss",
+        "pandemonium",
+        "abyss",
+        "forge",
+        "zot"
+      ]
+    },
+    {
+      "name": "stoneheart",
+      "weight": 3,
+      "floors": [
+        "dungeon",
+        "dungeon",
+        "vaults",
+        "vaults",
+        "crypt",
+        "tomb",
+        "depths",
+        "depths",
+        "vaults",
+        "zot"
+      ]
+    },
+    {
+      "name": "elven_path",
+      "weight": 2,
+      "floors": [
+        "dungeon",
+        "lair",
+        "lair",
+        "elf",
+        "elf",
+        "vaults",
+        "crypt",
+        "depths",
+        "depths",
+        "zot"
+      ]
+    },
+    {
+      "name": "wild",
+      "weight": 2,
+      "floors": [
+        "dungeon",
+        "lair",
+        "spider",
+        "spider",
+        "snake",
+        "swamp",
+        "shoals",
+        "vaults",
+        "depths",
+        "zot"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "name": "des_hellmonk_spider_rune_endless_swarm",
+  "size": [
+    41,
+    36
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "spider"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "                xxxxxxxxxx               ",
+    "             xxxxxxxxxxxxxxxx            ",
+    "           xxxxx......xxxxxxxxx          ",
+    "         xxxx......2.............        ",
+    "       xxxx....xxx.................      ",
+    "      xxx....xxx.xxx...6....3663...x     ",
+    "     xxx..2..x.....x...........36...x    ",
+    "    xxx.....xx..3..xx...........33..xx   ",
+    "   xxx.........363...............3..xxx  ",
+    "   xx.......xx..3..xx.3..+.......6..xxx  ",
+    "  xxx........x.....x................xxxx ",
+    "  xx.........xxx.xxx.................xxx ",
+    " xx.2..........x.x...............3....xxx",
+    " xx........................6.....3....xxx",
+    " xx.........3......x.x..............2.xxx",
+    "xx...............xxx.xxx......+.......xxx",
+    "xx..xxx.xxx......x....xx...............xx",
+    "xx..xx...xx.....xx..3..xx..........6...xx",
+    "xx..x..3..x........363.................xx",
+    "xx....363.......xx..3..xx.....x.x.......x",
+    "xx..x.....x......xx...xx....xxx.xxx.....x",
+    "xx..xx...xx......xxx.xxx....xx...xx....xx",
+    "xxx.xxx.xxx........x.x.....xx..3..xx.2.xx",
+    "xxx............................63......xx",
+    " xx......................3.xx..3..xx..xx ",
+    "  x.........xxx.xxx.........xx...xx...xx ",
+    "  .2........xx...xx.........xxx.xxx..xx  ",
+    "   ........xx..3..x...........x.x....xx  ",
+    "    ...........63..................xxx   ",
+    "     .......x..3..x...............xxx    ",
+    "      ......xx...xx.......6..2..xxxx     ",
+    "       .....xxx.xxx...........xxxxx      ",
+    "        .2x.................xxxxx        ",
+    "         xxxx.............xxxxx          ",
+    "           xxxxxxxxxxxxxxxxxx            ",
+    "                xxxxxxxxxx               "
+  ],
+  "spawns": {
+    "2": {
+      "enemy_pool": [
+        "orb_spider"
+      ]
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "name": "des_shoals_rune_alternative_decoy",
+  "size": [
+    11,
+    11
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "shoals"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "allow_dup",
+    "transparent"
+  ],
+  "grid": [
+    "  xxxxxxx  ",
+    " xx.....xx ",
+    "xx.....x.xx",
+    "x.......x.x",
+    "x..x......x",
+    "x....x....x",
+    "x.........x",
+    "x.C...x...x",
+    ".x.C.....xx",
+    "..x.....xx ",
+    " ..xxxxxx  "
+  ],
+  "spawns": {}
+}

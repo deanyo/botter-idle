@@ -1,0 +1,37 @@
+{
+  "name": "des_nicolae_swamp_necromancer_hut",
+  "size": [
+    10,
+    13
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "swamp"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "  ....    ",
+    " ......   ",
+    "........  ",
+    "........  ",
+    "..xx.xx.. ",
+    "..x...x...",
+    "..x.1.+...",
+    "..x...x...",
+    "..xx.xx.. ",
+    "........  ",
+    "........  ",
+    " ......   ",
+    "  ....    "
+  ],
+  "spawns": {}
+}

@@ -1,0 +1,42 @@
+{
+  "name": "des_regret_index_lairdec_lost_corridors",
+  "size": [
+    23,
+    16
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "lair"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    ".   .             .   .",
+    ".....             .....",
+    ".x...             ...x.",
+    "C....             ....C",
+    ".....             .....",
+    "....C             C....",
+    "...x.             .x...",
+    ".....             .....",
+    ".   .             .   .",
+    "     .           .     ",
+    "      .         .      ",
+    "       ...C.C...       ",
+    "        .......        ",
+    "        .......        ",
+    "        .x...x.        ",
+    "       .........       "
+  ],
+  "spawns": {}
+}

@@ -1,0 +1,39 @@
+{
+  "name": "des_nicolae_blade_entry_floor_patterns",
+  "size": [
+    13,
+    14
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "elf",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "      .      ",
+    "xxxxx...xxxxx",
+    "xxxxx...xxxxx",
+    "xxCCC...CCCxx",
+    "xxC.......Cxx",
+    "xxC.1...1.Cxx",
+    "......x......",
+    ".....xxx.....",
+    "......x......",
+    "xxC.1...1.Cxx",
+    "xxC.......Cxx",
+    "xxCCC...CCCxx",
+    "xxxxx...xxxxx",
+    "xxxxx...xxxxx"
+  ],
+  "spawns": {}
+}

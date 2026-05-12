@@ -1,0 +1,29 @@
+{
+  "name": "des_abyss_entry_small_statue_room",
+  "size": [
+    3,
+    5
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "abyss",
+    "dungeon"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    ".x.",
+    "x.x",
+    "+.x",
+    "x.x",
+    ".x."
+  ],
+  "spawns": {}
+}

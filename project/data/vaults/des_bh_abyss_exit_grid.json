@@ -1,0 +1,39 @@
+{
+  "name": "des_bh_abyss_exit_grid",
+  "size": [
+    15,
+    13
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "abyss",
+    "dungeon"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "allow_dup"
+  ],
+  "grid": [
+    "   . . . . .   ",
+    "  ...........  ",
+    " ..x.x.x.x.x.. ",
+    "..x.x.x.x.x.x..",
+    " ..x.x.x.x.x.. ",
+    "..x.x.....x.x..",
+    " ..x.......x.. ",
+    "..x.x.....x.x..",
+    " ..x.x.x.x.x.. ",
+    "..x.x.x.x.x.x..",
+    " ..x.x.x.x.x.. ",
+    "  ...........  ",
+    "   . . . . .   "
+  ],
+  "spawns": {}
+}

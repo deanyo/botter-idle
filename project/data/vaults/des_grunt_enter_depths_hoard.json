@@ -1,0 +1,39 @@
+{
+  "name": "des_grunt_enter_depths_hoard",
+  "size": [
+    17,
+    7
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "depths",
+    "dungeon",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "  .......        ",
+    " .........       ",
+    ".....1........   ",
+    "...............  ",
+    ".....2.......... ",
+    " ................",
+    "  ..............."
+  ],
+  "spawns": {
+    "1": {
+      "enemy_pool": [
+        "fire_dragon",
+        "ice_dragon"
+      ]
+    }
+  }
+}

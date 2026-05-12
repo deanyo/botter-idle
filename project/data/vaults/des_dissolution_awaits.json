@@ -1,0 +1,31 @@
+{
+  "name": "des_dissolution_awaits",
+  "size": [
+    6,
+    7
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "slime"
+  ],
+  "floor_range": [
+    2,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    " .....",
+    "......",
+    "......",
+    "...1..",
+    "......",
+    "......",
+    " ....."
+  ],
+  "spawns": {}
+}

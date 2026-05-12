@@ -1,0 +1,39 @@
+{
+  "name": "des_nicolae_crawler_farm",
+  "size": [
+    14,
+    13
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "spider"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "no_monster_gen"
+  ],
+  "grid": [
+    "  xxxxx       ",
+    " x...xxxx     ",
+    ".......xxxx   ",
+    "........2xxx  ",
+    "...xx....2xx  ",
+    " ..xxx2....xx ",
+    "  xxxx....2xx ",
+    "  xxx..1...xx ",
+    "  xx2....2.xx ",
+    "  x2..2....x  ",
+    "  xx....22xx  ",
+    "   xxxxxxxxx  ",
+    "     xxxxx    "
+  ],
+  "spawns": {}
+}

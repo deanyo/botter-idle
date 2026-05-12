@@ -1,0 +1,40 @@
+{
+  "name": "des_nicolae_lair_liquid_snakes",
+  "size": [
+    20,
+    14
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "lair"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "        ........... ",
+    "       ..xxxxxxxxx..",
+    "........xx...1...xx.",
+    "xxxxxxxxx.........xx",
+    "x....xxx...........x",
+    "x.....x............x",
+    "......1.............",
+    ".............2......",
+    "x............x.....x",
+    "x...........xxx....x",
+    "xx.........xxxxxxxxx",
+    ".xx...2...xx........",
+    "..xxxxxxxxx..       ",
+    " ...........        "
+  ],
+  "spawns": {}
+}

@@ -1,0 +1,43 @@
+{
+  "name": "des_nicolae_swamp_orc_logging_accident",
+  "size": [
+    21,
+    17
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "swamp"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "no_monster_gen"
+  ],
+  "grid": [
+    "       TTTTT         ",
+    "     TT.....TTT      ",
+    "    T..........TT    ",
+    "   T.............T   ",
+    "  T...............T  ",
+    " T.................T ",
+    " T..................T",
+    "TT...xxxx...........T",
+    "T....x..x...xx.x....T",
+    "T....x..+...x..x....T",
+    "T....x..x...+.......T",
+    "T....xxxx...x..x....T",
+    "T...........xx.x...TT",
+    "T..................T ",
+    "TT................TT ",
+    " TTTT............TT  ",
+    "    TTTT     TTTTT   "
+  ],
+  "spawns": {}
+}

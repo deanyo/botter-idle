@@ -1,0 +1,49 @@
+{
+  "name": "des_grunt_orc_community_big_house_1",
+  "size": [
+    11,
+    11
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "mines",
+    "orc"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "no_item_gen"
+  ],
+  "grid": [
+    "  .......  ",
+    " ......... ",
+    ".....1.....",
+    "....2.2....",
+    ".....2.....",
+    "...........",
+    ".....2.....",
+    "....2.2....",
+    ".....1.....",
+    " ......... ",
+    "   ......  "
+  ],
+  "spawns": {
+    "2": {
+      "enemy_pool": [
+        "orc_warrior"
+      ]
+    },
+    "1": {
+      "enemy_pool": [
+        "orc_warrior"
+      ]
+    }
+  }
+}

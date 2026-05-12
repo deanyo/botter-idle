@@ -1,0 +1,58 @@
+{
+  "name": "des_nicolae_orc_accident_2",
+  "size": [
+    19,
+    22
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "mines",
+    "orc"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "xxxxx..........xxxx",
+    "xxxxx..........xxxx",
+    "xxxxxxx......xxxxxx",
+    "xxx.....2...2.....x",
+    "xxx...............x",
+    "xx................x",
+    "xx................x",
+    "xx................x",
+    "x.................x",
+    "x......1.....1....x",
+    "x.................x",
+    "x.................x",
+    "x.................x",
+    "x.........xxx.....x",
+    "x.......xxxx       ",
+    "x.......xxxx       ",
+    "x.......xx         ",
+    "x........          ",
+    "xx.......          ",
+    "xx.......          ",
+    "xxx......          ",
+    "xxxxxxxxx          "
+  ],
+  "spawns": {
+    "1": {
+      "enemy_pool": [
+        "orc_warrior"
+      ]
+    },
+    "2": {
+      "enemy_pool": [
+        "orc_priest"
+      ]
+    }
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "name": "des_nicolae_lair_flooded_remnant",
+  "size": [
+    9,
+    11
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "lair"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "........ ",
+    ".......xx",
+    "........x",
+    ".........",
+    ".........",
+    ".........",
+    ".........",
+    ".........",
+    ".........",
+    " xS.....x",
+    " xx....xx"
+  ],
+  "spawns": {}
+}

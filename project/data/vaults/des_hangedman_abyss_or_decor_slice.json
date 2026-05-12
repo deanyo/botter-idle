@@ -1,0 +1,37 @@
+{
+  "name": "des_hangedman_abyss_or_decor_slice",
+  "size": [
+    10,
+    12
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "abyss",
+    "dungeon",
+    "glacier"
+  ],
+  "floor_range": [
+    4,
+    10
+  ],
+  "weight": 5,
+  "tags": [],
+  "grid": [
+    "    xx.   ",
+    "... x..   ",
+    ".x..xx.   ",
+    "....x..   ",
+    " ....x.   ",
+    "  .....   ",
+    "   .....  ",
+    "   .x.... ",
+    "   ..x....",
+    "   .xx..x.",
+    "   ..x ...",
+    "   .xx    "
+  ],
+  "spawns": {}
+}

@@ -1,0 +1,47 @@
+{
+  "name": "des_vaults_end_minmay_cup_spider",
+  "size": [
+    27,
+    23
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "  xxxxxxxxxxxxxxxxxxxxxxx  ",
+    " ......................... ",
+    "x.........................x",
+    "x..x99x99xxxxxxxxx99x99x..x",
+    "x..x..x..x*..x..*x..x..x..x",
+    "x..x**x**x*..x..*x**x**x..x",
+    "x..xxxxxxxx99x99xxxxxxxx..x",
+    "x..9.*x**....x....**x*.9..x",
+    "x..9.*x......x......x*.9..x",
+    "x..xxxx..xx..x..xx..xxxx..x",
+    "x..xxxx99xx99x99xx99xxxx..x",
+    "x........x.......x........x",
+    "x........x.......x........x",
+    "x..xxxx99xx99x99xx99xxxx..x",
+    "x..x**x..xx..x..xx..x**x..x",
+    "x..x..x**x.......x**x..x..x",
+    "x..x99xxxxxxxxxxxxxxx99x..x",
+    "x.....x..9..*x*..9..x.....x",
+    "x.....x..9..*x*..9..x.....x",
+    "x..xxxx..xxxxxxxxx..xxxx..x",
+    "x.........................x",
+    "  ........................ ",
+    "  xxxxxxxxxxxxxxxxxxxxxxx  "
+  ],
+  "spawns": {}
+}

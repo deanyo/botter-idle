@@ -1,0 +1,36 @@
+{
+  "name": "des_nicolae_crypt_tucked_away",
+  "size": [
+    11,
+    9
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "crypt",
+    "dungeon"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent",
+    "allow_dup"
+  ],
+  "grid": [
+    "xxxxxxxxxxx",
+    "x.x.x.x.x.x",
+    "x.........x",
+    "x.........x",
+    "...........",
+    "x.........x",
+    "x.........x",
+    "x.x.x.x.x.x",
+    "xxxxxxxxxxx"
+  ],
+  "spawns": {}
+}

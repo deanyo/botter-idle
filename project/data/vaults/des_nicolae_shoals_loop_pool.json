@@ -1,0 +1,39 @@
+{
+  "name": "des_nicolae_shoals_loop_pool",
+  "size": [
+    16,
+    13
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "shoals"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    " .xxx...        ",
+    ".xx......       ",
+    ".x...........   ",
+    ".x............  ",
+    ".x......xxxxxx. ",
+    ".x...........xx.",
+    ".x............x.",
+    ".xx...........x.",
+    " .xxxxxx......x.",
+    "  ............x.",
+    "   ...........x.",
+    "       ......xx.",
+    "        ...xxx. "
+  ],
+  "spawns": {}
+}

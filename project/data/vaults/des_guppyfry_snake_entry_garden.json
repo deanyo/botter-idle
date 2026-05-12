@@ -1,0 +1,45 @@
+{
+  "name": "des_guppyfry_snake_entry_garden",
+  "size": [
+    11,
+    11
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "snake"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "no_monster_gen",
+    "transparent"
+  ],
+  "grid": [
+    " xxxx.xxxx ",
+    "xx.......xx",
+    "x.........x",
+    "x.........x",
+    "x...1.1...x",
+    "...........",
+    "x...1.1...x",
+    "x.........x",
+    "x.........x",
+    "xx.......xx",
+    " xxxx.xxxx "
+  ],
+  "spawns": {
+    "1": {
+      "enemy_pool": [
+        "naga",
+        "black_mamba"
+      ]
+    }
+  }
+}

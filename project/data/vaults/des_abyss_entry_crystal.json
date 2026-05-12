@@ -1,0 +1,30 @@
+{
+  "name": "des_abyss_entry_crystal",
+  "size": [
+    9,
+    6
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "abyss",
+    "dungeon"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "x.......x",
+    "x.......x",
+    "x.......x",
+    "xx.....xx",
+    " xx...xx ",
+    "  xxxxx  "
+  ],
+  "spawns": {}
+}

@@ -1,0 +1,51 @@
+{
+  "name": "des_vaults_end_minmay_triangle_fans",
+  "size": [
+    23,
+    27
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "  xxxxxxxxxxxxxxxx...  ",
+    " ......xxxx.......xxxx ",
+    "x....x..xxx.....x..xxx.",
+    "x...xx...xx....xx...xx.",
+    "x..xxx....x...xxx....x.",
+    "x.xxxx9......xxxx9....x",
+    "x....9xxxx......9xxxx.x",
+    "xx....xxx*..x*...xxx..x",
+    "xxx...xx....xx...xx...x",
+    "xxxx..x*....xxx*.x....x",
+    "xxxxx.....9.xxxx.....9x",
+    "x9.....xxxx.9.....xxxxx",
+    "x....x.*xxx....*x..xxxx",
+    "x...xx...xx....xx...xxx",
+    "x..xxx...*x..*xxx....xx",
+    "x.xxxx9......xxxx9....x",
+    "x....9xxxx......9xxxx.x",
+    "xx....xxx*..x*...xxx..x",
+    "xxx...xx....xx...xx...x",
+    "xxxx..x*....xxx*.x....x",
+    "xxxxx.....9.xxxx.....9x",
+    "x9.....xxxx.9.....xxxxx",
+    "x....x..xxx.....x..xxxx",
+    "x...xx...xx....xx...xxx",
+    "x..xxx....x...xxx....xx",
+    " .xxxx.......xxxx....  ",
+    "  xxxxxxxxxxxxxxxxxxx  "
+  ],
+  "spawns": {}
+}

@@ -1,0 +1,41 @@
+{
+  "name": "des_nicolae_snake_entry_squirm",
+  "size": [
+    9,
+    15
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "snake"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "xxxxxxxxx",
+    "xxx...xxx",
+    "xxx...xxx",
+    "xx.....xx",
+    "xx.T.T.xx",
+    "xx.....xx",
+    "xxx...xxx",
+    "xx...xxxx",
+    "x...xxxxx",
+    "xx...xxxx",
+    "xxx...xxx",
+    "xxxx...xx",
+    "xxxxx...x",
+    "xxxx...xx",
+    "xxx...xxx"
+  ],
+  "spawns": {}
+}

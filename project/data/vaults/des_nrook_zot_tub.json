@@ -1,0 +1,37 @@
+{
+  "name": "des_nrook_zot_tub",
+  "size": [
+    12,
+    11
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "zot"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 25,
+  "tags": [
+    "no_monster_gen"
+  ],
+  "grid": [
+    " xxxxxxxxxxx",
+    " x.........x",
+    " x.........x",
+    " x..x.x.x..x",
+    " x.........x",
+    ".+..x...x..x",
+    " x.........x",
+    " x..x.x.x..x",
+    " x.........x",
+    " x.........x",
+    " xxxxxxxxxxx"
+  ],
+  "spawns": {}
+}

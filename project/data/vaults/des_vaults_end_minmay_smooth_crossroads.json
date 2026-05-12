@@ -1,0 +1,47 @@
+{
+  "name": "des_vaults_end_minmay_smooth_crossroads",
+  "size": [
+    27,
+    23
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "  xxxxxxxxxxxxxxxxxxxxxxx  ",
+    " 9.....x9.....9x9........  ",
+    "x......x.......x...x....9.x",
+    "x.....xx...x...x...xx.....x",
+    "x.....x....x...x....x.....x",
+    "x....xx....x...x....xx....x",
+    "x..xxx....xx...xx....xxx..x",
+    "x.xx......x*...*x......xxxx",
+    "x........xx*...*xx.......9x",
+    "x9.....xxx.......xxx......x",
+    "xxxxxxxx**...9...**xxxx...x",
+    "x9..........9x9..........9x",
+    "x...xxxx**...9...**xxxxxxxx",
+    "x......xxx.......xxx.....9x",
+    "x9.......xx*...*xx........x",
+    "xxxx......x*...*x......xx.x",
+    "x..xxx....xx...xx....xxx..x",
+    "x....xx....x...x....xx....x",
+    "x.....x....x...x....x.....x",
+    "x.....xx...x...x...xx.....x",
+    "x......x...x.......x......x",
+    " 9........9x9.....9x.....9 ",
+    "  xxxxxxxxxxxxxxxxxxxxxxx  "
+  ],
+  "spawns": {}
+}

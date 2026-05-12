@@ -1,0 +1,45 @@
+{
+  "name": "des_dreamdust_zin_vs_xom",
+  "size": [
+    11,
+    19
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "zot"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "no_monster_gen"
+  ],
+  "grid": [
+    "xxxxxxxxxxx",
+    "x.........x",
+    "x.........x",
+    "x...1.1...x",
+    "x....1....x",
+    "x.........x",
+    "x....1....x",
+    "x.........x",
+    "x.........x",
+    "...........",
+    "x.........x",
+    "x.........x",
+    "x.........x",
+    "x.........x",
+    "x.........x",
+    "x.........x",
+    "x.........x",
+    "x.........x",
+    "xxxxxxxxxxx"
+  ],
+  "spawns": {}
+}

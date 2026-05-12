@@ -1,0 +1,47 @@
+{
+  "name": "des_vaults_end_grunt_pinched",
+  "size": [
+    27,
+    23
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "  xxxxxxxxxxxxxxxxxxxxxxx  ",
+    " ........x...............  ",
+    "x.......xx...9............x",
+    "x...9...xx...x............x",
+    "x......xx....xx....9......x",
+    "x.....xx9....*x...........x",
+    "x...xxxxx....*xx..........x",
+    "x9xxxx.xxx....9xx......9..x",
+    "x.......xx..9.*xxxx.......x",
+    "x...9....9..**xx.9xxx.....x",
+    "x.9.x**....*.xx*...xxxx...x",
+    "x...xxxx....xx*.....**x.9.x",
+    "x.....xxx9*xx.*...9.......x",
+    "x.......xxxx.*............x",
+    "x..9....xxx*..............x",
+    "x......xxxxx9..9.xx..9.xx9x",
+    "x.....xx...xx*...xxxxxxxx.x",
+    "x....xx.....x*....xxxx....x",
+    "x...xx......xx....xx......x",
+    "x..xx....9...x.9..x....9..x",
+    "x.xx.........9...xx.......x",
+    " ................x........ ",
+    "  .xxxxxxxxxxxxxxxxxxxxxx  "
+  ],
+  "spawns": {}
+}

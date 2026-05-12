@@ -1,0 +1,46 @@
+{
+  "name": "des_nicolae_shoals_songs",
+  "size": [
+    21,
+    22
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "shoals"
+  ],
+  "floor_range": [
+    2,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "         .xx.        ",
+    "        .xxxx.       ",
+    "       .xx..xx.      ",
+    "       xx....xx      ",
+    "      .xx....xx.     ",
+    "      xxx....xxx     ",
+    "    .xxx......xxx.   ",
+    "  .xxxxx......xxxxx. ",
+    " .xxxx..........xxxx.",
+    ".xx................xx",
+    "xx.<<...............+",
+    "xx.<<...............+",
+    ".xx................xx",
+    " .xxxx..........xxxx.",
+    "  .xxxxx......xxxxx. ",
+    "    .xxx......xxx.   ",
+    "      xxx....xxx     ",
+    "      .xx....xx.     ",
+    "       xx....xx      ",
+    "       .xx..xx.      ",
+    "        .xxxx.       ",
+    "         .xx.        "
+  ],
+  "spawns": {}
+}

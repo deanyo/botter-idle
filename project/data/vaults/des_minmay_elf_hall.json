@@ -1,0 +1,61 @@
+{
+  "name": "des_minmay_elf_hall",
+  "size": [
+    39,
+    36
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "elf",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "xxxxxxxxxxxxx.............xxxxxxxxxxxxx",
+    "xxxxxxxxxxxxx...x.....x...xxxxxxxxxxxxx",
+    "xxxxxxxxxxxxx.....x.x.....xxxxxxxxxxxxx",
+    "xxxxxxxxxxxxx.x.........x.xxxxxxxxxxxxx",
+    "xxxxxxxxxxxxx.....x.x.....xxxxxxxxxxxxx",
+    "xxxxxxxxxxxxx...x.....x...xxxxxxxxxxxxx",
+    "xxxx.....xxxx.............xxxx.....xxxx",
+    "xx.........xxxxx.......xxxxx.........xx",
+    "x............x...........x............x",
+    "x.3.................................4.x",
+    "x.....6......5...........5......6.....x",
+    "x.3.................................4.x",
+    "x........3.........7.........3........x",
+    "xx...................................xx",
+    "xxx.5............6...6............5.xxx",
+    "xx...................................xx",
+    "x.........4........7........4.........x",
+    "x.1.................................2.x",
+    "x.....7......5...........5......7.....x",
+    "x.1.................................2.x",
+    "x............x...........x............x",
+    "xx.........xxxxx.......xxxxx.........xx",
+    "xxxx..+..xxxxxxxxx...xxxxxxxxx..+..xxxx",
+    "xxxx..*..xxxxxxxxx...xxxxxxxxx..*..xxxx",
+    "xxxx..*..xxxxxxxxx...xxxxxxxxx..*..xxxx",
+    "xxxx.....xxxxxxxxx...xxxxxxxxx.....xxxx",
+    "xxxxxxxxxxxxxxxxxx...xxxxxxxxxxxxxxxxxx",
+    "xxxxxxxxxxxxxxxxxx...xxxxxxxxxxxxxxxxxx",
+    "xxxxxxxx.....xxx.......xxx.....xxxxxxxx",
+    "xxxxx......*.....6...6.....*......xxxxx",
+    "xxx...*..*....+.........+....*.*....xxx",
+    "xx..*..*.........7...7....*......*...xx",
+    "x...*.*.*.*....x.......x....*..*......x",
+    "x..*....*....xxxxxxxxxxxxx.....*....*.x",
+    "x.........xxxxxxxxxxxxxxxxxxx.........x",
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+  ],
+  "spawns": {}
+}

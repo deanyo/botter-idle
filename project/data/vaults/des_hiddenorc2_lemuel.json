@@ -1,0 +1,44 @@
+{
+  "name": "des_hiddenorc2_lemuel",
+  "size": [
+    13,
+    13
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "mines",
+    "orc"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "xx.xxxxxxxx.x",
+    "x111xxxxx111x",
+    ".1.1.....1.1.",
+    "x111xxxxx111x",
+    "xx.x+xxx+x.xx",
+    "xx.xx...xx.xx",
+    "xx.xx...xx.xx",
+    "xx.xx...xx.xx",
+    "xx.x+xxx+x.xx",
+    "x111xxxxx111x",
+    ".1.1.....1.1.",
+    "x111xxxxx111x",
+    "xx.xxxxxxx.xx"
+  ],
+  "spawns": {
+    "1": {
+      "enemy_pool": [
+        "orc"
+      ]
+    }
+  }
+}

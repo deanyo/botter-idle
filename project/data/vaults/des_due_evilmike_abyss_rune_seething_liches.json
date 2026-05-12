@@ -1,0 +1,43 @@
+{
+  "name": "des_due_evilmike_abyss_rune_seething_liches",
+  "size": [
+    17,
+    17
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "abyss",
+    "dungeon"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "no_monster_gen"
+  ],
+  "grid": [
+    "        x xxx....",
+    "       x x xx++x.",
+    "      x x xx...+.",
+    "     x x xx....+.",
+    "    x x xx2....xx",
+    "   x x xx2....xx ",
+    "  x x xx3.1.2xx x",
+    "x ....x4.1.2xx x ",
+    " .....C...3xx x x",
+    "....+.++.4xx x x ",
+    "..+.1.++Cxx x x  ",
+    "...12..... x x   ",
+    "..+..21+..x x    ",
+    ".....1.... x     ",
+    "....+.+...x      ",
+    " ........        ",
+    "  ...... x       "
+  ],
+  "spawns": {}
+}

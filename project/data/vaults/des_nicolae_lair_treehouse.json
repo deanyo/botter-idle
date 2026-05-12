@@ -1,0 +1,34 @@
+{
+  "name": "des_nicolae_lair_treehouse",
+  "size": [
+    9,
+    7
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "lair",
+    "forest"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    ".........",
+    ".x.....x.",
+    ".........",
+    ".........",
+    ".....S...",
+    ".xx...xx.",
+    "........."
+  ],
+  "spawns": {}
+}

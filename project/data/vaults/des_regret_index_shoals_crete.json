@@ -1,0 +1,58 @@
+{
+  "name": "des_regret_index_shoals_crete",
+  "size": [
+    12,
+    26
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "shoals"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "no_monster_gen"
+  ],
+  "grid": [
+    "       x..  ",
+    "      xx..  ",
+    "     xxx..  ",
+    ".....x....  ",
+    ".5..xx...x  ",
+    "...xx4...x  ",
+    "...+..1..xx ",
+    ".*xx.C....x ",
+    ".xx.......xx",
+    "xx4........x",
+    "xx.x.......x",
+    "x....x.....x",
+    "x...1.1.....",
+    "x....x.....x",
+    "xx.x.......x",
+    "xx2........x",
+    ".xx.......xx",
+    ".*xx.C....x ",
+    "...+..1..xx ",
+    "...xx2...x  ",
+    ".3..xx...x  ",
+    ".....x....  ",
+    "     xx...  ",
+    "      xx..  ",
+    "       x..  ",
+    "       x.   "
+  ],
+  "spawns": {
+    "1": {
+      "enemy_pool": [
+        "snapping_turtle"
+      ]
+    }
+  }
+}

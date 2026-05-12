@@ -1,0 +1,51 @@
+{
+  "name": "des_lemuel_acid_trip",
+  "size": [
+    20,
+    19
+  ],
+  "orient": "centre",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "zot",
+    "slime"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "       xx++xx       ",
+    "     xxx....xxx     ",
+    "   xxx..4444..xxx   ",
+    "  xx....4554....xx  ",
+    " xx..............xx ",
+    " x................x ",
+    "xx................xx",
+    "x.......1111.......x",
+    "x.......1.11.......x",
+    "x.5.....11.1.....5.x",
+    "x.......1.11.......x",
+    "x.......1111.......x",
+    "xx................xx",
+    " x................x ",
+    " xx..............xx ",
+    "  xx............xx  ",
+    "   xxx..4444..xxx   ",
+    "     xxx4554xxx     ",
+    "       xxxxxx       "
+  ],
+  "spawns": {
+    "1": {
+      "enemy_pool": [
+        "acid_blob",
+        "jelly"
+      ]
+    }
+  }
+}

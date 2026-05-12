@@ -1,0 +1,47 @@
+{
+  "name": "des_erik_lair_dragon",
+  "size": [
+    49,
+    11
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "lair",
+    "forge"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "xxxxxxx.xxx.xxx.xxxxxxxxxx...xxxxxxxxxxxxxxxxxxxx",
+    "x.....2...2.........xx.xxx2..xxxxxxxxxxxxxxxxxxxx",
+    "x....................xx....xxxxxxxxxxxx.xxx.xxxxx",
+    "x.................2....xxxx.xxxxxxxxxxxx...xxx.xx",
+    "x.......x.2...1.........x.x.xxxxxx.xx.2.xxx......",
+    "x...+........................xx..xx..xxxxx...xx.x",
+    "x.......x................2...xxx.....xxxxxxxxxxxx",
+    "xxxx..x.xxxx....xxx..x.xx........2.xxxxxxxxxxxxxx",
+    "xxxxx.2..xxx.*x.xxx.xx2.x.xx.x.xxx.xxxxxxxxxxxxxx",
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+  ],
+  "spawns": {
+    "2": {
+      "enemy_pool": [
+        "wyvern"
+      ]
+    },
+    "1": {
+      "enemy_pool": [
+        "steam_dragon"
+      ]
+    }
+  }
+}

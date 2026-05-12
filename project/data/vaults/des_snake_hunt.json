@@ -1,0 +1,74 @@
+{
+  "name": "des_snake_hunt",
+  "size": [
+    37,
+    44
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "snake"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "xxxxxxxxxxxxxxxxxxxxxxxx...xxxxxxxxxx",
+    "xxxxxxxxxx...xxxxxxxxxx....xxxxxxxxxx",
+    "xxxxxxxxx..x..xxxxxxx.........xxxxxxx",
+    "xxxxxxxx..xxx.xxxxxx...........xxxxxx",
+    "xxxxxxxx.xxx..xxxxxx....1.1.....xxxxx",
+    "xxxxxxxx.xx....xxxx...11...1.....xxxx",
+    "xxxxxxx..x......xxx..1......1....xxxx",
+    "xxxxxxx.xx......xxx...............xxx",
+    "xxxxxx..x........x................xxx",
+    "xxxxxxx.x........x.....xx.x.......xxx",
+    "xxxxxxx.x........x...xx....x.......xx",
+    "xxxxxx..x........xx.x.......x......xx",
+    "xxxxxx.xxx......xxxx...1....x......xx",
+    "xxxxx..xxx......xxxx22.......x.....xx",
+    "xxxxxx.xxxx....xxxx.22...T...x.....xx",
+    "xxxxxx.x..xx..xxxxx...........x..3..x",
+    "xxxxxx.65.xxx.xxxxx.5.........x.....x",
+    "xxxxx..664.xx4.xxx.5..T.....T.x...3.x",
+    "xxxx..44656..5.x.x.3...........x.....",
+    "xxxx...6556.33...+.33................",
+    "xxxx..44656..5.x.x.3...........x.....",
+    "xxxxx..664.xx4.xxx.4..T.....T.x...3.x",
+    "xxxxxx.65.xxx.xxxxx.4.........x.....x",
+    "xxxxxx.x..xx..xxxxx...........x..3..x",
+    "xxxxxx.xxxx....xxxx.11...T...x.....xx",
+    "xxxxx..xxx......xxxx11.......x.....xx",
+    "xxxxxx.xxx......xxxx...2....x......xx",
+    "xxxxxx..x........xx.x.......x......xx",
+    "xxxxxxx.x........x...xx....x.......xx",
+    "xxxxxxx.x........x.....xxxx.......xxx",
+    "xxxxxx..x........x................xxx",
+    "xxxxxxx.xx......xxx...............xxx",
+    "xxxxxxx..x......xxx..2......2....xxxx",
+    "xxxxxxxx.xx....xxxx...22...2.....xxxx",
+    "xxxxxxxx.xxx..xxxxxx....2.2.....xxxxx",
+    "xxxxxxxx..xxx.xxxxxx...........xxxxxx",
+    "xxxxxxxxx..x..xxxxxxx.........xxxxxxx",
+    "xxxxxxxxxx...xxxxxxxxxx....xxxxxxxxxx",
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+  ],
+  "spawns": {
+    "1": {
+      "enemy_pool": [
+        "naga"
+      ]
+    }
+  }
+}

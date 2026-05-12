@@ -1,0 +1,38 @@
+{
+  "name": "des_hellmonk_spider_spawner",
+  "size": [
+    19,
+    11
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "spider"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent",
+    "no_monster_gen"
+  ],
+  "grid": [
+    "      xxxxxxx      ",
+    "    xxx.....xxxx   ",
+    "   xx....x.....xx  ",
+    "   x....xxx..x..xx ",
+    "xxxx...xxxxx.....xx",
+    "......xxxxxxx..x.1x",
+    "xxxx...xxxxx.....xx",
+    "   x....xxx..x..xx ",
+    "   xx....x.....xx  ",
+    "    xxx.....xxxx   ",
+    "      xxxxxxx      "
+  ],
+  "spawns": {}
+}

@@ -1,0 +1,42 @@
+{
+  "name": "des_nicolae_crypt_stairsoleum",
+  "size": [
+    16,
+    16
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "crypt",
+    "dungeon"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "..xxSSx..x..xx..",
+    "...x..x..x..x...",
+    "x..............x",
+    "xx............xx",
+    "......x..x......",
+    ".....xx..xx.....",
+    "xx..xx....xx..xx",
+    "................",
+    "................",
+    "xx..xx....xx..xx",
+    ".....xx..xx.....",
+    "......x..x......",
+    "xx............xx",
+    "x..............x",
+    "...x..x..x..x...",
+    "..xx..x..x..xx.."
+  ],
+  "spawns": {}
+}

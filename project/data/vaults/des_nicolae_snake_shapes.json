@@ -1,0 +1,39 @@
+{
+  "name": "des_nicolae_snake_shapes",
+  "size": [
+    19,
+    13
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "snake"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "      .....        ",
+    "   ...........     ",
+    " ......xxx......   ",
+    " ........x.......  ",
+    "...xxx..xx..xxx... ",
+    ".....x..x.....x... ",
+    "....xx..xxx..xx....",
+    " ...x.....x..x.....",
+    " ...xxx..xx..xxx...",
+    "  .......x........ ",
+    "   ......xxx...... ",
+    "     ...........   ",
+    "        .....      "
+  ],
+  "spawns": {}
+}

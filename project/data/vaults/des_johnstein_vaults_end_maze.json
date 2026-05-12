@@ -1,0 +1,51 @@
+{
+  "name": "des_johnstein_vaults_end_maze",
+  "size": [
+    23,
+    27
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "  xxxxxxxxxxxxxxxxxxx  ",
+    " ..................... ",
+    "x.xxx.............xxx.x",
+    "x.x*xxxx.......xxxx*x.x",
+    "x.xx*.9xx.....xx9.*xx.x",
+    "x..x....xx.9.xx....x..x",
+    "x..x9.............9x..x",
+    "x..x...............x..x",
+    "x..x..xxxxx.xxxxx..x..x",
+    "x..x..x.x.....x.x..x..x",
+    "x..xx.xx..xxx..xx.xx..x",
+    "x...x..x.x9.9x.x..x...x",
+    "x......xx..x..xx......x",
+    "x...9.9.x9x.x9x.9.9...x",
+    "x......xx..x..xx......x",
+    "x...x..x.x9.9x.x..x...x",
+    "x..xx.xx..xxx..xx.xx..x",
+    "x..x..xSx.....x.x..x..x",
+    "x..x..xxxxx.xxxxx..x..x",
+    "x..x...............x..x",
+    "x..x9.............9x..x",
+    "x..x....xx.9.xx....x..x",
+    "x.xx*.9xx.....xx9.*xx.x",
+    "x.x*xxxx.......xxxx*x.x",
+    "x.xxx.............xxx.x",
+    " ....................  ",
+    "  xxxxxxxxxxxxxxxxxxx  "
+  ],
+  "spawns": {}
+}

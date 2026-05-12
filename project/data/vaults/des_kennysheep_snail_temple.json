@@ -1,0 +1,38 @@
+{
+  "name": "des_kennysheep_snail_temple",
+  "size": [
+    22,
+    14
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "lair"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "       xxxxxxxxxxxx   ",
+    "      xx...1........  ",
+    "     xx.xxxxxxxxxxx   ",
+    "    xx.xx.....xxxxx   ",
+    "    x..x..........xx  ",
+    " xxxx.x.........xx.xxx",
+    "....1.....1.1....1...x",
+    " xxx............x....x",
+    "   xx..........x..xx.x",
+    "    xxxx......xx.xxx.x",
+    "       xxxxxxxx.xx x.x",
+    "      .....1...xx  x.x",
+    "       xxxxxxxxx   x.x",
+    "                    . "
+  ],
+  "spawns": {}
+}

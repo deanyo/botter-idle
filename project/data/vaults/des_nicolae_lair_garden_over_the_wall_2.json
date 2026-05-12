@@ -1,0 +1,38 @@
+{
+  "name": "des_nicolae_lair_garden_over_the_wall_2",
+  "size": [
+    17,
+    12
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "lair"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "    .xx.         ",
+    ".....xx...       ",
+    ".xxxxxxxx.       ",
+    ".xxxxxxxx.  .....",
+    ".xx....xx.  .xxxx",
+    ".xx.  .xx.  .xxxx",
+    ".xx.  .xx.  .xx..",
+    ".xx.  .xx....xx. ",
+    "      .xxxxxxxx. ",
+    "      .xxxxxxxx. ",
+    "      .......xx. ",
+    "            .xx. "
+  ],
+  "spawns": {}
+}

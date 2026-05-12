@@ -1,0 +1,51 @@
+{
+  "name": "des_nicolae_spider_corner",
+  "size": [
+    24,
+    27
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "spider"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "xxxxxxxxxxxxxxxxxxxxxxxx",
+    "xxxxxxxxxxx....xxxxxxxxx",
+    "xx..x...x.x......x..x..x",
+    "xx........xxx.......x..x",
+    "xx....x...xxx..x.......x",
+    "x.....x...xxx..xx......x",
+    "x.....xx..xxx..xxxCxx..x",
+    "x..x...x..xxx..xxxCCx.xx",
+    "x..xx..x...xx...xxCCxx.x",
+    "x...xx.x...x.....CCCx...",
+    "xx...x..x..x..x..CCxxx..",
+    "xxx........x..x...Cxx...",
+    "xx.........x..x...xxx.. ",
+    "xx............xxxxxx... ",
+    "xxxxx.........xxxxx...x ",
+    "xxxxxx.........xxxx...x ",
+    "xx..xxxxxxxx..........x ",
+    "xx....xxxxxxx........x  ",
+    "x........xxx..xx....x   ",
+    "x........xx........x    ",
+    "x..xxxx...x.......x     ",
+    "x..xxxxx.....xx...      ",
+    "x..x...xx...xxx...      ",
+    "x......xxxxxxxx...      ",
+    "x.........xxx.....      ",
+    "xx..x.x..........       ",
+    "xxxxxxxxx......         "
+  ],
+  "spawns": {}
+}

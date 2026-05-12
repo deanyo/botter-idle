@@ -1,0 +1,55 @@
+{
+  "name": "des_beast_lair_carwin_large_4",
+  "size": [
+    13,
+    29
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "lair"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "42xx....   . ",
+    "..x.x....... ",
+    "..x..........",
+    " .xx..xxx... ",
+    " ..x..x3xxx. ",
+    " x.xx....3x. ",
+    " x..x.1.xxx. ",
+    " ...x.1.xx.. ",
+    " .x..x...... ",
+    " ..x.......  ",
+    "..2xx......  ",
+    " x4x4...x... ",
+    " xxxT.x..x.. ",
+    ".xxxx.x..xx..",
+    "xxxx..x..4x..",
+    " xxx...2xxx.1",
+    "..x...xx..x. ",
+    "............ ",
+    ".....x..x... ",
+    "1....x..xx.x ",
+    ".3......2x.  ",
+    ".....x..4x.  ",
+    ".....xxxxx.  ",
+    " ..2. x....  ",
+    "....  x...x. ",
+    " ...1....x   ",
+    " . ..  x..   ",
+    " .      .    ",
+    "        .    "
+  ],
+  "spawns": {}
+}

@@ -1,0 +1,47 @@
+{
+  "name": "des_vaults_end_nooodl_tilted_maze",
+  "size": [
+    27,
+    23
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "  xxxxxxxxxxxxxxxxxxxxxxx  ",
+    " ..xx..xx......9x..9xx.... ",
+    "x..xx...........xx..xx....x",
+    "x........9..xx..xx........x",
+    "x.......xxxxxx...x........x",
+    "x...xx..xx***....x9..xx..xx",
+    "xx..xx..*x*..9...xx..xx...x",
+    "xx.....9*x*..xxxxxx.......x",
+    "x.....***xx*.xx.......9...x",
+    "x9...xxxxxx......9....xx.9x",
+    "xxx..xx***x.9.....xxxxxx..x",
+    "xxx......*x...xxxxxx***...x",
+    "x........*xxxxxx...x*9....x",
+    "x...9.xx.*xx.....9.x*..xxxx",
+    "x.xxxxxx...........xx..xx.x",
+    "x.xx...x.....9.xx..xx.....x",
+    "x....9.x...xxxxxx.......9.x",
+    "x......xx..xx...9.......xxx",
+    "x..xx..xx.9.x.......xx..xxx",
+    "xxxxx.......x...xx..xx....x",
+    "x..9....9...xx..xx........x",
+    " .......xx..xx...9........ ",
+    "  xxxxxxxxxxxxxxxxxxxxxxx  "
+  ],
+  "spawns": {}
+}

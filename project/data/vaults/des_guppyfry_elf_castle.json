@@ -1,0 +1,50 @@
+{
+  "name": "des_guppyfry_elf_castle",
+  "size": [
+    14,
+    12
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "elf",
+    "vaults"
+  ],
+  "floor_range": [
+    2,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "..............",
+    ".xx.xx++xx.xx.",
+    ".x..1....1*.x.",
+    ".x........2.x.",
+    ".xxx+x++x+xxx.",
+    ".x...x..x...x.",
+    ".x...x..x...x.",
+    ".xx.xx..xx.xx.",
+    ".x.2.x..x...x.",
+    ".x1*1x..x1.1x.",
+    ".xx.xx..xx.xx.",
+    ".............."
+  ],
+  "spawns": {
+    "1": {
+      "enemy_pool": [
+        "deep_elf_pyromancer"
+      ]
+    },
+    "2": {
+      "enemy_pool": [
+        "deep_elf_sorcerer"
+      ]
+    }
+  }
+}

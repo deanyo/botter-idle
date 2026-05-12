@@ -1,0 +1,51 @@
+{
+  "name": "des_vaults_end_minmay_odd_checkers",
+  "size": [
+    23,
+    27
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "  xxxxxxxxxxxxxxxxxxx  ",
+    "  ...xx..xx..xx99x999. ",
+    "x....xx..xx..xx..x....x",
+    "x...9.................x",
+    "x..9..................x",
+    "xxx....xx..xx....x.99.x",
+    "xxx....xx99xx....x....x",
+    "x................x....x",
+    "x................x....x",
+    "x..xx..9.xx..xx..x....x",
+    "x..xx.9..xx..xx99x....x",
+    "x................x....x",
+    "x...............*x....x",
+    "xxx99xx....xx...*x....x",
+    "xxx..xx....xx....x....x",
+    "x.........9......x9...x",
+    "x........9....99.x.9..x",
+    "x..xx..xx....xx9.x..9.x",
+    "x..xx..xx...9xx..x...9x",
+    "x...........99...x....x",
+    "x.......**.......x....x",
+    "xxx99xxxxxxxxxxxxx.xxxx",
+    "x9.........9..........x",
+    "x9.....9....9....x....x",
+    "x9.....9.....9...x....x",
+    " .............9..x.... ",
+    "  xxxxxxxxxxxxxxxxxxx  "
+  ],
+  "spawns": {}
+}
