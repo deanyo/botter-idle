@@ -813,6 +813,16 @@ func _on_enemy_died(actor: Actor) -> void:
 	if e == null or not is_instance_valid(e):
 		return
 	floor_kills += 1
+	# Combat effect: biome-themed kill flash. Forge → fire, Glacier → ice,
+	# others → blood splat.
+	var biome_id: String = String(current_biome.get("id", ""))
+	var kill_pos: Vector2 = e.position + Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5)
+	if biome_id == "forge" or biome_id == "pandemonium":
+		Effects.fire_flash(actor_layer, kill_pos)
+	elif biome_id == "glacier":
+		Effects.ice_shatter(actor_layer, kill_pos)
+	else:
+		Effects.blood_splat(actor_layer, kill_pos)
 	bot.gain_xp(e.xp_reward)
 	var gold_drop: int = rng.randi_range(1, 5) + current_floor
 	bot.gold += gold_drop
@@ -961,11 +971,15 @@ func _spawn_altar(at_cell: Vector2i) -> void:
 	interactables.append(altar)
 	altar.blessed.connect(_on_altar_blessed)
 
-func _on_altar_blessed(_altar: Altar, blessing: Dictionary) -> void:
+func _on_altar_blessed(altar: Altar, blessing: Dictionary) -> void:
 	floor_altars_used += 1
 	var bname: String = String(blessing.get("name", "blessing"))
 	var bdesc: String = String(blessing.get("desc", ""))
 	_log("Received %s — %s" % [bname, bdesc])
+	# Magic shimmer at altar position for divine-grant flair.
+	if is_instance_valid(altar):
+		var pos: Vector2 = altar.position + Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5)
+		Effects.magic_shimmer(actor_layer, pos)
 
 func _spawn_portal(at_cell: Vector2i) -> void:
 	var portal := Portal.new()
@@ -1321,6 +1335,13 @@ func _complete_loot_pickup(drop: LootDrop) -> void:
 	loot_drops.erase(drop)
 	interactables.erase(drop)
 	drop.consumed = true
+	# Magic shimmer for legendaries; gold sparkle for rares.
+	var rarity: String = String(item.get("rarity", ""))
+	var pickup_pos: Vector2 = drop.position + Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5)
+	if rarity == "legendary":
+		Effects.magic_shimmer(actor_layer, pickup_pos)
+	elif rarity == "rare":
+		Effects.gold_burst(actor_layer, pickup_pos)
 	if bot.fx:
 		bot.fx.loot_pop()
 	drop.play_pickup_then_free()

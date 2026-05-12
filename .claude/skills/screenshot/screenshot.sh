@@ -91,6 +91,36 @@ fi
 wait $PID 2>/dev/null || true
 
 if [[ -z "$NEW_PATH" ]]; then
+    # Auto-recover from a stale class_name cache. If the log shows a
+    # "not declared" parse error, refresh and retry once before giving up.
+    if grep -q 'Parse Error.*not declared' "$LOG" 2>/dev/null; then
+        echo "screenshot: detected stale class cache, refreshing and retrying..." >&2
+        bash "$REPO/tools/refresh_class_cache.sh" >/dev/null 2>&1 || true
+        # Retry the launch once.
+        "$GODOT" --path "$PROJECT" >>"$LOG" 2>&1 &
+        PID=$!
+        DEADLINE=$(( $(date +%s) + TIMEOUT_S ))
+        while [[ $(date +%s) -lt $DEADLINE ]]; do
+            if [[ -f "$MANIFEST" ]]; then
+                CUR=$(grep '^LAST=' "$MANIFEST" 2>/dev/null | tail -1 | sed 's/^LAST=//' || true)
+                if [[ -n "$CUR" && "$CUR" != "$PREV_LAST" ]]; then
+                    NEW_PATH="$CUR"
+                    break
+                fi
+            fi
+            if ! kill -0 $PID 2>/dev/null; then break; fi
+            sleep 0.25
+        done
+        if kill -0 $PID 2>/dev/null; then
+            kill $PID 2>/dev/null || true
+            sleep 0.4
+            kill -9 $PID 2>/dev/null || true
+        fi
+        wait $PID 2>/dev/null || true
+    fi
+fi
+
+if [[ -z "$NEW_PATH" ]]; then
     echo "screenshot: no new manifest entry detected after ${TIMEOUT_S}s" >&2
     echo "log: $LOG" >&2
     tail -20 "$LOG" >&2

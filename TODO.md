@@ -80,10 +80,11 @@ The "1.5 variety pass" originally listed as 9 sub-stages. Status:
 - ⬜ **1.5e Special features** — vault glyphs `t` / `L` / `W` / `I` / `B` /
   `M`. Some are partially done (KFEAT supports altar/fountain/stairs);
   terrain types (lava-as-floor with damage, water-as-slow-floor) are not.
-- ⬜ **1.5f Door tiles** — vault `+` glyph still renders as plain floor;
-  needs an actual door sprite + per-biome variants.
-- ⬜ **1.5g Combat effects** — blood splatter, fire flash, ice shatter,
-  magic shimmer, smoke poof. None wired (`effect/*` tiles untapped).
+- ✅ **1.5f Door tiles** — vault `+` glyph renders as closed/runed/sealed
+  door per biome (3 sprites, mapping in MapRenderer.DOOR_BY_BIOME).
+- ✅ **1.5g Combat effects** — Effects helper class. Biome-themed kill
+  flashes (fire/ice/blood), magic shimmer on legendary pickups + altar
+  grants, gold sparkle on rares.
 - ⬜ **1.5h Negative space** — partially done via fog; could be tighter
   (smaller playable area, tighter camera).
 - ⬜ **1.5i DCSS-style UI** — side panel HP/MP bars, minimap top-right,
@@ -187,11 +188,12 @@ Still want:
 
 Quality-of-life upgrades to land before more feature work piles up.
 
-### Permission allowlist
+### Permission allowlist — DONE
 
-Add common Godot/git/grep/find paths to `.claude/settings.json` so Claude
-doesn't prompt on every launch. Audit a session's prompt log; stuff
-recurring patterns into the allowlist. ~30+ clicks saved per session.
+Shipped. .claude/settings.json now allows common patterns: read-only git
+(status/log/diff/show), python3, bash skills, find/grep/sed/awk/jq, file
+ops, etc. Destructive ops (rm, git push, git reset --hard, gh) stay
+behind `ask`.
 
 ### Save-state isolation — DONE
 
@@ -199,13 +201,12 @@ Shipped: `SaveState.debug_mode = true` when AUTO_GRIND or DEBUG_FLOOR
 markers are present, routing IO to `user://botter_save_debug.json`. Live
 `botter_save.json` is untouched by benchmark/screenshot runs.
 
-### class_name refresh wrapper
+### class_name refresh wrapper — DONE
 
-When a new GDScript `class_name` is added, headless launches fail with a
-"class not declared" parse error until the global script cache is
-regenerated via `godot --headless --import`. Build `tools/refresh_class_cache.sh`
-that wraps it. Better: detect "Parse Error: ... not declared" in our
-skill scripts and auto-run `--import` then retry.
+Shipped: `tools/refresh_class_cache.sh` wraps `godot --headless --import`
+and reports class count. Both `/screenshot` and `/grind` skills auto-detect
+"Parse Error: ... not declared" in their log output and re-run with
+refresh.
 
 ### Pre-commit headless validation
 
@@ -235,8 +236,9 @@ debug-jump's per-biome 1-floor mode.
 - ⬜ **Player paper-doll** — 975 layered sprites for custom bot appearance.
   Deferred to post-MVP cosmetics. Architecture sketch: base body + per-slot
   overlays, `equipped` dict picks `tile_override` per slot.
-- ⬜ **23 god altar variants** — currently use 7. Adding more is a JSON edit
-  when desired.
+- ✅ **God altar variants** — expanded from 7 to 22. Beogh/Makhleb/Yred/
+  TSO/Lugonu/Jiyva/Fedhas/Cheibriados/Xom/Ashenzari/Dithmenos/Gozag/
+  Qazlal/Nemelex/Ru added with thematic blessings + glow colors.
 - ⬜ **Organic flame jitter** — torches/candles/lava currently use uniform
   tween-based flicker; should be broadband per-light noise. Implementation
   in `LightSpec._apply_flicker`.

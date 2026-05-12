@@ -4,7 +4,20 @@ extends Node2D
 const C := preload("res://scripts/constants.gd")
 
 const STAIRS_DOWN_TEX := preload("res://assets/tiles/gateways/stairs_down.png")
-const DOOR_TEX := preload("res://assets/tiles/features/closed_door.png")
+const DOOR_PLAIN := preload("res://assets/tiles/features/closed_door.png")
+const DOOR_RUNED := preload("res://assets/tiles/features/runed_door.png")
+const DOOR_SEALED := preload("res://assets/tiles/features/sealed_door.png")
+# Biome → door texture preference. Falls back to DOOR_PLAIN for unlisted biomes.
+const DOOR_BY_BIOME := {
+	"crypt":     "runed",
+	"tomb":      "runed",
+	"vaults":    "sealed",
+	"depths":    "sealed",
+	"elf":       "runed",
+	"zot":       "runed",
+	"pandemonium": "runed",
+	"abyss":     "runed",
+}
 
 const FLOOR_PATCH_COUNT := 14
 const WALL_PATCH_COUNT := 10
@@ -84,7 +97,7 @@ func render(g: Array, rs: Array, biome: Dictionary, rng: RandomNumberGenerator, 
 			if cell == C.T_STAIRS_DOWN:
 				_place(STAIRS_DOWN_TEX, x, y)
 			if cell == C.T_DOOR:
-				_place(DOOR_TEX, x, y)
+				_place(_door_texture_for(biome), x, y)
 			# Edge overlay: stamped on floor cells that border walls. Picked
 			# directionally so e.g. grass tufts spill in from the wall side.
 			if not edge_overlay.is_empty() and (cell == C.T_FLOOR or cell == C.T_DOOR or cell == C.T_STAIRS_DOWN):
@@ -101,6 +114,13 @@ func render(g: Array, rs: Array, biome: Dictionary, rng: RandomNumberGenerator, 
 	var density: Vector2i = BiomeData.sigil_density(biome)
 	if not sigil_set.is_empty() and density.y > 0 and not rooms.is_empty():
 		_stamp_room_sigils(sigil_set, density, protected_cells, rng)
+
+func _door_texture_for(biome: Dictionary) -> Texture2D:
+	var biome_id: String = String(biome.get("id", ""))
+	match DOOR_BY_BIOME.get(biome_id, "plain"):
+		"runed":  return DOOR_RUNED
+		"sealed": return DOOR_SEALED
+		_:        return DOOR_PLAIN
 
 func _stamp_decor_marks(vault_results: Dictionary, _rng: RandomNumberGenerator) -> void:
 	var decor: Array = vault_results.get("decor_marks", [])

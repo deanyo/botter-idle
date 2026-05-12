@@ -95,9 +95,10 @@ counter does not advance during the side-trip.
   names. 5 stats wired to combat (hp/atk/def/hp_pct/atk_pct); 24 others parse
   but don't affect gameplay yet.
 - **Interactables**: chests (burst items in arcs on open), fountains (heal
-  40-60% HP, bot only stops if injured), altars (7 god-themed run-ephemeral
-  blessings — Trog/Okawaru/Zin/Elyvilon/Vehumet/Kikubaaqudgha/Sif Muna),
-  portals (above).
+  40-60% HP, bot only stops if injured), altars (22 god-themed
+  run-ephemeral blessings — Trog/Okawaru/Zin/Elyvilon/Vehumet/Kiku/Sif Muna
+  + Beogh/Makhleb/Yred/TSO/Lugonu/Jiyva/Fedhas/Cheibriados/Xom/Ashenzari/
+  Dithmenos/Gozag/Qazlal/Nemelex/Ru), portals (above).
 - **Sprite FX**: per-actor Tween-driven squash/stretch — attack lunge, hit
   squish + flash, death spin/shrink, kneel-on-interact, loot pop.
 - **Run journal**: per-floor narrative log (DCSS-morgue style) shown on run
@@ -127,6 +128,28 @@ Wired to biomes:
 
 The renderer reads `biome.edge_overlay = {"prefix": "grass", "density": 0.85,
 "patch_density": 0.06}`.
+
+## Doors
+
+Vault `+` glyph renders as `closed_door`/`runed_door`/`sealed_door` based
+on biome. Stone-tier biomes (vaults/depths) get sealed iron; ritual
+biomes (crypt/tomb/elf/zot/pandemonium/abyss) get runed; everywhere else
+gets the plain wooden closed door. Three sprites in
+`project/assets/tiles/features/`. Mapping in `MapRenderer.DOOR_BY_BIOME`.
+
+## Combat effects
+
+Lightweight `Effects` helper (`scripts/effects.gd`) — one-shot Sprite2D
+fades. Hooks:
+
+- Enemy died → biome-themed kill flash. Forge/Pandemonium → fire,
+  Glacier → ice, everywhere else → blood splat.
+- Legendary loot picked up → magic shimmer.
+- Rare loot picked up → gold sparkle.
+- Altar grant → magic shimmer at the altar.
+
+7 effect tiles in `project/assets/tiles/effects/`. Each spawn tweens
+scale + alpha and queue_frees itself; no persistent state.
 
 ## Big-creature visual scaling
 

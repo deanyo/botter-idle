@@ -79,6 +79,35 @@ fi
 wait $PID 2>/dev/null || true
 
 if [[ $DONE -eq 0 ]]; then
+    # Auto-recover from stale class_name cache.
+    if grep -q 'Parse Error.*not declared' "$LOG" 2>/dev/null; then
+        echo "grind: detected stale class cache, refreshing and retrying..." >&2
+        bash "$REPO/tools/refresh_class_cache.sh" >/dev/null 2>&1 || true
+        echo "${SPEED},${RUNS}" > "$GRIND_MARKER"
+        "$GODOT" --path "$PROJECT" --headless >>"$LOG" 2>&1 &
+        PID=$!
+        DEADLINE=$(( $(date +%s) + TIMEOUT_S ))
+        while [[ $(date +%s) -lt $DEADLINE ]]; do
+            if grep -q '\[run\] auto-grind COMPLETE' "$LOG" 2>/dev/null; then
+                DONE=1
+                break
+            fi
+            if ! kill -0 $PID 2>/dev/null; then
+                if grep -q '\[run\] auto-grind COMPLETE' "$LOG" 2>/dev/null; then DONE=1; fi
+                break
+            fi
+            sleep 0.5
+        done
+        if kill -0 $PID 2>/dev/null; then
+            kill $PID 2>/dev/null || true
+            sleep 0.4
+            kill -9 $PID 2>/dev/null || true
+        fi
+        wait $PID 2>/dev/null || true
+    fi
+fi
+
+if [[ $DONE -eq 0 ]]; then
     echo "grind: did not complete within ${TIMEOUT_S}s — last 30 log lines:" >&2
     tail -30 "$LOG" >&2
     echo "log: $LOG" >&2
