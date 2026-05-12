@@ -196,12 +196,10 @@ func _log_floor_metrics(layout_id: String, theme: String, floor_num: int, w: int
 		bad.append("orphan_cells=%d" % orphan)
 	if bbox_w * bbox_h < 400:
 		bad.append("bbox<400")
-	var msg: String = "[floor-metrics] floor=%d biome=%s layout=%s floor_cells=%d largest_region=%d regions=%d bbox=%dx%d rooms=%d vaults=%s" % [
+	var msg: String = "[gen] f=%d biome=%s layout=%s cells=%d largest=%d regions=%d bbox=%dx%d rooms=%d vaults=%s" % [
 		floor_num, theme, layout_id, floor_count, largest, region_count,
 		bbox_w, bbox_h, rooms.size(), str(vault_results.get("placed_vaults", [])),
 	]
-	if Engine.has_singleton("GrindLog"):
-		pass  # GrindLog is autoload; fall through to direct call
 	if not bad.is_empty():
 		msg = "[bad-floor] " + " ".join(bad) + " | " + msg
 	GrindLog.log_line(msg)

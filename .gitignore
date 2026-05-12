@@ -29,6 +29,10 @@ __pycache__/
 
 # Local-only debug + grind scratch
 /tmp/
+# In-repo logs (timestamped per-run; persistent for diff/grep but not pushed)
+logs/
+# Local screenshot copies (canonical lives in user://debug_screenshots/)
+screenshots/
 
 # Project-local Claude config (only commit settings.json shared cfg if you want)
 .claude/settings.local.json

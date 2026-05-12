@@ -51,6 +51,24 @@ var bot_target_cell: Vector2i = Vector2i(-1, -1)
 var bot_target_kind: String = ""
 var dist_to_stairs: Array = []
 var ticks_without_move: int = 0
+# Per-floor accumulating counters, reset on _build_floor, emitted on floor_cleared.
+var floor_start_tick: int = 0
+var floor_kills: int = 0
+var floor_loot_picked: int = 0
+var floor_chests_opened: int = 0
+var floor_altars_used: int = 0
+var floor_fountains_used: int = 0
+var floor_portals_entered: int = 0
+var floor_stalls: int = 0
+var floor_hard_recoveries: int = 0
+var floor_starting_hp: int = 0
+# Run-wide counters for run-end summary.
+var run_kills: int = 0
+var run_loot_picked: int = 0
+var run_portals_entered: int = 0
+var run_stalls: int = 0
+var run_vaults_stamped: Array = []
+var run_biomes_visited: Array = []
 const MAX_TICKS_WITHOUT_MOVE := 30
 var hud_layer: CanvasLayer = null
 var hud_name_label: Label = null
@@ -107,6 +125,14 @@ func _start_run() -> void:
 	bot.gold = int(save.get("gold", 0))
 	bot.clear_blessings()
 	bot.apply_gear(items_db, save.get("equipped", {}))
+	# Reset run-wide counters at run start
+	run_kills = 0
+	run_loot_picked = 0
+	run_portals_entered = 0
+	run_stalls = 0
+	run_vaults_stamped = []
+	run_biomes_visited = []
+	GrindLog.log_line("[run] start hp=%d/%d level=%d gold=%d" % [bot.hp, bot.max_hp, bot.level, bot.gold])
 	_build_floor()
 
 func _build_floor() -> void:
@@ -139,6 +165,15 @@ func _build_floor() -> void:
 	bot_interacting = false
 	interact_target = null
 	interact_timer = 0.0
+	floor_start_tick = Engine.get_process_frames()
+	floor_kills = 0
+	floor_loot_picked = 0
+	floor_chests_opened = 0
+	floor_altars_used = 0
+	floor_fountains_used = 0
+	floor_portals_entered = 0
+	floor_stalls = 0
+	floor_hard_recoveries = 0
 
 	if DebugJump.active and DebugJump.biome_id != "":
 		# Replace the run plan with a 10-floor stretch of the debug biome so
@@ -172,7 +207,11 @@ func _build_floor() -> void:
 	rooms = data.rooms
 	stairs_cell = data.get("stairs_down", _find_stairs_cell())
 	dist_to_stairs = data.get("dist_to_stairs", [])
-	_apply_vault_results(data.get("vault_results", {}))
+	var vr: Dictionary = data.get("vault_results", {})
+	_apply_vault_results(vr)
+	for vname in vr.get("placed_vaults", []):
+		if not run_vaults_stamped.has(String(vname)):
+			run_vaults_stamped.append(String(vname))
 
 	visited_rooms = []
 	visited_rooms.resize(rooms.size())
@@ -216,6 +255,7 @@ func _build_floor() -> void:
 
 	_spawn_enemies()
 	_update_biome_hud()
+	floor_starting_hp = bot.hp
 	floor_started.emit(current_floor)
 
 	# Debug-jump screenshot mode: after a short settle delay, save the
@@ -230,8 +270,9 @@ func _schedule_debug_screenshot() -> void:
 	t.timeout.connect(_capture_debug_screenshot)
 
 func _capture_debug_screenshot() -> void:
-	# Reveal the whole map for vault inspection — fog defeats the purpose of
-	# screenshot debugging, since the bot's tiny LoS hides 95% of every vault.
+	# Window has been pre-sized to 1024x1024 in main.gd at scene start. Here
+	# we just: reveal fog, fit camera, wait one frame, save_png, write the
+	# manifest, quit. No runtime resolution mutations.
 	if fog and grid.size() > 0:
 		var w: int = grid[0].size()
 		var h: int = grid.size()
@@ -241,35 +282,20 @@ func _capture_debug_screenshot() -> void:
 		fog._update_texture()
 		if current_renderer:
 			current_renderer.apply_visibility(fog)
-		# Snap renderer to fully-visible without waiting for fade.
-		if current_renderer:
 			for key in current_renderer.cell_target_alpha.keys():
 				current_renderer.cell_current_alpha[key] = 1.0
 				current_renderer.cell_target_alpha[key] = 1.0
 				for s in current_renderer.cell_sprites[key]:
 					if is_instance_valid(s):
 						s.modulate = Color(1, 1, 1, 1)
-		# Disable fog shader entirely so the whole map is fully bright.
 		if fog_overlay:
 			fog_overlay.set_darkness(0.0)
-		# Also disable ambient modulate so walls aren't tinted dim.
 		if ambient_modulate:
 			ambient_modulate.color = Color(1, 1, 1, 1)
-		# Boost the bot's torch radius dramatically and disable shadow casting
-		# so the entire vault is lit without occlusion.
 		if bot_light:
 			bot_light.shadow_enabled = false
 			bot_light.texture_scale = 50.0
 			bot_light.energy = 2.5
-		# Bump viewport to 1920x1920 so the screenshot captures fine vault
-		# detail at zoom-out. Mobile portrait 540x960 is too cramped for audit.
-		# Disable content scaling entirely so 1 viewport pixel == 1 screen pixel.
-		var win: Window = get_window()
-		if win:
-			win.content_scale_mode = Window.CONTENT_SCALE_MODE_DISABLED
-			win.size = Vector2i(1920, 1920)
-		# Reveal all entities (interactables, decor) since they're normally
-		# fog-gated.
 		for inter in interactables:
 			if is_instance_valid(inter):
 				inter.visible = true
@@ -282,10 +308,7 @@ func _capture_debug_screenshot() -> void:
 		for n in ambient_decor_nodes:
 			if is_instance_valid(n):
 				n.visible = true
-		# Pan the camera to the map center and zoom out to fit the whole vault.
-		# Need a frame for the window resize to propagate before computing zoom.
-		await get_tree().process_frame
-		if camera and grid.size() > 0:
+		if camera:
 			camera.position = Vector2(w * C.TILE_SIZE * 0.5, h * C.TILE_SIZE * 0.5)
 			var view_size: Vector2 = get_viewport().get_visible_rect().size
 			var map_w_px: float = float(w * C.TILE_SIZE)
@@ -294,24 +317,27 @@ func _capture_debug_screenshot() -> void:
 			var zoom_y: float = view_size.y / max(1.0, map_h_px)
 			var zoom: float = minf(zoom_x, zoom_y) * 0.92
 			camera.zoom = Vector2(zoom, zoom)
-		await get_tree().process_frame
-		await get_tree().process_frame
+	# One frame after the camera/fog/visibility are set, render and capture.
+	await get_tree().process_frame
+	await RenderingServer.frame_post_draw
 	var img: Image = get_viewport().get_texture().get_image()
 	var dir := DirAccess.open("user://")
 	if dir != null and not dir.dir_exists("debug_screenshots"):
 		dir.make_dir("debug_screenshots")
-	# Each screenshot gets a unique millisecond-precision filename so the
-	# external Read tool can never serve stale content from a previous run.
-	# A separate manifest file always points at the latest screenshot path
-	# for the most-recently-screenshot biome — Claude reads the manifest,
-	# extracts the path, then Reads that uniquely-named PNG.
 	var name: String = DebugJump.biome_id
 	if DebugJump.vault_name != "":
 		name += "_" + DebugJump.vault_name
 	var ts: int = Time.get_ticks_msec()
 	var path := "user://debug_screenshots/%s_%d.png" % [name, ts]
 	img.save_png(path)
-	# Manifest: latest path for this name, plus a global "last" path.
+	# Sidecar JSON with EVERYTHING Claude can't reliably read off a downscaled
+	# pixel-art screenshot. The PNG is just shape/silhouette; this is truth.
+	var sidecar_path: String = "user://debug_screenshots/%s_%d.json" % [name, ts]
+	var meta: Dictionary = _collect_render_manifest(img, path, ts)
+	var jf := FileAccess.open(sidecar_path, FileAccess.WRITE)
+	if jf:
+		jf.store_string(JSON.stringify(meta, "  "))
+		jf.close()
 	var manifest_path := "user://debug_screenshots/_manifest.txt"
 	var existing: Dictionary = {}
 	if FileAccess.file_exists(manifest_path):
@@ -323,14 +349,217 @@ func _capture_debug_screenshot() -> void:
 					existing[p[0].strip_edges()] = p[1].strip_edges()
 	existing[name] = path
 	existing["LAST"] = path
+	existing["LAST_JSON"] = sidecar_path
 	var wf := FileAccess.open(manifest_path, FileAccess.WRITE)
 	if wf:
 		var keys: Array = existing.keys()
 		keys.sort()
 		for k in keys:
 			wf.store_line("%s=%s" % [k, existing[k]])
-	print("[debug-screenshot] saved %s (size=%dx%d)" % [path, img.get_width(), img.get_height()])
+		wf.close()
+	print("[debug-screenshot] saved %s + %s" % [path, sidecar_path])
 	get_tree().quit()
+
+func _collect_render_manifest(img: Image, png_path: String, ts: int) -> Dictionary:
+	# Comprehensive render manifest. Everything that informs what a Claude
+	# image-reviewer should "see" — biome config, layout, all loaded textures,
+	# overlay set, every entity on the floor with its cell, walls vs floor
+	# counts, stairs/spawn, room rects, ambient settings, etc.
+	var w: int = grid[0].size() if grid.size() > 0 else 0
+	var h: int = grid.size()
+	var floor_count: int = 0
+	var wall_count: int = 0
+	var door_count: int = 0
+	var stair_count: int = 0
+	for y in h:
+		for x in w:
+			var v: int = grid[y][x]
+			if v == C.T_FLOOR: floor_count += 1
+			elif v == C.T_WALL: wall_count += 1
+			elif v == C.T_DOOR: door_count += 1
+			elif v == C.T_STAIRS_DOWN: stair_count += 1
+
+	var floor_primary: Array = BiomeData.load_floor_primary(current_biome)
+	var floor_accent: Array = BiomeData.load_floor_accent(current_biome)
+	var wall_primary: Array = BiomeData.load_wall_primary(current_biome)
+	var wall_accent: Array = BiomeData.load_wall_accent(current_biome)
+	var wall_alts: Array = BiomeData.load_wall_alternates(current_biome)
+	var edge_overlay: Dictionary = BiomeData.load_edge_overlay(current_biome)
+
+	var floor_primary_paths: Array = []
+	for tex in floor_primary:
+		if tex and tex.resource_path:
+			floor_primary_paths.append(String(tex.resource_path))
+	var floor_accent_paths: Array = []
+	for tex in floor_accent:
+		if tex and tex.resource_path:
+			floor_accent_paths.append(String(tex.resource_path))
+	var wall_primary_paths: Array = []
+	for tex in wall_primary:
+		if tex and tex.resource_path:
+			wall_primary_paths.append(String(tex.resource_path))
+	var wall_accent_paths: Array = []
+	for tex in wall_accent:
+		if tex and tex.resource_path:
+			wall_accent_paths.append(String(tex.resource_path))
+	var wall_alt_summary: Array = []
+	for entry in wall_alts:
+		var paths: Array = []
+		for tex in entry.get("textures", []):
+			if tex and tex.resource_path:
+				paths.append(String(tex.resource_path))
+		wall_alt_summary.append({"weight": entry.get("weight", 0), "textures": paths})
+	var overlay_summary: Dictionary = {}
+	for k in edge_overlay.keys():
+		var val = edge_overlay[k]
+		if val is Texture2D:
+			overlay_summary[String(k)] = String(val.resource_path) if val.resource_path else "(unloaded)"
+		elif val is Array:
+			var arr: Array = []
+			for tex in val:
+				if tex is Texture2D and tex.resource_path:
+					arr.append(String(tex.resource_path))
+			overlay_summary[String(k)] = arr
+		else:
+			overlay_summary[String(k)] = val
+
+	# Every enemy with id + cell + hp
+	var enemy_list: Array = []
+	for e in enemies:
+		if not is_instance_valid(e): continue
+		enemy_list.append({
+			"id": String(e.enemy_id) if "enemy_id" in e else "",
+			"name": String(e.display_name) if "display_name" in e else "",
+			"cell": [int(e.cell.x), int(e.cell.y)],
+			"hp": int(e.hp) if "hp" in e else 0,
+			"max_hp": int(e.max_hp) if "max_hp" in e else 0,
+			"is_boss": bool(e.is_boss) if "is_boss" in e else false,
+			"is_miniboss": bool(e.is_miniboss) if "is_miniboss" in e else false,
+		})
+
+	# Every interactable
+	var inter_list: Array = []
+	for i in interactables:
+		if not is_instance_valid(i): continue
+		var kind: String = "unknown"
+		var extra: Dictionary = {}
+		if i is Chest:
+			kind = "chest"
+			extra["bias"] = i.rarity_bias
+			extra["drops"] = i.drop_count
+		elif i is Fountain:
+			kind = "fountain"
+		elif i is Altar:
+			kind = "altar"
+			extra["god"] = i.god
+		elif i is Portal:
+			kind = "portal"
+			extra["portal_kind"] = i.kind
+		elif i is LootDrop:
+			kind = "loot"
+			if "item" in i:
+				extra["item_id"] = i.item.get("id", "")
+				extra["rarity"] = i.item.get("rarity", "")
+		else:
+			kind = String(i.get_class())
+		inter_list.append({
+			"kind": kind,
+			"cell": [int(i.cell.x), int(i.cell.y)],
+			"consumed": bool(i.consumed) if "consumed" in i else false,
+		} if extra.is_empty() else {
+			"kind": kind,
+			"cell": [int(i.cell.x), int(i.cell.y)],
+			"consumed": bool(i.consumed) if "consumed" in i else false,
+			"extra": extra,
+		})
+
+	# Rooms (BSP rectangles)
+	var room_list: Array = []
+	for r in rooms:
+		room_list.append({
+			"x": int(r.position.x), "y": int(r.position.y),
+			"w": int(r.size.x), "h": int(r.size.y),
+		})
+
+	return {
+		"png": png_path,
+		"timestamp_ms": ts,
+		"requested": {
+			"biome_id": DebugJump.biome_id,
+			"vault_name": DebugJump.vault_name,
+			"floor_num": DebugJump.floor_num,
+		},
+		"resolved": {
+			"biome_id": String(current_biome.get("id", "?")),
+			"display_name": String(current_biome.get("display_name", "")),
+			"layout_id": current_biome.get("layout", ""),
+			"layouts_pool": current_biome.get("layouts", []),
+			"vault_themes": current_biome.get("vault_themes", []),
+			"darkness": float(current_biome.get("darkness", 0.0)),
+			"modulate": current_biome.get("modulate", []),
+			"map_size": current_biome.get("map_size", []),
+			"enemy_pool": current_biome.get("enemy_pool", []),
+			"ambient_decor": current_biome.get("ambient_decor", []),
+			"ambient_density": current_biome.get("ambient_density", 0.0),
+		},
+		"render_textures": {
+			"floor_primary_count": floor_primary_paths.size(),
+			"floor_primary_samples": floor_primary_paths,
+			"floor_accent_count": floor_accent_paths.size(),
+			"floor_accent_samples": floor_accent_paths,
+			"wall_primary": wall_primary_paths,
+			"wall_accent": wall_accent_paths,
+			"wall_alternates": wall_alt_summary,
+			"edge_overlay": overlay_summary,
+		},
+		"hud": {
+			"name": hud_name_label.text if is_instance_valid(hud_name_label) else "",
+			"place": hud_place_label.text if is_instance_valid(hud_place_label) else "",
+			"hp": hud_hp_label.text if is_instance_valid(hud_hp_label) else "",
+			"atk": hud_atk_label.text if is_instance_valid(hud_atk_label) else "",
+			"def": hud_def_label.text if is_instance_valid(hud_def_label) else "",
+			"xp": hud_xp_label.text if is_instance_valid(hud_xp_label) else "",
+			"gold": hud_gold_label.text if is_instance_valid(hud_gold_label) else "",
+		},
+		"bot": {
+			"cell": [int(bot.cell.x), int(bot.cell.y)] if is_instance_valid(bot) else [],
+			"hp": int(bot.hp) if is_instance_valid(bot) else 0,
+			"max_hp": int(bot.max_hp) if is_instance_valid(bot) else 0,
+			"atk": int(bot.atk) if is_instance_valid(bot) else 0,
+			"def": int(bot.defense) if is_instance_valid(bot) else 0,
+			"level": int(bot.level) if is_instance_valid(bot) else 0,
+			"xp": int(bot.xp) if is_instance_valid(bot) else 0,
+			"gold": int(bot.gold) if is_instance_valid(bot) else 0,
+		},
+		"floor": {
+			"number": current_floor,
+			"width": w,
+			"height": h,
+			"floor_cells": floor_count,
+			"wall_cells": wall_count,
+			"door_cells": door_count,
+			"stair_cells": stair_count,
+			"rooms": room_list,
+			"spawn_cell": [int(bot.cell.x), int(bot.cell.y)] if is_instance_valid(bot) else [],
+			"stairs_cell": [int(stairs_cell.x), int(stairs_cell.y)],
+			"placed_vaults_this_run": run_vaults_stamped,
+			"branch_label": BiomeData.branch_depth_label(run_plan, current_floor),
+		},
+		"entities": {
+			"enemies": enemy_list,
+			"interactables": inter_list,
+			"vault_decor_sprite_count": vault_decor_sprites.size(),
+			"ambient_decor_node_count": ambient_decor_nodes.size(),
+		},
+		"render": {
+			"image_width": img.get_width(),
+			"image_height": img.get_height(),
+			"pixels_per_tile": C.TILE_SIZE,
+			"camera_position": [camera.position.x, camera.position.y] if camera else [],
+			"camera_zoom": [camera.zoom.x, camera.zoom.y] if camera else [],
+		},
+		"warning": "DCSS pixel-art at 32px tiles, downscaled to a 1024px square. Trust this JSON for facts (biome, HUD, stats, entity positions, tile palettes). The PNG is reliable for shape, layout structure, and broad color silhouettes only.",
+	}
 
 func _ensure_hud() -> void:
 	if hud_layer != null:
@@ -338,10 +567,11 @@ func _ensure_hud() -> void:
 	hud_layer = CanvasLayer.new()
 	hud_layer.layer = 10
 	add_child(hud_layer)
+	var size_mult: float = 1.5 if (DebugJump.active and DebugJump.screenshot) else 1.0
 	var bg := ColorRect.new()
 	bg.color = Color(0, 0, 0, 0.78)
 	bg.position = Vector2(0, 0)
-	bg.size = Vector2(360, 240)
+	bg.size = Vector2(360, 240) * size_mult
 	hud_layer.add_child(bg)
 	var amber := Color(0.92, 0.78, 0.45)
 	var dim := Color(0.7, 0.6, 0.4)
@@ -350,13 +580,13 @@ func _ensure_hud() -> void:
 	hud_hp_label = _hud_label("HP:   0/  0", Vector2(10, 70), Color(0.6, 1.0, 0.55))
 	hud_hp_bar_bg = ColorRect.new()
 	hud_hp_bar_bg.color = Color(0.18, 0.05, 0.05, 0.9)
-	hud_hp_bar_bg.position = Vector2(10, 100)
-	hud_hp_bar_bg.size = Vector2(340, 10)
+	hud_hp_bar_bg.position = Vector2(10, 100) * size_mult
+	hud_hp_bar_bg.size = Vector2(340, 10) * size_mult
 	hud_layer.add_child(hud_hp_bar_bg)
 	hud_hp_bar = ColorRect.new()
 	hud_hp_bar.color = Color(0.45, 0.85, 0.4, 1.0)
-	hud_hp_bar.position = Vector2(10, 100)
-	hud_hp_bar.size = Vector2(340, 10)
+	hud_hp_bar.position = Vector2(10, 100) * size_mult
+	hud_hp_bar.size = Vector2(340, 10) * size_mult
 	hud_layer.add_child(hud_hp_bar)
 	hud_atk_label = _hud_label("ATK: 0", Vector2(10, 118), amber)
 	hud_def_label = _hud_label("DEF: 0", Vector2(170, 118), amber)
@@ -366,11 +596,15 @@ func _ensure_hud() -> void:
 func _hud_label(text: String, pos: Vector2, color: Color) -> Label:
 	var lbl := Label.new()
 	lbl.text = text
-	lbl.position = pos
+	# Screenshot mode bumps everything 1.7x — at 1920x1920 with the gameplay
+	# HUD's mobile-portrait sizing the labels are unreadable when scaled to a
+	# 600px audit thumbnail. In gameplay we keep the smaller HUD.
+	var size_mult: float = 1.5 if (DebugJump.active and DebugJump.screenshot) else 1.0
+	lbl.position = pos * size_mult
 	lbl.add_theme_color_override("font_color", color)
 	lbl.add_theme_color_override("font_outline_color", Color(0, 0, 0))
 	lbl.add_theme_constant_override("outline_size", 3)
-	lbl.add_theme_font_size_override("font_size", 22)
+	lbl.add_theme_font_size_override("font_size", int(22 * size_mult))
 	hud_layer.add_child(lbl)
 	return lbl
 
@@ -382,7 +616,8 @@ func _update_biome_hud() -> void:
 	if is_instance_valid(bot):
 		hud_hp_label.text = "HP: %3d/%3d" % [bot.hp, bot.max_hp]
 		var hp_pct: float = clampf(float(bot.hp) / maxf(1.0, float(bot.max_hp)), 0.0, 1.0)
-		hud_hp_bar.size = Vector2(100.0 * hp_pct, 10)
+		var bar_mult: float = 1.5 if (DebugJump.active and DebugJump.screenshot) else 1.0
+		hud_hp_bar.size = Vector2(100.0 * hp_pct * bar_mult, 10.0 * bar_mult)
 		hud_atk_label.text = "ATK: %d" % bot.atk
 		hud_def_label.text = "DEF: %d" % bot.defense
 		hud_xp_label.text = "XL: %d" % bot.level
@@ -550,6 +785,7 @@ func _on_enemy_died(actor: Actor) -> void:
 	var e := actor as Enemy
 	if e == null or not is_instance_valid(e):
 		return
+	floor_kills += 1
 	bot.gain_xp(e.xp_reward)
 	var gold_drop: int = rng.randi_range(1, 5) + current_floor
 	bot.gold += gold_drop
@@ -630,6 +866,7 @@ func _spawn_fountain(at_cell: Vector2i, kind: String) -> void:
 	fountain.drank.connect(_on_fountain_drank)
 
 func _on_fountain_drank(_fountain: Fountain, heal: int, kind: String) -> void:
+	floor_fountains_used += 1
 	_log("Drank from a %s fountain (+%d HP)." % [kind, heal])
 
 func _apply_vault_results(results: Dictionary) -> void:
@@ -698,6 +935,7 @@ func _spawn_altar(at_cell: Vector2i) -> void:
 	altar.blessed.connect(_on_altar_blessed)
 
 func _on_altar_blessed(_altar: Altar, blessing: Dictionary) -> void:
+	floor_altars_used += 1
 	var bname: String = String(blessing.get("name", "blessing"))
 	var bdesc: String = String(blessing.get("desc", ""))
 	_log("Received %s — %s" % [bname, bdesc])
@@ -716,6 +954,8 @@ func _on_portal_entered(_portal: Portal, kind: String, biome_id: String, loot_bi
 	var def: Dictionary = Portal.PORTAL_KINDS.get(kind, {})
 	var portal_name: String = String(def.get("name", "Portal"))
 	_log("Stepped through a %s portal." % portal_name)
+	GrindLog.log_line("[portal] entered=%s -> biome=%s bias=%d on_floor=%d" % [kind, biome_id, loot_bias, current_floor])
+	floor_portals_entered += 1
 	portal_active = true
 	portal_kind = kind
 	portal_biome_override = override
@@ -786,12 +1026,7 @@ func _tick_bot(delta: float) -> void:
 			_begin_interaction(inter)
 			return
 
-	# Logging: dump state every ~120 ticks if we're not making progress.
-	if Engine.get_process_frames() % 240 == 0:
-		GrindLog.log_line("[grind-debug] bot=%s target=%s kind=%s path_idx=%d/%d enemies=%d alive_adjacent=%d" % [
-			str(bot.cell), str(bot_target_cell), bot_target_kind, bot.path_index, bot.path.size(),
-			enemies.size(), _count_alive_adjacent_enemies(),
-		])
+	# Tick-level state probe is gated to stall-recovery only (see _check_stuck).
 
 	# If ANY enemy is adjacent, attack it. Don't switch targets while in melee.
 	var adjacent_enemy: Enemy = null
@@ -932,18 +1167,18 @@ func _check_stuck() -> void:
 	if bot.cell == _last_bot_cell:
 		_stuck_ticks += 1
 		if _stuck_ticks == STUCK_THRESHOLD:
-			GrindLog.log_line("[grind] STALL %dt bot=%s target=%s kind=%s stairs=%s grid_at_stairs=%d enemies=%d interactables=%d unvisited_rooms=%d alive_adjacent=%d" % [
-				_stuck_ticks, str(bot.cell), str(bot_target_cell), bot_target_kind,
-				str(stairs_cell), grid[stairs_cell.y][stairs_cell.x] if stairs_cell.y >= 0 and stairs_cell.y < grid.size() and stairs_cell.x >= 0 and stairs_cell.x < grid[0].size() else -1,
-				enemies.size(), interactables.size(),
-				_count_unvisited_rooms(),
-				_count_alive_adjacent_enemies(),
+			floor_stalls += 1
+			GrindLog.log_line("[stall] f=%d ticks=%d bot=%s target=%s kind=%s stairs=%s enemies=%d interactables=%d unvisited_rooms=%d alive_adj=%d" % [
+				current_floor, _stuck_ticks, str(bot.cell), str(bot_target_cell), bot_target_kind,
+				str(stairs_cell), enemies.size(), interactables.size(),
+				_count_unvisited_rooms(), _count_alive_adjacent_enemies(),
 			])
 		if _stuck_ticks == STUCK_RECOVERY_THRESHOLD:
 			if not _stall_snapshot_taken:
 				_dump_stall_snapshot()
 				_stall_snapshot_taken = true
-			GrindLog.log_line("[grind] HARD-RECOVERY teleporting bot from %s to %s and descending" % [str(bot.cell), str(stairs_cell)])
+			floor_hard_recoveries += 1
+			GrindLog.log_line("[stall] HARD-RECOVERY f=%d teleport from=%s to=%s" % [current_floor, str(bot.cell), str(stairs_cell)])
 			if stairs_cell.x >= 0 and stairs_cell.y >= 0 and stairs_cell.y < grid.size() and stairs_cell.x < grid[0].size():
 				bot.place_at(stairs_cell)
 				_descend()
@@ -1052,6 +1287,7 @@ func _complete_loot_pickup(drop: LootDrop) -> void:
 	var inst: Dictionary = drop.instance
 	var item: Dictionary = drop.item
 	var display_name: String = AffixSystem.format_item_name(String(item.name), inst.get("affixes", []))
+	floor_loot_picked += 1
 	dropped_items.append(inst)
 	loot_log.append("Looted: [%s] %s" % [item.rarity, display_name])
 	_log("Found: %s [%s]" % [display_name, item.rarity])
@@ -1063,6 +1299,7 @@ func _complete_loot_pickup(drop: LootDrop) -> void:
 	drop.play_pickup_then_free()
 
 func _on_chest_opened(chest: Chest, n: int, bias: int) -> void:
+	floor_chests_opened += 1
 	var chest_world: Vector2 = chest.position + Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5)
 	for i in n:
 		var rarity: String = _roll_rarity_with_bias(bias)
@@ -1167,6 +1404,24 @@ func _room_center(r: Rect2i) -> Vector2i:
 	return Vector2i(r.position.x + int(r.size.x / 2.0), r.position.y + int(r.size.y / 2.0))
 
 func _descend() -> void:
+	# Per-floor summary line — one structured row per cleared floor. Emitted
+	# before floor_cleared so consumers see the data first.
+	var ticks: int = Engine.get_process_frames() - floor_start_tick
+	var biome_id: String = String(current_biome.get("id", "?"))
+	var floor_label: String = "%s%s" % [biome_id, ".portal" if portal_active else ""]
+	var hp_lost: int = max(0, floor_starting_hp - bot.hp)
+	GrindLog.log_line("[floor] f=%d biome=%s ticks=%d kills=%d loot=%d chests=%d altars=%d fountains=%d portals=%d stalls=%d hp_lost=%d" % [
+		current_floor, floor_label, ticks, floor_kills, floor_loot_picked,
+		floor_chests_opened, floor_altars_used, floor_fountains_used,
+		floor_portals_entered, floor_stalls, hp_lost,
+	])
+	# Run-wide accumulators
+	run_kills += floor_kills
+	run_loot_picked += floor_loot_picked
+	run_portals_entered += floor_portals_entered
+	run_stalls += floor_stalls
+	if not run_biomes_visited.has(biome_id):
+		run_biomes_visited.append(biome_id)
 	floor_cleared.emit(current_floor)
 	if portal_active:
 		# Portal stairs return to the run's main progression on the NEXT floor.

@@ -4,6 +4,7 @@ extends RefCounted
 const BIOMES_PATH := "res://data/biomes.json"
 const FLOOR_DIR := "res://assets/tiles/floor/"
 const WALL_DIR := "res://assets/tiles/wall/"
+const OVERLAY_DIR := "res://assets/tiles/overlays/"
 
 static var _biomes: Dictionary = {}
 static var _run_plans: Array = []
@@ -163,6 +164,44 @@ static func pick_ambient_decor(biome: Dictionary, rng: RandomNumberGenerator) ->
 
 static func ambient_density_for(biome: Dictionary) -> float:
 	return float(biome.get("ambient_density", 0.012))
+
+# Edge-overlay autotile loader. Returns a Dictionary keyed by direction:
+#   {"north": Texture, "south": Texture, "east", "west",
+#    "northeast", "northwest", "southeast", "southwest",
+#    "full": Texture (fully-enclosed; optional),
+#    "patches": Array (random spatter; optional)}
+# An empty dict signals "biome has no overlay".
+static func load_edge_overlay(biome: Dictionary) -> Dictionary:
+	var spec: Dictionary = biome.get("edge_overlay", {})
+	if spec.is_empty():
+		return {}
+	var prefix: String = String(spec.get("prefix", ""))
+	if prefix == "":
+		return {}
+	var dirs := ["north", "south", "east", "west",
+		"northeast", "northwest", "southeast", "southwest"]
+	var out: Dictionary = {}
+	for d in dirs:
+		var path: String = OVERLAY_DIR + prefix + "_" + d + ".png"
+		if ResourceLoader.exists(path):
+			out[d] = load(path)
+	# Optional fully-covered tile (used when ALL 4 cardinals are walls).
+	var full_path: String = OVERLAY_DIR + prefix + "_full.png"
+	if ResourceLoader.exists(full_path):
+		out["full"] = load(full_path)
+	# Optional patches (random spatter for cells with no wall neighbours).
+	var patches: Array = []
+	for i in range(0, 8):
+		var p: String = OVERLAY_DIR + prefix + "_" + str(i) + ".png"
+		if ResourceLoader.exists(p):
+			patches.append(load(p))
+		else:
+			break
+	if not patches.is_empty():
+		out["patches"] = patches
+	out["density"] = float(spec.get("density", 0.7))
+	out["patch_density"] = float(spec.get("patch_density", 0.04))
+	return out
 
 # Roll a layout id from the biome's weighted layouts table. Falls back to the
 # legacy single 'layout' field, then to 'basic', so older biome entries still work.

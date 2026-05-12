@@ -263,7 +263,12 @@
           "id": "basic",
           "weight": 1
         }
-      ]
+      ],
+      "edge_overlay": {
+        "prefix": "grass",
+        "density": 0.85,
+        "patch_density": 0.06
+      }
     },
     "forest": {
       "display_name": "the Forest",
@@ -348,7 +353,12 @@
           "id": "caves",
           "weight": 1
         }
-      ]
+      ],
+      "edge_overlay": {
+        "prefix": "grass",
+        "density": 0.95,
+        "patch_density": 0.1
+      }
     },
     "swamp": {
       "display_name": "the Swamp",
@@ -429,7 +439,12 @@
           "id": "caves_open",
           "weight": 2
         }
-      ]
+      ],
+      "edge_overlay": {
+        "prefix": "dirt",
+        "density": 0.85,
+        "patch_density": 0.05
+      }
     },
     "snake": {
       "display_name": "the Snake Pit",
@@ -483,7 +498,12 @@
           "id": "caves",
           "weight": 1
         }
-      ]
+      ],
+      "edge_overlay": {
+        "prefix": "dirt",
+        "density": 0.55,
+        "patch_density": 0.02
+      }
     },
     "shoals": {
       "display_name": "the Shoals",
@@ -553,7 +573,12 @@
           "id": "caves",
           "weight": 1
         }
-      ]
+      ],
+      "edge_overlay": {
+        "prefix": "shallow_water_wave",
+        "density": 0.6,
+        "patch_density": 0.0
+      }
     },
     "orc": {
       "display_name": "the Orc Hold",
@@ -1038,7 +1063,12 @@
           "id": "caves_tight",
           "weight": 1
         }
-      ]
+      ],
+      "edge_overlay": {
+        "prefix": "slime_overlay",
+        "density": 0.85,
+        "patch_density": 0.0
+      }
     },
     "hive": {
       "display_name": "the Hive",
@@ -1088,7 +1118,12 @@
           "id": "caves",
           "weight": 1
         }
-      ]
+      ],
+      "edge_overlay": {
+        "prefix": "dirt",
+        "density": 0.5,
+        "patch_density": 0.0
+      }
     },
     "labyrinth": {
       "display_name": "the Labyrinth",
@@ -1439,7 +1474,12 @@
           "id": "caves_tight",
           "weight": 2
         }
-      ]
+      ],
+      "edge_overlay": {
+        "prefix": "dirt",
+        "density": 0.5,
+        "patch_density": 0.02
+      }
     },
     "temple": {
       "display_name": "the Ecumenical Temple",

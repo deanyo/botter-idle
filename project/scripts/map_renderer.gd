@@ -39,9 +39,16 @@ func render(g: Array, rs: Array, biome: Dictionary, rng: RandomNumberGenerator) 
 	var wall_primary: Array = BiomeData.load_wall_primary(biome)
 	var wall_accent: Array = BiomeData.load_wall_accent(biome)
 	var wall_alternates: Array = BiomeData.load_wall_alternates(biome)
+	var edge_overlay: Dictionary = BiomeData.load_edge_overlay(biome)
 	if floor_primary.is_empty() or wall_primary.is_empty():
 		push_error("Biome %s missing primary tiles" % biome.get("id", "?"))
 		return
+	var overlay_label: String = "(none)"
+	if not edge_overlay.is_empty():
+		overlay_label = "n=%d cardinals" % int(edge_overlay.size() - 1)
+	GrindLog.log_line("[render] biome=%s floor_tiles=%d wall_tiles=%d overlay=%s" % [
+		String(biome.get("id","?")), floor_primary.size(), wall_primary.size(), overlay_label,
+	])
 
 	var h := grid.size()
 	var w: int = grid[0].size() if h > 0 else 0
@@ -69,6 +76,71 @@ func render(g: Array, rs: Array, biome: Dictionary, rng: RandomNumberGenerator) 
 				_place(STAIRS_DOWN_TEX, x, y)
 			if cell == C.T_DOOR:
 				_place(DOOR_TEX, x, y)
+			# Edge overlay: stamped on floor cells that border walls. Picked
+			# directionally so e.g. grass tufts spill in from the wall side.
+			if not edge_overlay.is_empty() and (cell == C.T_FLOOR or cell == C.T_DOOR or cell == C.T_STAIRS_DOWN):
+				_apply_edge_overlay(x, y, w, h, edge_overlay, rng)
+
+func _apply_edge_overlay(x: int, y: int, w: int, h: int, overlay: Dictionary, rng: RandomNumberGenerator) -> void:
+	# Determine which cardinals are walls (treat out-of-bounds as wall too —
+	# the map perimeter should overlay correctly even at the very edge).
+	var n_wall: bool = _is_wall_or_out(x, y - 1, w, h)
+	var s_wall: bool = _is_wall_or_out(x, y + 1, w, h)
+	var e_wall: bool = _is_wall_or_out(x + 1, y, w, h)
+	var w_wall: bool = _is_wall_or_out(x - 1, y, w, h)
+	var wall_count: int = int(n_wall) + int(s_wall) + int(e_wall) + int(w_wall)
+
+	var density: float = float(overlay.get("density", 0.7))
+	var patch_density: float = float(overlay.get("patch_density", 0.04))
+
+	if wall_count == 0:
+		# No bordering walls — optional random patch from the patches array.
+		var patches: Array = overlay.get("patches", [])
+		if patches.is_empty():
+			return
+		if _hash_chance(x, y, 17, rng.seed) >= patch_density:
+			return
+		var idx: int = _hash_idx(x, y, 19, rng.seed) % patches.size()
+		_place(patches[idx], x, y)
+		return
+
+	# Roll density gate so the overlay isn't on every wall-adjacent cell —
+	# gives a more organic look (some bare cells, some grass-spilling cells).
+	if _hash_chance(x, y, 23, rng.seed) >= density:
+		return
+
+	# All four cardinals are walls — use 'full' if we have one, else nothing.
+	if wall_count == 4:
+		if overlay.has("full"):
+			_place(overlay["full"], x, y)
+		return
+
+	# Two adjacent walls form a corner — pick the diagonal piece.
+	if n_wall and e_wall and overlay.has("northeast"):
+		_place(overlay["northeast"], x, y); return
+	if n_wall and w_wall and overlay.has("northwest"):
+		_place(overlay["northwest"], x, y); return
+	if s_wall and e_wall and overlay.has("southeast"):
+		_place(overlay["southeast"], x, y); return
+	if s_wall and w_wall and overlay.has("southwest"):
+		_place(overlay["southwest"], x, y); return
+
+	# Single-cardinal: use that direction. If two opposite walls (e.g. N+S),
+	# pick one randomly so we don't double-stamp.
+	var picks: Array = []
+	if n_wall and overlay.has("north"): picks.append("north")
+	if s_wall and overlay.has("south"): picks.append("south")
+	if e_wall and overlay.has("east"):  picks.append("east")
+	if w_wall and overlay.has("west"):  picks.append("west")
+	if picks.is_empty():
+		return
+	var dir: String = picks[_hash_idx(x, y, 29, rng.seed) % picks.size()]
+	_place(overlay[dir], x, y)
+
+func _is_wall_or_out(x: int, y: int, w: int, h: int) -> bool:
+	if x < 0 or y < 0 or x >= w or y >= h:
+		return true
+	return grid[y][x] == C.T_WALL
 
 func _wall_borders_floor(x: int, y: int, w: int, h: int) -> bool:
 	for dy in range(-1, 2):

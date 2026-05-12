@@ -68,9 +68,18 @@ func _ready() -> void:
 	if DebugJump.active:
 		auto_grind = false
 		Engine.time_scale = 1.0
+	# Screenshot mode: set up audit-resolution window FROM SCENE START so the
+	# Dungeon can render once at the right size without mid-capture mutations.
+	# 1024x1024 is the practical sweet spot for Claude's image pipeline (no
+	# additional downsampling beyond what claude.ai applies anyway).
+	if DebugJump.active and DebugJump.screenshot:
+		var win: Window = get_window()
+		if win:
+			win.content_scale_mode = Window.CONTENT_SCALE_MODE_DISABLED
+			win.size = Vector2i(1024, 1024)
 	if auto_grind:
 		GrindLog.enable()
-		_log("auto-grind ENABLED speed=%sx max_runs=%d" % [str(auto_grind_speed), auto_grind_max_runs])
+		GrindLog.log_line("[run] auto-grind ENABLED speed=%sx max_runs=%d" % [str(auto_grind_speed), auto_grind_max_runs])
 		Engine.time_scale = auto_grind_speed
 		auto_grind_start_time = Time.get_ticks_msec()
 		_on_deploy()
@@ -92,47 +101,35 @@ func _on_deploy() -> void:
 		dungeon.floor_started.connect(_on_floor_started)
 		dungeon.floor_cleared.connect(_on_floor_cleared)
 
-func _on_floor_started(floor_num: int) -> void:
-	if not auto_grind:
-		return
-	var d: Node = current_screen
-	if d == null:
-		return
-	var biome_id: String = "?"
-	var layout: String = "?"
-	if "current_biome" in d:
-		biome_id = String(d.current_biome.get("id", "?"))
-		layout = String(d.current_biome.get("layout", "?"))
-	var room_count: int = 0
-	if "rooms" in d:
-		room_count = d.rooms.size()
-	var enemy_count: int = 0
-	if "enemies" in d:
-		enemy_count = d.enemies.size()
-	var inter_count: int = 0
-	if "interactables" in d:
-		inter_count = d.interactables.size()
-	_log("floor %d  biome=%s  layout=%s  rooms=%d  enemies=%d  interactables=%d" % [floor_num, biome_id, layout, room_count, enemy_count, inter_count])
-	auto_grind_floors[floor_num] = {
-		"biome": biome_id,
-		"layout": layout,
-		"rooms": room_count,
-		"enemies": enemy_count,
-	}
+func _on_floor_started(_floor_num: int) -> void:
+	# Per-floor summary is emitted by Dungeon when the floor is cleared (see
+	# _descend in dungeon.gd). Nothing else to log here.
+	pass
 
-func _on_floor_cleared(floor_num: int) -> void:
-	if auto_grind:
-		_log("floor %d CLEARED" % floor_num)
+func _on_floor_cleared(_floor_num: int) -> void:
+	# Per-floor summary already emitted by Dungeon._descend before this signal.
+	pass
 
 func _on_run_ended(victory: bool, report: Dictionary) -> void:
 	if auto_grind:
 		auto_grind_runs += 1
 		var elapsed_ms: int = Time.get_ticks_msec() - auto_grind_start_time
-		_log("RUN %d ENDED  victory=%s  floor=%d  level=%d  gold=%d  elapsed=%.1fs" % [
-			auto_grind_runs, str(victory), int(report.floor), int(report.level), int(report.gold), elapsed_ms / 1000.0
+		var d: Node = current_screen
+		var run_kills: int = int(d.run_kills) if d and "run_kills" in d else 0
+		var run_loot: int = int(d.run_loot_picked) if d and "run_loot_picked" in d else 0
+		var run_portals: int = int(d.run_portals_entered) if d and "run_portals_entered" in d else 0
+		var run_stalls: int = int(d.run_stalls) if d and "run_stalls" in d else 0
+		var run_biomes: Array = d.run_biomes_visited if d and "run_biomes_visited" in d else []
+		var run_vaults: Array = d.run_vaults_stamped if d and "run_vaults_stamped" in d else []
+		GrindLog.log_line("[run] end #%d victory=%s floor=%d level=%d gold=%d kills=%d loot=%d portals=%d stalls=%d biomes=%d uniq_vaults=%d elapsed=%.1fs" % [
+			auto_grind_runs, str(victory), int(report.floor), int(report.level), int(report.gold),
+			run_kills, run_loot, run_portals, run_stalls,
+			run_biomes.size(), run_vaults.size(),
+			elapsed_ms / 1000.0,
 		])
+		GrindLog.log_line("[run] biomes=%s" % str(run_biomes))
 		if auto_grind_runs >= auto_grind_max_runs:
-			_log("auto-grind COMPLETE — %d runs done" % auto_grind_runs)
+			GrindLog.log_line("[run] auto-grind COMPLETE total=%d runs" % auto_grind_runs)
 			get_tree().quit()
 			return
 		_on_deploy()
