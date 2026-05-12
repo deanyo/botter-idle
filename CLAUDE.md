@@ -216,6 +216,20 @@ When porting a DCSS algorithm:
   used in this program are from the public domain roguelike tileset
   RLTiles. http://rltiles.sf.net"* and credit DCSS contributors (CC0).
 
+## Plan mode for multi-step work
+
+When a request will touch **4+ files** or changes architecture (new
+subsystem, generator rewrite, save-state schema migration, etc.), enter
+Plan mode first via `ExitPlanMode`. Surface:
+
+- Affected files (with line numbers when known)
+- Step-by-step sequence
+- Risk areas / what could break
+- Validation plan (which skill/test confirms it works)
+
+Get user approval before editing. Catches design mistakes earlier and
+produces a doc trail. For small changes (1-3 files, isolated) just edit.
+
 ## What NOT to do
 
 - **Don't pull in DCSS *source code*** — it's GPLv2+ and would force the

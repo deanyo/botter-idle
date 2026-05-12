@@ -179,6 +179,45 @@ Still want:
   `DungeonGenerator.generate()` 200× per layout, prints bad-floor rate per
   layout. Run before merging generator changes.
 
+## Tooling — infrastructure
+
+Quality-of-life upgrades to land before more feature work piles up.
+
+### Permission allowlist
+
+Add common Godot/git/grep/find paths to `.claude/settings.json` so Claude
+doesn't prompt on every launch. Audit a session's prompt log; stuff
+recurring patterns into the allowlist. ~30+ clicks saved per session.
+
+### Save-state isolation for grind / screenshot
+
+`/grind` and `/screenshot` currently use the same `user://botter_save.json`
+slot as live playtest. After a 100-run benchmark, the playtest bot is
+level 247 with 141k gold. Pollution.
+
+Fix options (pick one):
+- Add a `--save-slot=debug` flag honored by `SaveState.load_state()` /
+  `save_state()` and read from a marker field. Auto-grind + screenshot
+  pass this flag.
+- Or simpler: when the AUTO_GRIND/DEBUG_FLOOR markers are present, use
+  `user://botter_save_debug.json` exclusively. Live playtest is untouched.
+
+### class_name refresh wrapper
+
+When a new GDScript `class_name` is added, headless launches fail with a
+"class not declared" parse error until the global script cache is
+regenerated via `godot --headless --import`. Build `tools/refresh_class_cache.sh`
+that wraps it. Better: detect "Parse Error: ... not declared" in our
+skill scripts and auto-run `--import` then retry.
+
+### Pre-commit headless validation
+
+Run a 1-floor-per-biome smoke build, grep for `[bad-floor]` or any `ERROR`/
+`SCRIPT ERROR` in the output, exit non-zero if found. Wire as a pre-commit
+hook OR as a `tools/check_before_commit.sh` script. Catches generator
+regressions and parse errors before they land. Should take <30s with
+debug-jump's per-biome 1-floor mode.
+
 ## Tooling — skills
 
 - ✅ `/screenshot <biome> [vault] [floor]` — captures one PNG + JSON sidecar
