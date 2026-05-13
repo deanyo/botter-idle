@@ -3,6 +3,26 @@ extends Actor
 
 const BOT_TEX := preload("res://assets/tiles/player/bot_base.png")
 const LANTERN_TEX := preload("res://assets/tiles/player/bot_lantern.png")
+const WEAPON_DIR := "res://assets/tiles/player/weapons/"
+
+# Map weapon item base_id -> overlay sprite filename. When the bot's equipped
+# weapon changes, the overlay swaps. Unmapped weapons fall back to long_sword.
+const WEAPON_OVERLAYS := {
+	"rusty_dagger":   "dagger",
+	"iron_dagger":    "dagger",
+	"steel_dagger":   "dagger",
+	"orcish_dagger":  "dagger",
+	"elven_dagger":   "dagger",
+	"short_sword":    "short_sword",
+	"iron_short_sword": "short_sword",
+	"long_sword":     "long_sword",
+	"iron_sword":     "long_sword",
+	"steel_sword":    "long_sword",
+	"falchion":       "falchion",
+	"scimitar":       "scimitar",
+	"great_sword":    "great_sword",
+	"claymore":       "great_sword",
+}
 
 var level: int = 1
 var xp: int = 0
@@ -22,6 +42,8 @@ var lifesteal_per_hit: int = 0
 var loot_rarity_bonus: float = 0.0
 var xp_gain_pct: float = 0.0
 var _regen_accum: float = 0.0
+var weapon_sprite: Sprite2D = null
+var _weapon_swing_tween: Tween
 
 func clear_blessings() -> void:
 	blessings.clear()
@@ -60,6 +82,7 @@ func apply_gear(items_db: Dictionary, equipped_instances: Dictionary) -> void:
 	recompute_stats()
 	hp = max_hp
 	_update_hp_bar()
+	_refresh_weapon_overlay()
 
 func recompute_stats() -> void:
 	max_hp = base_max_hp + (level - 1) * 8
@@ -106,6 +129,47 @@ func _ready() -> void:
 	lantern.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	lantern.z_index = 1
 	add_child(lantern)
+	_refresh_weapon_overlay()
+
+func _refresh_weapon_overlay() -> void:
+	# Drop existing weapon sprite if any.
+	if is_instance_valid(weapon_sprite):
+		weapon_sprite.queue_free()
+		weapon_sprite = null
+	var wpn: Variant = equipped.get("weapon", null)
+	if wpn == null or typeof(wpn) != TYPE_DICTIONARY:
+		return
+	var base_id: String = String(wpn.get("base_id", ""))
+	var overlay_name: String = String(WEAPON_OVERLAYS.get(base_id, "long_sword"))
+	var path: String = WEAPON_DIR + overlay_name + ".png"
+	if not ResourceLoader.exists(path):
+		return
+	weapon_sprite = Sprite2D.new()
+	weapon_sprite.texture = load(path)
+	weapon_sprite.centered = true
+	# Position roughly at the bot's right hand (offset slightly down + right
+	# of cell centre). Tweaked to match where DCSS hand_right paperdoll sits.
+	weapon_sprite.position = Vector2(C.TILE_SIZE * 0.5 + 4, C.TILE_SIZE * 0.5 + 2)
+	weapon_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	weapon_sprite.z_index = 2
+	add_child(weapon_sprite)
+
+func swing_weapon(toward: Vector2) -> void:
+	if not is_instance_valid(weapon_sprite):
+		return
+	if _weapon_swing_tween and _weapon_swing_tween.is_valid():
+		_weapon_swing_tween.kill()
+	# Snap rotation to match swing direction, then ease back to neutral.
+	var target_rot: float = -PI / 2.0  # 90° anticlockwise (overhead arc)
+	if toward.x < 0:
+		target_rot = PI / 2.0  # right-handed → mirror for leftward swings
+	weapon_sprite.rotation = 0
+	weapon_sprite.scale = Vector2(1, 1)
+	_weapon_swing_tween = weapon_sprite.create_tween().set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	_weapon_swing_tween.tween_property(weapon_sprite, "rotation", target_rot, 0.06)
+	_weapon_swing_tween.parallel().tween_property(weapon_sprite, "scale", Vector2(1.25, 1.25), 0.06)
+	_weapon_swing_tween.tween_property(weapon_sprite, "rotation", 0.0, 0.14)
+	_weapon_swing_tween.parallel().tween_property(weapon_sprite, "scale", Vector2(1, 1), 0.14)
 
 func _process(delta: float) -> void:
 	if not is_alive or hp_regen_per_sec <= 0.0:
@@ -126,9 +190,13 @@ func take_damage(raw: int) -> int:
 
 func attempt_attack(other: Actor, delta: float) -> int:
 	var dealt := super.attempt_attack(other, delta)
-	if dealt > 0 and lifesteal_per_hit > 0:
-		hp = mini(max_hp, hp + lifesteal_per_hit)
-		_update_hp_bar()
+	if dealt > 0:
+		# Swing the equipped weapon overlay toward the target.
+		var toward: Vector2 = (other.position - position) if is_instance_valid(other) else Vector2.RIGHT
+		swing_weapon(toward)
+		if lifesteal_per_hit > 0:
+			hp = mini(max_hp, hp + lifesteal_per_hit)
+			_update_hp_bar()
 	return dealt
 
 func gain_xp(amount: int) -> void:

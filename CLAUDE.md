@@ -162,7 +162,7 @@ When porting a DCSS algorithm:
    system (Vector2i), our tile constants (`C.T_FLOOR`, `C.T_WALL`), our
    RNG (passed in), and our map dimensions. Don't open the .cc file again
    until you hit a question.
-4. **Translate constants**: DCSS uses 80×70 maps. We use 60×60. Scale
+4. **Translate constants**: DCSS uses 80×70 maps. We use 80×80. Scale
    absolute-coordinate constants proportionally. Bounds checks use our
    `MAP_W`/`MAP_H`.
 5. **Drop branch-specific edge cases.** DCSS has

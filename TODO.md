@@ -122,7 +122,9 @@ The "1.5 variety pass" originally listed as 9 sub-stages. Status:
 This is the only Botter-unique creative work:
 
 - ⬜ Configurable bot priorities (started — proximity-ranked behavior).
-  Config UI in Garage screen.
+  Config UI in Garage screen. Bot AI now has aggro range cap (8 cells),
+  current-room loot priority, low-HP retreat. Player exposing these as
+  Garage sliders is the next step.
 - ⬜ Run-config: which branches to attempt, gear loadout, behavioral
   preferences (greed vs caution, melee vs ranged).
 - ⬜ Idle reward curves (offline progress, time-gated rewards).

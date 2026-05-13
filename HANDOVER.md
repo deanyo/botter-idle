@@ -21,14 +21,23 @@ Sticky-target priority engine in `dungeon.gd`:
 1. Adjacent live enemy → attack (lock, don't switch).
 2. Has unfinished path? → keep walking, don't repick target.
 3. Target invalid (enemy died, interactable consumed) → drop path, repick.
-4. Pick goal in priority order: nearest enemy → nearest interactable → stairs.
-5. Mark room visited as bot passes through (incidental, no separate room navigation).
-
-Room navigation was REMOVED — caused oscillation between rival room targets.
-Bot relies on incidental room visits during enemy/interactable/stairs traversal.
+4. **Low-HP retreat**: HP < 30% max → head to nearest unconsumed fountain.
+5. **Current-room loot priority**: if bot is inside a BSP room and that
+   room contains an unconsumed interactable, target it before chasing
+   distant enemies.
+6. **Aggro range cap (8 cells)**: nearest-enemy chase only if within 8
+   cells. Beyond that, bot keeps exploring; combat happens when paths
+   cross.
+7. Nearest interactable globally → walk toward.
+8. Nearest unvisited room → walk toward.
+9. Stairs → descend.
 
 The bot reads the full grid for pathing (autoexplore-style); the player
 watches through fog. That's intentional and matches DCSS's autoexplore.
+
+**Enemy soft-collision**: enemies hold their tick if their next path-cell
+is occupied by another live enemy (excluding the bot's cell). Prevents
+the visual stacking when a horde converges on the bot.
 
 ## Map size
 
@@ -135,8 +144,9 @@ counter does not advance during the side-trip.
   run-ephemeral blessings — Trog/Okawaru/Zin/Elyvilon/Vehumet/Kiku/Sif Muna
   + Beogh/Makhleb/Yred/TSO/Lugonu/Jiyva/Fedhas/Cheibriados/Xom/Ashenzari/
   Dithmenos/Gozag/Qazlal/Nemelex/Ru), portals (above).
-- **Sprite FX**: per-actor Tween-driven squash/stretch — attack lunge, hit
-  squish + flash, death spin/shrink, kneel-on-interact, loot pop.
+- **Sprite FX**: per-actor Tween-driven squash/stretch — attack lunge
+  (with bright color flash on swing), hit squish + flash, death spin/
+  shrink, kneel-on-interact, loot pop.
 - **Run journal**: per-floor narrative log (DCSS-morgue style) shown on run
   report alongside loot recovered/lost.
 

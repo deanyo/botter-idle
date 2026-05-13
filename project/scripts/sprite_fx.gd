@@ -37,12 +37,22 @@ func attack_lunge(toward: Vector2) -> void:
 	_reset()
 	var dir: Vector2 = toward.normalized() if toward.length() > 0.01 else Vector2.RIGHT
 	var lunge_offset: Vector2 = base_position + dir * 12.0
+	# Bright flash on the windup, fade back during the recovery. Punches up
+	# the combat feel — without it the lunge is a position+scale bump only.
+	var flash_color: Color = Color(
+		minf(base_modulate.r * 1.6, 1.0),
+		minf(base_modulate.g * 1.6, 1.0),
+		minf(base_modulate.b * 1.4, 1.0),
+		base_modulate.a,
+	)
 	transient = sprite.create_tween().set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	transient.tween_property(sprite, "scale", base_scale * Vector2(1.15, 0.85), 0.05)
+	transient.parallel().tween_property(sprite, "modulate", flash_color, 0.04)
 	transient.tween_property(sprite, "scale", base_scale * Vector2(0.85, 1.15), 0.05)
 	transient.parallel().tween_property(sprite, "position", lunge_offset, 0.05)
 	transient.tween_property(sprite, "scale", base_scale, 0.08)
 	transient.parallel().tween_property(sprite, "position", base_position, 0.08)
+	transient.parallel().tween_property(sprite, "modulate", base_modulate, 0.10)
 
 func hit_squish() -> void:
 	if not is_instance_valid(sprite):

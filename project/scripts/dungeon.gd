@@ -1047,6 +1047,12 @@ const AGGRO_ENGAGE_RANGE := 5
 
 var _lava_tick_accum: float = 0.0
 
+# Bot AI tuning constants. AGGRO_DISTANCE caps how far the bot will actively
+# pursue an enemy. Beyond this, the bot ignores them and keeps exploring;
+# adjacency check at the top of the tick still catches drive-by attacks.
+const AGGRO_DISTANCE := 8
+const RETREAT_HP_PCT := 0.30
+
 func _tick_bot(delta: float) -> void:
 	_mark_room_visited_at(bot.cell)
 	_refresh_fog()
@@ -1161,7 +1167,39 @@ func _tick_bot(delta: float) -> void:
 	bot_target_cell = Vector2i(-1, -1)
 	bot_target_kind = ""
 
-	if nearby_enemy != null:
+	# Low-HP retreat: head to nearest fountain if we have one and HP is low.
+	# Lets the bot survive a bad streak instead of fighting to 1 HP.
+	var hp_low: bool = is_instance_valid(bot) and bot.max_hp > 0 \
+			and float(bot.hp) / float(bot.max_hp) < RETREAT_HP_PCT
+	if hp_low:
+		var fountain: Interactable = _nearest_fountain_unconsumed()
+		if fountain != null:
+			var p_f: PackedVector2Array = pathing.path(bot.cell, fountain.cell)
+			if p_f.size() > 1:
+				bot.set_path(p_f.slice(1))
+				bot_target_cell = fountain.cell
+				bot_target_kind = "interactable"
+				bot.step_movement(delta)
+				return
+
+	# Current-room loot priority: if the bot is inside a BSP room, finish
+	# what's in this room (chests, altars, loot) before chasing distant
+	# enemies. Makes bot feel like it explores rooms rather than beelining.
+	var current_room_idx: int = _room_containing(bot.cell)
+	if current_room_idx >= 0:
+		var inter_in_room: Interactable = _nearest_interactable_in_room(rooms[current_room_idx])
+		if inter_in_room != null:
+			var p_in_room: PackedVector2Array = pathing.path(bot.cell, inter_in_room.cell)
+			if p_in_room.size() > 1:
+				bot.set_path(p_in_room.slice(1))
+				bot_target_cell = inter_in_room.cell
+				bot_target_kind = "interactable"
+				bot.step_movement(delta)
+				return
+
+	# Pursue nearby enemy only within aggro range. Distant ones get ignored
+	# so we don't beeline 30 cells across the map.
+	if nearby_enemy != null and _chebyshev(bot.cell, nearby_enemy.cell) <= AGGRO_DISTANCE:
 		var p_enemy: PackedVector2Array = pathing.path(bot.cell, nearby_enemy.cell)
 		if p_enemy.size() > 1:
 			bot.set_path(p_enemy.slice(1))
@@ -1331,6 +1369,64 @@ func _nearest_interactable() -> Interactable:
 			best = i
 	return best
 
+# Returns the nearest interactable whose cell is inside `rect` (a BSP room).
+# Used by the current-room loot priority so bot finishes the room it's in
+# before chasing distant goals.
+func _nearest_interactable_in_room(rect: Rect2i) -> Interactable:
+	var best: Interactable = null
+	var best_d: int = 9999
+	for i in interactables:
+		if not is_instance_valid(i) or not i.can_interact():
+			continue
+		if i.should_skip(bot):
+			continue
+		if not rect.has_point(i.cell):
+			continue
+		var dist: int = _chebyshev(bot.cell, i.cell)
+		if dist < best_d:
+			best_d = dist
+			best = i
+	return best
+
+# Returns the BSP room index containing `cell`, or -1 if none. For caves
+# layouts where _detect_open_regions builds rectangle approximations of the
+# organic regions, this still works — a bot standing inside a detected
+# region is "in that room" for priority purposes.
+func _room_containing(cell: Vector2i) -> int:
+	for i in rooms.size():
+		var r: Rect2i = rooms[i]
+		if r.has_point(cell):
+			return i
+	return -1
+
+# Nearest unconsumed fountain — used by low-HP retreat behaviour.
+func _nearest_fountain_unconsumed() -> Interactable:
+	var best: Interactable = null
+	var best_d: int = 9999
+	for i in interactables:
+		if not is_instance_valid(i) or not i.can_interact():
+			continue
+		if not (i is Fountain):
+			continue
+		var dist: int = _chebyshev(bot.cell, i.cell)
+		if dist < best_d:
+			best_d = dist
+			best = i
+	return best
+
+# True if `cell` is occupied by a live enemy other than `ignore`. Used by
+# the enemy AI to avoid stacking — they wait their turn instead of piling
+# onto the bot's cell.
+func cell_has_other_enemy(cell: Vector2i, ignore: Enemy) -> bool:
+	for e in enemies:
+		if e == ignore:
+			continue
+		if not is_instance_valid(e) or not e.is_alive:
+			continue
+		if e.cell == cell:
+			return true
+	return false
+
 func _begin_interaction(inter: Interactable) -> void:
 	bot_interacting = true
 	interact_target = inter
@@ -1455,6 +1551,14 @@ func _tick_enemies(delta: float) -> void:
 				var p: PackedVector2Array = pathing.path(e.cell, bot.cell)
 				if p.size() > 1:
 					e.set_path(p.slice(1))
+			# Soft collision: if our next path-cell already has another live
+			# enemy on it, hold this tick so we don't visually stack.
+			# Bot's cell is exempt — the goal of pursuit IS to share that cell.
+			if e.path.size() > 0 and e.path_index < e.path.size():
+				var next: Vector2 = e.path[e.path_index]
+				var next_cell := Vector2i(int(next.x / C.TILE_SIZE), int(next.y / C.TILE_SIZE))
+				if next_cell != bot.cell and cell_has_other_enemy(next_cell, e):
+					continue
 			e.step_movement(delta)
 
 func _mark_room_visited_at(cell: Vector2i) -> void:

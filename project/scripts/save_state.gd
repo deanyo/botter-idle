@@ -49,14 +49,25 @@ static func save_state(state: Dictionary) -> void:
 	f.store_string(JSON.stringify(state, "  "))
 
 static func _default() -> Dictionary:
+	# Starter gear: gives a level-1 fresh bot a fighting chance and ensures
+	# the weapon overlay sprite has something to render. Chosen for shape
+	# (dagger -> simple silhouette) and balance (low stats).
 	return {
 		"gold": 0,
 		"level": 1,
 		"xp": 0,
 		"inventory": [],
 		"equipped": {
-			"weapon": null,
-			"armor": null,
+			"weapon": {
+				"base_id": "rusty_dagger",
+				"instance_id": "starter_weapon",
+				"affixes": [],
+			},
+			"armor": {
+				"base_id": "tattered_hide",
+				"instance_id": "starter_armor",
+				"affixes": [],
+			},
 			"helm": null,
 			"boots": null,
 			"shield": null,
