@@ -74,6 +74,10 @@ static func _get_noise() -> FastNoiseLite:
 	return _noise
 
 static func attach(parent: Node2D, spec_id: String, offset_px: Vector2 = Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5)) -> PointLight2D:
+	# BOTTER_NO_LIGHTS=1 — skip every LightSpec attach. For isolating
+	# PointLight2D blend cost from other GPU work in benchmarks.
+	if OS.has_environment("BOTTER_NO_LIGHTS"):
+		return null
 	var spec: Dictionary = SPECS.get(spec_id, {})
 	if spec.is_empty():
 		return null
@@ -85,9 +89,22 @@ static func attach(parent: Node2D, spec_id: String, offset_px: Vector2 = Vector2
 	light.color = spec.get("color", Color(1, 1, 1))
 	light.range_z_min = -1024
 	light.range_z_max = 1024
-	light.shadow_enabled = true
-	light.shadow_filter = Light2D.SHADOW_FILTER_PCF5
-	light.shadow_filter_smooth = 1.5
+	# Perf A/B knobs (env vars):
+	#   BOTTER_NO_SHADOWS=1       — disable shadows on every LightSpec light
+	#   BOTTER_SHADOW_FILTER=none|hard|pcf3|pcf5  — override filter quality
+	var no_shadows: bool = OS.has_environment("BOTTER_NO_SHADOWS")
+	var filter_env: String = OS.get_environment("BOTTER_SHADOW_FILTER") if OS.has_environment("BOTTER_SHADOW_FILTER") else "pcf5"
+	if no_shadows:
+		light.shadow_enabled = false
+	else:
+		light.shadow_enabled = true
+		# Godot 4 only ships SHADOW_FILTER_NONE / PCF5 / PCF13.
+		match filter_env:
+			"none":  light.shadow_filter = Light2D.SHADOW_FILTER_NONE
+			"pcf5":  light.shadow_filter = Light2D.SHADOW_FILTER_PCF5
+			"pcf13": light.shadow_filter = Light2D.SHADOW_FILTER_PCF13
+			_:       light.shadow_filter = Light2D.SHADOW_FILTER_PCF5
+		light.shadow_filter_smooth = 1.5
 
 	# Stamp metadata FlickerDriver reads each frame to drive organic flicker.
 	# Each light gets a unique seed so flames desync naturally.
@@ -103,14 +120,20 @@ static func attach(parent: Node2D, spec_id: String, offset_px: Vector2 = Vector2
 	})
 
 	parent.add_child(light)
+	# Register with FlickerDriver so it doesn't have to walk the scene tree
+	# every frame. Group is read by FlickerDriver._collect_lights.
+	light.add_to_group("flicker_lights")
 
 	# Particle effects on flame-category sources only.
-	if String(spec.get("category", "")) == "fire":
-		_attach_fire_particles(parent, offset_px, spec)
+	#   BOTTER_NO_EMBERS=1 — disable ember particles entirely
+	if String(spec.get("category", "")) == "fire" and not OS.has_environment("BOTTER_NO_EMBERS"):
+		var emitter: GPUParticles2D = _attach_fire_particles(parent, offset_px, spec)
+		if emitter and light:
+			light.set_meta("ember_emitter", emitter)
 
 	return light
 
-static func _attach_fire_particles(parent: Node2D, offset_px: Vector2, spec: Dictionary) -> void:
+static func _attach_fire_particles(parent: Node2D, offset_px: Vector2, spec: Dictionary) -> GPUParticles2D:
 	var p := GPUParticles2D.new()
 	p.position = offset_px
 	p.amount = 14
@@ -143,6 +166,7 @@ static func _attach_fire_particles(parent: Node2D, offset_px: Vector2, spec: Dic
 	# Tiny ember dot texture
 	p.texture = _ember_texture()
 	parent.add_child(p)
+	return p
 
 static var _cached_radial: Texture2D = null
 

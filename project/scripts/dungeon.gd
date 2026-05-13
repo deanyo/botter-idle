@@ -62,6 +62,11 @@ var floor_portals_entered: int = 0
 var floor_stalls: int = 0
 var floor_hard_recoveries: int = 0
 var floor_starting_hp: int = 0
+var floor_placed_vaults: Array = []
+var _last_fog_cell: Vector2i = Vector2i(-99, -99)
+var _fog_dirty: bool = true
+var _cached_world_lights: Array = []
+var _cached_world_lights_valid: bool = false
 # Run-wide counters for run-end summary.
 var run_kills: int = 0
 var run_loot_picked: int = 0
@@ -99,7 +104,9 @@ func _start_run() -> void:
 		world_env = WorldEnvironment.new()
 		var env := Environment.new()
 		env.background_mode = Environment.BG_CANVAS
-		env.glow_enabled = true
+		# BOTTER_NO_GLOW=1 disables bloom for perf A/B testing.
+		var glow_on: bool = not OS.has_environment("BOTTER_NO_GLOW")
+		env.glow_enabled = glow_on
 		env.glow_intensity = 0.9
 		env.glow_strength = 1.2
 		env.glow_bloom = 0.2
@@ -107,7 +114,10 @@ func _start_run() -> void:
 		env.glow_hdr_threshold = 1.0
 		world_env.environment = env
 		add_child(world_env)
-	if fog_overlay == null and camera != null:
+	# BOTTER_NO_FOG=1 skips creating the fog overlay (full-screen shader,
+	# 24-light loop per pixel). Visibility raycast still runs — sprites use
+	# their own modulate fade. For perf A/B testing.
+	if fog_overlay == null and camera != null and not OS.has_environment("BOTTER_NO_FOG"):
 		fog_overlay = FogOverlay.new()
 		add_child(fog_overlay)
 		var view_size: Vector2 = get_viewport().get_visible_rect().size
@@ -161,6 +171,9 @@ func _build_floor() -> void:
 	interact_target = null
 	interact_timer = 0.0
 	floor_start_tick = Engine.get_process_frames()
+	_last_fog_cell = Vector2i(-99, -99)
+	_fog_dirty = true
+	_cached_world_lights_valid = false
 	floor_kills = 0
 	floor_loot_picked = 0
 	floor_chests_opened = 0
@@ -204,7 +217,9 @@ func _build_floor() -> void:
 	dist_to_stairs = data.get("dist_to_stairs", [])
 	var vr: Dictionary = data.get("vault_results", {})
 	_apply_vault_results(vr)
+	floor_placed_vaults = []
 	for vname in vr.get("placed_vaults", []):
+		floor_placed_vaults.append(String(vname))
 		if not run_vaults_stamped.has(String(vname)):
 			run_vaults_stamped.append(String(vname))
 
@@ -252,6 +267,12 @@ func _build_floor() -> void:
 	_spawn_enemies()
 	_update_biome_hud()
 	floor_starting_hp = bot.hp
+	var perf_label: String = "%s|%s|f%d" % [
+		String(current_biome.get("id", "?")),
+		",".join(floor_placed_vaults) if not floor_placed_vaults.is_empty() else "_",
+		current_floor,
+	]
+	PerfMon.floor_begin(perf_label)
 	floor_started.emit(current_floor)
 
 	# Debug-jump screenshot mode: after a short settle delay, save the
@@ -622,6 +643,8 @@ func _update_biome_hud() -> void:
 		dbg.append("grid: %dx%d" % [grid[0].size(), grid.size()])
 	dbg.append("enemies: %d  inter: %d" % [enemies.size(), interactables.size()])
 	dbg.append("fps: %d" % Engine.get_frames_per_second())
+	for line in PerfMon.format_hud_lines():
+		dbg.append(line)
 	chrome.update_debug(dbg)
 
 func _spawn_enemies() -> void:
@@ -827,6 +850,9 @@ func _on_enemy_died(actor: Actor) -> void:
 		_log("Slew a %s." % e.display_name)
 	_maybe_drop_item(e)
 	enemies.erase(e)
+	# Enemy may have been a light emitter (fire dragon, ice giant, etc) — its
+	# light is gone, fog needs to repaint without it.
+	invalidate_fog()
 	# A boss-flagged enemy only ends the run if we're actually on the
 	# final-boss floor. Vault-stamped bosses on earlier floors are just
 	# strong elites — they shouldn't auto-win the run.
@@ -1019,14 +1045,22 @@ var _turn_accum: float = 0.0
 func _process(delta: float) -> void:
 	if not is_instance_valid(bot) or not bot.is_alive:
 		return
+	PerfMon.begin(PerfMon.TAG_FRAME)
+	PerfMon.begin(PerfMon.TAG_AI)
 	_tick_bot(delta)
 	_tick_enemies(delta)
+	PerfMon.end(PerfMon.TAG_AI)
 	_center_camera_on_bot()
 	_turn_accum += delta
 	if _turn_accum >= 0.25:
 		_turn_accum -= 0.25
 		run_turn += 1
 	_update_biome_hud()
+	PerfMon.end(PerfMon.TAG_FRAME)
+	if PerfMon.tick_frame():
+		var suffix: String = PerfMon.format_log_suffix()
+		if suffix != "":
+			GrindLog.log_line("[perf] " + suffix)
 
 const AGGRO_ENGAGE_RANGE := 5
 
@@ -1060,7 +1094,9 @@ func _tick_bot(delta: float) -> void:
 		_descend()
 		return
 	if fog_overlay:
+		PerfMon.begin(PerfMon.TAG_LIGHTS)
 		fog_overlay.update_lights(_gather_lights(), delta)
+		PerfMon.end(PerfMon.TAG_LIGHTS)
 	if bot_light == null and is_instance_valid(bot):
 		bot_light = PointLight2D.new()
 		bot_light.texture = _make_radial_light(128)
@@ -1437,6 +1473,7 @@ func _tick_interaction(delta: float) -> void:
 		_complete_loot_pickup(inter)
 	else:
 		inter.on_interact_complete(bot)
+	invalidate_fog()
 
 func _complete_loot_pickup(drop: LootDrop) -> void:
 	var inst: Dictionary = drop.instance
@@ -1449,6 +1486,7 @@ func _complete_loot_pickup(drop: LootDrop) -> void:
 	loot_drops.erase(drop)
 	interactables.erase(drop)
 	drop.consumed = true
+	invalidate_fog()
 	# Magic shimmer for legendaries; gold sparkle for rares.
 	var rarity: String = String(item.get("rarity", ""))
 	var pickup_pos: Vector2 = drop.position + Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5)
@@ -1483,6 +1521,7 @@ func _on_chest_opened(chest: Chest, n: int, bias: int) -> void:
 	fade.tween_interval(2.0)
 	fade.tween_property(chest, "modulate:a", 0.0, 0.5)
 	fade.tween_callback(chest.queue_free)
+	invalidate_fog()
 
 func _spawn_loot_drop_get(instance: Dictionary, at_cell: Vector2i) -> LootDrop:
 	var base_id: String = String(instance.get("base_id", ""))
@@ -1585,6 +1624,9 @@ func _descend() -> void:
 		floor_chests_opened, floor_altars_used, floor_fountains_used,
 		floor_portals_entered, floor_stalls, hp_lost,
 	])
+	var perf_floor: String = PerfMon.floor_end_summary()
+	if perf_floor != "":
+		GrindLog.log_line("[perf-floor] " + perf_floor)
 	# Run-wide accumulators
 	run_kills += floor_kills
 	run_loot_picked += floor_loot_picked
@@ -1710,12 +1752,13 @@ func _center_camera_on_bot() -> void:
 	# Translucent chrome means the player can see the dungeon UNDER the right
 	# sidebar and bottom bag — so the visible-dungeon "main viewport" is the
 	# rectangle not covered by chrome. Shift the camera so the bot sits at the
-	# centre of that rectangle, not the geometric viewport centre. Positive
-	# offset.x slides the view right (bot appears left), negative offset.y
-	# slides the view up (bot appears lower in screen). Offset is in world
-	# units, so we divide by zoom to get the requested screen-pixel shift.
+	# centre of that rectangle, not the geometric viewport centre. In Godot
+	# 2D, camera.offset shifts the rendered view: +x makes the bot appear
+	# LEFT on screen (away from the right sidebar), +y makes the bot appear
+	# UP on screen (away from the bottom bag). Offset is in world units, so
+	# we divide by zoom to get the requested screen-pixel shift.
 	var dx_screen: float = HudChrome.SIDEBAR_W * 0.5
-	var dy_screen: float = -HudChrome.BAG_H * 0.5
+	var dy_screen: float = HudChrome.BAG_H * 0.5
 	var zx: float = camera.zoom.x if camera.zoom.x != 0.0 else 1.0
 	var zy: float = camera.zoom.y if camera.zoom.y != 0.0 else 1.0
 	camera.offset = Vector2(dx_screen / zx, dy_screen / zy)
@@ -1743,6 +1786,10 @@ func _world_light_sources() -> Array:
 	# Returns [{cell, position, radius_px, intensity, color}] for every
 	# world light source. Each source feeds both LoS computation and the
 	# fog shader tint. Bot is appended separately by callers.
+	# Cached: invalidated by invalidate_fog() (interactable consume,
+	# enemy death/spawn, floor build).
+	if _cached_world_lights_valid:
+		return _cached_world_lights
 	var out: Array = []
 	for inter in interactables:
 		if not is_instance_valid(inter) or inter.consumed:
@@ -1790,14 +1837,30 @@ func _world_light_sources() -> Array:
 			"intensity": float(spec2.get("energy", 0.6)),
 			"color": spec2.get("color", Color(1, 1, 1)),
 		})
+	_cached_world_lights = out
+	_cached_world_lights_valid = true
 	return out
+
+func invalidate_fog() -> void:
+	# Called when an interactable is consumed, an enemy dies/spawns, or any
+	# other event that changes the visible-light set or visibility-blocker
+	# layout. Bot motion is handled implicitly by the cell-change check.
+	_fog_dirty = true
+	_cached_world_lights_valid = false
 
 func _refresh_fog() -> void:
 	if fog == null or not is_instance_valid(bot):
 		return
-	# Recompute every tick — the per-tile fade in MapRenderer smooths the
-	# transition so cells gently appear/disappear at LoS rim instead of
-	# popping when the bot crosses cell boundaries.
+	# Gate on bot cell change OR explicit dirty flag. The fog state only
+	# meaningfully changes when LoS sources move, so re-running raycast +
+	# texture rebuild + per-actor visibility every frame is wasted work.
+	# Per-tile modulate fade in MapRenderer continues to run every frame
+	# regardless, so transitions stay smooth.
+	if bot.cell == _last_fog_cell and not _fog_dirty:
+		return
+	PerfMon.begin(PerfMon.TAG_FOG)
+	_last_fog_cell = bot.cell
+	_fog_dirty = false
 	var sources: Array = _world_light_sources()
 	fog.recompute(bot.cell, sources)
 	if current_renderer:
@@ -1805,6 +1868,7 @@ func _refresh_fog() -> void:
 	_apply_visibility_to_actors()
 	if fog_overlay:
 		fog_overlay.set_visibility_grid(fog)
+	PerfMon.end(PerfMon.TAG_FOG)
 
 func _apply_visibility_to_actors() -> void:
 	if fog == null:

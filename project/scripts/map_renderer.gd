@@ -421,6 +421,7 @@ func apply_visibility(fog: FogSystem) -> void:
 func _process(delta: float) -> void:
 	if cell_target_alpha.is_empty():
 		return
+	PerfMon.begin(PerfMon.TAG_RENDER_FADE)
 	var step: float = FADE_RATE * delta
 	for key in cell_target_alpha.keys():
 		var target: float = cell_target_alpha[key]
@@ -436,3 +437,4 @@ func _process(delta: float) -> void:
 		for s in sprites:
 			if is_instance_valid(s):
 				s.modulate = Color(current, current, current, 1.0)
+	PerfMon.end(PerfMon.TAG_RENDER_FADE)

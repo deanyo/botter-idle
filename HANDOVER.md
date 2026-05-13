@@ -4,7 +4,105 @@ Point-in-time snapshot of what's actually shipping. Updated as we go. The
 durable rules and process live in `CLAUDE.md`; the roadmap and open work
 items live in `TODO.md`.
 
-Last refresh: 2026-05-13 (end of marathon session).
+Last refresh: 2026-05-13 (perf pass — PerfMon, /benchmark, 3 opts).
+
+## Perf instrumentation + optimization pass — 2026-05-13
+
+### PerfMon module + HUD line + [perf] log
+
+`scripts/perf_mon.gd` is a static µs accumulator. Tags
+(`frame`/`fog`/`lights`/`flicker`/`render`/`ai`) wrap their hot paths
+with `PerfMon.begin/end`. Every 240 frames it rolls the window into a
+snapshot consumed by:
+
+- The top-left debug HUD (`hud_chrome.update_debug`) — shows
+  `frame: X.XXms / fog us / light us / flick us / render us / ai us`.
+- `[perf]` lines in the grind log: `frame_ms=X.XX fog_us=N …`.
+- `[perf-floor]` lines emitted on `_descend`:
+  `label=biome|vault[,vault]|fN frames=N fog_us=N …`.
+
+The label embeds biome + vault list + floor so `/benchmark` can rank
+outliers per vault.
+
+### `/benchmark` skill
+
+`.claude/skills/benchmark/` — wraps the auto-grind harness with a
+**duration budget** (default 300s) instead of a run count:
+
+- `benchmark.sh [duration_s] [speed] [label] [headless|windowed]`
+- `parse_perf.py` aggregates `[perf]` and `[perf-floor]` lines into
+  avg / p50 / p95 / max per tag, plus worst-floor and worst-vault
+  rankings.
+- `compare.sh <a> <b>` prints aligned per-tag deltas between two
+  benchmark logs.
+
+Marker hygiene: same as `/grind` — `AUTO_GRIND.txt` is removed on
+exit so the user's next interactive launch lands in normal play.
+
+### Three CPU optimizations (M3 Pro 16× headless, 5min × 5runs)
+
+Per-tag deltas (averaged across two post-opt re-runs vs baseline):
+
+| Tag | Baseline | After | Δ avg | Δ p95 |
+|---|---|---|---|---|
+| `flicker_us` | 1669 | ~60 | **-96%** | **-95%** |
+| `fog_us` | 3325 | ~2390 | **-29%** | **-44%** |
+| `lights_us` | 88 | ~44 | **-49%** | **-59%** |
+| `render_us` | 410 | ~404 | flat | -10% |
+| `ai_us` | 4375 | ~3400 | -23% (likely biome-mix luck — opts don't touch AI) | |
+
+Frame_ms is noisy at 16× headless (16% variance even between identical
+configs); per-tag is the honest read.
+
+**Opt 1 — fog refresh gating.** `dungeon._refresh_fog()` now early-exits
+when `bot.cell` is unchanged AND no fog-invalidating event happened
+since last refresh. `invalidate_fog()` is called on chest open / loot
+pickup / fountain / altar / portal use / enemy death / floor build.
+`_world_light_sources()` is now cached behind the same dirty flag — was
+called twice per frame, now at most once per refresh.
+
+**Opt 2 — shader buffer reuse + dirty flag.** `FogOverlay.update_lights`
+preallocates the 4 packed arrays (`light_positions`, `light_radii`,
+`light_intensities`, `light_colors`) at MAX_LIGHTS=24. Per-slot
+position/radius/intensity/color are diffed; `set_shader_parameter` only
+fires when something actually changed. Camera params skip pushes when
+camera is stationary. `time_seconds` still pushes every frame (drives
+shader-side flicker tint).
+
+**Opt 3 — FlickerDriver list cache + visibility gating.** Lights now
+register on the `flicker_lights` group via `LightSpec.attach()`, so
+FlickerDriver does `get_nodes_in_group()` instead of recursive
+`_walk_and_animate()` over the whole scene tree. Lights that aren't
+`is_visible_in_tree()` (parent hidden by fog) skip animation entirely
+AND have their ember `GPUParticles2D.emitting = false`. Coming back
+into view re-enables both.
+
+### Hardware caveats
+
+Baseline is **MacBook M3 Pro**. Future passes will run the same
+`/benchmark` skill on high-end gaming PC, mid-tier gaming PC, low-end
+Windows laptop — a 200µs win on M3 Pro can be 2ms on the laptop.
+
+`--headless` skips the GPU renderer entirely. CPU timers (fog, ai,
+flicker, render-fade, light pack) are honest; **GPU shader / shadow /
+particle costs are not exercised**. Use `windowed` mode for full-stack
+frame-time validation.
+
+### Known outlier maps/vaults (perf hot floors)
+
+From baseline 5min, 16×, M3 Pro:
+
+- `crypt|des_grunt_crypt_end_deaths_head` and
+  `crypt|des_quadcrypt_mu` — top frame_ms floors.
+- `pandemonium|des_hellmonk_crystal_mountain`,
+  `pandemonium|des_infiniplex_zot_generator`.
+- `lair|des_grunt_forest_small_clearing_treed` — small sample but high
+  ms; likely big-tree decor.
+
+These are candidates for inspection if perf still hurts on lower-tier
+hardware after these opts.
+
+
 
 ## Marathon session summary — what just shipped
 

@@ -27,6 +27,31 @@ Other queued work:
   a once-over to use the wider canvas (e.g. equipped + inventory side
   by side, stats column on the right).
 
+## Perf — next passes
+
+The 2026-05-13 pass shipped PerfMon + `/benchmark` + three CPU opts
+(fog gate, shader buffer reuse, flicker cache). Remaining ideas:
+
+- ⬜ **Validate on lower-tier hardware** — current numbers are M3 Pro
+  headless. Re-run `/benchmark` on high-end PC, mid PC, low-end Windows
+  laptop; compare per-tag percentiles.
+- ⬜ **`/benchmark windowed` baseline + final** — current measurements
+  skip the GPU stack. Capture rendered frame_ms before claiming "done".
+- ⬜ **MapRenderer fade dirty-set** — `_process` still iterates every
+  cell key even when most are settled. Cheap win at ~410µs avg.
+- ⬜ **AI tick sweeps** — `ai_us` is the largest remaining cost
+  (~3400µs avg). Two known O(N) iterations: bot-adjacency check over
+  all enemies, target picker over all interactables. Profile with a
+  per-sub-tag breakdown before optimizing.
+- ⬜ **PointLight2D shadow filter** — PCF5 against ~1500 wall occluders
+  per floor is the heaviest GPU cost. Headless can't see this.
+  Investigate dropping to PCF3 or `LIGHT_MODE_NO_SHADOW` for ambient
+  decor lights (keep shadows for bot/weapon/altar).
+- ⬜ **Outlier vaults** — `des_grunt_crypt_end_deaths_head`,
+  `des_quadcrypt_mu`, `des_hellmonk_crystal_mountain` consistently top
+  the perf-floor ranking. Inspect for excess decor, light count, or
+  pathological room shapes.
+
 ## Combat pass (queued)
 
 User flagged for a future session:
@@ -269,8 +294,10 @@ debug-jump's per-biome 1-floor mode.
 
 - ✅ `/screenshot <biome> [vault] [floor]` — captures one PNG + JSON sidecar
   per call. See `.claude/skills/screenshot/`.
-- ⬜ **`/grind <runs>`** skill — `.claude/skills/grind/` exists empty. Wrap
-  the auto-grind ritual: write marker, launch, follow log, return summary.
+- ✅ `/grind <runs> [speed]` — N-run headless harness, structured summary.
+- ✅ `/benchmark <duration_s> [speed] [label] [headless|windowed]` —
+  time-bounded headless run with PerfMon telemetry; `parse_perf.py`
+  ranks worst floors / vaults; `compare.sh` diffs two logs.
 - ⬜ **Batch screenshot mode** — single Godot process with TCP eval to
   capture N biomes at the cost of one cold start. The fork
   `tugcantopaloglu/godot-mcp` (cloned to `/Users/dyo/claude/external/godot-mcp-fork`)
