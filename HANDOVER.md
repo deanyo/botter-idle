@@ -8,7 +8,7 @@ Last refresh: 2026-05-13 (end of marathon session).
 
 ## Marathon session summary — what just shipped
 
-15+ commits in one session. Highlights:
+16+ commits in one session. Highlights:
 
 - **Vault stamping rate 14% → 75-83%** (the fundamental fix to the user's
   "maps look like random messes, no notable loot rooms" complaint)
@@ -37,6 +37,8 @@ Last refresh: 2026-05-13 (end of marathon session).
   counts)
 - **HP scaling bug fix** (level-up no longer fully heals)
 - **Run-end-on-boss-kill** gated to actual boss floor
+- **Bot visual swap** — spriggan_female base + mummy body armor +
+  battleaxe weapon overlay (testing the layered sprite system)
 
 ---
 
