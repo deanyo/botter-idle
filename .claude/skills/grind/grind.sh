@@ -122,13 +122,30 @@ TOTAL_BAD=$(grep -c '\[bad-floor\]' "$LOG" || true)
 TOTAL_STALLS=$(grep -c '^\[stall\] f=' "$LOG" || true)
 TOTAL_PORTALS=$(grep -c '^\[portal\] entered=' "$LOG" || true)
 TOTAL_FLOORS=$(grep -c '^\[floor\] f=' "$LOG" || true)
-UNIQUE_BIOMES=$(grep -oE 'biome=[a-z_]+' "$LOG" | grep -v 'floor-metrics' | sort -u | wc -l | tr -d ' ')
+UNIQUE_BIOMES=$(grep -oE '^\[floor\] f=[0-9]+ biome=[a-z_.]+' "$LOG" | awk '{print $3}' | sort -u | wc -l | tr -d ' ')
 UNIQUE_VAULTS=$(grep -oE 'vaults=\["des_[^"]+"' "$LOG" | sort -u | wc -l | tr -d ' ')
 echo "totals: floors=${TOTAL_FLOORS} bad-floors=${TOTAL_BAD} stalls=${TOTAL_STALLS} portals=${TOTAL_PORTALS}"
 echo "uniqueness: biomes=${UNIQUE_BIOMES} vaults=${UNIQUE_VAULTS}"
 if [[ "$TOTAL_BAD" -gt 0 ]]; then
+    echo
     echo "bad-floor patterns:"
     grep '\[bad-floor\]' "$LOG" | grep -oE 'bad-floor\] [^|]+' | sort | uniq -c | sort -rn
+fi
+# Per-biome breakdown if multi-run
+if [[ "$TOTAL_FLOORS" -ge 5 ]]; then
+    echo
+    echo "biome distribution:"
+    grep -oE '^\[floor\] f=[0-9]+ biome=[a-z_.]+' "$LOG" | awk '{print $3}' | sort | uniq -c | sort -rn | head -25
+fi
+# Portals fired
+if [[ "$TOTAL_PORTALS" -gt 0 ]]; then
+    echo
+    echo "portals: $(grep -oE '\[portal\] entered=[a-z_]+' "$LOG" | sort | uniq -c | sort -rn | tr '\n' ' ')"
+fi
+# Terrain stamped
+TERRAIN_HITS=$(grep -E "lava_pit|lava_bridge|tide_pool|swamp_bog|ice_shrine|blood_pool" "$LOG" | wc -l | tr -d ' ')
+if [[ "$TERRAIN_HITS" -gt 0 ]]; then
+    echo "terrain vaults: ${TERRAIN_HITS}"
 fi
 echo
 echo "log: $LOG"

@@ -193,6 +193,15 @@ static func _apply(grid: Array, vault: Dictionary, ox: int, oy: int, results: Di
 					_set_cell(grid, cell, C.T_WATER)
 				"I":
 					_set_cell(grid, cell, C.T_ICE)
+				"t":
+					_set_cell(grid, cell, C.T_WALL)
+					decor_marks.append({"cell": cell, "texture": "tree", "is_wall": true})
+				"B":
+					_set_cell(grid, cell, C.T_FLOOR)
+					decor_marks.append({"cell": cell, "texture": "bones", "is_wall": false})
+				"M":
+					_set_cell(grid, cell, C.T_WALL)
+					decor_marks.append({"cell": cell, "texture": "mushroom", "is_wall": true})
 				"T":
 					_set_cell(grid, cell, C.T_FLOOR)
 					fountains.append(cell)

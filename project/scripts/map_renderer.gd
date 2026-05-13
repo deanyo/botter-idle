@@ -137,15 +137,28 @@ func _stamp_decor_marks(vault_results: Dictionary, _rng: RandomNumberGenerator) 
 		var cell: Vector2i = entry.cell
 		if cell.y < 0 or cell.y >= grid.size() or cell.x < 0 or cell.x >= grid[0].size():
 			continue
-		if grid[cell.y][cell.x] != C.T_FLOOR and grid[cell.y][cell.x] != C.T_STAIRS_DOWN:
-			continue
+		var is_wall_decor: bool = bool(entry.get("is_wall", false))
+		# Skip type mismatch — bones on a floor cell, tree on a wall cell.
+		if is_wall_decor:
+			if grid[cell.y][cell.x] != C.T_WALL:
+				continue
+		else:
+			if grid[cell.y][cell.x] != C.T_FLOOR and grid[cell.y][cell.x] != C.T_STAIRS_DOWN:
+				continue
 		var tex_name: String = String(entry.get("texture", ""))
 		if tex_name == "":
 			continue
-		var path: String = "res://assets/tiles/sigils/" + tex_name + ".png"
-		if not ResourceLoader.exists(path):
+		# Try both decor dirs: sigils/ for floor sigils, decor_impassable/
+		# for trees / mushrooms / bones / sarcophagus / etc.
+		var tex: Texture2D = null
+		var path_a: String = "res://assets/tiles/sigils/" + tex_name + ".png"
+		var path_b: String = "res://assets/tiles/decor_impassable/" + tex_name + ".png"
+		if ResourceLoader.exists(path_a):
+			tex = load(path_a)
+		elif ResourceLoader.exists(path_b):
+			tex = load(path_b)
+		if tex == null:
 			continue
-		var tex: Texture2D = load(path)
 		_place(tex, cell.x, cell.y)
 		decor_marks.append({"cell": cell, "texture": tex_name})
 

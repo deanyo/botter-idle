@@ -8,9 +8,9 @@ var level: int = 1
 var xp: int = 0
 var gold: int = 0
 var equipped: Dictionary = {}
-var base_max_hp: int = 50
-var base_atk: int = 5
-var base_def: int = 1
+var base_max_hp: int = 80
+var base_atk: int = 6
+var base_def: int = 2
 
 var blessings: Array = []
 var bonus_max_hp_pct: float = 0.0
