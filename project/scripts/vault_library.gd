@@ -22,6 +22,7 @@ static func _ensure_loaded() -> void:
 			if f != null:
 				var parsed: Variant = JSON.parse_string(f.get_as_text())
 				if typeof(parsed) == TYPE_DICTIONARY:
+					_annotate_vault(parsed)
 					_vaults.append(parsed)
 				else:
 					push_error("Failed to parse vault: %s" % name)
@@ -31,6 +32,29 @@ static func _ensure_loaded() -> void:
 static func all_vaults() -> Array:
 	_ensure_loaded()
 	return _vaults
+
+# Count "C" chest glyphs once per vault and cache. Vaults with 4+ chests get
+# weight-divided to ~1/20 their original — they're "treasure room" novelties,
+# not the everyday stamp. Without this, the 28×22 chest-grid `des_vaults_vault`
+# stamps almost as often as a normal vault and floods the map.
+static func _annotate_vault(vault: Dictionary) -> void:
+	var grid_arr: Array = vault.get("grid", [])
+	var chest_count: int = 0
+	for row in grid_arr:
+		var s: String = String(row)
+		for i in s.length():
+			if s.substr(i, 1) == "C":
+				chest_count += 1
+	vault["_chest_count"] = chest_count
+
+static func _effective_weight(vault: Dictionary) -> float:
+	var w: float = float(vault.get("weight", 1))
+	var chest_count: int = int(vault.get("_chest_count", 0))
+	if chest_count >= 4:
+		# Steep penalty: 4 chests = 1/8, 8+ chests = 1/20.
+		var divisor: float = 8.0 if chest_count < 8 else 20.0
+		return maxf(0.05, w / divisor)
+	return w
 
 static func _theme_match(vault: Dictionary, theme: String) -> bool:
 	var themes: Array = vault.get("themes", [])
@@ -158,13 +182,13 @@ static func pick_weighted(candidates: Array, rng: RandomNumberGenerator) -> Dict
 		return {}
 	var total: float = 0.0
 	for c in candidates:
-		total += float(c.get("weight", 1))
+		total += _effective_weight(c)
 	if total <= 0.0:
 		return {}
 	var roll: float = rng.randf_range(0.0, total)
 	var cum: float = 0.0
 	for c in candidates:
-		cum += float(c.get("weight", 1))
+		cum += _effective_weight(c)
 		if roll <= cum:
 			return c
 	return candidates[-1]

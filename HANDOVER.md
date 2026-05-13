@@ -40,18 +40,45 @@ Last refresh: 2026-05-13 (end of marathon session).
 - **Bot visual swap** — spriggan_female base + mummy body armor +
   battleaxe weapon overlay (testing the layered sprite system)
 - **Desktop pivot + DCSS chrome**:
-  - Viewport 540×960 → 1280×720 landscape. `keep` aspect stretch.
+  - Viewport 540×960 → **1600×900** landscape. `keep` aspect stretch.
   - New `HudChrome` CanvasLayer (`scripts/hud_chrome.gd`):
     right sidebar (minimap top, stats panel, recent-events log feed),
     bottom-left bag panel (5 equipped slots + scrollable inventory
     grid), tiny top-left debug HUD (biome/floor/layout/recent vault
     names/grid dims/enemy + interactable counts/fps).
-  - Camera `offset` shifts world view so the bot stays in the visible
-    dungeon region (not under the sidebar/bag).
+  - Subtle translucency on chrome (panel α 0.62, slot bg α 0.40) so
+    the dungeon shows under the chrome in the cracks.
+  - Camera `offset` shifts world view so the bot stays in the centre
+    of the dungeon-visible region (not under the sidebar/bag).
+    Screenshot mode bypasses the offset.
   - Old top-left HUD (`hud_name_label`, `hud_hp_bar`, etc.) removed —
     chrome owns all stats.
   - DCSS GUI tile assets copied to `project/assets/tiles/gui/`
     (tab labels, checkboxes, prompt yes/no).
+- **Biome editor (per-tile review tool)** — `tools/biome_editor.html`:
+  - Visual editor showing every tile that could render per biome
+    (floor primary/secondary/accent, wall primary/accent/alternates,
+    edge overlay with 3×3 directional grid + N/S/E/W/NE/NW/SE/SW/FULL
+    labels, sigil set), per-tile **Replace** dropdown via picker modal,
+    Duplicate / New blank / Delete buttons, raw-JSON textarea for
+    advanced fields, `⬇ Export biomes.json` downloads modified file.
+  - Biome JSON schema extended: `@stem` literal-tile syntax alongside
+    prefixes (`biome_data.gd._expand_prefixes`); `wall_primary` now
+    accepts arrays as well as strings; `wall_alternates` supports
+    `prefixes:` list as well as legacy `prefix:`.
+  - `tools/build_biome_manifest.py` bakes asset directory listings →
+    `tools/biome_manifest.json` for the static editor.
+- **Vault chest cap** — `vault_stamper` enforces
+  `CHEST_MAX_PER_VAULT = 8` and `LOOT_MAX_PER_VAULT = 12` with stride
+  sampling; `vault_library` precomputes `_chest_count` at load and
+  `_effective_weight` divides by 8 (4-7 chests) or 20 (8+) before
+  `pick_weighted` rolls. `des_vaults_vault` (28×22 = 608 chest glyphs)
+  used to spawn 613 chests and tank perf — now picks ~1/600th as often
+  AND caps at 8 chests when it does.
+- **Skill marker hygiene** — `grind.sh` and `screenshot.sh` now
+  unconditionally `rm -f` their markers (`AUTO_GRIND.txt`,
+  `DEBUG_FLOOR.txt`, parked variants) on exit so the user's next
+  interactive Godot launch always lands in normal-speed play.
 - **Floor pass** (DCSS-faithful):
   - Per-cell hashed weighted variant pick replaces Voronoi patches —
     floors read as "textured" instead of chunky-patches. Weights match

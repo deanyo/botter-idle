@@ -1701,19 +1701,24 @@ func _find_stairs_cell() -> Vector2i:
 func _center_camera_on_bot() -> void:
 	if not (camera and is_instance_valid(bot)):
 		return
-	# Camera centers on the bot in world space, but the new chrome reserves a
-	# right-side sidebar (HudChrome.SIDEBAR_W) and a bottom bag panel
-	# (HudChrome.BAG_H). Offset the world view so the bot lands in the centre
-	# of the *visible* dungeon region instead of the geometric viewport
-	# centre. Skipped during screenshot mode — the screenshot wants the
-	# whole 1024×1024 frame to be dungeon content.
 	camera.position = bot.position + Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5)
+	# Screenshot mode: capture the whole 1024×1024 frame as dungeon content,
+	# no chrome compensation needed.
 	if DebugJump.active and DebugJump.screenshot:
 		camera.offset = Vector2.ZERO
 		return
-	# Offset = half of the chrome reserved space, so the camera shifts
-	# the world to the left and up by exactly the missing half.
-	camera.offset = Vector2(HudChrome.SIDEBAR_W * 0.5, -HudChrome.BAG_H * 0.5) / camera.zoom
+	# Translucent chrome means the player can see the dungeon UNDER the right
+	# sidebar and bottom bag — so the visible-dungeon "main viewport" is the
+	# rectangle not covered by chrome. Shift the camera so the bot sits at the
+	# centre of that rectangle, not the geometric viewport centre. Positive
+	# offset.x slides the view right (bot appears left), negative offset.y
+	# slides the view up (bot appears lower in screen). Offset is in world
+	# units, so we divide by zoom to get the requested screen-pixel shift.
+	var dx_screen: float = HudChrome.SIDEBAR_W * 0.5
+	var dy_screen: float = -HudChrome.BAG_H * 0.5
+	var zx: float = camera.zoom.x if camera.zoom.x != 0.0 else 1.0
+	var zy: float = camera.zoom.y if camera.zoom.y != 0.0 else 1.0
+	camera.offset = Vector2(dx_screen / zx, dy_screen / zy)
 
 func _scatter_ambient_decor() -> void:
 	var density: float = BiomeData.ambient_density_for(current_biome)

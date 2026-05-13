@@ -141,6 +141,9 @@ static func _placement_safe(grid: Array, vault: Dictionary, ox: int, oy: int) ->
 				return false
 	return true
 
+const CHEST_MAX_PER_VAULT := 8
+const LOOT_MAX_PER_VAULT := 12
+
 static func _apply(grid: Array, vault: Dictionary, ox: int, oy: int, results: Dictionary) -> void:
 	var grid_arr: Array = vault.get("grid", [])
 	var fountains: Array = results.get("fountains", [])
@@ -159,6 +162,13 @@ static func _apply(grid: Array, vault: Dictionary, ox: int, oy: int, results: Di
 	var decor_marks: Array = results.get("decor_marks", [])
 	var tags: Array = vault.get("tags", [])
 
+	# Collect chest/loot glyph cells separately so we can cap the spawn count
+	# at vault-application time. Some ported DCSS vaults stamp huge "C" or "*"
+	# blocks (treasure-vault tile-art) where each glyph nominally represents a
+	# *chance* of treasure, not literal one-chest-per-cell. Without a cap, a
+	# 28×22 chest block spawns 613 chest interactables — instant lag.
+	var chest_candidates: Array[Vector2i] = []
+	var loot_candidates: Array = []
 	for y in grid_arr.size():
 		var row: String = String(grid_arr[y])
 		for x in row.length():
@@ -210,12 +220,12 @@ static func _apply(grid: Array, vault: Dictionary, ox: int, oy: int, results: Di
 				"*":
 					_set_cell(grid, cell, C.T_FLOOR)
 					if kitem.has(ch):
-						loot_marks.append({"cell": cell, "kitem": kitem[ch]})
+						loot_candidates.append({"cell": cell, "kitem": kitem[ch]})
 					else:
-						loot_marks.append(cell)
+						loot_candidates.append(cell)
 				"C":
 					_set_cell(grid, cell, C.T_FLOOR)
-					chest_marks.append(cell)
+					chest_candidates.append(cell)
 				"A":
 					_set_cell(grid, cell, C.T_FLOOR)
 					altar_marks.append(cell)
@@ -237,6 +247,28 @@ static func _apply(grid: Array, vault: Dictionary, ox: int, oy: int, results: Di
 						elif spawns_def.has(ch):
 							spawn_overrides[cell] = spawns_def[ch]
 			protected[cell] = true
+
+	# Cap chest / loot counts. Vaults that stamp wide "treasure block" rectangles
+	# overflow gameplay and tank perf — pick a fair sample instead of one per
+	# cell. Sampling stride keeps clusters spread out across the block.
+	if chest_candidates.size() > CHEST_MAX_PER_VAULT:
+		var stride: int = max(1, chest_candidates.size() / CHEST_MAX_PER_VAULT)
+		for i in range(0, chest_candidates.size(), stride):
+			chest_marks.append(chest_candidates[i])
+			if chest_marks.size() >= CHEST_MAX_PER_VAULT:
+				break
+	else:
+		for c in chest_candidates:
+			chest_marks.append(c)
+	if loot_candidates.size() > LOOT_MAX_PER_VAULT:
+		var lstride: int = max(1, loot_candidates.size() / LOOT_MAX_PER_VAULT)
+		for i in range(0, loot_candidates.size(), lstride):
+			loot_marks.append(loot_candidates[i])
+			if loot_marks.size() >= LOOT_MAX_PER_VAULT:
+				break
+	else:
+		for l in loot_candidates:
+			loot_marks.append(l)
 
 	results["fountains"] = fountains
 	results["statues"] = statues

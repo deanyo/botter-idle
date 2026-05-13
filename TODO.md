@@ -7,15 +7,25 @@ the durable rules in `CLAUDE.md`. Update this file when committing.
 
 ## Active — next session
 
-User explicitly queued: **run planning UI in Garage**. Add a panel where
-the player picks a 10-floor branch chain (D:1-3 → Lair:1-2 → Vaults:1
-→ ...) before deploying. Mobile-first scrollable picker. Currently
-`BiomeData.roll_run_plan()` returns a fully random 10-biome list; we'd
-gate that behind "Random run" vs "Custom plan". Save the chosen plan
-to SaveState so deploy uses it. ~4h.
+User has been reviewing biome tile selections via the new
+`tools/biome_editor.html` page (per-tile replacement, directional N/S/E/W
+labels, weighted wall alternates, dup/new/delete biomes). Findings
+expected to flow back as `biomes.json` edits the user exports from the
+editor — after that, `python3 tools/build_biome_manifest.py` if any new
+tile assets land.
 
-The Garage scene already has `Stats / Equipped / Inventory / Deploy`.
-A new tab or panel for "Branch chain" would slot in above Deploy.
+Other queued work:
+
+- **Run planning UI in Garage**: panel where the player picks a 10-floor
+  branch chain (D:1-3 → Lair:1-2 → Vaults:1 → ...) before deploying.
+  Currently `BiomeData.roll_run_plan()` returns a fully random 10-biome
+  list; gate behind "Random run" vs "Custom plan". Save chosen plan to
+  SaveState. ~4h. Now desktop-shaped (tabbed picker, not portrait
+  scroll), since we pivoted to landscape.
+- **Garage / run_report layout review** — both scenes still use the
+  portrait-era VBox layouts. Probably readable on 1600×900 but worth
+  a once-over to use the wider canvas (e.g. equipped + inventory side
+  by side, stats column on the right).
 
 ## Combat pass (queued)
 

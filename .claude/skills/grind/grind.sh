@@ -79,6 +79,13 @@ if kill -0 $PID 2>/dev/null; then
 fi
 wait $PID 2>/dev/null || true
 
+# CRITICAL: clear AUTO_GRIND.txt so the user's next interactive launch
+# doesn't silently boot into 16× speed mode. Also clear any parked
+# DEBUG_FLOOR.txt — the user wants Godot launches to land in normal play
+# mode, not screenshot capture mode.
+rm -f "$GRIND_MARKER"
+rm -f "$DEBUG_MARKER.parked"
+
 if [[ $DONE -eq 0 ]]; then
     # Auto-recover from stale class_name cache.
     if grep -q 'Parse Error.*not declared' "$LOG" 2>/dev/null; then

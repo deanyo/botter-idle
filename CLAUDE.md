@@ -61,6 +61,17 @@ reinvent these rituals each session.
   victory/level/gold, totals (floors, bad-floors, stalls, portals),
   uniqueness (biomes, vaults). Logs in `logs/grind/`.
 
+**Marker hygiene** (CRITICAL): both skills drive Godot via marker files
+(`AUTO_GRIND.txt` for grind, `DEBUG_FLOOR.txt` for screenshot) under
+`~/Library/Application Support/Godot/app_userdata/Botter/`. `main.gd`
+reads these on every launch and switches the game into 16× speed-grind
+mode or screenshot-and-quit mode accordingly. Both `grind.sh` and
+`screenshot.sh` `rm -f` their markers (and parked `.parked` variants)
+on exit. **If you ever launch Godot directly with these markers or
+otherwise leak them, manually delete them before reporting the task
+done** — the user playtests in normal mode and a stray marker breaks
+their next launch silently. The user has been bitten by this.
+
 When tooling-shaped work comes up (driving Godot from scripts, parsing
 logs, watching for events) — **check whether a skill already exists**
 before building one. If it doesn't, consider whether a new skill would
@@ -70,8 +81,11 @@ save time on the second use.
 
 - **Engine:** Godot 4.6.2-stable. User's binary at `/Applications/Godot.app/Contents/MacOS/Godot`.
 - **Language:** GDScript only. No C# / GDExtension.
-- **Target:** Mobile-first portrait orientation (540×960 viewport). Desktop
-  is the dev target.
+- **Target:** **Desktop landscape (1600×900 viewport)**, `keep` aspect
+  stretch. DCSS-style chrome via `scripts/hud_chrome.gd`: right sidebar
+  (minimap + stats + log feed), bottom-left bag (equipped + inventory),
+  tiny top-left debug HUD. Mobile port is deferred — was originally
+  mobile-first 540×960 portrait, pivoted 2026-05-13.
 - **Tiles:** 32×32 DCSS sprites, CC0. Two source trees (both gitignored —
   bulky, refetchable, never shipped):
   - `dcss/` — full DCSS tilesheets (CC0 art only). Curated subset already
@@ -104,7 +118,7 @@ botter/
 │   ├── settings.json          # project permissions (committed)
 │   └── skills/                # /screenshot, /grind (committed)
 ├── docs/                      # long-form references (biome audit, branch dossier)
-├── tools/                     # atlas builder + viewer
+├── tools/                     # atlas builder + viewer + biome editor
 ├── logs/                      # gitignored: screenshot + grind run logs
 ├── reference/                 # visual reference shots
 ├── dcss/                      # gitignored: raw DCSS tile pack (CC0)
@@ -117,7 +131,7 @@ botter/
     │                          # vault_library, vault_stamper, dcss_layouts,
     │                          # portal, altar, chest, fountain, fog_*, light_spec,
     │                          # affix_system, save_state, debug_jump, grind_log,
-    │                          # main, garage, run_report
+    │                          # hud_chrome, main, garage, run_report
     ├── data/                  # biomes.json, enemies.json, items.json,
     │                          # tile_atlas.json, vaults/des_*.json (1320 ported)
     └── assets/tiles/          # floor/, wall/, overlays/, features/, gateways/,
@@ -290,6 +304,24 @@ biome / class / subcategory.
 **Before bulk-copying any assets**: consult the atlas. **Never hardcode
 caps** like "copy 3 variants" — pull all available, or read the count
 from the catalog. The atlas exists exactly for this reason.
+
+## Biome editor
+
+`tools/biome_editor.html` (also at `http://localhost:8080/tools/biome_editor.html`)
+is a per-biome visual editor. For each biome it shows every tile that
+could render (floor primary/secondary/accent, wall primary/accent/
+alternates, edge overlay as a 3×3 directional grid with N/S/E/W/NE/NW/
+SE/SW/FULL labels, sigil set). Each tile has a **Replace** button that
+opens a picker; the schema supports `@stem` literal-tile syntax
+alongside prefixes so picks are surgical. Duplicate / New blank /
+Delete buttons. **Export biomes.json** downloads the modified file —
+drop it into `project/data/biomes.json`. Backed by
+`tools/biome_manifest.json` (rebuild via
+`python3 tools/build_biome_manifest.py` whenever new tile assets land).
+
+Use this for any "spider feels off" / "hive walls clash with floor"
+review pass — visual review needs a human eye, the editor gives the
+user a single page to make decisions.
 
 ## Tile-prefix gotchas (LESSONS LEARNED)
 

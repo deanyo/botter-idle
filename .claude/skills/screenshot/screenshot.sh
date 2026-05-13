@@ -120,6 +120,13 @@ if [[ -z "$NEW_PATH" ]]; then
     fi
 fi
 
+# CRITICAL: clear markers so the user's next interactive Godot launch lands
+# in normal play, not screenshot or grind mode. Done unconditionally — even
+# on failure. Both markers have caused "why is my game running at 16× / why
+# does it screenshot and quit" surprises in the past.
+rm -f "$MARKER"
+rm -f "$GRIND_MARKER.parked"
+
 if [[ -z "$NEW_PATH" ]]; then
     echo "screenshot: no new manifest entry detected after ${TIMEOUT_S}s" >&2
     echo "log: $LOG" >&2

@@ -36,8 +36,8 @@ const COL_DIM := Color(0.7, 0.6, 0.4)
 const COL_HP := Color(0.55, 0.95, 0.5)
 const COL_HP_LOW := Color(1.0, 0.45, 0.45)
 const COL_GOLD := Color(1.0, 0.85, 0.3)
-const COL_PANEL := Color(0.04, 0.04, 0.06, 0.92)
-const COL_PANEL_BORDER := Color(0.35, 0.3, 0.18, 0.85)
+const COL_PANEL := Color(0.04, 0.04, 0.06, 0.62)
+const COL_PANEL_BORDER := Color(0.35, 0.3, 0.18, 0.65)
 
 # Stats panel labels
 var lbl_name: Label
@@ -193,7 +193,7 @@ func _build_bag() -> void:
 		var ox = eqx + col * (SLOT_TILE_SIZE + 18)
 		# Slot background
 		var slot_bg := ColorRect.new()
-		slot_bg.color = Color(0, 0, 0, 0.55)
+		slot_bg.color = Color(0, 0, 0, 0.40)
 		slot_bg.position = Vector2(ox, eqy)
 		slot_bg.size = Vector2(SLOT_TILE_SIZE, SLOT_TILE_SIZE)
 		add_child(slot_bg)
