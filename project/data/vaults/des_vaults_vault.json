@@ -9,14 +9,13 @@
     "ported"
   ],
   "themes": [
-    "dungeon",
     "vaults"
   ],
   "floor_range": [
-    1,
+    8,
     10
   ],
-  "weight": 10,
+  "weight": 4,
   "tags": [],
   "grid": [
     "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",

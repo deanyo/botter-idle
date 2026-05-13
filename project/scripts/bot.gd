@@ -117,6 +117,13 @@ func _process(delta: float) -> void:
 		hp = mini(max_hp, hp + ticks)
 		_update_hp_bar()
 
+func take_damage(raw: int) -> int:
+	# Grind/audit invincibility — set by main.gd when auto_grind is active.
+	# Live playtest is unaffected.
+	if DebugJump.bot_invincible:
+		return 0
+	return super.take_damage(raw)
+
 func attempt_attack(other: Actor, delta: float) -> int:
 	var dealt := super.attempt_attack(other, delta)
 	if dealt > 0 and lifesteal_per_hit > 0:

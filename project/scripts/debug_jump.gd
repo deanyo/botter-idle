@@ -12,3 +12,7 @@ static var vault_name: String = ""
 static var floor_num: int = 1
 static var screenshot: bool = false
 static var screenshot_delay: float = 2.0
+# Set by main.gd when AUTO_GRIND is active. Bot.take_damage no-ops when true
+# so benchmark runs reach floor 10 reliably and we can audit late-floor
+# generation without combat balance noise.
+static var bot_invincible: bool = false

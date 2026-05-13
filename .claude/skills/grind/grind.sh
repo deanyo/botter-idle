@@ -46,10 +46,11 @@ echo "${SPEED},${RUNS}" > "$GRIND_MARKER"
 "$GODOT" --path "$PROJECT" --headless >"$LOG" 2>&1 &
 PID=$!
 
-# Tail the log waiting for the COMPLETE line. Hard timeout: 120s/run for
-# safety (a normal run at 16x is ~30-60s but headless can be slower and
-# stalls add a few seconds each). Adjust upward if your grinds time out.
-TIMEOUT_S=$((RUNS * 120))
+# Tail the log waiting for the COMPLETE line. Hard timeout: 240s/run.
+# A normal run at 16x is ~30-60s but invincible grind runs can hit huge
+# encompass vaults (e.g. des_vaults_vault has 608 chests) that take many
+# minutes to explore.
+TIMEOUT_S=$((RUNS * 240))
 DEADLINE=$(( $(date +%s) + TIMEOUT_S ))
 DONE=0
 while [[ $(date +%s) -lt $DEADLINE ]]; do

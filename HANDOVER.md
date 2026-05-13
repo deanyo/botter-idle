@@ -30,6 +30,42 @@ Bot relies on incidental room visits during enemy/interactable/stairs traversal.
 The bot reads the full grid for pathing (autoexplore-style); the player
 watches through fog. That's intentional and matches DCSS's autoexplore.
 
+## Map size
+
+80×80 cells (was 60×60). Bigger maps mean more breathing room for both
+caves and procedural rooms, more space for vaults to land, less cramped
+combat. Each tile is 32 px so maps render at 2560×2560 internal coords.
+
+## Vault stamping reliability — FIXED
+
+Earlier sessions saw most floors with `vaults=[]` (vaults rare). Root
+causes diagnosed and fixed:
+
+1. **Float stamper picked one random vault, tried once.** If the picked
+   vault was 30×20 and no detected room was 32×22, the floor got zero
+   vaults — even though plenty of 8×8 vaults would have fit. Fixed:
+   stamper now retries up to 16 candidate picks per slot with a size
+   filter that pre-screens for fitting candidates.
+2. **First and last rooms were always skipped** in the room-shuffle
+   loop (legacy attempt to keep spawn/stairs vault-free). On caves
+   layouts where room order is arbitrary this discarded ~20% of valid
+   placements. Fixed: try every room.
+3. **Vault-stamped boss enemies ended the run prematurely.** Vaults
+   like `des_shoals_end_hellmonk_lost_city` have `spawns: [..., minotaur]`
+   and minotaur is boss-flagged, so killing it on floor 5 ended the run
+   "victorious". Fixed: run-end-on-boss-kill only triggers on the actual
+   final-boss floor (`current_floor >= BOSS_FLOOR`).
+
+Result: vault stamp rate jumped from 14% to 75-83% per floor. A typical
+3-run grind now stamps 14-17 unique vaults across 30 floors.
+
+## Bot invincibility (grind only)
+
+When auto-grind is active, `DebugJump.bot_invincible = true` and
+`Bot.take_damage` no-ops. Lets benchmark runs reach floor 10 reliably so
+late-floor generation is audited even if the bot's combat balance is off.
+Live playtest is unaffected.
+
 ## Generation pipeline (DCSS-faithful)
 
 Order in `dungeon_generator.gd`:

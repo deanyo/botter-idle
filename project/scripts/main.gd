@@ -72,6 +72,10 @@ func _ready() -> void:
 	# slot so they don't bake the playtest bot into a level-300 god.
 	if auto_grind or DebugJump.active:
 		SaveState.debug_mode = true
+	# Invincible bot in grind mode — lets us reach floor 10 reliably so the
+	# audit covers late-floor generation. Live playtest is unaffected.
+	if auto_grind:
+		DebugJump.bot_invincible = true
 	# Screenshot mode: set up audit-resolution window FROM SCENE START so the
 	# Dungeon can render once at the right size without mid-capture mutations.
 	# 1024x1024 is the practical sweet spot for Claude's image pipeline (no

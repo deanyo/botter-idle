@@ -19,8 +19,8 @@ const T_ICE   := 7
 # Cells the bot can walk through. Used by pathfinding and walkable checks.
 const WALKABLE_TERRAIN := [T_FLOOR, T_STAIRS_DOWN, T_STAIRS_UP, T_DOOR, T_LAVA, T_WATER, T_ICE]
 
-const MAP_W := 60
-const MAP_H := 60
+const MAP_W := 80
+const MAP_H := 80
 
 const FLOORS_PER_RUN := 10
 const BOSS_FLOOR := 10

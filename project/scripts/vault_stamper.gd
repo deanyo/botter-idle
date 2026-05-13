@@ -84,11 +84,10 @@ static func try_stamp(grid: Array, rooms: Array, vault: Dictionary, rng: RandomN
 	if grid_arr.size() != vh:
 		return false
 
+	# Try every room (used to skip first+last; that was discarding valid
+	# placements on caves layouts where room order is arbitrary).
 	var room_indices: Array[int] = []
-	var last_idx: int = rooms.size() - 1
 	for i in rooms.size():
-		if i == 0 or i == last_idx:
-			continue
 		room_indices.append(i)
 	room_indices.shuffle()
 

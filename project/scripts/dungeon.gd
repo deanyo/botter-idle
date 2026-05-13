@@ -848,7 +848,10 @@ func _on_enemy_died(actor: Actor) -> void:
 		_log("Slew a %s." % e.display_name)
 	_maybe_drop_item(e)
 	enemies.erase(e)
-	if e.is_boss:
+	# A boss-flagged enemy only ends the run if we're actually on the
+	# final-boss floor. Vault-stamped bosses on earlier floors are just
+	# strong elites — they shouldn't auto-win the run.
+	if e.is_boss and current_floor >= C.BOSS_FLOOR:
 		_end_run(true)
 		return
 

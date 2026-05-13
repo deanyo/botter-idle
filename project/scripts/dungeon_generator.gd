@@ -598,30 +598,64 @@ func _stamp_float_vaults(theme: String, floor_num: int, results: Dictionary) -> 
 	var placed_names: Dictionary = {}
 	for name in results.get("placed_vaults", []):
 		placed_names[name] = true
-	var attempts: int = 1
-	if floor_num >= 4 and rng.randf() < 0.4:
-		attempts = 2
+	# Target N successful stamps; up to MAX_TRIES candidate picks per slot.
+	# The previous logic picked ONE random vault per slot; if that vault
+	# was too large for any detected room, we got zero stamps. Retrying
+	# with smaller candidates fixes the "vaults rare" problem.
+	var target: int = 1
+	if floor_num >= 4 and rng.randf() < 0.5:
+		target = 2
 	if floor_num == 10:
-		attempts = 1
-	if rng.randf() < 0.25 and floor_num < 10:
-		attempts = 0
+		target = 1
+	if rng.randf() < 0.15 and floor_num < 10:
+		target = 0
 	# Debug-jump always attempts the forced vault.
 	if DebugJump.active and DebugJump.vault_name != "":
-		attempts = max(attempts, 1)
-	for i in attempts:
-		var candidates: Array = VaultLibrary.float_candidates_multi(_themes_or(theme), floor_num, placed_names)
-		if candidates.is_empty():
-			return
-		var picked: Dictionary = VaultLibrary.pick_weighted(candidates, rng)
-		if picked.is_empty():
-			continue
-		if not VaultLibrary.passes_chance(picked, floor_num, rng):
-			continue
-		var ok: bool = VaultStamper.try_stamp_oriented(grid, rooms, picked, rng, results)
-		if ok:
-			var name: String = String(picked.get("name", ""))
-			results["placed_vaults"].append(name)
-			placed_names[name] = true
+		target = max(target, 1)
+	# Find the largest detected room — caps the vault size we'll try.
+	# Caves layouts produce small organic pockets; without this cap we'd
+	# pick a 30x20 vault on every attempt and silently fail.
+	var biggest_w: int = 0
+	var biggest_h: int = 0
+	for r in rooms:
+		var rect: Rect2i = r as Rect2i
+		biggest_w = max(biggest_w, rect.size.x)
+		biggest_h = max(biggest_h, rect.size.y)
+	const MAX_TRIES_PER_SLOT := 16
+	var stamped: int = 0
+	while stamped < target:
+		var slot_succeeded: bool = false
+		for try_n in MAX_TRIES_PER_SLOT:
+			var candidates: Array = VaultLibrary.float_candidates_multi(_themes_or(theme), floor_num, placed_names)
+			if candidates.is_empty():
+				return
+			# Filter to candidates that COULD fit in the largest available
+			# room. Avoids wasting picks on huge vaults in caves layouts.
+			if biggest_w > 0 and biggest_h > 0:
+				var fitting: Array = []
+				for c in candidates:
+					var s: Array = c.get("size", [0, 0])
+					if int(s[0]) + 2 <= biggest_w and int(s[1]) + 2 <= biggest_h:
+						fitting.append(c)
+				if not fitting.is_empty():
+					candidates = fitting
+			var picked: Dictionary = VaultLibrary.pick_weighted(candidates, rng)
+			if picked.is_empty():
+				continue
+			if not VaultLibrary.passes_chance(picked, floor_num, rng):
+				continue
+			var ok: bool = VaultStamper.try_stamp_oriented(grid, rooms, picked, rng, results)
+			if ok:
+				var name: String = String(picked.get("name", ""))
+				results["placed_vaults"].append(name)
+				placed_names[name] = true
+				slot_succeeded = true
+				break
+			# This vault didn't fit; mark it placed so we don't retry it.
+			placed_names[String(picked.get("name", "_unnamed"))] = true
+		if not slot_succeeded:
+			break
+		stamped += 1
 
 var _stairs_down_pos: Vector2i
 
