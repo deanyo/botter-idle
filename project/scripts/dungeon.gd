@@ -67,6 +67,13 @@ var _last_fog_cell: Vector2i = Vector2i(-99, -99)
 var _fog_dirty: bool = true
 var _cached_world_lights: Array = []
 var _cached_world_lights_valid: bool = false
+# Set to false while _build_floor is running across frames; gates _process
+# so the bot doesn't try to tick on a half-built floor.
+var _floor_ready: bool = false
+# Generation counter — each call to _build_floor bumps it. Async phases
+# bail if their captured generation no longer matches, so a new build
+# (or scene teardown) can preempt a half-finished one.
+var _build_generation: int = 0
 # Run-wide counters for run-end summary.
 var run_kills: int = 0
 var run_loot_picked: int = 0
@@ -141,6 +148,17 @@ func _start_run() -> void:
 	_build_floor()
 
 func _build_floor() -> void:
+	# Async wrapper — splits the build across multiple frames so the
+	# 70-600ms generate+render+decor work doesn't manifest as a single-
+	# frame stutter on stairs descent. Each phase yields one frame so
+	# Godot can process the rendering for the previous phase. Sync
+	# call sites just don't await the result.
+	_async_build_floor()
+
+func _async_build_floor() -> void:
+	_floor_ready = false
+	_build_generation += 1
+	var my_gen: int = _build_generation
 	var t_total: int = Time.get_ticks_usec()
 	for e in enemies:
 		if is_instance_valid(e):
@@ -214,6 +232,11 @@ func _build_floor() -> void:
 	var size_arr: Array = current_biome.get("map_size", [C.MAP_W, C.MAP_H])
 	var map_w: int = int(size_arr[0]) if size_arr.size() >= 2 else C.MAP_W
 	var map_h: int = int(size_arr[1]) if size_arr.size() >= 2 else C.MAP_H
+	# Phase 1: dungeon generation (the heaviest single block, 30-450ms).
+	# Yield before so the descend tween has a chance to render, and the
+	# old floor's queue_free's commit on this frame.
+	await get_tree().process_frame
+	if my_gen != _build_generation: return
 	var t_gen: int = Time.get_ticks_usec()
 	var data: Dictionary = gen.generate_themed(map_w, map_h, vault_themes, current_floor, layout_id, String(current_biome.get("id", "")))
 	t_gen = Time.get_ticks_usec() - t_gen
@@ -241,6 +264,9 @@ func _build_floor() -> void:
 	for child in map_layer.get_children():
 		child.queue_free()
 	map_layer.add_child(renderer)
+	# Phase 2: TileMap atlas bake + tile placement (40-90ms).
+	await get_tree().process_frame
+	if my_gen != _build_generation or not is_instance_valid(renderer): return
 	var t_render: int = Time.get_ticks_usec()
 	renderer.render(grid, rooms, current_biome, rng, vr)
 	t_render = Time.get_ticks_usec() - t_render
@@ -255,6 +281,9 @@ func _build_floor() -> void:
 	bot.place_at(data.spawn)
 	_mark_room_visited_at(bot.cell)
 	_center_camera_on_bot()
+	# Phase 3: ambient decor scatter (5-15ms).
+	await get_tree().process_frame
+	if my_gen != _build_generation: return
 	var t_decor: int = Time.get_ticks_usec()
 	_scatter_ambient_decor()
 	t_decor = Time.get_ticks_usec() - t_decor
@@ -274,12 +303,16 @@ func _build_floor() -> void:
 		"events": [],
 	})
 
+	# Phase 4: enemy spawn (3-8ms).
+	await get_tree().process_frame
+	if my_gen != _build_generation: return
 	var t_spawn: int = Time.get_ticks_usec()
 	_spawn_enemies()
 	t_spawn = Time.get_ticks_usec() - t_spawn
 	_update_biome_hud()
 	floor_starting_hp = bot.hp
 	t_total = Time.get_ticks_usec() - t_total
+	_floor_ready = true
 	GrindLog.log_line("[build-floor] f=%d total_ms=%.1f gen_ms=%.1f render_ms=%.1f decor_ms=%.1f spawn_ms=%.1f enemies=%d" % [
 		current_floor, t_total / 1000.0, t_gen / 1000.0, t_render / 1000.0,
 		t_decor / 1000.0, t_spawn / 1000.0, enemies.size(),
@@ -818,6 +851,9 @@ func _spawn_miniboss(id: String, at_cell: Vector2i) -> void:
 		if ml_spec != "":
 			LightSpec.attach(e, ml_spec)
 	e.place_at(at_cell)
+	# Stagger initial repath so a freshly-spawned horde doesn't all repath
+	# on the same frame. Spread across the full REPATH_INTERVAL.
+	e.repath_timer = rng.randf_range(0.0, Enemy.REPATH_INTERVAL)
 	e.died.connect(_on_enemy_died)
 	enemies.append(e)
 
@@ -857,6 +893,9 @@ func _spawn_specific(id: String, at_cell: Vector2i) -> void:
 		if enemy_light_spec != "":
 			LightSpec.attach(e, enemy_light_spec)
 	e.place_at(at_cell)
+	# Stagger initial repath so a freshly-spawned horde doesn't all repath
+	# on the same frame. Spread across the full REPATH_INTERVAL.
+	e.repath_timer = rng.randf_range(0.0, Enemy.REPATH_INTERVAL)
 	e.died.connect(_on_enemy_died)
 	enemies.append(e)
 
@@ -1081,7 +1120,7 @@ func _roll_rarity(is_boss: bool) -> String:
 var _turn_accum: float = 0.0
 
 func _process(delta: float) -> void:
-	if not is_instance_valid(bot) or not bot.is_alive:
+	if not _floor_ready or not is_instance_valid(bot) or not bot.is_alive:
 		return
 	PerfMon.begin(PerfMon.TAG_FRAME)
 	PerfMon.begin(PerfMon.TAG_AI)
@@ -1595,7 +1634,14 @@ func _adjacent_walkable_cell(center: Vector2i, idx: int) -> Vector2i:
 				return c
 	return center
 
+const MAX_REPATHS_PER_FRAME := 3
+
 func _tick_enemies(delta: float) -> void:
+	# Cap A* paths per frame so a horde repath doesn't burn 24*1ms in one
+	# tick. Enemies that miss this frame's slot keep their old path
+	# (still animates) and try again next frame — at 60Hz the player
+	# never sees the difference.
+	var repaths_this_frame: int = 0
 	for e in enemies:
 		if not is_instance_valid(e) or not e.is_alive:
 			continue
@@ -1611,11 +1657,13 @@ func _tick_enemies(delta: float) -> void:
 				return
 		else:
 			e.repath_timer -= delta
-			if e.path.is_empty() or e.path_index >= e.path.size() or e.repath_timer <= 0.0:
-				e.repath_timer = 0.8
+			var needs_repath: bool = e.path.is_empty() or e.path_index >= e.path.size() or e.repath_timer <= 0.0
+			if needs_repath and repaths_this_frame < MAX_REPATHS_PER_FRAME:
+				e.repath_timer = Enemy.REPATH_INTERVAL
 				var p: PackedVector2Array = pathing.path(e.cell, bot.cell)
 				if p.size() > 1:
 					e.set_path(p.slice(1))
+				repaths_this_frame += 1
 			# Soft collision: if our next path-cell already has another live
 			# enemy on it, hold this tick so we don't visually stack.
 			# Bot's cell is exempt — the goal of pursuit IS to share that cell.
