@@ -27,30 +27,25 @@ Other queued work:
   a once-over to use the wider canvas (e.g. equipped + inventory side
   by side, stats column on the right).
 
-## Perf — next passes
+## Perf — done for now
 
-The 2026-05-13 pass shipped PerfMon + `/benchmark` + three CPU opts
-(fog gate, shader buffer reuse, flicker cache). Remaining ideas:
+The 2026-05-13 perf pass took fps avg 19 → 112 on M3 Pro 1× windowed.
+See HANDOVER for the full breakdown. Remaining items are all "nice to
+have" / "validate on other hardware":
 
-- ⬜ **Validate on lower-tier hardware** — current numbers are M3 Pro
-  headless. Re-run `/benchmark` on high-end PC, mid PC, low-end Windows
-  laptop; compare per-tag percentiles.
-- ⬜ **`/benchmark windowed` baseline + final** — current measurements
-  skip the GPU stack. Capture rendered frame_ms before claiming "done".
-- ⬜ **MapRenderer fade dirty-set** — `_process` still iterates every
-  cell key even when most are settled. Cheap win at ~410µs avg.
-- ⬜ **AI tick sweeps** — `ai_us` is the largest remaining cost
-  (~3400µs avg). Two known O(N) iterations: bot-adjacency check over
-  all enemies, target picker over all interactables. Profile with a
-  per-sub-tag breakdown before optimizing.
-- ⬜ **PointLight2D shadow filter** — PCF5 against ~1500 wall occluders
-  per floor is the heaviest GPU cost. Headless can't see this.
-  Investigate dropping to PCF3 or `LIGHT_MODE_NO_SHADOW` for ambient
-  decor lights (keep shadows for bot/weapon/altar).
+- ⬜ **Validate on lower-tier hardware** — high-end PC, mid PC, low-end
+  Windows laptop. Env-var A/B knobs (`BOTTER_NO_*`) are wired, ready
+  for hypothesis tests on each platform.
 - ⬜ **Outlier vaults** — `des_grunt_crypt_end_deaths_head`,
   `des_quadcrypt_mu`, `des_hellmonk_crystal_mountain` consistently top
-  the perf-floor ranking. Inspect for excess decor, light count, or
-  pathological room shapes.
+  the perf-floor ranking. Cosmetic perf — inspect for excess decor,
+  light count, or pathological room shapes only if a low-end target
+  struggles on these floors.
+- ⬜ **Shadow filter for ambient decor** — drop PCF5 to NONE/PCF13 only
+  if a low-end target shows shadows as the cost. Currently zero impact
+  on M3 Pro. The `BOTTER_SHADOW_FILTER` env var is the test harness.
+- ⬜ **MapRenderer fade dirty-set** — minor (~410µs); skip if not seen
+  in the wild.
 
 ## Combat pass (queued)
 

@@ -4,126 +4,124 @@ Point-in-time snapshot of what's actually shipping. Updated as we go. The
 durable rules and process live in `CLAUDE.md`; the roadmap and open work
 items live in `TODO.md`.
 
-Last refresh: 2026-05-13 (perf pass — PerfMon, /benchmark, 3 opts).
+Last refresh: 2026-05-13 (perf pass — fps avg 19 → 112 on M3 Pro).
 
-## Perf instrumentation + optimization pass — 2026-05-13
+## Perf pass — 2026-05-13 (full session arc)
 
-### PerfMon module + HUD line + [perf] log
+The session opened with a "fairly simplistic game running at variable
+30-120fps" complaint. By end, **avg fps 19 → 112, p50 → 120 (vsync
+cap), min 17 → 49** on M3 Pro 1× windowed.
 
-`scripts/perf_mon.gd` is a static µs accumulator. Tags
-(`frame`/`fog`/`lights`/`flicker`/`render`/`ai`) wrap their hot paths
-with `PerfMon.begin/end`. Every 240 frames it rolls the window into a
-snapshot consumed by:
+### What turned out to actually be slow (in order of impact)
 
-- The top-left debug HUD (`hud_chrome.update_debug`) — shows
-  `frame: X.XXms / fog us / light us / flick us / render us / ai us`.
-- `[perf]` lines in the grind log: `frame_ms=X.XX fog_us=N …`.
-- `[perf-floor]` lines emitted on `_descend`:
-  `label=biome|vault[,vault]|fN frames=N fog_us=N …`.
+1. **HUD update was the dominant cost** — `_update_biome_hud` ran every
+   frame and (a) called `SaveState.load_state()` (file open + JSON parse
+   + migrate) every frame, (b) queue_freed and recreated up to 1745
+   `TextureRect` nodes for the inventory grid, (c) repainted a 6400-pixel
+   minimap image, (d) wrote 7 Label.text values triggering Godot
+   layout/relayout. Throttling these to "data-changed" / 0.25s ticks
+   alone took fps from 19 → ~80. **This single class of fix dwarfed
+   everything else.**
 
-The label embeds biome + vault list + floor so `/benchmark` can rank
-outliers per vault.
+2. **Tile rendering as per-cell Sprite2D** — 6400 individual canvas
+   items × 2 layers = thousands of draw calls per frame. Migrated to
+   `TileMapLayer` with a runtime-baked packed atlas (one
+   `TileSetAtlasSource` per floor, every biome texture blitted into
+   one `Image`). Draws fell from ~6400 to ~150. Per-cell modulate
+   visibility fade replaced with a canvas shader sampling the fog
+   visibility texture.
 
-### `/benchmark` skill
+3. **Async floor build** — `_build_floor` is now split across 4 frames
+   via `await get_tree().process_frame` between gen / atlas-bake / decor
+   / spawn phases. The single-frame 70-600ms freeze on stairs descent
+   is gone. Build-generation counter cancels stale awaits when a new
+   build preempts (fixes the race when runs end mid-build).
 
-`.claude/skills/benchmark/` — wraps the auto-grind harness with a
-**duration budget** (default 300s) instead of a run count:
+4. **AI repath thundering herd** — every enemy initialised
+   `repath_timer = 0` so they all fired A* on the same frame; with
+   24 enemies that was 24 × ~1ms paths per repath cycle. Fixes:
+   stagger `repath_timer = randf_range(0, REPATH_INTERVAL)` at spawn,
+   cap `MAX_REPATHS_PER_FRAME = 3` in `_tick_enemies`. ai_us max
+   went 12741 → 276µs (46×).
 
-- `benchmark.sh [duration_s] [speed] [label] [headless|windowed]`
-- `parse_perf.py` aggregates `[perf]` and `[perf-floor]` lines into
-  avg / p50 / p95 / max per tag, plus worst-floor and worst-vault
-  rankings.
-- `compare.sh <a> <b>` prints aligned per-tag deltas between two
-  benchmark logs.
+5. **Three CPU opts (already shipped earlier in the session)** —
+   - **Fog refresh gate** (`bot.cell` change + invalidate_fog events;
+     dedupes `_world_light_sources` to once per refresh). avg -29%,
+     p95 -44%.
+   - **Shader buffer reuse** in `FogOverlay` — preallocated MAX_LIGHTS
+     packed arrays, per-slot diffing skips redundant
+     `set_shader_parameter` calls. avg -49%.
+   - **FlickerDriver group cache + visibility gating** — replaced
+     scene-tree walk with `flicker_lights` group; lights not visible
+     in tree skip animation AND pause ember `GPUParticles2D.emitting`.
+     avg -96%.
 
-Marker hygiene: same as `/grind` — `AUTO_GRIND.txt` is removed on
-exit so the user's next interactive launch lands in normal play.
+### What I expected to be slow but wasn't
 
-### Three CPU optimizations (M3 Pro 16× headless, 5min × 5runs)
+- **PointLight2D shadow filter (PCF5) against ~1500 wall occluders.**
+  Disabling shadows entirely gained zero fps. Counterintuitive.
+- **WorldEnvironment glow.** Disabling gave ~+1% fps.
+- **GPUParticles2D embers.** Disabling gave 0%.
+- **Floor enemy count.** ai_us was flat across f1 (6 enemies) → f8
+  (24 enemies); the spike was paths firing simultaneously, not the
+  scale of work.
 
-Per-tag deltas (averaged across two post-opt re-runs vs baseline):
+### Telemetry that landed
 
-| Tag | Baseline | After | Δ avg | Δ p95 |
-|---|---|---|---|---|
-| `flicker_us` | 1669 | ~60 | **-96%** | **-95%** |
-| `fog_us` | 3325 | ~2390 | **-29%** | **-44%** |
-| `lights_us` | 88 | ~44 | **-49%** | **-59%** |
-| `render_us` | 410 | ~404 | flat | -10% |
-| `ai_us` | 4375 | ~3400 | -23% (likely biome-mix luck — opts don't touch AI) | |
+- **`scripts/perf_mon.gd`** — static µs accumulator. Tags
+  `frame/fog/lights/flicker/render/ai`. 240-frame rolling window.
+  HUD line, `[perf]` log every snapshot, `[perf-floor]` per-floor
+  with `label=biome|vault[,vault]|fN`. The `[perf]` line also
+  reports `draws=` (RenderingServer draw calls) + `objs=` + `nodes=`.
+- **`scripts/dungeon.gd`** — `[build-floor]` line per floor with
+  total/gen/render/decor/spawn ms. Pinpoints which phase is slow.
+- **`/benchmark` skill** — `.claude/skills/benchmark/`.
+  `benchmark.sh [duration_s] [speed] [label] [headless|windowed]`,
+  `parse_perf.py` ranks worst floors/vaults/floor-numbers,
+  `compare.sh` diffs two logs.
 
-Frame_ms is noisy at 16× headless (16% variance even between identical
-configs); per-tag is the honest read.
+### Hardware A/B knobs (kept for future hardware testing)
 
-**Opt 1 — fog refresh gating.** `dungeon._refresh_fog()` now early-exits
-when `bot.cell` is unchanged AND no fog-invalidating event happened
-since last refresh. `invalidate_fog()` is called on chest open / loot
-pickup / fountain / altar / portal use / enemy death / floor build.
-`_world_light_sources()` is now cached behind the same dirty flag — was
-called twice per frame, now at most once per refresh.
+Env vars that disable individual systems at scene start, for
+hypothesis-testing perf on lower hardware:
 
-**Opt 2 — shader buffer reuse + dirty flag.** `FogOverlay.update_lights`
-preallocates the 4 packed arrays (`light_positions`, `light_radii`,
-`light_intensities`, `light_colors`) at MAX_LIGHTS=24. Per-slot
-position/radius/intensity/color are diffed; `set_shader_parameter` only
-fires when something actually changed. Camera params skip pushes when
-camera is stationary. `time_seconds` still pushes every frame (drives
-shader-side flicker tint).
+`BOTTER_NO_TILES`, `BOTTER_NO_LIGHTS`, `BOTTER_NO_FOG`,
+`BOTTER_NO_GLOW`, `BOTTER_NO_EMBERS`, `BOTTER_NO_SHADOWS`,
+`BOTTER_NO_OCCLUDERS`, `BOTTER_NO_VSYNC`,
+`BOTTER_SHADOW_FILTER=none|pcf5|pcf13`.
 
-**Opt 3 — FlickerDriver list cache + visibility gating.** Lights now
-register on the `flicker_lights` group via `LightSpec.attach()`, so
-FlickerDriver does `get_nodes_in_group()` instead of recursive
-`_walk_and_animate()` over the whole scene tree. Lights that aren't
-`is_visible_in_tree()` (parent hidden by fog) skip animation entirely
-AND have their ember `GPUParticles2D.emitting = false`. Coming back
-into view re-enables both.
+`BOTTER_NO_TILES=1 BOTTER_NO_LIGHTS=1 bash benchmark.sh 30 1
+all-off windowed` is a useful "what's the platform's ceiling".
+
+### Headless vs windowed
+
+- `--headless` skips the GPU renderer entirely. CPU timers (fog, ai,
+  flicker, render-fade, light pack) are honest; **GPU shader / shadow
+  / particle costs are NOT exercised**. Useful for fast CPU-only A/B.
+- `windowed` launches the actual game window so the full renderer
+  runs. Required for any GPU-related measurement.
+- Important: at 16× speed_scale the bot ticks 16× per real second,
+  so CPU work scales but GPU per-frame cost stays constant.
+  GPU-cost measurements need 1× speed.
+
+### Final M3 Pro numbers (2min windowed 1×)
+
+| Metric | Pre-pass | Final | Δ |
+|---|---|---|---|
+| fps avg | 19 | **112** | 5.9× |
+| fps p50 | 18 | **120** (vsync cap) | 6.7× |
+| fps p05 | 19 | **56** | 2.9× |
+| fps min | 17 | **49** | 2.9× |
+| ai_us max | 12,741 | **276** | 46× |
+| draws | ~6400 (per-cell sprites) | ~150 (packed atlas) | 40× |
 
 ### Hardware caveats
 
-Baseline is **MacBook M3 Pro**. Future passes will run the same
-`/benchmark` skill on high-end gaming PC, mid-tier gaming PC, low-end
-Windows laptop — a 200µs win on M3 Pro can be 2ms on the laptop.
+Baseline is **MacBook M3 Pro**. Re-run `/benchmark` on the high-end PC,
+mid PC, low-end Windows laptop when those become available — a 200µs
+win on M3 Pro can be 2ms on the laptop.
 
-`--headless` skips the GPU renderer entirely. CPU timers (fog, ai,
-flicker, render-fade, light pack) are honest; **GPU shader / shadow /
-particle costs are not exercised**. Use `windowed` mode for full-stack
-frame-time validation.
-
-### TileMap migration + HUD throttle — 2026-05-13 (later same session)
-
-**Result: 19fps → 50-80fps in normal play (M3 Pro 1× windowed)**, with
-peaks reaching 120fps on quiet floors. The variance you previously saw
-(52→120 fps spread) was almost entirely **HUD update cost**, not dungeon
-content.
-
-What landed:
-
-- **`MapRenderer` migrated to `TileMapLayer`** with a packed runtime
-  atlas. Every biome-specific texture this floor needs is blitted into
-  one Image at floor build time, registered as a single
-  `TileSetAtlasSource`. Two layers (base + overlay) → ~150 draw calls
-  per frame instead of the 6400-Sprite2D approach (which would have
-  been thousands).
-- **Per-tile visibility shader** (`assets/tile_visibility.gdshader`).
-  Replaces the per-cell `modulate` fade loop. Reads `FogSystem.vis_texture`
-  at the tile's world position and modulates alpha. The
-  `MapRenderer._process` loop is gone entirely.
-- **HUD throttle in Dungeon._update_biome_hud**: `update_inventory()`
-  was queue_freeing and recreating ~30 `TextureRect` nodes EVERY frame
-  (it's called from `_process` via `_update_biome_hud`). Same with
-  `update_equipped` (5 slots). Same with `update_minimap` (6400
-  set_pixel calls). Now: inventory + equipped redraw only when their
-  data hash changes; minimap repaints on a 0.25s tick. **This was
-  responsible for ~30ms of the per-frame cost.**
-
-GPU/perf A/B env knobs (kept for future hardware testing):
-- `BOTTER_NO_TILES`, `BOTTER_NO_LIGHTS`, `BOTTER_NO_FOG`, `BOTTER_NO_GLOW`,
-  `BOTTER_NO_EMBERS`, `BOTTER_NO_SHADOWS`, `BOTTER_NO_OCCLUDERS`,
-  `BOTTER_NO_VSYNC`, `BOTTER_SHADOW_FILTER`.
-
-The `[perf]` log line now also reports `draws=N` (RenderingServer
-draw-call count this frame) — useful for spotting batch-buster regressions.
-
-### Known outlier maps/vaults (perf hot floors)
+### Outlier maps/vaults — perf hot floors
 
 From baseline 5min, 16×, M3 Pro:
 
