@@ -299,12 +299,7 @@ func _capture_debug_screenshot() -> void:
 		fog._update_texture()
 		if current_renderer:
 			current_renderer.apply_visibility(fog)
-			for key in current_renderer.cell_target_alpha.keys():
-				current_renderer.cell_current_alpha[key] = 1.0
-				current_renderer.cell_target_alpha[key] = 1.0
-				for s in current_renderer.cell_sprites[key]:
-					if is_instance_valid(s):
-						s.modulate = Color(1, 1, 1, 1)
+			current_renderer.reveal_all()
 		if fog_overlay:
 			fog_overlay.set_darkness(0.0)
 		if ambient_modulate:
@@ -614,24 +609,41 @@ func _ensure_hud() -> void:
 	chrome = HudChrome.new()
 	add_child(chrome)
 
+var _hud_full_refresh_accum: float = 0.0
+var _last_inventory_size: int = -1
+var _last_equipped_hash: int = 0
+
 func _update_biome_hud() -> void:
 	_ensure_hud()
 	var biome_id: String = String(current_biome.get("id", "?"))
 	var branch: String = BiomeData.branch_depth_label(run_plan, current_floor)
 	var place_str := "%s  (%s)" % [branch, biome_id]
+	# Stats label updates are cheap (just text/color writes) — every frame.
 	chrome.update_stats(bot, place_str, run_turn)
-	chrome.update_equipped(bot.equipped if is_instance_valid(bot) else {}, items_db)
-	# Loose inventory = save state's inventory minus equipped instances.
-	var save: Dictionary = SaveState.load_state()
-	var loose: Array = save.get("inventory", [])
-	chrome.update_inventory(loose, items_db)
-	# Minimap snapshot (cell grid + bot + stairs + visible cells from fog).
-	var visible_cells: Dictionary = {}
-	if fog != null and "visible" in fog:
-		visible_cells = fog.visible
-	if grid is Array and not grid.is_empty():
-		var bot_cell: Vector2i = bot.cell if is_instance_valid(bot) else Vector2i(-1, -1)
-		chrome.update_minimap(grid, bot_cell, stairs_cell, visible_cells)
+	# Inventory + equipped + minimap are EXPENSIVE (queue_free + recreate
+	# nodes / repaint 6400 pixels). Only refresh when the underlying data
+	# actually changed, plus a coarse 0.25s tick for minimap movement.
+	_hud_full_refresh_accum += get_process_delta_time()
+	var equipped_hash: int = (bot.equipped.hash() if is_instance_valid(bot) else 0)
+	var save_inv: Array = SaveState.load_state().get("inventory", [])
+	var inv_size: int = save_inv.size()
+	var inv_changed: bool = inv_size != _last_inventory_size
+	var eq_changed: bool = equipped_hash != _last_equipped_hash
+	if eq_changed:
+		chrome.update_equipped(bot.equipped if is_instance_valid(bot) else {}, items_db)
+		_last_equipped_hash = equipped_hash
+	if inv_changed:
+		chrome.update_inventory(save_inv, items_db)
+		_last_inventory_size = inv_size
+	# Minimap — every 0.25s is plenty for visualizing bot motion.
+	if _hud_full_refresh_accum >= 0.25:
+		_hud_full_refresh_accum = 0.0
+		var visible_cells: Dictionary = {}
+		if fog != null and "visible" in fog:
+			visible_cells = fog.visible
+		if grid is Array and not grid.is_empty():
+			var bot_cell: Vector2i = bot.cell if is_instance_valid(bot) else Vector2i(-1, -1)
+			chrome.update_minimap(grid, bot_cell, stairs_cell, visible_cells)
 	# Debug HUD (top-left): biome / vaults / cell counts / FPS.
 	var dbg: Array = []
 	dbg.append("biome: %s" % biome_id)
@@ -642,7 +654,10 @@ func _update_biome_hud() -> void:
 	if grid is Array and not grid.is_empty():
 		dbg.append("grid: %dx%d" % [grid[0].size(), grid.size()])
 	dbg.append("enemies: %d  inter: %d" % [enemies.size(), interactables.size()])
-	dbg.append("fps: %d" % Engine.get_frames_per_second())
+	dbg.append("fps: %d  draws: %d" % [
+		Engine.get_frames_per_second(),
+		int(Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME)),
+	])
 	for line in PerfMon.format_hud_lines():
 		dbg.append(line)
 	chrome.update_debug(dbg)

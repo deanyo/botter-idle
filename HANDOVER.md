@@ -88,6 +88,41 @@ flicker, render-fade, light pack) are honest; **GPU shader / shadow /
 particle costs are not exercised**. Use `windowed` mode for full-stack
 frame-time validation.
 
+### TileMap migration + HUD throttle — 2026-05-13 (later same session)
+
+**Result: 19fps → 50-80fps in normal play (M3 Pro 1× windowed)**, with
+peaks reaching 120fps on quiet floors. The variance you previously saw
+(52→120 fps spread) was almost entirely **HUD update cost**, not dungeon
+content.
+
+What landed:
+
+- **`MapRenderer` migrated to `TileMapLayer`** with a packed runtime
+  atlas. Every biome-specific texture this floor needs is blitted into
+  one Image at floor build time, registered as a single
+  `TileSetAtlasSource`. Two layers (base + overlay) → ~150 draw calls
+  per frame instead of the 6400-Sprite2D approach (which would have
+  been thousands).
+- **Per-tile visibility shader** (`assets/tile_visibility.gdshader`).
+  Replaces the per-cell `modulate` fade loop. Reads `FogSystem.vis_texture`
+  at the tile's world position and modulates alpha. The
+  `MapRenderer._process` loop is gone entirely.
+- **HUD throttle in Dungeon._update_biome_hud**: `update_inventory()`
+  was queue_freeing and recreating ~30 `TextureRect` nodes EVERY frame
+  (it's called from `_process` via `_update_biome_hud`). Same with
+  `update_equipped` (5 slots). Same with `update_minimap` (6400
+  set_pixel calls). Now: inventory + equipped redraw only when their
+  data hash changes; minimap repaints on a 0.25s tick. **This was
+  responsible for ~30ms of the per-frame cost.**
+
+GPU/perf A/B env knobs (kept for future hardware testing):
+- `BOTTER_NO_TILES`, `BOTTER_NO_LIGHTS`, `BOTTER_NO_FOG`, `BOTTER_NO_GLOW`,
+  `BOTTER_NO_EMBERS`, `BOTTER_NO_SHADOWS`, `BOTTER_NO_OCCLUDERS`,
+  `BOTTER_NO_VSYNC`, `BOTTER_SHADOW_FILTER`.
+
+The `[perf]` log line now also reports `draws=N` (RenderingServer
+draw-call count this frame) — useful for spotting batch-buster regressions.
+
 ### Known outlier maps/vaults (perf hot floors)
 
 From baseline 5min, 16×, M3 Pro:

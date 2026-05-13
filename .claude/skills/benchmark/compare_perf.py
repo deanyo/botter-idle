@@ -9,7 +9,7 @@ from typing import Dict, List
 
 PERF_TAGS = ["fog", "lights", "flicker", "render", "ai"]
 PERF_RE = re.compile(
-    r"\[perf\] frame_ms=(?P<frame_ms>[\d.]+) "
+    r"\[perf\] frame_ms=(?P<frame_ms>[\d.]+)(?: fps=(?P<fps>[\d.]+))?(?: draws=(?P<draws>\d+))? "
     r"fog_us=(?P<fog>\d+) lights_us=(?P<lights>\d+) flicker_us=(?P<flicker>\d+) "
     r"render_us=(?P<render>\d+) ai_us=(?P<ai>\d+)"
 )

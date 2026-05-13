@@ -13,6 +13,12 @@ var auto_grind_floors: Dictionary = {}
 var auto_grind_start_time: int = 0
 
 func _ready() -> void:
+	# BOTTER_NO_VSYNC=1 — disable vsync for perf benchmarking. With ProMotion
+	# 120Hz displays, vsync coupling can mask the real frame cost behind
+	# discrete refresh windows.
+	if OS.has_environment("BOTTER_NO_VSYNC"):
+		DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED)
+		Engine.max_fps = 0
 	for arg in OS.get_cmdline_args():
 		if arg == "--auto-grind" or arg == "auto-grind":
 			auto_grind = true
