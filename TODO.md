@@ -5,6 +5,31 @@ the durable rules in `CLAUDE.md`. Update this file when committing.
 
 ---
 
+## Active — next session
+
+User explicitly queued: **run planning UI in Garage**. Add a panel where
+the player picks a 10-floor branch chain (D:1-3 → Lair:1-2 → Vaults:1
+→ ...) before deploying. Mobile-first scrollable picker. Currently
+`BiomeData.roll_run_plan()` returns a fully random 10-biome list; we'd
+gate that behind "Random run" vs "Custom plan". Save the chosen plan
+to SaveState so deploy uses it. ~4h.
+
+The Garage scene already has `Stats / Equipped / Inventory / Deploy`.
+A new tab or panel for "Branch chain" would slot in above Deploy.
+
+## Combat pass (queued)
+
+User flagged for a future session:
+- **Affix expansion** — wire crit / lifesteal / regen / dodge / thorns
+  from items into combat. Currently 5 of 30 affixes affect gameplay; the
+  other 25 are decorative. ~3h.
+- **Real paper-doll** — not just weapon overlay. Body armor / helm /
+  boots / shield / cloak each get a sprite layer matched to equipped
+  item. ~1 day. Atlas already catalogs 975 paperdoll sprites.
+- **Enemy attack effects** — currently bot has weapon overlay + swing
+  animation. Enemies just have hit_squish on hit. Add per-enemy attack
+  animations: dragon breath, mage cast, archer shoot.
+
 ## Active — directional tiles continuation
 
 Edge overlays and sigils both shipped. Remaining: multi-tile creatures.

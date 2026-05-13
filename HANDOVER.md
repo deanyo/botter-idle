@@ -4,7 +4,7 @@ Point-in-time snapshot of what's actually shipping. Updated as we go. The
 durable rules and process live in `CLAUDE.md`; the roadmap and open work
 items live in `TODO.md`.
 
-Last refresh: 2026-05-12 (end of evening session).
+Last refresh: 2026-05-13 (end of marathon session).
 
 ---
 
@@ -362,11 +362,14 @@ The 4-field form `biome,vault,floor,1` enables screenshot mode (the
 
 ## Open balance knobs (next time we touch combat)
 
-- **HP scaling looks buggy** — user flagged. The `[floor] hp_lost=` field in
-  the new logging was added to help diagnose. Most floors show `hp_lost=0`
-  even with 20+ enemies, which doesn't match expectation.
-- Common gear may be too strong vs floor-1 enemies (Rusty Dagger +16 ATK).
-- Vault frequency may need re-tuning — currently ~25% chance of zero float
-  vaults, ~40% chance of two on floors 4+.
-- 24 affix stats not yet wired into combat (crit, lifesteal, gold find,
-  dodge, regen, thorns, etc).
+- **Vault frequency** — currently ~75-83% per floor with retry-up-to-16
+  candidates. Feels right; may need to dial back for atmosphere on some
+  biomes.
+- **Common gear power** — Rusty Dagger is +16 ATK on a 6 ATK base.
+  Starter bot is dramatically stronger than a no-gear bot. May want to
+  trim early-tier item stats once playtesting reveals balance gaps.
+- **24 affix stats not yet wired into combat** (crit, lifesteal, gold
+  find, dodge, regen, thorns, etc). Affix system rolls them on items
+  and prints them in tooltips but they have no gameplay effect.
+- **Aggro range cap (8 cells)** is conservative; may be too restrictive
+  on bigger 80×80 maps where cluster combat would feel more alive.
