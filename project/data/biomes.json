@@ -5,18 +5,16 @@
       "floor_primary": [
         "dungeon"
       ],
-      "floor_accent": [
-        "dungeon_alt"
+      "floor_accent": [],
+      "wall_primary": [
+        "dungeon"
       ],
-      "wall_primary": "dungeon",
-      "wall_accent": [
-        "dungeon_alt"
-      ],
+      "wall_accent": [],
       "modulate": [
-        1.0,
-        1.0,
-        1.0,
-        1.0
+        1,
+        1,
+        1,
+        1
       ],
       "darkness": 0.15,
       "enemy_pool": [
@@ -57,26 +55,54 @@
           "id": "caves",
           "weight": 1
         }
-      ]
+      ],
+      "floor_secondary": [
+        "@dungeon_alt_7",
+        "@dungeon_alt_6",
+        "@dungeon_alt_5",
+        "@dungeon_alt_4",
+        "@dungeon_alt_3",
+        "@dungeon_alt_2",
+        "@dungeon_alt_1",
+        "@dungeon_alt_0"
+      ],
+      "wall_alternates": [
+        {
+          "weight": 1,
+          "prefixes": [
+            "@dungeon_alt_0",
+            "@dungeon_alt_1",
+            "@dungeon_alt_2",
+            "@dungeon_alt_3",
+            "@dungeon_alt_4",
+            "@dungeon_alt_5"
+          ]
+        }
+      ],
+      "edge_overlay": {
+        "patches": []
+      },
+      "sigil_set": [],
+      "liquid_type": "water"
     },
     "dungeon_dark": {
       "display_name": "the Dark Dungeon",
       "floor_primary": [
         "dungeon_dark"
       ],
-      "floor_accent": [
-        "dungeon_dark_alt",
-        "dungeon_dark_blood"
+      "floor_accent": [],
+      "wall_primary": [
+        "dungeon_dark"
       ],
-      "wall_primary": "dungeon_dark",
       "wall_accent": [
-        "dungeon_dark_alt"
+        "@dungeon_dark_2",
+        "@dungeon_dark_1"
       ],
       "modulate": [
         0.78,
         0.74,
         0.85,
-        1.0
+        1
       ],
       "darkness": 0.4,
       "enemy_pool": [
@@ -116,7 +142,25 @@
           "id": "caves_tight",
           "weight": 1
         }
-      ]
+      ],
+      "floor_secondary": [
+        "@dungeon_dark_alt_0",
+        "@dungeon_dark_alt_1",
+        "@dungeon_dark_alt_2",
+        "@dungeon_dark_alt_3",
+        "@dungeon_dark_alt_4",
+        "@dungeon_dark_alt_5"
+      ],
+      "wall_alternates": [
+        {
+          "weight": 1,
+          "prefixes": []
+        }
+      ],
+      "edge_overlay": {
+        "patches": []
+      },
+      "sigil_set": []
     },
     "mines": {
       "display_name": "the Orcish Mines",
@@ -124,13 +168,15 @@
         "mines"
       ],
       "floor_accent": [],
-      "wall_primary": "mines",
+      "wall_primary": [
+        "mines"
+      ],
       "wall_accent": [],
       "modulate": [
         1.05,
         0.95,
         0.85,
-        1.0
+        1
       ],
       "darkness": 0.35,
       "enemy_pool": [
@@ -174,47 +220,58 @@
           "id": "caves_open",
           "weight": 1
         }
-      ]
+      ],
+      "floor_secondary": [
+        "@dungeon_9",
+        "@dungeon_8",
+        "@dungeon_7",
+        "@dungeon_6",
+        "@dungeon_5",
+        "@dungeon_4",
+        "@dungeon_3",
+        "@dungeon_2",
+        "@dungeon_11",
+        "@dungeon_0"
+      ],
+      "wall_alternates": [],
+      "edge_overlay": {
+        "patches": []
+      },
+      "sigil_set": []
     },
     "lair": {
       "display_name": "the Lair",
       "floor_primary": [
         "lair"
       ],
-      "floor_accent": [
-        "lair_alt"
+      "floor_accent": [],
+      "wall_primary": [
+        "lair"
       ],
-      "wall_primary": "lair",
       "wall_accent": [
-        "lair_alt"
+        "@orc_3",
+        "@orc_4",
+        "@orc_5"
       ],
       "wall_alternates": [
         {
-          "prefix": "tree_1_yellow",
-          "weight": 25
-        },
-        {
-          "prefix": "tree_2_yellow",
-          "weight": 25
-        },
-        {
-          "prefix": "shallow_water_2",
-          "weight": 10
-        },
-        {
-          "prefix": "mold_1",
-          "weight": 10
-        },
-        {
-          "prefix": "mold_2",
-          "weight": 10
+          "weight": 12,
+          "prefixes": [
+            "tree_1_yellow",
+            "@dungeon_alt_0",
+            "@dungeon_alt_1",
+            "@dungeon_alt_2",
+            "@dungeon_alt_4",
+            "@dungeon_alt_5",
+            "@dungeon_alt_2"
+          ]
         }
       ],
       "modulate": [
         0.9,
         1.05,
         0.85,
-        1.0
+        1
       ],
       "darkness": 0.2,
       "enemy_pool": [
@@ -267,12 +324,14 @@
       "edge_overlay": {
         "prefix": "grass",
         "density": 0.85,
-        "patch_density": 0.06
+        "patch_density": 0.06,
+        "patches": []
       },
       "liquid_type": "water",
       "floor_secondary": [
         "moss"
-      ]
+      ],
+      "sigil_set": []
     },
     "forest": {
       "display_name": "the Forest",
@@ -282,37 +341,27 @@
       "floor_accent": [
         "forest_alt"
       ],
-      "wall_primary": "forest",
-      "wall_accent": [
-        "forest_alt"
+      "wall_primary": [
+        "forest"
       ],
+      "wall_accent": [],
       "wall_alternates": [
         {
-          "prefix": "tree_1_lightred",
-          "weight": 30
-        },
-        {
-          "prefix": "tree_2_lightred",
-          "weight": 25
-        },
-        {
-          "prefix": "tree_1_red",
-          "weight": 15
-        },
-        {
-          "prefix": "tree_2_red",
-          "weight": 15
-        },
-        {
-          "prefix": "mold_3",
-          "weight": 5
+          "weight": 30,
+          "prefixes": [
+            "tree_1_lightred",
+            "@forest_alt_0",
+            "@forest_alt_1",
+            "@forest_alt_2",
+            "@forest_alt_3"
+          ]
         }
       ],
       "modulate": [
         0.85,
         1.05,
         0.85,
-        1.0
+        1
       ],
       "darkness": 0.3,
       "enemy_pool": [
@@ -361,9 +410,12 @@
       "edge_overlay": {
         "prefix": "grass",
         "density": 0.95,
-        "patch_density": 0.1
+        "patch_density": 0.1,
+        "patches": []
       },
-      "liquid_type": "water"
+      "liquid_type": "water",
+      "floor_secondary": [],
+      "sigil_set": []
     },
     "swamp": {
       "display_name": "the Swamp",
@@ -373,35 +425,47 @@
       "floor_accent": [
         "swamp_alt"
       ],
-      "wall_primary": "swamp",
+      "wall_primary": [
+        "swamp"
+      ],
       "wall_accent": [],
       "wall_alternates": [
         {
-          "prefix": "deep_water_murky_0",
-          "weight": 25
+          "weight": 25,
+          "prefixes": [
+            "deep_water_murky_0"
+          ]
         },
         {
-          "prefix": "deep_water_0",
-          "weight": 15
+          "weight": 15,
+          "prefixes": [
+            "deep_water_0"
+          ]
         },
         {
-          "prefix": "mangrove_1",
-          "weight": 15
+          "weight": 15,
+          "prefixes": [
+            "mangrove_1"
+          ]
         },
         {
-          "prefix": "mangrove_2",
-          "weight": 15
+          "weight": 15,
+          "prefixes": [
+            "mangrove_2"
+          ]
         },
         {
-          "prefix": "mangrove_3",
-          "weight": 10
+          "weight": 10,
+          "prefixes": [
+            "mangrove_3"
+          ]
         }
       ],
       "modulate": [
         0.85,
-        1.0,
+        1,
         0.8,
-        1.0
+        1
       ],
       "darkness": 0.4,
       "enemy_pool": [
@@ -448,9 +512,12 @@
       "edge_overlay": {
         "prefix": "dirt",
         "density": 0.85,
-        "patch_density": 0.05
+        "patch_density": 0.05,
+        "patches": []
       },
-      "liquid_type": "water"
+      "liquid_type": "water",
+      "floor_secondary": [],
+      "sigil_set": []
     },
     "snake": {
       "display_name": "the Snake Pit",
@@ -458,13 +525,15 @@
         "snake"
       ],
       "floor_accent": [],
-      "wall_primary": "snake",
+      "wall_primary": [
+        "snake"
+      ],
       "wall_accent": [],
       "modulate": [
-        1.0,
-        1.0,
+        1,
+        1,
         0.85,
-        1.0
+        1
       ],
       "darkness": 0.25,
       "enemy_pool": [
@@ -508,9 +577,13 @@
       "edge_overlay": {
         "prefix": "dirt",
         "density": 0.55,
-        "patch_density": 0.02
+        "patch_density": 0.02,
+        "patches": []
       },
-      "liquid_type": "water"
+      "liquid_type": "water",
+      "floor_secondary": [],
+      "wall_alternates": [],
+      "sigil_set": []
     },
     "shoals": {
       "display_name": "the Shoals",
@@ -521,27 +594,35 @@
         "shoals_alt",
         "shoals_rocks"
       ],
-      "wall_primary": "shoals",
+      "wall_primary": [
+        "shoals"
+      ],
       "wall_accent": [],
       "wall_alternates": [
         {
-          "prefix": "deep_water_0",
-          "weight": 35
+          "weight": 35,
+          "prefixes": [
+            "deep_water_0"
+          ]
         },
         {
-          "prefix": "deep_water_1",
-          "weight": 25
+          "weight": 25,
+          "prefixes": [
+            "deep_water_1"
+          ]
         },
         {
-          "prefix": "shallow_water_2",
-          "weight": 15
+          "weight": 15,
+          "prefixes": [
+            "shallow_water_2"
+          ]
         }
       ],
       "modulate": [
-        1.0,
+        1,
         1.05,
         1.1,
-        1.0
+        1
       ],
       "darkness": 0.1,
       "enemy_pool": [
@@ -584,9 +665,12 @@
       "edge_overlay": {
         "prefix": "shallow_water_wave",
         "density": 0.6,
-        "patch_density": 0.0
+        "patch_density": 0,
+        "patches": []
       },
-      "liquid_type": "water"
+      "liquid_type": "water",
+      "floor_secondary": [],
+      "sigil_set": []
     },
     "orc": {
       "display_name": "the Orc Hold",
@@ -594,13 +678,20 @@
         "orc"
       ],
       "floor_accent": [],
-      "wall_primary": "orc",
-      "wall_accent": [],
+      "wall_primary": [
+        "orc"
+      ],
+      "wall_accent": [
+        "@forest_alt_0",
+        "@forest_alt_1",
+        "@forest_alt_2",
+        "@forest_alt_3"
+      ],
       "modulate": [
-        1.0,
+        1,
         0.95,
         0.85,
-        1.0
+        1
       ],
       "darkness": 0.3,
       "enemy_pool": [
@@ -651,7 +742,19 @@
           "id": "caves_open",
           "weight": 1
         }
-      ]
+      ],
+      "floor_secondary": [
+        "@tomb_0",
+        "@tomb_5",
+        "@tomb_4",
+        "@tomb_2",
+        "@tomb_1"
+      ],
+      "wall_alternates": [],
+      "edge_overlay": {
+        "patches": []
+      },
+      "sigil_set": []
     },
     "vaults": {
       "display_name": "the Vaults",
@@ -667,10 +770,10 @@
         "vaults_alt2"
       ],
       "modulate": [
-        1.0,
-        1.0,
-        1.0,
-        1.0
+        1,
+        1,
+        1,
+        1
       ],
       "darkness": 0.1,
       "enemy_pool": [
@@ -730,29 +833,36 @@
       "floor_primary": [
         "crypt"
       ],
-      "floor_accent": [
-        "crypt_alt",
-        "crypt_alt2"
+      "floor_accent": [],
+      "wall_primary": [
+        "crypt"
       ],
-      "wall_primary": "crypt",
-      "wall_accent": [
-        "crypt_alt"
-      ],
+      "wall_accent": [],
       "wall_alternates": [
         {
-          "prefix": "crumbled_column",
-          "weight": 15
+          "weight": 15,
+          "prefixes": [
+            "crumbled_column",
+            "@crypt_alt_0",
+            "@crypt_alt_1",
+            "@crypt_alt_2",
+            "@crypt_alt_3",
+            "@crypt_alt_4",
+            "@crypt_alt_5"
+          ]
         },
         {
-          "prefix": "boulder",
-          "weight": 10
+          "weight": 10,
+          "prefixes": [
+            "boulder"
+          ]
         }
       ],
       "modulate": [
         0.7,
         0.7,
         0.85,
-        1.0
+        1
       ],
       "darkness": 0.55,
       "enemy_pool": [
@@ -808,7 +918,16 @@
         1,
         1
       ],
-      "liquid_type": ""
+      "liquid_type": "water",
+      "floor_secondary": [
+        "@tomb_alt_0",
+        "@tomb_alt_1",
+        "@tomb_alt_2",
+        "@tomb_alt_3"
+      ],
+      "edge_overlay": {
+        "patches": []
+      }
     },
     "tomb": {
       "display_name": "the Tomb",
@@ -818,15 +937,17 @@
       "floor_accent": [
         "tomb_alt"
       ],
-      "wall_primary": "tomb",
+      "wall_primary": [
+        "tomb"
+      ],
       "wall_accent": [
         "tomb_alt"
       ],
       "modulate": [
         1.05,
-        1.0,
+        1,
         0.75,
-        1.0
+        1
       ],
       "darkness": 0.2,
       "enemy_pool": [
@@ -879,7 +1000,12 @@
         1,
         2
       ],
-      "liquid_type": ""
+      "liquid_type": "",
+      "floor_secondary": [],
+      "wall_alternates": [],
+      "edge_overlay": {
+        "patches": []
+      }
     },
     "forge": {
       "display_name": "the Forge",
@@ -887,36 +1013,39 @@
         "forge"
       ],
       "floor_accent": [
-        "forge_alt",
-        "forge_alt2"
-      ],
-      "wall_primary": "forge",
-      "wall_accent": [
         "forge_alt"
+      ],
+      "wall_primary": [
+        "@forge_alt_5",
+        "@forge_alt_4",
+        "@forge_alt_3",
+        "@forge_alt_2",
+        "@forge_alt_1",
+        "@forge_alt_0"
+      ],
+      "wall_accent": [
+        "@forge_7",
+        "@forge_6",
+        "@forge_5",
+        "@forge_4",
+        "@forge_3",
+        "@forge_2",
+        "@forge_1",
+        "@forge_0"
       ],
       "wall_alternates": [
         {
-          "prefix": "lava_0",
-          "weight": 20
-        },
-        {
-          "prefix": "lava_1",
-          "weight": 15
-        },
-        {
-          "prefix": "lava_2",
-          "weight": 10
-        },
-        {
-          "prefix": "boulder",
-          "weight": 10
+          "weight": 20,
+          "prefixes": [
+            "lava_0"
+          ]
         }
       ],
       "modulate": [
         1.15,
         0.9,
         0.7,
-        1.0
+        1
       ],
       "darkness": 0.5,
       "enemy_pool": [
@@ -965,7 +1094,12 @@
           "weight": 1
         }
       ],
-      "liquid_type": "lava"
+      "liquid_type": "lava",
+      "floor_secondary": [],
+      "edge_overlay": {
+        "patches": []
+      },
+      "sigil_set": []
     },
     "glacier": {
       "display_name": "the Glacier",
@@ -975,7 +1109,9 @@
       "floor_accent": [
         "glacier_alt"
       ],
-      "wall_primary": "glacier",
+      "wall_primary": [
+        "glacier"
+      ],
       "wall_accent": [
         "glacier_alt"
       ],
@@ -983,7 +1119,7 @@
         0.85,
         0.95,
         1.15,
-        1.0
+        1
       ],
       "darkness": 0.15,
       "enemy_pool": [
@@ -1030,7 +1166,13 @@
           "weight": 1
         }
       ],
-      "liquid_type": ""
+      "liquid_type": "water",
+      "floor_secondary": [],
+      "wall_alternates": [],
+      "edge_overlay": {
+        "patches": []
+      },
+      "sigil_set": []
     },
     "slime": {
       "display_name": "the Slime Pits",
@@ -1038,27 +1180,35 @@
         "dungeon"
       ],
       "floor_accent": [],
-      "wall_primary": "slime",
+      "wall_primary": [
+        "slime"
+      ],
       "wall_accent": [],
       "wall_alternates": [
         {
-          "prefix": "deep_water_murky_0",
-          "weight": 25
+          "weight": 25,
+          "prefixes": [
+            "deep_water_murky_0"
+          ]
         },
         {
-          "prefix": "mold_1",
-          "weight": 15
+          "weight": 15,
+          "prefixes": [
+            "mold_1"
+          ]
         },
         {
-          "prefix": "mold_2",
-          "weight": 15
+          "weight": 15,
+          "prefixes": [
+            "mold_2"
+          ]
         }
       ],
       "modulate": [
         0.85,
         1.05,
         0.7,
-        1.0
+        1
       ],
       "darkness": 0.4,
       "enemy_pool": [
@@ -1106,9 +1256,12 @@
       "edge_overlay": {
         "prefix": "slime_overlay",
         "density": 0.85,
-        "patch_density": 0.0
+        "patch_density": 0,
+        "patches": []
       },
-      "liquid_type": "water"
+      "liquid_type": "water",
+      "floor_secondary": [],
+      "sigil_set": []
     },
     "hive": {
       "display_name": "the Hive",
@@ -1116,13 +1269,15 @@
         "mines"
       ],
       "floor_accent": [],
-      "wall_primary": "hive",
+      "wall_primary": [
+        "hive"
+      ],
       "wall_accent": [],
       "modulate": [
         1.05,
-        1.0,
+        1,
         0.7,
-        1.0
+        1
       ],
       "darkness": 0.25,
       "enemy_pool": [
@@ -1162,8 +1317,27 @@
       "edge_overlay": {
         "prefix": "dirt",
         "density": 0.85,
-        "patch_density": 0.04
-      }
+        "patch_density": 0.04,
+        "patches": []
+      },
+      "floor_secondary": [
+        "@hive_3",
+        "@hive_2",
+        "@hive_1",
+        "@hive_0"
+      ],
+      "wall_alternates": [
+        {
+          "weight": 12,
+          "prefixes": [
+            "@forest_alt_3",
+            "@forest_alt_0",
+            "@forest_alt_1",
+            "@forest_alt_2"
+          ]
+        }
+      ],
+      "sigil_set": []
     },
     "labyrinth": {
       "display_name": "the Labyrinth",
@@ -1171,7 +1345,9 @@
         "labyrinth"
       ],
       "floor_accent": [],
-      "wall_primary": "labyrinth",
+      "wall_primary": [
+        "labyrinth"
+      ],
       "wall_accent": [
         "labyrinth_alt"
       ],
@@ -1179,7 +1355,7 @@
         0.95,
         0.9,
         0.85,
-        1.0
+        1
       ],
       "darkness": 0.45,
       "enemy_pool": [
@@ -1226,7 +1402,22 @@
       "sigil_density": [
         1,
         2
-      ]
+      ],
+      "floor_secondary": [
+        "@mines_0",
+        "@mines_1",
+        "@mines_2",
+        "@mines_3",
+        "@mines_4",
+        "@mines_5",
+        "@mines_6",
+        "@mines_7",
+        "@mines_8"
+      ],
+      "wall_alternates": [],
+      "edge_overlay": {
+        "patches": []
+      }
     },
     "abyss": {
       "display_name": "the Abyss",
@@ -1234,13 +1425,15 @@
         "abyss"
       ],
       "floor_accent": [],
-      "wall_primary": "abyss",
+      "wall_primary": [
+        "abyss"
+      ],
       "wall_accent": [],
       "modulate": [
-        1.0,
+        1,
         0.7,
         0.85,
-        1.0
+        1
       ],
       "darkness": 0.55,
       "enemy_pool": [
@@ -1288,7 +1481,25 @@
           "weight": 1
         }
       ],
-      "liquid_type": "lava"
+      "liquid_type": "lava",
+      "floor_secondary": [
+        "@dungeon_dark_alt_0",
+        "@dungeon_dark_alt_1",
+        "@dungeon_dark_alt_2",
+        "@dungeon_dark_alt_3",
+        "@dungeon_dark_alt_4",
+        "@dungeon_dark_alt_5"
+      ],
+      "wall_alternates": [
+        {
+          "weight": 1,
+          "prefixes": []
+        }
+      ],
+      "edge_overlay": {
+        "patches": []
+      },
+      "sigil_set": []
     },
     "pandemonium": {
       "display_name": "Pandemonium",
@@ -1296,13 +1507,22 @@
         "pandemonium"
       ],
       "floor_accent": [],
-      "wall_primary": "pandemonium",
-      "wall_accent": [],
+      "wall_primary": [
+        "pandemonium"
+      ],
+      "wall_accent": [
+        "@forge_alt_5",
+        "@forge_alt_4",
+        "@forge_alt_3",
+        "@forge_alt_1",
+        "@forge_alt_2",
+        "@forge_alt_0"
+      ],
       "modulate": [
         1.1,
         0.75,
         0.75,
-        1.0
+        1
       ],
       "darkness": 0.5,
       "enemy_pool": [
@@ -1358,7 +1578,17 @@
         2,
         3
       ],
-      "liquid_type": "lava"
+      "liquid_type": "lava",
+      "floor_secondary": [
+        "@vaults_alt3_0",
+        "@vaults_alt3_1",
+        "@vaults_alt3_2",
+        "@vaults_alt3_3"
+      ],
+      "wall_alternates": [],
+      "edge_overlay": {
+        "patches": []
+      }
     },
     "zot": {
       "display_name": "the Realm of Zot",
@@ -1372,7 +1602,7 @@
         0.95,
         0.9,
         1.15,
-        1.0
+        1
       ],
       "darkness": 0.4,
       "enemy_pool": [
@@ -1439,13 +1669,15 @@
       "floor_accent": [
         "elf_frame"
       ],
-      "wall_primary": "elf",
+      "wall_primary": [
+        "elf"
+      ],
       "wall_accent": [],
       "modulate": [
         1.05,
-        1.0,
+        1,
         1.15,
-        1.0
+        1
       ],
       "darkness": 0.18,
       "enemy_pool": [
@@ -1496,7 +1728,12 @@
       "sigil_density": [
         1,
         2
-      ]
+      ],
+      "floor_secondary": [],
+      "wall_alternates": [],
+      "edge_overlay": {
+        "patches": []
+      }
     },
     "spider": {
       "display_name": "the Spider Nest",
@@ -1504,19 +1741,23 @@
         "mines"
       ],
       "floor_accent": [],
-      "wall_primary": "spider",
+      "wall_primary": [
+        "spider"
+      ],
       "wall_accent": [],
       "wall_alternates": [
         {
-          "prefix": "tree",
-          "weight": 8
+          "weight": 8,
+          "prefixes": [
+            "tree"
+          ]
         }
       ],
       "modulate": [
         0.9,
         0.95,
         0.85,
-        1.0
+        1
       ],
       "darkness": 0.55,
       "enemy_pool": [
@@ -1557,9 +1798,12 @@
       "edge_overlay": {
         "prefix": "dirt",
         "density": 0.85,
-        "patch_density": 0.04
+        "patch_density": 0.04,
+        "patches": []
       },
-      "liquid_type": ""
+      "liquid_type": "",
+      "floor_secondary": [],
+      "sigil_set": []
     },
     "temple": {
       "display_name": "the Ecumenical Temple",
@@ -1567,13 +1811,15 @@
         "temple"
       ],
       "floor_accent": [],
-      "wall_primary": "temple",
+      "wall_primary": [
+        "temple"
+      ],
       "wall_accent": [],
       "modulate": [
         1.05,
         1.05,
         0.95,
-        1.0
+        1
       ],
       "darkness": 0.05,
       "enemy_pool": [],
@@ -1611,7 +1857,13 @@
       "sigil_density": [
         1,
         2
-      ]
+      ],
+      "floor_secondary": [],
+      "wall_alternates": [],
+      "edge_overlay": {
+        "patches": []
+      },
+      "liquid_type": "water"
     },
     "depths": {
       "display_name": "the Depths",
@@ -1621,13 +1873,15 @@
       "floor_accent": [
         "depths_alt"
       ],
-      "wall_primary": "depths",
+      "wall_primary": [
+        "depths"
+      ],
       "wall_accent": [],
       "modulate": [
         0.85,
         0.85,
         1.05,
-        1.0
+        1
       ],
       "darkness": 0.45,
       "enemy_pool": [
@@ -1682,7 +1936,31 @@
       "sigil_density": [
         1,
         2
-      ]
+      ],
+      "floor_secondary": [
+        "@zot_9",
+        "@zot_8",
+        "@zot_11",
+        "@zot_10",
+        "@zot_7",
+        "@zot_5"
+      ],
+      "wall_alternates": [
+        {
+          "weight": 1,
+          "prefixes": [
+            "@vaults_alt_0",
+            "@vaults_alt_1",
+            "@vaults_alt_2",
+            "@vaults_alt_3",
+            "@vaults_alt_4",
+            "@vaults_alt_5"
+          ]
+        }
+      ],
+      "edge_overlay": {
+        "patches": []
+      }
     }
   },
   "run_plans": [
