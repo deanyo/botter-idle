@@ -28,7 +28,7 @@ static func spawn(parent: Node, tex: Texture2D, world_pos: Vector2, duration: fl
 	s.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	s.modulate = Color(1, 1, 1, 1)
 	s.scale = Vector2(0.8, 0.8)
-	s.z_index = 5
+	s.z_index = 6
 	parent.add_child(s)
 	var tw := s.create_tween()
 	tw.set_parallel(true)

@@ -1079,9 +1079,11 @@ func _tick_bot(delta: float) -> void:
 	if bot_light == null and is_instance_valid(bot):
 		bot_light = PointLight2D.new()
 		bot_light.texture = _make_radial_light(128)
-		bot_light.texture_scale = 5.5
+		# Lower scale + energy so the light's inner core doesn't white-out the
+		# bot sprite on sandy/cream tile maps (Tomb, Vaults, Shoals).
+		bot_light.texture_scale = 4.5
 		bot_light.offset = Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5)
-		bot_light.energy = 1.15
+		bot_light.energy = 0.85
 		bot_light.color = Color(1.0, 0.95, 0.8)
 		bot_light.range_z_min = -1024
 		bot_light.range_z_max = 1024
@@ -1091,8 +1093,8 @@ func _tick_bot(delta: float) -> void:
 		bot.add_child(bot_light)
 		var t := bot_light.create_tween().set_loops()
 		t.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-		t.tween_property(bot_light, "energy", 1.0, 0.7)
-		t.tween_property(bot_light, "energy", 1.2, 0.7)
+		t.tween_property(bot_light, "energy", 0.75, 0.7)
+		t.tween_property(bot_light, "energy", 0.95, 0.7)
 
 	if bot_interacting:
 		_tick_interaction(delta)

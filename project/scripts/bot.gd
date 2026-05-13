@@ -120,6 +120,9 @@ func recompute_stats() -> void:
 
 func _ready() -> void:
 	super._ready()
+	# Render bot above all interactables (chests/altars/loot/portals which
+	# default to z_index = 0). FX particles draw at z=6 so they still overlay.
+	z_index = 5
 	set_texture(BOT_TEX)
 	# Layer the lantern over the player base. Sprite is centered=false in Actor,
 	# matching tile origin, so the overlay aligns 1:1 by default.
