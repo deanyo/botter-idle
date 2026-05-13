@@ -70,16 +70,8 @@ var run_stalls: int = 0
 var run_vaults_stamped: Array = []
 var run_biomes_visited: Array = []
 const MAX_TICKS_WITHOUT_MOVE := 30
-var hud_layer: CanvasLayer = null
-var hud_name_label: Label = null
-var hud_place_label: Label = null
-var hud_hp_label: Label = null
-var hud_hp_bar: ColorRect = null
-var hud_hp_bar_bg: ColorRect = null
-var hud_xp_label: Label = null
-var hud_gold_label: Label = null
-var hud_atk_label: Label = null
-var hud_def_label: Label = null
+var chrome: HudChrome = null
+var run_turn: int = 0
 
 @onready var map_layer: Node2D = $MapLayer
 @onready var actor_layer: Node2D = $ActorLayer
@@ -540,13 +532,13 @@ func _collect_render_manifest(img: Image, png_path: String, ts: int) -> Dictiona
 			"edge_overlay": overlay_summary,
 		},
 		"hud": {
-			"name": hud_name_label.text if is_instance_valid(hud_name_label) else "",
-			"place": hud_place_label.text if is_instance_valid(hud_place_label) else "",
-			"hp": hud_hp_label.text if is_instance_valid(hud_hp_label) else "",
-			"atk": hud_atk_label.text if is_instance_valid(hud_atk_label) else "",
-			"def": hud_def_label.text if is_instance_valid(hud_def_label) else "",
-			"xp": hud_xp_label.text if is_instance_valid(hud_xp_label) else "",
-			"gold": hud_gold_label.text if is_instance_valid(hud_gold_label) else "",
+			"name": chrome.lbl_name.text if (chrome and is_instance_valid(chrome.lbl_name)) else "",
+			"place": chrome.lbl_place.text if (chrome and is_instance_valid(chrome.lbl_place)) else "",
+			"hp": chrome.lbl_hp.text if (chrome and is_instance_valid(chrome.lbl_hp)) else "",
+			"atk": chrome.lbl_atk.text if (chrome and is_instance_valid(chrome.lbl_atk)) else "",
+			"def": chrome.lbl_def.text if (chrome and is_instance_valid(chrome.lbl_def)) else "",
+			"xp": chrome.lbl_level.text if (chrome and is_instance_valid(chrome.lbl_level)) else "",
+			"gold": chrome.lbl_gold.text if (chrome and is_instance_valid(chrome.lbl_gold)) else "",
 		},
 		"bot": {
 			"cell": [int(bot.cell.x), int(bot.cell.y)] if is_instance_valid(bot) else [],
@@ -596,66 +588,41 @@ func _collect_render_manifest(img: Image, png_path: String, ts: int) -> Dictiona
 	}
 
 func _ensure_hud() -> void:
-	if hud_layer != null:
+	if chrome != null:
 		return
-	hud_layer = CanvasLayer.new()
-	hud_layer.layer = 10
-	add_child(hud_layer)
-	var size_mult: float = 1.5 if (DebugJump.active and DebugJump.screenshot) else 1.0
-	var bg := ColorRect.new()
-	bg.color = Color(0, 0, 0, 0.78)
-	bg.position = Vector2(0, 0)
-	bg.size = Vector2(360, 240) * size_mult
-	hud_layer.add_child(bg)
-	var amber := Color(0.92, 0.78, 0.45)
-	var dim := Color(0.7, 0.6, 0.4)
-	hud_name_label = _hud_label("Bot the Adventurer", Vector2(10, 6), amber)
-	hud_place_label = _hud_label("Place: D:1", Vector2(10, 38), dim)
-	hud_hp_label = _hud_label("HP:   0/  0", Vector2(10, 70), Color(0.6, 1.0, 0.55))
-	hud_hp_bar_bg = ColorRect.new()
-	hud_hp_bar_bg.color = Color(0.18, 0.05, 0.05, 0.9)
-	hud_hp_bar_bg.position = Vector2(10, 100) * size_mult
-	hud_hp_bar_bg.size = Vector2(340, 10) * size_mult
-	hud_layer.add_child(hud_hp_bar_bg)
-	hud_hp_bar = ColorRect.new()
-	hud_hp_bar.color = Color(0.45, 0.85, 0.4, 1.0)
-	hud_hp_bar.position = Vector2(10, 100) * size_mult
-	hud_hp_bar.size = Vector2(340, 10) * size_mult
-	hud_layer.add_child(hud_hp_bar)
-	hud_atk_label = _hud_label("ATK: 0", Vector2(10, 118), amber)
-	hud_def_label = _hud_label("DEF: 0", Vector2(170, 118), amber)
-	hud_xp_label = _hud_label("XL: 1", Vector2(10, 150), dim)
-	hud_gold_label = _hud_label("Gold: 0", Vector2(10, 184), Color(1.0, 0.85, 0.3))
-
-func _hud_label(text: String, pos: Vector2, color: Color) -> Label:
-	var lbl := Label.new()
-	lbl.text = text
-	# Screenshot mode bumps everything 1.7x — at 1920x1920 with the gameplay
-	# HUD's mobile-portrait sizing the labels are unreadable when scaled to a
-	# 600px audit thumbnail. In gameplay we keep the smaller HUD.
-	var size_mult: float = 1.5 if (DebugJump.active and DebugJump.screenshot) else 1.0
-	lbl.position = pos * size_mult
-	lbl.add_theme_color_override("font_color", color)
-	lbl.add_theme_color_override("font_outline_color", Color(0, 0, 0))
-	lbl.add_theme_constant_override("outline_size", 3)
-	lbl.add_theme_font_size_override("font_size", int(22 * size_mult))
-	hud_layer.add_child(lbl)
-	return lbl
+	chrome = HudChrome.new()
+	add_child(chrome)
 
 func _update_biome_hud() -> void:
 	_ensure_hud()
 	var biome_id: String = String(current_biome.get("id", "?"))
 	var branch: String = BiomeData.branch_depth_label(run_plan, current_floor)
-	hud_place_label.text = "Place: %s  (%s)" % [branch, biome_id]
-	if is_instance_valid(bot):
-		hud_hp_label.text = "HP: %3d/%3d" % [bot.hp, bot.max_hp]
-		var hp_pct: float = clampf(float(bot.hp) / maxf(1.0, float(bot.max_hp)), 0.0, 1.0)
-		var bar_mult: float = 1.5 if (DebugJump.active and DebugJump.screenshot) else 1.0
-		hud_hp_bar.size = Vector2(100.0 * hp_pct * bar_mult, 10.0 * bar_mult)
-		hud_atk_label.text = "ATK: %d" % bot.atk
-		hud_def_label.text = "DEF: %d" % bot.defense
-		hud_xp_label.text = "XL: %d" % bot.level
-		hud_gold_label.text = "Gold: %d" % bot.gold
+	var place_str := "%s  (%s)" % [branch, biome_id]
+	chrome.update_stats(bot, place_str, run_turn)
+	chrome.update_equipped(bot.equipped if is_instance_valid(bot) else {}, items_db)
+	# Loose inventory = save state's inventory minus equipped instances.
+	var save: Dictionary = SaveState.load_state()
+	var loose: Array = save.get("inventory", [])
+	chrome.update_inventory(loose, items_db)
+	# Minimap snapshot (cell grid + bot + stairs + visible cells from fog).
+	var visible_cells: Dictionary = {}
+	if fog != null and "visible" in fog:
+		visible_cells = fog.visible
+	if grid is Array and not grid.is_empty():
+		var bot_cell: Vector2i = bot.cell if is_instance_valid(bot) else Vector2i(-1, -1)
+		chrome.update_minimap(grid, bot_cell, stairs_cell, visible_cells)
+	# Debug HUD (top-left): biome / vaults / cell counts / FPS.
+	var dbg: Array = []
+	dbg.append("biome: %s" % biome_id)
+	dbg.append("floor: %d  layout: %s" % [current_floor, String(current_biome.get("layout", "?"))])
+	if not run_vaults_stamped.is_empty():
+		var recent_vaults: Array = run_vaults_stamped.slice(max(0, run_vaults_stamped.size() - 4))
+		dbg.append("vaults: %s" % ", ".join(recent_vaults.map(func(s): return String(s))))
+	if grid is Array and not grid.is_empty():
+		dbg.append("grid: %dx%d" % [grid[0].size(), grid.size()])
+	dbg.append("enemies: %d  inter: %d" % [enemies.size(), interactables.size()])
+	dbg.append("fps: %d" % Engine.get_frames_per_second())
+	chrome.update_debug(dbg)
 
 func _spawn_enemies() -> void:
 	var pool: Array = []
@@ -746,9 +713,10 @@ func _is_final_boss_floor() -> bool:
 	return current_floor >= C.BOSS_FLOOR
 
 func _log(msg: String) -> void:
-	if journal.is_empty():
-		return
-	journal.back().events.append(msg)
+	if not journal.is_empty():
+		journal.back().events.append(msg)
+	if chrome != null:
+		chrome.push_log(msg)
 
 func _pick_miniboss_id(pool: Array) -> String:
 	if pool.is_empty():
@@ -1046,12 +1014,18 @@ func _roll_rarity(is_boss: bool) -> String:
 	if r < 0.55: return "uncommon"
 	return "common"
 
+var _turn_accum: float = 0.0
+
 func _process(delta: float) -> void:
 	if not is_instance_valid(bot) or not bot.is_alive:
 		return
 	_tick_bot(delta)
 	_tick_enemies(delta)
 	_center_camera_on_bot()
+	_turn_accum += delta
+	if _turn_accum >= 0.25:
+		_turn_accum -= 0.25
+		run_turn += 1
 	_update_biome_hud()
 
 const AGGRO_ENGAGE_RANGE := 5
@@ -1725,8 +1699,21 @@ func _find_stairs_cell() -> Vector2i:
 	return bot.cell
 
 func _center_camera_on_bot() -> void:
-	if camera and is_instance_valid(bot):
-		camera.position = bot.position + Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5)
+	if not (camera and is_instance_valid(bot)):
+		return
+	# Camera centers on the bot in world space, but the new chrome reserves a
+	# right-side sidebar (HudChrome.SIDEBAR_W) and a bottom bag panel
+	# (HudChrome.BAG_H). Offset the world view so the bot lands in the centre
+	# of the *visible* dungeon region instead of the geometric viewport
+	# centre. Skipped during screenshot mode — the screenshot wants the
+	# whole 1024×1024 frame to be dungeon content.
+	camera.position = bot.position + Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5)
+	if DebugJump.active and DebugJump.screenshot:
+		camera.offset = Vector2.ZERO
+		return
+	# Offset = half of the chrome reserved space, so the camera shifts
+	# the world to the left and up by exactly the missing half.
+	camera.offset = Vector2(HudChrome.SIDEBAR_W * 0.5, -HudChrome.BAG_H * 0.5) / camera.zoom
 
 func _scatter_ambient_decor() -> void:
 	var density: float = BiomeData.ambient_density_for(current_biome)

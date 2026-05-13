@@ -83,33 +83,72 @@ static func load_floor_primary(biome: Dictionary) -> Array:
 static func load_floor_accent(biome: Dictionary) -> Array:
 	return _expand_prefixes(biome.get("floor_accent", []), FLOOR_DIR)
 
+# Optional secondary floor pool used by the dual-floor mix system. Cells
+# fall into "primary zone" or "secondary zone" based on a noise sample;
+# transitions look smooth without the per-cell-confetti problem.
+static func load_floor_secondary(biome: Dictionary) -> Array:
+	return _expand_prefixes(biome.get("floor_secondary", []), FLOOR_DIR)
+
+# Liquid type used by river/lake builders. "water" or "lava" or "" (none).
+static func liquid_type_for(biome: Dictionary) -> String:
+	return String(biome.get("liquid_type", ""))
+
 static func load_wall_primary(biome: Dictionary) -> Array:
-	var prefix: String = String(biome.get("wall_primary", ""))
-	if prefix == "":
+	# Accepts a string ("spider") for backwards compat, or an array
+	# (["spider", "@stone_brick_0"]) for editor-driven explicit lists.
+	var raw: Variant = biome.get("wall_primary", "")
+	var prefixes: Array
+	if typeof(raw) == TYPE_ARRAY:
+		prefixes = raw
+	else:
+		prefixes = [String(raw)] if String(raw) != "" else []
+	if prefixes.is_empty():
 		return []
-	return _expand_prefixes([prefix], WALL_DIR)
+	return _expand_prefixes(prefixes, WALL_DIR)
 
 static func load_wall_accent(biome: Dictionary) -> Array:
 	return _expand_prefixes(biome.get("wall_accent", []), WALL_DIR)
 
 static func load_wall_alternates(biome: Dictionary) -> Array:
+	# Each alternate group can supply either:
+	#   "prefix": "tree"     (legacy: single prefix)
+	#   "prefixes": [...]    (editor-driven: list of prefixes / @stems)
 	var out: Array = []
 	for entry in biome.get("wall_alternates", []):
-		var prefix: String = String(entry.get("prefix", ""))
 		var weight: float = float(entry.get("weight", 1))
-		var textures: Array = _expand_prefixes([prefix], WALL_DIR)
+		var prefixes: Array
+		if entry.has("prefixes"):
+			prefixes = entry["prefixes"]
+		elif entry.has("prefix"):
+			prefixes = [String(entry["prefix"])]
+		else:
+			continue
+		var textures: Array = _expand_prefixes(prefixes, WALL_DIR)
 		if textures.is_empty():
 			continue
 		out.append({"textures": textures, "weight": weight})
 	return out
 
 static func _expand_prefixes(prefixes: Array, dir_path: String) -> Array:
-	# Match exactly `prefix_<digit>` so e.g. 'slime' doesn't accidentally pull
-	# in 'slime_alt_*' files (which would belong to a separate accent prefix).
+	# Two entry forms:
+	#   "spider"      → prefix expansion: pulls every `spider_<digit>.png`
+	#   "@spider_0"   → literal: pulls exactly `spider_0.png`
+	# The `@` form lets the biome editor pick individual variants without
+	# changing the dir layout. Prefix form keeps backwards compat — all
+	# existing biome JSON entries are bare prefixes.
 	var arr: Array = []
 	var files: Array = _list_dir(dir_path)
 	for prefix in prefixes:
-		var p: String = String(prefix) + "_"
+		var entry: String = String(prefix)
+		if entry.begins_with("@"):
+			var stem: String = entry.substr(1)
+			var fname: String = stem + ".png"
+			if files.has(fname):
+				var tex: Texture2D = load(dir_path + fname)
+				if tex:
+					arr.append(tex)
+			continue
+		var p: String = entry + "_"
 		for f in files:
 			if not f.begins_with(p):
 				continue

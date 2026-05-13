@@ -39,6 +39,35 @@ Last refresh: 2026-05-13 (end of marathon session).
 - **Run-end-on-boss-kill** gated to actual boss floor
 - **Bot visual swap** — spriggan_female base + mummy body armor +
   battleaxe weapon overlay (testing the layered sprite system)
+- **Desktop pivot + DCSS chrome**:
+  - Viewport 540×960 → 1280×720 landscape. `keep` aspect stretch.
+  - New `HudChrome` CanvasLayer (`scripts/hud_chrome.gd`):
+    right sidebar (minimap top, stats panel, recent-events log feed),
+    bottom-left bag panel (5 equipped slots + scrollable inventory
+    grid), tiny top-left debug HUD (biome/floor/layout/recent vault
+    names/grid dims/enemy + interactable counts/fps).
+  - Camera `offset` shifts world view so the bot stays in the visible
+    dungeon region (not under the sidebar/bag).
+  - Old top-left HUD (`hud_name_label`, `hud_hp_bar`, etc.) removed —
+    chrome owns all stats.
+  - DCSS GUI tile assets copied to `project/assets/tiles/gui/`
+    (tab labels, checkboxes, prompt yes/no).
+- **Floor pass** (DCSS-faithful):
+  - Per-cell hashed weighted variant pick replaces Voronoi patches —
+    floors read as "textured" instead of chunky-patches. Weights match
+    DCSS's 6/3/1 distribution.
+  - Real liquid terrain: river/lake/pools convert FLOOR cells to
+    T_WATER / T_LAVA (was: T_WALL stub). Biome-gated via
+    `liquid_type: "water"|"lava"|""` in biomes.json (forge / pandemonium
+    / abyss → lava; shoals / swamp / lair / snake / forest / slime →
+    water). Wired through both `basic_level` and `delve` paths so
+    caves layouts also get rivers.
+  - Sigil set audit: directional sigils stripped from per-room sigil
+    placement (they were designed to layer, not scatter). Defaulted to
+    safe single-tile [sigil_circle, sigil_cross, sigil_rhombus].
+  - Lair pilot dual-floor mix: Perlin noise (one octave, freq 0.045)
+    selects between `floor_primary` (lair) and `floor_secondary` (moss)
+    so cells transition organically across the map.
 
 ---
 

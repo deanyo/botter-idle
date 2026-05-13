@@ -215,24 +215,29 @@ func _new_vault_results() -> Dictionary:
 func _carve_layout(layout_id: String, w: int, h: int, floor_num: int) -> Dictionary:
 	var spawn := Vector2i(1, 1)
 	var stairs := Vector2i(1, 1)
+	# Pull liquid_type from biome so river/lake builders can stamp T_WATER /
+	# T_LAVA in the right biomes (forge → lava, shoals → water, etc).
+	var liquid_type: String = ""
+	if _active_biome_id != "":
+		liquid_type = BiomeData.liquid_type_for(BiomeData.get_biome(_active_biome_id))
 	match layout_id:
 		"caves":
-			var result: Dictionary = DCSSLayouts.delve(grid, rng, floor_num, 2, 5, 35, -1)
+			var result: Dictionary = DCSSLayouts.delve(grid, rng, floor_num, 2, 5, 35, -1, liquid_type)
 			grid = result.grid
 			spawn = result.spawn
 			stairs = result.stairs_down
 		"caves_tight":
-			var result: Dictionary = DCSSLayouts.delve(grid, rng, floor_num, 2, 4, 50, -1)
+			var result: Dictionary = DCSSLayouts.delve(grid, rng, floor_num, 2, 4, 50, -1, liquid_type)
 			grid = result.grid
 			spawn = result.spawn
 			stairs = result.stairs_down
 		"caves_open":
-			var result: Dictionary = DCSSLayouts.delve(grid, rng, floor_num, 3, 6, 60, -1)
+			var result: Dictionary = DCSSLayouts.delve(grid, rng, floor_num, 3, 6, 60, -1, liquid_type)
 			grid = result.grid
 			spawn = result.spawn
 			stairs = result.stairs_down
 		_:
-			var result: Dictionary = DCSSLayouts.basic_level(grid, rng, floor_num)
+			var result: Dictionary = DCSSLayouts.basic_level(grid, rng, floor_num, liquid_type)
 			grid = result.grid
 			spawn = result.spawn
 			stairs = result.stairs_down

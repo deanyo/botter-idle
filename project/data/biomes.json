@@ -268,7 +268,11 @@
         "prefix": "grass",
         "density": 0.85,
         "patch_density": 0.06
-      }
+      },
+      "liquid_type": "water",
+      "floor_secondary": [
+        "moss"
+      ]
     },
     "forest": {
       "display_name": "the Forest",
@@ -358,7 +362,8 @@
         "prefix": "grass",
         "density": 0.95,
         "patch_density": 0.1
-      }
+      },
+      "liquid_type": "water"
     },
     "swamp": {
       "display_name": "the Swamp",
@@ -444,7 +449,8 @@
         "prefix": "dirt",
         "density": 0.85,
         "patch_density": 0.05
-      }
+      },
+      "liquid_type": "water"
     },
     "snake": {
       "display_name": "the Snake Pit",
@@ -503,7 +509,8 @@
         "prefix": "dirt",
         "density": 0.55,
         "patch_density": 0.02
-      }
+      },
+      "liquid_type": "water"
     },
     "shoals": {
       "display_name": "the Shoals",
@@ -578,7 +585,8 @@
         "prefix": "shallow_water_wave",
         "density": 0.6,
         "patch_density": 0.0
-      }
+      },
+      "liquid_type": "water"
     },
     "orc": {
       "display_name": "the Orc Hold",
@@ -710,15 +718,7 @@
       "sigil_set": [
         "sigil_circle",
         "sigil_cross",
-        "sigil_rhombus",
-        "sigil_algiz_left",
-        "sigil_algiz_right",
-        "sigil_curve_north_east",
-        "sigil_curve_north_west",
-        "sigil_curve_south_east",
-        "sigil_curve_south_west",
-        "sigil_straight_east_west",
-        "sigil_straight_north_south"
+        "sigil_rhombus"
       ],
       "sigil_density": [
         1,
@@ -800,17 +800,15 @@
         }
       ],
       "sigil_set": [
+        "sigil_circle",
         "sigil_cross",
-        "sigil_rhombus",
-        "sigil_algiz_left",
-        "sigil_algiz_right",
-        "sigil_curve_north_east",
-        "sigil_curve_south_west"
+        "sigil_rhombus"
       ],
       "sigil_density": [
         1,
         1
-      ]
+      ],
+      "liquid_type": ""
     },
     "tomb": {
       "display_name": "the Tomb",
@@ -873,18 +871,15 @@
         }
       ],
       "sigil_set": [
-        "sigil_algiz_left",
-        "sigil_algiz_right",
-        "sigil_y_north",
-        "sigil_y_south",
-        "sigil_y_east",
-        "sigil_y_west",
+        "sigil_circle",
+        "sigil_cross",
         "sigil_rhombus"
       ],
       "sigil_density": [
         1,
         2
-      ]
+      ],
+      "liquid_type": ""
     },
     "forge": {
       "display_name": "the Forge",
@@ -969,7 +964,8 @@
           "id": "basic",
           "weight": 1
         }
-      ]
+      ],
+      "liquid_type": "lava"
     },
     "glacier": {
       "display_name": "the Glacier",
@@ -1033,7 +1029,8 @@
           "id": "basic",
           "weight": 1
         }
-      ]
+      ],
+      "liquid_type": ""
     },
     "slime": {
       "display_name": "the Slime Pits",
@@ -1110,12 +1107,13 @@
         "prefix": "slime_overlay",
         "density": 0.85,
         "patch_density": 0.0
-      }
+      },
+      "liquid_type": "water"
     },
     "hive": {
       "display_name": "the Hive",
       "floor_primary": [
-        "hive"
+        "mines"
       ],
       "floor_accent": [],
       "wall_primary": "hive",
@@ -1163,8 +1161,8 @@
       ],
       "edge_overlay": {
         "prefix": "dirt",
-        "density": 0.5,
-        "patch_density": 0.0
+        "density": 0.85,
+        "patch_density": 0.04
       }
     },
     "labyrinth": {
@@ -1220,10 +1218,9 @@
         }
       ],
       "sigil_set": [
-        "sigil_straight_east_west",
-        "sigil_straight_north_south",
-        "sigil_straight_northeast_southwest",
-        "sigil_straight_northwest_southeast",
+        "sigil_circle",
+        "sigil_cross",
+        "sigil_rhombus",
         "x-shaped"
       ],
       "sigil_density": [
@@ -1290,7 +1287,8 @@
           "id": "basic",
           "weight": 1
         }
-      ]
+      ],
+      "liquid_type": "lava"
     },
     "pandemonium": {
       "display_name": "Pandemonium",
@@ -1354,15 +1352,13 @@
       "sigil_set": [
         "sigil_circle",
         "sigil_cross",
-        "sigil_algiz_left",
-        "sigil_algiz_right",
-        "sigil_y_left",
-        "sigil_y_right"
+        "sigil_rhombus"
       ],
       "sigil_density": [
         2,
         3
-      ]
+      ],
+      "liquid_type": "lava"
     },
     "zot": {
       "display_name": "the Realm of Zot",
@@ -1428,15 +1424,7 @@
       "sigil_set": [
         "sigil_circle",
         "sigil_cross",
-        "sigil_rhombus",
-        "sigil_y_east",
-        "sigil_y_west",
-        "sigil_y_north",
-        "sigil_y_south",
-        "sigil_y_left",
-        "sigil_y_right",
-        "sigil_algiz_left",
-        "sigil_algiz_right"
+        "sigil_rhombus"
       ],
       "sigil_density": [
         2,
@@ -1502,10 +1490,8 @@
       ],
       "sigil_set": [
         "sigil_circle",
-        "sigil_curve_north_east",
-        "sigil_curve_north_west",
-        "sigil_curve_south_east",
-        "sigil_curve_south_west"
+        "sigil_cross",
+        "sigil_rhombus"
       ],
       "sigil_density": [
         1,
@@ -1515,7 +1501,7 @@
     "spider": {
       "display_name": "the Spider Nest",
       "floor_primary": [
-        "spider"
+        "mines"
       ],
       "floor_accent": [],
       "wall_primary": "spider",
@@ -1570,9 +1556,10 @@
       ],
       "edge_overlay": {
         "prefix": "dirt",
-        "density": 0.5,
-        "patch_density": 0.02
-      }
+        "density": 0.85,
+        "patch_density": 0.04
+      },
+      "liquid_type": ""
     },
     "temple": {
       "display_name": "the Ecumenical Temple",
@@ -1617,8 +1604,8 @@
         }
       ],
       "sigil_set": [
-        "sigil_cross",
         "sigil_circle",
+        "sigil_cross",
         "sigil_rhombus"
       ],
       "sigil_density": [
@@ -1688,13 +1675,9 @@
         }
       ],
       "sigil_set": [
-        "sigil_straight_east_west",
-        "sigil_straight_north_south",
-        "sigil_y_east",
-        "sigil_y_west",
-        "sigil_y_north",
-        "sigil_y_south",
-        "sigil_circle"
+        "sigil_circle",
+        "sigil_cross",
+        "sigil_rhombus"
       ],
       "sigil_density": [
         1,

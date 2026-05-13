@@ -25,7 +25,7 @@ const C := preload("res://scripts/constants.gd")
 #   6. Builder extras: optional river/lake/many-pools dressing on later floors.
 # ============================================================================
 
-static func basic_level(grid: Array, rng: RandomNumberGenerator, level_number: int) -> Dictionary:
+static func basic_level(grid: Array, rng: RandomNumberGenerator, level_number: int, liquid_type: String = "") -> Dictionary:
 	var w: int = grid[0].size()
 	var h: int = grid.size()
 
@@ -79,7 +79,7 @@ static func basic_level(grid: Array, rng: RandomNumberGenerator, level_number: i
 	_make_random_rooms(grid, rng, room_count, 2 + rng.randi_range(0, 7), door_level, _scale_x(50, w), _scale_y(40, h), room_size)
 	_make_random_rooms(grid, rng, 1 + rng.randi_range(0, 2), 1, door_level, _scale_x(55, w), _scale_y(45, h), 6)
 
-	_builder_extras(grid, rng, level_number)
+	_builder_extras(grid, rng, level_number, liquid_type)
 	_place_doors(grid, rng, level_number)
 
 	var rooms_out: Array = _detect_rooms_for_compatibility(grid)
@@ -426,16 +426,31 @@ static func _diamond_rooms(grid: Array, rng: RandomNumberGenerator, _level_numbe
 # builder_extras — late-floor dressing. Roll a river or lake or pool cluster.
 # ============================================================================
 
-static func _builder_extras(grid: Array, rng: RandomNumberGenerator, level_number: int) -> void:
-	if level_number > 6 and rng.randi_range(0, 9) == 0:
-		_many_pools(grid, rng)
+static func _builder_extras(grid: Array, rng: RandomNumberGenerator, level_number: int, liquid_type: String = "") -> void:
+	# No-liquid biomes skip the river/lake/pools pass entirely.
+	if liquid_type == "":
 		return
-	if level_number > 8 and rng.randi_range(0, 15) == 0:
-		_build_river(grid, rng)
-	elif level_number > 8 and rng.randi_range(0, 11) == 0:
-		_build_lake(grid, rng)
+	# Bumped probability — these are atmospheric flavour, biome-gated so they
+	# only fire on biomes whose theme actually wants a water/lava feature.
+	# Floor 2+ instead of 6+/8+.
+	if level_number >= 2 and rng.randi_range(0, 7) == 0:
+		_many_pools(grid, rng, liquid_type)
+		return
+	if level_number >= 2 and rng.randi_range(0, 9) == 0:
+		_build_river(grid, rng, liquid_type)
+	elif level_number >= 2 and rng.randi_range(0, 7) == 0:
+		_build_lake(grid, rng, liquid_type)
 
-static func _build_river(grid: Array, rng: RandomNumberGenerator) -> void:
+static func _liquid_cell(liquid_type: String) -> int:
+	match liquid_type:
+		"lava":  return C.T_LAVA
+		"water": return C.T_WATER
+		_:       return C.T_FLOOR
+
+static func _build_river(grid: Array, rng: RandomNumberGenerator, liquid_type: String) -> void:
+	var liquid: int = _liquid_cell(liquid_type)
+	if liquid == C.T_FLOOR:
+		return
 	var w: int = grid[0].size()
 	var h: int = grid.size()
 	var width: int = 3 + rng.randi_range(0, 3)
@@ -453,13 +468,15 @@ static func _build_river(grid: Array, rng: RandomNumberGenerator) -> void:
 		y = clampi(y, 4, h - width - 4)
 		for j in range(y, y + width):
 			if j >= 5 and j <= h - 5 and rng.randi_range(0, 199) != 0:
-				# Rivers carve through walls — keep them as wall (impassable terrain
-				# variant we already render via biome `wall_alternates: deep_water`).
-				# A real water layer would need a third tile state; for now, the
-				# river just *clears* the area to wall-rendered-as-water.
-				grid[j][x] = C.T_WALL
+				# Only convert floor cells — never overwrite walls/stairs/vault
+				# protected cells. Result: rivers carve through open spaces.
+				if grid[j][x] == C.T_FLOOR:
+					grid[j][x] = liquid
 
-static func _build_lake(grid: Array, rng: RandomNumberGenerator) -> void:
+static func _build_lake(grid: Array, rng: RandomNumberGenerator, liquid_type: String) -> void:
+	var liquid: int = _liquid_cell(liquid_type)
+	if liquid == C.T_FLOOR:
+		return
 	var w: int = grid[0].size()
 	var h: int = grid.size()
 	var x1: int = 5 + rng.randi_range(0, maxi(1, w - 30))
@@ -484,39 +501,42 @@ static func _build_lake(grid: Array, rng: RandomNumberGenerator) -> void:
 			x1 += rng.randi_range(0, 2)
 		for i in range(x1, x2):
 			if j >= 5 and j <= h - 5 and i >= 5 and i <= w - 5 and rng.randi_range(0, 199) != 0:
-				grid[j][i] = C.T_WALL
+				if grid[j][i] == C.T_FLOOR:
+					grid[j][i] = liquid
 
-static func _many_pools(grid: Array, rng: RandomNumberGenerator) -> void:
+static func _many_pools(grid: Array, rng: RandomNumberGenerator, liquid_type: String) -> void:
+	var liquid: int = _liquid_cell(liquid_type)
+	if liquid == C.T_FLOOR:
+		return
 	var w: int = grid[0].size()
 	var h: int = grid.size()
-	var num_pools: int = 20 + _avg_two(rng, 9)
+	# Smaller pools, fewer of them. Original (20-29 pools, 18x18 max each)
+	# was fine for an empty grid but too aggressive when carving floor cells.
+	var num_pools: int = 6 + rng.randi_range(0, 6)
 	var placed: int = 0
-	var safety: int = 30000
+	var safety: int = 1000
 	while placed < num_pools and safety > 0:
 		safety -= 1
-		var i: int = rng.randi_range(2, maxi(3, w - 21))
-		var j: int = rng.randi_range(2, maxi(3, h - 21))
-		var k: int = i + 2 + rng.randi_range(2, 18)
-		var l: int = j + 2 + rng.randi_range(2, 18)
-		if k >= w - 1 or l >= h - 1:
+		var i: int = rng.randi_range(3, maxi(4, w - 12))
+		var j: int = rng.randi_range(3, maxi(4, h - 12))
+		var k: int = i + 3 + rng.randi_range(2, 7)
+		var l: int = j + 3 + rng.randi_range(2, 7)
+		if k >= w - 2 or l >= h - 2:
 			continue
-		# Only place pool if region currently has NO floor cells.
-		var has_floor: bool = false
+		# Only place pool if region has SOME floor cells (we want it to land
+		# in open space, not solid wall — DCSS does the opposite, but with
+		# our smaller maps and bigger walls, floor placement looks better).
+		var floor_n: int = 0
 		for x in range(i, k + 1):
-			if has_floor:
-				break
 			for y in range(j, l + 1):
 				if grid[y][x] == C.T_FLOOR:
-					has_floor = true
-					break
-		if has_floor:
+					floor_n += 1
+		if floor_n < 6:
 			continue
-		_place_pool(grid, rng, i, j, k, l)
+		_place_pool(grid, rng, i, j, k, l, liquid)
 		placed += 1
 
-static func _place_pool(grid: Array, rng: RandomNumberGenerator, x1: int, y1: int, x2: int, y2: int) -> void:
-	var w: int = grid[0].size()
-	var h: int = grid.size()
+static func _place_pool(grid: Array, rng: RandomNumberGenerator, x1: int, y1: int, x2: int, y2: int, liquid: int) -> void:
 	if x1 >= x2 - 4 or y1 >= y2 - 4:
 		return
 	var span: int = x2 - x1
@@ -525,8 +545,8 @@ static func _place_pool(grid: Array, rng: RandomNumberGenerator, x1: int, y1: in
 	for j in range(y1 + 1, y2 - 1):
 		for i in range(x1 + 1, x2 - 1):
 			if i >= left_edge and i <= right_edge and grid[j][i] == C.T_FLOOR:
-				grid[j][i] = C.T_WALL
-		# Edge jitter — first half pulls outward, second half inward, with random kicks.
+				grid[j][i] = liquid
+		# Edge jitter — egg shape.
 		if j - y1 < (y2 - y1) / 2 or rng.randi_range(0, 3) == 0:
 			if left_edge > x1 + 1:
 				left_edge -= rng.randi_range(0, 2)
@@ -547,7 +567,7 @@ static func _place_pool(grid: Array, rng: RandomNumberGenerator, x1: int, y1: in
 # Returns same {grid, rooms, spawn, stairs_down} contract.
 # ============================================================================
 
-static func delve(grid: Array, rng: RandomNumberGenerator, _level_number: int, ngb_min: int = 2, ngb_max: int = 5, connchance: int = 35, target_floor_count: int = -1) -> Dictionary:
+static func delve(grid: Array, rng: RandomNumberGenerator, _level_number: int, ngb_min: int = 2, ngb_max: int = 5, connchance: int = 35, target_floor_count: int = -1, liquid_type: String = "") -> Dictionary:
 	var w: int = grid[0].size()
 	var h: int = grid.size()
 	# Initial seed: dig a small 3x3 cluster so the first candidates have enough
@@ -621,6 +641,12 @@ static func delve(grid: Array, rng: RandomNumberGenerator, _level_number: int, n
 			stairs = alt
 	if stairs.x >= 0:
 		grid[stairs.y][stairs.x] = C.T_STAIRS_DOWN
+	# Apply liquid extras AFTER carving — converts a fraction of floor cells
+	# to T_WATER / T_LAVA flavour. Skips spawn/stairs by chance via the 1/200
+	# guard inside the builders, but final connectivity check in
+	# DungeonGenerator catches any unreachable case.
+	if liquid_type != "":
+		_builder_extras(grid, rng, _level_number, liquid_type)
 	return {
 		"grid": grid,
 		"rooms": [],

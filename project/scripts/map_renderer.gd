@@ -60,6 +60,7 @@ func render(g: Array, rs: Array, biome: Dictionary, rng: RandomNumberGenerator, 
 	var protected_cells: Dictionary = vault_results.get("protected_cells", {})
 
 	var floor_primary: Array = BiomeData.load_floor_primary(biome)
+	var floor_secondary: Array = BiomeData.load_floor_secondary(biome)
 	var floor_accent: Array = BiomeData.load_floor_accent(biome)
 	var wall_primary: Array = BiomeData.load_wall_primary(biome)
 	var wall_accent: Array = BiomeData.load_wall_accent(biome)
@@ -68,6 +69,15 @@ func render(g: Array, rs: Array, biome: Dictionary, rng: RandomNumberGenerator, 
 	if floor_primary.is_empty() or wall_primary.is_empty():
 		push_error("Biome %s missing primary tiles" % biome.get("id", "?"))
 		return
+	# Dual-floor noise: when biome has a secondary pool, sample one octave of
+	# Perlin per cell. Cells where noise > threshold use secondary, others
+	# use primary. Smooth zonal transition without per-cell confetti.
+	var floor_noise: FastNoiseLite = null
+	if not floor_secondary.is_empty():
+		floor_noise = FastNoiseLite.new()
+		floor_noise.noise_type = FastNoiseLite.TYPE_PERLIN
+		floor_noise.frequency = 0.045
+		floor_noise.seed = int(rng.seed)
 	var overlay_label: String = "(none)"
 	if not edge_overlay.is_empty():
 		overlay_label = "n=%d cardinals" % int(edge_overlay.size() - 1)
@@ -90,7 +100,13 @@ func render(g: Array, rs: Array, biome: Dictionary, rng: RandomNumberGenerator, 
 					continue
 				tex = _pick_wall_tile(x, y, wall_patches, wall_primary, wall_accent, rng)
 			elif cell == C.T_FLOOR or cell == C.T_STAIRS_DOWN or cell == C.T_DOOR:
-				tex = _pick_floor_tile(x, y, floor_patches, floor_primary, floor_accent, rng)
+				# Dual-floor mix: pick from secondary pool when noise crosses
+				# the threshold; otherwise primary. Threshold 0.18 keeps primary
+				# dominant but gives meaningful patches of secondary.
+				var pool: Array = floor_primary
+				if floor_noise != null and floor_noise.get_noise_2d(float(x), float(y)) > 0.18:
+					pool = floor_secondary
+				tex = _pick_floor_tile(x, y, floor_patches, pool, floor_accent, rng)
 			elif cell == C.T_LAVA:
 				tex = TERRAIN_LAVA
 			elif cell == C.T_WATER:
@@ -299,21 +315,37 @@ func _generate_wall_patches(w: int, h: int, wall_primary: Array, wall_alternates
 		seeds.append({"x": sx, "y": sy, "theme": theme})
 	return seeds
 
-func _pick_floor_tile(x: int, y: int, patches: Array, primary: Array, accent: Array, rng: RandomNumberGenerator) -> Texture2D:
+func _pick_floor_tile(x: int, y: int, _patches: Array, primary: Array, accent: Array, rng: RandomNumberGenerator) -> Texture2D:
+	# DCSS-style per-cell hashed weighted variant pick. Each cell is a stable
+	# hash of (rng.seed, x, y) into the primary array, with an accent sprinkle
+	# at low probability. No Voronoi patching — variants are subtly different
+	# and per-cell randomness reads as "textured floor" rather than "chunky
+	# patch boundaries". (Patches arg kept for signature compat; ignored.)
 	if not accent.is_empty() and _hash_chance(x, y, 73, rng.seed) < ACCENT_PROB:
 		return accent[_hash_idx(x, y, 31, rng.seed) % accent.size()]
-	var best: int = 0
-	var best_d: int = 999999
-	for i in patches.size():
-		var p: Dictionary = patches[i]
-		var dx: int = x - int(p.x)
-		var dy: int = y - int(p.y)
-		var d: int = dx * dx + dy * dy
-		if d < best_d:
-			best_d = d
-			best = i
-	var primary_idx: int = int(patches[best].primary) % primary.size()
-	return primary[primary_idx]
+	if primary.is_empty():
+		return null
+	# Weighted pick: variants earlier in the array are slightly more common
+	# (matches DCSS's `%weight 6 / 3 / 1` distribution where common variants
+	# dominate). Shape: [6, 6, 6, 6, 3, 3, 1, 1] gives the first variants
+	# ~25% each and tail variants ~3% each.
+	var weights: Array = []
+	var total: int = 0
+	for i in primary.size():
+		var w: int = 6
+		if i >= primary.size() / 2:
+			w = 3
+		if i >= primary.size() * 3 / 4:
+			w = 1
+		weights.append(w)
+		total += w
+	var roll: int = _hash_idx(x, y, 11, rng.seed) % max(1, total)
+	var cum: int = 0
+	for i in primary.size():
+		cum += weights[i]
+		if roll < cum:
+			return primary[i]
+	return primary[-1]
 
 func _pick_wall_tile(x: int, y: int, patches: Array, _wall_primary: Array, wall_accent: Array, rng: RandomNumberGenerator) -> Texture2D:
 	var best: int = 0

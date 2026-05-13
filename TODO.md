@@ -105,8 +105,15 @@ The "1.5 variety pass" originally listed as 9 sub-stages. Status:
   `W`/`w` (water, 50% move speed), `I` (ice visual-only). Six mini-vaults
   for forge/shoals/swamp/glacier/crypt with irregular organic shapes.
   Pathfinder weight 4.0 lava / 2.0 water. JSON sidecar exposes counts.
-  Still TODO: `t` (tree), `B` (bones), `M` (mushroom) impassable decor;
-  ice-slip mechanic.
+  Plus river/lake/pools builder converts FLOOR cells to T_WATER / T_LAVA
+  procedurally on biomes with `liquid_type` set. Wired through both
+  `basic_level` and `delve` paths. Still TODO: `t` (tree), `B` (bones),
+  `M` (mushroom) impassable decor; ice-slip mechanic.
+- ✅ **Floor pass** — per-cell hashed weighted variant pick (replaces
+  Voronoi patches), directional sigils stripped from per-room placement,
+  Lair dual-floor mix pilot via Perlin noise (lair-grass + moss),
+  `liquid_type` field threaded through generators so caves layouts can
+  also stamp rivers/lakes.
 - ✅ **1.5f Door tiles** — vault `+` glyph renders as closed/runed/sealed
   door per biome (3 sprites, mapping in MapRenderer.DOOR_BY_BIOME).
 - ✅ **1.5g Combat effects** — Effects helper class. Biome-themed kill
@@ -114,8 +121,11 @@ The "1.5 variety pass" originally listed as 9 sub-stages. Status:
   grants, gold sparkle on rares.
 - ⬜ **1.5h Negative space** — partially done via fog; could be tighter
   (smaller playable area, tighter camera).
-- ⬜ **1.5i DCSS-style UI** — side panel HP/MP bars, minimap top-right,
-  inventory shortcut row, pixel font. Deferred until 1.5e-h are in.
+- ✅ **1.5i DCSS-style UI** — landscape 1280×720 viewport, right
+  sidebar with minimap + stats + log feed, bottom-left bag panel
+  (equipped slots + scrollable inventory), tiny top-left debug HUD
+  (biome/vaults/cells/fps). Mobile port deferred — desktop is the
+  primary target now.
 
 ## DCSS-port — phases
 
