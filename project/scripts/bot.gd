@@ -24,6 +24,17 @@ const WEAPON_OVERLAYS := {
 	"claymore":       "battleaxe",
 }
 
+# Weapon ids that should glow with a fire/magic light when equipped. Empty
+# string = no light. Lights attach to the weapon_sprite child so they move
+# with the bot and shimmer with the swing animation.
+const WEAPON_LIGHTS := {
+	"firestarter":    "firestarter",
+	"hellfire":       "hellfire",
+	"demon_blade":    "demon_blade",
+	"flaming_sword":  "firestarter",
+	"flaming_axe":    "firestarter",
+}
+
 var level: int = 1
 var xp: int = 0
 var gold: int = 0
@@ -157,6 +168,11 @@ func _refresh_weapon_overlay() -> void:
 	weapon_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	weapon_sprite.z_index = 2
 	add_child(weapon_sprite)
+	# Fire-tagged weapons emit their own light from the held sprite. Must
+	# happen AFTER add_child so LightSpec.attach has a parent in the tree.
+	var weapon_light_id: String = String(WEAPON_LIGHTS.get(base_id, ""))
+	if weapon_light_id != "":
+		LightSpec.attach(weapon_sprite, weapon_light_id, Vector2.ZERO)
 
 func swing_weapon(toward: Vector2) -> void:
 	if not is_instance_valid(weapon_sprite):

@@ -193,6 +193,37 @@ applied as per-cell modulate.
 
 **Walls don't yet block vision** — that's the line-of-sight upgrade in TODO.
 
+### Organic flicker + ember particles
+
+`LightSpec.attach()` stamps a "flicker" meta dict on each PointLight2D
+instead of running a tween. A single `FlickerDriver` node walks the
+scene each frame and animates every light via a shared FastNoiseLite,
+sampled at unique seeds per-light so flames desync naturally. Three
+flicker categories:
+
+- **fire** — broadband noise, sub-pixel position jitter, ember particles
+  (GPUParticles2D with per-spec colour gradient)
+- **magic** — noise + slow sine pulse, no jitter, no particles
+- **crystal** — slow noise wobble, no jitter, no particles
+
+Light specs added: `firestarter`, `hellfire`, `demon_blade`, `firefly`,
+`fire_creature`, `lava_creature`, `ice_creature`, `magic_lamp`.
+
+### Per-creature emitter lights
+
+`enemies.json` entries can declare a `light_spec` field. The spawner
+calls `LightSpec.attach(enemy, spec)` so fire dragons / ice giants /
+fireflies emit their own light. 8 creatures tagged: fire_giant,
+fire_dragon, salamander, cacodemon, ice_dragon, ice_beast, frost_giant,
+blizzard_demon.
+
+### Fire weapons emit light
+
+`Bot.WEAPON_LIGHTS` maps weapon `base_id` -> light spec. Fire-tagged
+weapons (firestarter, hellfire, demon_blade, flaming_sword/axe) attach
+their light to the weapon overlay sprite, so the glow follows the bot's
+held hand.
+
 ## Edge-overlay autotile system
 
 In `MapRenderer._apply_edge_overlay`. Floor cells that border walls get a

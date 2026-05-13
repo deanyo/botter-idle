@@ -268,9 +268,9 @@ debug-jump's per-biome 1-floor mode.
 - ✅ **God altar variants** — expanded from 7 to 22. Beogh/Makhleb/Yred/
   TSO/Lugonu/Jiyva/Fedhas/Cheibriados/Xom/Ashenzari/Dithmenos/Gozag/
   Qazlal/Nemelex/Ru added with thematic blessings + glow colors.
-- ⬜ **Organic flame jitter** — torches/candles/lava currently use uniform
-  tween-based flicker; should be broadband per-light noise. Implementation
-  in `LightSpec._apply_flicker`.
+- ✅ **Organic flame jitter** — done. FlickerDriver runs FastNoiseLite
+  per-light with unique seeds so flames desync. Sub-pixel jitter on
+  fire-category lights. Ember particles on flame sources.
 
 ## Open questions — defer until needed
 

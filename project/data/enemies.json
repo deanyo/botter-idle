@@ -367,7 +367,8 @@
     "xp": 16,
     "min_floor": 4,
     "tier": 3,
-    "boss": false
+    "boss": false,
+    "light_spec": "ice_creature"
   },
   "dwarf": {
     "name": "Dwarf",
@@ -577,7 +578,8 @@
     "tier": 4,
     "boss": false,
     "visual_scale": 1.5,
-    "visual_anchor": "ground"
+    "visual_anchor": "ground",
+    "light_spec": "fire_creature"
   },
   "hill_giant": {
     "name": "Hill Giant",
@@ -619,7 +621,8 @@
     "tier": 5,
     "boss": false,
     "visual_scale": 1.5,
-    "visual_anchor": "ground"
+    "visual_anchor": "ground",
+    "light_spec": "ice_creature"
   },
   "fire_dragon": {
     "name": "Fire Dragon",
@@ -633,7 +636,8 @@
     "tier": 5,
     "boss": false,
     "visual_scale": 1.5,
-    "visual_anchor": "ground"
+    "visual_anchor": "ground",
+    "light_spec": "fire_creature"
   },
   "iron_dragon": {
     "name": "Iron Dragon",
@@ -733,7 +737,8 @@
     "tier": 5,
     "boss": false,
     "visual_scale": 1.5,
-    "visual_anchor": "ground"
+    "visual_anchor": "ground",
+    "light_spec": "ice_creature"
   },
   "balrug": {
     "name": "Balrug",
@@ -759,7 +764,8 @@
     "tier": 5,
     "boss": false,
     "visual_scale": 1.6,
-    "visual_anchor": "ground"
+    "visual_anchor": "ground",
+    "light_spec": "fire_creature"
   },
   "blue_devil": {
     "name": "Blue Devil",
@@ -785,7 +791,8 @@
     "tier": 5,
     "boss": false,
     "visual_scale": 1.55,
-    "visual_anchor": "ground"
+    "visual_anchor": "ground",
+    "light_spec": "ice_creature"
   },
   "minotaur": {
     "name": "Minotaur",
@@ -885,7 +892,8 @@
     "xp": 7,
     "min_floor": 7,
     "tier": 3,
-    "boss": false
+    "boss": false,
+    "light_spec": "fire_creature"
   },
   "naga": {
     "name": "Naga",

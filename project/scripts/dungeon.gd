@@ -89,6 +89,9 @@ func _ready() -> void:
 	rng.randomize()
 	enemy_data = _load_json(ENEMIES_PATH)
 	items_db = _load_items(ITEMS_PATH)
+	# FlickerDriver animates every PointLight2D with a "flicker" meta dict.
+	# Single shared driver keeps cost predictable.
+	add_child(FlickerDriver.new())
 	_start_run()
 
 func _start_run() -> void:
@@ -781,6 +784,10 @@ func _spawn_miniboss(id: String, at_cell: Vector2i) -> void:
 		if e.sprite:
 			e.sprite.modulate = Color(1.2, 0.85, 0.85)
 			e.fx = SpriteFX.new(e.sprite)
+		# Miniboss inherits creature's light_spec if defined.
+		var ml_spec: String = String(def.get("light_spec", ""))
+		if ml_spec != "":
+			LightSpec.attach(e, ml_spec)
 	e.place_at(at_cell)
 	e.died.connect(_on_enemy_died)
 	enemies.append(e)
@@ -816,6 +823,10 @@ func _spawn_specific(id: String, at_cell: Vector2i) -> void:
 			e.sprite.modulate = Color(1.0, 0.85, 1.3)
 			e.fx = SpriteFX.new(e.sprite)
 			LightSpec.attach(e, "sigil")
+		# Per-creature emitter: fire/ice creatures emit their own light.
+		var enemy_light_spec: String = String(def.get("light_spec", ""))
+		if enemy_light_spec != "":
+			LightSpec.attach(e, enemy_light_spec)
 	e.place_at(at_cell)
 	e.died.connect(_on_enemy_died)
 	enemies.append(e)
