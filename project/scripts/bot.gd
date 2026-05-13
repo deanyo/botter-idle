@@ -1,27 +1,27 @@
 class_name Bot
 extends Actor
 
-const BOT_TEX := preload("res://assets/tiles/player/bot_base.png")
-const LANTERN_TEX := preload("res://assets/tiles/player/bot_lantern.png")
+const BOT_TEX := preload("res://assets/tiles/player/spriggan_female.png")
+const BODY_TEX := preload("res://assets/tiles/player/body/armor_mummy.png")
 const WEAPON_DIR := "res://assets/tiles/player/weapons/"
 
-# Map weapon item base_id -> overlay sprite filename. When the bot's equipped
-# weapon changes, the overlay swaps. Unmapped weapons fall back to long_sword.
+# Map weapon item base_id -> overlay sprite filename. Test mode: any weapon
+# uses battleaxe so we can verify the overlay+swing animation visually.
 const WEAPON_OVERLAYS := {
-	"rusty_dagger":   "dagger",
-	"iron_dagger":    "dagger",
-	"steel_dagger":   "dagger",
-	"orcish_dagger":  "dagger",
-	"elven_dagger":   "dagger",
-	"short_sword":    "short_sword",
-	"iron_short_sword": "short_sword",
-	"long_sword":     "long_sword",
-	"iron_sword":     "long_sword",
-	"steel_sword":    "long_sword",
-	"falchion":       "falchion",
-	"scimitar":       "scimitar",
-	"great_sword":    "great_sword",
-	"claymore":       "great_sword",
+	"rusty_dagger":   "battleaxe",
+	"iron_dagger":    "battleaxe",
+	"steel_dagger":   "battleaxe",
+	"orcish_dagger":  "battleaxe",
+	"elven_dagger":   "battleaxe",
+	"short_sword":    "battleaxe",
+	"iron_short_sword": "battleaxe",
+	"long_sword":     "battleaxe",
+	"iron_sword":     "battleaxe",
+	"steel_sword":    "battleaxe",
+	"falchion":       "battleaxe",
+	"scimitar":       "battleaxe",
+	"great_sword":    "battleaxe",
+	"claymore":       "battleaxe",
 }
 
 var level: int = 1
@@ -124,14 +124,15 @@ func _ready() -> void:
 	# default to z_index = 0). FX particles draw at z=6 so they still overlay.
 	z_index = 5
 	set_texture(BOT_TEX)
-	# Layer the lantern over the player base. Sprite is centered=false in Actor,
-	# matching tile origin, so the overlay aligns 1:1 by default.
-	var lantern := Sprite2D.new()
-	lantern.texture = LANTERN_TEX
-	lantern.centered = false
-	lantern.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	lantern.z_index = 1
-	add_child(lantern)
+	# Layer the body armor sprite over the player base. Lantern removed —
+	# we want clean weapon + (eventually) shield slots only.
+	var body := Sprite2D.new()
+	body.texture = BODY_TEX
+	body.centered = true
+	body.position = Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5)
+	body.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	body.z_index = 1
+	add_child(body)
 	_refresh_weapon_overlay()
 
 func _refresh_weapon_overlay() -> void:

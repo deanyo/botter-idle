@@ -6,6 +6,38 @@ items live in `TODO.md`.
 
 Last refresh: 2026-05-13 (end of marathon session).
 
+## Marathon session summary — what just shipped
+
+15+ commits in one session. Highlights:
+
+- **Vault stamping rate 14% → 75-83%** (the fundamental fix to the user's
+  "maps look like random messes, no notable loot rooms" complaint)
+- **Map size 60×60 → 80×80** for breathing room
+- **Bot AI tuning**: aggro range cap, current-room loot priority, low-HP
+  retreat. Loot pickup rate jumped from 20 to 125 per run.
+- **Starter gear** (rusty_dagger + tattered_hide) so a fresh bot can
+  actually progress
+- **Weapon overlay sprite** + swing animation on attacks
+- **Bot light + z-order fixes** (no more white-out, bot draws over chests)
+- **Special-feature terrain** (lava damages, water slows, ice visual)
+- **Sigil floor decorations** (single + multi-tile compositions via
+  decor_overlays vault format extension)
+- **Multi-tile decor glyphs** (t/B/M for trees/bones/mushrooms)
+- **Big-creature visual scaling** (32 enemies render 1.3-1.6× scale)
+- **22 god altars** (was 7) with thematic blessings
+- **Combat effects** (blood/fire/ice on kill, magic shimmer on legendary)
+- **Doors** (per-biome variants — wooden/runed/sealed)
+- **Save-state isolation** (debug runs don't pollute live save)
+- **Bot invincibility** in grind mode
+- **Permission allowlist** expanded (saves session clicks)
+- **Pre-commit validation** (`tools/check_before_commit.sh`)
+- **class_name refresh wrapper** (`tools/refresh_class_cache.sh`) +
+  auto-recovery in skill scripts
+- **Richer /grind summary** (per-biome breakdown, portal kinds, terrain
+  counts)
+- **HP scaling bug fix** (level-up no longer fully heals)
+- **Run-end-on-boss-kill** gated to actual boss floor
+
 ---
 
 ## Core gameplay loop — fully working
