@@ -87,8 +87,10 @@ static func format_log_suffix() -> String:
 	if s.is_empty():
 		return ""
 	var draws: int = int(Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME))
-	return "frame_ms=%.2f fps=%.0f draws=%d fog_us=%d lights_us=%d flicker_us=%d render_us=%d ai_us=%d" % [
-		_last_frame_ms, _last_fps, draws,
+	var objs: int = int(Performance.get_monitor(Performance.RENDER_TOTAL_OBJECTS_IN_FRAME))
+	var nodes: int = int(Performance.get_monitor(Performance.OBJECT_NODE_COUNT))
+	return "frame_ms=%.2f fps=%.0f draws=%d objs=%d nodes=%d fog_us=%d lights_us=%d flicker_us=%d render_us=%d ai_us=%d" % [
+		_last_frame_ms, _last_fps, draws, objs, nodes,
 		int(s.get(TAG_FOG, 0)), int(s.get(TAG_LIGHTS, 0)), int(s.get(TAG_FLICKER, 0)),
 		int(s.get(TAG_RENDER_FADE, 0)), int(s.get(TAG_AI, 0)),
 	]

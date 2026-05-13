@@ -276,19 +276,46 @@ func _add_label(t: String, x: int, y: int, size: int, color: Color) -> Label:
 # Public update API — called by dungeon.gd
 # ============================================================================
 
+var _last_place: String = ""
+var _last_hp: int = -1
+var _last_max_hp: int = -1
+var _last_atk: int = -1
+var _last_def: int = -1
+var _last_level: int = -1
+var _last_gold: int = -1
+var _last_turn: int = -1
+
 func update_stats(bot_ref: Bot, place_str: String, turn: int) -> void:
+	# Setting Label.text triggers layout/relayout in Godot. Skipping
+	# unchanged values turns this from "10 layouts/frame" into "0 most
+	# frames, 1-2 when something changes."
 	if not is_instance_valid(bot_ref):
 		return
-	lbl_place.text = "Place: %s" % place_str
-	lbl_hp.text = "HP: %d / %d" % [bot_ref.hp, bot_ref.max_hp]
-	var hp_pct: float = clampf(float(bot_ref.hp) / maxf(1.0, float(bot_ref.max_hp)), 0.0, 1.0)
-	hp_bar_fill.size = Vector2((SIDEBAR_W - SIDEBAR_PAD * 2) * hp_pct, 8)
-	hp_bar_fill.color = COL_HP_LOW if hp_pct < 0.3 else COL_HP
-	lbl_atk.text = "ATK: %d" % bot_ref.atk
-	lbl_def.text = "DEF: %d" % bot_ref.defense
-	lbl_level.text = "XL: %d" % bot_ref.level
-	lbl_gold.text = "Gold: %d" % bot_ref.gold
-	lbl_turn.text = "Turn: %d" % turn
+	if place_str != _last_place:
+		lbl_place.text = "Place: %s" % place_str
+		_last_place = place_str
+	if bot_ref.hp != _last_hp or bot_ref.max_hp != _last_max_hp:
+		lbl_hp.text = "HP: %d / %d" % [bot_ref.hp, bot_ref.max_hp]
+		var hp_pct: float = clampf(float(bot_ref.hp) / maxf(1.0, float(bot_ref.max_hp)), 0.0, 1.0)
+		hp_bar_fill.size = Vector2((SIDEBAR_W - SIDEBAR_PAD * 2) * hp_pct, 8)
+		hp_bar_fill.color = COL_HP_LOW if hp_pct < 0.3 else COL_HP
+		_last_hp = bot_ref.hp
+		_last_max_hp = bot_ref.max_hp
+	if bot_ref.atk != _last_atk:
+		lbl_atk.text = "ATK: %d" % bot_ref.atk
+		_last_atk = bot_ref.atk
+	if bot_ref.defense != _last_def:
+		lbl_def.text = "DEF: %d" % bot_ref.defense
+		_last_def = bot_ref.defense
+	if bot_ref.level != _last_level:
+		lbl_level.text = "XL: %d" % bot_ref.level
+		_last_level = bot_ref.level
+	if bot_ref.gold != _last_gold:
+		lbl_gold.text = "Gold: %d" % bot_ref.gold
+		_last_gold = bot_ref.gold
+	if turn != _last_turn:
+		lbl_turn.text = "Turn: %d" % turn
+		_last_turn = turn
 
 func push_log(msg: String) -> void:
 	log_buffer.append(msg)
@@ -322,11 +349,19 @@ func update_equipped(equipped: Dictionary, items_db: Dictionary) -> void:
 			sprite.texture = null
 		name_lbl.text = String(item_def.get("name", item_id))
 
+const INVENTORY_DISPLAY_CAP := 64
+
 func update_inventory(loose: Array, items_db: Dictionary) -> void:
-	# loose: array of {id, ...} dicts
+	# loose: array of {id, ...} dicts. Capped at INVENTORY_DISPLAY_CAP —
+	# stash sizes can balloon to hundreds/thousands and rebuilding that
+	# many TextureRects every time a floor builds was a multi-100ms stall
+	# (1745-item save profiled at ~250ms). Recent items shown last.
 	for child in inventory_grid.get_children():
 		child.queue_free()
-	for inst in loose:
+	var n: int = mini(loose.size(), INVENTORY_DISPLAY_CAP)
+	var start: int = loose.size() - n
+	for i in n:
+		var inst: Variant = loose[start + i]
 		if typeof(inst) != TYPE_DICTIONARY:
 			continue
 		var item_id: String = String(inst.get("base_id", inst.get("id", "")))
@@ -408,5 +443,10 @@ func update_minimap(grid: Array, bot_cell: Vector2i, stairs: Vector2i, fog_visib
 	else:
 		minimap_stairs.visible = false
 
+var _last_debug_text: String = ""
+
 func update_debug(lines: Array) -> void:
-	debug_lbl.text = "\n".join(lines.map(func(s): return String(s)))
+	var t: String = "\n".join(lines.map(func(s): return String(s)))
+	if t != _last_debug_text:
+		debug_lbl.text = t
+		_last_debug_text = t

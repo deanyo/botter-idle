@@ -141,6 +141,7 @@ func _start_run() -> void:
 	_build_floor()
 
 func _build_floor() -> void:
+	var t_total: int = Time.get_ticks_usec()
 	for e in enemies:
 		if is_instance_valid(e):
 			e.queue_free()
@@ -174,6 +175,9 @@ func _build_floor() -> void:
 	_last_fog_cell = Vector2i(-99, -99)
 	_fog_dirty = true
 	_cached_world_lights_valid = false
+	# HUD inventory snapshot is per-run; refresh once at floor build.
+	_last_inventory_dirty = true
+	_last_equipped_hash = 0
 	floor_kills = 0
 	floor_loot_picked = 0
 	floor_chests_opened = 0
@@ -210,7 +214,9 @@ func _build_floor() -> void:
 	var size_arr: Array = current_biome.get("map_size", [C.MAP_W, C.MAP_H])
 	var map_w: int = int(size_arr[0]) if size_arr.size() >= 2 else C.MAP_W
 	var map_h: int = int(size_arr[1]) if size_arr.size() >= 2 else C.MAP_H
+	var t_gen: int = Time.get_ticks_usec()
 	var data: Dictionary = gen.generate_themed(map_w, map_h, vault_themes, current_floor, layout_id, String(current_biome.get("id", "")))
+	t_gen = Time.get_ticks_usec() - t_gen
 	grid = data.grid
 	rooms = data.rooms
 	stairs_cell = data.get("stairs_down", _find_stairs_cell())
@@ -235,7 +241,9 @@ func _build_floor() -> void:
 	for child in map_layer.get_children():
 		child.queue_free()
 	map_layer.add_child(renderer)
+	var t_render: int = Time.get_ticks_usec()
 	renderer.render(grid, rooms, current_biome, rng, vr)
+	t_render = Time.get_ticks_usec() - t_render
 	current_renderer = renderer
 	fog = FogSystem.new()
 	fog.setup(grid[0].size(), grid.size(), grid)
@@ -247,7 +255,9 @@ func _build_floor() -> void:
 	bot.place_at(data.spawn)
 	_mark_room_visited_at(bot.cell)
 	_center_camera_on_bot()
+	var t_decor: int = Time.get_ticks_usec()
 	_scatter_ambient_decor()
+	t_decor = Time.get_ticks_usec() - t_decor
 
 	var biome_name: String = String(current_biome.get("display_name", "the Dungeon"))
 	var branch_label: String = BiomeData.branch_depth_label(run_plan, current_floor)
@@ -264,9 +274,16 @@ func _build_floor() -> void:
 		"events": [],
 	})
 
+	var t_spawn: int = Time.get_ticks_usec()
 	_spawn_enemies()
+	t_spawn = Time.get_ticks_usec() - t_spawn
 	_update_biome_hud()
 	floor_starting_hp = bot.hp
+	t_total = Time.get_ticks_usec() - t_total
+	GrindLog.log_line("[build-floor] f=%d total_ms=%.1f gen_ms=%.1f render_ms=%.1f decor_ms=%.1f spawn_ms=%.1f enemies=%d" % [
+		current_floor, t_total / 1000.0, t_gen / 1000.0, t_render / 1000.0,
+		t_decor / 1000.0, t_spawn / 1000.0, enemies.size(),
+	])
 	var perf_label: String = "%s|%s|f%d" % [
 		String(current_biome.get("id", "?")),
 		",".join(floor_placed_vaults) if not floor_placed_vaults.is_empty() else "_",
@@ -610,31 +627,37 @@ func _ensure_hud() -> void:
 	add_child(chrome)
 
 var _hud_full_refresh_accum: float = 0.0
-var _last_inventory_size: int = -1
+var _last_inventory_dirty: bool = true
 var _last_equipped_hash: int = 0
+# Cached inventory snapshot. Save-state reads from disk + JSON parse —
+# we should NOT call SaveState.load_state() every frame. dropped_items
+# tracks pickups during this run, and the floor's _build_floor seeds
+# the cache from disk once.
+var _hud_inv_cache: Array = []
+var _hud_inv_cache_size_at_last_render: int = -1
+
+func invalidate_hud_inventory() -> void:
+	_last_inventory_dirty = true
 
 func _update_biome_hud() -> void:
 	_ensure_hud()
 	var biome_id: String = String(current_biome.get("id", "?"))
 	var branch: String = BiomeData.branch_depth_label(run_plan, current_floor)
 	var place_str := "%s  (%s)" % [branch, biome_id]
-	# Stats label updates are cheap (just text/color writes) — every frame.
+	# Stats label updates internally diff each label — cheap when steady.
 	chrome.update_stats(bot, place_str, run_turn)
-	# Inventory + equipped + minimap are EXPENSIVE (queue_free + recreate
-	# nodes / repaint 6400 pixels). Only refresh when the underlying data
-	# actually changed, plus a coarse 0.25s tick for minimap movement.
 	_hud_full_refresh_accum += get_process_delta_time()
 	var equipped_hash: int = (bot.equipped.hash() if is_instance_valid(bot) else 0)
-	var save_inv: Array = SaveState.load_state().get("inventory", [])
-	var inv_size: int = save_inv.size()
-	var inv_changed: bool = inv_size != _last_inventory_size
 	var eq_changed: bool = equipped_hash != _last_equipped_hash
 	if eq_changed:
 		chrome.update_equipped(bot.equipped if is_instance_valid(bot) else {}, items_db)
 		_last_equipped_hash = equipped_hash
-	if inv_changed:
-		chrome.update_inventory(save_inv, items_db)
-		_last_inventory_size = inv_size
+	if _last_inventory_dirty:
+		# Lazy reload from disk only when something invalidated it. This
+		# is the slow path — file open + JSON parse + migrate.
+		_hud_inv_cache = SaveState.load_state().get("inventory", [])
+		chrome.update_inventory(_hud_inv_cache, items_db)
+		_last_inventory_dirty = false
 	# Minimap — every 0.25s is plenty for visualizing bot motion.
 	if _hud_full_refresh_accum >= 0.25:
 		_hud_full_refresh_accum = 0.0
