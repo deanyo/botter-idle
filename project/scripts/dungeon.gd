@@ -213,6 +213,14 @@ func _async_build_floor() -> void:
 			run_plan.append(DebugJump.biome_id)
 		current_floor = DebugJump.floor_num if DebugJump.floor_num > 0 else current_floor
 		print("[debug-jump] _build_floor biome=%s floor=%d" % [DebugJump.biome_id, current_floor])
+	# BOTTER_FORCE_BIOME=<id> — pin every floor of an auto-grind run to one
+	# biome. Used to A/B test a specific biome's perf cost without waiting
+	# for the random run plan to roll it.
+	elif OS.has_environment("BOTTER_FORCE_BIOME"):
+		var forced: String = OS.get_environment("BOTTER_FORCE_BIOME")
+		run_plan = []
+		for i in 10:
+			run_plan.append(forced)
 	current_biome = BiomeData.biome_for_floor(run_plan, current_floor)
 	if DebugJump.active and DebugJump.biome_id != "":
 		var override: Dictionary = BiomeData.get_biome(DebugJump.biome_id)
@@ -238,7 +246,11 @@ func _async_build_floor() -> void:
 	await get_tree().process_frame
 	if my_gen != _build_generation: return
 	var t_gen: int = Time.get_ticks_usec()
-	var data: Dictionary = gen.generate_themed(map_w, map_h, vault_themes, current_floor, layout_id, String(current_biome.get("id", "")))
+	var data: Dictionary
+	if DebugJump.showcase:
+		data = _build_showcase_floor_data()
+	else:
+		data = gen.generate_themed(map_w, map_h, vault_themes, current_floor, layout_id, String(current_biome.get("id", "")))
 	t_gen = Time.get_ticks_usec() - t_gen
 	grid = data.grid
 	rooms = data.rooms
@@ -285,7 +297,10 @@ func _async_build_floor() -> void:
 	await get_tree().process_frame
 	if my_gen != _build_generation: return
 	var t_decor: int = Time.get_ticks_usec()
-	_scatter_ambient_decor()
+	if DebugJump.showcase:
+		_spawn_showcase_stations()
+	else:
+		_scatter_ambient_decor()
 	t_decor = Time.get_ticks_usec() - t_decor
 
 	var biome_name: String = String(current_biome.get("display_name", "the Dungeon"))
@@ -303,11 +318,13 @@ func _async_build_floor() -> void:
 		"events": [],
 	})
 
-	# Phase 4: enemy spawn (3-8ms).
+	# Phase 4: enemy spawn (3-8ms). Skipped in showcase mode — enemies
+	# there are spawned by _spawn_showcase_stations() in phase 3.
 	await get_tree().process_frame
 	if my_gen != _build_generation: return
 	var t_spawn: int = Time.get_ticks_usec()
-	_spawn_enemies()
+	if not DebugJump.showcase:
+		_spawn_enemies()
 	t_spawn = Time.get_ticks_usec() - t_spawn
 	_update_biome_hud()
 	floor_starting_hp = bot.hp
@@ -843,9 +860,9 @@ func _spawn_miniboss(id: String, at_cell: Vector2i) -> void:
 		var base_scale: float = float(def.get("visual_scale", 1.0))
 		var anchor: String = String(def.get("visual_anchor", "centre"))
 		e.apply_visual_scale(base_scale * 1.4, anchor, 2)
-		if e.sprite:
-			e.sprite.modulate = Color(1.2, 0.85, 0.85)
-			e.fx = SpriteFX.new(e.sprite)
+		if e.rig:
+			e.rig.modulate = Color(1.2, 0.85, 0.85)
+			e.fx = SpriteFX.new(e.rig, e.sprite)
 		# Miniboss inherits creature's light_spec if defined.
 		var ml_spec: String = String(def.get("light_spec", ""))
 		if ml_spec != "":
@@ -884,9 +901,9 @@ func _spawn_specific(id: String, at_cell: Vector2i) -> void:
 		var vz: int = int(def.get("visual_z", 1 if base_scale > 1.0 else 0))
 		var champ_visual: float = 1.25 if is_champion else 1.0
 		e.apply_visual_scale(base_scale * champ_visual, anchor, vz)
-		if is_champion and e.sprite:
-			e.sprite.modulate = Color(1.0, 0.85, 1.3)
-			e.fx = SpriteFX.new(e.sprite)
+		if is_champion and e.rig:
+			e.rig.modulate = Color(1.0, 0.85, 1.3)
+			e.fx = SpriteFX.new(e.rig, e.sprite)
 			LightSpec.attach(e, "sigil")
 		# Per-creature emitter: fire/ice creatures emit their own light.
 		var enemy_light_spec: String = String(def.get("light_spec", ""))
@@ -1167,7 +1184,10 @@ func _tick_bot(delta: float) -> void:
 			# Visual feedback for the burn.
 			Effects.fire_flash(actor_layer, bot.position + Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5))
 	# Standing on stairs and no enemies nearby? Descend immediately.
-	if bot.cell == stairs_cell and _nearest_enemy() == null:
+	# Showcase mode pins the floor — never descend, even if the patrol
+	# happens to cross the stairs cell (it doesn't, by design, but guard
+	# against accidental rebuilds).
+	if bot.cell == stairs_cell and _nearest_enemy() == null and not DebugJump.showcase:
 		_descend()
 		return
 	if fog_overlay:
@@ -1197,6 +1217,13 @@ func _tick_bot(delta: float) -> void:
 
 	if bot_interacting:
 		_tick_interaction(delta)
+		return
+
+	# Showcase mode: bot patrols a fixed path, ignoring enemies and
+	# interactables. The bot's light reveals each station as it passes.
+	# When the current path segment finishes, advance to the next station.
+	if DebugJump.showcase:
+		_showcase_tick_patrol(delta)
 		return
 
 	for inter in interactables:
@@ -1374,6 +1401,11 @@ const STUCK_RECOVERY_THRESHOLD := 360
 var _stall_snapshot_taken: bool = false
 
 func _check_stuck() -> void:
+	# Showcase mode pins the floor and the bot patrols deliberately —
+	# cell-equal-to-last is normal between path segments. Skip the
+	# stall watchdog so it doesn't trigger HARD-RECOVERY teleports.
+	if DebugJump.showcase:
+		return
 	if bot.cell == _last_bot_cell:
 		_stuck_ticks += 1
 		if _stuck_ticks == STUCK_THRESHOLD:
@@ -1637,6 +1669,12 @@ func _adjacent_walkable_cell(center: Vector2i, idx: int) -> Vector2i:
 const MAX_REPATHS_PER_FRAME := 3
 
 func _tick_enemies(delta: float) -> void:
+	# Showcase mode: enemies are frozen visual props — no AI, no aggro,
+	# no path. Their light_spec / sprite / flicker still update, since
+	# those are driven elsewhere (FlickerDriver per-frame, sprites are
+	# CanvasItems that paint regardless).
+	if DebugJump.showcase:
+		return
 	# Cap A* paths per frame so a horde repath doesn't burn 24*1ms in one
 	# tick. Enemies that miss this frame's slot keep their old path
 	# (still animates) and try again next frame — at 60Hz the player
@@ -1869,9 +1907,13 @@ func _scatter_ambient_decor() -> void:
 			ambient_decor_nodes.append(decor)
 
 func _world_light_sources() -> Array:
-	# Returns [{cell, position, radius_px, intensity, color}] for every
-	# world light source. Each source feeds both LoS computation and the
-	# fog shader tint. Bot is appended separately by callers.
+	# Returns [{cell, position, radius_px, intensity, color, flicker}] for
+	# every world light source. Each source feeds both LoS computation and
+	# the fog shader tint. Bot is appended separately by callers.
+	# `flicker` carries {category, freq, amp, seed} so _gather_lights can
+	# sample noise per-frame to modulate intensity (decor lights have no
+	# PointLight2D so flicker animation lives in the source dict, not on a
+	# scene-tree node).
 	# Cached: invalidated by invalidate_fog() (interactable consume,
 	# enemy death/spawn, floor build).
 	if _cached_world_lights_valid:
@@ -1904,6 +1946,7 @@ func _world_light_sources() -> Array:
 			"radius_px": C.TILE_SIZE * radius_tiles,
 			"intensity": float(spec.get("energy", 0.7)),
 			"color": spec.get("color", Color(1, 1, 1)),
+			"flicker": _flicker_meta_for(spec),
 		})
 	for n in ambient_decor_nodes:
 		if not is_instance_valid(n) or not (n is AmbientDecor):
@@ -1922,10 +1965,48 @@ func _world_light_sources() -> Array:
 			"radius_px": C.TILE_SIZE * radius_tiles2,
 			"intensity": float(spec2.get("energy", 0.6)),
 			"color": spec2.get("color", Color(1, 1, 1)),
+			"flicker": _flicker_meta_for(spec2),
 		})
 	_cached_world_lights = out
 	_cached_world_lights_valid = true
 	return out
+
+var _flicker_seed_counter: int = 0
+var _flicker_noise: FastNoiseLite = null
+
+func _flicker_meta_for(spec: Dictionary) -> Dictionary:
+	# Per-source flicker descriptor — used by _gather_lights to modulate
+	# intensity each frame. amp=0 means "steady, skip the noise sample."
+	var amp: float = float(spec.get("amp", 0.0))
+	if amp <= 0.0:
+		return {}
+	_flicker_seed_counter += 1
+	return {
+		"category": String(spec.get("category", "steady")),
+		"freq": float(spec.get("freq", 1.0)),
+		"amp": amp,
+		"seed": _flicker_seed_counter,
+	}
+
+func _flicker_factor(meta: Dictionary, t: float) -> float:
+	# Returns the multiplier to apply to base intensity. Mirrors
+	# FlickerDriver._animate_light's math so PointLight2D-backed lights and
+	# fog-shader-only lights pulse identically.
+	if meta.is_empty():
+		return 1.0
+	if _flicker_noise == null:
+		_flicker_noise = FastNoiseLite.new()
+		_flicker_noise.noise_type = FastNoiseLite.TYPE_PERLIN
+		_flicker_noise.frequency = 1.0
+	var freq: float = float(meta.get("freq", 1.0))
+	var amp: float = float(meta.get("amp", 0.0))
+	var seed_id: int = int(meta.get("seed", 0))
+	var n: float = _flicker_noise.get_noise_2d(t * freq, float(seed_id) * 17.3)
+	var category: String = String(meta.get("category", ""))
+	if category == "magic":
+		var slow: float = sin(t * freq * 0.4 + float(seed_id) * 0.7) * 0.4
+		n = (n + slow) * 0.5
+	return maxf(0.0, 1.0 + n * amp)
 
 func invalidate_fog() -> void:
 	# Called when an interactable is consumed, an enemy dies/spawns, or any
@@ -1989,7 +2070,12 @@ func _gather_lights() -> Array:
 	# lights only contribute if their source cell is currently visible — this
 	# stops a torch in an unexplored room from bleeding warmth into the
 	# corridor outside it.
+	# Flicker meta on each source lets us modulate intensity per-frame
+	# without a PointLight2D node — same animation as FlickerDriver does for
+	# actor-tier lights, but driven CPU-side and pushed via the existing
+	# light_intensities[] shader uniform.
 	var out: Array = []
+	var t: float = Time.get_ticks_msec() / 1000.0
 	if is_instance_valid(bot):
 		out.append({
 			"position": bot.position + Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5),
@@ -2000,10 +2086,13 @@ func _gather_lights() -> Array:
 	for src in _world_light_sources():
 		if fog and not fog.is_visible(src.cell):
 			continue
+		var base_intensity: float = float(src.intensity)
+		var meta: Dictionary = src.get("flicker", {})
+		var animated: float = base_intensity * _flicker_factor(meta, t)
 		out.append({
 			"position": src.position,
 			"radius": src.radius_px,
-			"intensity": src.intensity,
+			"intensity": animated,
 			"color": src.color,
 		})
 	return out
@@ -2019,6 +2108,137 @@ func _make_radial_light(size_px: int) -> Texture2D:
 			var a: float = t * t
 			img.set_pixel(x, y, Color(1, 1, 1, a))
 	return ImageTexture.create_from_image(img)
+
+# --- Showcase mode ---------------------------------------------------------
+# Hand-curated visual audit floor. See scripts/showcase.gd. Activated by the
+# /showcase skill writing "showcase" to user://DEBUG_FLOOR.txt.
+
+var _showcase_patrol: Array = []
+var _showcase_patrol_idx: int = 0
+
+func _build_showcase_floor_data() -> Dictionary:
+	var grid_arr: Array = Showcase.build_grid()
+	# Bot spawns at the first patrol cell. Stairs cell is parked far away
+	# (corner) — we never want the bot to descend in showcase mode, but the
+	# field is required by downstream code.
+	_showcase_patrol = Showcase.patrol_path()
+	_showcase_patrol_idx = 0
+	var spawn: Vector2i = _showcase_patrol[0] if not _showcase_patrol.is_empty() else Vector2i(2, 2)
+	return {
+		"grid": grid_arr,
+		"rooms": [],
+		"spawn": spawn,
+		"stairs_down": Vector2i(Showcase.MAP_W - 2, Showcase.MAP_H - 2),
+		"dist_to_stairs": [],
+		"vault_results": {},
+	}
+
+func _spawn_showcase_stations() -> void:
+	for s in Showcase.STATIONS:
+		var cell: Vector2i = s.anchor
+		var kind: String = s.kind
+		match kind:
+			"fire_decor":
+				for d in ["flame_0", "flame_1", "flame_2"]:
+					var c: Vector2i = cell + Vector2i(["flame_0","flame_1","flame_2"].find(d) - 1, 0)
+					_showcase_spawn_decor(d, c)
+			"magic_decor":
+				_showcase_spawn_decor("lantern", cell + Vector2i(-1, 0))
+				_showcase_spawn_decor("magic_lamp", cell)
+				_showcase_spawn_decor("orb", cell + Vector2i(1, 0))
+			"crystal_decor":
+				_showcase_spawn_decor("orb_glow_0", cell + Vector2i(-1, 0))
+				_showcase_spawn_decor("orb_glow_1", cell)
+				_showcase_spawn_decor("crystal_orb", cell + Vector2i(1, 0))
+			"mushroom_decor":
+				_showcase_spawn_decor("mold_1", cell + Vector2i(-1, 0))
+				_showcase_spawn_decor("mold_2", cell)
+				_showcase_spawn_decor("zot_pillar", cell + Vector2i(1, 0))
+			"campfire":
+				# Actor-tier flicker — full PointLight2D + embers. Lets us
+				# compare the decor-tier (fog-only) flicker side by side.
+				_showcase_spawn_decor("campfire", cell)
+			"lava_pool", "water_pool", "ice_patch":
+				pass # Terrain stamped at grid-build time; no entity needed.
+			"fountain_blue":
+				_spawn_fountain(cell, "blue")
+			"fountain_blood":
+				_spawn_fountain(cell, "blood")
+			"altar_trog", "altar_zin", "altar_vehumet", "altar_kikubaaqudgha", "altar_xom":
+				var god_id: String = kind.substr(6)
+				var altar := Altar.new()
+				altar.setup(cell, god_id)
+				actor_layer.add_child(altar)
+				interactables.append(altar)
+			"loot_common", "loot_uncommon", "loot_rare", "loot_epic", "loot_legendary":
+				var rarity: String = kind.substr(5)
+				_showcase_spawn_loot_at(cell, rarity)
+			"chest_normal":
+				_spawn_chest(cell, 2, 0)
+			"chest_rich":
+				_spawn_chest(cell, 3, 2)
+			"portal":
+				_spawn_portal(cell)
+			"enemy_fire_dragon":
+				_showcase_spawn_enemy("fire_dragon", cell)
+			"enemy_ice_dragon":
+				_showcase_spawn_enemy("ice_dragon", cell)
+			"enemy_salamander":
+				_showcase_spawn_enemy("salamander", cell)
+			"enemy_blizzard_demon":
+				_showcase_spawn_enemy("blizzard_demon", cell)
+			"enemy_firefly":
+				_showcase_spawn_enemy("firefly", cell)
+
+func _showcase_spawn_decor(decor_id: String, cell: Vector2i) -> void:
+	var decor := AmbientDecor.new()
+	decor.setup(decor_id, cell)
+	actor_layer.add_child(decor)
+	ambient_decor_nodes.append(decor)
+
+func _showcase_spawn_loot_at(cell: Vector2i, rarity: String) -> void:
+	var pool: Array = []
+	for id in items_db.keys():
+		if items_db[id].rarity == rarity:
+			pool.append(id)
+	if pool.is_empty():
+		return
+	var picked: String = pool[0]
+	var inst: Dictionary = _create_item_instance(picked)
+	_spawn_loot_drop(inst, cell)
+
+func _showcase_spawn_enemy(id: String, cell: Vector2i) -> void:
+	# Same path as _spawn_specific so creature lights / scaling are honoured.
+	# Frozen-in-place is enforced by _tick_enemies skipping all movement when
+	# DebugJump.showcase is set.
+	_spawn_specific(id, cell)
+
+func _showcase_tick_patrol(delta: float) -> void:
+	# Walk to the next patrol cell. When the bot reaches it, advance the
+	# index and emit a path to the next one. Loops forever.
+	# step_movement is the per-frame mover — Bot._process doesn't move on
+	# its own; the dungeon's tick is what advances the bot along its path.
+	if _showcase_patrol.is_empty():
+		return
+	var has_path: bool = bot.path.size() > 0 and bot.path_index < bot.path.size()
+	if has_path:
+		bot.step_movement(delta)
+		return
+	# Arrived (or no path yet) — pick next station.
+	_showcase_patrol_idx = (_showcase_patrol_idx + 1) % _showcase_patrol.size()
+	var target: Vector2i = _showcase_patrol[_showcase_patrol_idx]
+	# If our spawn cell already matches the first station, skip ahead by
+	# rolling once more — otherwise we'd ask pathing for an empty path and
+	# get stuck.
+	if target == bot.cell:
+		_showcase_patrol_idx = (_showcase_patrol_idx + 1) % _showcase_patrol.size()
+		target = _showcase_patrol[_showcase_patrol_idx]
+	var p: PackedVector2Array = pathing.path(bot.cell, target)
+	if p.size() > 1:
+		bot.set_path(p.slice(1))
+		bot_target_cell = target
+		bot_target_kind = "showcase_patrol"
+		bot.step_movement(delta)
 
 func _load_json(path: String) -> Dictionary:
 	var f := FileAccess.open(path, FileAccess.READ)

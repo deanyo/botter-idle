@@ -54,7 +54,13 @@ func generate(w: int = C.MAP_W, h: int = C.MAP_H, theme: String = "dungeon", flo
 	var stairs_cell := Vector2i(1, 1)
 	var vault_results: Dictionary = {}
 	var dist_to_stairs: Array = []
+	var t_carve: int = 0
+	var t_vault: int = 0
+	var t_connect: int = 0
+	var t_dist: int = 0
+	var t_attempts: int = 0
 	for attempt in MAX_REGEN_ATTEMPTS:
+		t_attempts += 1
 		grid = []
 		rooms.clear()
 		for y in h:
@@ -90,7 +96,9 @@ func generate(w: int = C.MAP_W, h: int = C.MAP_H, theme: String = "dungeon", flo
 			if stairs_cell.x >= 0 and stairs_cell.y >= 0 and stairs_cell.y < h and stairs_cell.x < w:
 				grid[stairs_cell.y][stairs_cell.x] = C.T_STAIRS_DOWN
 		else:
+			var t0: int = Time.get_ticks_usec()
 			var spawn_stairs: Dictionary = _carve_layout(layout_id, w, h, floor_num)
+			t_carve += Time.get_ticks_usec() - t0
 			spawn_cell = spawn_stairs.spawn
 			stairs_cell = spawn_stairs.stairs
 
@@ -104,9 +112,11 @@ func generate(w: int = C.MAP_W, h: int = C.MAP_H, theme: String = "dungeon", flo
 				continue
 
 			# DCSS step 2: detect open regions and stamp orient + float vaults.
+			t0 = Time.get_ticks_usec()
 			rooms = _detect_open_regions(w, h, 5, 5, 30)
 			_stamp_oriented_vaults(theme, floor_num, vault_results)
 			_stamp_float_vaults(theme, floor_num, vault_results)
+			t_vault += Time.get_ticks_usec() - t0
 
 			# DCSS step 3: ensure spawn and stairs are still floor.
 			if grid[spawn_cell.y][spawn_cell.x] != C.T_FLOOR:
@@ -117,13 +127,21 @@ func generate(w: int = C.MAP_W, h: int = C.MAP_H, theme: String = "dungeon", flo
 			# Vault stamping can occasionally seal a vault interior off from the
 			# rest of the map; carve a corridor from each orphan to the nearest
 			# main-region floor cell.
+			t0 = Time.get_ticks_usec()
 			_connect_orphans_to_main(spawn_cell)
+			t_connect += Time.get_ticks_usec() - t0
 
 		# DCSS step 4: connectivity verification.
+		var td: int = Time.get_ticks_usec()
 		dist_to_stairs = _build_distance_map(stairs_cell, w, h)
+		t_dist += Time.get_ticks_usec() - td
 		if dist_to_stairs[spawn_cell.y][spawn_cell.x] < 0:
 			continue
 		break
+
+	GrindLog.log_line("[gen-phases] attempts=%d carve_us=%d vault_us=%d connect_us=%d dist_us=%d" % [
+		t_attempts, t_carve, t_vault, t_connect, t_dist
+	])
 
 	var log_biome: String = _active_biome_id if _active_biome_id != "" else theme
 	_log_floor_metrics(layout_id, log_biome, floor_num, w, h, spawn_cell, stairs_cell, vault_results)
@@ -393,17 +411,25 @@ func _spawn_in_largest_region(w: int, h: int) -> Vector2i:
 	return best
 
 func _connect_orphans_to_main(spawn: Vector2i) -> void:
+	# Was: per-orphan-cell expanding spiral search for the nearest main-
+	# region cell — O(orphans × W × H) worst case, profiled at 2 seconds
+	# on fragmented maps. Now: single multi-source BFS from all main-
+	# region cells walking through walls, recording the parent cell that
+	# discovered each tile. For each orphan group, the closest connector
+	# pair is read in O(group_size) and the corridor is just a backtrace
+	# along the parent chain. Total cost is O(W × H).
 	var h: int = grid.size()
 	var w: int = grid[0].size() if h > 0 else 0
-	# BFS from spawn over walkable cells.
-	var main_region: Dictionary = {}
 	if spawn.x < 0 or spawn.y < 0 or spawn.x >= w or spawn.y >= h:
 		return
-	var queue: Array[Vector2i] = [spawn]
+
+	# Phase 1: BFS over walkable cells from spawn → identify main_region.
+	var main_region: Dictionary = {}
+	var seed_queue: Array[Vector2i] = [spawn]
 	main_region[spawn] = true
 	var head: int = 0
-	while head < queue.size():
-		var c: Vector2i = queue[head]
+	while head < seed_queue.size():
+		var c: Vector2i = seed_queue[head]
 		head += 1
 		for d in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
 			var n: Vector2i = c + d
@@ -415,10 +441,50 @@ func _connect_orphans_to_main(spawn: Vector2i) -> void:
 			if cv != C.T_FLOOR and cv != C.T_STAIRS_DOWN and cv != C.T_DOOR:
 				continue
 			main_region[n] = true
-			queue.append(n)
-	# Find all orphan floor cells; group by region.
+			seed_queue.append(n)
+
+	# Phase 2: multi-source BFS from every main_region cell, this time
+	# walking THROUGH walls. Record which cell discovered each tile so we
+	# can backtrace a corridor cheaply. Distance is implicit in BFS order.
+	# Distance map doubles as a "have we visited?" check (-1 = unvisited).
+	# parent_idx[y * w + x] = parent flat index, or -1 for sources.
+	var dist: PackedInt32Array = PackedInt32Array()
+	dist.resize(w * h)
+	var parent: PackedInt32Array = PackedInt32Array()
+	parent.resize(w * h)
+	for i in range(w * h):
+		dist[i] = -1
+		parent[i] = -1
+	# Enqueue all main_region cells as sources at dist=0.
+	var bfs: Array[Vector2i] = []
+	for k in main_region.keys():
+		var mc: Vector2i = k
+		dist[mc.y * w + mc.x] = 0
+		bfs.append(mc)
+	head = 0
+	while head < bfs.size():
+		var cur: Vector2i = bfs[head]
+		head += 1
+		var cur_idx: int = cur.y * w + cur.x
+		var cur_d: int = dist[cur_idx]
+		for d in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+			var nb: Vector2i = cur + d
+			if nb.x < 0 or nb.y < 0 or nb.x >= w or nb.y >= h:
+				continue
+			# Skip the outer wall ring — never carve through it.
+			if nb.x == 0 or nb.y == 0 or nb.x == w - 1 or nb.y == h - 1:
+				continue
+			var nb_idx: int = nb.y * w + nb.x
+			if dist[nb_idx] >= 0:
+				continue
+			dist[nb_idx] = cur_d + 1
+			parent[nb_idx] = cur_idx
+			bfs.append(nb)
+
+	# Phase 3: find orphan groups, pick the cell with the smallest dist
+	# (= closest to main_region through-walls), backtrace via parent chain
+	# to carve the corridor.
 	var visited: Dictionary = main_region.duplicate()
-	var orphan_groups: Array = []
 	for y in h:
 		for x in w:
 			var cell := Vector2i(x, y)
@@ -427,15 +493,20 @@ func _connect_orphans_to_main(spawn: Vector2i) -> void:
 			var v: int = grid[y][x]
 			if v != C.T_FLOOR and v != C.T_STAIRS_DOWN and v != C.T_DOOR:
 				continue
-			# New orphan region — flood it.
-			var group: Array[Vector2i] = []
-			var sub_queue: Array[Vector2i] = [cell]
+			# Flood this orphan group, tracking the cell with minimum
+			# through-wall distance to main_region.
+			var group_queue: Array[Vector2i] = [cell]
 			visited[cell] = true
-			var sub_head: int = 0
-			while sub_head < sub_queue.size():
-				var oc: Vector2i = sub_queue[sub_head]
-				sub_head += 1
-				group.append(oc)
+			var group_head: int = 0
+			var best_cell: Vector2i = cell
+			var best_dist: int = dist[cell.y * w + cell.x]
+			while group_head < group_queue.size():
+				var oc: Vector2i = group_queue[group_head]
+				group_head += 1
+				var oc_dist: int = dist[oc.y * w + oc.x]
+				if oc_dist >= 0 and (best_dist < 0 or oc_dist < best_dist):
+					best_dist = oc_dist
+					best_cell = oc
 				for d2 in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
 					var on: Vector2i = oc + d2
 					if on.x < 0 or on.y < 0 or on.x >= w or on.y >= h:
@@ -446,59 +517,22 @@ func _connect_orphans_to_main(spawn: Vector2i) -> void:
 					if ov != C.T_FLOOR and ov != C.T_STAIRS_DOWN and ov != C.T_DOOR:
 						continue
 					visited[on] = true
-					sub_queue.append(on)
-			orphan_groups.append(group)
-	# For each orphan group, carve a corridor to the nearest main-region cell.
-	for group in orphan_groups:
-		_carve_corridor_to_main(group, main_region, w, h)
-
-func _carve_corridor_to_main(orphan: Array, main_region: Dictionary, w: int, h: int) -> void:
-	# Pick the orphan cell closest to any main-region cell (Manhattan).
-	var best_orphan := Vector2i(-1, -1)
-	var best_main := Vector2i(-1, -1)
-	var best_d: int = 999999
-	for oc in orphan:
-		# Spiral outward looking for nearest main-region cell. Capped by
-		# the map bounds to keep runtime reasonable.
-		for radius in range(1, maxi(w, h)):
-			var found: bool = false
-			for dy in range(-radius, radius + 1):
-				for dx in range(-radius, radius + 1):
-					if absi(dx) != radius and absi(dy) != radius:
-						continue
-					var probe := Vector2i(oc.x + dx, oc.y + dy)
-					if not main_region.has(probe):
-						continue
-					var d: int = absi(dx) + absi(dy)
-					if d < best_d:
-						best_d = d
-						best_orphan = oc
-						best_main = probe
-					found = true
-			if found:
-				break
-		if best_d <= 2:
-			break
-	if best_orphan.x < 0 or best_main.x < 0:
-		return
-	# Carve a Manhattan corridor from best_orphan toward best_main, ignoring
-	# walls and doors (replace with floor). This is brute-force connectivity.
-	var cur: Vector2i = best_orphan
-	var safety: int = 200
-	while cur != best_main and safety > 0:
-		safety -= 1
-		if grid[cur.y][cur.x] == C.T_WALL:
-			grid[cur.y][cur.x] = C.T_FLOOR
-		var dx: int = best_main.x - cur.x
-		var dy: int = best_main.y - cur.y
-		if absi(dx) >= absi(dy) and dx != 0:
-			cur.x += signi(dx)
-		elif dy != 0:
-			cur.y += signi(dy)
-		else:
-			cur.x += signi(dx)
-	if grid[best_main.y][best_main.x] == C.T_WALL:
-		grid[best_main.y][best_main.x] = C.T_FLOOR
+					group_queue.append(on)
+			# Backtrace from best_cell along parent[] until we hit a
+			# main_region cell. Carve the wall cells we pass through.
+			if best_dist < 0:
+				continue
+			var trace_idx: int = best_cell.y * w + best_cell.x
+			var safety: int = w * h
+			while trace_idx != -1 and safety > 0:
+				safety -= 1
+				var ty: int = trace_idx / w
+				var tx: int = trace_idx - ty * w
+				if grid[ty][tx] == C.T_WALL:
+					grid[ty][tx] = C.T_FLOOR
+				if main_region.has(Vector2i(tx, ty)):
+					break
+				trace_idx = parent[trace_idx]
 
 func _largest_floor_region_size(w: int, h: int) -> int:
 	var visited: Dictionary = {}

@@ -351,31 +351,45 @@ func update_equipped(equipped: Dictionary, items_db: Dictionary) -> void:
 
 const INVENTORY_DISPLAY_CAP := 64
 
+# Pool of TextureRect cells, kept alive across update_inventory calls.
+# Cells past the current item count get hidden, not freed — replacing the
+# queue_free + new TextureRect churn that profiled at ~250ms on a 1745-item
+# save and was triggered every floor build.
+var _inv_cell_pool: Array = []
+
 func update_inventory(loose: Array, items_db: Dictionary) -> void:
 	# loose: array of {id, ...} dicts. Capped at INVENTORY_DISPLAY_CAP —
-	# stash sizes can balloon to hundreds/thousands and rebuilding that
-	# many TextureRects every time a floor builds was a multi-100ms stall
-	# (1745-item save profiled at ~250ms). Recent items shown last.
-	for child in inventory_grid.get_children():
-		child.queue_free()
+	# stash sizes can balloon to hundreds/thousands.
 	var n: int = mini(loose.size(), INVENTORY_DISPLAY_CAP)
 	var start: int = loose.size() - n
-	for i in n:
-		var inst: Variant = loose[start + i]
-		if typeof(inst) != TYPE_DICTIONARY:
-			continue
-		var item_id: String = String(inst.get("base_id", inst.get("id", "")))
-		var item_def: Dictionary = items_db.get(item_id, {})
+	# Grow pool to current need (only ever grows; cells are reused).
+	while _inv_cell_pool.size() < n:
 		var cell := TextureRect.new()
 		cell.custom_minimum_size = Vector2(SLOT_TILE_SIZE - 4, SLOT_TILE_SIZE - 4)
 		cell.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		cell.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		cell.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-		cell.tooltip_text = String(item_def.get("name", item_id))
-		var tile_path: String = "res://assets/tiles/items/" + String(item_def.get("tile", ""))
-		if ResourceLoader.exists(tile_path):
-			cell.texture = load(tile_path)
 		inventory_grid.add_child(cell)
+		_inv_cell_pool.append(cell)
+	# Update visible cells in place — no node creation, no queue_free.
+	for i in n:
+		var inst: Variant = loose[start + i]
+		var pool_cell: TextureRect = _inv_cell_pool[i]
+		if typeof(inst) != TYPE_DICTIONARY:
+			pool_cell.visible = false
+			continue
+		var item_id: String = String(inst.get("base_id", inst.get("id", "")))
+		var item_def: Dictionary = items_db.get(item_id, {})
+		pool_cell.tooltip_text = String(item_def.get("name", item_id))
+		var tile_path: String = "res://assets/tiles/items/" + String(item_def.get("tile", ""))
+		var tex: Texture2D = null
+		if ResourceLoader.exists(tile_path):
+			tex = load(tile_path)
+		pool_cell.texture = tex
+		pool_cell.visible = true
+	# Hide any pool slots past the current item count.
+	for i in range(n, _inv_cell_pool.size()):
+		_inv_cell_pool[i].visible = false
 
 # Minimap: pass the current grid + bot cell + stairs cell. Renders downscaled.
 var _minimap_image: Image

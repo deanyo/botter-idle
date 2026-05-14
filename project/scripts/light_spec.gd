@@ -73,13 +73,25 @@ static func _get_noise() -> FastNoiseLite:
 		_noise.frequency = 1.0
 	return _noise
 
-static func attach(parent: Node2D, spec_id: String, offset_px: Vector2 = Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5)) -> PointLight2D:
+const TIER_ACTOR := "actor"
+const TIER_DECOR := "decor"
+
+static func attach(parent: Node2D, spec_id: String, offset_px: Vector2 = Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5), tier: String = TIER_ACTOR) -> PointLight2D:
 	# BOTTER_NO_LIGHTS=1 — skip every LightSpec attach. For isolating
 	# PointLight2D blend cost from other GPU work in benchmarks.
 	if OS.has_environment("BOTTER_NO_LIGHTS"):
 		return null
 	var spec: Dictionary = SPECS.get(spec_id, {})
 	if spec.is_empty():
+		return null
+	# Decor tier: no PointLight2D node, no shadows, no embers. The fog
+	# overlay shader still tints the cell via _world_light_sources(), and
+	# AmbientDecor.light_emit() carries the colour data — so visually the
+	# warm glow is preserved, just without the per-pixel PointLight2D blend.
+	# Forge with 50 decor lights drops 119→19 fps on M3 Pro Retina with
+	# nodes; identical biome lands at locked 120 once decor lights are
+	# fog-only.
+	if tier == TIER_DECOR:
 		return null
 	var light := PointLight2D.new()
 	light.texture = _radial_texture()

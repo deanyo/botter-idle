@@ -20,31 +20,33 @@ const C := preload("res://scripts/constants.gd")
 var _noise: FastNoiseLite
 var _t: float = 0.0
 var _cached_lights: Array = []
-var _list_dirty: bool = true
+# Coarse refresh cadence in seconds. Flicker lights only enter/leave the
+# tree on floor build (~once per second of play at most), so refreshing 4×
+# per second is more than enough — no need to wire signal listeners.
+const REFRESH_INTERVAL: float = 0.25
+var _refresh_accum: float = 0.0
 
 func _ready() -> void:
 	_noise = FastNoiseLite.new()
 	_noise.noise_type = FastNoiseLite.TYPE_PERLIN
 	_noise.frequency = 1.0
-	# When new lights spawn or old ones free, the group fires
-	# tree_node_added_in_group / removed signals indirectly via the
-	# scene tree. We refresh on a coarse cadence rather than
-	# subscribing — flicker driver _process is the only consumer.
-	get_tree().node_added.connect(_on_tree_changed)
-	get_tree().node_removed.connect(_on_tree_changed)
-
-func _on_tree_changed(_n: Node) -> void:
-	_list_dirty = true
+	# Was: subscribed to tree.node_added/node_removed globally. Every blood
+	# splat, hit flash, loot tween, attack effect node fired the signal,
+	# marked the cache dirty, and forced a full tree walk on the next
+	# frame. On forge with combat that's hundreds of refreshes per second.
+	# Now: refresh on a coarse timer (every REFRESH_INTERVAL) and detect
+	# stale entries inline during _process.
 
 func _process(delta: float) -> void:
 	_t += delta
 	PerfMon.begin(PerfMon.TAG_FLICKER)
-	if _list_dirty:
+	_refresh_accum += delta
+	if _refresh_accum >= REFRESH_INTERVAL:
+		_refresh_accum = 0.0
 		_cached_lights = get_tree().get_nodes_in_group("flicker_lights")
-		_list_dirty = false
 	for n in _cached_lights:
 		if not is_instance_valid(n):
-			_list_dirty = true
+			# Stale slot — next refresh tick will drop it. We just skip.
 			continue
 		if not (n is PointLight2D):
 			continue

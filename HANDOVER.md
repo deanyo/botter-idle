@@ -4,9 +4,85 @@ Point-in-time snapshot of what's actually shipping. Updated as we go. The
 durable rules and process live in `CLAUDE.md`; the roadmap and open work
 items live in `TODO.md`.
 
-Last refresh: 2026-05-13 (perf pass — fps avg 19 → 112 on M3 Pro).
+Last refresh: 2026-05-14 (perf pass 2 — native Retina, fps min 19 → 119 on forge).
 
-## Perf pass — 2026-05-13 (full session arc)
+## Perf pass 2 — 2026-05-14 (native Retina + 1×)
+
+User reported 10-23 fps on most maps and 10 fps in lava/forge vaults
+despite the previous pass logging 19 → 112 fps. Root cause: the previous
+pass measured at 1600×900 windowed, which is ~5× fewer pixels than M3 Pro
+native Retina. CPU side was fine; everything was GPU- and floor-build-
+hitch-bound at native res. Six surgical wins:
+
+1. **PointLight2D node count was the GPU killer.** Forge spawns ~50
+   ambient-decor lights per floor; each is a separate full-coverage screen
+   pass on Godot's GL Compatibility renderer, dropping fps from 120 to
+   19 at native res. Added `LightSpec.TIER_DECOR` — for decor lights,
+   skip the PointLight2D node entirely. The fog-overlay shader's
+   24-source `light_intensities[]` uniform handles the broad warmth, and
+   a per-decor additive glow Sprite2D + GPUParticles2D embers handle the
+   "this is a flame" visual.
+2. **Decor flicker animation moved CPU-side.** When PointLight2D went
+   away, FlickerDriver lost its lights to animate. Per-decor `_process`
+   now runs the same noise math (FastNoiseLite, scoped at 35% spec
+   amplitude), driving glow alpha + scale + sub-pixel jitter. Visually
+   equivalent to actor-tier flicker, zero GPU cost.
+3. **FlickerDriver tree-signal churn.** Was subscribed to global
+   `tree.node_added`/`node_removed`; every blood splat / hit flash /
+   tween-spawned sprite forced a full tree walk to refresh the cache.
+   Replaced with a 0.25s coarse refresh tick. **CPU avg 515µs → 254µs.**
+4. **HUD inventory pool.** `update_inventory` was queue_freeing every
+   `TextureRect` and re-creating; now grows a pool once and toggles
+   visibility + texture. No more per-build node churn.
+5. **Forward+ renderer.** Flipped `rendering_method` from
+   `gl_compatibility` to `forward_plus`. Boots cleanly on Apple Metal.
+   **fps min 58 → 100** (much smoother frametimes); CPU per-system tags
+   ~doubled but well within budget. Caveat: requires Vulkan, will fall
+   back to gl_compatibility on hardware without it (mobile profile keeps
+   compat anyway).
+6. **Orphan-connect O(N×W×H) → O(W×H).** `_connect_orphans_to_main` was
+   doing per-orphan-cell expanding-spiral nearest-cell searches. p95
+   1290ms, max 2016ms — that's the 2-second hitch users actually saw.
+   Rewrote as a single multi-source BFS from main_region walking through
+   walls + parent backtrace. **p95 18ms, max 26ms (-98.7%).**
+   `[gen-phases]` log line stays in for future regressions.
+
+### Final M3 Pro numbers (1× windowed, native Retina, forge)
+
+| Metric | Pre-pass | Final | Δ |
+|---|---|---|---|
+| fps median | 73 | **120** (vsync cap) | +64% |
+| fps min | **19** | **119** | **+526%** |
+| frame_ms max | (variable, 0.80+) | 0.55 | smooth |
+| gen p95 | 1290ms hitch | 18ms | -98.7% |
+| build_floor avg | 1500+ms tail | 432ms | -71% |
+
+### New tooling
+
+- **`/showcase` skill** — hand-curated visual audit floor with one
+  station per visual feature (fire/magic/crystal decor, campfire actor-
+  tier reference, lava/water/ice, altars, fountains, loot rarities,
+  chests, portal, fire/ice creatures with light_spec). Bot patrols a
+  fixed loop so its light reveals each station. Use for any visual
+  iteration without waiting for procgen to roll the right combination.
+  See `.claude/skills/showcase/`.
+- **`BOTTER_FORCE_BIOME=<id>`** env var — pins every floor of an
+  auto-grind to a single biome. Used for biome-specific A/B sweeps.
+- **`[gen-phases]`** log line — per-floor `carve_us / vault_us /
+  connect_us / dist_us` profile. Stays in to flag any future generator
+  hot spot.
+
+### Hardware caveat (unchanged)
+
+Baseline is M3 Pro Retina. The remaining sub-vsync floors (gen 30-75ms,
+vault 10-40ms) are not yet split across frames; on a low-end Windows
+laptop these may need further work. Forward+ requires Vulkan — older
+hardware will hit the gl_compatibility fallback and lose the smoother-
+min benefit.
+
+---
+
+## Perf pass 1 — 2026-05-13 (full session arc)
 
 The session opened with a "fairly simplistic game running at variable
 30-120fps" complaint. By end, **avg fps 19 → 112, p50 → 120 (vsync

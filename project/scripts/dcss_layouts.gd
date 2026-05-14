@@ -430,15 +430,22 @@ static func _builder_extras(grid: Array, rng: RandomNumberGenerator, level_numbe
 	# No-liquid biomes skip the river/lake/pools pass entirely.
 	if liquid_type == "":
 		return
-	# Bumped probability — these are atmospheric flavour, biome-gated so they
-	# only fire on biomes whose theme actually wants a water/lava feature.
-	# Floor 2+ instead of 6+/8+.
-	if level_number >= 2 and rng.randi_range(0, 7) == 0:
+	# Liquid is a *signature* of the biome (forge → lava, shoals/swamp → water).
+	# Players never seeing it on these biomes broke the theming, so we now
+	# guarantee at least one feature rolls and let pools/river/lake stack.
+	# No floor gate — D:1 of a swamp run should still be wet.
+	var rolled: bool = false
+	if rng.randi_range(0, 2) == 0:
 		_many_pools(grid, rng, liquid_type)
-		return
-	if level_number >= 2 and rng.randi_range(0, 9) == 0:
+		rolled = true
+	if rng.randi_range(0, 2) == 0:
 		_build_river(grid, rng, liquid_type)
-	elif level_number >= 2 and rng.randi_range(0, 7) == 0:
+		rolled = true
+	if rng.randi_range(0, 2) == 0:
+		_build_lake(grid, rng, liquid_type)
+		rolled = true
+	# If RNG gave us nothing, force a lake so the biome reads correctly.
+	if not rolled:
 		_build_lake(grid, rng, liquid_type)
 
 static func _liquid_cell(liquid_type: String) -> int:

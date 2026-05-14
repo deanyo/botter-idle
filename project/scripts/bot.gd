@@ -135,15 +135,15 @@ func _ready() -> void:
 	# default to z_index = 0). FX particles draw at z=6 so they still overlay.
 	z_index = 5
 	set_texture(BOT_TEX)
-	# Layer the body armor sprite over the player base. Lantern removed —
-	# we want clean weapon + (eventually) shield slots only.
+	# Layer the body armor sprite over the player base. Parented to rig so
+	# it inherits attack_lunge / hit_squish / death_spin tweens. Lantern
+	# removed — we want clean weapon + (eventually) shield slots only.
 	var body := Sprite2D.new()
 	body.texture = BODY_TEX
 	body.centered = true
-	body.position = Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5)
 	body.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	body.z_index = 1
-	add_child(body)
+	rig.add_child(body)
 	_refresh_weapon_overlay()
 
 func _refresh_weapon_overlay() -> void:
@@ -162,12 +162,13 @@ func _refresh_weapon_overlay() -> void:
 	weapon_sprite = Sprite2D.new()
 	weapon_sprite.texture = load(path)
 	weapon_sprite.centered = true
-	# Position roughly at the bot's right hand (offset slightly down + right
-	# of cell centre). Tweaked to match where DCSS hand_right paperdoll sits.
-	weapon_sprite.position = Vector2(C.TILE_SIZE * 0.5 + 4, C.TILE_SIZE * 0.5 + 2)
+	# Offset slightly down + right of rig origin — roughly where DCSS
+	# hand_right paperdoll sits. Parented to rig so it inherits the bot's
+	# lunge / squish / death tweens; weapon's own swing tween composes on top.
+	weapon_sprite.position = Vector2(4, 2)
 	weapon_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	weapon_sprite.z_index = 2
-	add_child(weapon_sprite)
+	rig.add_child(weapon_sprite)
 	# Fire-tagged weapons emit their own light from the held sprite. Must
 	# happen AFTER add_child so LightSpec.attach has a parent in the tree.
 	var weapon_light_id: String = String(WEAPON_LIGHTS.get(base_id, ""))
@@ -179,17 +180,26 @@ func swing_weapon(toward: Vector2) -> void:
 		return
 	if _weapon_swing_tween and _weapon_swing_tween.is_valid():
 		_weapon_swing_tween.kill()
-	# Snap rotation to match swing direction, then ease back to neutral.
-	var target_rot: float = -PI / 2.0  # 90° anticlockwise (overhead arc)
-	if toward.x < 0:
-		target_rot = PI / 2.0  # right-handed → mirror for leftward swings
-	weapon_sprite.rotation = 0
+	# Real swing: cock back, sweep through a wide arc, snap to rest.
+	# Direction sign mirrors the arc for leftward attacks (weapon held in
+	# right hand, so leftward swings go overhead the other way).
+	var sign: float = 1.0 if toward.x >= 0 else -1.0
+	var windup_rot: float = sign * deg_to_rad(35.0)   # cock back slightly
+	var swing_rot: float = sign * -deg_to_rad(110.0)  # sweep across body
+	weapon_sprite.rotation = 0.0
 	weapon_sprite.scale = Vector2(1, 1)
-	_weapon_swing_tween = weapon_sprite.create_tween().set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	_weapon_swing_tween.tween_property(weapon_sprite, "rotation", target_rot, 0.06)
-	_weapon_swing_tween.parallel().tween_property(weapon_sprite, "scale", Vector2(1.25, 1.25), 0.06)
-	_weapon_swing_tween.tween_property(weapon_sprite, "rotation", 0.0, 0.14)
-	_weapon_swing_tween.parallel().tween_property(weapon_sprite, "scale", Vector2(1, 1), 0.14)
+	_weapon_swing_tween = weapon_sprite.create_tween()
+	# Windup: slow ease-in.
+	_weapon_swing_tween.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	_weapon_swing_tween.tween_property(weapon_sprite, "rotation", windup_rot, 0.07)
+	# Swing-through: fast, exaggerated scale at peak for impact.
+	_weapon_swing_tween.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	_weapon_swing_tween.tween_property(weapon_sprite, "rotation", swing_rot, 0.08)
+	_weapon_swing_tween.parallel().tween_property(weapon_sprite, "scale", Vector2(1.35, 1.35), 0.08)
+	# Recovery: ease back to neutral.
+	_weapon_swing_tween.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
+	_weapon_swing_tween.tween_property(weapon_sprite, "rotation", 0.0, 0.16)
+	_weapon_swing_tween.parallel().tween_property(weapon_sprite, "scale", Vector2(1, 1), 0.16)
 
 func _process(delta: float) -> void:
 	if not is_alive or hp_regen_per_sec <= 0.0:

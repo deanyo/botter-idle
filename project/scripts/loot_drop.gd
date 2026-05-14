@@ -71,7 +71,9 @@ func _ready() -> void:
 	if tex:
 		sprite.texture = tex
 	add_child(sprite)
-	fx = SpriteFX.new(sprite)
+	# Loot has no overlay stack — pass the sprite itself as both rig and sprite
+	# so loot_pop tweens the sprite directly.
+	fx = SpriteFX.new(sprite, sprite)
 
 	_start_wobble()
 	_pulse_glow()

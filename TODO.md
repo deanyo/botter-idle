@@ -29,13 +29,24 @@ Other queued work:
 
 ## Perf — done for now
 
-The 2026-05-13 perf pass took fps avg 19 → 112 on M3 Pro 1× windowed.
-See HANDOVER for the full breakdown. Remaining items are all "nice to
-have" / "validate on other hardware":
+Two passes complete. Pass 1 (2026-05-13) was CPU-side at 1600×900
+windowed. Pass 2 (2026-05-14) was GPU + hitch at native Retina:
+**fps min on forge 19 → 119, gen p95 1290ms → 18ms**. See HANDOVER for
+the full breakdown.
+
+Remaining items are all "nice to have" / "validate on other hardware":
 
 - ⬜ **Validate on lower-tier hardware** — high-end PC, mid PC, low-end
-  Windows laptop. Env-var A/B knobs (`BOTTER_NO_*`) are wired, ready
-  for hypothesis tests on each platform.
+  Windows laptop. Env-var A/B knobs (`BOTTER_NO_*`, `BOTTER_FORCE_BIOME`)
+  are wired, ready for hypothesis tests on each platform. Forward+
+  requires Vulkan — track which hardware falls back to gl_compatibility.
+- ⬜ **Stretch mode `viewport`** — currently `canvas_items` (renders at
+  window resolution). `viewport` mode renders at design size + GPU
+  upscales — universal pixel-art-game perf trick on high-DPI. Changes
+  pixel snap, needs a visual review under `/showcase` before shipping.
+- ⬜ **Glow / bloom video options toggle** — `WorldEnvironment.glow_*`
+  is on unconditionally for ~+1% cost. Add a graphics-options toggle
+  for low-end targets. Low priority.
 - ⬜ **Outlier vaults** — `des_grunt_crypt_end_deaths_head`,
   `des_quadcrypt_mu`, `des_hellmonk_crystal_mountain` consistently top
   the perf-floor ranking. Cosmetic perf — inspect for excess decor,
@@ -46,6 +57,17 @@ have" / "validate on other hardware":
   on M3 Pro. The `BOTTER_SHADOW_FILTER` env var is the test harness.
 - ⬜ **MapRenderer fade dirty-set** — minor (~410µs); skip if not seen
   in the wild.
+- ⬜ **`_carve_layout` p95 53ms** — biggest remaining gen hitch on
+  forge. Already async-split at the build-floor level so the user
+  sees it as a stutter, not a freeze. Could split internally if a
+  weaker target shows it as a problem.
+
+## New skills shipped
+
+- ✅ `/showcase` — visual audit floor with one station per feature.
+  See `.claude/skills/showcase/`. Use for any flicker / glow / terrain /
+  loot-rarity visual iteration. Bot patrols a fixed path so each
+  station enters its light radius in turn.
 
 ## Combat pass (queued)
 

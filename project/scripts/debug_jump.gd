@@ -16,3 +16,8 @@ static var screenshot_delay: float = 2.0
 # so benchmark runs reach floor 10 reliably and we can audit late-floor
 # generation without combat balance noise.
 static var bot_invincible: bool = false
+# Showcase mode: skip procedural generation, build a hand-curated visual
+# audit floor with one of every interesting feature, and walk the bot on
+# a fixed patrol so its light reveals each section in turn. Combat AI is
+# off; enemies are visual-only (frozen in place, no aggro, can't be hit).
+static var showcase: bool = false

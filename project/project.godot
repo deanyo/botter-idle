@@ -13,7 +13,7 @@ config_version=5
 config/name="Botter"
 config/description="Idle dungeon-crawl RPG. Configure a bot, deploy it, watch it loot and die. Repeat."
 run/main_scene="res://scenes/main.tscn"
-config/features=PackedStringArray("4.6", "GL Compatibility")
+config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://assets/tiles/player/bot.png"
 
 [display]
@@ -33,5 +33,5 @@ ui_skip={
 [rendering]
 
 textures/canvas_textures/default_texture_filter=0
-renderer/rendering_method="gl_compatibility"
+renderer/rendering_method="forward_plus"
 renderer/rendering_method.mobile="gl_compatibility"

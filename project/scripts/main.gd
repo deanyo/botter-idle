@@ -3,6 +3,9 @@ extends Node
 const DUNGEON_SCENE := preload("res://scenes/dungeon.tscn")
 const REPORT_SCENE := preload("res://scenes/run_report.tscn")
 const GARAGE_SCENE := preload("res://scenes/garage.tscn")
+const MAIN_MENU_SCENE := preload("res://scenes/main_menu.tscn")
+const VIDEO_OPTIONS_SCENE := preload("res://scenes/video_options.tscn")
+const VS := preload("res://scripts/video_settings.gd")
 
 var current_screen: Node = null
 var auto_grind: bool = false
@@ -13,6 +16,13 @@ var auto_grind_floors: Dictionary = {}
 var auto_grind_start_time: int = 0
 
 func _ready() -> void:
+	# Apply persisted video settings (window mode, resolution, vsync) before
+	# anything paints, so the user's choice carries over launch-to-launch.
+	# Skipped for grind/screenshot modes — those need a deterministic window.
+	if not OS.has_environment("BOTTER_AUTO_GRIND") \
+			and not FileAccess.file_exists("user://AUTO_GRIND.txt") \
+			and not FileAccess.file_exists("user://DEBUG_FLOOR.txt"):
+		VS.apply(VS.load_settings())
 	# BOTTER_NO_VSYNC=1 — disable vsync for perf benchmarking. With ProMotion
 	# 120Hz displays, vsync coupling can mask the real frame cost behind
 	# discrete refresh windows.
@@ -59,15 +69,23 @@ func _ready() -> void:
 			var contents: String = df.get_as_text().strip_edges()
 			if contents != "":
 				var parts: PackedStringArray = contents.split(",")
-				DebugJump.biome_id = parts[0].strip_edges()
-				if parts.size() >= 2 and parts[1].strip_edges() != "" and parts[1].strip_edges() != "_":
-					DebugJump.vault_name = parts[1].strip_edges()
-				if parts.size() >= 3 and parts[2].strip_edges() != "" and parts[2].strip_edges() != "_":
-					DebugJump.floor_num = int(parts[2].strip_edges())
-				if parts.size() >= 4 and parts[3].strip_edges() != "":
-					DebugJump.screenshot = true
-				DebugJump.active = true
-				print("[debug-jump] biome=%s vault=%s floor=%d screenshot=%s" % [DebugJump.biome_id, DebugJump.vault_name, DebugJump.floor_num, str(DebugJump.screenshot)])
+				var first: String = parts[0].strip_edges()
+				if first == "showcase":
+					# showcase[,no_screenshot] — hand-curated visual audit floor.
+					DebugJump.showcase = true
+					DebugJump.active = true
+					DebugJump.biome_id = "dungeon"
+					print("[debug-jump] showcase mode")
+				else:
+					DebugJump.biome_id = first
+					if parts.size() >= 2 and parts[1].strip_edges() != "" and parts[1].strip_edges() != "_":
+						DebugJump.vault_name = parts[1].strip_edges()
+					if parts.size() >= 3 and parts[2].strip_edges() != "" and parts[2].strip_edges() != "_":
+						DebugJump.floor_num = int(parts[2].strip_edges())
+					if parts.size() >= 4 and parts[3].strip_edges() != "":
+						DebugJump.screenshot = true
+					DebugJump.active = true
+					print("[debug-jump] biome=%s vault=%s floor=%d screenshot=%s" % [DebugJump.biome_id, DebugJump.vault_name, DebugJump.floor_num, str(DebugJump.screenshot)])
 
 	# Debug-jump always takes priority over auto-grind so screenshots aren't
 	# polluted by speed-scaled floor descents.
@@ -101,7 +119,18 @@ func _ready() -> void:
 		# Skip the garage; jump straight into the dungeon.
 		_on_deploy()
 	else:
-		_show_garage()
+		_show_main_menu()
+
+func _show_main_menu() -> void:
+	var menu: Node = MAIN_MENU_SCENE.instantiate()
+	_swap(menu)
+	menu.play_pressed.connect(_show_garage)
+	menu.video_options_pressed.connect(_show_video_options)
+
+func _show_video_options() -> void:
+	var opts: Node = VIDEO_OPTIONS_SCENE.instantiate()
+	_swap(opts)
+	opts.back_pressed.connect(_show_main_menu)
 
 func _show_garage() -> void:
 	_swap(GARAGE_SCENE.instantiate())

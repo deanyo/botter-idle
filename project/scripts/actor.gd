@@ -23,6 +23,10 @@ const ATTACK_INTERVAL := 0.6
 # (e.g. water slow). Set externally; nil means no terrain modifiers.
 var terrain_grid: Array = []
 
+# rig parents the visual stack (base sprite + any overlays like armor / weapon)
+# so SpriteFX can lunge / squish / flash the whole figure at once. HP bars stay
+# direct children of Actor — they shouldn't bob with the lunge.
+var rig: Node2D
 var sprite: Sprite2D
 var fx: SpriteFX
 var hp_bar: ColorRect
@@ -34,12 +38,18 @@ var visual_anchor: String = "centre"
 
 func _ready() -> void:
 	hp = max_hp
+	# rig sits at the tile center so SpriteFX can rotate / scale around the
+	# figure's pivot (death spin, attack lunge squish). All visual children —
+	# base sprite, body armor, weapon overlay — attach to rig at offset (0, 0)
+	# so they inherit lunge / flash / death tweens together.
+	rig = Node2D.new()
+	rig.position = Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5)
+	add_child(rig)
 	sprite = Sprite2D.new()
 	sprite.centered = true
-	sprite.position = Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5)
 	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	add_child(sprite)
-	fx = SpriteFX.new(sprite)
+	rig.add_child(sprite)
+	fx = SpriteFX.new(rig, sprite)
 	hp_bar_bg = ColorRect.new()
 	hp_bar_bg.color = Color(0.1, 0.0, 0.0, 0.9)
 	hp_bar_bg.size = Vector2(C.TILE_SIZE - 4, 3)
@@ -52,16 +62,19 @@ func _ready() -> void:
 	add_child(hp_bar)
 
 func set_texture(tex: Texture2D) -> void:
+	if rig == null:
+		rig = Node2D.new()
+		rig.position = Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5)
+		add_child(rig)
 	if sprite == null:
 		sprite = Sprite2D.new()
 		sprite.centered = true
-		sprite.position = Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5)
 		sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-		add_child(sprite)
-		fx = SpriteFX.new(sprite)
+		rig.add_child(sprite)
+		fx = SpriteFX.new(rig, sprite)
 	sprite.texture = tex
 	if fx == null:
-		fx = SpriteFX.new(sprite)
+		fx = SpriteFX.new(rig, sprite)
 
 func apply_visual_scale(scale: float, anchor: String = "centre", z: int = 0) -> void:
 	# Caller-provided scale already accounts for miniboss/champion compounding.
@@ -69,18 +82,20 @@ func apply_visual_scale(scale: float, anchor: String = "centre", z: int = 0) -> 
 	scale = clampf(scale, 0.5, 2.5)
 	visual_scale = scale
 	visual_anchor = anchor
-	if sprite == null:
+	if rig == null or sprite == null:
 		return
-	sprite.scale = Vector2(scale, scale)
-	# Default sprite is centred at (TILE_SIZE/2, TILE_SIZE/2). For ground anchor
-	# we shift up by half the visual overflow so the sprite's bottom edge stays
-	# pinned to the cell's bottom — looks natural for upright creatures.
+	# Scale the rig so any child overlays scale together. Sprite stays at (0,0)
+	# inside the rig — the rig's own position handles tile centering.
+	rig.scale = Vector2(scale, scale)
 	if anchor == "ground":
+		# For ground anchor, shift the rig up so the sprite's bottom edge stays
+		# pinned to the cell's bottom — looks natural for upright creatures.
 		var half_tile: float = C.TILE_SIZE * 0.5
 		var overflow: float = (scale - 1.0) * half_tile
-		sprite.position = Vector2(half_tile, half_tile - overflow)
+		rig.position = Vector2(half_tile, half_tile - overflow)
 	else:
-		sprite.position = Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5)
+		rig.position = Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5)
+	sprite.position = Vector2.ZERO
 	if z != 0:
 		sprite.z_index = z
 
