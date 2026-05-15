@@ -7,21 +7,46 @@ the durable rules in `CLAUDE.md`. Update this file when committing.
 
 ## Active — next session
 
-User has been reviewing biome tile selections via the new
-`tools/biome_editor.html` page (per-tile replacement, directional N/S/E/W
-labels, weighted wall alternates, dup/new/delete biomes). Findings
-expected to flow back as `biomes.json` edits the user exports from the
-editor — after that, `python3 tools/build_biome_manifest.py` if any new
-tile assets land.
+Full gameplay loop plan written: **`docs/gameplay-loop-plan.md`** (2026-05-15).
+This is the primary reference for all loop-shaping work. Implements in 10
+beats ordered by dependency. Read it before any of the items below.
 
-Other queued work:
+Summary of what changed direction:
+- Runs are now **6 floors** (5 regular + 1 boss), not random 10. Branch is
+  player-selected in Garage, not random.
+- Biomes organised into **5 tiers** gated by CR + boss kills. All 24 biomes
+  assigned. See `docs/gameplay-loop-plan.md` Appendix B.
+- **Affixes slimmed to 5**: Strength / Stamina / Agility / Regen / Crit.
+  Old 30-affix system replaced in full. See Part 3.
+- **Gear bloat solved**: inventory cap 50, loot filter (player sets min rarity
+  for bot to pick up), auto-salvage below threshold → gold.
+- **Death is a retreat**, not a run-end. Bot respawns floor 1 of same branch.
+  Enables 1h+ unattended play.
+- **Offline progress**: delta-time loot calc on load, capped at 1h.
+- **Bot upgrades**: permanent gold-sink purchases (Conditioning, Combat Training,
+  etc.) that persist across prestige.
+- **Gold economy** defined per tier. See Part 7.
 
-- **Run planning UI in Garage**: panel where the player picks a 10-floor
-  branch chain (D:1-3 → Lair:1-2 → Vaults:1 → ...) before deploying.
-  Currently `BiomeData.roll_run_plan()` returns a fully random 10-biome
-  list; gate behind "Random run" vs "Custom plan". Save chosen plan to
-  SaveState. ~4h. Now desktop-shaped (tabbed picker, not portrait
-  scroll), since we pivoted to landscape.
+Pending beats (follow plan order):
+
+- ⬜ **Beat 1 — Affix simplification** (`affixes.json` replace + crit wiring
+  in `actor.gd` + save migration). ~1–2h.
+- ⬜ **Beat 2 — Branch tier data** (`biomes.json` + `enemies.json` bosses +
+  `constants.gd` floor count changes + TIER_SCALE). ~1h.
+- ⬜ **Beat 3 — Save state migration** (new fields + `_migrate()`). ~30m.
+- ⬜ **Beat 4 — Branch-aware run plan** (`BiomeData` + `dungeon.gd` scaling +
+  boss spawn + unlock signal). ~1–2h.
+- ⬜ **Beat 5 — Death retreat** (retreat instead of run-end). ~1h.
+- ⬜ **Beat 6 — Gear bloat** (loot filter + inventory cap + auto-salvage). ~1–2h.
+- ⬜ **Beat 7 — Bot upgrades** (`bot_upgrades.json` + Garage tab). ~2–3h.
+- ⬜ **Beat 8 — Branch picker UI** (Garage branch list + CR indicator). ~2–3h.
+- ⬜ **Beat 9 — Offline progress** (delta-time loot on load + "While Away" screen). ~1–2h.
+- ⬜ **Beat 10 — Run report: unlock prominence** (boss-kill unlock shown first). ~30m.
+
+Previous "run planning UI in Garage" item is superseded by Beats 4 + 8 above.
+
+Other queued work (lower priority than the gameplay loop beats):
+
 - **Garage / run_report layout review** — both scenes still use the
   portrait-era VBox layouts. Probably readable on 1600×900 but worth
   a once-over to use the wider canvas (e.g. equipped + inventory side
