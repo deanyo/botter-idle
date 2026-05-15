@@ -26,8 +26,18 @@ func show_report(victory: bool, report: Dictionary) -> void:
 	title.text = "VICTORY" if victory else "YOU DIED"
 	title.add_theme_color_override("font_color", Color(0.4, 0.95, 0.4) if victory else Color(0.95, 0.3, 0.3))
 
-	summary.text = "[b]Floor:[/b] %d   [b]Level:[/b] %d   [b]Gold:[/b] %d\n[b]HP:[/b] %d / %d   [b]XP:[/b] %d" % [
-		report.floor, report.level, report.gold, report.hp, report.max_hp, report.xp,
+	var retreats: int = int(report.get("retreats", 0))
+	var retreat_line: String = ""
+	if retreats > 0:
+		retreat_line = "   [color=#cc6666][b]Retreats:[/b] %d[/color]" % retreats
+	var salvaged: int = int(report.get("salvaged_count", 0))
+	var salvage_line: String = ""
+	if salvaged > 0:
+		salvage_line = "\n[color=#aaa]Auto-salvaged %d items (+%d gold)[/color]" % [
+			salvaged, int(report.get("salvaged_gold", 0)),
+		]
+	summary.text = "[b]Floor:[/b] %d   [b]Level:[/b] %d   [b]Gold:[/b] %d%s\n[b]HP:[/b] %d / %d   [b]XP:[/b] %d%s" % [
+		report.floor, report.level, report.gold, retreat_line, report.hp, report.max_hp, report.xp, salvage_line,
 	]
 
 	journal_box.text = _render_journal(report.get("journal", []))

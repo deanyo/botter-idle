@@ -290,7 +290,137 @@ func _build_stats_pane(x: int, y: int, w: int, h: int) -> void:
 	lbl_crit = _add_stat(sx, sy, 16, COL_DIM, "Crit —"); sy += 22
 	lbl_haste = _add_stat(sx, sy, 16, COL_DIM, "Haste —"); sy += 22
 	lbl_regen = _add_stat(sx, sy, 16, COL_DIM, "Regen —"); sy += 22
-	lbl_gold = _add_stat(sx, sy, 16, COL_GOLD, "Gold —"); sy += 24
+	lbl_gold = _add_stat(sx, sy, 16, COL_GOLD, "Gold —"); sy += 30
+	# Bot instructions — loot filter dictates what the bot bothers picking
+	# up during a run. Auto-salvage uses the same threshold to convert
+	# overflow loot to gold when the inventory cap is hit.
+	var instr_hdr := Label.new()
+	instr_hdr.text = "Bot Instructions"
+	instr_hdr.position = Vector2(sx, sy)
+	instr_hdr.add_theme_font_size_override("font_size", 13)
+	instr_hdr.add_theme_color_override("font_color", COL_DIM)
+	add_child(instr_hdr); sy += 22
+	var filter_lbl := _add_stat(sx, sy, 13, COL_DIM, "Pick up:"); sy += 18
+	filter_lbl.size = Vector2(w - 32, 18)
+	var filter_btn := OptionButton.new()
+	filter_btn.position = Vector2(sx, sy)
+	filter_btn.size = Vector2(w - 32, 28)
+	for filter_name in ["Common+ (everything)", "Uncommon+", "Rare+", "Epic+", "Legendary only"]:
+		filter_btn.add_item(filter_name)
+	var filter_idx: int = LootDrop.RARITY_RANK.get(String(state.get("loot_filter", "common")), 0)
+	filter_btn.selected = filter_idx
+	filter_btn.item_selected.connect(_on_loot_filter_changed)
+	add_child(filter_btn); sy += 32
+	# Inventory cap readout (folds in Pouch upgrade contribution).
+	var inv_count: int = int(state.get("inventory", []).size())
+	var cap: int = int(state.get("inventory_cap", 50)) + int(BotUpgrades.total_for_stat(state, "inventory_cap"))
+	var inv_lbl := _add_stat(sx, sy, 13, COL_DIM, "Inventory: %d / %d" % [inv_count, cap]); sy += 28
+	inv_lbl.size = Vector2(w - 32, 18)
+	# Upgrades panel — gold-sink permanent purchases. Lives in the rest
+	# of the stats column; scrolls if it overflows.
+	_build_upgrades_section(sx, sy, w - 32, y + h - sy - 16)
+
+# Tracks the upgrade rows so refresh can update them in-place after a buy
+# without rebuilding the whole pane. Keyed by upgrade id.
+var _upgrade_rows: Dictionary = {}
+
+func _build_upgrades_section(x: int, y: int, w: int, h: int) -> void:
+	var hdr := Label.new()
+	hdr.text = "Upgrades"
+	hdr.position = Vector2(x, y)
+	hdr.add_theme_font_size_override("font_size", 13)
+	hdr.add_theme_color_override("font_color", COL_DIM)
+	add_child(hdr)
+	var scroll := ScrollContainer.new()
+	scroll.position = Vector2(x, y + 22)
+	scroll.size = Vector2(w, max(0, h - 22))
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	add_child(scroll)
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", 6)
+	scroll.add_child(box)
+	for def in BotUpgrades.all():
+		box.add_child(_make_upgrade_row(def))
+
+func _make_upgrade_row(def: Dictionary) -> Control:
+	var row := PanelContainer.new()
+	var inner := VBoxContainer.new()
+	inner.add_theme_constant_override("separation", 2)
+	row.add_child(inner)
+	var top := HBoxContainer.new()
+	top.add_theme_constant_override("separation", 8)
+	inner.add_child(top)
+	var name_lbl := Label.new()
+	name_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	name_lbl.add_theme_font_size_override("font_size", 13)
+	name_lbl.add_theme_color_override("font_color", COL_AMBER)
+	top.add_child(name_lbl)
+	var rank_lbl := Label.new()
+	rank_lbl.add_theme_font_size_override("font_size", 12)
+	rank_lbl.add_theme_color_override("font_color", COL_DIM)
+	top.add_child(rank_lbl)
+	var desc_lbl := Label.new()
+	desc_lbl.add_theme_font_size_override("font_size", 11)
+	desc_lbl.add_theme_color_override("font_color", COL_DIM)
+	desc_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	inner.add_child(desc_lbl)
+	var btn := Button.new()
+	btn.add_theme_font_size_override("font_size", 12)
+	inner.add_child(btn)
+	var id: String = String(def.id)
+	btn.pressed.connect(_on_upgrade_buy.bind(id))
+	var refs: Dictionary = {
+		"row": row, "name": name_lbl, "rank": rank_lbl,
+		"desc": desc_lbl, "btn": btn,
+	}
+	_upgrade_rows[id] = refs
+	_refresh_upgrade_row(id)
+	return row
+
+func _refresh_upgrade_row(id: String) -> void:
+	var refs: Dictionary = _upgrade_rows.get(id, {})
+	if refs.is_empty():
+		return
+	var def: Dictionary = BotUpgrades.get_def(id)
+	if def.is_empty():
+		return
+	var owned: Dictionary = state.get("bot_upgrades", {})
+	var rank: int = int(owned.get(id, 0))
+	var max_rank: int = int(def.get("max_rank", 0))
+	var name_lbl: Label = refs.name
+	var rank_lbl: Label = refs.rank
+	var desc_lbl: Label = refs.desc
+	var btn: Button = refs.btn
+	name_lbl.text = String(def.name)
+	rank_lbl.text = "%d / %d" % [rank, max_rank]
+	desc_lbl.text = String(def.desc)
+	var cost: int = BotUpgrades.next_rank_cost(state, id)
+	if cost < 0:
+		btn.text = "MAXED"
+		btn.disabled = true
+	else:
+		btn.text = "Buy — %dg" % cost
+		btn.disabled = int(state.get("gold", 0)) < cost
+
+func _on_upgrade_buy(id: String) -> void:
+	if not BotUpgrades.try_buy(state, id):
+		return
+	SaveState.save_state(state)
+	# Refresh the bought row + the gold readout + every other row's button
+	# (gold may have crossed below another upgrade's threshold).
+	_refresh_upgrade_row(id)
+	for other_id in _upgrade_rows.keys():
+		if other_id != id:
+			_refresh_upgrade_row(other_id)
+	if lbl_gold:
+		lbl_gold.text = "Gold %d" % int(state.gold)
+
+const _FILTER_IDS := ["common", "uncommon", "rare", "epic", "legendary"]
+func _on_loot_filter_changed(idx: int) -> void:
+	if idx < 0 or idx >= _FILTER_IDS.size():
+		return
+	state["loot_filter"] = _FILTER_IDS[idx]
+	SaveState.save_state(state)
 
 func _add_stat(x: int, y: int, size: int, color: Color, txt: String) -> Label:
 	var lbl := Label.new()

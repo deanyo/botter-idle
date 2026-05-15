@@ -28,6 +28,11 @@ static func load_state() -> Dictionary:
 	return state
 
 static func save_state(state: Dictionary) -> void:
+	# Stamp the save with the current wall time so launch can compute
+	# offline_seconds = now - last_seen_timestamp on the next boot. Done
+	# here (not at run-end) so even mid-session saves accurately reflect
+	# "when the game was last alive".
+	state["last_seen_timestamp"] = int(Time.get_unix_time_from_system())
 	var f := FileAccess.open(_path(), FileAccess.WRITE)
 	if f == null:
 		return
@@ -62,6 +67,19 @@ static func _default() -> Dictionary:
 		# Tier 1 (the Dungeon) is unlocked from the start. Boss kills
 		# extend this list — see dungeon.gd boss_killed signal.
 		"unlocked_branches": ["dungeon"],
+		# Death retreat: max revives per run. On HP=0 the bot respawns at
+		# floor 1 of the current branch instead of run-end, until revives
+		# run out. Scaling later via bot upgrade ranks / gear affixes.
+		"max_revives": 3,
+		# Gear bloat controls. loot_filter: bot walks past loot below this
+		# rarity (default common = everything goes in the bag). inventory_cap:
+		# hard ceiling triggering auto-salvage when exceeded.
+		"loot_filter": "common",
+		"inventory_cap": 50,
+		# Last branch the player deployed to. Offline progress simulates
+		# floors of this branch while the game was closed. Empty until the
+		# first deploy.
+		"last_branch": "",
 		# Reserved for future systems (gold-sink upgrades, prestige currency,
 		# offline-progress timestamps). Leaving the keys present means save
 		# loads don't need to add-with-defaults branches when those land.

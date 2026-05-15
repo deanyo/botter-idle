@@ -119,10 +119,44 @@ func _ready() -> void:
 		# Skip the garage; jump straight into the dungeon.
 		_on_deploy()
 	else:
+		# Apply offline progress before the menu loads so the player sees
+		# the loot in their inventory + a "While You Were Away" banner.
+		# Skipped in grind/debug-jump because those use the debug save and
+		# the timestamp diff would be misleading.
+		_pending_offline_summary = _apply_offline_progress()
 		_show_main_menu()
+
+var _pending_offline_summary: Dictionary = {}
+
+func _apply_offline_progress() -> Dictionary:
+	var save: Dictionary = SaveState.load_state()
+	var items_db: Dictionary = _load_items_db()
+	if items_db.is_empty():
+		return {}
+	var summary: Dictionary = OfflineProgress.apply(save, items_db)
+	if summary.get("floors", 0) > 0:
+		SaveState.save_state(save)
+	return summary
+
+func _load_items_db() -> Dictionary:
+	var f := FileAccess.open("res://data/items.json", FileAccess.READ)
+	if f == null:
+		return {}
+	var parsed: Variant = JSON.parse_string(f.get_as_text())
+	if typeof(parsed) != TYPE_DICTIONARY:
+		return {}
+	var by_id: Dictionary = {}
+	for it in parsed.get("items", []):
+		by_id[it.id] = it
+	return by_id
 
 func _show_main_menu() -> void:
 	var menu: Node = MAIN_MENU_SCENE.instantiate()
+	# Hand the offline summary to the menu BEFORE adding to tree so the
+	# menu's _ready can render it as a banner. One-shot — clear after.
+	if not _pending_offline_summary.is_empty() and "offline_summary" in menu:
+		menu.offline_summary = _pending_offline_summary
+		_pending_offline_summary = {}
 	_swap(menu)
 	menu.play_pressed.connect(_show_outpost)
 	menu.video_options_pressed.connect(_show_video_options)
@@ -143,6 +177,12 @@ func _show_outpost() -> void:
 
 func _deploy_branch(branch_id: String) -> void:
 	_selected_branch = branch_id
+	# Persist the picked branch so offline progress knows where the bot
+	# was farming when the game closed.
+	if branch_id != "":
+		var save: Dictionary = SaveState.load_state()
+		save["last_branch"] = branch_id
+		SaveState.save_state(save)
 	_on_deploy()
 
 func _on_deploy() -> void:

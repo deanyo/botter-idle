@@ -66,10 +66,20 @@ func grant_blessing(b: Dictionary) -> void:
 	_update_hp_bar()
 
 var _items_db_cache: Dictionary = {}
+# Snapshot of save.bot_upgrades at run start. Used by recompute_stats to
+# stack upgrade ranks on top of base + gear stats. Set by apply_gear.
+var upgrade_state: Dictionary = {}
 
-func apply_gear(items_db: Dictionary, equipped_instances: Dictionary) -> void:
+func apply_gear(items_db: Dictionary, equipped_instances: Dictionary, save_state: Dictionary = {}) -> void:
 	_items_db_cache = items_db
 	equipped = equipped_instances.duplicate(true)
+	upgrade_state = save_state
+	# Run-stable upgrade contributions to "blessing-style" stats. recompute
+	# doesn't touch these (blessings can keep adding mid-run), so we apply
+	# them once here at run start and let the rest of the run's flow stack
+	# on top.
+	if not upgrade_state.is_empty():
+		loot_rarity_bonus = BotUpgrades.total_for_stat(upgrade_state, "loot_rarity_bonus")
 	recompute_stats()
 	hp = max_hp
 	_update_hp_bar()
@@ -99,9 +109,16 @@ func equip_from_inventory(inst: Dictionary) -> Variant:
 	return displaced
 
 func recompute_stats() -> void:
-	max_hp = base_max_hp + (level - 1) * 8
-	atk = base_atk + (level - 1)
-	defense = base_def + int(level / 3.0)
+	# Permanent gold-sink upgrades stack on top of base level-scaled stats
+	# (and stay on top of gear). Cached snapshot so we don't reload save
+	# every recompute. Apply BEFORE gear so % multipliers (none yet, but
+	# planned for later affixes) compound correctly.
+	var up_hp: float = BotUpgrades.total_for_stat(upgrade_state, "max_hp") if not upgrade_state.is_empty() else 0.0
+	var up_atk: float = BotUpgrades.total_for_stat(upgrade_state, "atk") if not upgrade_state.is_empty() else 0.0
+	var up_def: float = BotUpgrades.total_for_stat(upgrade_state, "def") if not upgrade_state.is_empty() else 0.0
+	max_hp = base_max_hp + (level - 1) * 8 + int(up_hp)
+	atk = base_atk + (level - 1) + int(up_atk)
+	defense = base_def + int(level / 3.0) + int(up_def)
 
 	var pct_hp: float = 0.0
 	var pct_atk: float = 0.0
@@ -141,10 +158,12 @@ func recompute_stats() -> void:
 	max_hp = int(round(max_hp * (1.0 + pct_hp / 100.0)))
 	atk = int(round(atk * (1.0 + pct_atk / 100.0)))
 
-	# Crit chance is a flat percentage (sum across gear), capped at 75 so
-	# fights still feel like fights. Haste is capped at 200 so attack
-	# interval can't drop below 0.2s (degenerate-flicker territory).
-	crit_chance = clampf(crit_sum, 0.0, 75.0)
+	# Crit chance is a flat percentage (sum across gear + Quick Reflexes
+	# upgrade), capped at 75 so fights still feel like fights. Haste is
+	# capped at 200 so attack interval can't drop below 0.2s (degenerate-
+	# flicker territory).
+	var up_crit: float = BotUpgrades.total_for_stat(upgrade_state, "crit_chance") if not upgrade_state.is_empty() else 0.0
+	crit_chance = clampf(crit_sum + up_crit, 0.0, 75.0)
 	var haste_pct: float = clampf(haste_sum, 0.0, 200.0)
 	attack_interval = 0.6 / (1.0 + haste_pct / 100.0)
 	# Gear regen + blessing regen. Blessings already added to

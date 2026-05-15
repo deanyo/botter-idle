@@ -19,6 +19,10 @@ const RARITY_DURATIONS := {
 	"legendary": 0.8,
 }
 
+const RARITY_RANK := {
+	"common": 0, "uncommon": 1, "rare": 2, "epic": 3, "legendary": 4,
+}
+
 var item_id: String = ""
 var item: Dictionary = {}
 var instance: Dictionary = {}
@@ -121,6 +125,16 @@ func play_pickup_then_free() -> void:
 	t.tween_interval(0.18)
 	t.tween_property(self, "modulate:a", 0.0, 0.12)
 	t.tween_callback(queue_free)
+
+# Bot loot filter — set per-run by the dungeon from the save state.
+# Filter is the minimum rarity to pick up; below it the bot walks past.
+# Static (one filter for all loot drops on the floor) so we don't reload
+# save state in the AI hot path.
+static var loot_filter_min_rank: int = 0
+
+func should_skip(_bot: Bot) -> bool:
+	var item_rarity: String = String(item.get("rarity", "common"))
+	return RARITY_RANK.get(item_rarity, 0) < loot_filter_min_rank
 
 static func _make_glow_texture() -> Texture2D:
 	var img := Image.create(C.TILE_SIZE, C.TILE_SIZE, false, Image.FORMAT_RGBA8)

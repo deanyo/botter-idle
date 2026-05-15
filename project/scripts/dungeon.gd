@@ -87,6 +87,17 @@ var run_portals_entered: int = 0
 var run_stalls: int = 0
 var run_vaults_stamped: Array = []
 var run_biomes_visited: Array = []
+# Death retreat: revives_remaining starts at save.max_revives at run start
+# and decrements on each retreat. When it hits zero, the next death is a
+# real run-end. Scales later via bot upgrades / gear affixes.
+var revives_remaining: int = 0
+var retreats_this_run: int = 0
+# Inventory cap drives auto-salvage when the bag fills up. Run-cached so
+# the per-pickup check doesn't re-read disk. _run_salvaged_* track the
+# stats reported in the run summary.
+var _inventory_cap: int = 50
+var _run_salvaged_count: int = 0
+var _run_salvaged_gold: int = 0
 const MAX_TICKS_WITHOUT_MOVE := 30
 var chrome: HudChrome = null
 var run_turn: int = 0
@@ -142,7 +153,7 @@ func _start_run() -> void:
 	bot.xp = int(save.get("xp", 0))
 	bot.gold = int(save.get("gold", 0))
 	bot.clear_blessings()
-	bot.apply_gear(items_db, save.get("equipped", {}))
+	bot.apply_gear(items_db, save.get("equipped", {}), save)
 	# Reset run-wide counters at run start
 	run_kills = 0
 	run_loot_picked = 0
@@ -150,6 +161,14 @@ func _start_run() -> void:
 	run_stalls = 0
 	run_vaults_stamped = []
 	run_biomes_visited = []
+	revives_remaining = int(save.get("max_revives", 3))
+	retreats_this_run = 0
+	# Cache loot filter rank for the run — LootDrop.should_skip reads it
+	# in the AI hot path so we don't want a disk hit there.
+	LootDrop.loot_filter_min_rank = LootDrop.RARITY_RANK.get(String(save.get("loot_filter", "common")), 0)
+	_inventory_cap = int(save.get("inventory_cap", 50)) + int(BotUpgrades.total_for_stat(save, "inventory_cap"))
+	_run_salvaged_count = 0
+	_run_salvaged_gold = 0
 	# Seed the live inventory with the player's stash. The HUD renders this
 	# as a "Base" section; loot picked up this run appends as Floor-N
 	# sections below it.
@@ -1280,6 +1299,14 @@ func _tick_bot(delta: float) -> void:
 			bot.take_damage(dmg)
 			# Visual feedback for the burn.
 			Effects.fire_flash(actor_layer, bot.position + Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5))
+			# Death-by-lava — checked here because no enemy is mid-attack to
+			# pick it up downstream. Same retreat-or-end fork as combat death.
+			if not bot.is_alive:
+				_log("Bot succumbs to lava on floor %d." % current_floor)
+				if _try_death_retreat("lava on f%d" % current_floor):
+					return
+				_end_run(false)
+				return
 	# Standing on stairs and no enemies nearby? Descend immediately.
 	# Showcase mode pins the floor — never descend, even if the patrol
 	# happens to cross the stairs cell (it doesn't, by design, but guard
@@ -1780,6 +1807,10 @@ func _complete_loot_pickup(drop: LootDrop) -> void:
 	_ensure_current_floor_segment()
 	(_loot_segments[_current_floor_segment_index].items as Array).append(inst)
 	_rebuild_inv_cache()
+	# If the cap is now exceeded, auto-salvage the oldest filtered-rarity
+	# items to gold. Player's loot filter doubles as the salvage threshold —
+	# anything strictly above it is protected.
+	_maybe_auto_salvage()
 	_push_inventory_to_hud()
 	loot_log.append("Looted: [%s] %s" % [item.rarity, display_name])
 	_log("Found: %s [%s]" % [display_name, item.rarity], "loot")
@@ -1815,6 +1846,62 @@ func _rebuild_inv_cache() -> void:
 func _push_inventory_to_hud() -> void:
 	if chrome != null:
 		chrome.update_inventory_segments(_loot_segments, items_db, _slot_cooldowns)
+
+# Auto-salvage: when inventory exceeds cap, walk segments oldest-first
+# and convert items to gold until back under. Only salvages items with
+# rarity at-or-below loot_filter (so a player who set filter=epic doesn't
+# lose epic+ items). Starter gear is excluded — never salvage rusty_dagger
+# or tattered_hide. Per item: gold = SALVAGE_VALUES[rarity].
+const _SALVAGE_VALUES := {
+	"common": 2, "uncommon": 6, "rare": 18, "epic": 60, "legendary": 200,
+}
+const _STARTER_IDS := ["rusty_dagger", "tattered_hide"]
+
+func _maybe_auto_salvage() -> void:
+	if _hud_inv_cache.size() <= _inventory_cap:
+		return
+	# Salvage threshold = the player's loot filter. Items above filter
+	# rarity are protected; only filtered-or-below get sold.
+	var threshold_rank: int = LootDrop.loot_filter_min_rank
+	var gold_earned: int = 0
+	var salvaged_count: int = 0
+	# Walk segments oldest-first (Base segment first — that's the player's
+	# stash, which is correct for "salvage what's been sitting there
+	# longest"). Within a segment, walk items by index.
+	for seg in _loot_segments:
+		var items_arr: Array = seg.get("items", [])
+		var i: int = 0
+		while i < items_arr.size() and _hud_inv_cache.size() - salvaged_count > _inventory_cap:
+			var inst: Variant = items_arr[i]
+			if typeof(inst) != TYPE_DICTIONARY:
+				i += 1
+				continue
+			var base_id: String = String(inst.get("base_id", ""))
+			if base_id in _STARTER_IDS:
+				i += 1
+				continue
+			if not items_db.has(base_id):
+				i += 1
+				continue
+			var item: Dictionary = items_db[base_id]
+			var rarity: String = String(item.get("rarity", "common"))
+			# Anything strictly above the filter is protected.
+			if LootDrop.RARITY_RANK.get(rarity, 0) > threshold_rank:
+				i += 1
+				continue
+			gold_earned += int(_SALVAGE_VALUES.get(rarity, 1))
+			salvaged_count += 1
+			items_arr.remove_at(i)
+			# Don't advance i — the next item shifted into this slot.
+		if _hud_inv_cache.size() - salvaged_count <= _inventory_cap:
+			break
+	if salvaged_count > 0:
+		bot.gold += gold_earned
+		_run_salvaged_count += salvaged_count
+		_run_salvaged_gold += gold_earned
+		_rebuild_inv_cache()
+		_push_inventory_to_hud()
+		_log("Salvaged %d items (+%d gold)." % [salvaged_count, gold_earned], "loot")
 
 # Player-initiated equip from the HUD inventory. Per-slot cooldown stops
 # the player from juggling identical items every tick to game positioning.
@@ -1955,6 +2042,8 @@ func _tick_enemies(delta: float) -> void:
 			e.attempt_attack(bot, delta)
 			if not bot.is_alive:
 				_log("Slain by %s on floor %d." % [e.display_name, current_floor])
+				if _try_death_retreat("slain by %s on f%d" % [e.display_name, current_floor]):
+					return
 				_end_run(false)
 				return
 		else:
@@ -2037,6 +2126,41 @@ func _descend() -> void:
 	current_floor += 1
 	_build_floor()
 
+# Bot just hit HP=0. If the player has a revive left, retreat to floor 1
+# of the current branch with full HP — keeps the run going so AFK play
+# accrues loot even on a too-hard branch. When revives are exhausted, the
+# next death is a real game-over and we _end_run(false). Returns true if
+# the death was absorbed into a retreat (caller should NOT also _end_run).
+func _try_death_retreat(reason: String) -> bool:
+	if revives_remaining <= 0:
+		return false
+	revives_remaining -= 1
+	retreats_this_run += 1
+	_log("Bot retreats — %d revives left." % revives_remaining, "loot")
+	GrindLog.log_line("[retreat] reason=\"%s\" revives_left=%d retreats_this_run=%d" % [
+		reason, revives_remaining, retreats_this_run,
+	])
+	# Revive the bot at full HP. Actor.take_damage already started the
+	# death-spin tween + queued an _on_death_tween_done callback that
+	# would queue_free the bot. Kill the tween, reset the rig transform,
+	# disconnect the queue_free, and flip is_alive back so AI resumes on
+	# the new floor. Bot stays the same instance — level, xp, gear,
+	# equipped, mid-run inventory all preserved.
+	if bot.fx and bot.fx.transient and bot.fx.transient.is_valid():
+		bot.fx.transient.kill()
+	if bot.rig:
+		bot.rig.rotation = 0.0
+		bot.rig.scale = Vector2.ONE
+		bot.rig.modulate = Color(1, 1, 1, 1)
+	bot.is_alive = true
+	bot.hp = bot.max_hp
+	bot._update_hp_bar()
+	# Reset to floor 1 of the same branch. Loot accumulated so far stays
+	# in _loot_segments and _hud_inv_cache; new floor opens its own segment.
+	current_floor = 1
+	_build_floor()
+	return true
+
 func _end_run(victory: bool) -> void:
 	# Loot is loot — banked on victory or death. The idle-game loop is "watch
 	# the bot fill your stash"; a 50% death tax punishes idle play.
@@ -2063,6 +2187,9 @@ func _end_run(victory: bool) -> void:
 		"gold": bot.gold,
 		"hp": bot.hp,
 		"max_hp": bot.max_hp,
+		"retreats": retreats_this_run,
+		"salvaged_count": _run_salvaged_count,
+		"salvaged_gold": _run_salvaged_gold,
 		"kills": kills.duplicate(),
 		"loot_log": loot_log.duplicate(),
 		"dropped": dropped_items.duplicate(),

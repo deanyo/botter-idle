@@ -21,6 +21,10 @@ const PAPERDOLL_BASE_PX := 32
 func _ready() -> void:
 	_build_layout()
 
+# Set by main.gd before _ready. When non-empty, the menu shows a "While
+# you were away" banner with the offline-progress numbers.
+var offline_summary: Dictionary = {}
+
 func _build_layout() -> void:
 	var view := get_viewport().get_visible_rect().size
 	var bg := ColorRect.new()
@@ -31,6 +35,25 @@ func _build_layout() -> void:
 	var split_x: int = int(view.x * 0.45)
 	_build_vignette(0, 0, split_x, int(view.y))
 	_build_buttons(split_x, 0, int(view.x) - split_x, int(view.y))
+	if not offline_summary.is_empty():
+		_show_offline_banner(offline_summary)
+
+func _show_offline_banner(s: Dictionary) -> void:
+	var dlg := AcceptDialog.new()
+	dlg.title = "While you were away"
+	var minutes: int = int(s.get("seconds", 0)) / 60
+	var floors: int = int(s.get("floors", 0))
+	var loot: int = int(s.get("loot_count", 0))
+	var gold: int = int(s.get("gold", 0))
+	var branch: String = String(s.get("branch", "the dungeon"))
+	dlg.dialog_text = "Your bot kept exploring %s for %d minutes.\n\n• Cleared %d floor%s\n• Picked up %d item%s\n• Earned %d gold" % [
+		branch, minutes,
+		floors, "" if floors == 1 else "s",
+		loot, "" if loot == 1 else "s",
+		gold,
+	]
+	add_child(dlg)
+	dlg.popup_centered(Vector2i(420, 200))
 
 func _build_vignette(x: int, y: int, w: int, h: int) -> void:
 	var pad := 48
