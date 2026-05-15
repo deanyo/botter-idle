@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cfqeku00jcbhv"
-path="res://.godot/imported/bot_lantern.png-cb62dc9c87dca0997cefd0b3541bdf6c.ctex"
+uid="uid://ct6rgowjaxkw1"
+path="res://.godot/imported/shield_buckler.png-fb42c4f68bf82a19744de20266049cad.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/tiles/player/bot_lantern.png"
-dest_files=["res://.godot/imported/bot_lantern.png-cb62dc9c87dca0997cefd0b3541bdf6c.ctex"]
+source_file="res://assets/tiles/player/shield/shield_buckler.png"
+dest_files=["res://.godot/imported/shield_buckler.png-fb42c4f68bf82a19744de20266049cad.ctex"]
 
 [params]
 
