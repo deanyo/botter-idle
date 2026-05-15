@@ -50,29 +50,15 @@ func _render_journal(journal: Array) -> String:
 		lines.append("")
 	return "\n".join(lines)
 
-func _render_loot(kept: Array, dropped: Array, items_db: Dictionary, victory: bool) -> String:
-	if dropped.is_empty():
+func _render_loot(kept: Array, _dropped: Array, items_db: Dictionary, _victory: bool) -> String:
+	# Loot is loot — banked regardless of victory/death since the death-loss
+	# tax was removed (idle-game friendly). dropped == kept in the new flow.
+	if kept.is_empty():
 		return "[i]No loot found.[/i]"
 	var lines: Array[String] = []
 	lines.append("[b]Loot Recovered[/b]")
-	if kept.is_empty():
-		lines.append("  [color=#888]· none ·[/color]")
-	else:
-		for inst in kept:
-			lines.append("  • " + _format_instance(inst, items_db, false))
-	if not victory:
-		var lost: Array = []
-		var kept_ids: Dictionary = {}
-		for k in kept:
-			kept_ids[String(k.get("instance_id", ""))] = true
-		for d in dropped:
-			if not kept_ids.has(String(d.get("instance_id", ""))):
-				lost.append(d)
-		if not lost.is_empty():
-			lines.append("")
-			lines.append("[b][color=#aa6666]Lost on death[/color][/b]")
-			for inst in lost:
-				lines.append("  • " + _format_instance(inst, items_db, true))
+	for inst in kept:
+		lines.append("  • " + _format_instance(inst, items_db, false))
 	return "\n".join(lines)
 
 func _format_instance(inst: Dictionary, items_db: Dictionary, dimmed: bool) -> String:

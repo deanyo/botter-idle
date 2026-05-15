@@ -22,7 +22,13 @@ const WALKABLE_TERRAIN := [T_FLOOR, T_STAIRS_DOWN, T_STAIRS_UP, T_DOOR, T_LAVA, 
 const MAP_W := 80
 const MAP_H := 80
 
-const FLOORS_PER_RUN := 10
-const BOSS_FLOOR := 10
-const MINIBOSS_FLOORS := [5, 10, 15, 20, 25]
+const FLOORS_PER_RUN := 6
+const BOSS_FLOOR := 6
+const MINIBOSS_FLOORS := [3]
+
+# Per-tier enemy stat multiplier. Indexed by branch tier - 1. Tier 1
+# (Dungeon/Mines) is the base; Tier 5 (Forge/Glacier/Zot/etc.) hits 5×
+# baseline so the same enemy IDs scale across the whole tree without
+# bespoke per-tier enemy data. Mirrors the doc's gameplay-loop-plan.md.
+const TIER_SCALE := [1.0, 1.4, 2.0, 3.2, 5.0]
 

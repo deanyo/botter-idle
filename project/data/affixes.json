@@ -1,37 +1,13 @@
 {
+  "_comment": "6 simple affixes, no prefix/suffix split. Every affix applies to any slot. Tiers index by rarity (common=0 ... legendary=4). All six are wired to combat in bot.gd / actor.gd.",
+
   "affixes": [
-    { "id": "sharp",      "name": "Sharp",      "slot": "prefix", "applies_to": ["weapon"],                          "stat": "atk",         "tiers": [2, 4, 6, 9, 14] },
-    { "id": "vicious",    "name": "Vicious",    "slot": "prefix", "applies_to": ["weapon"],                          "stat": "atk_pct",     "tiers": [5, 8, 12, 17, 25] },
-    { "id": "heavy",      "name": "Heavy",      "slot": "prefix", "applies_to": ["weapon"],                          "stat": "atk",         "tiers": [3, 6, 10, 15, 22] },
-    { "id": "balanced",   "name": "Balanced",   "slot": "prefix", "applies_to": ["weapon"],                          "stat": "crit_chance", "tiers": [3, 5, 8, 12, 18] },
-    { "id": "savage",     "name": "Savage",     "slot": "prefix", "applies_to": ["weapon"],                          "stat": "crit_dmg",    "tiers": [10, 18, 28, 42, 60] },
-    { "id": "brutal",     "name": "Brutal",     "slot": "prefix", "applies_to": ["weapon"],                          "stat": "armor_pierce","tiers": [1, 2, 3, 5, 8] },
-    { "id": "vampiric",   "name": "Vampiric",   "slot": "prefix", "applies_to": ["weapon"],                          "stat": "lifesteal",   "tiers": [1, 2, 3, 4, 6] },
-
-    { "id": "sturdy",     "name": "Sturdy",     "slot": "prefix", "applies_to": ["armor", "helm", "boots", "shield"],"stat": "hp",          "tiers": [12, 20, 32, 48, 70] },
-    { "id": "reinforced", "name": "Reinforced", "slot": "prefix", "applies_to": ["armor", "helm", "boots", "shield"],"stat": "def",         "tiers": [2, 3, 5, 8, 12] },
-    { "id": "guardian",   "name": "Guardian",   "slot": "prefix", "applies_to": ["armor", "shield"],                 "stat": "block_chance","tiers": [2, 4, 6, 9, 14] },
-    { "id": "stalwart",   "name": "Stalwart",   "slot": "prefix", "applies_to": ["armor", "helm", "boots", "shield"],"stat": "hp_pct",      "tiers": [3, 5, 8, 12, 18] },
-    { "id": "thorned",    "name": "Thorned",    "slot": "prefix", "applies_to": ["armor", "shield"],                 "stat": "thorns",      "tiers": [1, 2, 3, 5, 8] },
-
-    { "id": "of_vigor",      "name": "of Vigor",      "slot": "suffix", "applies_to": ["any"],   "stat": "hp",            "tiers": [10, 16, 26, 40, 60] },
-    { "id": "of_might",      "name": "of Might",      "slot": "suffix", "applies_to": ["any"],   "stat": "atk",           "tiers": [1, 2, 4, 6, 10] },
-    { "id": "of_warding",    "name": "of Warding",    "slot": "suffix", "applies_to": ["any"],   "stat": "def",           "tiers": [1, 2, 3, 5, 7] },
-    { "id": "of_swiftness",  "name": "of Swiftness",  "slot": "suffix", "applies_to": ["any"],   "stat": "move_speed_pct","tiers": [3, 5, 8, 12, 18] },
-    { "id": "of_haste",      "name": "of Haste",      "slot": "suffix", "applies_to": ["any"],   "stat": "atk_speed_pct", "tiers": [3, 5, 8, 12, 18] },
-    { "id": "of_fortune",    "name": "of Fortune",    "slot": "suffix", "applies_to": ["any"],   "stat": "gold_find_pct", "tiers": [10, 18, 28, 42, 65] },
-    { "id": "of_seeking",    "name": "of Seeking",    "slot": "suffix", "applies_to": ["any"],   "stat": "magic_find_pct","tiers": [5, 10, 16, 24, 35] },
-    { "id": "of_xp",         "name": "of Wisdom",     "slot": "suffix", "applies_to": ["any"],   "stat": "xp_gain_pct",   "tiers": [5, 10, 16, 24, 35] },
-    { "id": "of_regen",      "name": "of Regrowth",   "slot": "suffix", "applies_to": ["any"],   "stat": "hp_regen",      "tiers": [1, 2, 3, 4, 6] },
-    { "id": "of_dodging",    "name": "of Evasion",    "slot": "suffix", "applies_to": ["any"],   "stat": "dodge_chance",  "tiers": [2, 4, 6, 9, 14] },
-    { "id": "of_pain",       "name": "of Pain",       "slot": "suffix", "applies_to": ["weapon"],"stat": "atk",           "tiers": [3, 5, 8, 12, 18] },
-    { "id": "of_butchery",   "name": "of Butchery",   "slot": "suffix", "applies_to": ["weapon"],"stat": "crit_chance",   "tiers": [2, 4, 6, 9, 14] },
-    { "id": "of_titans",     "name": "of Titans",     "slot": "suffix", "applies_to": ["weapon"],"stat": "atk_pct",       "tiers": [3, 6, 10, 15, 22] },
-    { "id": "of_the_bear",   "name": "of the Bear",   "slot": "suffix", "applies_to": ["armor", "shield"], "stat": "hp",  "tiers": [15, 25, 40, 60, 90] },
-    { "id": "of_the_turtle", "name": "of the Turtle", "slot": "suffix", "applies_to": ["armor", "shield"], "stat": "def", "tiers": [2, 4, 6, 9, 14] },
-    { "id": "of_the_wolf",   "name": "of the Wolf",   "slot": "suffix", "applies_to": ["boots"], "stat": "move_speed_pct","tiers": [5, 8, 12, 18, 26] },
-    { "id": "of_the_fox",    "name": "of the Fox",    "slot": "suffix", "applies_to": ["boots"], "stat": "dodge_chance",  "tiers": [3, 5, 8, 12, 18] },
-    { "id": "of_the_owl",    "name": "of the Owl",    "slot": "suffix", "applies_to": ["helm"],  "stat": "xp_gain_pct",   "tiers": [8, 14, 22, 32, 48] }
+    { "id": "strength", "name": "Strength", "applies_to": ["any"], "stat": "atk",            "tiers": [2, 4, 7, 12, 18] },
+    { "id": "stamina",  "name": "Stamina",  "applies_to": ["any"], "stat": "hp",             "tiers": [12, 22, 38, 60, 90] },
+    { "id": "agility",  "name": "Agility",  "applies_to": ["any"], "stat": "def",            "tiers": [1, 2, 4, 7, 11] },
+    { "id": "regen",    "name": "Regen",    "applies_to": ["any"], "stat": "hp_regen",       "tiers": [1, 2, 4, 6, 10] },
+    { "id": "crit",     "name": "Crit",     "applies_to": ["any"], "stat": "crit_chance",    "tiers": [3, 6, 10, 15, 22] },
+    { "id": "haste",    "name": "Haste",    "applies_to": ["any"], "stat": "atk_speed_pct",  "tiers": [4, 8, 14, 22, 32] }
   ],
 
   "rarity_affix_count": {

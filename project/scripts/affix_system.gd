@@ -36,31 +36,15 @@ static func roll_affixes_for(item: Dictionary, rng: RandomNumberGenerator) -> Ar
 	if n <= 0:
 		return []
 	var tier_idx: int = int(_rarity_idx.get(rarity, 0))
-
-	var prefix_pool: Array = []
-	var suffix_pool: Array = []
+	var pool: Array = []
 	for id in _affixes_by_id.keys():
 		var af: Dictionary = _affixes_by_id[id]
 		var applies: Array = af.applies_to
-		if not (applies.has(slot) or applies.has("any")):
-			continue
-		if af.slot == "prefix":
-			prefix_pool.append(af)
-		else:
-			suffix_pool.append(af)
-
+		if applies.has(slot) or applies.has("any"):
+			pool.append(af)
 	var rolled: Array = []
 	var used_ids: Dictionary = {}
-	var max_prefixes: int = int((n + 1) / 2.0)
-	var max_suffixes: int = n - max_prefixes
-
-	_roll_from(prefix_pool, max_prefixes, used_ids, rolled, tier_idx, rng)
-	_roll_from(suffix_pool, max_suffixes, used_ids, rolled, tier_idx, rng)
-
-	if rolled.size() < n:
-		var remaining_pool: Array = prefix_pool + suffix_pool
-		_roll_from(remaining_pool, n - rolled.size(), used_ids, rolled, tier_idx, rng)
-
+	_roll_from(pool, n, used_ids, rolled, tier_idx, rng)
 	return rolled
 
 static func _roll_from(pool: Array, want: int, used_ids: Dictionary, into: Array, tier_idx: int, rng: RandomNumberGenerator) -> void:
@@ -82,19 +66,25 @@ static func get_affix_def(id: String) -> Dictionary:
 	_ensure_loaded()
 	return _affixes_by_id.get(id, {})
 
-static func format_item_name(base_name: String, affixes: Array) -> String:
+static func tier_index_for_rarity(rarity: String) -> int:
 	_ensure_loaded()
-	var prefix_str := ""
-	var suffix_str := ""
+	return int(_rarity_idx.get(rarity, 0))
+
+static func format_item_name(base_name: String, affixes: Array) -> String:
+	# Simplified to "BaseName [+Stat, +Stat]" — every affix is just an affix,
+	# no prefix/suffix grammar. Empty-affix items show just the base name.
+	_ensure_loaded()
+	if affixes.is_empty():
+		return base_name
+	var tags: Array = []
 	for af_inst in affixes:
 		var def: Dictionary = _affixes_by_id.get(af_inst.id, {})
 		if def.is_empty():
 			continue
-		if def.slot == "prefix":
-			prefix_str = String(def.name) + " "
-		else:
-			suffix_str = " " + String(def.name)
-	return prefix_str + base_name + suffix_str
+		tags.append("+" + String(def.name))
+	if tags.is_empty():
+		return base_name
+	return "%s [%s]" % [base_name, ", ".join(tags)]
 
 static func format_affix_lines(affixes: Array) -> Array:
 	_ensure_loaded()
@@ -111,24 +101,40 @@ static func format_affix_lines(affixes: Array) -> Array:
 static func _format_stat_line(stat: String, v: int) -> String:
 	match stat:
 		"atk": return "+%d ATK" % v
-		"atk_pct": return "+%d%% ATK" % v
 		"hp": return "+%d HP" % v
-		"hp_pct": return "+%d%% HP" % v
 		"def": return "+%d DEF" % v
+		"hp_regen": return "+%d HP/sec" % v
 		"crit_chance": return "+%d%% Crit" % v
-		"crit_dmg": return "+%d%% Crit Dmg" % v
-		"armor_pierce": return "+%d Armor Pierce" % v
-		"lifesteal": return "%d Lifesteal" % v
-		"block_chance": return "+%d%% Block" % v
-		"thorns": return "%d Thorns" % v
-		"move_speed_pct": return "+%d%% Move Spd" % v
-		"atk_speed_pct": return "+%d%% Atk Spd" % v
-		"gold_find_pct": return "+%d%% Gold Find" % v
-		"magic_find_pct": return "+%d%% Magic Find" % v
-		"xp_gain_pct": return "+%d%% XP" % v
-		"hp_regen": return "%d HP/sec" % v
-		"dodge_chance": return "+%d%% Dodge" % v
+		"atk_speed_pct": return "+%d%% Haste" % v
 	return "+%d %s" % [v, stat]
+
+# Canonical hover tooltip for an item. Used by every UI surface that shows
+# items so the format never drifts between HUD / Outpost / menu.
+#   Line 1: "Item Name [rarity]"
+#   Line 2: base "+X ATK +Y DEF +Z HP" (zeros suppressed)
+#   Line N: each affix on its own line
+static func format_item_tooltip(item_def: Dictionary, inst: Variant) -> String:
+	if item_def.is_empty():
+		return ""
+	var affixes: Array = []
+	if typeof(inst) == TYPE_DICTIONARY:
+		affixes = inst.get("affixes", [])
+	var disp_name: String = format_item_name(String(item_def.get("name", "")), affixes)
+	var rarity: String = String(item_def.get("rarity", "")).capitalize()
+	var lines: Array = []
+	lines.append("%s [%s]" % [disp_name, rarity] if rarity != "" else disp_name)
+	var base_parts: Array = []
+	var atk_v: int = int(item_def.get("atk", 0))
+	var def_v: int = int(item_def.get("def", 0))
+	var hp_v: int = int(item_def.get("hp", 0))
+	if atk_v > 0: base_parts.append("+%d ATK" % atk_v)
+	if def_v > 0: base_parts.append("+%d DEF" % def_v)
+	if hp_v > 0: base_parts.append("+%d HP" % hp_v)
+	if not base_parts.is_empty():
+		lines.append("  ".join(base_parts))
+	var affix_lines: Array = format_affix_lines(affixes)
+	lines.append_array(affix_lines)
+	return "\n".join(lines)
 
 static func sum_affix_stats(affixes: Array) -> Dictionary:
 	_ensure_loaded()

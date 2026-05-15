@@ -83,7 +83,9 @@
         "patches": []
       },
       "sigil_set": [],
-      "liquid_type": "water"
+      "liquid_type": "water",
+      "tier": 1,
+      "cr_recommended": 20
     },
     "dungeon_dark": {
       "display_name": "the Dark Dungeon",
@@ -160,7 +162,9 @@
       "edge_overlay": {
         "patches": []
       },
-      "sigil_set": []
+      "sigil_set": [],
+      "tier": 1,
+      "cr_recommended": 20
     },
     "mines": {
       "display_name": "the Orcish Mines",
@@ -237,7 +241,9 @@
       "edge_overlay": {
         "patches": []
       },
-      "sigil_set": []
+      "sigil_set": [],
+      "tier": 1,
+      "cr_recommended": 20
     },
     "lair": {
       "display_name": "the Lair",
@@ -331,7 +337,9 @@
       "floor_secondary": [
         "moss"
       ],
-      "sigil_set": []
+      "sigil_set": [],
+      "tier": 2,
+      "cr_recommended": 120
     },
     "forest": {
       "display_name": "the Forest",
@@ -415,7 +423,9 @@
       },
       "liquid_type": "water",
       "floor_secondary": [],
-      "sigil_set": []
+      "sigil_set": [],
+      "tier": 2,
+      "cr_recommended": 120
     },
     "swamp": {
       "display_name": "the Swamp",
@@ -517,7 +527,9 @@
       },
       "liquid_type": "water",
       "floor_secondary": [],
-      "sigil_set": []
+      "sigil_set": [],
+      "tier": 3,
+      "cr_recommended": 280
     },
     "snake": {
       "display_name": "the Snake Pit",
@@ -583,7 +595,9 @@
       "liquid_type": "water",
       "floor_secondary": [],
       "wall_alternates": [],
-      "sigil_set": []
+      "sigil_set": [],
+      "tier": 3,
+      "cr_recommended": 280
     },
     "shoals": {
       "display_name": "the Shoals",
@@ -670,7 +684,9 @@
       },
       "liquid_type": "water",
       "floor_secondary": [],
-      "sigil_set": []
+      "sigil_set": [],
+      "tier": 3,
+      "cr_recommended": 280
     },
     "orc": {
       "display_name": "the Orc Hold",
@@ -754,7 +770,9 @@
       "edge_overlay": {
         "patches": []
       },
-      "sigil_set": []
+      "sigil_set": [],
+      "tier": 2,
+      "cr_recommended": 120
     },
     "vaults": {
       "display_name": "the Vaults",
@@ -826,7 +844,9 @@
       "sigil_density": [
         1,
         2
-      ]
+      ],
+      "tier": 4,
+      "cr_recommended": 600
     },
     "crypt": {
       "display_name": "the Crypt",
@@ -927,7 +947,9 @@
       ],
       "edge_overlay": {
         "patches": []
-      }
+      },
+      "tier": 4,
+      "cr_recommended": 600
     },
     "tomb": {
       "display_name": "the Tomb",
@@ -1005,7 +1027,9 @@
       "wall_alternates": [],
       "edge_overlay": {
         "patches": []
-      }
+      },
+      "tier": 4,
+      "cr_recommended": 600
     },
     "forge": {
       "display_name": "the Forge",
@@ -1099,7 +1123,9 @@
       "edge_overlay": {
         "patches": []
       },
-      "sigil_set": []
+      "sigil_set": [],
+      "tier": 5,
+      "cr_recommended": 1100
     },
     "glacier": {
       "display_name": "the Glacier",
@@ -1172,7 +1198,9 @@
       "edge_overlay": {
         "patches": []
       },
-      "sigil_set": []
+      "sigil_set": [],
+      "tier": 5,
+      "cr_recommended": 1100
     },
     "slime": {
       "display_name": "the Slime Pits",
@@ -1261,7 +1289,9 @@
       },
       "liquid_type": "water",
       "floor_secondary": [],
-      "sigil_set": []
+      "sigil_set": [],
+      "tier": 5,
+      "cr_recommended": 1100
     },
     "hive": {
       "display_name": "the Hive",
@@ -1337,7 +1367,9 @@
           ]
         }
       ],
-      "sigil_set": []
+      "sigil_set": [],
+      "tier": 3,
+      "cr_recommended": 280
     },
     "labyrinth": {
       "display_name": "the Labyrinth",
@@ -1417,7 +1449,9 @@
       "wall_alternates": [],
       "edge_overlay": {
         "patches": []
-      }
+      },
+      "tier": 5,
+      "cr_recommended": 1100
     },
     "abyss": {
       "display_name": "the Abyss",
@@ -1499,7 +1533,9 @@
       "edge_overlay": {
         "patches": []
       },
-      "sigil_set": []
+      "sigil_set": [],
+      "tier": 5,
+      "cr_recommended": 1100
     },
     "pandemonium": {
       "display_name": "Pandemonium",
@@ -1588,7 +1624,9 @@
       "wall_alternates": [],
       "edge_overlay": {
         "patches": []
-      }
+      },
+      "tier": 5,
+      "cr_recommended": 1100
     },
     "zot": {
       "display_name": "the Realm of Zot",
@@ -1659,7 +1697,9 @@
       "sigil_density": [
         2,
         3
-      ]
+      ],
+      "tier": 5,
+      "cr_recommended": 1100
     },
     "elf": {
       "display_name": "the Elven Halls",
@@ -1733,7 +1773,9 @@
       "wall_alternates": [],
       "edge_overlay": {
         "patches": []
-      }
+      },
+      "tier": 4,
+      "cr_recommended": 600
     },
     "spider": {
       "display_name": "the Spider Nest",
@@ -1803,7 +1845,9 @@
       },
       "liquid_type": "",
       "floor_secondary": [],
-      "sigil_set": []
+      "sigil_set": [],
+      "tier": 3,
+      "cr_recommended": 280
     },
     "temple": {
       "display_name": "the Ecumenical Temple",
@@ -1863,7 +1907,9 @@
       "edge_overlay": {
         "patches": []
       },
-      "liquid_type": "water"
+      "liquid_type": "water",
+      "tier": 2,
+      "cr_recommended": 120
     },
     "depths": {
       "display_name": "the Depths",
@@ -1960,7 +2006,9 @@
       ],
       "edge_overlay": {
         "patches": []
-      }
+      },
+      "tier": 4,
+      "cr_recommended": 600
     }
   },
   "run_plans": [

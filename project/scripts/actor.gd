@@ -18,7 +18,13 @@ var path: PackedVector2Array = PackedVector2Array()
 var path_index: int = 0
 var is_alive: bool = true
 var attack_cooldown: float = 0.0
-const ATTACK_INTERVAL := 0.6
+# Per-actor attack cadence (seconds between swings). Was a const 0.6 across
+# all actors; now mutable so the bot can apply Haste affixes to shorten it.
+# Enemies leave the default 0.6 for now.
+var attack_interval: float = 0.6
+# 0..100. Bot reads from Crit affixes; enemies stay at 0.
+var crit_chance: float = 0.0
+const CRIT_MULTIPLIER := 1.5
 # Optional reference to the dungeon grid for per-cell terrain effects
 # (e.g. water slow). Set externally; nil means no terrain modifiers.
 var terrain_grid: Array = []
@@ -152,11 +158,16 @@ func attempt_attack(other: Actor, delta: float) -> int:
 	attack_cooldown -= delta
 	if attack_cooldown > 0.0:
 		return 0
-	attack_cooldown = ATTACK_INTERVAL
+	attack_cooldown = attack_interval
 	if fx:
 		var toward: Vector2 = (other.position - position) if is_instance_valid(other) else Vector2.RIGHT
 		fx.attack_lunge(toward)
-	return other.take_damage(atk)
+	# Crit roll: on success multiply raw damage before defense subtraction so
+	# crit feels meaningful even against high-DEF targets.
+	var raw: int = atk
+	if crit_chance > 0.0 and randf() * 100.0 < crit_chance:
+		raw = int(round(float(raw) * CRIT_MULTIPLIER))
+	return other.take_damage(raw)
 
 func _play_death_then_emit() -> void:
 	if fx == null:

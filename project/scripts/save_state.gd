@@ -25,22 +25,7 @@ static func load_state() -> Dictionary:
 	for k in _default().keys():
 		if not state.has(k):
 			state[k] = _default()[k]
-	_migrate(state)
 	return state
-
-static func _migrate(state: Dictionary) -> void:
-	var inv: Array = state.inventory
-	for i in inv.size():
-		if typeof(inv[i]) == TYPE_STRING:
-			inv[i] = {"base_id": inv[i], "instance_id": "legacy_%d" % i, "affixes": []}
-	var eq: Dictionary = state.equipped
-	for slot in eq.keys():
-		var v: Variant = eq[slot]
-		if typeof(v) == TYPE_STRING:
-			if v == "":
-				eq[slot] = null
-			else:
-				eq[slot] = {"base_id": v, "instance_id": "legacy_eq_%s" % slot, "affixes": []}
 
 static func save_state(state: Dictionary) -> void:
 	var f := FileAccess.open(_path(), FileAccess.WRITE)
@@ -74,4 +59,13 @@ static func _default() -> Dictionary:
 		},
 		"runs_completed": 0,
 		"highest_floor": 0,
+		# Tier 1 (the Dungeon) is unlocked from the start. Boss kills
+		# extend this list — see dungeon.gd boss_killed signal.
+		"unlocked_branches": ["dungeon"],
+		# Reserved for future systems (gold-sink upgrades, prestige currency,
+		# offline-progress timestamps). Leaving the keys present means save
+		# loads don't need to add-with-defaults branches when those land.
+		"bot_upgrades": {},
+		"shards": 0,
+		"last_seen_timestamp": 0,
 	}

@@ -2,7 +2,7 @@ extends Node
 
 const DUNGEON_SCENE := preload("res://scenes/dungeon.tscn")
 const REPORT_SCENE := preload("res://scenes/run_report.tscn")
-const GARAGE_SCENE := preload("res://scenes/garage.tscn")
+const OUTPOST_SCENE := preload("res://scenes/outpost.tscn")
 const MAIN_MENU_SCENE := preload("res://scenes/main_menu.tscn")
 const VIDEO_OPTIONS_SCENE := preload("res://scenes/video_options.tscn")
 const VS := preload("res://scripts/video_settings.gd")
@@ -124,7 +124,7 @@ func _ready() -> void:
 func _show_main_menu() -> void:
 	var menu: Node = MAIN_MENU_SCENE.instantiate()
 	_swap(menu)
-	menu.play_pressed.connect(_show_garage)
+	menu.play_pressed.connect(_show_outpost)
 	menu.video_options_pressed.connect(_show_video_options)
 
 func _show_video_options() -> void:
@@ -132,17 +132,74 @@ func _show_video_options() -> void:
 	_swap(opts)
 	opts.back_pressed.connect(_show_main_menu)
 
-func _show_garage() -> void:
-	_swap(GARAGE_SCENE.instantiate())
-	current_screen.deploy_pressed.connect(_on_deploy)
+var _selected_branch: String = ""
+
+func _show_outpost() -> void:
+	_swap(OUTPOST_SCENE.instantiate())
+	# Outpost emits deploy_pressed(branch_id). Older signal-without-arg
+	# call sites (run report, debug-jump) bind via _deploy_branch.
+	if current_screen.has_signal("deploy_pressed"):
+		current_screen.deploy_pressed.connect(_deploy_branch)
+
+func _deploy_branch(branch_id: String) -> void:
+	_selected_branch = branch_id
+	_on_deploy()
 
 func _on_deploy() -> void:
 	var dungeon: Node = DUNGEON_SCENE.instantiate()
+	dungeon.branch_id = _selected_branch
 	_swap(dungeon)
 	dungeon.run_ended.connect(_on_run_ended)
+	dungeon.boss_killed.connect(_on_boss_killed)
 	if auto_grind:
 		dungeon.floor_started.connect(_on_floor_started)
 		dungeon.floor_cleared.connect(_on_floor_cleared)
+
+# When the player kills a branch boss, unlock all sibling branches at the
+# same tier and (if it's the only-unlocked branch in this tier) the first
+# branch of the next tier. Mirrors the Melvor-style "clear a dungeon →
+# unlock the next" hook.
+const _TIER_BRANCHES := {
+	1: ["dungeon", "dungeon_dark", "mines"],
+	2: ["lair", "forest", "orc", "temple"],
+	3: ["shoals", "swamp", "snake", "spider", "hive"],
+	4: ["vaults", "crypt", "tomb", "elf", "depths"],
+	5: ["forge", "glacier", "slime", "labyrinth", "abyss", "pandemonium", "zot"],
+}
+
+func _on_boss_killed(branch_id: String) -> void:
+	# Always print so the user can see this fired in normal play (Godot's
+	# stdout — visible from the editor or `godot --path` runs). GrindLog is
+	# disabled outside grind mode so the print is the only evidence in
+	# normal play that the unlock path actually ran.
+	print("[unlock] boss_killed signal received: branch_id=%s" % branch_id)
+	if branch_id == "":
+		return
+	var save: Dictionary = SaveState.load_state()
+	var unlocked: Array = save.get("unlocked_branches", ["dungeon"])
+	var tier: int = BiomeData.tier_for_biome(branch_id)
+	if tier < 1:
+		print("[unlock] skipped — tier_for_biome(%s) returned %d" % [branch_id, tier])
+		return
+	var added: Array = []
+	# Unlock all siblings at the same tier (clearing one Tier-2 boss
+	# unlocks all Tier-2 branches).
+	for sib in _TIER_BRANCHES.get(tier, []):
+		if not unlocked.has(sib):
+			unlocked.append(sib)
+			added.append(sib)
+	# Unlock all next-tier branches too — doc says "2 bosses to unlock next
+	# tier" but for now any first-clear opens the next tier so the player
+	# always has a fresh target. Tunable later.
+	if tier < 5:
+		for nxt in _TIER_BRANCHES.get(tier + 1, []):
+			if not unlocked.has(nxt):
+				unlocked.append(nxt)
+				added.append(nxt)
+	save.unlocked_branches = unlocked
+	SaveState.save_state(save)
+	print("[unlock] tier=%d new=%s total_unlocked=%d" % [tier, str(added), unlocked.size()])
+	GrindLog.log_line("[unlock] killed boss=%s tier=%d new_branches=%s" % [branch_id, tier, str(added)])
 
 func _on_floor_started(_floor_num: int) -> void:
 	# Per-floor summary is emitted by Dungeon when the floor is cleared (see
@@ -154,6 +211,13 @@ func _on_floor_cleared(_floor_num: int) -> void:
 	pass
 
 func _on_run_ended(victory: bool, report: Dictionary) -> void:
+	# Fallback unlock path. The primary trigger is the boss_killed signal,
+	# but if anything fails (signal disconnected, boss didn't have is_boss
+	# set, etc.) a victorious run on a branch should still unlock that
+	# branch's tier and the next. Idempotent — _on_boss_killed only adds
+	# new entries, so calling it twice is fine.
+	if victory and _selected_branch != "":
+		_on_boss_killed(_selected_branch)
 	if auto_grind:
 		auto_grind_runs += 1
 		var elapsed_ms: int = Time.get_ticks_msec() - auto_grind_start_time
@@ -181,7 +245,7 @@ func _on_run_ended(victory: bool, report: Dictionary) -> void:
 	_swap(rpt)
 	rpt.show_report(victory, report)
 	rpt.deploy_again.connect(_on_deploy)
-	rpt.back_to_garage.connect(_show_garage)
+	rpt.back_to_garage.connect(_show_outpost)
 
 func _swap(scene: Node) -> void:
 	if current_screen:

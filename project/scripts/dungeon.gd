@@ -7,6 +7,9 @@ const Path := preload("res://scripts/pathfinding.gd")
 signal floor_started(floor_num: int)
 signal floor_cleared(floor_num: int)
 signal run_ended(victory: bool, report: Dictionary)
+# Emitted when the branch's boss dies. main.gd listens and unlocks the
+# next-tier branches in the save state.
+signal boss_killed(branch_id: String)
 
 const ENEMIES_PATH := "res://data/enemies.json"
 const ITEMS_PATH := "res://data/items.json"
@@ -35,6 +38,9 @@ var interact_timer: float = 0.0
 var vault_spawn_overrides: Dictionary = {}
 var vault_decor_sprites: Array[Node2D] = []
 var run_plan: Array = []
+# Branch the player picked in the Outpost. Empty = legacy random-roll.
+# Set by main.gd before the dungeon is added to the tree.
+var branch_id: String = ""
 var current_biome: Dictionary = {}
 var ambient_modulate: CanvasModulate = null
 var fog: FogSystem = null
@@ -103,7 +109,7 @@ func _start_run() -> void:
 	loot_log.clear()
 	kills.clear()
 	journal.clear()
-	run_plan = BiomeData.roll_run_plan(rng)
+	run_plan = BiomeData.roll_run_plan(rng, branch_id)
 	if ambient_modulate == null:
 		ambient_modulate = CanvasModulate.new()
 		add_child(ambient_modulate)
@@ -144,6 +150,20 @@ func _start_run() -> void:
 	run_stalls = 0
 	run_vaults_stamped = []
 	run_biomes_visited = []
+	# Seed the live inventory with the player's stash. The HUD renders this
+	# as a "Base" section; loot picked up this run appends as Floor-N
+	# sections below it.
+	_loot_segments.clear()
+	_loot_segments.append({"header": "Base", "items": save.get("inventory", []).duplicate(true)})
+	_current_floor_segment_index = -1
+	_slot_cooldowns.clear()
+	_hud_inventory_seeded = false
+	_rebuild_inv_cache()
+	# Push once so the HUD shows the base inventory before any loot drops.
+	# (chrome may not exist yet on the first frame; the HUD's _ensure path
+	# will pick this up on its next update_biome_hud tick.)
+	if chrome != null:
+		_push_inventory_to_hud()
 	GrindLog.log_line("[run] start hp=%d/%d level=%d gold=%d" % [bot.hp, bot.max_hp, bot.level, bot.gold])
 	_build_floor()
 
@@ -183,7 +203,7 @@ func _async_build_floor() -> void:
 	bot_target_cell = Vector2i(-1, -1)
 	bot_target_kind = ""
 	_stall_snapshot_taken = false
-	_stuck_ticks = 0
+	_reset_stuck_timer()
 	_last_bot_cell = Vector2i(-99, -99)
 	vault_spawn_overrides.clear()
 	bot_interacting = false
@@ -193,8 +213,8 @@ func _async_build_floor() -> void:
 	_last_fog_cell = Vector2i(-99, -99)
 	_fog_dirty = true
 	_cached_world_lights_valid = false
-	# HUD inventory snapshot is per-run; refresh once at floor build.
-	_last_inventory_dirty = true
+	# Each floor opens a new loot segment lazily — first pickup creates it.
+	_current_floor_segment_index = -1
 	_last_equipped_hash = 0
 	floor_kills = 0
 	floor_loot_picked = 0
@@ -288,6 +308,10 @@ func _async_build_floor() -> void:
 	if fog_overlay:
 		fog_overlay.set_darkness(1.0)
 		fog_overlay.set_visibility_grid(fog)
+		# Push the wall mask once per floor — shader ray-march samples it
+		# every fragment to test LoS from the bot. Replaces the per-cell
+		# Bresenham FoV that produced tile-aligned ticks + stripe artifacts.
+		fog_overlay.set_wall_mask_from_grid(grid)
 
 	bot.terrain_grid = grid
 	bot.place_at(data.spawn)
@@ -620,7 +644,9 @@ func _collect_render_manifest(img: Image, png_path: String, ts: int) -> Dictiona
 			"hp": chrome.lbl_hp.text if (chrome and is_instance_valid(chrome.lbl_hp)) else "",
 			"atk": chrome.lbl_atk.text if (chrome and is_instance_valid(chrome.lbl_atk)) else "",
 			"def": chrome.lbl_def.text if (chrome and is_instance_valid(chrome.lbl_def)) else "",
-			"xp": chrome.lbl_level.text if (chrome and is_instance_valid(chrome.lbl_level)) else "",
+			"crit": chrome.lbl_crit.text if (chrome and is_instance_valid(chrome.lbl_crit)) else "",
+			"haste": chrome.lbl_haste.text if (chrome and is_instance_valid(chrome.lbl_haste)) else "",
+			"regen": chrome.lbl_regen.text if (chrome and is_instance_valid(chrome.lbl_regen)) else "",
 			"gold": chrome.lbl_gold.text if (chrome and is_instance_valid(chrome.lbl_gold)) else "",
 		},
 		"bot": {
@@ -675,19 +701,25 @@ func _ensure_hud() -> void:
 		return
 	chrome = HudChrome.new()
 	add_child(chrome)
+	# HUD inventory cells call back here to request an equip swap.
+	chrome.equip_request_target = self
 
 var _hud_full_refresh_accum: float = 0.0
-var _last_inventory_dirty: bool = true
 var _last_equipped_hash: int = 0
-# Cached inventory snapshot. Save-state reads from disk + JSON parse —
-# we should NOT call SaveState.load_state() every frame. dropped_items
-# tracks pickups during this run, and the floor's _build_floor seeds
-# the cache from disk once.
+# Inventory presented to the player. Segmented so the HUD can render a
+# Base section + one section per floor that produced loot. Each segment is
+# {header: String, items: Array[Dictionary]}. Mutating the items array
+# (equip / loot) updates the HUD next frame; segments are never collapsed
+# during a run so the player can see "what came from where" at a glance.
+var _loot_segments: Array = []
+var _current_floor_segment_index: int = -1
+# Mirror used at run end to compute the flat saved inventory. Equals the
+# concatenation of every segment's items, in order.
 var _hud_inv_cache: Array = []
-var _hud_inv_cache_size_at_last_render: int = -1
-
-func invalidate_hud_inventory() -> void:
-	_last_inventory_dirty = true
+var _hud_inventory_seeded: bool = false
+# Per-slot equip cooldowns in seconds. Decremented every _process tick.
+var _slot_cooldowns: Dictionary = {}
+const EQUIP_COOLDOWN_SECONDS := 30.0
 
 func _update_biome_hud() -> void:
 	_ensure_hud()
@@ -702,12 +734,12 @@ func _update_biome_hud() -> void:
 	if eq_changed:
 		chrome.update_equipped(bot.equipped if is_instance_valid(bot) else {}, items_db)
 		_last_equipped_hash = equipped_hash
-	if _last_inventory_dirty:
-		# Lazy reload from disk only when something invalidated it. This
-		# is the slow path — file open + JSON parse + migrate.
-		_hud_inv_cache = SaveState.load_state().get("inventory", [])
-		chrome.update_inventory(_hud_inv_cache, items_db)
-		_last_inventory_dirty = false
+	# Inventory updates are pushed via _push_inventory_to_hud() whenever
+	# segments mutate (loot pickup, equip). First-tick push covers the case
+	# where the chrome wasn't ready when the run started.
+	if not _hud_inventory_seeded:
+		_push_inventory_to_hud()
+		_hud_inventory_seeded = true
 	# Minimap — every 0.25s is plenty for visualizing bot motion.
 	if _hud_full_refresh_accum >= 0.25:
 		_hud_full_refresh_accum = 0.0
@@ -754,10 +786,18 @@ func _spawn_enemies() -> void:
 		pool.append("rat")
 
 	if is_boss_floor:
-		for id in enemy_data.keys():
-			if enemy_data[id].boss:
-				_spawn_specific(id, _pick_boss_room())
-				break
+		# Branch boss = the strongest enemy in the branch's pool, scaled to
+		# boss tier. Lets every branch have a thematic boss without
+		# bespoke per-branch enemy data; bespoke bosses can replace this
+		# later by setting a `boss_id` field on the biome. We ignore
+		# min_floor for the boss pick because boss floors should always
+		# have one regardless of "this enemy normally only spawns on D:8".
+		var boss_pool: Array = []
+		for id in biome_pool:
+			if enemy_data.has(id) and not enemy_data[id].boss:
+				boss_pool.append(id)
+		var boss_id: String = _pick_branch_boss_id(boss_pool if not boss_pool.is_empty() else pool)
+		_spawn_branch_boss(boss_id, _pick_boss_room())
 	elif _is_miniboss_floor(current_floor):
 		var elite_id: String = _pick_miniboss_id(pool)
 		_spawn_miniboss(elite_id, _pick_boss_room())
@@ -823,11 +863,11 @@ func _is_miniboss_floor(f: int) -> bool:
 func _is_final_boss_floor() -> bool:
 	return current_floor >= C.BOSS_FLOOR
 
-func _log(msg: String) -> void:
+func _log(msg: String, tag: String = "combat") -> void:
 	if not journal.is_empty():
 		journal.back().events.append(msg)
 	if chrome != null:
-		chrome.push_log(msg)
+		chrome.push_log(msg, tag)
 
 func _pick_miniboss_id(pool: Array) -> String:
 	if pool.is_empty():
@@ -835,6 +875,53 @@ func _pick_miniboss_id(pool: Array) -> String:
 	var ranked: Array = pool.duplicate()
 	ranked.sort_custom(func(a, b): return float(enemy_data[a].hp) > float(enemy_data[b].hp))
 	return ranked[0]
+
+# Branch boss = strongest enemy from the branch's pool. Same selection as
+# miniboss but scaled differently (see _spawn_branch_boss).
+func _pick_branch_boss_id(pool: Array) -> String:
+	return _pick_miniboss_id(pool)
+
+func _branch_tier_mult() -> float:
+	# Reads from current_biome (set per floor in _build_floor). Defaults to
+	# tier 1 if missing or out of range.
+	var tier: int = clampi(int(current_biome.get("tier", 1)) - 1, 0, C.TIER_SCALE.size() - 1)
+	return float(C.TIER_SCALE[tier])
+
+func _spawn_branch_boss(id: String, at_cell: Vector2i) -> void:
+	if not enemy_data.has(id):
+		return
+	var def: Dictionary = enemy_data[id]
+	var e := Enemy.new()
+	actor_layer.add_child(e)
+	e.enemy_id = id + "_boss"
+	e.display_name = "Greater " + str(def.name)  # placeholder; bespoke names later
+	e.xp_reward = int(def.xp) * 8
+	e.is_boss = true
+	var floor_mult: float = pow(1.10, current_floor - 1)
+	var tier_mult: float = _branch_tier_mult()
+	# Boss stats: similar to miniboss but bumped — 3.0× HP, 1.7× ATK, 1.5× DEF.
+	e.max_hp = int(round(float(def.hp) * floor_mult * tier_mult * 3.0))
+	e.atk = int(round(float(def.atk) * floor_mult * tier_mult * 1.7))
+	e.defense = int(round(float(def.def) * floor_mult * tier_mult * 1.5))
+	e.hp = e.max_hp
+	e.move_speed = float(def.speed) * 4.0
+	var tex: Texture2D = load(ENEMY_TILE_DIR + def.tile)
+	if tex:
+		e.set_texture(tex)
+		var base_scale: float = float(def.get("visual_scale", 1.0))
+		var anchor: String = String(def.get("visual_anchor", "centre"))
+		# Boss scale: 1.7× base, capped by Actor.apply_visual_scale.
+		e.apply_visual_scale(base_scale * 1.7, anchor, 3)
+		if e.rig:
+			e.rig.modulate = Color(1.4, 0.8, 0.8)
+			e.fx = SpriteFX.new(e.rig, e.sprite)
+		var bl_spec: String = String(def.get("light_spec", ""))
+		if bl_spec != "":
+			LightSpec.attach(e, bl_spec)
+	e.place_at(at_cell)
+	e.repath_timer = rng.randf_range(0.0, Enemy.REPATH_INTERVAL)
+	e.died.connect(_on_enemy_died)
+	enemies.append(e)
 
 func _spawn_miniboss(id: String, at_cell: Vector2i) -> void:
 	if not enemy_data.has(id):
@@ -848,9 +935,10 @@ func _spawn_miniboss(id: String, at_cell: Vector2i) -> void:
 	e.is_boss = false
 	e.is_miniboss = true
 	var floor_mult: float = pow(1.10, current_floor - 1)
-	e.max_hp = int(round(float(def.hp) * floor_mult * 1.8))
-	e.atk = int(round(float(def.atk) * floor_mult * 1.4))
-	e.defense = int(round(float(def.def) * floor_mult * 1.3))
+	var tier_mult: float = _branch_tier_mult()
+	e.max_hp = int(round(float(def.hp) * floor_mult * tier_mult * 1.8))
+	e.atk = int(round(float(def.atk) * floor_mult * tier_mult * 1.4))
+	e.defense = int(round(float(def.def) * floor_mult * tier_mult * 1.3))
 	e.hp = e.max_hp
 	e.move_speed = float(def.speed) * 4.0
 	var tex: Texture2D = load(ENEMY_TILE_DIR + def.tile)
@@ -886,10 +974,14 @@ func _spawn_specific(id: String, at_cell: Vector2i) -> void:
 	e.xp_reward = int(def.xp) * (3 if is_champion else 1)
 	e.is_boss = bool(def.boss)
 	var floor_mult: float = pow(1.10, current_floor - 1)
+	# Branch tier multiplier — turns the same enemy IDs into Tier-5
+	# nightmares without bespoke per-tier enemy data. See constants.gd
+	# TIER_SCALE.
+	var tier_mult: float = _branch_tier_mult()
 	var champ_mult: float = 1.5 if is_champion else 1.0
-	e.max_hp = int(round(float(def.hp) * floor_mult * champ_mult))
-	e.atk = int(round(float(def.atk) * floor_mult * champ_mult))
-	e.defense = int(round(float(def.def) * floor_mult * (1.2 if is_champion else 1.0)))
+	e.max_hp = int(round(float(def.hp) * floor_mult * tier_mult * champ_mult))
+	e.atk = int(round(float(def.atk) * floor_mult * tier_mult * champ_mult))
+	e.defense = int(round(float(def.def) * floor_mult * tier_mult * (1.2 if is_champion else 1.0)))
 	e.hp = e.max_hp
 	e.move_speed = float(def.speed) * 4.0
 	var tex: Texture2D = load(ENEMY_TILE_DIR + def.tile)
@@ -938,6 +1030,10 @@ func _on_enemy_died(actor: Actor) -> void:
 	loot_log.append("%s slain (+%d gold, +%d xp)" % [e.display_name, gold_drop, e.xp_reward])
 	if e.is_boss:
 		_log("Slew %s. (+%d gold, +%d xp)" % [e.display_name, gold_drop, e.xp_reward])
+		# Branch boss dead → notify main.gd so the player unlocks the next
+		# tier's branches. Branch id comes from current biome (boss floors
+		# always sit on the chosen branch's biome).
+		boss_killed.emit(String(current_biome.get("id", "")))
 	elif e.is_miniboss:
 		_log("Vanquished %s! (+%d gold, +%d xp)" % [e.display_name, gold_drop, e.xp_reward])
 	else:
@@ -1089,7 +1185,7 @@ func _on_altar_blessed(altar: Altar, blessing: Dictionary) -> void:
 	floor_altars_used += 1
 	var bname: String = String(blessing.get("name", "blessing"))
 	var bdesc: String = String(blessing.get("desc", ""))
-	_log("Received %s — %s" % [bname, bdesc])
+	_log("Received %s — %s" % [bname, bdesc], "loot")
 	# Magic shimmer at altar position for divine-grant flair.
 	if is_instance_valid(altar):
 		var pos: Vector2 = altar.position + Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5)
@@ -1149,6 +1245,7 @@ func _process(delta: float) -> void:
 	if _turn_accum >= 0.25:
 		_turn_accum -= 0.25
 		run_turn += 1
+	_tick_equip_cooldowns(delta)
 	_update_biome_hud()
 	PerfMon.end(PerfMon.TAG_FRAME)
 	if PerfMon.tick_frame():
@@ -1169,7 +1266,7 @@ const RETREAT_HP_PCT := 0.30
 func _tick_bot(delta: float) -> void:
 	_mark_room_visited_at(bot.cell)
 	_refresh_fog()
-	_check_stuck()
+	_check_stuck(delta)
 	# Lava damage: if bot is standing on a lava cell, deal 5% max_hp
 	# every 0.5 seconds. Tick accumulator avoids per-frame damage spam.
 	_lava_tick_accum += delta
@@ -1192,7 +1289,15 @@ func _tick_bot(delta: float) -> void:
 		return
 	if fog_overlay:
 		PerfMon.begin(PerfMon.TAG_LIGHTS)
-		fog_overlay.update_lights(_gather_lights(), delta)
+		# Bot world position for shader ray-march LoS — sampled every frame
+		# so the lit cone tracks bot motion smoothly between cell boundaries.
+		# Centred on the bot sprite (bot.position is its top-left tile origin).
+		var bot_world: Vector2 = Vector2(INF, INF)
+		var bot_radius_px: float = 0.0
+		if is_instance_valid(bot):
+			bot_world = bot.position + Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5)
+			bot_radius_px = float(FogSystem.BOT_LOS_RADIUS) * float(C.TILE_SIZE)
+		fog_overlay.update_lights(_gather_lights(), delta, bot_world, bot_radius_px)
 		PerfMon.end(PerfMon.TAG_LIGHTS)
 	if bot_light == null and is_instance_valid(bot):
 		bot_light = PointLight2D.new()
@@ -1395,39 +1500,110 @@ func _tick_bot(delta: float) -> void:
 	bot.step_movement(delta)
 
 var _last_bot_cell: Vector2i = Vector2i(-99, -99)
-var _stuck_ticks: int = 0
-const STUCK_THRESHOLD := 120
-const STUCK_RECOVERY_THRESHOLD := 360
+# Seconds (not frames) — frame-based threshold broke on 120Hz ProMotion
+# displays where 360 frames is 3s instead of the intended 6s. We measure
+# real wall time so the watchdog behaves the same on every refresh rate.
+var _stuck_seconds: float = 0.0
+const STALL_WARN_SECONDS: float = 6.0
+const STALL_SOFT_RECOVERY_SECONDS: float = 10.0
+const STALL_HARD_RECOVERY_SECONDS: float = 18.0
+const STALL_TELEPORT_SECONDS: float = 30.0
 var _stall_snapshot_taken: bool = false
+var _stall_warned: bool = false
+var _stall_soft_attempted: bool = false
+var _stall_hard_attempted: bool = false
 
-func _check_stuck() -> void:
-	# Showcase mode pins the floor and the bot patrols deliberately —
-	# cell-equal-to-last is normal between path segments. Skip the
-	# stall watchdog so it doesn't trigger HARD-RECOVERY teleports.
+func _check_stuck(delta: float) -> void:
+	# Showcase mode pins the floor on purpose; the bot patrols a fixed loop
+	# and "cell unchanged" is the steady state — never trigger here.
 	if DebugJump.showcase:
 		return
-	if bot.cell == _last_bot_cell:
-		_stuck_ticks += 1
-		if _stuck_ticks == STUCK_THRESHOLD:
-			floor_stalls += 1
-			GrindLog.log_line("[stall] f=%d ticks=%d bot=%s target=%s kind=%s stairs=%s enemies=%d interactables=%d unvisited_rooms=%d alive_adj=%d" % [
-				current_floor, _stuck_ticks, str(bot.cell), str(bot_target_cell), bot_target_kind,
-				str(stairs_cell), enemies.size(), interactables.size(),
-				_count_unvisited_rooms(), _count_alive_adjacent_enemies(),
-			])
-		if _stuck_ticks == STUCK_RECOVERY_THRESHOLD:
-			if not _stall_snapshot_taken:
-				_dump_stall_snapshot()
-				_stall_snapshot_taken = true
-			floor_hard_recoveries += 1
-			GrindLog.log_line("[stall] HARD-RECOVERY f=%d teleport from=%s to=%s" % [current_floor, str(bot.cell), str(stairs_cell)])
-			if stairs_cell.x >= 0 and stairs_cell.y >= 0 and stairs_cell.y < grid.size() and stairs_cell.x < grid[0].size():
-				bot.place_at(stairs_cell)
-				_descend()
-			_stuck_ticks = 0
-	else:
-		_stuck_ticks = 0
-	_last_bot_cell = bot.cell
+	if not is_instance_valid(bot) or not bot.is_alive:
+		_reset_stuck_timer()
+		return
+	# Cell changed → real progress, reset everything.
+	if bot.cell != _last_bot_cell:
+		_last_bot_cell = bot.cell
+		_reset_stuck_timer()
+		return
+	# Cell unchanged but the bot is legitimately busy — don't accumulate.
+	# These cover the bulk of "looks idle" frames in normal play:
+	#   * bot_interacting: kneeling at a chest/altar/fountain/loot/portal
+	#   * enemy in combat range (Chebyshev <= AGGRO_ENGAGE_RANGE): swinging
+	#     in melee OR repositioning vs. a ranged/knockback boss who isn't
+	#     adjacent every frame. Generous radius is intentional — the cost
+	#     of failing to teleport an actually-stuck bot for an extra few
+	#     seconds is much smaller than the cost of teleporting mid-boss.
+	#   * pending path: actively traversing between cells (mid-tween)
+	if bot_interacting or bot.path.size() > 0 or _has_combat_engaged_enemy():
+		_reset_stuck_timer()
+		return
+	# Genuinely idle — accumulate.
+	_stuck_seconds += delta
+	if not _stall_warned and _stuck_seconds >= STALL_WARN_SECONDS:
+		_stall_warned = true
+		floor_stalls += 1
+		GrindLog.log_line("[stall] f=%d secs=%.1f bot=%s target=%s kind=%s stairs=%s enemies=%d interactables=%d unvisited_rooms=%d" % [
+			current_floor, _stuck_seconds, str(bot.cell), str(bot_target_cell), bot_target_kind,
+			str(stairs_cell), enemies.size(), interactables.size(),
+			_count_unvisited_rooms(),
+		])
+	# Soft recovery: ditch whatever the bot was trying to do and force a
+	# fresh path to stairs. Often the bot's higher-level planner is wedged
+	# on an unreachable interactable while the stairs are perfectly walkable.
+	if not _stall_soft_attempted and _stuck_seconds >= STALL_SOFT_RECOVERY_SECONDS:
+		_stall_soft_attempted = true
+		GrindLog.log_line("[stall] SOFT-RECOVERY f=%d repath bot=%s -> stairs=%s" % [
+			current_floor, str(bot.cell), str(stairs_cell),
+		])
+		_force_repath_to_stairs()
+		return
+	# Hard recovery: clear all path/target state, repath from scratch.
+	if not _stall_hard_attempted and _stuck_seconds >= STALL_HARD_RECOVERY_SECONDS:
+		_stall_hard_attempted = true
+		if not _stall_snapshot_taken:
+			_dump_stall_snapshot()
+			_stall_snapshot_taken = true
+		GrindLog.log_line("[stall] HARD-RECOVERY f=%d clear-state+repath bot=%s -> stairs=%s" % [
+			current_floor, str(bot.cell), str(stairs_cell),
+		])
+		bot.path = PackedVector2Array()
+		bot_target_cell = Vector2i(-1, -1)
+		bot_target_kind = ""
+		_force_repath_to_stairs()
+		return
+	# Last resort: 30 seconds of doing nothing in an empty room means
+	# something is broken (orphaned cell, busted dist field, generator
+	# regression). Snap to stairs and descend so the run survives. This
+	# should be exceptionally rare — every trigger of this branch is a
+	# generator/AI bug worth investigating.
+	if _stuck_seconds >= STALL_TELEPORT_SECONDS:
+		floor_hard_recoveries += 1
+		GrindLog.log_line("[stall] TELEPORT f=%d last-resort from=%s to=%s" % [
+			current_floor, str(bot.cell), str(stairs_cell),
+		])
+		if stairs_cell.x >= 0 and stairs_cell.y >= 0 \
+				and stairs_cell.y < grid.size() and stairs_cell.x < grid[0].size():
+			bot.place_at(stairs_cell)
+			_descend()
+		_reset_stuck_timer()
+
+func _reset_stuck_timer() -> void:
+	_stuck_seconds = 0.0
+	_stall_warned = false
+	_stall_soft_attempted = false
+	_stall_hard_attempted = false
+
+func _force_repath_to_stairs() -> void:
+	if stairs_cell.x < 0 or stairs_cell.y < 0:
+		return
+	if stairs_cell.y >= grid.size() or stairs_cell.x >= grid[0].size():
+		return
+	var p: PackedVector2Array = pathing.path(bot.cell, stairs_cell)
+	if p.size() > 1:
+		bot.set_path(p.slice(1))
+		bot_target_cell = stairs_cell
+		bot_target_kind = "stairs"
 
 func _dump_stall_snapshot() -> void:
 	var path := "user://stall_snapshot_floor%d.txt" % current_floor
@@ -1487,6 +1663,16 @@ func _count_alive_adjacent_enemies() -> int:
 		if is_instance_valid(e) and e.is_alive and _chebyshev(bot.cell, e.cell) <= 1:
 			n += 1
 	return n
+
+# True if any live enemy is within combat-engagement range. Used by the
+# stall watchdog to keep the timer at zero during boss fights, ranged duels,
+# and knockback recovery — anywhere "fighting" might temporarily look like
+# "standing still."
+func _has_combat_engaged_enemy() -> bool:
+	for e in enemies:
+		if is_instance_valid(e) and e.is_alive and _chebyshev(bot.cell, e.cell) <= AGGRO_ENGAGE_RANGE:
+			return true
+	return false
 
 func _nearest_interactable() -> Interactable:
 	var best: Interactable = null
@@ -1590,8 +1776,13 @@ func _complete_loot_pickup(drop: LootDrop) -> void:
 	var display_name: String = AffixSystem.format_item_name(String(item.name), inst.get("affixes", []))
 	floor_loot_picked += 1
 	dropped_items.append(inst)
+	# Append into this floor's segment (lazy-create on first pickup).
+	_ensure_current_floor_segment()
+	(_loot_segments[_current_floor_segment_index].items as Array).append(inst)
+	_rebuild_inv_cache()
+	_push_inventory_to_hud()
 	loot_log.append("Looted: [%s] %s" % [item.rarity, display_name])
-	_log("Found: %s [%s]" % [display_name, item.rarity])
+	_log("Found: %s [%s]" % [display_name, item.rarity], "loot")
 	loot_drops.erase(drop)
 	interactables.erase(drop)
 	drop.consumed = true
@@ -1606,6 +1797,79 @@ func _complete_loot_pickup(drop: LootDrop) -> void:
 	if bot.fx:
 		bot.fx.loot_pop()
 	drop.play_pickup_then_free()
+
+func _ensure_current_floor_segment() -> void:
+	if _current_floor_segment_index >= 0 and _current_floor_segment_index < _loot_segments.size():
+		return
+	_loot_segments.append({"header": "Floor %d" % current_floor, "items": []})
+	_current_floor_segment_index = _loot_segments.size() - 1
+
+func _rebuild_inv_cache() -> void:
+	# Flat mirror of every segment's items, in render order. Used at run
+	# end to write SaveState.inventory.
+	_hud_inv_cache.clear()
+	for seg in _loot_segments:
+		for inst in seg.get("items", []):
+			_hud_inv_cache.append(inst)
+
+func _push_inventory_to_hud() -> void:
+	if chrome != null:
+		chrome.update_inventory_segments(_loot_segments, items_db, _slot_cooldowns)
+
+# Player-initiated equip from the HUD inventory. Per-slot cooldown stops
+# the player from juggling identical items every tick to game positioning.
+# Returns true if the equip happened.
+func try_equip_from_segment(seg_idx: int, item_idx: int) -> bool:
+	if seg_idx < 0 or seg_idx >= _loot_segments.size():
+		return false
+	var seg: Dictionary = _loot_segments[seg_idx]
+	var items: Array = seg.get("items", [])
+	if item_idx < 0 or item_idx >= items.size():
+		return false
+	var inst: Variant = items[item_idx]
+	if typeof(inst) != TYPE_DICTIONARY:
+		return false
+	var base_id: String = String(inst.get("base_id", ""))
+	if not items_db.has(base_id):
+		return false
+	var slot: String = String(items_db[base_id].get("slot", ""))
+	if slot == "":
+		return false
+	# Per-slot cooldown gate.
+	var cd: float = float(_slot_cooldowns.get(slot, 0.0))
+	if cd > 0.0:
+		_log("Equip on cooldown: %s (%.0fs left)" % [slot.capitalize(), cd], "combat")
+		return false
+	if not is_instance_valid(bot):
+		return false
+	var displaced: Variant = bot.equip_from_inventory(inst)
+	# Remove the picked item from its segment.
+	items.remove_at(item_idx)
+	# Stash the displaced item back at the same segment so the player can
+	# unequip-then-pick another in succession without searching the list.
+	if displaced != null and typeof(displaced) == TYPE_DICTIONARY:
+		items.append(displaced)
+	_slot_cooldowns[slot] = EQUIP_COOLDOWN_SECONDS
+	_rebuild_inv_cache()
+	_push_inventory_to_hud()
+	# Equip changed → trigger paperdoll refresh next frame via the existing
+	# equipped-hash compare in _update_biome_hud.
+	_last_equipped_hash = 0
+	return true
+
+func _tick_equip_cooldowns(delta: float) -> void:
+	if _slot_cooldowns.is_empty():
+		return
+	for slot in _slot_cooldowns.keys():
+		var cd: float = float(_slot_cooldowns[slot]) - delta
+		if cd <= 0.0:
+			_slot_cooldowns.erase(slot)
+		else:
+			_slot_cooldowns[slot] = cd
+	# Lightweight per-frame refresh — only updates the paperdoll countdown
+	# labels, not the inventory grid (which would be wasteful every tick).
+	if chrome != null:
+		chrome.update_cooldowns(_slot_cooldowns)
 
 func _on_chest_opened(chest: Chest, n: int, bias: int) -> void:
 	floor_chests_opened += 1
@@ -1625,7 +1889,7 @@ func _on_chest_opened(chest: Chest, n: int, bias: int) -> void:
 		if drop:
 			drop.arc_from(chest_world, 0.45 + i * 0.05)
 	interactables.erase(chest)
-	_log("Opened a chest!")
+	_log("Opened a chest!", "loot")
 	var fade := chest.create_tween()
 	fade.tween_interval(2.0)
 	fade.tween_property(chest, "modulate:a", 0.0, 0.5)
@@ -1774,24 +2038,22 @@ func _descend() -> void:
 	_build_floor()
 
 func _end_run(victory: bool) -> void:
+	# Loot is loot — banked on victory or death. The idle-game loop is "watch
+	# the bot fill your stash"; a 50% death tax punishes idle play.
 	var save: Dictionary = SaveState.load_state()
 	save.gold = bot.gold
 	save.level = bot.level
 	save.xp = bot.xp
-	var inv: Array = save.get("inventory", [])
-	var kept: Array = []
-	if victory:
-		kept = dropped_items.duplicate(true)
-	else:
-		for it in dropped_items:
-			if rng.randf() < 0.5:
-				kept.append(it.duplicate(true))
-	for it in kept:
-		inv.append(it)
-	save.inventory = inv
+	# Persist whatever is currently in the live HUD inventory cache. That's
+	# the source of truth — it includes base inventory + everything looted
+	# this run, minus anything that got equipped mid-run (those moved to
+	# bot.equipped, also persisted below).
+	save.inventory = _hud_inv_cache.duplicate(true)
+	save.equipped = bot.equipped.duplicate(true) if is_instance_valid(bot) else save.get("equipped", {})
 	save.runs_completed = int(save.get("runs_completed", 0)) + 1
 	save.highest_floor = maxi(int(save.get("highest_floor", 0)), current_floor)
 	SaveState.save_state(save)
+	var kept: Array = dropped_items.duplicate(true)
 
 	var report: Dictionary = {
 		"victory": victory,

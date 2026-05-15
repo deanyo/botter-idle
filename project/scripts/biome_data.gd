@@ -27,18 +27,34 @@ static func _ensure_loaded() -> void:
 	_biomes = parsed.get("biomes", {})
 	_run_plans = parsed.get("run_plans", [])
 
-static func roll_run_plan(rng: RandomNumberGenerator) -> Array:
+static func roll_run_plan(rng: RandomNumberGenerator, branch_id: String = "") -> Array:
+	# Branch-locked plan: every floor of the run is the chosen branch's
+	# biome (boss floor uses the same biome with a stronger spawn). Empty
+	# branch_id = legacy random-roll plan — kept for showcase / debug.
 	_ensure_loaded()
-	# Fully-random plan: each of the 10 floor slots gets an independently rolled
-	# biome id from the full roster. Bypasses the weighted run_plans table while
-	# we shake out vault variety.
+	const C := preload("res://scripts/constants.gd")
+	if branch_id != "" and _biomes.has(branch_id):
+		var plan: Array = []
+		for i in C.FLOORS_PER_RUN:
+			plan.append(branch_id)
+		return plan
 	var ids: Array = _biomes.keys()
 	if ids.is_empty():
-		return ["dungeon", "dungeon", "dungeon", "dungeon", "dungeon", "dungeon", "dungeon", "dungeon", "dungeon", "dungeon"]
-	var plan: Array = []
-	for i in 10:
-		plan.append(String(ids[rng.randi() % ids.size()]))
-	return plan
+		var fallback: Array = []
+		for i in C.FLOORS_PER_RUN:
+			fallback.append("dungeon")
+		return fallback
+	var rolled: Array = []
+	for i in C.FLOORS_PER_RUN:
+		rolled.append(String(ids[rng.randi() % ids.size()]))
+	return rolled
+
+# Returns the branch tier (1..5) for a biome id. Defaults to 1 if missing.
+static func tier_for_biome(biome_id: String) -> int:
+	_ensure_loaded()
+	if not _biomes.has(biome_id):
+		return 1
+	return int(_biomes[biome_id].get("tier", 1))
 
 static func get_biome(biome_id: String) -> Dictionary:
 	_ensure_loaded()

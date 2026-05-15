@@ -2,27 +2,6 @@ class_name Bot
 extends Actor
 
 const BOT_TEX := preload("res://assets/tiles/player/spriggan_female.png")
-const BODY_TEX := preload("res://assets/tiles/player/body/armor_mummy.png")
-const WEAPON_DIR := "res://assets/tiles/player/weapons/"
-
-# Map weapon item base_id -> overlay sprite filename. Test mode: any weapon
-# uses battleaxe so we can verify the overlay+swing animation visually.
-const WEAPON_OVERLAYS := {
-	"rusty_dagger":   "battleaxe",
-	"iron_dagger":    "battleaxe",
-	"steel_dagger":   "battleaxe",
-	"orcish_dagger":  "battleaxe",
-	"elven_dagger":   "battleaxe",
-	"short_sword":    "battleaxe",
-	"iron_short_sword": "battleaxe",
-	"long_sword":     "battleaxe",
-	"iron_sword":     "battleaxe",
-	"steel_sword":    "battleaxe",
-	"falchion":       "battleaxe",
-	"scimitar":       "battleaxe",
-	"great_sword":    "battleaxe",
-	"claymore":       "battleaxe",
-}
 
 # Weapon ids that should glow with a fire/magic light when equipped. Empty
 # string = no light. Lights attach to the weapon_sprite child so they move
@@ -76,7 +55,8 @@ func grant_blessing(b: Dictionary) -> void:
 		"atk_flat": bonus_atk_flat += int(v)
 		"def_flat": bonus_def_flat += int(v)
 		"hp_pct": bonus_max_hp_pct += v
-		"hp_regen": hp_regen_per_sec += v
+		# hp_regen is re-derived from blessings array inside recompute_stats
+		# so we don't write it here directly (avoids double-counting).
 		"lifesteal": lifesteal_per_hit += int(v)
 		"loot_rarity": loot_rarity_bonus += v
 		"xp_gain": xp_gain_pct += v
@@ -93,7 +73,30 @@ func apply_gear(items_db: Dictionary, equipped_instances: Dictionary) -> void:
 	recompute_stats()
 	hp = max_hp
 	_update_hp_bar()
-	_refresh_weapon_overlay()
+	_refresh_gear_overlays()
+
+# Swap an inventory item into its slot. Returns the displaced instance
+# (or null if the slot was empty), so the caller can re-insert it into the
+# inventory at whichever segment makes sense. Stat recompute preserves
+# current HP delta (no cheesing full-heal by re-equipping).
+func equip_from_inventory(inst: Dictionary) -> Variant:
+	if typeof(inst) != TYPE_DICTIONARY:
+		return null
+	var base_id: String = String(inst.get("base_id", ""))
+	if base_id == "" or not _items_db_cache.has(base_id):
+		return null
+	var slot: String = String(_items_db_cache[base_id].get("slot", ""))
+	if slot == "":
+		return null
+	var displaced: Variant = equipped.get(slot, null)
+	equipped[slot] = inst.duplicate(true)
+	var prev_max: int = max_hp
+	recompute_stats()
+	# Preserve the player's HP delta — equip does not heal or hurt.
+	hp = clampi(hp + (max_hp - prev_max), 0, max_hp)
+	_update_hp_bar()
+	_refresh_gear_overlays()
+	return displaced
 
 func recompute_stats() -> void:
 	max_hp = base_max_hp + (level - 1) * 8
@@ -102,6 +105,11 @@ func recompute_stats() -> void:
 
 	var pct_hp: float = 0.0
 	var pct_atk: float = 0.0
+	# Affix stats from the simplified 6-affix system. Crit/Haste are summed
+	# across all gear slots; gear-regen stacks with altar blessings.
+	var crit_sum: float = 0.0
+	var haste_sum: float = 0.0
+	var gear_regen: float = 0.0
 	for slot in equipped.keys():
 		var inst: Variant = equipped[slot]
 		if inst == null or typeof(inst) != TYPE_DICTIONARY:
@@ -118,8 +126,12 @@ func recompute_stats() -> void:
 		max_hp += int(sums.get("hp", 0))
 		atk += int(sums.get("atk", 0))
 		defense += int(sums.get("def", 0))
+		# Legacy %-affixes (from pre-migration saves that somehow slip through).
 		pct_hp += float(sums.get("hp_pct", 0))
 		pct_atk += float(sums.get("atk_pct", 0))
+		crit_sum += float(sums.get("crit_chance", 0))
+		haste_sum += float(sums.get("atk_speed_pct", 0))
+		gear_regen += float(sums.get("hp_regen", 0))
 
 	atk += bonus_atk_flat
 	defense += bonus_def_flat
@@ -129,51 +141,62 @@ func recompute_stats() -> void:
 	max_hp = int(round(max_hp * (1.0 + pct_hp / 100.0)))
 	atk = int(round(atk * (1.0 + pct_atk / 100.0)))
 
+	# Crit chance is a flat percentage (sum across gear), capped at 75 so
+	# fights still feel like fights. Haste is capped at 200 so attack
+	# interval can't drop below 0.2s (degenerate-flicker territory).
+	crit_chance = clampf(crit_sum, 0.0, 75.0)
+	var haste_pct: float = clampf(haste_sum, 0.0, 200.0)
+	attack_interval = 0.6 / (1.0 + haste_pct / 100.0)
+	# Gear regen + blessing regen. Blessings already added to
+	# hp_regen_per_sec via grant_blessing, so we re-derive from scratch:
+	# count gear here + blessing array contents. clear_blessings resets to 0.
+	hp_regen_per_sec = gear_regen
+	for b in blessings:
+		if String(b.get("kind", "")) == "hp_regen":
+			hp_regen_per_sec += float(b.get("value", 0))
+
+var _gear_sprites: Dictionary = {}  # slot_id → Sprite2D, for swing/light hooks
+
 func _ready() -> void:
 	super._ready()
 	# Render bot above all interactables (chests/altars/loot/portals which
 	# default to z_index = 0). FX particles draw at z=6 so they still overlay.
 	z_index = 5
 	set_texture(BOT_TEX)
-	# Layer the body armor sprite over the player base. Parented to rig so
-	# it inherits attack_lunge / hit_squish / death_spin tweens. Lantern
-	# removed — we want clean weapon + (eventually) shield slots only.
-	var body := Sprite2D.new()
-	body.texture = BODY_TEX
-	body.centered = true
-	body.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	body.z_index = 1
-	rig.add_child(body)
-	_refresh_weapon_overlay()
+	_refresh_gear_overlays()
 
-func _refresh_weapon_overlay() -> void:
-	# Drop existing weapon sprite if any.
-	if is_instance_valid(weapon_sprite):
-		weapon_sprite.queue_free()
-		weapon_sprite = null
-	var wpn: Variant = equipped.get("weapon", null)
-	if wpn == null or typeof(wpn) != TYPE_DICTIONARY:
-		return
-	var base_id: String = String(wpn.get("base_id", ""))
-	var overlay_name: String = String(WEAPON_OVERLAYS.get(base_id, "long_sword"))
-	var path: String = WEAPON_DIR + overlay_name + ".png"
-	if not ResourceLoader.exists(path):
-		return
-	weapon_sprite = Sprite2D.new()
-	weapon_sprite.texture = load(path)
-	weapon_sprite.centered = true
-	# Offset slightly down + right of rig origin — roughly where DCSS
-	# hand_right paperdoll sits. Parented to rig so it inherits the bot's
-	# lunge / squish / death tweens; weapon's own swing tween composes on top.
-	weapon_sprite.position = Vector2(4, 2)
-	weapon_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	weapon_sprite.z_index = 2
-	rig.add_child(weapon_sprite)
-	# Fire-tagged weapons emit their own light from the held sprite. Must
-	# happen AFTER add_child so LightSpec.attach has a parent in the tree.
-	var weapon_light_id: String = String(WEAPON_LIGHTS.get(base_id, ""))
-	if weapon_light_id != "":
-		LightSpec.attach(weapon_sprite, weapon_light_id, Vector2.ZERO)
+func _refresh_gear_overlays() -> void:
+	# Drop any existing overlay sprites (preserve the base bot texture which
+	# lives on `self`, not in `_gear_sprites`).
+	for slot in _gear_sprites.keys():
+		var s: Variant = _gear_sprites[slot]
+		if s is Sprite2D and is_instance_valid(s):
+			s.queue_free()
+	_gear_sprites.clear()
+	weapon_sprite = null
+	# Build the rig overlays directly under `rig` so they inherit the bot's
+	# lunge / squish / death tweens. We don't reuse the renderer's Node2D
+	# wrapper because the bot's base sprite is `self`, not a child.
+	for slot_id in PaperdollRenderer.SLOT_Z.keys():
+		var path: String = PaperdollRenderer._resolve_overlay(slot_id, equipped, _items_db_cache)
+		if path == "":
+			continue
+		var sprite := Sprite2D.new()
+		sprite.texture = load(path)
+		sprite.centered = true
+		sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		sprite.position = PaperdollRenderer.SLOT_OFFSETS.get(slot_id, Vector2.ZERO)
+		sprite.z_index = int(PaperdollRenderer.SLOT_Z[slot_id])
+		rig.add_child(sprite)
+		_gear_sprites[slot_id] = sprite
+	weapon_sprite = _gear_sprites.get("weapon", null)
+	# Fire-tagged weapons emit their own light from the held sprite.
+	if weapon_sprite != null:
+		var wpn: Variant = equipped.get("weapon", null)
+		var base_id: String = "" if wpn == null or typeof(wpn) != TYPE_DICTIONARY else String(wpn.get("base_id", ""))
+		var weapon_light_id: String = String(WEAPON_LIGHTS.get(base_id, ""))
+		if weapon_light_id != "":
+			LightSpec.attach(weapon_sprite, weapon_light_id, Vector2.ZERO)
 
 func swing_weapon(toward: Vector2) -> void:
 	if not is_instance_valid(weapon_sprite):
