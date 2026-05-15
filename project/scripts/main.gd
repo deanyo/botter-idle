@@ -209,37 +209,55 @@ const _TIER_BRANCHES := {
 
 func _on_boss_killed(branch_id: String) -> void:
 	# Always print so the user can see this fired in normal play (Godot's
-	# stdout — visible from the editor or `godot --path` runs). GrindLog is
-	# disabled outside grind mode so the print is the only evidence in
-	# normal play that the unlock path actually ran.
+	# stdout — visible from the editor or `godot --path` runs).
 	print("[unlock] boss_killed signal received: branch_id=%s" % branch_id)
 	if branch_id == "":
 		return
 	var save: Dictionary = SaveState.load_state()
 	var unlocked: Array = save.get("unlocked_branches", ["dungeon"])
+	var bosses_killed: Dictionary = save.get("bosses_killed", {})
 	var tier: int = BiomeData.tier_for_biome(branch_id)
 	if tier < 1:
 		print("[unlock] skipped — tier_for_biome(%s) returned %d" % [branch_id, tier])
 		return
+	# Record the kill (used for the "every tier-N boss cleared" check below).
+	bosses_killed[branch_id] = int(bosses_killed.get(branch_id, 0)) + 1
 	var added: Array = []
-	# Unlock all siblings at the same tier (clearing one Tier-2 boss
-	# unlocks all Tier-2 branches).
+	# Sibling unlock — clearing any tier-N boss unlocks the rest of tier N.
 	for sib in _TIER_BRANCHES.get(tier, []):
 		if not unlocked.has(sib):
 			unlocked.append(sib)
 			added.append(sib)
-	# Unlock all next-tier branches too — doc says "2 bosses to unlock next
-	# tier" but for now any first-clear opens the next tier so the player
-	# always has a fresh target. Tunable later.
+	# Next-tier unlock requires EVERY tier-N branch to have at least one
+	# boss kill recorded. Stricter than the doc's "any 2" but matches the
+	# user's "you should have to beat them all" call. Encourages back-
+	# tracking through earlier branches with their freshly-rolled mods.
 	if tier < 5:
-		for nxt in _TIER_BRANCHES.get(tier + 1, []):
-			if not unlocked.has(nxt):
-				unlocked.append(nxt)
-				added.append(nxt)
+		var all_cleared: bool = true
+		for sib in _TIER_BRANCHES.get(tier, []):
+			if int(bosses_killed.get(sib, 0)) <= 0:
+				all_cleared = false
+				break
+		if all_cleared:
+			for nxt in _TIER_BRANCHES.get(tier + 1, []):
+				if not unlocked.has(nxt):
+					unlocked.append(nxt)
+					added.append(nxt)
 	save.unlocked_branches = unlocked
+	save.bosses_killed = bosses_killed
 	SaveState.save_state(save)
-	print("[unlock] tier=%d new=%s total_unlocked=%d" % [tier, str(added), unlocked.size()])
-	GrindLog.log_line("[unlock] killed boss=%s tier=%d new_branches=%s" % [branch_id, tier, str(added)])
+	var tier_complete: bool = false
+	for sib in _TIER_BRANCHES.get(tier, []):
+		if int(bosses_killed.get(sib, 0)) <= 0:
+			tier_complete = false
+			break
+		tier_complete = true
+	print("[unlock] tier=%d killed=%s tier_complete=%s new=%s total=%d" % [
+		tier, branch_id, str(tier_complete), str(added), unlocked.size(),
+	])
+	GrindLog.log_line("[unlock] killed boss=%s tier=%d tier_complete=%s new_branches=%s" % [
+		branch_id, tier, str(tier_complete), str(added),
+	])
 
 func _on_floor_started(_floor_num: int) -> void:
 	# Per-floor summary is emitted by Dungeon when the floor is cleared (see

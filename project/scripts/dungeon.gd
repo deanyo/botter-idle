@@ -92,6 +92,15 @@ var run_biomes_visited: Array = []
 # real run-end. Scales later via bot upgrades / gear affixes.
 var revives_remaining: int = 0
 var retreats_this_run: int = 0
+# Active run modifiers (Crowded, Endless, etc). Set at run start from
+# save.branch_modifiers[branch_id]; cached here so spawn-time code paths
+# don't reload the save. Effects fold into enemy count, floor count,
+# rarity, gold, and chest counts.
+var active_modifiers: Array = []
+# Per-run resolved floor counts. Default to constants but Endless extends
+# them. _boss_floor always equals _floors_per_run (boss is final floor).
+var _floors_per_run: int = 6
+var _boss_floor: int = 6
 # Inventory cap drives auto-salvage when the bag fills up. Run-cached so
 # the per-pickup check doesn't re-read disk. _run_salvaged_* track the
 # stats reported in the run summary.
@@ -120,7 +129,10 @@ func _start_run() -> void:
 	loot_log.clear()
 	kills.clear()
 	journal.clear()
-	run_plan = BiomeData.roll_run_plan(rng, branch_id)
+	# Resolve modifiers up front so floor count + plan size reflect Endless
+	# and any future floor-shaping mods.
+	_resolve_active_modifiers()
+	run_plan = BiomeData.roll_run_plan(rng, branch_id, _floors_per_run)
 	if ambient_modulate == null:
 		ambient_modulate = CanvasModulate.new()
 		add_child(ambient_modulate)
@@ -788,7 +800,7 @@ func _update_biome_hud() -> void:
 
 func _spawn_enemies() -> void:
 	var pool: Array = []
-	var is_boss_floor: bool = current_floor >= C.BOSS_FLOOR
+	var is_boss_floor: bool = current_floor >= _boss_floor
 	var biome_pool: Array = current_biome.get("enemy_pool", [])
 	for id in enemy_data.keys():
 		var def: Dictionary = enemy_data[id]
@@ -831,7 +843,9 @@ func _spawn_enemies() -> void:
 		var enemy_id: String = String(enemy_pool[rng.randi_range(0, enemy_pool.size() - 1)])
 		_spawn_specific(enemy_id, cell)
 
-	var count: int = 4 + current_floor * 2
+	# Crowded modifier multiplies the spawn count.
+	var count_mult: float = RunModifiers.sum_effect(active_modifiers, "enemy_count_mult", 1.0)
+	var count: int = int(round((4 + current_floor * 2) * count_mult))
 	for i in count:
 		var id: String = pool[rng.randi_range(0, pool.size() - 1)]
 		var cell: Vector2i = _random_walkable_cell_far_from_bot()
@@ -844,6 +858,12 @@ func _spawn_enemies() -> void:
 		chest_count = 3
 	if portal_active:
 		chest_count += 1 + portal_loot_bias
+	# Treasure Hoard adds one chest per floor.
+	chest_count += int(RunModifiers.sum_effect(active_modifiers, "extra_chests_per_floor", 0.0))
+	# Hunted modifier: extra elite on the targeted floor.
+	if RunModifiers.has_extra_miniboss_on(active_modifiers, current_floor):
+		var elite_id2: String = _pick_miniboss_id(pool)
+		_spawn_miniboss(elite_id2, _pick_boss_room())
 	for i in chest_count:
 		var chest_cell: Vector2i = _random_walkable_cell_far_from_bot()
 		var bias: int = 0
@@ -853,7 +873,10 @@ func _spawn_enemies() -> void:
 			bias = 2
 		if portal_active:
 			bias = max(bias, portal_loot_bias)
-		_spawn_chest(chest_cell, rng.randi_range(1, 3), bias)
+		# Fortified modifier: chests carry more contents.
+		var contents_mult: float = RunModifiers.sum_effect(active_modifiers, "chest_contents_mult", 1.0)
+		var contents: int = int(round(float(rng.randi_range(1, 3)) * contents_mult))
+		_spawn_chest(chest_cell, contents, bias)
 
 	if rng.randf() < 0.35:
 		var fountain_cell: Vector2i = _random_walkable_cell_far_from_bot()
@@ -871,16 +894,16 @@ func _spawn_enemies() -> void:
 
 	# Portals: stepping on one swaps the floor to a themed mini-floor with
 	# bumped loot. Skip on portal floors themselves and on the boss/floor 1.
-	if not is_boss_floor and not portal_active and current_floor >= 2 and current_floor <= C.FLOORS_PER_RUN - 1:
+	if not is_boss_floor and not portal_active and current_floor >= 2 and current_floor <= _floors_per_run - 1:
 		if rng.randf() < 0.15:
 			var portal_cell: Vector2i = _random_walkable_cell_far_from_bot()
 			_spawn_portal(portal_cell)
 
 func _is_miniboss_floor(f: int) -> bool:
-	return f != C.BOSS_FLOOR and f in C.MINIBOSS_FLOORS
+	return f != _boss_floor and f in C.MINIBOSS_FLOORS
 
 func _is_final_boss_floor() -> bool:
-	return current_floor >= C.BOSS_FLOOR
+	return current_floor >= _boss_floor
 
 func _log(msg: String, tag: String = "combat") -> void:
 	if not journal.is_empty():
@@ -902,9 +925,11 @@ func _pick_branch_boss_id(pool: Array) -> String:
 
 func _branch_tier_mult() -> float:
 	# Reads from current_biome (set per floor in _build_floor). Defaults to
-	# tier 1 if missing or out of range.
+	# tier 1 if missing or out of range. Folds in the Bloodlust modifier
+	# (enemy_stat_mult) so it applies uniformly to every enemy spawn site.
 	var tier: int = clampi(int(current_biome.get("tier", 1)) - 1, 0, C.TIER_SCALE.size() - 1)
-	return float(C.TIER_SCALE[tier])
+	var mod_mult: float = RunModifiers.sum_effect(active_modifiers, "enemy_stat_mult", 1.0)
+	return float(C.TIER_SCALE[tier]) * mod_mult
 
 func _spawn_branch_boss(id: String, at_cell: Vector2i) -> void:
 	if not enemy_data.has(id):
@@ -1043,7 +1068,8 @@ func _on_enemy_died(actor: Actor) -> void:
 	else:
 		Effects.blood_splat(actor_layer, kill_pos)
 	bot.gain_xp(e.xp_reward)
-	var gold_drop: int = rng.randi_range(1, 5) + current_floor
+	var gold_mult: float = RunModifiers.sum_effect(active_modifiers, "gold_mult", 1.0)
+	var gold_drop: int = int(round(float(rng.randi_range(1, 5) + current_floor) * gold_mult))
 	bot.gold += gold_drop
 	kills[e.enemy_id] = kills.get(e.enemy_id, 0) + 1
 	loot_log.append("%s slain (+%d gold, +%d xp)" % [e.display_name, gold_drop, e.xp_reward])
@@ -1065,7 +1091,7 @@ func _on_enemy_died(actor: Actor) -> void:
 	# A boss-flagged enemy only ends the run if we're actually on the
 	# final-boss floor. Vault-stamped bosses on earlier floors are just
 	# strong elites — they shouldn't auto-win the run.
-	if e.is_boss and current_floor >= C.BOSS_FLOOR:
+	if e.is_boss and current_floor >= _boss_floor:
 		_end_run(true)
 		return
 
@@ -1078,16 +1104,22 @@ func _maybe_drop_item(e: Enemy) -> void:
 		threshold = 1.0
 	if roll > threshold:
 		return
-	var rarity: String = _roll_rarity(e.is_boss or e.is_miniboss)
-	var pool: Array = []
-	for id in items_db.keys():
-		if items_db[id].rarity == rarity:
-			pool.append(id)
-	if pool.is_empty():
-		return
-	var picked: String = pool[rng.randi_range(0, pool.size() - 1)]
-	var instance: Dictionary = _create_item_instance(picked)
-	_spawn_loot_drop(instance, e.cell)
+	# Boss Hunt modifier: branch boss drops 2× loot.
+	var drop_count: int = 1
+	if e.is_boss:
+		drop_count = int(round(RunModifiers.sum_effect(active_modifiers, "boss_loot_mult", 1.0)))
+		drop_count = maxi(drop_count, 1)
+	for _i in drop_count:
+		var rarity: String = _roll_rarity(e.is_boss or e.is_miniboss)
+		var pool: Array = []
+		for id in items_db.keys():
+			if items_db[id].rarity == rarity:
+				pool.append(id)
+		if pool.is_empty():
+			continue
+		var picked: String = pool[rng.randi_range(0, pool.size() - 1)]
+		var instance: Dictionary = _create_item_instance(picked)
+		_spawn_loot_drop(instance, e.cell)
 
 func _create_item_instance(base_id: String) -> Dictionary:
 	var base: Dictionary = items_db.get(base_id, {})
@@ -1242,7 +1274,13 @@ func _roll_rarity(is_boss: bool) -> String:
 		return "rare"
 	var floor_bonus: float = float(current_floor - 1) * 0.05
 	var blessing_bonus: float = bot.loot_rarity_bonus / 100.0 if is_instance_valid(bot) else 0.0
-	var r: float = rng.randf() - floor_bonus - blessing_bonus
+	# Tier baseline: tier 1 = 0, tier 5 = +0.20. Higher-tier branches
+	# always lean toward better loot even without modifiers.
+	var tier: int = int(current_biome.get("tier", 1))
+	var tier_bonus: float = float(tier - 1) * 0.05
+	# Modifier-driven rarity bias (Treasure Hoard, Glittering).
+	var mod_bonus: float = RunModifiers.sum_effect(active_modifiers, "rarity_bonus", 0.0)
+	var r: float = rng.randf() - floor_bonus - blessing_bonus - tier_bonus - mod_bonus
 	if r < 0.02: return "legendary"
 	if r < 0.10: return "epic"
 	if r < 0.25: return "rare"
@@ -1847,6 +1885,24 @@ func _push_inventory_to_hud() -> void:
 	if chrome != null:
 		chrome.update_inventory_segments(_loot_segments, items_db, _slot_cooldowns)
 
+# Pull this branch's rolled modifiers from save, clear them so the next
+# Outpost visit re-rolls fresh, and resolve floor count from any
+# Endless-style modifiers. Called from _start_run before roll_run_plan
+# so the plan is sized correctly.
+func _resolve_active_modifiers() -> void:
+	var save: Dictionary = SaveState.load_state()
+	var all_mods: Dictionary = save.get("branch_modifiers", {})
+	active_modifiers = (all_mods.get(branch_id, []) as Array).duplicate() if branch_id != "" else []
+	if branch_id != "" and all_mods.has(branch_id):
+		all_mods.erase(branch_id)
+		save["branch_modifiers"] = all_mods
+		SaveState.save_state(save)
+	if not active_modifiers.is_empty():
+		GrindLog.log_line("[run] modifiers=%s" % str(active_modifiers))
+	var extra_floors: int = int(RunModifiers.sum_effect(active_modifiers, "extra_floors", 0.0))
+	_floors_per_run = C.FLOORS_PER_RUN + extra_floors
+	_boss_floor = _floors_per_run
+
 # Auto-salvage: when inventory exceeds cap, walk segments oldest-first
 # and convert items to gold until back under. Only salvages items with
 # rarity at-or-below loot_filter (so a player who set filter=epic doesn't
@@ -2120,7 +2176,7 @@ func _descend() -> void:
 		portal_biome_override = {}
 		portal_loot_bias = 0
 	_log("Descended to floor %d." % (current_floor + 1))
-	if current_floor >= C.FLOORS_PER_RUN:
+	if current_floor >= _floors_per_run:
 		_end_run(true)
 		return
 	current_floor += 1

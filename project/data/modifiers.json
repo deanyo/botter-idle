@@ -1,0 +1,62 @@
+{
+  "_comment": "Per-deploy run modifiers. Outpost rolls 1-2 per branch; effects fold into dungeon.gd at run start. Effects are flat additions or multipliers — see dungeon._apply_run_modifiers for the engine glue. min_tier filters which branches a modifier can roll on (some are too punishing for tier 1 starters).",
+
+  "modifiers": [
+    {
+      "id": "treasure_hoard",
+      "name": "Treasure Hoard",
+      "desc": "+1 chest per floor, loot rarity bias.",
+      "min_tier": 1,
+      "effects": { "extra_chests_per_floor": 1, "rarity_bonus": 0.05 }
+    },
+    {
+      "id": "crowded",
+      "name": "Crowded",
+      "desc": "+50% enemy spawn count.",
+      "min_tier": 1,
+      "effects": { "enemy_count_mult": 1.5 }
+    },
+    {
+      "id": "endless",
+      "name": "Endless",
+      "desc": "+2 floors before the boss.",
+      "min_tier": 2,
+      "effects": { "extra_floors": 2 }
+    },
+    {
+      "id": "glittering",
+      "name": "Glittering",
+      "desc": "Loot drops one rarity tier higher.",
+      "min_tier": 1,
+      "effects": { "rarity_bonus": 0.15 }
+    },
+    {
+      "id": "bloodlust",
+      "name": "Bloodlust",
+      "desc": "Enemies hit harder; gold drops boosted.",
+      "min_tier": 2,
+      "effects": { "enemy_stat_mult": 1.3, "gold_mult": 1.3 }
+    },
+    {
+      "id": "fortified",
+      "name": "Fortified",
+      "desc": "Chests are stuffed — 2× contents.",
+      "min_tier": 1,
+      "effects": { "chest_contents_mult": 2.0 }
+    },
+    {
+      "id": "hunted",
+      "name": "Hunted",
+      "desc": "An extra elite stalks floor 3.",
+      "min_tier": 3,
+      "effects": { "extra_miniboss_on_floor": 3 }
+    },
+    {
+      "id": "boss_hunt",
+      "name": "Boss Hunt",
+      "desc": "Branch boss drops twice as much loot.",
+      "min_tier": 2,
+      "effects": { "boss_loot_mult": 2.0 }
+    }
+  ]
+}

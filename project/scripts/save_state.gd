@@ -67,6 +67,9 @@ static func _default() -> Dictionary:
 		# Tier 1 (the Dungeon) is unlocked from the start. Boss kills
 		# extend this list — see dungeon.gd boss_killed signal.
 		"unlocked_branches": ["dungeon"],
+		# Per-branch boss-kill counts. Drives the "clear every tier-N
+		# boss to unlock tier-(N+1)" progression rule. {branch_id: count}.
+		"bosses_killed": {},
 		# Death retreat: max revives per run. On HP=0 the bot respawns at
 		# floor 1 of the current branch instead of run-end, until revives
 		# run out. Scaling later via bot upgrade ranks / gear affixes.
@@ -80,6 +83,10 @@ static func _default() -> Dictionary:
 		# floors of this branch while the game was closed. Empty until the
 		# first deploy.
 		"last_branch": "",
+		# Per-branch run modifiers, rolled fresh on Outpost visit when
+		# empty. {branch_id: [modifier_id, ...]}. Cleared after a deploy
+		# of that branch so the next visit re-rolls.
+		"branch_modifiers": {},
 		# Reserved for future systems (gold-sink upgrades, prestige currency,
 		# offline-progress timestamps). Leaving the keys present means save
 		# loads don't need to add-with-defaults branches when those land.

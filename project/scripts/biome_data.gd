@@ -27,25 +27,28 @@ static func _ensure_loaded() -> void:
 	_biomes = parsed.get("biomes", {})
 	_run_plans = parsed.get("run_plans", [])
 
-static func roll_run_plan(rng: RandomNumberGenerator, branch_id: String = "") -> Array:
+static func roll_run_plan(rng: RandomNumberGenerator, branch_id: String = "", floors: int = -1) -> Array:
 	# Branch-locked plan: every floor of the run is the chosen branch's
 	# biome (boss floor uses the same biome with a stronger spawn). Empty
 	# branch_id = legacy random-roll plan — kept for showcase / debug.
+	# `floors` defaults to C.FLOORS_PER_RUN; modifiers like Endless override.
 	_ensure_loaded()
 	const C := preload("res://scripts/constants.gd")
+	if floors < 0:
+		floors = C.FLOORS_PER_RUN
 	if branch_id != "" and _biomes.has(branch_id):
 		var plan: Array = []
-		for i in C.FLOORS_PER_RUN:
+		for i in floors:
 			plan.append(branch_id)
 		return plan
 	var ids: Array = _biomes.keys()
 	if ids.is_empty():
 		var fallback: Array = []
-		for i in C.FLOORS_PER_RUN:
+		for i in floors:
 			fallback.append("dungeon")
 		return fallback
 	var rolled: Array = []
-	for i in C.FLOORS_PER_RUN:
+	for i in floors:
 		rolled.append(String(ids[rng.randi() % ids.size()]))
 	return rolled
 

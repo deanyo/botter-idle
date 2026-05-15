@@ -84,8 +84,22 @@ var inventory_grid: GridContainer
 func _ready() -> void:
 	items_db = _load_items()
 	state = SaveState.load_state()
+	_reroll_branch_modifiers()
 	_build_layout()
 	_render()
+
+# Per-Outpost-visit modifier roll. Every unlocked branch gets a fresh
+# 1-2 modifier set; the player picks based on what tonight's offer
+# looks like. Persists to save so a re-render uses the same set.
+func _reroll_branch_modifiers() -> void:
+	var rng := RandomNumberGenerator.new()
+	rng.randomize()
+	var unlocked: Array = state.get("unlocked_branches", ["dungeon"])
+	var rolled: Dictionary = {}
+	for branch_id in unlocked:
+		rolled[String(branch_id)] = RunModifiers.roll_for_branch(String(branch_id), rng)
+	state["branch_modifiers"] = rolled
+	SaveState.save_state(state)
 
 func _build_layout() -> void:
 	var view := get_viewport().get_visible_rect().size
@@ -154,22 +168,49 @@ func _make_tier_column(tier: int, unlocked: Array) -> Control:
 	return col
 
 func _make_branch_button(branch_id: String, is_unlocked: bool) -> Button:
+	# Button is the outer node so the whole cell (name + modifier strip)
+	# is one click target. The display label is set as the Button's text;
+	# modifier strip is a child Label drawn over the button face.
 	var b := Button.new()
-	b.custom_minimum_size = Vector2(120, 38)
+	b.custom_minimum_size = Vector2(150, 64)
 	# Display name from biomes.json — falls back to capitalised id.
 	# biomes use "the Dungeon" style names; trim the article for buttons.
 	var biome: Dictionary = BiomeData.get_biome(branch_id)
 	var display: String = String(biome.get("display_name", branch_id.capitalize()))
 	if display.to_lower().begins_with("the "):
 		display = display.substr(4)
-	b.text = display.capitalize() if display == display.to_lower() else display
+	var pretty: String = display.capitalize() if display == display.to_lower() else display
 	b.add_theme_font_size_override("font_size", 13)
+	# Modifier strip — pulled from save.branch_modifiers, set on Outpost open.
+	var mods: Array = state.get("branch_modifiers", {}).get(branch_id, [])
+	var mod_brief: String = RunModifiers.format_brief(mods) if is_unlocked else ""
 	if is_unlocked:
-		b.tooltip_text = "%s (CR %d recommended)" % [display, int(biome.get("cr_recommended", 0))]
+		# Full text: name on top, dim modifier line below. Use Button.text
+		# for the name + a child Label for the colored modifier strip so
+		# the modifier line can be a different color.
+		b.text = pretty
+		b.alignment = HORIZONTAL_ALIGNMENT_CENTER
+		var tooltip: String = "%s (CR %d recommended)" % [display, int(biome.get("cr_recommended", 0))]
+		var mod_tip: String = RunModifiers.format_tooltip(mods)
+		if mod_tip != "":
+			tooltip += "\n\n" + mod_tip
+		b.tooltip_text = tooltip
 		b.pressed.connect(func(): deploy_pressed.emit(branch_id))
+		if mod_brief != "":
+			var mod_lbl := Label.new()
+			mod_lbl.text = mod_brief
+			mod_lbl.position = Vector2(4, 38)
+			mod_lbl.size = Vector2(142, 24)
+			mod_lbl.add_theme_font_size_override("font_size", 10)
+			mod_lbl.add_theme_color_override("font_color", COL_AMBER)
+			mod_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			mod_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+			mod_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			b.add_child(mod_lbl)
 	else:
+		b.text = pretty
 		b.disabled = true
-		b.tooltip_text = "%s — locked. Clear a previous-tier boss to unlock." % display
+		b.tooltip_text = "%s — locked. Clear all branches in the previous tier to unlock." % display
 	return b
 
 func _make_panel(x: int, y: int, w: int, h: int, header: String) -> void:
