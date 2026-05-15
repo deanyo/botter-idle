@@ -53,20 +53,70 @@ func setup(cam: Camera2D, view_size: Vector2 = Vector2(540, 960)) -> void:
 	add_child(rect)
 
 func set_visibility_grid(fog: FogSystem) -> void:
-	if mat == null or fog == null or fog.vis_texture == null:
+	# Marks the shader as "fog active" — the per-cell visibility texture is
+	# no longer sampled (replaced by shader-side ray-march against
+	# wall_mask_tex). Callers still invoke this so we keep the entry point
+	# stable; it now only flips the in_use flag and records grid_size.
+	if mat == null or fog == null:
 		return
-	mat.set_shader_parameter("visibility_tex", fog.vis_texture)
 	mat.set_shader_parameter("grid_size", Vector2(float(fog.grid_w), float(fog.grid_h)))
 	mat.set_shader_parameter("visibility_in_use", 1.0)
+
+# Build (or rebuild) the wall mask texture from the dungeon's tile grid.
+# Called once per floor by dungeon._build_floor. R8: 1.0 = wall, 0.0 = walkable.
+# The shader ray-marches against this mask to test LoS — if any sample on
+# the ray from a fragment to the bot is opaque, the fragment is dark. This
+# replaces the per-cell binary visibility texture which produced the
+# tile-aligned "tick" and Bresenham stripe artifacts.
+var _wall_mask_image: Image = null
+var _wall_mask_tex: ImageTexture = null
+func set_wall_mask_from_grid(grid: Array) -> void:
+	if mat == null:
+		return
+	var h: int = grid.size()
+	var w: int = grid[0].size() if h > 0 else 0
+	if w == 0 or h == 0:
+		return
+	if _wall_mask_image == null or _wall_mask_image.get_width() != w or _wall_mask_image.get_height() != h:
+		_wall_mask_image = Image.create(w, h, false, Image.FORMAT_R8)
+	for y in h:
+		var row: Array = grid[y]
+		for x in w:
+			# Anything not in WALKABLE_TERRAIN blocks light. Doors block until
+			# opened — we treat any T_DOOR as walkable here so the interior of
+			# rooms isn't solid-black before entry.
+			var is_wall: bool = (row[x] == C.T_WALL)
+			_wall_mask_image.set_pixel(x, y, Color(1.0 if is_wall else 0.0, 0, 0, 1))
+	if _wall_mask_tex == null:
+		_wall_mask_tex = ImageTexture.create_from_image(_wall_mask_image)
+	else:
+		_wall_mask_tex.update(_wall_mask_image)
+	mat.set_shader_parameter("wall_mask_tex", _wall_mask_tex)
+	mat.set_shader_parameter("grid_size", Vector2(float(w), float(h)))
 
 func set_darkness(amount: float) -> void:
 	if mat:
 		mat.set_shader_parameter("base_darkness", clampf(amount, 0.0, 1.0))
 
-func update_lights(world_lights: Array, delta: float) -> void:
+var _last_bot_world: Vector2 = Vector2(INF, INF)
+var _last_bot_radius_px: float = -1.0
+
+# bot_world: continuous world-pixel position of the bot (centre of its sprite).
+# bot_radius_px: LoS radius in world pixels (cells × tile_size_px).
+# Both are pushed every frame so the shader ray-march tracks bot motion
+# smoothly between cell boundaries — fixes the "tick" that the per-cell
+# visibility texture produced.
+func update_lights(world_lights: Array, delta: float, bot_world: Vector2 = Vector2(INF, INF), bot_radius_px: float = 0.0) -> void:
 	if mat == null or camera == null:
 		return
 	elapsed += delta
+	if bot_world.x != INF:
+		if bot_world != _last_bot_world:
+			mat.set_shader_parameter("bot_world", bot_world)
+			_last_bot_world = bot_world
+		if not is_equal_approx(bot_radius_px, _last_bot_radius_px):
+			mat.set_shader_parameter("bot_radius_px", bot_radius_px)
+			_last_bot_radius_px = bot_radius_px
 	var n: int = mini(world_lights.size(), MAX_LIGHTS)
 	# Detect content change. Light list size + per-slot position/radius/
 	# intensity/color comparison. Cheap because n <= 24 and we early-exit
