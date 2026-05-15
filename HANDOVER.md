@@ -4,7 +4,220 @@ Point-in-time snapshot of what's actually shipping. Updated as we go. The
 durable rules and process live in `CLAUDE.md`; the roadmap and open work
 items live in `TODO.md`.
 
-Last refresh: 2026-05-14 (perf pass 2 — native Retina, fps min 19 → 119 on forge).
+Last refresh: 2026-05-15 (gameplay loop overhaul — full plan implemented).
+
+## Gameplay loop overhaul — 2026-05-15 (whole loop rebuilt)
+
+Marathon session. Implemented all 10 beats of `docs/gameplay-loop-plan.md`
+plus a smooth-fog rewrite, paperdoll renderer, three new commit-worthy
+visual reworks. The play loop is now Melvor-idle-shaped: pick branch →
+clear bosses → unlock the next tier → repeat with random per-deploy
+modifiers spicing each run.
+
+### What's new
+
+**Affix system (was 30 → now 6, all combat-wired):**
+- Strength (+ATK), Stamina (+HP), Agility (+DEF), Regen (+HP/sec), Crit
+  (+%), Haste (+%atk speed). No prefix/suffix split. `applies_to: ["any"]`
+  on all 6.
+- `actor.gd` rolls crit on every attack (1.5× multiplier on success).
+- `attack_interval` is per-actor mutable; bot's = `0.6 / (1 + haste/100)`.
+  Capped at 200% haste so interval doesn't drop below 0.2s.
+- Crit cap 75%. Regen flows from gear via `bot.recompute_stats`.
+- Item names simplified: `Iron Sword [+Strength, +Crit]` instead of
+  `Sharp Iron Sword of Butchery`.
+
+**Branch tier system (5 tiers, doc Appendix B):**
+- 24 biomes mapped to 5 tiers with `tier` + `cr_recommended` in
+  `biomes.json`. Tier 1 base, Tier 5 `5×` enemy stats via
+  `C.TIER_SCALE[tier-1]` folded into `_branch_tier_mult`.
+- `FLOORS_PER_RUN: 10 → 6` (5 regular + 1 boss). `BOSS_FLOOR=6`.
+  `MINIBOSS_FLOORS=[3]`.
+- Branch boss = strongest enemy in the branch's pool, ×3 hp / ×1.7 atk
+  / ×1.5 def on top of tier+floor mults. No bespoke per-branch enemy
+  data needed; future `boss_id` field on biomes can override.
+- Per-tier rarity baseline: T1 +0% .. T5 +20% in `_roll_rarity` so
+  higher tiers naturally drop better loot.
+
+**Stricter unlock progression:**
+- Clearing one tier-N boss unlocks tier-N siblings only.
+- Tier-(N+1) only opens when EVERY tier-N branch's boss is cleared at
+  least once. Tracked in `save.bosses_killed: {branch_id: count}`.
+- `boss_killed` signal in `dungeon.gd`; `main.gd::_on_boss_killed`
+  applies the rule and writes save. Prints `[unlock]` lines so progress
+  is visible in the editor stdout.
+- Fallback path: `_on_run_ended(victory=true)` re-runs `_on_boss_killed`
+  on the selected branch in case the signal silently failed.
+
+**Per-deploy run modifiers (`data/modifiers.json`):**
+- 8 modifiers gated by `min_tier`: Treasure Hoard, Crowded, Endless,
+  Glittering, Bloodlust, Fortified, Hunted, Boss Hunt.
+- Outpost rolls 1-2 per unlocked branch on every visit (60% one /
+  40% two), persists in `save.branch_modifiers`. Cleared after deploy
+  so the next visit re-rolls fresh.
+- Effects fold throughout: `enemy_count_mult`, `enemy_stat_mult`,
+  `extra_floors`, `rarity_bonus`, `extra_chests_per_floor`,
+  `chest_contents_mult`, `extra_miniboss_on_floor`, `boss_loot_mult`,
+  `gold_mult`. See `RunModifiers.sum_effect`.
+- Branch picker buttons show the rolled modifier strip ("+Crowded ·
+  +Glittering") with full descriptions in the hover tooltip.
+
+**Death retreat with revives stat:**
+- `save.max_revives` (default 3) → `revives_remaining` per run.
+- HP=0 → `_try_death_retreat`: kills the death-spin tween, resets the
+  rig transform, revives bot at full HP, respawns at floor 1 of the
+  same branch. Loot stays in `_loot_segments` and `_hud_inv_cache`.
+- When revives hit 0, real `_end_run(false)`. Run report shows
+  `Retreats: N` in red.
+- Lava death routes through retreat too (was a missing path).
+- `max_revives` is the scaling hook — bot upgrades / gear affixes can
+  bump it later.
+
+**Idle-friendly inventory loop:**
+- No more death loss — loot is loot, banked on victory or death.
+- `_loot_segments`: per-floor inventory sections. Base stash on top,
+  Floor-N segments append as floors complete. HUD renders newest-first
+  so latest pickups stay in view without scrolling.
+- Live equip from HUD: click an inventory cell → bot swaps in-place.
+  Per-slot 30s cooldown (countdown overlays the paperdoll equipped
+  slot, NOT every same-slot inventory item — visual was misleading).
+  Refusing-during-cooldown logs to combat log.
+
+**Gear bloat controls:**
+- `save.loot_filter` (default `"common"`) — bot walks past loot below
+  this rarity. `LootDrop.should_skip` checks a static rank cached at
+  run start (no disk hit in AI hot path).
+- `save.inventory_cap` (default 50). On pickup, `_maybe_auto_salvage`
+  walks segments oldest-first and converts items at-or-below the
+  filter rarity to gold until under cap. Starter gear excluded.
+- Salvage values: common 2g / uncommon 6 / rare 18 / epic 60 /
+  legendary 200. Tunable in `_SALVAGE_VALUES`.
+- Outpost "Bot Instructions" panel: filter dropdown + `Inventory: X / N`
+  readout (folds in Pouch upgrade contribution).
+
+**Bot upgrades (`data/bot_upgrades.json` + `scripts/bot_upgrades.gd`):**
+- 6 upgrades: Conditioning (+5 HP/rank), Combat Training (+1 ATK/rank),
+  Toughening (+1 DEF/rank), Quick Reflexes (+2% crit/rank), Loot Sense
+  (+10% rarity bias/rank), Pouch (+10 inventory cap/rank).
+- Cost curves per the doc (×2.5/rank).
+- Stats fold into `bot.recompute_stats` via
+  `BotUpgrades.total_for_stat(state, stat)`. Loot Sense is set once at
+  `apply_gear` (blessing-style stat).
+- Outpost upgrades section: scrollable list with rank N/M, "Buy — Xg"
+  button (greyed unaffordable, "MAXED" when full).
+
+**Offline progress (`scripts/offline_progress.gd`):**
+- `save_state.save_state` stamps `last_seen_timestamp` on every save.
+- `last_branch` written on deploy.
+- On launch (skipped in grind/debug-jump): `OfflineProgress.apply`
+  computes `elapsed = min(now - last_seen, 3600s)`. Below 60s = no
+  progress.
+- Estimated floors/sec scales with bot CR vs branch `cr_recommended`
+  (clamped 22..360s/floor). ~4 loot drops per floor on average; loot
+  honors the player's filter. Per-tier gold: T1 ~10g/floor → T5
+  ~1150g/floor.
+- "While You Were Away" `AcceptDialog` on the main menu reports
+  branch / minutes / floors / loot / gold. One-shot, cleared after.
+
+### Stuck-detection rewrite
+
+Old code counted frames (`STUCK_RECOVERY_THRESHOLD = 360`). On 120Hz
+ProMotion that was 3s — well under the 6s the original comment intended.
+Plus zero carve-outs for legitimate idle states. Result: bot teleporting
+to stairs mid-boss-fight or while opening a chest.
+
+New behavior (`_check_stuck` + `_try_death_retreat`):
+- Delta-time accumulator, refresh-rate independent.
+- Carve-outs reset the timer to zero every frame: `bot_interacting`,
+  `bot.path.size() > 0`, `_has_combat_engaged_enemy()` (any live enemy
+  within `AGGRO_ENGAGE_RANGE = 5` cells, Chebyshev). Boss fights
+  no longer count as idle.
+- 4-tier escalation: warn at 6s, soft repath at 10s, hard reset at 18s,
+  last-resort teleport-to-stairs at 30s. Each tier logs.
+
+### UI rework — Outpost (was Garage), shared paperdoll, smoother chrome
+
+`scripts/garage.{gd,uid,tscn}` removed; replaced by
+`scripts/outpost.{gd,uid,tscn}`. Three-pane DCSS chrome: paperdoll left,
+stats center, inventory right. Branch picker at the bottom.
+
+**Shared paperdoll renderer (`scripts/paperdoll_renderer.gd`):**
+Builds a layered Sprite2D rig (base bot + boots/armor/helm/shield/weapon
+overlays at anatomical anchors). Used by:
+- In-game bot via `bot.gd::_refresh_gear_overlays`. Removed the
+  hardcoded `armor_mummy.png` body and the "every weapon = battleaxe"
+  test-mode hack. Equipped weapon/armor/helm/shield/boots all show
+  their actual sprites now.
+- HUD sidebar paperdoll panel (rebuilt on `update_equipped`).
+- Outpost paperdoll pane.
+- Main menu vignette.
+Same `Node2D` rig + `scale` knob — what's in inventory matches what
+fights in the dungeon.
+
+**New gear overlay assets** under `assets/tiles/player/`:
+- `body/` — `armor_chain.png`, `armor_leather.png`, `armor_plate.png`,
+  `armor_robe.png` (plus existing `armor_mummy.png`)
+- `helm/` — `helm_cap.png`, `helm_crested.png`
+- `shield/` — `shield_buckler.png`
+- `boots/` — `boots_brown.png`
+- `weapons/` — `weapon_dagger.png`, `weapon_sword.png`, `weapon_axe.png`,
+  `weapon_claymore.png` (plus existing battleaxe/dagger/long_sword/etc)
+- `bot_lantern.png` removed (was a mistakenly-equipped-as-overlay icon
+  from a previous test).
+
+**Rarity decoration on item cells** (`UITheme.add_rarity_cell_decor`):
+1px square border in rarity color + inset halo (rarity-tinted edge ring
+fading to dark center). Halo strength scales with rarity (common 0% ..
+legendary 55%). Replaces the old silhouette outline shader for
+inventory + equipped slots. Floor loot drops keep the silhouette glow
+(`loot_drop.gd::_make_glow_texture` — different system).
+
+**HUD sidebar reshape:**
+- Dropped XL/Turn (mystery values).
+- Added Crit / Haste / Regen so all 6 stats are visible at a glance.
+- Loot log moved to bottom strip; segmented inventory grid renders
+  newest-first.
+- Tooltips unified via `AffixSystem.format_item_tooltip` —
+  `Iron Brigandine [+Strength] [Common]\n+7 DEF +80 HP\n+4 ATK`.
+- Fixed mouse-filter regressions: bag/sidebar/minimap `ColorRect`s set
+  to `MOUSE_FILTER_IGNORE` so tooltips reach the underlying buttons.
+
+**Main menu refresh** — two-column splash, bot vignette pulls saved bot's
+gear/stats. "Reset Save" dialog requires typing `reset`. "Create Character
+(soon)" placeholder for later.
+
+**Theme constants** (`scripts/ui_theme.gd`) — single source of truth for
+colors, font sizes, rarity tints. GDScript const-expression rules force
+inline duplicates in each consumer; UITheme is the documentation reference.
+
+### Smooth shader-driven fog of war
+
+Replaced cell-aligned Bresenham FoV with shader-side ray-march.
+`fog_overlay.gdshader` does per-fragment LoS to the bot's continuous
+world position against a wall-mask texture (`R8`: 1=wall, 0=walkable),
+24 march steps with linear filtering for soft occlusion.
+
+Fixes:
+- The "tick" every tile (cell-aligned visibility texture only refreshed
+  when `bot.cell` changed).
+- Christmas-cracker corridor stripes (Bresenham rays to grid-aligned
+  perimeter cells).
+- Hard occlusion edges (now soft via per-step density accumulation).
+- Grey halo bleed past map edges (OOB samples treated as wall;
+  `oob_factor` clamps OOB fragments to opaque black).
+- Grey ticking trails behind the bot (`tile_visibility.gdshader` was
+  independently fading each tile based on the old per-cell texture —
+  bypassed; tiles now render full alpha and the overlay is the only
+  fog source).
+
+CPU `FogSystem` still runs for AI gating, journal, minimap dimming, and
+actor visibility. Just no longer drives the visual.
+
+`FogOverlay.set_wall_mask_from_grid(grid)` builds the mask once per
+floor. `FogOverlay.update_lights(..., bot_world, bot_radius_px)` pushes
+bot world position every frame (diff-checked).
+
+---
 
 ## Perf pass 2 — 2026-05-14 (native Retina + 1×)
 
@@ -307,9 +520,19 @@ hardware after these opts.
 
 ## Core gameplay loop — fully working
 
-Garage → Deploy → 10-floor dungeon → Run report → back to Garage with new loot
-→ equip → redeploy. Boss on floor 10 (Minotaur). Mini-bosses on floors 5/10/15/20/25
-(1.8× HP, 1.4× ATK, larger sprite, red tint, "Greater [Enemy]" name).
+Main menu → Outpost (pick branch) → Deploy → 6-floor dungeon → Run report
+→ Outpost with new loot → equip / spend gold on upgrades → redeploy.
+
+- **Boss floor = 6** (5 regular + 1 boss), single miniboss floor at 3.
+- **Branch boss** = strongest enemy in the branch's pool, scaled to boss
+  tier. Each tier multiplies enemy stats by `TIER_SCALE[tier-1]`
+  (1.0/1.4/2.0/3.2/5.0).
+- **Stricter unlock**: clearing one tier-N boss opens tier-N siblings;
+  clearing every tier-N boss opens tier-(N+1).
+- **Death retreat**: HP=0 spends a revive (default 3/run). When revives
+  run out the run actually ends.
+- **Per-deploy modifiers**: each branch button shows 1-2 rolled
+  modifiers (Crowded, Endless, etc) refreshed on every Outpost visit.
 
 ## Bot AI
 
@@ -432,10 +655,10 @@ counter does not advance during the side-trip.
 - **Loot drops**: Items physically drop on floor with rarity-coded glow + idle
   wobble. Bot kneels (squish + lean) to pick up. Rarity-scaled pickup
   duration (common 0.35s → legendary 0.8s).
-- **Affix system**: 30 affixes (Sharp, Vicious, of Vigor, of Fortune, etc).
-  Roll 0-4 per item by rarity. Items get "Sharp Iron Sword of Vigor"-style
-  names. 5 stats wired to combat (hp/atk/def/hp_pct/atk_pct); 24 others parse
-  but don't affect gameplay yet.
+- **Affix system**: 6 affixes (Strength, Stamina, Agility, Regen, Crit,
+  Haste). Roll 0-4 per item by rarity. Items get
+  "Iron Sword [+Strength, +Crit]"-style names. ALL 6 are combat-wired.
+  Cap: 75% crit, 200% haste.
 - **Interactables**: chests (burst items in arcs on open), fountains (heal
   40-60% HP, bot only stops if injured), altars (22 god-themed
   run-ephemeral blessings — Trog/Okawaru/Zin/Elyvilon/Vehumet/Kiku/Sif Muna
@@ -449,12 +672,23 @@ counter does not advance during the side-trip.
 
 ## Fog of war + dynamic lighting
 
-Radius-based reveal (FogSystem `REVEAL_RADIUS=7`) plus `PointLight2D`-driven
-lighting from world sources (altars, fountains, lava, legendary loot, lit
-chests). Tile sprites have a 3-state visibility system (UNSEEN/EXPLORED/VISIBLE)
-applied as per-cell modulate.
+**Shader-driven ray-march** (`assets/fog_overlay.gdshader`). Per-fragment
+LoS from screen pixel to bot's continuous world position against a
+wall-mask texture. 24 march steps, linear-filtered mask, soft occlusion
+via per-step density accumulation. Smooth as the bot moves, walls block
+lights cleanly, no tile-aligned ticks.
 
-**Walls don't yet block vision** — that's the line-of-sight upgrade in TODO.
+External lights (torches, sconces, fire dragons) ray-march against the
+same mask so they don't leak through walls. Out-of-bounds fragments are
+forced to opaque black so light halos don't bleed past the map edge.
+
+CPU `FogSystem` still runs for AI gating + journal + minimap dimming +
+actor visibility (per-cell binary "can the bot see this enemy"). Just
+doesn't drive the visual anymore.
+
+`PointLight2D`-driven additive lighting from world sources (altars,
+fountains, lava, legendary loot, lit chests, fire/ice creatures) layers
+on top of the fog overlay.
 
 ### Organic flicker + ember particles
 
@@ -690,14 +924,36 @@ The 4-field form `biome,vault,floor,1` enables screenshot mode (the
 
 ## Open balance knobs (next time we touch combat)
 
-- **Vault frequency** — currently ~75-83% per floor with retry-up-to-16
-  candidates. Feels right; may need to dial back for atmosphere on some
-  biomes.
-- **Common gear power** — Rusty Dagger is +16 ATK on a 6 ATK base.
-  Starter bot is dramatically stronger than a no-gear bot. May want to
-  trim early-tier item stats once playtesting reveals balance gaps.
-- **24 affix stats not yet wired into combat** (crit, lifesteal, gold
-  find, dodge, regen, thorns, etc). Affix system rolls them on items
-  and prints them in tooltips but they have no gameplay effect.
+- **Vault frequency** — ~75-83% per floor. Feels right; may need to dial
+  back for atmosphere.
+- **Affix tier values** — `data/affixes.json` is conservative right now
+  (Strength tier-3 = +7 ATK, Crit legendary = +22%). Tune as playtesting
+  reveals what feels good. Crit/haste caps in `bot.recompute_stats`
+  (75/200) are also tunable.
+- **Modifier difficulty** — Bloodlust ×1.3 enemy stats might be too
+  punishing in tier 1; min_tier 2 was the band-aid. Tune `data/modifiers.json`
+  effects.
+- **Bot upgrade costs** — `data/bot_upgrades.json` matches the doc's
+  ×2.5/rank curve. Re-evaluate once gold-per-tier feels real.
+- **Salvage gold values** — common 2g .. legendary 200g in
+  `_SALVAGE_VALUES`. Currently doesn't feel exciting for low rarities.
 - **Aggro range cap (8 cells)** is conservative; may be too restrictive
-  on bigger 80×80 maps where cluster combat would feel more alive.
+  on 80×80 maps.
+
+## Save state schema (current)
+
+`save_state.gd::_default()` returns:
+- `gold, level, xp` — bot stats
+- `inventory: Array[item_instance]` — loose stash
+- `equipped: {weapon, armor, helm, boots, shield}` — slots
+- `runs_completed, highest_floor` — meta progress
+- `unlocked_branches: Array[branch_id]` — starts `["dungeon"]`
+- `bosses_killed: {branch_id: count}` — drives stricter unlock rule
+- `max_revives: int` — death retreat budget per run (default 3)
+- `loot_filter: String` — bot's pickup threshold ("common".."legendary")
+- `inventory_cap: int` — auto-salvage threshold (default 50)
+- `last_branch: String` — for offline progress
+- `branch_modifiers: {branch_id: [modifier_id, ...]}` — current Outpost rolls
+- `bot_upgrades: {upgrade_id: rank}` — gold-sink purchases
+- `shards: int` — prestige currency stub
+- `last_seen_timestamp: int` — Unix time, drives offline calc

@@ -5,52 +5,82 @@ the durable rules in `CLAUDE.md`. Update this file when committing.
 
 ---
 
-## Active — next session
+## Gameplay loop overhaul — DONE 2026-05-15
 
-Full gameplay loop plan written: **`docs/gameplay-loop-plan.md`** (2026-05-15).
-This is the primary reference for all loop-shaping work. Implements in 10
-beats ordered by dependency. Read it before any of the items below.
+All 10 beats from `docs/gameplay-loop-plan.md` implemented + several
+extras. Latest snapshot lives in `HANDOVER.md` "Gameplay loop overhaul"
+section. 5 commits ahead of `origin/main`:
 
-Summary of what changed direction:
-- Runs are now **6 floors** (5 regular + 1 boss), not random 10. Branch is
-  player-selected in Garage, not random.
-- Biomes organised into **5 tiers** gated by CR + boss kills. All 24 biomes
-  assigned. See `docs/gameplay-loop-plan.md` Appendix B.
-- **Affixes slimmed to 5**: Strength / Stamina / Agility / Regen / Crit.
-  Old 30-affix system replaced in full. See Part 3.
-- **Gear bloat solved**: inventory cap 50, loot filter (player sets min rarity
-  for bot to pick up), auto-salvage below threshold → gold.
-- **Death is a retreat**, not a run-end. Bot respawns floor 1 of same branch.
-  Enables 1h+ unattended play.
-- **Offline progress**: delta-time loot calc on load, capped at 1h.
-- **Bot upgrades**: permanent gold-sink purchases (Conditioning, Combat Training,
-  etc.) that persist across prestige.
-- **Gold economy** defined per tier. See Part 7.
+```
+52a9ab5 Stricter progression + per-deploy run modifiers
+70aff1b Death retreat + gear bloat + bot upgrades + offline progress
+5fad84a Smooth shader-driven fog of war
+6ead4a6 UI rework — Outpost (was Garage), shared paperdoll, rarity decor
+b88eb83 Gameplay loop overhaul — 6 affixes + branch tiers + idle-friendly inventory
+```
 
-Pending beats (follow plan order):
+Beat status:
+- ✅ **Beat 1 — Affix simplification** (6 affixes — added Haste vs the
+  doc's 5; crit + haste wired in `actor.gd`; no save migration, dev saves
+  nuked instead)
+- ✅ **Beat 2 — Branch tier data** (`biomes.json` tagged tier 1-5 +
+  cr_recommended; `constants.gd` FLOORS_PER_RUN 10→6, MINIBOSS_FLOORS [3],
+  TIER_SCALE [1.0, 1.4, 2.0, 3.2, 5.0])
+- ✅ **Beat 3 — Save state expansion** (unlocked_branches, bosses_killed,
+  max_revives, loot_filter, inventory_cap, last_branch, branch_modifiers,
+  bot_upgrades, shards, last_seen_timestamp)
+- ✅ **Beat 4 — Branch-aware run plan** (BiomeData.roll_run_plan accepts
+  branch_id + floors; runtime tier scaling at spawn; branch boss = strongest
+  pool member; boss_killed signal)
+- ✅ **Beat 5 — Death retreat with revives stat** (max_revives default 3;
+  HP=0 → revive at floor 1 of same branch; lava death routed through
+  retreat too)
+- ✅ **Beat 6 — Gear bloat** (loot_filter + inventory_cap + auto-salvage,
+  Outpost UI surfaced)
+- ✅ **Beat 7 — Bot upgrades** (data/bot_upgrades.json with 6 upgrades,
+  Outpost upgrades panel, stats fold into bot.recompute_stats)
+- ✅ **Beat 8 — Branch picker UI** (Outpost tier-grouped picker, locked
+  branches dimmed, modifier strip per branch)
+- ✅ **Beat 9 — Offline progress** (last_seen_timestamp on save,
+  OfflineProgress.apply on launch, "While You Were Away" AcceptDialog)
+- ⬜ **Beat 10 — Run report unlock prominence** — boss kill writes save
+  + emits boss_killed signal, but the run report doesn't yet visually
+  highlight first-clear unlocks above the loot list. The unlock IS
+  surfaced via `[unlock]` print + the next Outpost visit shows new
+  branches available; just no "BRANCH UNLOCKED" banner in the report.
+  ~30m if/when desired.
 
-- ⬜ **Beat 1 — Affix simplification** (`affixes.json` replace + crit wiring
-  in `actor.gd` + save migration). ~1–2h.
-- ⬜ **Beat 2 — Branch tier data** (`biomes.json` + `enemies.json` bosses +
-  `constants.gd` floor count changes + TIER_SCALE). ~1h.
-- ⬜ **Beat 3 — Save state migration** (new fields + `_migrate()`). ~30m.
-- ⬜ **Beat 4 — Branch-aware run plan** (`BiomeData` + `dungeon.gd` scaling +
-  boss spawn + unlock signal). ~1–2h.
-- ⬜ **Beat 5 — Death retreat** (retreat instead of run-end). ~1h.
-- ⬜ **Beat 6 — Gear bloat** (loot filter + inventory cap + auto-salvage). ~1–2h.
-- ⬜ **Beat 7 — Bot upgrades** (`bot_upgrades.json` + Garage tab). ~2–3h.
-- ⬜ **Beat 8 — Branch picker UI** (Garage branch list + CR indicator). ~2–3h.
-- ⬜ **Beat 9 — Offline progress** (delta-time loot on load + "While Away" screen). ~1–2h.
-- ⬜ **Beat 10 — Run report: unlock prominence** (boss-kill unlock shown first). ~30m.
+Bonus beats shipped beyond the doc:
+- **Smooth shader-driven fog of war** (replaces the cell-aligned Bresenham
+  FoV). See HANDOVER.
+- **Shared paperdoll renderer** — one rig builder used by in-game bot,
+  HUD, Outpost, and main menu. Removes the "every weapon = battleaxe"
+  test-mode hack and the hardcoded mummy armor.
+- **Per-deploy run modifiers** (8 modifiers, Outpost picker shows the
+  rolled set). User-requested addition to encourage backtracking.
+- **Stricter unlock progression** — clearing every tier-N boss to open
+  tier-(N+1), instead of the doc's "any 1 boss". User call.
+- **Per-tier rarity baseline** in `_roll_rarity` so high-tier branches
+  naturally drop better loot.
+- **UI consistency pass** — palette/font unification, rarity outline
+  → square border + inset halo, unified item tooltips everywhere.
+- **Stuck-detection rewrite** — frame-counts → delta-time, carve-outs
+  for combat / interaction / pathing. Bot no longer teleports mid-boss-
+  fight on 120Hz displays.
 
-Previous "run planning UI in Garage" item is superseded by Beats 4 + 8 above.
+Remaining gameplay-loop-shaped work:
 
-Other queued work (lower priority than the gameplay loop beats):
-
-- **Garage / run_report layout review** — both scenes still use the
-  portrait-era VBox layouts. Probably readable on 1600×900 but worth
-  a once-over to use the wider canvas (e.g. equipped + inventory side
-  by side, stats column on the right).
+- ⬜ **Run report unlock prominence** (Beat 10) — show "TIER N CLEARED —
+  Tier (N+1) unlocked!" above the loot list when applicable.
+- ⬜ **Sword item plan** (`docs/items-swords-plan.md`) — full re-roster of
+  1H swords with `flavor_tags`, `drop_weights`, lore. Pending the same
+  pass for axes/maces/staves/armor and a rebuild of the sprite-pack to
+  match.
+- ⬜ **Bespoke per-branch bosses** — currently boss = strongest pool
+  member. Doc's Hydra/Lich/Vault Warden/etc would need 24+ new enemies
+  in `enemies.json` (HP/ATK/sprite/etc). Add a `boss_id` field on the
+  biome to override the pool-pick; ship the 7 endgame uniques first
+  (per the items plan).
 
 ## Perf — done for now
 
@@ -94,16 +124,15 @@ Remaining items are all "nice to have" / "validate on other hardware":
   loot-rarity visual iteration. Bot patrols a fixed path so each
   station enters its light radius in turn.
 
-## Combat pass (queued)
+## Combat pass — partly shipped 2026-05-15
 
-User flagged for a future session:
-- **Affix expansion** — wire crit / lifesteal / regen / dodge / thorns
-  from items into combat. Currently 5 of 30 affixes affect gameplay; the
-  other 25 are decorative. ~3h.
-- **Real paper-doll** — not just weapon overlay. Body armor / helm /
-  boots / shield / cloak each get a sprite layer matched to equipped
-  item. ~1 day. Atlas already catalogs 975 paperdoll sprites.
-- **Enemy attack effects** — currently bot has weapon overlay + swing
+- ✅ **Affix expansion** — collapsed to 6 affixes, all 6 wired
+  (Strength/Stamina/Agility/Regen/Crit/Haste). The old 30-affix system
+  with 24 decorative stats is gone.
+- ✅ **Real paper-doll** — `paperdoll_renderer.gd` builds layered Sprite2D
+  rig from equipped weapon/armor/helm/shield/boots. Used in-game and
+  on every UI surface.
+- ⬜ **Enemy attack effects** — currently bot has weapon overlay + swing
   animation. Enemies just have hit_squish on hit. Add per-enemy attack
   animations: dragon breath, mage cast, archer shoot.
 
@@ -231,17 +260,21 @@ The "1.5 variety pass" originally listed as 9 sub-stages. Status:
 
 ### Phase C — bot AI + idle loop (the actual game)
 
-This is the only Botter-unique creative work:
+This is the only Botter-unique creative work. Big chunks shipped 2026-05-15:
 
 - ⬜ Configurable bot priorities (started — proximity-ranked behavior).
-  Config UI in Garage screen. Bot AI now has aggro range cap (8 cells),
-  current-room loot priority, low-HP retreat. Player exposing these as
-  Garage sliders is the next step.
-- ⬜ Run-config: which branches to attempt, gear loadout, behavioral
-  preferences (greed vs caution, melee vs ranged).
-- ⬜ Idle reward curves (offline progress, time-gated rewards).
-- ⬜ Meta-progression (prestige, permanent unlocks, gear stash).
-- ✅ Visual presentation (fog, lighting, sprite FX, edge overlays).
+  Bot AI has aggro range cap (8 cells), current-room loot priority,
+  low-HP retreat. Exposing these as Outpost sliders is still pending.
+- ✅ Run-config: branch picker in Outpost. Per-deploy modifier rolls
+  offer flavour variation. Behavioral preferences (greed vs caution,
+  melee vs ranged) still pending.
+- ✅ Idle reward curves — offline progress capped at 1h, "While You
+  Were Away" summary on launch.
+- ⬜ Meta-progression — `bot_upgrades` shipped (gold sink, permanent).
+  Prestige (`shards`) field reserved in save state; no implementation
+  yet.
+- ✅ Visual presentation (smooth fog, paperdoll, rarity decor, segmented
+  inventory).
 
 ## Generation pipeline — DCSS-faithful gaps
 
@@ -351,9 +384,10 @@ debug-jump's per-biome 1-floor mode.
 - ⬜ **Doors** — 30 door sprites, none used (vault `+` renders as plain floor)
 - ⬜ **Traps** — 24 trap sprites, none used
 - ⬜ **Effects** — 238 effect frames (blood, fire, ice, magic), none used
-- ⬜ **Player paper-doll** — 975 layered sprites for custom bot appearance.
-  Deferred to post-MVP cosmetics. Architecture sketch: base body + per-slot
-  overlays, `equipped` dict picks `tile_override` per slot.
+- ✅ **Player paper-doll** — `scripts/paperdoll_renderer.gd` builds layered
+  Sprite2D rig from `equipped`. Used in-game + every UI surface. Asset
+  set added under `project/assets/tiles/player/` (body/, helm/, shield/,
+  boots/, weapons/). 975+ sprites still available for variety expansion.
 - ✅ **God altar variants** — expanded from 7 to 22. Beogh/Makhleb/Yred/
   TSO/Lugonu/Jiyva/Fedhas/Cheibriados/Xom/Ashenzari/Dithmenos/Gozag/
   Qazlal/Nemelex/Ru added with thematic blessings + glow colors.
