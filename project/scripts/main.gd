@@ -98,7 +98,9 @@ func _ready() -> void:
 		SaveState.debug_mode = true
 	# Invincible bot in grind mode — lets us reach floor 10 reliably so the
 	# audit covers late-floor generation. Live playtest is unaffected.
-	if auto_grind:
+	# Balance experiments (/duel, /sweep) opt out via BOTTER_NO_INVINCIBLE=1
+	# so build comparisons can actually fail and produce a win-rate signal.
+	if auto_grind and not OS.has_environment("BOTTER_NO_INVINCIBLE"):
 		DebugJump.bot_invincible = true
 	# Screenshot mode: set up audit-resolution window FROM SCENE START so the
 	# Dungeon can render once at the right size without mid-capture mutations.

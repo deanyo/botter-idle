@@ -402,6 +402,40 @@ debug-jump's per-biome 1-floor mode.
   shows the pattern: an autoload TCP server accepts JSON commands. Worth
   porting if we ever need a 24-biome audit in one shot.
 
+## Tooling — balance pipeline (shipped 2026-05-20)
+
+- ✅ `BOTTER_SEED=<int>` — seeds dungeon rng + Godot global rng. Same
+  seed + same save = byte-identical world. Per-floor reseed so combat
+  doesn't consume world entropy.
+- ✅ `BOTTER_NO_INVINCIBLE=1` — opt out of grind invincibility so duels
+  produce real win-rate signal. Set automatically by /duel and /sweep.
+- ✅ `tools/inject_save.py` — JSON build spec → debug save. Validates
+  ids/tiers/branches. Affix shorthand reads tier values from affixes.json.
+- ✅ `[combat]` log tag in actor.gd — per-attack structured event
+  (attacker, defender, weapon, damage, crit, boss flag).
+- ✅ `tools/parse_grind.py` — shared dataclass parser. CLI mode for
+  ad-hoc inspection.
+- ✅ `tools/balance.py` — harness for /duel and /sweep. Includes
+  `run_grind`, `inject`, `append_index`, marker hygiene.
+- ✅ `/equip` skill — shorthand build-spec parser. Validates and
+  writes to debug save.
+- ✅ `/duel` skill — A/B test two builds across same N seeds. Wilson
+  CI on win rate, paired stats, damage attribution.
+- ✅ `/sweep` skill — vary one parameter across N runs. @set tokens
+  (@legendary, @epic_weapon, etc) for item sweeps. --affix --tiers
+  for stat curve sweeps. Ranked output table.
+- ⬜ **Parallel runner** — sweeps are sequential. Multiple Godot
+  instances would cut wall-clock by core count (~50-min sweep → ~10min).
+  Need to handle save state isolation per worker (each worker writes
+  to its own user_data dir or uses --user-data-dir override).
+- ⬜ **HP-loss telemetry** — `[combat] dealt` is bot-attacker only
+  meaningfully populated. For "did bot survive narrowly" we need HP
+  curves over time. Add `[hp] f=N t=N hp=N max=N` line per second-ish.
+- ⬜ **Cross-branch sweeps** — `--branches dungeon,lair,forge` to
+  compare a build's win rate across tiers. Build when needed.
+
+See `docs/balance-pipeline.md`.
+
 ## Tooling — items pipeline (shipped 2026-05-20)
 
 - ✅ `tools/item_editor.html` — slot-tabbed browser editor (1H Swords /

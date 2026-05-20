@@ -165,9 +165,34 @@ func attempt_attack(other: Actor, delta: float) -> int:
 	# Crit roll: on success multiply raw damage before defense subtraction so
 	# crit feels meaningful even against high-DEF targets.
 	var raw: int = atk
+	var crit: bool = false
 	if crit_chance > 0.0 and randf() * 100.0 < crit_chance:
 		raw = int(round(float(raw) * CRIT_MULTIPLIER))
-	return other.take_damage(raw)
+		crit = true
+	var dealt: int = other.take_damage(raw)
+	# [combat] emitted only during instrumented runs (GrindLog enabled = grind/
+	# benchmark mode). Per-attack volume is fine in batches but spams playtests.
+	if GrindLog._enabled:
+		GrindLog.log_line("[combat] atk=%s def=%s wpn=%s raw=%d crit=%s dealt=%d def_hp=%d boss=%s mb=%s" % [
+			combat_label(),
+			other.combat_label() if is_instance_valid(other) else "?",
+			combat_weapon_id(),
+			raw,
+			"1" if crit else "0",
+			dealt,
+			other.hp if is_instance_valid(other) else 0,
+			"1" if other is Enemy and (other as Enemy).is_boss else "0",
+			"1" if other is Enemy and (other as Enemy).is_miniboss else "0",
+		])
+	return dealt
+
+# Subclasses override (Bot returns "bot", Enemy returns enemy_id).
+func combat_label() -> String:
+	return "actor"
+
+# Bot overrides to return its equipped weapon's base_id; Enemy returns "".
+func combat_weapon_id() -> String:
+	return ""
 
 func _play_death_then_emit() -> void:
 	if fx == null:

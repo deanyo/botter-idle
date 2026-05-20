@@ -4,7 +4,121 @@ Point-in-time snapshot of what's actually shipping. Updated as we go. The
 durable rules and process live in `CLAUDE.md`; the roadmap and open work
 items live in `TODO.md`.
 
-Last refresh: 2026-05-20 (items pipeline migration — 234 items live).
+Last refresh: 2026-05-20 (balance pipeline + items pipeline).
+
+## Balance pipeline — 2026-05-20
+
+The bot plays itself, so balance experiments are unusually tractable. New
+toolchain enables headless A/B comparisons across deterministic seed
+sequences — settle "is X stronger than Y" questions in minutes instead
+of hours of human playtest.
+
+### Skills
+
+- **`/equip <build>`** (`.claude/skills/equip/`) — write a loadout to
+  the debug save without launching Godot. Shorthand syntax:
+  `weapon=demon_blade,Strength5,Crit4 armor=crystal_plate,Stamina5
+   level=30 branch=forge`. Validates against items.json / affixes.json
+  / biomes.json. Affix shorthand `<Name><Tier>` looks up the actual
+  value from affixes.json (Strength5 → 18 ATK).
+- **`/duel <a> -- <b> [-N 20]`** (`.claude/skills/duel/`) — A/B test two
+  builds across the same N seeds. Same world, different gear. Returns
+  paired comparison: win rate ± 95% Wilson CI, avg floor, avg kills,
+  avg elapsed, damage by weapon. Writes per-run logs + summary line to
+  `logs/balance/index.jsonl`.
+- **`/sweep --slot W --values @legendary [-N 10]`** (`.claude/skills/sweep/`)
+  — vary one parameter across many runs. Two flavors:
+  - Item sweep: `--slot weapon --values demon_blade,runed_warsword,...`
+    or `--values @legendary` / `@epic_armor` / `@helm`.
+  - Affix sweep: `--affix crit --tiers 1,2,3,4,5`.
+  Returns ranked table. Uses same seed sequence per variant for paired
+  comparison.
+
+### Foundation
+
+- **Seedable RNG** (`BOTTER_SEED=<int>`). `dungeon.gd` seeds both its
+  `RandomNumberGenerator` and Godot's global rng (`seed()`). Each floor
+  build re-seeds the global stream from world rng so combat doesn't
+  consume world entropy between floors. **Same seed + same save = byte-
+  identical floor sequence + byte-identical combat.** `[run] start ...
+  seed=N` stamps the seed for traceability.
+- **`tools/inject_save.py`** — JSON build spec → `botter_save_debug.json`.
+  Validates item ids / affix ids / branch ids. Affix shorthand
+  `["strength", 5]` reads tier-5 value from affixes.json automatically.
+  Item shorthand `"demon_blade"` = `{"base_id": "demon_blade"}`.
+  Flags: `--reset`, `--dry-run`, `-` for stdin. Routes everything
+  through the debug save so playtests are untouched.
+- **`[combat]` log tag** in `actor.gd::attempt_attack`. Per-attack
+  structured line: `atk=<id> def=<id> wpn=<weapon_id> raw=N crit=0|1
+  dealt=N def_hp=N boss=0|1 mb=0|1`. Gated on `GrindLog._enabled` so
+  playtests don't spam. Bot/Enemy override `combat_label()` and
+  `combat_weapon_id()` for clean attribution. ~250 events/run at 16x.
+- **`tools/parse_grind.py`** — shared parser, returns dataclasses
+  (`GrindResult`, `RunResult`, `FloorResult`, `CombatEvent`). Used by
+  every balance skill. CLI mode for ad-hoc inspection:
+  `python3 tools/parse_grind.py logs/grind/<latest>.log --combat`.
+- **`tools/balance.py`** — harness for skill scripts.
+  `run_grind(seed, runs, speed, label, invincible)` drives Godot
+  headless, returns when COMPLETE line appears. `inject(spec)` wraps
+  inject_save. `append_index(entry)` appends one JSON line to
+  `logs/balance/index.jsonl`. Sets `BOTTER_NO_INVINCIBLE=1` by default
+  so balance experiments produce real win/loss signal.
+
+### `BOTTER_NO_INVINCIBLE=1`
+
+`main.gd` sets `DebugJump.bot_invincible = true` for grind mode by
+default (so /grind reaches floor 10 reliably for procgen audit).
+Balance skills set `BOTTER_NO_INVINCIBLE=1` to opt out, so build
+differences actually translate to win/loss outcomes. Pass
+`--invincible` on duel/sweep to override (useful when you only care
+about clear time / damage output, not survival).
+
+### Determinism caveats
+
+Combat IS deterministic under `BOTTER_SEED` — same seed + same build
+= identical kills, identical damage rolls. This is reproducibility,
+not a bug. It means seed sensitivity matters: a 20-run duel covers 20
+different floor sequences, not 20 random combat samples. If you need
+combat variance, set seeds to a wider range (e.g. `--seed-base 100
+-N 50`).
+
+Different builds on the same seed will diverge floor-by-floor as
+combat speed differences propagate (build A clears faster, lands on
+floor 2 with different HP, fights the same vault but with different
+aggro state, etc). The pairing is "same world, different gear" — not
+"same fight, different gear" — but that's what we want for build
+comparison.
+
+### Where data lives
+
+```
+logs/balance/
+├── index.jsonl                                     # one line per experiment
+├── 20260520-180312_grind_duel_demon_s1.log         # per-run log
+├── 20260520-180345_grind_duel_demon_s2.log
+└── 20260520-180712_grind_sweep_arc_blade_s1.log
+```
+
+`index.jsonl` schema: `{ts, kind, label, params, a, b}` for duels,
+`{ts, kind, label, params, ranked: [...]}` for sweeps. Query with `jq`.
+
+### Smoke-test findings (preliminary)
+
+A 2-run /duel of demon_blade vs rusty_dagger and a 3-variant /sweep
+across legendary swords on forge-T5 (level 30 unequipped) both came
+back with **0% win rate across all variants**, with bloodbane and
+demon_blade reaching floor 3-5 vs rusty_dagger floor 1-3.
+
+Two real findings from those 4 minutes of automated testing:
+1. Forge-T5 is genuinely undertuned for level-30 unequipped bots —
+   the difficulty curve may be too steep at the boss floor.
+2. Bloodbane (regen-tagged) outperforms demon_blade (raw ATK) despite
+   demon_blade's higher base damage — suggests the regen affix is doing
+   meaningful work even without the bespoke lifesteal mechanic wired.
+
+These are exactly the kind of insights the pipeline was built to surface.
+
+See `docs/balance-pipeline.md` for the full docs.
 
 ## Items pipeline — 2026-05-20
 

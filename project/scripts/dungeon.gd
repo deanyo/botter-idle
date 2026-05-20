@@ -119,7 +119,22 @@ var run_turn: int = 0
 @onready var camera: Camera2D = $Camera
 
 func _ready() -> void:
-	rng.randomize()
+	# BOTTER_SEED=<int> seeds the world-rng stream (vault picks, loot rolls,
+	# affix rolls, generator). Same seed = same floor sequence + same loot.
+	# Combat rng (per-attack crit on Actor.attack) is the global stream
+	# (randf/randi without an rng), seeded separately so it stays its own
+	# axis of variance — duels can converge or diverge on combat skill.
+	var seed_env: String = OS.get_environment("BOTTER_SEED")
+	if seed_env != "" and seed_env.is_valid_int():
+		var s: int = int(seed_env)
+		rng.seed = s
+		# Also seed the global rng for the few class-level callers
+		# (altar.gd / portal.gd setup-time picks, dcss_layouts.gd carve
+		# step direction). These are "world" decisions, not combat.
+		seed(s)
+		print("[seed] world_rng=%d" % s)
+	else:
+		rng.randomize()
 	enemy_data = _load_json(ENEMIES_PATH)
 	items_db = _load_items(ITEMS_PATH)
 	# FlickerDriver animates every PointLight2D with a "flicker" meta dict.
@@ -199,7 +214,7 @@ func _start_run() -> void:
 	# will pick this up on its next update_biome_hud tick.)
 	if chrome != null:
 		_push_inventory_to_hud()
-	GrindLog.log_line("[run] start hp=%d/%d level=%d gold=%d" % [bot.hp, bot.max_hp, bot.level, bot.gold])
+	GrindLog.log_line("[run] start hp=%d/%d level=%d gold=%d seed=%d" % [bot.hp, bot.max_hp, bot.level, bot.gold, rng.seed])
 	_build_floor()
 
 func _build_floor() -> void:
@@ -289,6 +304,11 @@ func _async_build_floor() -> void:
 	var vault_themes: Array = current_biome.get("vault_themes", ["dungeon"])
 
 	var seed_val: int = rng.randi()
+	# Reseed the global stream from world rng each floor build, so combat
+	# rng (randf in actor.gd) doesn't consume world entropy between floors.
+	# Otherwise a duel where build-A crits more than build-B on floor N
+	# would generate different floor N+1 layouts despite identical seed.
+	seed(rng.randi())
 	var gen := DungeonGen.new(seed_val)
 	var layout_id: String = BiomeData.roll_layout(current_biome, rng)
 	# Biome may override map size (e.g. portal vaults need bigger floors).

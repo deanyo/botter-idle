@@ -217,6 +217,15 @@ func _refresh_gear_overlays() -> void:
 		if weapon_light_id != "":
 			LightSpec.attach(weapon_sprite, weapon_light_id, Vector2.ZERO)
 
+func combat_label() -> String:
+	return "bot"
+
+func combat_weapon_id() -> String:
+	var wpn: Variant = equipped.get("weapon", null)
+	if wpn == null or typeof(wpn) != TYPE_DICTIONARY:
+		return ""
+	return String(wpn.get("base_id", ""))
+
 func swing_weapon(toward: Vector2) -> void:
 	if not is_instance_valid(weapon_sprite):
 		return

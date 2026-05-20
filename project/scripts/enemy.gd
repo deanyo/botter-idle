@@ -9,3 +9,6 @@ var is_miniboss: bool = false
 var aggro_range: int = 8
 var repath_timer: float = 0.0
 const REPATH_INTERVAL := 0.8
+
+func combat_label() -> String:
+	return enemy_id if enemy_id != "" else "enemy"
