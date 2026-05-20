@@ -166,6 +166,47 @@ duel.py "weapon=demon_blade level=30 branch=forge" -- \
 Output: same build, only modifier differs. Win rate delta = how much
 those modifiers actually punish you.
 
+## Analysis tools
+
+- **`tools/analyze_affix_sweep.py`** — cross-branch tier × branch grid for
+  the latest N affix sweeps in `index.jsonl`. Shows win rate / avg floor /
+  avg kills / elapsed per cell, plus tier-1 → tier-N slope per branch.
+- **`tools/analyze_floor_deaths.py`** — histogram of which floor kills the
+  bot. Reads grind logs (default `logs/balance/*.log`). Identifies death
+  cliffs (largest deaths-up jump) and the most-deadly floor.
+
+## Findings — first experiments (2026-05-20)
+
+### Crit affix tier curve (120 grinds, dungeon/vaults/forge × tiers 1-5 × N=8)
+
+Headline: **the experiment was statistically inconclusive in an informative
+way.** N=8 produced overlapping CIs, but the secondary metrics revealed
+real signal:
+
+- **Crit is a kill-rate stat, not a survival stat.** kills/run scaled
+  linearly with tier (~30% boost from t1→t5 at vaults/forge), but death
+  floor was unchanged. More crit = more enemies dead, same time-to-die.
+- **Cross-branch curve is identical** — crit doesn't shine more at high
+  tiers vs T1. If the design intent was "crit becomes powerful at endgame",
+  current numbers don't realize it.
+- **The bot dies on floors 4-5, not the boss floor.** Floor distribution
+  histogram showed 34% of deaths happen on floor 4 (the +17 deaths jump
+  from floor 3 → 4 is the biggest cliff). This is a difficulty-curve
+  finding, not an affix one.
+
+### What this means for tuning
+
+- Crit tier values in `data/affixes.json` may need a non-linear curve
+  (legendary should be qualitatively different, not just larger numbers)
+  OR a secondary effect (crits heal, refund cooldown, AoE) to differentiate
+  from raw Strength.
+- Floor 4 death cliff suggests miniboss damage on floor 3 + no healing
+  spawns sets up the bot to die on floor 4 with no cushion. Either
+  guarantee a fountain on floors 1-3 or reduce floor-3 miniboss damage.
+- Sample-size lesson: N=8 is good for kills/elapsed-style continuous
+  metrics, too small for win-rate categorical signal. Use N=30+ when the
+  question is "does this build win more often."
+
 ## What's not yet built
 
 - **Parallel runner** — sweeps are currently sequential. ~30s/grind ×

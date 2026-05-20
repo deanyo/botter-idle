@@ -115,7 +115,10 @@ def run_grind(seed: int, runs: int = 1, speed: int = 16,
     """
     log_path = new_log_path("grind", label)
     if timeout_s is None:
-        timeout_s = max(60.0, runs * 60.0)
+        # 90s/run is safe at 16x — most runs finish in 25-50s, but a tanky
+        # build navigating dense vaults can stretch to 80s+. Tuned upward
+        # after seeing 60s clip live grinds mid-floor-4.
+        timeout_s = max(120.0, runs * 90.0)
 
     USER_DATA.mkdir(parents=True, exist_ok=True)
     GRIND_MARKER.write_text(f"{speed},{runs}\n")
