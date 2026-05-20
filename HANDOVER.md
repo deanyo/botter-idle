@@ -102,23 +102,31 @@ logs/balance/
 `index.jsonl` schema: `{ts, kind, label, params, a, b}` for duels,
 `{ts, kind, label, params, ranked: [...]}` for sweeps. Query with `jq`.
 
-### Smoke-test findings (preliminary)
+### Findings from first production runs (2026-05-20)
 
-A 2-run /duel of demon_blade vs rusty_dagger and a 3-variant /sweep
-across legendary swords on forge-T5 (level 30 unequipped) both came
-back with **0% win rate across all variants**, with bloodbane and
-demon_blade reaching floor 3-5 vs rusty_dagger floor 1-3.
+210 grinds across two experiments, ~165 min wall-clock. Full writeup
+in `docs/balance-findings-2026-05-20.md`. Headlines:
 
-Two real findings from those 4 minutes of automated testing:
-1. Forge-T5 is genuinely undertuned for level-30 unequipped bots —
-   the difficulty curve may be too steep at the boss floor.
-2. Bloodbane (regen-tagged) outperforms demon_blade (raw ATK) despite
-   demon_blade's higher base damage — suggests the regen affix is doing
-   meaningful work even without the bespoke lifesteal mechanic wired.
+- **Strength is undertuned at endgame.** +18 ATK (legendary) is a
+  wasted slot — 0 wins out of 15 in the 6-affix matrix. Killing isn't
+  the bottleneck; chip damage is.
+- **Crit has the same problem.** More crits = more kills, same death
+  floor. Crit5 + Strength5 tied for worst HP-lost.
+- **Regen is overtuned.** +10 HP/sec (legendary) had median HP-lost = 0
+  — the bot heals faster than enemies damage it at vaults T4. Cap or
+  rate-limit needed.
+- **Floor 4-5 cliff is real.** 34-37% of all deaths happen on these
+  floors across both experiments. Likely floor-3 miniboss damage with
+  no fountain pre-floor-3.
+- **Stamina/Agility balanced about right.** Haste competitive with
+  Strength.
 
-These are exactly the kind of insights the pipeline was built to surface.
+Methodology lessons: HP-lost is 20× higher-resolution than win-rate
+at small N. Use N=30+ for categorical signal. Same-seed paired
+comparison works correctly.
 
-See `docs/balance-pipeline.md` for the full docs.
+See `docs/balance-pipeline.md` for the toolchain, `docs/balance-
+findings-2026-05-20.md` for the analysis writeup.
 
 ## Items pipeline — 2026-05-20
 
