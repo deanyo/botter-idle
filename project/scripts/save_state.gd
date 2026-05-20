@@ -61,6 +61,11 @@ static func _default() -> Dictionary:
 			"helm": null,
 			"boots": null,
 			"shield": null,
+			# Jewellery slots reserved — manifests authored under tools/items_*_manifest.json
+			# but not yet wired to combat/paperdoll. Reading code defaults to null.
+			"ring1": null,
+			"ring2": null,
+			"amulet": null,
 		},
 		"runs_completed": 0,
 		"highest_floor": 0,

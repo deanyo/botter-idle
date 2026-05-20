@@ -72,15 +72,33 @@ Remaining gameplay-loop-shaped work:
 
 - ⬜ **Run report unlock prominence** (Beat 10) — show "TIER N CLEARED —
   Tier (N+1) unlocked!" above the loot list when applicable.
-- ⬜ **Sword item plan** (`docs/items-swords-plan.md`) — full re-roster of
-  1H swords with `flavor_tags`, `drop_weights`, lore. Pending the same
-  pass for axes/maces/staves/armor and a rebuild of the sprite-pack to
-  match.
+- ✅ **Item plan** (`docs/items-plan.md`) — DONE 2026-05-20. 234 items
+  shipped across all 7 slots (47 swords / 32 helms / 47 armor / 27 shields
+  / 20 boots / 35 rings / 26 amulets), `flavor_tags` + `drop_weights` +
+  lore on every item, manifest-driven editor + sync pipeline. See
+  HANDOVER "Items pipeline" section.
+- ⬜ **Rings/amulets full wiring** — items + schema slots in save_state
+  ready, but `paperdoll_renderer.gd::SLOT_DIRS` has no jewellery entries,
+  `outpost.gd::SLOTS` const doesn't include ring1/ring2/amulet, HUD
+  tooltips don't render jewellery. ~1.5h of work. Natural follow-up
+  to the items pipeline migration.
+- ⬜ **2H weapons / axes / maces / staves manifests** — 14 legacy
+  entries (bearded_axe, chipped_claymore, dawnbreaker, fanged_dirk,
+  highland_claymore, honed_dagger, iron_shortsword, mithril_blade,
+  runed_warsword, shadowfang, steel_sword, thunder_cleaver, voidpiercer,
+  worldsplitter) were pruned during the 1H-only items migration.
+  DCSS has sprites for all of these (`spwpn_glaive_of_prune`, `urand_wrath_of_trog`,
+  `spwpn_scepter_of_torment`, `urand_arc_blade` etc). Same manifest +
+  editor + sync workflow as 1H swords. ~1h per slot.
+- ⬜ **First flavor-tag mechanic wired** — pick a simple one (vampiric
+  lifesteal, fire DoT, precision crit-multiplier) and wire it
+  end-to-end in `actor.gd`. Validates the tag → mechanic pipeline
+  before all 30 tags accumulate. ~45m.
 - ⬜ **Bespoke per-branch bosses** — currently boss = strongest pool
   member. Doc's Hydra/Lich/Vault Warden/etc would need 24+ new enemies
   in `enemies.json` (HP/ATK/sprite/etc). Add a `boss_id` field on the
-  biome to override the pool-pick; ship the 7 endgame uniques first
-  (per the items plan).
+  biome to override the pool-pick; ship the 7 endgame sword uniques
+  first (per the items plan — they exist in items.json now).
 
 ## Perf — done for now
 
@@ -252,8 +270,13 @@ The "1.5 variety pass" originally listed as 9 sub-stages. Status:
 
 - ⬜ `enemies.json` — replace stats with DCSS `mon-data.h` values (decades-
   tuned). Currently using a mix of hand-rolled and partial ports.
-- ⬜ `items.json` + affix system — port from DCSS item definitions and `ego`
-  enum. Currently 30 hand-rolled affixes; DCSS has more.
+- ✅ `items.json` — DONE 2026-05-20. 234 items across 7 slots, base types
+  derived from DCSS `item-prop.cc` and `item-prop-enum.h` jewellery enum.
+  Manifest-driven via `tools/items_*_manifest.json` + `tools/item_editor.html`
+  + `tools/sync_items.py`. **Affixes are still the simplified 6-stat system
+  from the gameplay-loop overhaul** (Strength/Stamina/Agility/Regen/Crit/Haste);
+  the DCSS `ego` enum is documented as `flavor_tags` for future-mechanic
+  wiring but doesn't drop additional stats today.
 - ⬜ `biomes.json` → eventually rename to `branches.json`. One entry per
   real DCSS branch with its actual generator id, enemy pool, vault tags,
   ambient features.
@@ -378,6 +401,23 @@ debug-jump's per-biome 1-floor mode.
   `tugcantopaloglu/godot-mcp` (cloned to `/Users/dyo/claude/external/godot-mcp-fork`)
   shows the pattern: an autoload TCP server accepts JSON commands. Worth
   porting if we ever need a 24-biome audit in one shot.
+
+## Tooling — items pipeline (shipped 2026-05-20)
+
+- ✅ `tools/item_editor.html` — slot-tabbed browser editor (1H Swords /
+  Helms / Armor / Shields / Boots / Rings / Amulets). Per-slot manifests
+  in `tools/items_*_manifest.json`. Drop-weight sliders, flavor-tag
+  toggles, sprite picker with slot-aware filters. Serve via
+  `python3 -m http.server` from repo root.
+- ✅ `tools/sync_items.py` — full or partial sync. Copies sprites from
+  `dcss/Dungeon Crawl Stone Soup Full/` → `project/assets/tiles/items/`
+  (and `player/<slot>/` for paperdoll), merges into
+  `project/data/items.json` by item id. Flags: `--dry-run`,
+  `--prune-legacy`. Run from repo root.
+- ✅ Drop-weight integration — `dungeon.gd::_pick_loot_id(rarity)` + 3
+  loot-path call sites + `offline_progress.gd::_roll_loot` filter.
+  Items respect `drop_weights[branch_tier-1]`; uniques tracked per-run
+  via `run_dropped_uniques`.
 
 ## Asset utilization — gaps
 

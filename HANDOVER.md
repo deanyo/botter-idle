@@ -4,7 +4,142 @@ Point-in-time snapshot of what's actually shipping. Updated as we go. The
 durable rules and process live in `CLAUDE.md`; the roadmap and open work
 items live in `TODO.md`.
 
-Last refresh: 2026-05-15 (gameplay loop overhaul — full plan implemented).
+Last refresh: 2026-05-20 (items pipeline migration — 234 items live).
+
+## Items pipeline — 2026-05-20
+
+The full gear catalogue moved from a 75-item hand-rolled list to a manifest-
+driven 234-item pool spread across all 7 equip slots. Workflow is editor →
+export → sync script → live data.
+
+### What shipped
+
+**7 manifest files under `tools/`:**
+
+| File | Slot | Items | Coverage |
+|---|---|---|---|
+| `items_manifest.json` | weapon (1H sword) | 47 | 55% of available DCSS sword sprites |
+| `items_helms_manifest.json` | helm | 32 | 46% |
+| `items_armor_manifest.json` | armor | 47 | 39% (rest is `_new`/`_old` art-revamp dupes) |
+| `items_shields_manifest.json` | shield | 27 | 38% |
+| `items_boots_manifest.json` | boots | 20 | 100% of base feet sprites (DCSS itself sparse) |
+| `items_rings_manifest.json` | ring | 35 | 71% |
+| `items_amulets_manifest.json` | amulet | 26 | 63% |
+
+Each item carries `id`, `name`, `slot`, `rarity`, `tile`, `atk`/`def`/`hp`,
+plus new fields: `item_tier` (1-5), `base_type` (DCSS-derived), `flavor_tags`
+(future-mechanic intent), `lore`, `drop_weights[T1..T5]`, `unique`.
+
+Base types are sourced from DCSS `item-prop.cc` (armor AC values, weapon
+damage/speed) and `item-prop-enum.h` (jewellery enum). Stat bands respect
+the project number ceiling (~1500 HP / ~300 ATK / ~100 DEF endgame).
+
+Total uniques: 39 across all slots, each with a documented
+`future_mechanic` payload (lifesteal, freeze chance, set bonuses, etc.).
+
+### `tools/item_editor.html` — slot-tabbed editor
+
+Browser tool. Tabs: 1H Swords / Helms / Armor / Shields / Boots / Rings /
+Amulets. Each tab loads the matching manifest, shows tier-grouped item
+cards with sprite previews, drop-weight bars, and rarity pills. Click a
+card to edit: name / base type / item tier / rarity / atk-def-hp /
+flavor-tag toggles / drop-weight sliders / lore. Sprite picker offers
+slot-aware filters (e.g. helms tab: All / Hats-Caps / Helmets / Artefacts).
+**⬇ Export** downloads `items_<slot>.json` for sync.
+
+Serve via `python3 -m http.server` from repo root, visit
+`http://localhost:8080/tools/item_editor.html`.
+
+### `tools/sync_items.py` — manifest → items.json + sprite copy
+
+CLI:
+```
+python3 tools/sync_items.py                    # full sync (all 7 manifests)
+python3 tools/sync_items.py items_armor.json   # partial sync from editor export
+python3 tools/sync_items.py --dry-run          # preview, no writes
+python3 tools/sync_items.py --prune-legacy     # drop items.json entries lacking base_type
+```
+
+What it does:
+1. Walks each manifest, finds the source PNG under `dcss/Dungeon Crawl Stone Soup Full/` or `Supplemental/`.
+2. Copies into `project/assets/tiles/items/<stem>.png` (inventory icon).
+3. For `weapon/armor/helm/shield/boots`, also copies into
+   `project/assets/tiles/player/<slot-dir>/<stem>.png` (paperdoll overlay).
+4. Skips copies if destination has identical content (md5 dedup).
+5. Merges into `project/data/items.json` by `id` — replaces matching IDs,
+   preserves non-manifest items unless `--prune-legacy`.
+6. Sorts items by slot → item_tier → id for stable diffs.
+7. Reports inserts / updates / prunes / orphans.
+
+Item IDs are the merge key. New schema fields are added on update;
+non-manifest items keep their original shape.
+
+### Drop-weight integration in `dungeon.gd`
+
+New `_pick_loot_id(rarity)` helper at `dungeon.gd:1269`:
+- Filters items by `drop_weights[branch_tier-1] > 0` for the current
+  biome's tier (tier read from `current_biome.tier`).
+- Weight-picks within the rarity tier.
+- Excludes items already in `run_dropped_uniques` if they're flagged
+  `unique: true`. Tracker resets on run start.
+- Falls back to flat weight 1 for legacy items without `drop_weights`,
+  so any non-manifest items still drop at all tiers until covered.
+
+Wired into 3 loot paths:
+- `_maybe_drop_item` (enemy kill drops)
+- `_apply_vault_results` (vault loot marks)
+- `_on_chest_opened` (chest contents)
+
+`offline_progress.gd::_roll_loot` got the same `drop_weights[tier-1] > 0`
+filter so the "While You Were Away" pool respects branch tier too.
+
+### Save state schema
+
+`save_state.gd::_default()` reserves `ring1`, `ring2`, `amulet` slots in
+the `equipped` dict (null defaults). Existing iterators (`bot.gd::recompute_stats`,
+`offline_progress.gd`, `outpost.gd`, `main_menu.gd`) all use `equipped.get(slot, null)`
+defensively, so null jewellery is a no-op until paperdoll/HUD wiring lands.
+
+### Migration outcome
+
+Before: 75 items, hand-rolled, all using flat-rarity drop logic.
+After:  234 items in `project/data/items.json` (387 sprite assets copied),
+        14 legacy axe/claymore entries pruned (their slots have no manifest yet),
+        drop_weights live in 3 loot paths + offline simulation,
+        starter gear (rusty_dagger, tattered_hide) preserved with new
+        sprites and added schema fields.
+
+Validated: 3-run grind (16× speed), all victorious, 56 loot pickups
+across 15 floors, zero stalls, zero errors. Loot rolls drew from items.json
+across T1 (dungeon, lair) through T5 (pandemonium, tomb) biomes.
+
+### Iteration workflow now
+
+1. Open `tools/item_editor.html` (any slot tab)
+2. Edit stats, drop weights, sprites, lore — hit ⬇ Export
+3. Drop the export into the chat / pass to `python3 tools/sync_items.py <export.json>`
+4. Reload Godot — items.json + sprite assets are in sync
+
+`tools/items_manifest.json` (and its 6 siblings) are the source of truth
+for the editor. Direct edits to those manifest files also flow through
+`sync_items.py` on full-sync.
+
+### What's not yet wired
+
+- **Rings/amulets paperdoll/HUD** — schema slots exist, items in items.json,
+  but `paperdoll_renderer.gd::SLOT_DIRS` has no entries for `ring1/ring2/amulet`,
+  `outpost.gd::SLOTS` only iterates the 5 wired slots, and HUD tooltips
+  don't render jewellery. Bot can technically equip from inventory but
+  nothing visible changes. Next session.
+- **Per-tag mechanics** — flavor tags currently route to affix-bonus stats
+  (documented in `docs/items-plan.md`). Real mechanics (lifesteal, fire DoT,
+  freeze chance, dragon-bane, set bonuses) need per-tag wiring in
+  `actor.gd`. None implemented yet.
+- **2H weapons / axes / maces / staves manifests** — the 14 legacy weapons
+  pruned in this pass (claymores, war swords, axes, cleavers) deserve
+  their own manifests. DCSS has plenty of sprites for these
+  (`spwpn_glaive_of_prune`, `urand_wrath_of_trog`, `spwpn_scepter_of_torment`,
+  etc.). Same workflow as 1H swords.
 
 ## Gameplay loop overhaul — 2026-05-15 (whole loop rebuilt)
 

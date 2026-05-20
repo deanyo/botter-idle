@@ -37,7 +37,8 @@ Background-friendly. Mobile-first.
 - **`docs/`** — biome audit, branch research dossier, vault audit
   (long-form references).
 - **`project/`** — the Godot project. Open this in the editor.
-- **`tools/`** — atlas builder + viewer (offline tooling).
+- **`tools/`** — atlas builder + viewer, biome editor, item editor +
+  per-slot manifests, `sync_items.py` (manifest → items.json + sprites).
 
 **Hard rule**: **when committing to git, update `HANDOVER.md` and `TODO.md`
 to match what just shipped or got deferred.** They're the source of truth

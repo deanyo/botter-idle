@@ -100,11 +100,17 @@ static func _roll_loot(state: Dictionary, items_db: Dictionary, floors: int, bio
 	# Filter floor — match player's loot filter so bot doesn't "pick up"
 	# stuff they'd skip live.
 	var filter_rank: int = LootDrop.RARITY_RANK.get(String(state.get("loot_filter", "common")), 0)
-	# Build a slot pool from items_db.
+	# Build a slot pool from items_db. Filter by drop_weights[tier-1] > 0 so
+	# offline loot respects the same tier gating as live runs. Items missing
+	# drop_weights stay eligible at all tiers (legacy fallback).
+	var idx: int = clampi(tier, 1, 5) - 1
 	var pool: Array = []
 	for id in items_db.keys():
 		var item: Dictionary = items_db[id]
 		if int(LootDrop.RARITY_RANK.get(String(item.get("rarity", "common")), 0)) < filter_rank:
+			continue
+		var dw: Array = item.get("drop_weights", [])
+		if dw.size() == 5 and float(dw[idx]) <= 0.0:
 			continue
 		pool.append(id)
 	if pool.is_empty():

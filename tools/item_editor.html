@@ -3,6 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <title>Botter — Item Editor</title>
+<style id="slot-tab-style">
+  #slot-tabs {
+    display: flex; gap: 2px; align-items: center; margin-right: 8px;
+  }
+  .slot-tab {
+    padding: 4px 10px; font-size: 12px; cursor: pointer; border: 1px solid #3a3a45;
+    background: #1a1a1f; color: #888; border-radius: 3px; font-weight: 600;
+  }
+  .slot-tab:hover { border-color: #6cb0ff; color: #ccc; }
+  .slot-tab.active { background: #2e2e38; border-color: #6cb0ff; color: #6cb0ff; }
+  .slot-tab .slot-count { font-size: 10px; color: #555; margin-left: 4px; }
+  .slot-tab.active .slot-count { color: #6cb0ff; }
+</style>
 <style>
   :root {
     --bg: #1a1a1f;
@@ -243,10 +256,8 @@
 <body>
 
 <div id="topbar">
-  <h1>Item Editor — 1H Swords</h1>
-  <select id="slot-filter" onchange="applyFilters()">
-    <option value="weapon">Weapons (1H Swords)</option>
-  </select>
+  <h1 id="topbar-title">Item Editor</h1>
+  <div id="slot-tabs"></div>
   <div id="status"></div>
   <div class="spacer"></div>
   <button onclick="addItem()">+ New item</button>
@@ -281,9 +292,7 @@
     <div id="picker-head">
       <strong>Pick Sprite</strong>
       <div id="picker-filter">
-        <button class="active" onclick="setPickerCategory('all',this)">All weapons</button>
-        <button onclick="setPickerCategory('sword',this)">Swords</button>
-        <button onclick="setPickerCategory('artefact',this)">Artefacts</button>
+        <!-- Rebuilt by renderPickerFilterBar() per active slot -->
       </div>
       <input type="text" id="picker-search" placeholder="filter…" oninput="renderPicker()">
       <button onclick="closePicker()">Close</button>
@@ -293,10 +302,77 @@
 </div>
 
 <script>
-const MANIFEST_PATH = "items_manifest.json";
 const ATLAS_PATH    = "../project/data/tile_atlas.json";
 const TILE_BASE     = "../dcss/Dungeon Crawl Stone Soup Full/";
 const TILE_BASE_SUP = "../dcss/Dungeon Crawl Stone Soup Supplemental/";
+
+// Per-slot config: manifest path + picker root + export name + label.
+// picker_roots controls which atlas paths the sprite picker offers when
+// the user clicks "Browse sprites…". Listed in display order in the tab strip.
+const SLOTS = [
+  { id:'weapon', label:'1H Swords',
+    manifest:'items_manifest.json',
+    export_key:'items_1h_swords', export_file:'items_1h_swords.json',
+    picker_roots:['item/weapon/'],
+    picker_extras:[
+      { key:'sword', label:'Swords',
+        keywords:['dagger','knife','short_sword','falchion','long_sword','scimitar','rapier','katana','sabre','quickblade','ancient_sword','demon_blade','elven','orcish','cutlass'] },
+      { key:'artefact', label:'Artefacts', path_includes:'/artefact/' }
+    ] },
+  { id:'helm', label:'Helms',
+    manifest:'items_helms_manifest.json',
+    export_key:'items_helms', export_file:'items_helms.json',
+    picker_roots:['item/armor/headgear/','item/armor/artefact/'],
+    picker_extras:[
+      { key:'hat', label:'Hats/Caps', keywords:['hat','cap','hood','cornuthaum','jester'] },
+      { key:'helmet', label:'Helmets', keywords:['helmet','helm','crown'] },
+      { key:'artefact', label:'Artefacts', path_includes:'/artefact/' }
+    ] },
+  { id:'armor', label:'Armor',
+    manifest:'items_armor_manifest.json',
+    export_key:'items_armor', export_file:'items_armor.json',
+    picker_roots:['item/armor/torso/','item/armor/artefact/'],
+    picker_extras:[
+      { key:'cloth', label:'Cloth/Leather', keywords:['robe','leather','animal_skin'] },
+      { key:'mail', label:'Mail', keywords:['chain','ring_mail','scale','splint','banded'] },
+      { key:'plate', label:'Plate/Crystal', keywords:['plate','crystal'] },
+      { key:'dragon', label:'Dragon', keywords:['dragon'] },
+      { key:'artefact', label:'Artefacts', path_includes:'/artefact/' }
+    ] },
+  { id:'shield', label:'Shields',
+    manifest:'items_shields_manifest.json',
+    export_key:'items_shields', export_file:'items_shields.json',
+    picker_roots:['item/armor/shields/','item/armor/artefact/'],
+    picker_extras:[
+      { key:'buckler', label:'Bucklers', keywords:['buckler'] },
+      { key:'shield', label:'Shields', keywords:['shield','lshield'] },
+      { key:'artefact', label:'Artefacts', path_includes:'/artefact/' }
+    ] },
+  { id:'boots', label:'Boots',
+    manifest:'items_boots_manifest.json',
+    export_key:'items_boots', export_file:'items_boots.json',
+    picker_roots:['item/armor/feet/','item/armor/artefact/'],
+    picker_extras:[
+      { key:'boots', label:'Boots', keywords:['boot','low_boot'] },
+      { key:'artefact', label:'Artefacts', path_includes:'/artefact/' }
+    ] },
+  { id:'ring', label:'Rings',
+    manifest:'items_rings_manifest.json',
+    export_key:'items_rings', export_file:'items_rings.json',
+    picker_roots:['item/ring/'],
+    picker_extras:[
+      { key:'ring', label:'Rings', keywords:['ring_','agate','brass','bronze','clay','copper','coral','diamond','emerald','glass','gold','granite','iron','jade','moonstone','opal','pearl','plain','ruby','silver','steel','tiger_eye','tourmaline','wooden'] },
+      { key:'artefact', label:'Artefacts', path_includes:'/artefact/' }
+    ] },
+  { id:'amulet', label:'Amulets',
+    manifest:'items_amulets_manifest.json',
+    export_key:'items_amulets', export_file:'items_amulets.json',
+    picker_roots:['item/amulet/'],
+    picker_extras:[
+      { key:'amulet', label:'Amulets', keywords:['amulet','bone','cameo','celtic','crystal','cylinder','eye','face','penta','ring_','stone'] },
+      { key:'artefact', label:'Artefacts', path_includes:'/artefact/' }
+    ] },
+];
 
 const TIER_COLORS = ['','#aaaaaa','#6699ff','#88dd66','#ffaa44','#ff6655'];
 const TIER_LABELS = ['','Tier 1 — Dungeon','Tier 2 — Surface','Tier 3 — Wilds','Tier 4 — Vaults','Tier 5 — Planes'];
@@ -310,32 +386,88 @@ const TIER_NOTES  = ['',
 const RARITIES    = ['common','uncommon','rare','epic','legendary'];
 const RARITY_COLORS = {common:'#cccccc',uncommon:'#6699ff',rare:'#ffdd44',epic:'#ff8833',legendary:'#ff5544'};
 
+let activeSlot = SLOTS[0];
 let manifest  = {};
 let atlas     = {};
-let items     = [];   // working copy
+let items     = [];   // working copy for the active slot
 let dirty     = new Set();
 let activeType = '__all__';
 let selectedId = null;
 let pickerCallback = null;
 let pickerCategory = 'all';
+// Per-slot working copies — switching tabs preserves your edits in memory
+// (they only persist to disk via Export).
+const slotState = {}; // id -> {manifest, items, dirty}
 
 // ---------- Boot ----------
 async function init() {
   setStatus('Loading…');
   try {
-    const [m, a] = await Promise.all([
-      fetch(MANIFEST_PATH).then(r=>r.json()),
-      fetch(ATLAS_PATH).then(r=>r.json()),
-    ]);
-    manifest = m;
-    atlas    = a;
-    items    = JSON.parse(JSON.stringify(m.items)); // deep clone
-    renderSidebar();
-    renderGrid();
+    atlas = await fetch(ATLAS_PATH).then(r=>r.json());
+    renderSlotTabs();
+    await loadSlot(SLOTS[0]);
     setStatus('');
   } catch(e) {
     setStatus('Load error: '+e.message, true);
   }
+}
+
+function renderSlotTabs() {
+  const div = document.getElementById('slot-tabs');
+  div.innerHTML = '';
+  SLOTS.forEach(s => {
+    const el = document.createElement('div');
+    el.className = 'slot-tab' + (s.id===activeSlot.id ? ' active' : '');
+    el.dataset.slot = s.id;
+    el.innerHTML = `${s.label}<span class="slot-count" id="slot-count-${s.id}"></span>`;
+    el.onclick = () => loadSlot(s);
+    div.appendChild(el);
+  });
+}
+
+function updateSlotCount(slotId, n) {
+  const el = document.getElementById('slot-count-'+slotId);
+  if (el) el.textContent = n != null ? '('+n+')' : '';
+}
+
+async function loadSlot(slot) {
+  // Persist current state in memory before switching
+  if (activeSlot && manifest && manifest.items) {
+    slotState[activeSlot.id] = { manifest, items, dirty: new Set(dirty) };
+  }
+  activeSlot = slot;
+  selectedId = null;
+  activeType = '__all__';
+  document.getElementById('topbar-title').textContent = 'Item Editor — ' + slot.label;
+  // Refresh active highlight on tabs
+  document.querySelectorAll('.slot-tab').forEach(t =>
+    t.classList.toggle('active', t.dataset.slot === slot.id));
+  // Reuse cached state if we've already loaded this slot
+  const cached = slotState[slot.id];
+  if (cached) {
+    manifest = cached.manifest;
+    items = cached.items;
+    dirty = cached.dirty;
+  } else {
+    try {
+      manifest = await fetch(slot.manifest).then(r=>{
+        if (!r.ok) throw new Error('HTTP '+r.status+' for '+slot.manifest);
+        return r.json();
+      });
+      items = JSON.parse(JSON.stringify(manifest.items));
+      dirty = new Set();
+    } catch(e) {
+      setStatus('Failed to load '+slot.manifest+': '+e.message, true);
+      return;
+    }
+  }
+  // Reset picker state for this slot
+  allWeaponTiles = [];
+  pickerCategory = 'all';
+  closeEdit();
+  renderSidebar();
+  renderGrid();
+  updateSlotCount(slot.id, items.length);
 }
 
 function setStatus(msg, warn=false) {
@@ -611,14 +743,26 @@ function updateCard(id) {
 }
 
 function addItem() {
-  const id = 'new_item_' + Date.now();
+  const id = 'new_'+activeSlot.id+'_' + Date.now();
+  // Pull a sensible default from the manifest's first item so per-slot
+  // defaults (sprite, base_type, atk/def/hp shape) come along for the ride.
+  const tplSrc = items[0] || {};
   const tpl = {
-    id, name:'New Sword', base_type:'long_sword', slot:'weapon',
-    item_tier:3, rarity:'rare', tile:'item/weapon/long_sword_1.png',
-    atk:40, def:0, hp:0, flavor_tags:[], lore:'', drop_weights:[0,0,100,0,0], unique:false
+    id,
+    name: 'New ' + activeSlot.label.replace(/s$/,''),
+    slot: activeSlot.id,
+    base_type: tplSrc.base_type || Object.keys(manifest.base_types || {})[0] || '',
+    item_tier: 3,
+    rarity: 'rare',
+    tile: tplSrc.tile || '',
+    atk: 0, def: 0, hp: 0,
+    flavor_tags: [], lore: '',
+    drop_weights: [0, 0, 100, 0, 0],
+    unique: false
   };
   items.push(tpl);
   dirty.add(id);
+  updateSlotCount(activeSlot.id, items.length);
   renderSidebar();
   renderGrid();
   openEdit(id);
@@ -633,6 +777,7 @@ function deleteItem() {
   closeEdit();
   renderSidebar();
   renderGrid();
+  updateSlotCount(activeSlot.id, items.length);
 }
 
 // ---------- Sprite picker ----------
@@ -640,9 +785,24 @@ let pickerItemId = null;
 let allWeaponTiles = [];
 
 function buildWeaponTileList() {
+  // Pull all atlas paths under any of the active slot's picker_roots.
+  const roots = activeSlot.picker_roots || [];
   allWeaponTiles = Object.keys(atlas)
-    .filter(k => k.startsWith('item/weapon/'))
+    .filter(k => roots.some(r => k.startsWith(r)))
     .sort();
+}
+
+function renderPickerFilterBar() {
+  const bar = document.getElementById('picker-filter');
+  bar.innerHTML = '';
+  const buttons = [{ key:'all', label:'All '+activeSlot.label }, ...(activeSlot.picker_extras || [])];
+  buttons.forEach(b => {
+    const btn = document.createElement('button');
+    btn.textContent = b.label;
+    btn.onclick = () => setPickerCategory(b.key, btn);
+    if (b.key === pickerCategory) btn.classList.add('active');
+    bar.appendChild(btn);
+  });
 }
 
 function setPickerCategory(cat, btn) {
@@ -655,6 +815,8 @@ function setPickerCategory(cat, btn) {
 function openPicker(id) {
   pickerItemId = id;
   if (!allWeaponTiles.length) buildWeaponTileList();
+  pickerCategory = 'all';
+  renderPickerFilterBar();
   document.getElementById('picker').classList.add('open');
   document.getElementById('picker-search').value = '';
   renderPicker();
@@ -667,11 +829,12 @@ function renderPicker() {
   grid.innerHTML = '';
 
   let tiles = allWeaponTiles;
-  if (pickerCategory === 'sword') {
-    const swordKw = ['dagger','knife','short_sword','falchion','long_sword','scimitar','rapier','katana','sabre','quickblade','ancient_sword','demon_blade','elven','orcish','cutlass'];
-    tiles = tiles.filter(k => swordKw.some(kw => k.includes(kw)));
-  } else if (pickerCategory === 'artefact') {
-    tiles = tiles.filter(k => k.includes('/artefact/'));
+  if (pickerCategory !== 'all') {
+    const cfg = (activeSlot.picker_extras || []).find(e => e.key === pickerCategory);
+    if (cfg) {
+      if (cfg.path_includes) tiles = tiles.filter(k => k.includes(cfg.path_includes));
+      else if (cfg.keywords) tiles = tiles.filter(k => cfg.keywords.some(kw => k.includes(kw)));
+    }
   }
   if (q) tiles = tiles.filter(k => k.includes(q));
 
@@ -699,14 +862,16 @@ function renderPicker() {
 
 // ---------- Export ----------
 function exportJSON() {
-  // Build items.json compatible slice — same schema as current project/data/items.json
+  // Build items.json-compatible slice for the active slot.
+  const slot = activeSlot;
   const out = {
-    "_note": "Auto-generated by item_editor.html. Merge into project/data/items.json.",
+    "_note": "Auto-generated by item_editor.html. Merge into project/data/items.json (the items[] array).",
     "_generated": new Date().toISOString(),
-    "items_1h_swords": items.map(it => ({
+    "_slot": slot.id,
+    [slot.export_key]: items.map(it => ({
       id: it.id,
       name: it.name,
-      slot: it.slot || 'weapon',
+      slot: it.slot || slot.id,
       base_type: it.base_type,
       item_tier: it.item_tier,
       rarity: it.rarity,
@@ -725,10 +890,10 @@ function exportJSON() {
   const blob = new Blob([JSON.stringify(out, null, 2)], {type:'application/json'});
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = 'items_1h_swords.json';
+  a.download = slot.export_file;
   a.click();
   dirty.clear();
-  setStatus('Exported items_1h_swords.json — drop into project/data/ or merge into items.json.');
+  setStatus('Exported '+slot.export_file+' — drop into project/data/ or merge into items.json.');
   setTimeout(() => setStatus(''), 4000);
   renderSidebar();
   renderGrid();

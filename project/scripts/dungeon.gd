@@ -87,6 +87,9 @@ var run_portals_entered: int = 0
 var run_stalls: int = 0
 var run_vaults_stamped: Array = []
 var run_biomes_visited: Array = []
+# IDs of `unique: true` items already dropped this run. Each unique drops
+# at most once per run; subsequent rolls excluding it. Reset on run start.
+var run_dropped_uniques: Array[String] = []
 # Death retreat: revives_remaining starts at save.max_revives at run start
 # and decrements on each retreat. When it hits zero, the next death is a
 # real run-end. Scales later via bot upgrades / gear affixes.
@@ -173,6 +176,7 @@ func _start_run() -> void:
 	run_stalls = 0
 	run_vaults_stamped = []
 	run_biomes_visited = []
+	run_dropped_uniques.clear()
 	revives_remaining = int(save.get("max_revives", 3))
 	retreats_this_run = 0
 	# Cache loot filter rank for the run — LootDrop.should_skip reads it
@@ -1111,13 +1115,9 @@ func _maybe_drop_item(e: Enemy) -> void:
 		drop_count = maxi(drop_count, 1)
 	for _i in drop_count:
 		var rarity: String = _roll_rarity(e.is_boss or e.is_miniboss)
-		var pool: Array = []
-		for id in items_db.keys():
-			if items_db[id].rarity == rarity:
-				pool.append(id)
-		if pool.is_empty():
+		var picked: String = _pick_loot_id(rarity)
+		if picked == "":
 			continue
-		var picked: String = pool[rng.randi_range(0, pool.size() - 1)]
 		var instance: Dictionary = _create_item_instance(picked)
 		_spawn_loot_drop(instance, e.cell)
 
@@ -1183,13 +1183,9 @@ func _apply_vault_results(results: Dictionary) -> void:
 	for entry in loot_marks:
 		var cell: Vector2i = entry.cell if typeof(entry) == TYPE_DICTIONARY else entry
 		var rarity: String = _roll_rarity(false)
-		var pool: Array = []
-		for id in items_db.keys():
-			if items_db[id].rarity == rarity:
-				pool.append(id)
-		if pool.is_empty():
+		var picked: String = _pick_loot_id(rarity)
+		if picked == "":
 			continue
-		var picked: String = pool[rng.randi_range(0, pool.size() - 1)]
 		var inst: Dictionary = _create_item_instance(picked)
 		_spawn_loot_drop(inst, cell)
 	var statues: Array = results.get("statues", [])
@@ -1265,6 +1261,49 @@ func _on_portal_entered(_portal: Portal, kind: String, biome_id: String, loot_bi
 	# Rebuild the floor in-place using the portal biome. Floor counter does
 	# not advance — descending the portal's stairs continues the run normally.
 	_build_floor()
+
+# Pick an item id of the given rarity, weighted by drop_weights[branch_tier-1].
+# Items with no drop_weights field still roll (legacy fallback, weight 1).
+# Items already dropped this run AND flagged unique are excluded.
+# Returns "" if no eligible item exists.
+func _pick_loot_id(rarity: String) -> String:
+	var tier: int = clampi(int(current_biome.get("tier", 1)), 1, 5)
+	var idx: int = tier - 1
+	var ids: Array[String] = []
+	var weights: Array[float] = []
+	var total: float = 0.0
+	for id in items_db.keys():
+		var item: Dictionary = items_db[id]
+		if String(item.get("rarity", "")) != rarity:
+			continue
+		if bool(item.get("unique", false)) and run_dropped_uniques.has(id):
+			continue
+		var dw: Array = item.get("drop_weights", [])
+		var w: float
+		if dw.size() == 5:
+			w = float(dw[idx])
+			if w <= 0.0:
+				continue
+		else:
+			# Legacy item without drop_weights — keep it eligible at all tiers
+			# until manifests cover its slot. Equal weight 1.
+			w = 1.0
+		ids.append(id)
+		weights.append(w)
+		total += w
+	if ids.is_empty():
+		return ""
+	var roll: float = rng.randf() * total
+	var acc: float = 0.0
+	for i in ids.size():
+		acc += weights[i]
+		if roll <= acc:
+			var picked: String = ids[i]
+			var item: Dictionary = items_db[picked]
+			if bool(item.get("unique", false)):
+				run_dropped_uniques.append(picked)
+			return picked
+	return ids[ids.size() - 1]
 
 func _roll_rarity(is_boss: bool) -> String:
 	if is_boss:
@@ -2019,13 +2058,9 @@ func _on_chest_opened(chest: Chest, n: int, bias: int) -> void:
 	var chest_world: Vector2 = chest.position + Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5)
 	for i in n:
 		var rarity: String = _roll_rarity_with_bias(bias)
-		var pool: Array = []
-		for id in items_db.keys():
-			if items_db[id].rarity == rarity:
-				pool.append(id)
-		if pool.is_empty():
+		var picked: String = _pick_loot_id(rarity)
+		if picked == "":
 			continue
-		var picked: String = pool[rng.randi_range(0, pool.size() - 1)]
 		var inst: Dictionary = _create_item_instance(picked)
 		var spawn_cell: Vector2i = _adjacent_walkable_cell(chest.cell, i + 1)
 		var drop := _spawn_loot_drop_get(inst, spawn_cell)

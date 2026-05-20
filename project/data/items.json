@@ -1,104 +1,5783 @@
 {
   "items": [
-
-    { "id": "rusty_dagger",        "name": "Rusty Dagger",        "slot": "weapon", "rarity": "common",    "tile": "weapon_dagger.png",   "atk": 16, "def": 0, "hp": 2 },
-    { "id": "iron_shortsword",     "name": "Iron Shortsword",     "slot": "weapon", "rarity": "common",    "tile": "weapon_sword.png",    "atk": 22, "def": 0, "hp": 4 },
-    { "id": "chipped_claymore",    "name": "Chipped Claymore",    "slot": "weapon", "rarity": "common",    "tile": "weapon_claymore.png", "atk": 28, "def": 0, "hp": 5 },
-
-    { "id": "honed_dagger",        "name": "Honed Dagger",        "slot": "weapon", "rarity": "uncommon",  "tile": "weapon_dagger.png",   "atk": 24, "def": 0, "hp": 3 },
-    { "id": "steel_sword",         "name": "Steel Sword",         "slot": "weapon", "rarity": "uncommon",  "tile": "weapon_sword.png",    "atk": 33, "def": 0, "hp": 6 },
-    { "id": "bearded_axe",         "name": "Bearded Axe",         "slot": "weapon", "rarity": "uncommon",  "tile": "weapon_axe.png",      "atk": 40, "def": 0, "hp": 8 },
-
-    { "id": "fanged_dirk",         "name": "Fanged Dirk",         "slot": "weapon", "rarity": "rare",      "tile": "weapon_dagger.png",   "atk": 36, "def": 0, "hp": 4 },
-    { "id": "mithril_blade",       "name": "Mithril Blade",       "slot": "weapon", "rarity": "rare",      "tile": "weapon_sword.png",    "atk": 48, "def": 0, "hp": 9 },
-    { "id": "highland_claymore",   "name": "Highland Claymore",   "slot": "weapon", "rarity": "rare",      "tile": "weapon_claymore.png", "atk": 60, "def": 0, "hp": 11 },
-
-    { "id": "shadowfang",          "name": "Shadowfang",          "slot": "weapon", "rarity": "epic",      "tile": "weapon_dagger.png",   "atk": 52, "def": 0, "hp": 6 },
-    { "id": "runed_warsword",      "name": "Runed Warsword",      "slot": "weapon", "rarity": "epic",      "tile": "weapon_sword.png",    "atk": 70, "def": 0, "hp": 12 },
-    { "id": "thunder_cleaver",     "name": "Thunder Cleaver",     "slot": "weapon", "rarity": "epic",      "tile": "weapon_axe.png",      "atk": 86, "def": 0, "hp": 16 },
-
-    { "id": "voidpiercer",         "name": "Voidpiercer",         "slot": "weapon", "rarity": "legendary", "tile": "weapon_dagger.png",   "atk": 72, "def": 0, "hp": 8 },
-    { "id": "dawnbreaker",         "name": "Dawnbreaker",         "slot": "weapon", "rarity": "legendary", "tile": "weapon_sword.png",    "atk": 100, "def": 0, "hp": 18 },
-    { "id": "worldsplitter",       "name": "Worldsplitter",       "slot": "weapon", "rarity": "legendary", "tile": "weapon_claymore.png", "atk": 130, "def": 0, "hp": 22 },
-
-    { "id": "tattered_hide",       "name": "Tattered Hide",       "slot": "armor",  "rarity": "common",    "tile": "armor_leather.png",   "atk": 0, "def": 3, "hp": 45 },
-    { "id": "leather_jerkin",      "name": "Leather Jerkin",      "slot": "armor",  "rarity": "common",    "tile": "armor_chain.png",     "atk": 0, "def": 5, "hp": 62 },
-    { "id": "iron_brigandine",     "name": "Iron Brigandine",     "slot": "armor",  "rarity": "common",    "tile": "armor_plate.png",     "atk": 0, "def": 7, "hp": 80 },
-
-    { "id": "studded_leather",     "name": "Studded Leather",     "slot": "armor",  "rarity": "uncommon",  "tile": "armor_leather.png",   "atk": 0, "def": 5, "hp": 70 },
-    { "id": "fine_chainmail",      "name": "Fine Chainmail",      "slot": "armor",  "rarity": "uncommon",  "tile": "armor_chain.png",     "atk": 0, "def": 8, "hp": 95 },
-    { "id": "steel_plate",         "name": "Steel Plate",         "slot": "armor",  "rarity": "uncommon",  "tile": "armor_plate.png",     "atk": 0, "def": 11, "hp": 120 },
-
-    { "id": "drakehide_armor",     "name": "Drakehide Armor",     "slot": "armor",  "rarity": "rare",      "tile": "armor_leather.png",   "atk": 0, "def": 7, "hp": 100 },
-    { "id": "elven_chainmail",     "name": "Elven Chainmail",     "slot": "armor",  "rarity": "rare",      "tile": "armor_chain.png",     "atk": 0, "def": 11, "hp": 138 },
-    { "id": "mithril_plate",       "name": "Mithril Plate",       "slot": "armor",  "rarity": "rare",      "tile": "armor_plate.png",     "atk": 0, "def": 16, "hp": 175 },
-
-    { "id": "shadowweave_garb",    "name": "Shadowweave Garb",    "slot": "armor",  "rarity": "epic",      "tile": "armor_leather.png",   "atk": 0, "def": 10, "hp": 145 },
-    { "id": "wyrmscale_hauberk",   "name": "Wyrmscale Hauberk",   "slot": "armor",  "rarity": "epic",      "tile": "armor_chain.png",     "atk": 0, "def": 16, "hp": 200 },
-    { "id": "dwarven_juggernaut",  "name": "Dwarven Juggernaut",  "slot": "armor",  "rarity": "epic",      "tile": "armor_plate.png",     "atk": 0, "def": 22, "hp": 250 },
-
-    { "id": "stormveil_robes",     "name": "Stormveil Robes",     "slot": "armor",  "rarity": "legendary", "tile": "armor_leather.png",   "atk": 0, "def": 14, "hp": 200 },
-    { "id": "godforged_mail",      "name": "Godforged Mail",      "slot": "armor",  "rarity": "legendary", "tile": "armor_chain.png",     "atk": 0, "def": 22, "hp": 280 },
-    { "id": "aegis_of_titans",     "name": "Aegis of Titans",     "slot": "armor",  "rarity": "legendary", "tile": "armor_plate.png",     "atk": 0, "def": 32, "hp": 360 },
-
-    { "id": "leather_cap",         "name": "Leather Cap",         "slot": "helm",   "rarity": "common",    "tile": "helm_cap.png",        "atk": 0, "def": 1, "hp": 22 },
-    { "id": "iron_skullcap",       "name": "Iron Skullcap",       "slot": "helm",   "rarity": "common",    "tile": "helm_cap.png",        "atk": 0, "def": 2, "hp": 33 },
-    { "id": "plumed_helm",         "name": "Plumed Helm",         "slot": "helm",   "rarity": "common",    "tile": "helm_crested.png",    "atk": 0, "def": 3, "hp": 42 },
-
-    { "id": "padded_coif",         "name": "Padded Coif",         "slot": "helm",   "rarity": "uncommon",  "tile": "helm_cap.png",        "atk": 0, "def": 2, "hp": 36 },
-    { "id": "knights_helm",        "name": "Knight's Helm",       "slot": "helm",   "rarity": "uncommon",  "tile": "helm_crested.png",    "atk": 0, "def": 3, "hp": 50 },
-    { "id": "great_basinet",       "name": "Great Basinet",       "slot": "helm",   "rarity": "uncommon",  "tile": "helm_crested.png",    "atk": 0, "def": 5, "hp": 64 },
-
-    { "id": "rangers_hood",        "name": "Ranger's Hood",       "slot": "helm",   "rarity": "rare",      "tile": "helm_cap.png",        "atk": 0, "def": 3, "hp": 50 },
-    { "id": "champions_helm",      "name": "Champion's Helm",     "slot": "helm",   "rarity": "rare",      "tile": "helm_crested.png",    "atk": 0, "def": 5, "hp": 73 },
-    { "id": "warlords_crown",      "name": "Warlord's Crown",     "slot": "helm",   "rarity": "rare",      "tile": "helm_crested.png",    "atk": 0, "def": 7, "hp": 92 },
-
-    { "id": "spectres_cowl",       "name": "Spectre's Cowl",      "slot": "helm",   "rarity": "epic",      "tile": "helm_cap.png",        "atk": 0, "def": 4, "hp": 72 },
-    { "id": "dragonbone_helm",     "name": "Dragonbone Helm",     "slot": "helm",   "rarity": "epic",      "tile": "helm_crested.png",    "atk": 0, "def": 7, "hp": 105 },
-    { "id": "kings_diadem",        "name": "King's Diadem",       "slot": "helm",   "rarity": "epic",      "tile": "helm_crested.png",    "atk": 0, "def": 10, "hp": 134 },
-
-    { "id": "shroud_of_whispers",  "name": "Shroud of Whispers",  "slot": "helm",   "rarity": "legendary", "tile": "helm_cap.png",        "atk": 0, "def": 6, "hp": 100 },
-    { "id": "crown_of_valor",      "name": "Crown of Valor",      "slot": "helm",   "rarity": "legendary", "tile": "helm_crested.png",    "atk": 0, "def": 10, "hp": 150 },
-    { "id": "halo_of_ascension",   "name": "Halo of Ascension",   "slot": "helm",   "rarity": "legendary", "tile": "helm_crested.png",    "atk": 0, "def": 14, "hp": 190 },
-
-    { "id": "worn_sandals",        "name": "Worn Sandals",        "slot": "boots",  "rarity": "common",    "tile": "boots_brown.png",     "atk": 0, "def": 1, "hp": 13 },
-    { "id": "leather_boots",       "name": "Leather Boots",       "slot": "boots",  "rarity": "common",    "tile": "boots_brown.png",     "atk": 0, "def": 2, "hp": 20 },
-    { "id": "studded_boots",       "name": "Studded Boots",       "slot": "boots",  "rarity": "common",    "tile": "boots_brown.png",     "atk": 0, "def": 3, "hp": 26 },
-
-    { "id": "scouts_treads",       "name": "Scout's Treads",      "slot": "boots",  "rarity": "uncommon",  "tile": "boots_brown.png",     "atk": 0, "def": 2, "hp": 22 },
-    { "id": "soldiers_greaves",    "name": "Soldier's Greaves",   "slot": "boots",  "rarity": "uncommon",  "tile": "boots_brown.png",     "atk": 0, "def": 3, "hp": 30 },
-    { "id": "ironshod_boots",      "name": "Ironshod Boots",      "slot": "boots",  "rarity": "uncommon",  "tile": "boots_brown.png",     "atk": 0, "def": 4, "hp": 40 },
-
-    { "id": "swiftstep_boots",     "name": "Swiftstep Boots",     "slot": "boots",  "rarity": "rare",      "tile": "boots_brown.png",     "atk": 0, "def": 3, "hp": 32 },
-    { "id": "sentinel_greaves",    "name": "Sentinel Greaves",    "slot": "boots",  "rarity": "rare",      "tile": "boots_brown.png",     "atk": 0, "def": 4, "hp": 44 },
-    { "id": "dwarven_stompers",    "name": "Dwarven Stompers",    "slot": "boots",  "rarity": "rare",      "tile": "boots_brown.png",     "atk": 0, "def": 6, "hp": 58 },
-
-    { "id": "stormrunner_boots",   "name": "Stormrunner Boots",   "slot": "boots",  "rarity": "epic",      "tile": "boots_brown.png",     "atk": 0, "def": 4, "hp": 46 },
-    { "id": "vanguard_sabatons",   "name": "Vanguard Sabatons",   "slot": "boots",  "rarity": "epic",      "tile": "boots_brown.png",     "atk": 0, "def": 6, "hp": 64 },
-    { "id": "earthshaker_treads",  "name": "Earthshaker Treads",  "slot": "boots",  "rarity": "epic",      "tile": "boots_brown.png",     "atk": 0, "def": 8, "hp": 84 },
-
-    { "id": "windwalkers",         "name": "Windwalkers",         "slot": "boots",  "rarity": "legendary", "tile": "boots_brown.png",     "atk": 0, "def": 6, "hp": 65 },
-    { "id": "march_of_kings",      "name": "March of Kings",      "slot": "boots",  "rarity": "legendary", "tile": "boots_brown.png",     "atk": 0, "def": 8, "hp": 90 },
-    { "id": "treads_of_apocalypse","name": "Treads of Apocalypse","slot": "boots",  "rarity": "legendary", "tile": "boots_brown.png",     "atk": 0, "def": 11, "hp": 118 },
-
-    { "id": "wooden_buckler",      "name": "Wooden Buckler",      "slot": "shield", "rarity": "common",    "tile": "shield_buckler.png",  "atk": 0, "def": 4, "hp": 28 },
-    { "id": "iron_buckler",        "name": "Iron Buckler",        "slot": "shield", "rarity": "common",    "tile": "shield_buckler.png",  "atk": 0, "def": 6, "hp": 40 },
-    { "id": "kite_shield",         "name": "Kite Shield",         "slot": "shield", "rarity": "common",    "tile": "shield_buckler.png",  "atk": 0, "def": 8, "hp": 52 },
-
-    { "id": "reinforced_buckler",  "name": "Reinforced Buckler",  "slot": "shield", "rarity": "uncommon",  "tile": "shield_buckler.png",  "atk": 0, "def": 6, "hp": 42 },
-    { "id": "tower_shield",        "name": "Tower Shield",        "slot": "shield", "rarity": "uncommon",  "tile": "shield_buckler.png",  "atk": 0, "def": 9, "hp": 60 },
-    { "id": "knights_bulwark",     "name": "Knight's Bulwark",    "slot": "shield", "rarity": "uncommon",  "tile": "shield_buckler.png",  "atk": 0, "def": 12, "hp": 78 },
-
-    { "id": "spellward_shield",    "name": "Spellward Shield",    "slot": "shield", "rarity": "rare",      "tile": "shield_buckler.png",  "atk": 0, "def": 9, "hp": 62 },
-    { "id": "dragoncrest_shield",  "name": "Dragoncrest Shield",  "slot": "shield", "rarity": "rare",      "tile": "shield_buckler.png",  "atk": 0, "def": 13, "hp": 88 },
-    { "id": "fortress_wall",       "name": "Fortress Wall",       "slot": "shield", "rarity": "rare",      "tile": "shield_buckler.png",  "atk": 0, "def": 18, "hp": 114 },
-
-    { "id": "phantom_aegis",       "name": "Phantom Aegis",       "slot": "shield", "rarity": "epic",      "tile": "shield_buckler.png",  "atk": 0, "def": 13, "hp": 90 },
-    { "id": "lions_bulwark",       "name": "Lion's Bulwark",      "slot": "shield", "rarity": "epic",      "tile": "shield_buckler.png",  "atk": 0, "def": 19, "hp": 128 },
-    { "id": "warding_colossus",    "name": "Warding Colossus",    "slot": "shield", "rarity": "epic",      "tile": "shield_buckler.png",  "atk": 0, "def": 26, "hp": 165 },
-
-    { "id": "sunshard_aegis",      "name": "Sunshard Aegis",      "slot": "shield", "rarity": "legendary", "tile": "shield_buckler.png",  "atk": 0, "def": 18, "hp": 128 },
-    { "id": "bulwark_of_eternity", "name": "Bulwark of Eternity", "slot": "shield", "rarity": "legendary", "tile": "shield_buckler.png",  "atk": 0, "def": 26, "hp": 180 },
-    { "id": "aegis_of_the_world",  "name": "Aegis of the World",  "slot": "shield", "rarity": "legendary", "tile": "shield_buckler.png",  "atk": 0, "def": 36, "hp": 234 }
+    {
+      "id": "bone_knife",
+      "name": "Bone Knife",
+      "slot": "weapon",
+      "rarity": "common",
+      "tile": "knife.png",
+      "atk": 10,
+      "def": 0,
+      "hp": 0,
+      "item_tier": 1,
+      "base_type": "knife",
+      "flavor_tags": [],
+      "lore": "Fashioned from something that used to be alive.",
+      "drop_weights": [
+        80,
+        10,
+        0,
+        0,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "chipped_shortsword",
+      "name": "Chipped Short Sword",
+      "slot": "weapon",
+      "rarity": "common",
+      "tile": "short_sword_1_new.png",
+      "atk": 16,
+      "def": 0,
+      "hp": 0,
+      "item_tier": 1,
+      "base_type": "short_sword",
+      "flavor_tags": [],
+      "lore": "A serviceable blade, if you ignore the nicks.",
+      "drop_weights": [
+        80,
+        15,
+        2,
+        0,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "iron_dagger",
+      "name": "Iron Dagger",
+      "slot": "weapon",
+      "rarity": "uncommon",
+      "tile": "dagger_new.png",
+      "atk": 18,
+      "def": 0,
+      "hp": 2,
+      "item_tier": 1,
+      "base_type": "dagger",
+      "flavor_tags": [],
+      "lore": "Standard issue for those who prefer not to be seen.",
+      "drop_weights": [
+        50,
+        35,
+        8,
+        0,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "rusty_dagger",
+      "name": "Rusty Dagger",
+      "slot": "weapon",
+      "rarity": "common",
+      "tile": "dagger_3.png",
+      "atk": 12,
+      "def": 0,
+      "hp": 0,
+      "item_tier": 1,
+      "base_type": "dagger",
+      "flavor_tags": [],
+      "lore": "A battered blade, more rust than iron.",
+      "drop_weights": [
+        80,
+        15,
+        0,
+        0,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "shiv",
+      "name": "Shiv",
+      "slot": "weapon",
+      "rarity": "common",
+      "tile": "dagger_6.png",
+      "atk": 13,
+      "def": 0,
+      "hp": 0,
+      "item_tier": 1,
+      "base_type": "dagger",
+      "flavor_tags": [],
+      "lore": "Improvised. Effective. Ugly.",
+      "drop_weights": [
+        80,
+        10,
+        0,
+        0,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "short_falchion",
+      "name": "Short Falchion",
+      "slot": "weapon",
+      "rarity": "uncommon",
+      "tile": "falchion_1_new.png",
+      "atk": 20,
+      "def": 0,
+      "hp": 2,
+      "item_tier": 1,
+      "base_type": "falchion",
+      "flavor_tags": [],
+      "lore": "A light curved blade. More than it looks.",
+      "drop_weights": [
+        50,
+        35,
+        8,
+        0,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "elven_dagger",
+      "name": "Elven Dagger",
+      "slot": "weapon",
+      "rarity": "uncommon",
+      "tile": "elven_dagger.png",
+      "atk": 22,
+      "def": 0,
+      "hp": 3,
+      "item_tier": 2,
+      "base_type": "dagger",
+      "flavor_tags": [
+        "swift"
+      ],
+      "lore": "Light enough to forget you're carrying it, until you aren't.",
+      "drop_weights": [
+        10,
+        65,
+        20,
+        3,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "iron_falchion",
+      "name": "Iron Falchion",
+      "slot": "weapon",
+      "rarity": "uncommon",
+      "tile": "falchion_2_new.png",
+      "atk": 28,
+      "def": 0,
+      "hp": 4,
+      "item_tier": 2,
+      "base_type": "falchion",
+      "flavor_tags": [],
+      "lore": "A broad single-edge blade. Prefers wide swings.",
+      "drop_weights": [
+        15,
+        65,
+        20,
+        3,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "orcish_shortsword",
+      "name": "Orcish Short Sword",
+      "slot": "weapon",
+      "rarity": "uncommon",
+      "tile": "orcish_short_sword.png",
+      "atk": 30,
+      "def": 0,
+      "hp": 5,
+      "item_tier": 2,
+      "base_type": "short_sword",
+      "flavor_tags": [
+        "brutal"
+      ],
+      "lore": "Crudely made, but it hits like one anyway.",
+      "drop_weights": [
+        8,
+        60,
+        25,
+        5,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "quick_blade",
+      "name": "Quick Blade",
+      "slot": "weapon",
+      "rarity": "rare",
+      "tile": "quickblade.png",
+      "atk": 20,
+      "def": 0,
+      "hp": 4,
+      "item_tier": 2,
+      "base_type": "quick_blade",
+      "flavor_tags": [
+        "swift",
+        "precision"
+      ],
+      "lore": "The fastest blade in the Dungeon. Blink and it's already over.",
+      "drop_weights": [
+        3,
+        40,
+        40,
+        10,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "rapier",
+      "name": "Rapier",
+      "slot": "weapon",
+      "rarity": "rare",
+      "tile": "rapier_1.png",
+      "atk": 26,
+      "def": 0,
+      "hp": 3,
+      "item_tier": 2,
+      "base_type": "rapier",
+      "flavor_tags": [
+        "precision"
+      ],
+      "lore": "A slender thrusting weapon. Rewards patience.",
+      "drop_weights": [
+        5,
+        50,
+        35,
+        8,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "steel_shortsword",
+      "name": "Steel Short Sword",
+      "slot": "weapon",
+      "rarity": "uncommon",
+      "tile": "short_sword_2_new.png",
+      "atk": 24,
+      "def": 0,
+      "hp": 4,
+      "item_tier": 2,
+      "base_type": "short_sword",
+      "flavor_tags": [],
+      "lore": "Properly forged. An honest weapon.",
+      "drop_weights": [
+        15,
+        65,
+        25,
+        3,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "iron_longsword",
+      "name": "Iron Long Sword",
+      "slot": "weapon",
+      "rarity": "rare",
+      "tile": "long_sword_1_new.png",
+      "atk": 38,
+      "def": 0,
+      "hp": 6,
+      "item_tier": 3,
+      "base_type": "long_sword",
+      "flavor_tags": [],
+      "lore": "A proper weapon for a proper fight.",
+      "drop_weights": [
+        0,
+        15,
+        60,
+        22,
+        3
+      ],
+      "unique": false
+    },
+    {
+      "id": "mithril_shortsword",
+      "name": "Mithril Short Sword",
+      "slot": "weapon",
+      "rarity": "rare",
+      "tile": "short_sword_5.png",
+      "atk": 34,
+      "def": 0,
+      "hp": 7,
+      "item_tier": 3,
+      "base_type": "short_sword",
+      "flavor_tags": [],
+      "lore": "Light. Strong. Expensive to replace.",
+      "drop_weights": [
+        0,
+        12,
+        58,
+        25,
+        5
+      ],
+      "unique": false
+    },
+    {
+      "id": "scimitar",
+      "name": "Scimitar",
+      "slot": "weapon",
+      "rarity": "rare",
+      "tile": "scimitar_1_new.png",
+      "atk": 42,
+      "def": 0,
+      "hp": 6,
+      "item_tier": 3,
+      "base_type": "scimitar",
+      "flavor_tags": [],
+      "lore": "A curve that finds every gap in armor.",
+      "drop_weights": [
+        0,
+        12,
+        60,
+        23,
+        5
+      ],
+      "unique": false
+    },
+    {
+      "id": "silver_rapier",
+      "name": "Silver Rapier",
+      "slot": "weapon",
+      "rarity": "rare",
+      "tile": "rapier_2.png",
+      "atk": 32,
+      "def": 0,
+      "hp": 5,
+      "item_tier": 3,
+      "base_type": "rapier",
+      "flavor_tags": [
+        "precision",
+        "holy"
+      ],
+      "lore": "Dipped in holy water before forging. Undead hate it.",
+      "drop_weights": [
+        0,
+        10,
+        55,
+        28,
+        6
+      ],
+      "unique": false
+    },
+    {
+      "id": "silver_sabre",
+      "name": "Silver Sabre",
+      "slot": "weapon",
+      "rarity": "rare",
+      "tile": "sabre_1_silver.png",
+      "atk": 40,
+      "def": 0,
+      "hp": 5,
+      "item_tier": 3,
+      "base_type": "sabre",
+      "flavor_tags": [
+        "holy"
+      ],
+      "lore": "Silver-edged. Blessed. Smells faintly of incense.",
+      "drop_weights": [
+        0,
+        8,
+        55,
+        30,
+        8
+      ],
+      "unique": false
+    },
+    {
+      "id": "steel_falchion",
+      "name": "Steel Falchion",
+      "slot": "weapon",
+      "rarity": "rare",
+      "tile": "falchion_3.png",
+      "atk": 36,
+      "def": 0,
+      "hp": 6,
+      "item_tier": 3,
+      "base_type": "falchion",
+      "flavor_tags": [],
+      "lore": "A proper blade, properly made.",
+      "drop_weights": [
+        0,
+        15,
+        60,
+        25,
+        5
+      ],
+      "unique": false
+    },
+    {
+      "id": "elven_broadsword",
+      "name": "Elven Broadsword",
+      "slot": "weapon",
+      "rarity": "epic",
+      "tile": "elven_broadsword.png",
+      "atk": 54,
+      "def": 0,
+      "hp": 10,
+      "item_tier": 4,
+      "base_type": "long_sword",
+      "flavor_tags": [
+        "swift",
+        "magic"
+      ],
+      "lore": "Longer than it looks. Lighter than possible.",
+      "drop_weights": [
+        0,
+        0,
+        8,
+        55,
+        38
+      ],
+      "unique": false
+    },
+    {
+      "id": "elven_shortsword",
+      "name": "Elven Short Sword",
+      "slot": "weapon",
+      "rarity": "epic",
+      "tile": "elven_short_sword.png",
+      "atk": 38,
+      "def": 0,
+      "hp": 8,
+      "item_tier": 4,
+      "base_type": "short_sword",
+      "flavor_tags": [
+        "swift",
+        "precision"
+      ],
+      "lore": "Almost too light to feel. Compensates by being very sharp.",
+      "drop_weights": [
+        0,
+        0,
+        10,
+        55,
+        35
+      ],
+      "unique": false
+    },
+    {
+      "id": "iron_katana",
+      "name": "Katana",
+      "slot": "weapon",
+      "rarity": "epic",
+      "tile": "katana.png",
+      "atk": 50,
+      "def": 0,
+      "hp": 9,
+      "item_tier": 4,
+      "base_type": "katana",
+      "flavor_tags": [
+        "precision",
+        "swift"
+      ],
+      "lore": "Simple. Exact. Deadly.",
+      "drop_weights": [
+        0,
+        0,
+        8,
+        58,
+        35
+      ],
+      "unique": false
+    },
+    {
+      "id": "knife_of_accuracy",
+      "name": "Knife of Accuracy",
+      "slot": "weapon",
+      "rarity": "epic",
+      "tile": "urand_knife_of_accuracy.png",
+      "atk": 42,
+      "def": 0,
+      "hp": 7,
+      "item_tier": 4,
+      "base_type": "knife",
+      "flavor_tags": [
+        "precision",
+        "swift"
+      ],
+      "lore": "Always finds the right place to be. Unfortunately for whatever it lands in.",
+      "drop_weights": [
+        0,
+        0,
+        8,
+        50,
+        35
+      ],
+      "unique": false
+    },
+    {
+      "id": "mithril_longsword",
+      "name": "Mithril Long Sword",
+      "slot": "weapon",
+      "rarity": "epic",
+      "tile": "long_sword_3.png",
+      "atk": 56,
+      "def": 0,
+      "hp": 10,
+      "item_tier": 4,
+      "base_type": "long_sword",
+      "flavor_tags": [],
+      "lore": "Light enough to carry all day, heavy enough to end the day.",
+      "drop_weights": [
+        0,
+        0,
+        10,
+        60,
+        30
+      ],
+      "unique": false
+    },
+    {
+      "id": "runed_falchion",
+      "name": "Runed Falchion",
+      "slot": "weapon",
+      "rarity": "epic",
+      "tile": "falchion_5.png",
+      "atk": 52,
+      "def": 0,
+      "hp": 10,
+      "item_tier": 4,
+      "base_type": "falchion",
+      "flavor_tags": [
+        "magic"
+      ],
+      "lore": "Sigils run down the blade, each one a name.",
+      "drop_weights": [
+        0,
+        0,
+        8,
+        58,
+        35
+      ],
+      "unique": false
+    },
+    {
+      "id": "runed_scimitar",
+      "name": "Runed Scimitar",
+      "slot": "weapon",
+      "rarity": "epic",
+      "tile": "scimitar_2.png",
+      "atk": 58,
+      "def": 0,
+      "hp": 11,
+      "item_tier": 4,
+      "base_type": "scimitar",
+      "flavor_tags": [
+        "magic"
+      ],
+      "lore": "The runes pulse when it cuts. Nobody knows why.",
+      "drop_weights": [
+        0,
+        0,
+        8,
+        60,
+        32
+      ],
+      "unique": false
+    },
+    {
+      "id": "steel_longsword",
+      "name": "Steel Long Sword",
+      "slot": "weapon",
+      "rarity": "rare",
+      "tile": "long_sword_2.png",
+      "atk": 48,
+      "def": 0,
+      "hp": 8,
+      "item_tier": 4,
+      "base_type": "long_sword",
+      "flavor_tags": [],
+      "lore": "Dependable. Exactly as good as it needs to be.",
+      "drop_weights": [
+        0,
+        0,
+        12,
+        58,
+        30
+      ],
+      "unique": false
+    },
+    {
+      "id": "ancient_sword",
+      "name": "Ancient Sword",
+      "slot": "weapon",
+      "rarity": "epic",
+      "tile": "ancient_sword.png",
+      "atk": 72,
+      "def": 0,
+      "hp": 16,
+      "item_tier": 5,
+      "base_type": "long_sword",
+      "flavor_tags": [
+        "dark",
+        "death"
+      ],
+      "lore": "Nobody remembers who made it. Nobody dares ask.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        14,
+        70
+      ],
+      "unique": false
+    },
+    {
+      "id": "arc_blade",
+      "name": "Arc Blade",
+      "slot": "weapon",
+      "rarity": "legendary",
+      "tile": "urand_arc_blade.png",
+      "atk": 84,
+      "def": 0,
+      "hp": 18,
+      "item_tier": 5,
+      "base_type": "long_sword",
+      "flavor_tags": [
+        "magic",
+        "elemental"
+      ],
+      "lore": "Lightning runs the length of the blade. It hisses when wet.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        25
+      ],
+      "unique": true,
+      "future_mechanic": "Hits chain to 1 adjacent enemy at 50% damage. Lightning-typed."
+    },
+    {
+      "id": "bloodbane",
+      "name": "Bloodbane",
+      "slot": "weapon",
+      "rarity": "legendary",
+      "tile": "urand_bloodbane_new.png",
+      "atk": 80,
+      "def": 0,
+      "hp": 22,
+      "item_tier": 5,
+      "base_type": "long_sword",
+      "flavor_tags": [
+        "vampiric",
+        "dark"
+      ],
+      "lore": "Drinks deep from those it cuts. Never seems satisfied.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        4,
+        22
+      ],
+      "unique": true,
+      "future_mechanic": "Lifesteal: heals 8% of damage dealt on every hit."
+    },
+    {
+      "id": "chilly_death",
+      "name": "Chilly Death",
+      "slot": "weapon",
+      "rarity": "legendary",
+      "tile": "urand_chilly_death_new.png",
+      "atk": 78,
+      "def": 0,
+      "hp": 18,
+      "item_tier": 5,
+      "base_type": "rapier",
+      "flavor_tags": [
+        "ice",
+        "cold"
+      ],
+      "lore": "Leaves wounds that refuse to close. Cold as the depths of Glacier.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        25
+      ],
+      "unique": true,
+      "future_mechanic": "15% chance to freeze enemy on hit (0.5s stun). Frozen enemies take +20% damage."
+    },
+    {
+      "id": "crystal_longsword",
+      "name": "Crystal Long Sword",
+      "slot": "weapon",
+      "rarity": "epic",
+      "tile": "long_sword_5.png",
+      "atk": 68,
+      "def": 0,
+      "hp": 14,
+      "item_tier": 5,
+      "base_type": "long_sword",
+      "flavor_tags": [
+        "magic",
+        "crystal"
+      ],
+      "lore": "Carved from a single growth of arcane crystal. Hums when hungry.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        15,
+        75
+      ],
+      "unique": false
+    },
+    {
+      "id": "demon_blade",
+      "name": "Demon Blade",
+      "slot": "weapon",
+      "rarity": "legendary",
+      "tile": "demon_blade.png",
+      "atk": 80,
+      "def": 0,
+      "hp": 16,
+      "item_tier": 5,
+      "base_type": "demon_blade",
+      "flavor_tags": [
+        "fire",
+        "demon"
+      ],
+      "lore": "Forged in a plane that shouldn't exist. Wants to go back.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        8,
+        60
+      ],
+      "unique": false
+    },
+    {
+      "id": "doom_knight_blade",
+      "name": "The Doom Knight's Blade",
+      "slot": "weapon",
+      "rarity": "legendary",
+      "tile": "urand_doom_knight_new.png",
+      "atk": 100,
+      "def": 0,
+      "hp": 24,
+      "item_tier": 5,
+      "base_type": "demon_blade",
+      "flavor_tags": [
+        "dark",
+        "death"
+      ],
+      "lore": "A weapon that has ended civilizations. It prefers it that way.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        3,
+        18
+      ],
+      "unique": true,
+      "future_mechanic": "Death mark: hit applies a 3s debuff (+25% damage taken). Stacks once."
+    },
+    {
+      "id": "eos",
+      "name": "Eos",
+      "slot": "weapon",
+      "rarity": "legendary",
+      "tile": "urand_eos.png",
+      "atk": 86,
+      "def": 0,
+      "hp": 18,
+      "item_tier": 5,
+      "base_type": "long_sword",
+      "flavor_tags": [
+        "holy",
+        "fire"
+      ],
+      "lore": "Forged from a fragment of dawn. It does not dim.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        4,
+        22
+      ],
+      "unique": true,
+      "future_mechanic": "+50% damage vs undead/demon. Emits weak light (sees-invisible)."
+    },
+    {
+      "id": "firestarter",
+      "name": "Firestarter",
+      "slot": "weapon",
+      "rarity": "legendary",
+      "tile": "urand_firestarter.png",
+      "atk": 85,
+      "def": 0,
+      "hp": 18,
+      "item_tier": 5,
+      "base_type": "falchion",
+      "flavor_tags": [
+        "fire"
+      ],
+      "lore": "A blade wreathed in eternal flame. It doesn't burn you. Yet.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        25
+      ],
+      "unique": true,
+      "future_mechanic": "Hits apply a 3-tick burn (5% max HP per tick). Light spec already wired."
+    },
+    {
+      "id": "gyre",
+      "name": "Gyre",
+      "slot": "weapon",
+      "rarity": "legendary",
+      "tile": "urand_gyre.png",
+      "atk": 90,
+      "def": 0,
+      "hp": 18,
+      "item_tier": 5,
+      "base_type": "katana",
+      "flavor_tags": [
+        "arcane",
+        "dual"
+      ],
+      "lore": "The blade orbits the hand as if alive, striking twice where others strike once.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        4,
+        22
+      ],
+      "unique": true,
+      "future_mechanic": "Hits twice per attack at 70% damage each. Total DPS roughly 1.4x base ATK."
+    },
+    {
+      "id": "jihad",
+      "name": "The Sword of Jihad",
+      "slot": "weapon",
+      "rarity": "legendary",
+      "tile": "urand_jihad_new.png",
+      "atk": 92,
+      "def": 0,
+      "hp": 16,
+      "item_tier": 5,
+      "base_type": "long_sword",
+      "flavor_tags": [
+        "holy",
+        "brutal"
+      ],
+      "lore": "Each kill draws the bearer further into something they can't quite name.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        4,
+        22
+      ],
+      "unique": true,
+      "future_mechanic": "Chain-kill bonus: +5% ATK per kill in last 6s, stacks to 30%."
+    },
+    {
+      "id": "majin_bo",
+      "name": "Majin-Bo",
+      "slot": "weapon",
+      "rarity": "legendary",
+      "tile": "spwpn_majin.png",
+      "atk": 100,
+      "def": 0,
+      "hp": 18,
+      "item_tier": 5,
+      "base_type": "katana",
+      "flavor_tags": [
+        "dark",
+        "magic",
+        "vampiric"
+      ],
+      "lore": "Whispers names of the people the bearer has lost. Or will lose.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        3,
+        18
+      ],
+      "unique": true,
+      "future_mechanic": "Lifesteal 6% on hit. Drains 1 max HP per kill (recovers between runs)."
+    },
+    {
+      "id": "mithril_katana",
+      "name": "Mithril Katana",
+      "slot": "weapon",
+      "rarity": "epic",
+      "tile": "katana_1.png",
+      "atk": 64,
+      "def": 0,
+      "hp": 13,
+      "item_tier": 5,
+      "base_type": "katana",
+      "flavor_tags": [
+        "precision",
+        "swift"
+      ],
+      "lore": "Forged over seven years. Used for the rest.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        12,
+        72
+      ],
+      "unique": false
+    },
+    {
+      "id": "serpent_scourge",
+      "name": "The Serpent's Scourge",
+      "slot": "weapon",
+      "rarity": "legendary",
+      "tile": "urand_serpent_scourge.png",
+      "atk": 82,
+      "def": 0,
+      "hp": 16,
+      "item_tier": 5,
+      "base_type": "scimitar",
+      "flavor_tags": [
+        "poison",
+        "swift"
+      ],
+      "lore": "Drips. Doesn't matter what you wipe it with.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        4,
+        22
+      ],
+      "unique": true,
+      "future_mechanic": "Hits apply 4-tick poison DoT (4% max HP per tick)."
+    },
+    {
+      "id": "singing_sword",
+      "name": "The Singing Sword",
+      "slot": "weapon",
+      "rarity": "legendary",
+      "tile": "spwpn_singing_sword.png",
+      "atk": 88,
+      "def": 0,
+      "hp": 20,
+      "item_tier": 5,
+      "base_type": "long_sword",
+      "flavor_tags": [
+        "magic",
+        "sound"
+      ],
+      "lore": "A blade said to sing in battle. The tune changes with each kill.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        25
+      ],
+      "unique": true,
+      "future_mechanic": "ATK scales with enemies killed this run (+1 ATK per 10 kills, resets on run end)."
+    },
+    {
+      "id": "spriggans_knife",
+      "name": "Spriggan's Knife",
+      "slot": "weapon",
+      "rarity": "legendary",
+      "tile": "urand_spriggans_knife_new.png",
+      "atk": 70,
+      "def": 0,
+      "hp": 12,
+      "item_tier": 5,
+      "base_type": "dagger",
+      "flavor_tags": [
+        "swift",
+        "precision"
+      ],
+      "lore": "Light as a leaf-stem. Faster than thought.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        4,
+        22
+      ],
+      "unique": true,
+      "future_mechanic": "+30% attack speed. Lower aggro range while held."
+    },
+    {
+      "id": "sword_of_cerebov",
+      "name": "Sword of Cerebov",
+      "slot": "weapon",
+      "rarity": "legendary",
+      "tile": "spwpn_sword_of_cerebov_new.png",
+      "atk": 110,
+      "def": 0,
+      "hp": 22,
+      "item_tier": 5,
+      "base_type": "demon_blade",
+      "flavor_tags": [
+        "fire",
+        "demon",
+        "brutal"
+      ],
+      "lore": "Cerebov never let it go. Even in defeat. Even now.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        3,
+        18
+      ],
+      "unique": true,
+      "future_mechanic": "+25% damage to bosses. Burning aura damages adjacent enemies."
+    },
+    {
+      "id": "sword_of_power",
+      "name": "Sword of Power",
+      "slot": "weapon",
+      "rarity": "legendary",
+      "tile": "spwpn_sword_of_power_new.png",
+      "atk": 95,
+      "def": 0,
+      "hp": 20,
+      "item_tier": 5,
+      "base_type": "long_sword",
+      "flavor_tags": [
+        "magic",
+        "brutal"
+      ],
+      "lore": "ATK scales with the bearer's current HP. The healthy hit hardest.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        3,
+        18
+      ],
+      "unique": true,
+      "future_mechanic": "ATK multiplied by current_hp/max_hp. Full HP = +50% damage; low HP = -50%."
+    },
+    {
+      "id": "sword_of_zonguldrok",
+      "name": "Sword of Zonguldrok",
+      "slot": "weapon",
+      "rarity": "legendary",
+      "tile": "spwpn_sword_of_zonguldrok_new.png",
+      "atk": 90,
+      "def": 0,
+      "hp": 18,
+      "item_tier": 5,
+      "base_type": "long_sword",
+      "flavor_tags": [
+        "dark",
+        "death",
+        "vampiric"
+      ],
+      "lore": "Each kill rises briefly to fight beside the bearer. Briefly.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        4,
+        20
+      ],
+      "unique": true,
+      "future_mechanic": "Killed enemies have a 20% chance to rise as a 5s ally."
+    },
+    {
+      "id": "vampires_tooth",
+      "name": "Vampire's Tooth",
+      "slot": "weapon",
+      "rarity": "legendary",
+      "tile": "spwpn_vampires_tooth.png",
+      "atk": 76,
+      "def": 0,
+      "hp": 18,
+      "item_tier": 5,
+      "base_type": "rapier",
+      "flavor_tags": [
+        "vampiric",
+        "dark",
+        "precision"
+      ],
+      "lore": "It thirsts. Always. The wearer learns to provide.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        25
+      ],
+      "unique": true,
+      "future_mechanic": "Lifesteal: 12% of damage dealt heals the bot. +10% crit."
+    },
+    {
+      "id": "wyrmbane",
+      "name": "Wyrmbane",
+      "slot": "weapon",
+      "rarity": "legendary",
+      "tile": "urand_wyrmbane_new.png",
+      "atk": 92,
+      "def": 0,
+      "hp": 20,
+      "item_tier": 5,
+      "base_type": "scimitar",
+      "flavor_tags": [
+        "holy",
+        "dragon_bane"
+      ],
+      "lore": "Forged to end dragons. Still hungry.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        25
+      ],
+      "unique": true,
+      "future_mechanic": "+50% damage vs dragon-type enemies. Base vs others."
+    },
+    {
+      "id": "iron_brigandine",
+      "name": "Iron Brigandine",
+      "slot": "armor",
+      "rarity": "uncommon",
+      "tile": "ring_mail_1_new.png",
+      "atk": 0,
+      "def": 7,
+      "hp": 85,
+      "item_tier": 1,
+      "base_type": "ring_mail",
+      "flavor_tags": [
+        "fortified"
+      ],
+      "lore": "Cheap and reliable. Heavy on the shoulders.",
+      "drop_weights": [
+        50,
+        35,
+        8,
+        0,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "leather_jerkin",
+      "name": "Leather Jerkin",
+      "slot": "armor",
+      "rarity": "common",
+      "tile": "leather_armor_1.png",
+      "atk": 0,
+      "def": 4,
+      "hp": 60,
+      "item_tier": 1,
+      "base_type": "leather",
+      "flavor_tags": [],
+      "lore": "Smells of old smoke.",
+      "drop_weights": [
+        70,
+        20,
+        2,
+        0,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "orcish_leather",
+      "name": "Orcish Leather",
+      "slot": "armor",
+      "rarity": "common",
+      "tile": "orcish_leather_armor.png",
+      "atk": 0,
+      "def": 4,
+      "hp": 55,
+      "item_tier": 1,
+      "base_type": "leather",
+      "flavor_tags": [],
+      "lore": "Cured rough. Smells like a forge.",
+      "drop_weights": [
+        70,
+        22,
+        4,
+        0,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "patchwork_robe",
+      "name": "Patchwork Robe",
+      "slot": "armor",
+      "rarity": "common",
+      "tile": "robe_1_old.png",
+      "atk": 0,
+      "def": 2,
+      "hp": 50,
+      "item_tier": 1,
+      "base_type": "robe",
+      "flavor_tags": [
+        "regen"
+      ],
+      "lore": "Mended often. Keeps falling apart.",
+      "drop_weights": [
+        80,
+        15,
+        0,
+        0,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "studded_leather",
+      "name": "Studded Leather",
+      "slot": "armor",
+      "rarity": "uncommon",
+      "tile": "studded_leather_armor.png",
+      "atk": 0,
+      "def": 5,
+      "hp": 70,
+      "item_tier": 1,
+      "base_type": "studded",
+      "flavor_tags": [],
+      "lore": "Iron rivets in a leather grid. Doesn't catch on fences.",
+      "drop_weights": [
+        55,
+        35,
+        5,
+        0,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "tattered_hide",
+      "name": "Tattered Hide",
+      "slot": "armor",
+      "rarity": "common",
+      "tile": "animal_skin_1_new.png",
+      "atk": 0,
+      "def": 3,
+      "hp": 45,
+      "item_tier": 1,
+      "base_type": "leather",
+      "flavor_tags": [],
+      "lore": "Whatever it was, it's leather now.",
+      "drop_weights": [
+        80,
+        15,
+        0,
+        0,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "elven_leather",
+      "name": "Elven Leather",
+      "slot": "armor",
+      "rarity": "rare",
+      "tile": "elven_leather_armor.png",
+      "atk": 0,
+      "def": 6,
+      "hp": 90,
+      "item_tier": 2,
+      "base_type": "leather",
+      "flavor_tags": [
+        "stealth",
+        "swiftness"
+      ],
+      "lore": "Lighter than air, by all accounts.",
+      "drop_weights": [
+        8,
+        55,
+        32,
+        5,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "fine_chainmail",
+      "name": "Fine Chainmail",
+      "slot": "armor",
+      "rarity": "uncommon",
+      "tile": "chain_mail_1.png",
+      "atk": 0,
+      "def": 9,
+      "hp": 105,
+      "item_tier": 2,
+      "base_type": "chain_mail",
+      "flavor_tags": [
+        "fortified"
+      ],
+      "lore": "Each ring closed cleanly. A craftsman's pride.",
+      "drop_weights": [
+        12,
+        60,
+        28,
+        5,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "orcish_chain",
+      "name": "Orcish Chainmail",
+      "slot": "armor",
+      "rarity": "uncommon",
+      "tile": "orcish_chain_mail.png",
+      "atk": 0,
+      "def": 8,
+      "hp": 100,
+      "item_tier": 2,
+      "base_type": "chain_mail",
+      "flavor_tags": [
+        "fortified"
+      ],
+      "lore": "Not pretty. Not subtle. Stops things.",
+      "drop_weights": [
+        12,
+        55,
+        28,
+        5,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "orcish_ringmail",
+      "name": "Orcish Ringmail",
+      "slot": "armor",
+      "rarity": "uncommon",
+      "tile": "orcish_ringmail.png",
+      "atk": 0,
+      "def": 6,
+      "hp": 80,
+      "item_tier": 2,
+      "base_type": "ring_mail",
+      "flavor_tags": [
+        "fortified"
+      ],
+      "lore": "Hammered hot, riveted cold. Effective.",
+      "drop_weights": [
+        15,
+        60,
+        28,
+        5,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "scale_mail",
+      "name": "Scale Mail",
+      "slot": "armor",
+      "rarity": "rare",
+      "tile": "scale_mail_1_new.png",
+      "atk": 0,
+      "def": 10,
+      "hp": 115,
+      "item_tier": 2,
+      "base_type": "scale_mail",
+      "flavor_tags": [
+        "fortified"
+      ],
+      "lore": "Each scale overlaps the next. Almost fish.",
+      "drop_weights": [
+        5,
+        50,
+        35,
+        8,
+        2
+      ],
+      "unique": false
+    },
+    {
+      "id": "scout_robe",
+      "name": "Scout's Robe",
+      "slot": "armor",
+      "rarity": "uncommon",
+      "tile": "robe_1_new.png",
+      "atk": 0,
+      "def": 4,
+      "hp": 75,
+      "item_tier": 2,
+      "base_type": "robe",
+      "flavor_tags": [
+        "stealth",
+        "swiftness"
+      ],
+      "lore": "Patterns dyed for grass shadow.",
+      "drop_weights": [
+        15,
+        65,
+        22,
+        3,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "troll_hide",
+      "name": "Troll Hide",
+      "slot": "armor",
+      "rarity": "rare",
+      "tile": "troll_hide.png",
+      "atk": 0,
+      "def": 5,
+      "hp": 85,
+      "item_tier": 2,
+      "base_type": "troll_leather",
+      "flavor_tags": [
+        "regen"
+      ],
+      "lore": "Raw hide, still healing slowly. So is the wearer.",
+      "drop_weights": [
+        10,
+        50,
+        32,
+        8,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "banded_mail",
+      "name": "Banded Mail",
+      "slot": "armor",
+      "rarity": "rare",
+      "tile": "banded_mail_1.png",
+      "atk": 0,
+      "def": 14,
+      "hp": 150,
+      "item_tier": 3,
+      "base_type": "banded_mail",
+      "flavor_tags": [
+        "fortified"
+      ],
+      "lore": "Bands ring against each other when you walk.",
+      "drop_weights": [
+        0,
+        15,
+        58,
+        25,
+        5
+      ],
+      "unique": false
+    },
+    {
+      "id": "elven_scalemail",
+      "name": "Elven Scalemail",
+      "slot": "armor",
+      "rarity": "rare",
+      "tile": "elven_scalemail.png",
+      "atk": 0,
+      "def": 12,
+      "hp": 130,
+      "item_tier": 3,
+      "base_type": "scale_mail",
+      "flavor_tags": [
+        "swiftness",
+        "willpower"
+      ],
+      "lore": "Mithril-scaled, light as silk, strong as steel.",
+      "drop_weights": [
+        0,
+        12,
+        55,
+        28,
+        8
+      ],
+      "unique": false
+    },
+    {
+      "id": "orcish_platemail",
+      "name": "Orcish Platemail",
+      "slot": "armor",
+      "rarity": "rare",
+      "tile": "orcish_platemail.png",
+      "atk": 0,
+      "def": 14,
+      "hp": 145,
+      "item_tier": 3,
+      "base_type": "plate",
+      "flavor_tags": [
+        "fortified"
+      ],
+      "lore": "Looks like it was bashed into shape. It was.",
+      "drop_weights": [
+        0,
+        18,
+        60,
+        22,
+        4
+      ],
+      "unique": false
+    },
+    {
+      "id": "splint_mail",
+      "name": "Splint Mail",
+      "slot": "armor",
+      "rarity": "rare",
+      "tile": "splint_mail_1.png",
+      "atk": 0,
+      "def": 13,
+      "hp": 140,
+      "item_tier": 3,
+      "base_type": "splint_mail",
+      "flavor_tags": [
+        "fortified"
+      ],
+      "lore": "Strips of steel over linen. A compromise that works.",
+      "drop_weights": [
+        0,
+        18,
+        60,
+        22,
+        4
+      ],
+      "unique": false
+    },
+    {
+      "id": "troll_leather",
+      "name": "Troll Leather Armor",
+      "slot": "armor",
+      "rarity": "epic",
+      "tile": "troll_leather_armor.png",
+      "atk": 0,
+      "def": 10,
+      "hp": 160,
+      "item_tier": 3,
+      "base_type": "troll_leather",
+      "flavor_tags": [
+        "regen"
+      ],
+      "lore": "It bleeds when struck. The bleeding stops on its own.",
+      "drop_weights": [
+        0,
+        8,
+        50,
+        32,
+        12
+      ],
+      "unique": false
+    },
+    {
+      "id": "fire_dragon_armor",
+      "name": "Fire Dragon Armor",
+      "slot": "armor",
+      "rarity": "epic",
+      "tile": "blue_dragon_scale_mail_new.png",
+      "atk": 0,
+      "def": 17,
+      "hp": 170,
+      "item_tier": 4,
+      "base_type": "dragon_scales",
+      "flavor_tags": [
+        "fire_res"
+      ],
+      "lore": "Warm where you wear it. Warmer where it strikes.",
+      "drop_weights": [
+        0,
+        0,
+        10,
+        55,
+        35
+      ],
+      "unique": false
+    },
+    {
+      "id": "green_dragon",
+      "name": "Green Dragon Scales",
+      "slot": "armor",
+      "rarity": "epic",
+      "tile": "green_dragon_scale_mail.png",
+      "atk": 0,
+      "def": 16,
+      "hp": 165,
+      "item_tier": 4,
+      "base_type": "dragon_scales",
+      "flavor_tags": [
+        "poison_res"
+      ],
+      "lore": "Dappled jade. Worn by a wyrm who poisoned cities.",
+      "drop_weights": [
+        0,
+        0,
+        10,
+        55,
+        35
+      ],
+      "unique": false
+    },
+    {
+      "id": "ice_dragon_armor",
+      "name": "Ice Dragon Armor",
+      "slot": "armor",
+      "rarity": "epic",
+      "tile": "ice_dragon_armor_new.png",
+      "atk": 0,
+      "def": 17,
+      "hp": 170,
+      "item_tier": 4,
+      "base_type": "dragon_scales",
+      "flavor_tags": [
+        "cold_res"
+      ],
+      "lore": "Cold to the touch. Colder when struck.",
+      "drop_weights": [
+        0,
+        0,
+        10,
+        55,
+        35
+      ],
+      "unique": false
+    },
+    {
+      "id": "mottled_dragon",
+      "name": "Mottled Dragon Scales",
+      "slot": "armor",
+      "rarity": "epic",
+      "tile": "mottled_dragon_armor_new.png",
+      "atk": 0,
+      "def": 17,
+      "hp": 170,
+      "item_tier": 4,
+      "base_type": "dragon_scales",
+      "flavor_tags": [
+        "fire_res",
+        "elemental"
+      ],
+      "lore": "Patchwork brown. Spat sticky napalm.",
+      "drop_weights": [
+        0,
+        0,
+        10,
+        55,
+        35
+      ],
+      "unique": false
+    },
+    {
+      "id": "plate_armor",
+      "name": "Plate Armor",
+      "slot": "armor",
+      "rarity": "rare",
+      "tile": "plate_mail_1.png",
+      "atk": 0,
+      "def": 18,
+      "hp": 175,
+      "item_tier": 4,
+      "base_type": "plate",
+      "flavor_tags": [
+        "fortified",
+        "ponderous"
+      ],
+      "lore": "Forged plates. Heavy. Honest.",
+      "drop_weights": [
+        0,
+        0,
+        12,
+        60,
+        28
+      ],
+      "unique": false
+    },
+    {
+      "id": "shimmering_armor",
+      "name": "Shimmering Dragon Scales",
+      "slot": "armor",
+      "rarity": "epic",
+      "tile": "shimmering_dragon_scales.png",
+      "atk": 0,
+      "def": 16,
+      "hp": 175,
+      "item_tier": 4,
+      "base_type": "dragon_scales",
+      "flavor_tags": [
+        "willpower"
+      ],
+      "lore": "The colors shift with what's looking at it.",
+      "drop_weights": [
+        0,
+        0,
+        8,
+        50,
+        40
+      ],
+      "unique": false
+    },
+    {
+      "id": "swamp_dragon_armor",
+      "name": "Swamp Dragon Armor",
+      "slot": "armor",
+      "rarity": "epic",
+      "tile": "swamp_dragon_armor_new.png",
+      "atk": 0,
+      "def": 16,
+      "hp": 165,
+      "item_tier": 4,
+      "base_type": "dragon_scales",
+      "flavor_tags": [
+        "poison_res"
+      ],
+      "lore": "Always damp. Smells faintly of bog.",
+      "drop_weights": [
+        0,
+        0,
+        10,
+        55,
+        35
+      ],
+      "unique": false
+    },
+    {
+      "id": "wyrmscale_hauberk",
+      "name": "Wyrmscale Hauberk",
+      "slot": "armor",
+      "rarity": "epic",
+      "tile": "scale_mail_3.png",
+      "atk": 0,
+      "def": 18,
+      "hp": 200,
+      "item_tier": 4,
+      "base_type": "scale_mail",
+      "flavor_tags": [
+        "fortified",
+        "elemental"
+      ],
+      "lore": "Built around the spine of something that never stopped flying.",
+      "drop_weights": [
+        0,
+        0,
+        8,
+        55,
+        38
+      ],
+      "unique": false
+    },
+    {
+      "id": "armor_of_zhor",
+      "name": "Armor of Zhor",
+      "slot": "armor",
+      "rarity": "legendary",
+      "tile": "urand_zhor.png",
+      "atk": 0,
+      "def": 14,
+      "hp": 240,
+      "item_tier": 5,
+      "base_type": "leather",
+      "flavor_tags": [
+        "regen",
+        "stealth"
+      ],
+      "lore": "Worn by Zhor, who could not be found. Or hurt.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        4,
+        22
+      ],
+      "unique": true,
+      "future_mechanic": "+12 HP regen tick. Lower aggro range."
+    },
+    {
+      "id": "crystal_plate",
+      "name": "Crystal Plate",
+      "slot": "armor",
+      "rarity": "epic",
+      "tile": "crystal_plate_mail.png",
+      "atk": 0,
+      "def": 26,
+      "hp": 260,
+      "item_tier": 5,
+      "base_type": "crystal_plate",
+      "flavor_tags": [
+        "fortified",
+        "thorns"
+      ],
+      "lore": "Living crystal grown over a hauberk. Hums in melee.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        10,
+        65
+      ],
+      "unique": false
+    },
+    {
+      "id": "dragon_kings_robe",
+      "name": "Robe of the Dragon King",
+      "slot": "armor",
+      "rarity": "legendary",
+      "tile": "urand_dragon_king.png",
+      "atk": 5,
+      "def": 16,
+      "hp": 235,
+      "item_tier": 5,
+      "base_type": "robe",
+      "flavor_tags": [
+        "elemental",
+        "lordly",
+        "willpower"
+      ],
+      "lore": "Worn by the wyrm who claimed the title. Briefly.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        4,
+        22
+      ],
+      "unique": true,
+      "future_mechanic": "+40% damage vs dragon-type. All elemental resistances."
+    },
+    {
+      "id": "etheric_cage",
+      "name": "Etheric Cage",
+      "slot": "armor",
+      "rarity": "legendary",
+      "tile": "urand_etheric_cage.png",
+      "atk": 0,
+      "def": 28,
+      "hp": 300,
+      "item_tier": 5,
+      "base_type": "plate",
+      "flavor_tags": [
+        "fortified",
+        "willpower"
+      ],
+      "lore": "An armor that holds its wearer in place. Spells slide off the bars.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        3,
+        18
+      ],
+      "unique": true,
+      "future_mechanic": "+50% magic resist. -10% move speed (drawback)."
+    },
+    {
+      "id": "faerie_dragon",
+      "name": "Faerie Dragon Hide",
+      "slot": "armor",
+      "rarity": "legendary",
+      "tile": "urand_faerie.png",
+      "atk": 0,
+      "def": 16,
+      "hp": 225,
+      "item_tier": 5,
+      "base_type": "dragon_scales",
+      "flavor_tags": [
+        "elemental",
+        "willpower",
+        "swiftness"
+      ],
+      "lore": "Light enough to be silly. Strong enough to be feared.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        25
+      ],
+      "unique": true,
+      "future_mechanic": "All elemental resistances. Mana regen scaling."
+    },
+    {
+      "id": "gold_dragon_armor",
+      "name": "Gold Dragon Armor",
+      "slot": "armor",
+      "rarity": "epic",
+      "tile": "gold_dragon_armor_new.png",
+      "atk": 0,
+      "def": 22,
+      "hp": 240,
+      "item_tier": 5,
+      "base_type": "dragon_scales",
+      "flavor_tags": [
+        "elemental",
+        "fortified"
+      ],
+      "lore": "Each scale catches the sun. Catches the spell, too.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        12,
+        72
+      ],
+      "unique": false
+    },
+    {
+      "id": "lear_chainmail",
+      "name": "Lear's Chainmail",
+      "slot": "armor",
+      "rarity": "legendary",
+      "tile": "urand_lear.png",
+      "atk": 0,
+      "def": 24,
+      "hp": 280,
+      "item_tier": 5,
+      "base_type": "chain_mail",
+      "flavor_tags": [
+        "lordly",
+        "willpower"
+      ],
+      "lore": "Worn by a king who refused to take it off.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        25
+      ],
+      "unique": true,
+      "future_mechanic": "+15% damage when surrounded by 3+ enemies."
+    },
+    {
+      "id": "lightning_scales",
+      "name": "Lightning Scales",
+      "slot": "armor",
+      "rarity": "legendary",
+      "tile": "urand_lightning_scales.png",
+      "atk": 6,
+      "def": 20,
+      "hp": 215,
+      "item_tier": 5,
+      "base_type": "dragon_scales",
+      "flavor_tags": [
+        "thorns",
+        "elemental"
+      ],
+      "lore": "Crackles when struck. Doesn't always wait to be struck.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        22
+      ],
+      "unique": true,
+      "future_mechanic": "Reflects 25% of melee as lightning damage to attacker."
+    },
+    {
+      "id": "pearl_dragon",
+      "name": "Pearl Dragon Armor",
+      "slot": "armor",
+      "rarity": "epic",
+      "tile": "pearl_dragon_armor.png",
+      "atk": 0,
+      "def": 20,
+      "hp": 230,
+      "item_tier": 5,
+      "base_type": "dragon_scales",
+      "flavor_tags": [
+        "willpower",
+        "regen"
+      ],
+      "lore": "Worn by saints, briefly. Always returned.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        12,
+        70
+      ],
+      "unique": false
+    },
+    {
+      "id": "quicksilver_dragon",
+      "name": "Quicksilver Dragon Scales",
+      "slot": "armor",
+      "rarity": "epic",
+      "tile": "quicksilver_dragon_scale_mail.png",
+      "atk": 0,
+      "def": 18,
+      "hp": 215,
+      "item_tier": 5,
+      "base_type": "dragon_scales",
+      "flavor_tags": [
+        "swiftness",
+        "willpower"
+      ],
+      "lore": "Liquid sheen. Always slightly off-pace with the rest of the world.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        12,
+        72
+      ],
+      "unique": false
+    },
+    {
+      "id": "ratskin_cloak",
+      "name": "Ratskin Cloak",
+      "slot": "armor",
+      "rarity": "legendary",
+      "tile": "urand_ratskin_cloak.png",
+      "atk": 0,
+      "def": 16,
+      "hp": 230,
+      "item_tier": 5,
+      "base_type": "leather",
+      "flavor_tags": [
+        "stealth",
+        "regen"
+      ],
+      "lore": "Stitched from a thousand rats. They were a problem first.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        22
+      ],
+      "unique": true,
+      "future_mechanic": "Disease immunity. Lower aggro range."
+    },
+    {
+      "id": "robe_of_clouds",
+      "name": "Robe of Clouds",
+      "slot": "armor",
+      "rarity": "legendary",
+      "tile": "urand_clouds.png",
+      "atk": 0,
+      "def": 12,
+      "hp": 200,
+      "item_tier": 5,
+      "base_type": "robe",
+      "flavor_tags": [
+        "stealth",
+        "willpower",
+        "regen"
+      ],
+      "lore": "Fades in and out of solid the longer the wearer stands still.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        25
+      ],
+      "unique": true,
+      "future_mechanic": "+30% dodge while moving. Concealment effect briefly after staying still."
+    },
+    {
+      "id": "robe_of_folly",
+      "name": "Robe of Folly",
+      "slot": "armor",
+      "rarity": "legendary",
+      "tile": "urand_folly.png",
+      "atk": 0,
+      "def": 14,
+      "hp": 220,
+      "item_tier": 5,
+      "base_type": "robe",
+      "flavor_tags": [
+        "regen",
+        "willpower"
+      ],
+      "lore": "Anyone who wears it makes one terrible decision. They survive it.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        25
+      ],
+      "unique": true,
+      "future_mechanic": "Regen 8 HP/s. -20% DEF (drawback)."
+    },
+    {
+      "id": "robe_of_misfortune",
+      "name": "Robe of Misfortune",
+      "slot": "armor",
+      "rarity": "legendary",
+      "tile": "urand_misfortune.png",
+      "atk": 0,
+      "def": 15,
+      "hp": 220,
+      "item_tier": 5,
+      "base_type": "robe",
+      "flavor_tags": [
+        "thorns",
+        "willpower"
+      ],
+      "lore": "Bad things happen near it. Worse things happen when struck.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        4,
+        20
+      ],
+      "unique": true,
+      "future_mechanic": "Reflects 15% of melee damage. Random affix swap each floor."
+    },
+    {
+      "id": "robe_of_night",
+      "name": "Robe of Night",
+      "slot": "armor",
+      "rarity": "legendary",
+      "tile": "urand_night_new.png",
+      "atk": 0,
+      "def": 13,
+      "hp": 200,
+      "item_tier": 5,
+      "base_type": "robe",
+      "flavor_tags": [
+        "stealth",
+        "dark",
+        "willpower"
+      ],
+      "lore": "Dimmer than the room around it. Always.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        4,
+        20
+      ],
+      "unique": true,
+      "future_mechanic": "Darkness aura: enemy aggro range -3 cells. +30% crit at <50% HP."
+    },
+    {
+      "id": "robe_of_resistance",
+      "name": "Robe of Resistance",
+      "slot": "armor",
+      "rarity": "legendary",
+      "tile": "urand_resistance.png",
+      "atk": 0,
+      "def": 14,
+      "hp": 220,
+      "item_tier": 5,
+      "base_type": "robe",
+      "flavor_tags": [
+        "fire_res",
+        "cold_res",
+        "willpower"
+      ],
+      "lore": "Worn by spell-eaters. Charred at the cuffs.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        25
+      ],
+      "unique": true,
+      "future_mechanic": "All elemental resistances at +25%. -10% physical DEF (drawback)."
+    },
+    {
+      "id": "salamander_hide",
+      "name": "Salamander Hide",
+      "slot": "armor",
+      "rarity": "legendary",
+      "tile": "urand_salamander.png",
+      "atk": 4,
+      "def": 18,
+      "hp": 200,
+      "item_tier": 5,
+      "base_type": "leather",
+      "flavor_tags": [
+        "fire_res",
+        "regen"
+      ],
+      "lore": "Hot to the touch. Cold to the things hitting it.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        22
+      ],
+      "unique": true,
+      "future_mechanic": "Fire immunity. Burning enemies near you take +20% damage."
+    },
+    {
+      "id": "shadow_dragon",
+      "name": "Shadow Dragon Armor",
+      "slot": "armor",
+      "rarity": "epic",
+      "tile": "shadow_dragon_scale_mail.png",
+      "atk": 0,
+      "def": 19,
+      "hp": 210,
+      "item_tier": 5,
+      "base_type": "dragon_scales",
+      "flavor_tags": [
+        "stealth",
+        "willpower"
+      ],
+      "lore": "Light bends around it. So do gazes.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        18,
+        70
+      ],
+      "unique": false
+    },
+    {
+      "id": "shadow_dragon_scales",
+      "name": "Shadow Dragon Scales",
+      "slot": "armor",
+      "rarity": "epic",
+      "tile": "shadow_dragon_scales.png",
+      "atk": 0,
+      "def": 18,
+      "hp": 200,
+      "item_tier": 5,
+      "base_type": "dragon_scales",
+      "flavor_tags": [
+        "stealth"
+      ],
+      "lore": "Lighter than the mail. Darker than the void.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        14,
+        70
+      ],
+      "unique": false
+    },
+    {
+      "id": "silver_dragon",
+      "name": "Silver Dragon Armor",
+      "slot": "armor",
+      "rarity": "epic",
+      "tile": "silver_dragon_scale_mail_new.png",
+      "atk": 0,
+      "def": 21,
+      "hp": 230,
+      "item_tier": 5,
+      "base_type": "dragon_scales",
+      "flavor_tags": [
+        "willpower",
+        "fortified"
+      ],
+      "lore": "Spectral wyrm. Spell-thirsty even in death.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        12,
+        72
+      ],
+      "unique": false
+    },
+    {
+      "id": "starlight_cloak",
+      "name": "Starlight Cloak",
+      "slot": "armor",
+      "rarity": "legendary",
+      "tile": "urand_starlight.png",
+      "atk": 0,
+      "def": 18,
+      "hp": 240,
+      "item_tier": 5,
+      "base_type": "robe",
+      "flavor_tags": [
+        "stealth",
+        "willpower"
+      ],
+      "lore": "Twilight clings to it. So does whatever's hunting you.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        4,
+        22
+      ],
+      "unique": true,
+      "future_mechanic": "Periodically blinks the wearer 3 cells in a random direction during combat."
+    },
+    {
+      "id": "battered_skullcap",
+      "name": "Battered Skullcap",
+      "slot": "helm",
+      "rarity": "common",
+      "tile": "cap_1.png",
+      "atk": 0,
+      "def": 1,
+      "hp": 18,
+      "item_tier": 1,
+      "base_type": "skullcap",
+      "flavor_tags": [],
+      "lore": "Dented in too many places to count.",
+      "drop_weights": [
+        80,
+        15,
+        0,
+        0,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "iron_skullcap",
+      "name": "Iron Skullcap",
+      "slot": "helm",
+      "rarity": "common",
+      "tile": "helmet_1.png",
+      "atk": 0,
+      "def": 2,
+      "hp": 30,
+      "item_tier": 1,
+      "base_type": "skullcap",
+      "flavor_tags": [],
+      "lore": "Cold iron. Better than soft leather.",
+      "drop_weights": [
+        70,
+        20,
+        2,
+        0,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "jesters_cap",
+      "name": "Jester's Cap",
+      "slot": "helm",
+      "rarity": "uncommon",
+      "tile": "cap_jester.png",
+      "atk": 0,
+      "def": 1,
+      "hp": 28,
+      "item_tier": 1,
+      "base_type": "cap",
+      "flavor_tags": [
+        "wisdom"
+      ],
+      "lore": "Bells included. They jingle even on the dead.",
+      "drop_weights": [
+        40,
+        35,
+        15,
+        0,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "leather_cap",
+      "name": "Leather Cap",
+      "slot": "helm",
+      "rarity": "common",
+      "tile": "cap_2.png",
+      "atk": 0,
+      "def": 1,
+      "hp": 22,
+      "item_tier": 1,
+      "base_type": "cap",
+      "flavor_tags": [],
+      "lore": "Soft leather. Better than nothing.",
+      "drop_weights": [
+        80,
+        15,
+        0,
+        0,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "padded_coif",
+      "name": "Padded Coif",
+      "slot": "helm",
+      "rarity": "uncommon",
+      "tile": "cap_jester.png",
+      "atk": 0,
+      "def": 2,
+      "hp": 35,
+      "item_tier": 1,
+      "base_type": "cap",
+      "flavor_tags": [],
+      "lore": "Quilted layers absorb the worst of it.",
+      "drop_weights": [
+        55,
+        30,
+        5,
+        0,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "plumed_helm",
+      "name": "Plumed Helm",
+      "slot": "helm",
+      "rarity": "uncommon",
+      "tile": "plumed_helmet.png",
+      "atk": 0,
+      "def": 3,
+      "hp": 42,
+      "item_tier": 1,
+      "base_type": "helmet",
+      "flavor_tags": [
+        "lordly"
+      ],
+      "lore": "A flourish that announces a fight.",
+      "drop_weights": [
+        50,
+        35,
+        8,
+        0,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "ranger_hood",
+      "name": "Ranger's Hood",
+      "slot": "helm",
+      "rarity": "uncommon",
+      "tile": "hat_1.png",
+      "atk": 0,
+      "def": 2,
+      "hp": 32,
+      "item_tier": 1,
+      "base_type": "hood",
+      "flavor_tags": [
+        "stealth"
+      ],
+      "lore": "Drawn close, the wearer's face becomes weather.",
+      "drop_weights": [
+        45,
+        35,
+        10,
+        0,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "crested_helm",
+      "name": "Crested Helm",
+      "slot": "helm",
+      "rarity": "uncommon",
+      "tile": "crested_helmet.png",
+      "atk": 0,
+      "def": 4,
+      "hp": 56,
+      "item_tier": 2,
+      "base_type": "helmet",
+      "flavor_tags": [
+        "lordly"
+      ],
+      "lore": "Worn by sergeants who outlived their lieutenants.",
+      "drop_weights": [
+        12,
+        60,
+        28,
+        5,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "elven_helm",
+      "name": "Elven Leather Helm",
+      "slot": "helm",
+      "rarity": "rare",
+      "tile": "elven_leather_helm.png",
+      "atk": 0,
+      "def": 3,
+      "hp": 48,
+      "item_tier": 2,
+      "base_type": "cap",
+      "flavor_tags": [
+        "stealth",
+        "vision"
+      ],
+      "lore": "So light you forget it isn't your own scalp.",
+      "drop_weights": [
+        8,
+        55,
+        32,
+        5,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "etched_helm",
+      "name": "Etched Helm",
+      "slot": "helm",
+      "rarity": "rare",
+      "tile": "helmet_2_etched.png",
+      "atk": 0,
+      "def": 5,
+      "hp": 60,
+      "item_tier": 2,
+      "base_type": "helmet",
+      "flavor_tags": [
+        "warding"
+      ],
+      "lore": "The runes don't quite stay still in lamplight.",
+      "drop_weights": [
+        5,
+        50,
+        35,
+        8,
+        2
+      ],
+      "unique": false
+    },
+    {
+      "id": "kettle_helm",
+      "name": "Kettle Helm",
+      "slot": "helm",
+      "rarity": "uncommon",
+      "tile": "helmet_2.png",
+      "atk": 0,
+      "def": 4,
+      "hp": 50,
+      "item_tier": 2,
+      "base_type": "helmet",
+      "flavor_tags": [],
+      "lore": "A common soldier's helm. Practical to a fault.",
+      "drop_weights": [
+        15,
+        65,
+        25,
+        3,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "champion_helm",
+      "name": "Champion's Helm",
+      "slot": "helm",
+      "rarity": "epic",
+      "tile": "helmet_3_old.png",
+      "atk": 0,
+      "def": 8,
+      "hp": 95,
+      "item_tier": 3,
+      "base_type": "great_helm",
+      "flavor_tags": [
+        "lordly",
+        "fortified"
+      ],
+      "lore": "Worn by those who finished the tournament.",
+      "drop_weights": [
+        0,
+        8,
+        50,
+        32,
+        12
+      ],
+      "unique": false
+    },
+    {
+      "id": "green_mask",
+      "name": "Green Mask",
+      "slot": "helm",
+      "rarity": "rare",
+      "tile": "green_mask.png",
+      "atk": 0,
+      "def": 4,
+      "hp": 60,
+      "item_tier": 3,
+      "base_type": "hood",
+      "flavor_tags": [
+        "stealth",
+        "psychic"
+      ],
+      "lore": "The mask sees what the wearer hasn't. Yet.",
+      "drop_weights": [
+        0,
+        12,
+        55,
+        28,
+        8
+      ],
+      "unique": false
+    },
+    {
+      "id": "knights_helm",
+      "name": "Knight's Helm",
+      "slot": "helm",
+      "rarity": "rare",
+      "tile": "helmet_3_new.png",
+      "atk": 0,
+      "def": 6,
+      "hp": 75,
+      "item_tier": 3,
+      "base_type": "great_helm",
+      "flavor_tags": [
+        "fortified"
+      ],
+      "lore": "Heavy and hot. Worth it when the blow comes.",
+      "drop_weights": [
+        0,
+        18,
+        60,
+        22,
+        4
+      ],
+      "unique": false
+    },
+    {
+      "id": "visored_basinet",
+      "name": "Visored Basinet",
+      "slot": "helm",
+      "rarity": "rare",
+      "tile": "helmet_1_visored.png",
+      "atk": 0,
+      "def": 7,
+      "hp": 82,
+      "item_tier": 3,
+      "base_type": "great_helm",
+      "flavor_tags": [
+        "fortified"
+      ],
+      "lore": "All eyes, no expression. Effective.",
+      "drop_weights": [
+        0,
+        15,
+        58,
+        25,
+        5
+      ],
+      "unique": false
+    },
+    {
+      "id": "wizard_hat",
+      "name": "Wizard's Hat",
+      "slot": "helm",
+      "rarity": "rare",
+      "tile": "wizard_hat_1.png",
+      "atk": 0,
+      "def": 4,
+      "hp": 68,
+      "item_tier": 3,
+      "base_type": "wizard_hat",
+      "flavor_tags": [
+        "wisdom",
+        "regen"
+      ],
+      "lore": "Only the truly wise wear something this silly.",
+      "drop_weights": [
+        0,
+        10,
+        55,
+        28,
+        8
+      ],
+      "unique": false
+    },
+    {
+      "id": "dragonbone_helm",
+      "name": "Dragonbone Helm",
+      "slot": "helm",
+      "rarity": "epic",
+      "tile": "helmet_5.png",
+      "atk": 0,
+      "def": 10,
+      "hp": 125,
+      "item_tier": 4,
+      "base_type": "helmet",
+      "flavor_tags": [
+        "fortified",
+        "elemental"
+      ],
+      "lore": "Carved from a wyrm too old to remember its hatchling name.",
+      "drop_weights": [
+        0,
+        0,
+        8,
+        55,
+        35
+      ],
+      "unique": false
+    },
+    {
+      "id": "ego_etched_great_helm",
+      "name": "Mage-Bound Helm",
+      "slot": "helm",
+      "rarity": "epic",
+      "tile": "helmet_ego_1.png",
+      "atk": 0,
+      "def": 9,
+      "hp": 115,
+      "item_tier": 4,
+      "base_type": "great_helm",
+      "flavor_tags": [
+        "wisdom",
+        "warding"
+      ],
+      "lore": "The bindings hum when spells fly nearby.",
+      "drop_weights": [
+        0,
+        0,
+        6,
+        52,
+        38
+      ],
+      "unique": false
+    },
+    {
+      "id": "ego_thane",
+      "name": "Helm of the Thane",
+      "slot": "helm",
+      "rarity": "epic",
+      "tile": "helmet_ego_3.png",
+      "atk": 0,
+      "def": 10,
+      "hp": 115,
+      "item_tier": 4,
+      "base_type": "great_helm",
+      "flavor_tags": [
+        "lordly",
+        "fortified"
+      ],
+      "lore": "Worn by mountain-thanes who never quite died.",
+      "drop_weights": [
+        0,
+        0,
+        8,
+        55,
+        37
+      ],
+      "unique": false
+    },
+    {
+      "id": "ego_visor",
+      "name": "Visor of the Watchman",
+      "slot": "helm",
+      "rarity": "epic",
+      "tile": "helmet_ego_2.png",
+      "atk": 0,
+      "def": 9,
+      "hp": 105,
+      "item_tier": 4,
+      "base_type": "great_helm",
+      "flavor_tags": [
+        "vision",
+        "warding"
+      ],
+      "lore": "It sees in the dark. It sees the dark.",
+      "drop_weights": [
+        0,
+        0,
+        10,
+        55,
+        35
+      ],
+      "unique": false
+    },
+    {
+      "id": "spectres_cowl",
+      "name": "Spectre's Cowl",
+      "slot": "helm",
+      "rarity": "epic",
+      "tile": "hat_2.png",
+      "atk": 0,
+      "def": 6,
+      "hp": 95,
+      "item_tier": 4,
+      "base_type": "hood",
+      "flavor_tags": [
+        "stealth",
+        "psychic"
+      ],
+      "lore": "Cold cloth. Things see less of you while you wear it.",
+      "drop_weights": [
+        0,
+        0,
+        10,
+        58,
+        30
+      ],
+      "unique": false
+    },
+    {
+      "id": "warlords_visor",
+      "name": "Warlord's Visor",
+      "slot": "helm",
+      "rarity": "epic",
+      "tile": "helmet_4_visor.png",
+      "atk": 0,
+      "def": 9,
+      "hp": 110,
+      "item_tier": 4,
+      "base_type": "great_helm",
+      "flavor_tags": [
+        "lordly",
+        "willpower"
+      ],
+      "lore": "It looks at the battlefield differently.",
+      "drop_weights": [
+        0,
+        0,
+        12,
+        55,
+        32
+      ],
+      "unique": false
+    },
+    {
+      "id": "wizard_hat_2",
+      "name": "Hat of the Archmage",
+      "slot": "helm",
+      "rarity": "epic",
+      "tile": "wizard_hat_2.png",
+      "atk": 0,
+      "def": 5,
+      "hp": 85,
+      "item_tier": 4,
+      "base_type": "wizard_hat",
+      "flavor_tags": [
+        "wisdom",
+        "warding",
+        "regen"
+      ],
+      "lore": "Pointier than the regulation hat. Worn by the difficult professors.",
+      "drop_weights": [
+        0,
+        0,
+        12,
+        55,
+        33
+      ],
+      "unique": false
+    },
+    {
+      "id": "cornuthaum",
+      "name": "Cornuthaum",
+      "slot": "helm",
+      "rarity": "legendary",
+      "tile": "cornuthaum.png",
+      "atk": 0,
+      "def": 8,
+      "hp": 140,
+      "item_tier": 5,
+      "base_type": "wizard_hat",
+      "flavor_tags": [
+        "wisdom",
+        "warding"
+      ],
+      "lore": "The Wizard's Hat. The W is implied.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        4,
+        22
+      ],
+      "unique": true,
+      "future_mechanic": "Reveals minimap one floor ahead. Magic resistance buff."
+    },
+    {
+      "id": "crown_of_dyrovepreva",
+      "name": "Crown of Dyrovepreva",
+      "slot": "helm",
+      "rarity": "legendary",
+      "tile": "urand_dyrovepreva_new.png",
+      "atk": 0,
+      "def": 12,
+      "hp": 170,
+      "item_tier": 5,
+      "base_type": "crown",
+      "flavor_tags": [
+        "lordly",
+        "psychic"
+      ],
+      "lore": "It remembers every order it ever wore.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        22
+      ],
+      "unique": true,
+      "future_mechanic": "See-invisible. Nearby enemies attack each other 5% of attacks."
+    },
+    {
+      "id": "crystal_crown",
+      "name": "Crystal Crown",
+      "slot": "helm",
+      "rarity": "epic",
+      "tile": "helmet_art_2.png",
+      "atk": 0,
+      "def": 11,
+      "hp": 145,
+      "item_tier": 5,
+      "base_type": "crown",
+      "flavor_tags": [
+        "wisdom",
+        "warding"
+      ],
+      "lore": "It refracts more than light.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        14,
+        72
+      ],
+      "unique": false
+    },
+    {
+      "id": "ego_warden",
+      "name": "Helm of the Warden",
+      "slot": "helm",
+      "rarity": "epic",
+      "tile": "helmet_ego_4.png",
+      "atk": 0,
+      "def": 12,
+      "hp": 145,
+      "item_tier": 5,
+      "base_type": "great_helm",
+      "flavor_tags": [
+        "fortified",
+        "warding",
+        "willpower"
+      ],
+      "lore": "Issued to the lieutenants of the gate. Returned, mostly.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        18,
+        65
+      ],
+      "unique": false
+    },
+    {
+      "id": "halo_of_ascension",
+      "name": "Halo of Ascension",
+      "slot": "helm",
+      "rarity": "epic",
+      "tile": "helmet_art_3.png",
+      "atk": 0,
+      "def": 12,
+      "hp": 160,
+      "item_tier": 5,
+      "base_type": "crown",
+      "flavor_tags": [
+        "lordly",
+        "wisdom"
+      ],
+      "lore": "Rests just above the head. Doesn't ask permission.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        12,
+        70
+      ],
+      "unique": false
+    },
+    {
+      "id": "hat_of_pondering",
+      "name": "Hat of Pondering",
+      "slot": "helm",
+      "rarity": "legendary",
+      "tile": "urand_pondering_new.png",
+      "atk": 0,
+      "def": 7,
+      "hp": 130,
+      "item_tier": 5,
+      "base_type": "wizard_hat",
+      "flavor_tags": [
+        "wisdom",
+        "regen"
+      ],
+      "lore": "It thinks for you. You don't always agree.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        25
+      ],
+      "unique": true,
+      "future_mechanic": "+25% XP gain. Slowly regenerates HP between fights."
+    },
+    {
+      "id": "helm_of_high_council",
+      "name": "Helm of the High Council",
+      "slot": "helm",
+      "rarity": "legendary",
+      "tile": "urand_high_council.png",
+      "atk": 0,
+      "def": 13,
+      "hp": 185,
+      "item_tier": 5,
+      "base_type": "great_helm",
+      "flavor_tags": [
+        "lordly",
+        "willpower"
+      ],
+      "lore": "Six hands forged it. Five of them disagreed.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        4,
+        22
+      ],
+      "unique": true,
+      "future_mechanic": "+10% all stats while wearer is at full HP."
+    },
+    {
+      "id": "helm_of_the_dragon",
+      "name": "Helm of the Dragon",
+      "slot": "helm",
+      "rarity": "legendary",
+      "tile": "urand_dragonmask.png",
+      "atk": 0,
+      "def": 14,
+      "hp": 175,
+      "item_tier": 5,
+      "base_type": "great_helm",
+      "flavor_tags": [
+        "fortified",
+        "elemental"
+      ],
+      "lore": "Worn by the last knight to challenge the wyrm. Briefly worn by the wyrm afterward.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        25
+      ],
+      "unique": true,
+      "future_mechanic": "+50% damage vs dragon-type. Fire resistance."
+    },
+    {
+      "id": "kings_diadem",
+      "name": "King's Diadem",
+      "slot": "helm",
+      "rarity": "epic",
+      "tile": "helmet_art_1.png",
+      "atk": 0,
+      "def": 9,
+      "hp": 130,
+      "item_tier": 5,
+      "base_type": "crown",
+      "flavor_tags": [
+        "lordly",
+        "willpower"
+      ],
+      "lore": "Worn while signing the order to attack.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        18,
+        70
+      ],
+      "unique": false
+    },
+    {
+      "id": "iron_buckler",
+      "name": "Iron Buckler",
+      "slot": "shield",
+      "rarity": "common",
+      "tile": "buckler_1_new.png",
+      "atk": 0,
+      "def": 6,
+      "hp": 38,
+      "item_tier": 1,
+      "base_type": "buckler",
+      "flavor_tags": [],
+      "lore": "Hammered iron disc with a strap.",
+      "drop_weights": [
+        75,
+        20,
+        2,
+        0,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "kite_shield",
+      "name": "Kite Shield",
+      "slot": "shield",
+      "rarity": "uncommon",
+      "tile": "shield_2_kite.png",
+      "atk": 0,
+      "def": 9,
+      "hp": 65,
+      "item_tier": 1,
+      "base_type": "kite_shield",
+      "flavor_tags": [
+        "fortified"
+      ],
+      "lore": "Long enough to crouch behind.",
+      "drop_weights": [
+        50,
+        35,
+        8,
+        0,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "round_shield",
+      "name": "Round Shield",
+      "slot": "shield",
+      "rarity": "uncommon",
+      "tile": "shield_3_round.png",
+      "atk": 0,
+      "def": 7,
+      "hp": 50,
+      "item_tier": 1,
+      "base_type": "round_shield",
+      "flavor_tags": [],
+      "lore": "Worn down by decades of arrow strikes.",
+      "drop_weights": [
+        55,
+        35,
+        5,
+        0,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "wooden_buckler",
+      "name": "Wooden Buckler",
+      "slot": "shield",
+      "rarity": "common",
+      "tile": "buckler_1_old.png",
+      "atk": 0,
+      "def": 4,
+      "hp": 28,
+      "item_tier": 1,
+      "base_type": "buckler",
+      "flavor_tags": [],
+      "lore": "Round, plain, splintery.",
+      "drop_weights": [
+        80,
+        15,
+        0,
+        0,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "elven_buckler",
+      "name": "Elven Buckler",
+      "slot": "shield",
+      "rarity": "rare",
+      "tile": "elven_buckler_1.png",
+      "atk": 0,
+      "def": 7,
+      "hp": 60,
+      "item_tier": 2,
+      "base_type": "buckler",
+      "flavor_tags": [
+        "swiftness",
+        "warding"
+      ],
+      "lore": "Light. Almost silly. The dents tell another story.",
+      "drop_weights": [
+        10,
+        60,
+        25,
+        5,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "elven_buckler_2",
+      "name": "Elven Targe",
+      "slot": "shield",
+      "rarity": "rare",
+      "tile": "elven_buckler_2.png",
+      "atk": 0,
+      "def": 8,
+      "hp": 65,
+      "item_tier": 2,
+      "base_type": "buckler",
+      "flavor_tags": [
+        "swiftness",
+        "warding"
+      ],
+      "lore": "Filigreed silver vines. The vines grow if you stop looking.",
+      "drop_weights": [
+        8,
+        55,
+        30,
+        7,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "guardsman_kite",
+      "name": "Guardsman's Kite",
+      "slot": "shield",
+      "rarity": "uncommon",
+      "tile": "shield_1.png",
+      "atk": 0,
+      "def": 11,
+      "hp": 80,
+      "item_tier": 2,
+      "base_type": "kite_shield",
+      "flavor_tags": [
+        "fortified"
+      ],
+      "lore": "Standard issue. Never quite clean.",
+      "drop_weights": [
+        12,
+        60,
+        28,
+        5,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "reinforced_buckler",
+      "name": "Reinforced Buckler",
+      "slot": "shield",
+      "rarity": "uncommon",
+      "tile": "buckler_2_new.png",
+      "atk": 0,
+      "def": 8,
+      "hp": 62,
+      "item_tier": 2,
+      "base_type": "buckler",
+      "flavor_tags": [],
+      "lore": "Iron rim welded over wood. Twice the weight, twice the life.",
+      "drop_weights": [
+        15,
+        65,
+        25,
+        3,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "dwarven_buckler",
+      "name": "Dwarven Buckler",
+      "slot": "shield",
+      "rarity": "rare",
+      "tile": "dwarven_buckler_1.png",
+      "atk": 0,
+      "def": 9,
+      "hp": 75,
+      "item_tier": 3,
+      "base_type": "buckler",
+      "flavor_tags": [
+        "fortified",
+        "reflective"
+      ],
+      "lore": "Stout, riveted, slightly grumpy.",
+      "drop_weights": [
+        0,
+        15,
+        55,
+        25,
+        5
+      ],
+      "unique": false
+    },
+    {
+      "id": "dwarven_buckler_2",
+      "name": "Dwarven Roundel",
+      "slot": "shield",
+      "rarity": "rare",
+      "tile": "dwarven_buckler_2.png",
+      "atk": 0,
+      "def": 10,
+      "hp": 80,
+      "item_tier": 3,
+      "base_type": "buckler",
+      "flavor_tags": [
+        "fortified",
+        "thorns"
+      ],
+      "lore": "Heavier than its size. Heavier than its weight.",
+      "drop_weights": [
+        0,
+        12,
+        55,
+        28,
+        5
+      ],
+      "unique": false
+    },
+    {
+      "id": "elven_shield",
+      "name": "Elven Shield",
+      "slot": "shield",
+      "rarity": "rare",
+      "tile": "shield_1_elven.png",
+      "atk": 0,
+      "def": 10,
+      "hp": 85,
+      "item_tier": 3,
+      "base_type": "round_shield",
+      "flavor_tags": [
+        "swiftness",
+        "warding"
+      ],
+      "lore": "Gilt with leaves. Holds blows lightly.",
+      "drop_weights": [
+        0,
+        18,
+        60,
+        20,
+        5
+      ],
+      "unique": false
+    },
+    {
+      "id": "large_kite",
+      "name": "Large Kite",
+      "slot": "shield",
+      "rarity": "rare",
+      "tile": "large_shield_1_new.png",
+      "atk": 0,
+      "def": 14,
+      "hp": 110,
+      "item_tier": 3,
+      "base_type": "kite_shield",
+      "flavor_tags": [
+        "fortified"
+      ],
+      "lore": "Tall as a person. Heavy as a person.",
+      "drop_weights": [
+        0,
+        12,
+        55,
+        28,
+        8
+      ],
+      "unique": false
+    },
+    {
+      "id": "spellward_kite",
+      "name": "Spellward Kite",
+      "slot": "shield",
+      "rarity": "rare",
+      "tile": "shield_2_new.png",
+      "atk": 0,
+      "def": 13,
+      "hp": 95,
+      "item_tier": 3,
+      "base_type": "kite_shield",
+      "flavor_tags": [
+        "willpower",
+        "warding"
+      ],
+      "lore": "Engraved against magic. The runes sting when struck.",
+      "drop_weights": [
+        0,
+        12,
+        55,
+        28,
+        8
+      ],
+      "unique": false
+    },
+    {
+      "id": "dd_scion_shield",
+      "name": "Scion's Bulwark",
+      "slot": "shield",
+      "rarity": "epic",
+      "tile": "shield_dd_scion.png",
+      "atk": 0,
+      "def": 20,
+      "hp": 165,
+      "item_tier": 4,
+      "base_type": "tower_shield",
+      "flavor_tags": [
+        "fortified"
+      ],
+      "lore": "Forged in deep halls. Inherited.",
+      "drop_weights": [
+        0,
+        0,
+        8,
+        55,
+        38
+      ],
+      "unique": false
+    },
+    {
+      "id": "donald_shield",
+      "name": "Donald's Shield",
+      "slot": "shield",
+      "rarity": "epic",
+      "tile": "shield_donald.png",
+      "atk": 0,
+      "def": 15,
+      "hp": 130,
+      "item_tier": 4,
+      "base_type": "kite_shield",
+      "flavor_tags": [
+        "fortified",
+        "lordly"
+      ],
+      "lore": "Donald lost it once. Briefly.",
+      "drop_weights": [
+        0,
+        0,
+        10,
+        58,
+        32
+      ],
+      "unique": false
+    },
+    {
+      "id": "dragoncrest_shield",
+      "name": "Dragoncrest Shield",
+      "slot": "shield",
+      "rarity": "epic",
+      "tile": "shield_3.png",
+      "atk": 0,
+      "def": 16,
+      "hp": 130,
+      "item_tier": 4,
+      "base_type": "kite_shield",
+      "flavor_tags": [
+        "fortified",
+        "elemental"
+      ],
+      "lore": "Forged from a dragon's claw. The crest still looks angry.",
+      "drop_weights": [
+        0,
+        0,
+        10,
+        58,
+        32
+      ],
+      "unique": false
+    },
+    {
+      "id": "fortress_wall",
+      "name": "Fortress Wall",
+      "slot": "shield",
+      "rarity": "epic",
+      "tile": "large_shield_3_new.png",
+      "atk": 0,
+      "def": 21,
+      "hp": 150,
+      "item_tier": 4,
+      "base_type": "tower_shield",
+      "flavor_tags": [
+        "fortified",
+        "thorns"
+      ],
+      "lore": "Heavy enough to redefine 'block.'",
+      "drop_weights": [
+        0,
+        0,
+        8,
+        55,
+        38
+      ],
+      "unique": false
+    },
+    {
+      "id": "spriggan_shield",
+      "name": "Spriggan Shield",
+      "slot": "shield",
+      "rarity": "epic",
+      "tile": "shield_4_spriggan.png",
+      "atk": 0,
+      "def": 11,
+      "hp": 110,
+      "item_tier": 4,
+      "base_type": "buckler",
+      "flavor_tags": [
+        "swiftness",
+        "warding"
+      ],
+      "lore": "Light as a leaf. Doesn't move when hit.",
+      "drop_weights": [
+        0,
+        0,
+        10,
+        55,
+        35
+      ],
+      "unique": false
+    },
+    {
+      "id": "tower_shield",
+      "name": "Tower Shield",
+      "slot": "shield",
+      "rarity": "rare",
+      "tile": "large_shield_2_new.png",
+      "atk": 0,
+      "def": 17,
+      "hp": 130,
+      "item_tier": 4,
+      "base_type": "tower_shield",
+      "flavor_tags": [
+        "fortified"
+      ],
+      "lore": "A wall, briefly portable.",
+      "drop_weights": [
+        0,
+        0,
+        12,
+        60,
+        28
+      ],
+      "unique": false
+    },
+    {
+      "id": "bullseye",
+      "name": "Bullseye",
+      "slot": "shield",
+      "rarity": "legendary",
+      "tile": "urand_bullseye.png",
+      "atk": 0,
+      "def": 18,
+      "hp": 175,
+      "item_tier": 5,
+      "base_type": "round_shield",
+      "flavor_tags": [
+        "reflective",
+        "warding"
+      ],
+      "lore": "Painted concentric. Ranged attackers find it irresistibly aimable-at.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        4,
+        22
+      ],
+      "unique": true,
+      "future_mechanic": "+50% block chance vs ranged attacks. Reflects projectiles."
+    },
+    {
+      "id": "gong_shield",
+      "name": "The Gong",
+      "slot": "shield",
+      "rarity": "legendary",
+      "tile": "urand_gong.png",
+      "atk": 0,
+      "def": 16,
+      "hp": 165,
+      "item_tier": 5,
+      "base_type": "buckler",
+      "flavor_tags": [
+        "lordly",
+        "thorns"
+      ],
+      "lore": "Every blow rings out. Half a mile away, things wake up.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        4,
+        22
+      ],
+      "unique": true,
+      "future_mechanic": "Each block AoE-stuns adjacent enemies for 0.5s. Drawback: increased aggro range."
+    },
+    {
+      "id": "lshield_doomknight",
+      "name": "The Doom Knight's Shield",
+      "slot": "shield",
+      "rarity": "legendary",
+      "tile": "lshield_dd_dk.png",
+      "atk": 0,
+      "def": 24,
+      "hp": 220,
+      "item_tier": 5,
+      "base_type": "tower_shield",
+      "flavor_tags": [
+        "fortified",
+        "thorns",
+        "willpower"
+      ],
+      "lore": "Bears the same crest as the blade. Worn together. Buried apart.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        4,
+        22
+      ],
+      "unique": true,
+      "future_mechanic": "Set bonus with The Doom Knight's Blade: +20% all stats while both equipped."
+    },
+    {
+      "id": "lshield_louise",
+      "name": "Louise's Shield",
+      "slot": "shield",
+      "rarity": "legendary",
+      "tile": "lshield_louise.png",
+      "atk": 0,
+      "def": 26,
+      "hp": 220,
+      "item_tier": 5,
+      "base_type": "tower_shield",
+      "flavor_tags": [
+        "fortified",
+        "thorns"
+      ],
+      "lore": "Forged for a knight who didn't believe in retreat.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        25
+      ],
+      "unique": true,
+      "future_mechanic": "Reflects 20% of melee damage. -10% move speed (drawback)."
+    },
+    {
+      "id": "phantom_aegis",
+      "name": "Phantom Aegis",
+      "slot": "shield",
+      "rarity": "epic",
+      "tile": "shield_3.png",
+      "atk": 0,
+      "def": 14,
+      "hp": 145,
+      "item_tier": 5,
+      "base_type": "round_shield",
+      "flavor_tags": [
+        "warding",
+        "willpower"
+      ],
+      "lore": "Half-translucent. Catches things that aren't there yet.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        18,
+        70
+      ],
+      "unique": false
+    },
+    {
+      "id": "shield_of_reflection",
+      "name": "Shield of Reflection",
+      "slot": "shield",
+      "rarity": "epic",
+      "tile": "shield_of_reflection.png",
+      "atk": 0,
+      "def": 20,
+      "hp": 175,
+      "item_tier": 5,
+      "base_type": "kite_shield",
+      "flavor_tags": [
+        "reflective",
+        "warding"
+      ],
+      "lore": "Polished. Dangerous to look into.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        12,
+        70
+      ],
+      "unique": false
+    },
+    {
+      "id": "shield_of_war",
+      "name": "The Shield of War",
+      "slot": "shield",
+      "rarity": "legendary",
+      "tile": "urand_war.png",
+      "atk": 0,
+      "def": 22,
+      "hp": 200,
+      "item_tier": 5,
+      "base_type": "kite_shield",
+      "flavor_tags": [
+        "lordly",
+        "fortified"
+      ],
+      "lore": "Carried to a thousand battles. Always returned home.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        25
+      ],
+      "unique": true,
+      "future_mechanic": "+15% damage when at full HP. +25% damage to bosses."
+    },
+    {
+      "id": "warlords_bulwark",
+      "name": "Warlord's Bulwark",
+      "slot": "shield",
+      "rarity": "epic",
+      "tile": "shield_dd.png",
+      "atk": 0,
+      "def": 24,
+      "hp": 200,
+      "item_tier": 5,
+      "base_type": "tower_shield",
+      "flavor_tags": [
+        "fortified",
+        "lordly"
+      ],
+      "lore": "Borne in front of the line.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        15,
+        70
+      ],
+      "unique": false
+    },
+    {
+      "id": "leather_boots",
+      "name": "Leather Boots",
+      "slot": "boots",
+      "rarity": "common",
+      "tile": "boots_1_brown_new.png",
+      "atk": 0,
+      "def": 2,
+      "hp": 24,
+      "item_tier": 1,
+      "base_type": "leather_boots",
+      "flavor_tags": [],
+      "lore": "Cracked, weather-beaten, comfortable.",
+      "drop_weights": [
+        70,
+        22,
+        4,
+        0,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "soft_shoes",
+      "name": "Soft Shoes",
+      "slot": "boots",
+      "rarity": "common",
+      "tile": "boots_3_stripe_old.png",
+      "atk": 0,
+      "def": 1,
+      "hp": 18,
+      "item_tier": 1,
+      "base_type": "shoes",
+      "flavor_tags": [
+        "stealth"
+      ],
+      "lore": "Quieter than the bot wearing them.",
+      "drop_weights": [
+        75,
+        18,
+        2,
+        0,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "studded_boots",
+      "name": "Studded Boots",
+      "slot": "boots",
+      "rarity": "uncommon",
+      "tile": "boots_2_jackboots.png",
+      "atk": 0,
+      "def": 3,
+      "hp": 32,
+      "item_tier": 1,
+      "base_type": "leather_boots",
+      "flavor_tags": [],
+      "lore": "Brass studs. Loud on stone.",
+      "drop_weights": [
+        55,
+        35,
+        5,
+        0,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "worn_sandals",
+      "name": "Worn Sandals",
+      "slot": "boots",
+      "rarity": "common",
+      "tile": "low_boots.png",
+      "atk": 0,
+      "def": 1,
+      "hp": 13,
+      "item_tier": 1,
+      "base_type": "sandals",
+      "flavor_tags": [
+        "swiftness"
+      ],
+      "lore": "Soles thinner than mood.",
+      "drop_weights": [
+        80,
+        15,
+        0,
+        0,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "ranger_boots",
+      "name": "Ranger Boots",
+      "slot": "boots",
+      "rarity": "rare",
+      "tile": "boots_3_stripe_new.png",
+      "atk": 0,
+      "def": 4,
+      "hp": 42,
+      "item_tier": 2,
+      "base_type": "leather_boots",
+      "flavor_tags": [
+        "stealth",
+        "footwork"
+      ],
+      "lore": "Soft soles, double-stitched. Worn by those who don't want to be heard.",
+      "drop_weights": [
+        8,
+        55,
+        32,
+        5,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "scouts_treads",
+      "name": "Scout's Treads",
+      "slot": "boots",
+      "rarity": "uncommon",
+      "tile": "boots_4_green.png",
+      "atk": 0,
+      "def": 3,
+      "hp": 35,
+      "item_tier": 2,
+      "base_type": "leather_boots",
+      "flavor_tags": [
+        "stealth",
+        "swiftness"
+      ],
+      "lore": "Patterned for forest floor.",
+      "drop_weights": [
+        15,
+        65,
+        25,
+        3,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "soldier_greaves",
+      "name": "Soldier's Greaves",
+      "slot": "boots",
+      "rarity": "uncommon",
+      "tile": "boots_iron_2.png",
+      "atk": 0,
+      "def": 5,
+      "hp": 50,
+      "item_tier": 2,
+      "base_type": "greaves",
+      "flavor_tags": [
+        "fortified"
+      ],
+      "lore": "Government issue. Blood-stained at the seams.",
+      "drop_weights": [
+        12,
+        60,
+        28,
+        5,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "ironshod_boots",
+      "name": "Ironshod Boots",
+      "slot": "boots",
+      "rarity": "rare",
+      "tile": "boots_iron_2.png",
+      "atk": 0,
+      "def": 6,
+      "hp": 60,
+      "item_tier": 3,
+      "base_type": "iron_boots",
+      "flavor_tags": [
+        "fortified",
+        "thunderous"
+      ],
+      "lore": "Iron plates over felt. Heavy enough to be heard.",
+      "drop_weights": [
+        0,
+        18,
+        60,
+        22,
+        4
+      ],
+      "unique": false
+    },
+    {
+      "id": "sentinel_greaves",
+      "name": "Sentinel Greaves",
+      "slot": "boots",
+      "rarity": "rare",
+      "tile": "boots_iron_2.png",
+      "atk": 0,
+      "def": 7,
+      "hp": 75,
+      "item_tier": 3,
+      "base_type": "greaves",
+      "flavor_tags": [
+        "fortified",
+        "rampaging"
+      ],
+      "lore": "Built for the watch. Built for the charge.",
+      "drop_weights": [
+        0,
+        12,
+        55,
+        28,
+        8
+      ],
+      "unique": false
+    },
+    {
+      "id": "swiftstep_boots",
+      "name": "Swiftstep Boots",
+      "slot": "boots",
+      "rarity": "rare",
+      "tile": "boots_1_brown_old.png",
+      "atk": 0,
+      "def": 4,
+      "hp": 48,
+      "item_tier": 3,
+      "base_type": "leather_boots",
+      "flavor_tags": [
+        "swiftness",
+        "footwork"
+      ],
+      "lore": "Lightly enchanted. Each step shorter than the last.",
+      "drop_weights": [
+        0,
+        15,
+        58,
+        25,
+        5
+      ],
+      "unique": false
+    },
+    {
+      "id": "earthshaker_treads",
+      "name": "Earthshaker Treads",
+      "slot": "boots",
+      "rarity": "epic",
+      "tile": "boots_iron_2.png",
+      "atk": 0,
+      "def": 11,
+      "hp": 110,
+      "item_tier": 4,
+      "base_type": "treads",
+      "flavor_tags": [
+        "earth",
+        "thunderous"
+      ],
+      "lore": "Each step leaves a shallow crater in stone.",
+      "drop_weights": [
+        0,
+        0,
+        8,
+        55,
+        38
+      ],
+      "unique": false
+    },
+    {
+      "id": "stormrunner_boots",
+      "name": "Stormrunner Boots",
+      "slot": "boots",
+      "rarity": "epic",
+      "tile": "boots_4_green.png",
+      "atk": 0,
+      "def": 6,
+      "hp": 80,
+      "item_tier": 4,
+      "base_type": "leather_boots",
+      "flavor_tags": [
+        "swiftness",
+        "flying",
+        "footwork"
+      ],
+      "lore": "Lightning never quite catches them.",
+      "drop_weights": [
+        0,
+        0,
+        10,
+        55,
+        35
+      ],
+      "unique": false
+    },
+    {
+      "id": "vanguard_sabatons",
+      "name": "Vanguard Sabatons",
+      "slot": "boots",
+      "rarity": "epic",
+      "tile": "boots_iron_2.png",
+      "atk": 0,
+      "def": 9,
+      "hp": 95,
+      "item_tier": 4,
+      "base_type": "greaves",
+      "flavor_tags": [
+        "fortified",
+        "rampaging",
+        "earth"
+      ],
+      "lore": "First through the breach. Last to leave the field.",
+      "drop_weights": [
+        0,
+        0,
+        12,
+        58,
+        30
+      ],
+      "unique": false
+    },
+    {
+      "id": "assassins_boots",
+      "name": "Assassin's Boots",
+      "slot": "boots",
+      "rarity": "legendary",
+      "tile": "urand_assassin.png",
+      "atk": 0,
+      "def": 8,
+      "hp": 105,
+      "item_tier": 5,
+      "base_type": "shoes",
+      "flavor_tags": [
+        "stealth",
+        "swiftness"
+      ],
+      "lore": "Silent on stone, silent on grass, silent on graves.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        25
+      ],
+      "unique": true,
+      "future_mechanic": "+25% damage on first hit per enemy. Lower aggro range."
+    },
+    {
+      "id": "fencer_slippers",
+      "name": "Fencer's Slippers",
+      "slot": "boots",
+      "rarity": "legendary",
+      "tile": "urand_fencer_new.png",
+      "atk": 0,
+      "def": 7,
+      "hp": 100,
+      "item_tier": 5,
+      "base_type": "shoes",
+      "flavor_tags": [
+        "footwork",
+        "swiftness"
+      ],
+      "lore": "They lead. The rest of the body follows.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        25
+      ],
+      "unique": true,
+      "future_mechanic": "+15% dodge chance. +10% crit chance."
+    },
+    {
+      "id": "flashboots",
+      "name": "Boots of Flash",
+      "slot": "boots",
+      "rarity": "legendary",
+      "tile": "urand_flash.png",
+      "atk": 0,
+      "def": 10,
+      "hp": 130,
+      "item_tier": 5,
+      "base_type": "treads",
+      "flavor_tags": [
+        "swiftness",
+        "flying",
+        "thunderous"
+      ],
+      "lore": "When they move, light moves out of the way.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        25
+      ],
+      "unique": true,
+      "future_mechanic": "Periodic short-range blink in combat."
+    },
+    {
+      "id": "march_of_kings",
+      "name": "March of Kings",
+      "slot": "boots",
+      "rarity": "epic",
+      "tile": "boots_iron_2.png",
+      "atk": 0,
+      "def": 13,
+      "hp": 135,
+      "item_tier": 5,
+      "base_type": "greaves",
+      "flavor_tags": [
+        "lordly",
+        "rampaging",
+        "fortified"
+      ],
+      "lore": "Worn at the head of the column. Always.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        14,
+        70
+      ],
+      "unique": false
+    },
+    {
+      "id": "thiefs_boots",
+      "name": "Thief's Boots",
+      "slot": "boots",
+      "rarity": "legendary",
+      "tile": "urand_thief.png",
+      "atk": 0,
+      "def": 7,
+      "hp": 100,
+      "item_tier": 5,
+      "base_type": "shoes",
+      "flavor_tags": [
+        "stealth",
+        "footwork"
+      ],
+      "lore": "They've left more places than they've entered.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        4,
+        22
+      ],
+      "unique": true,
+      "future_mechanic": "+10% chance to find extra gold per chest. Stealth bonus."
+    },
+    {
+      "id": "treads_apocalypse",
+      "name": "Treads of Apocalypse",
+      "slot": "boots",
+      "rarity": "legendary",
+      "tile": "boots_iron_2.png",
+      "atk": 0,
+      "def": 14,
+      "hp": 160,
+      "item_tier": 5,
+      "base_type": "treads",
+      "flavor_tags": [
+        "earth",
+        "thunderous",
+        "rampaging"
+      ],
+      "lore": "What the wearer steps on does not get up.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        4,
+        22
+      ],
+      "unique": true,
+      "future_mechanic": "Each step damages adjacent enemies. -5% move speed (drawback)."
+    },
+    {
+      "id": "windwalker_boots",
+      "name": "Windwalkers",
+      "slot": "boots",
+      "rarity": "epic",
+      "tile": "boots_3_stripe_new.png",
+      "atk": 0,
+      "def": 8,
+      "hp": 110,
+      "item_tier": 5,
+      "base_type": "treads",
+      "flavor_tags": [
+        "swiftness",
+        "flying"
+      ],
+      "lore": "Heels barely brush the ground.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        18,
+        70
+      ],
+      "unique": false
+    },
+    {
+      "id": "brass_ring",
+      "name": "Brass Ring",
+      "slot": "ring",
+      "rarity": "uncommon",
+      "tile": "brass.png",
+      "atk": 0,
+      "def": 2,
+      "hp": 12,
+      "item_tier": 1,
+      "base_type": "ring_protection",
+      "flavor_tags": [
+        "fortified"
+      ],
+      "lore": "Stamped with a rune. The rune doesn't mean anything.",
+      "drop_weights": [
+        55,
+        35,
+        5,
+        0,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "bronze_ring",
+      "name": "Bronze Ring",
+      "slot": "ring",
+      "rarity": "uncommon",
+      "tile": "bronze.png",
+      "atk": 2,
+      "def": 0,
+      "hp": 10,
+      "item_tier": 1,
+      "base_type": "ring_strength",
+      "flavor_tags": [],
+      "lore": "Heavy enough to feel.",
+      "drop_weights": [
+        55,
+        35,
+        5,
+        0,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "clay_ring",
+      "name": "Clay Ring",
+      "slot": "ring",
+      "rarity": "common",
+      "tile": "clay.png",
+      "atk": 1,
+      "def": 0,
+      "hp": 6,
+      "item_tier": 1,
+      "base_type": "ring_strength",
+      "flavor_tags": [],
+      "lore": "Crude. Almost ceremonial.",
+      "drop_weights": [
+        80,
+        15,
+        0,
+        0,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "copper_ring",
+      "name": "Copper Ring",
+      "slot": "ring",
+      "rarity": "common",
+      "tile": "copper.png",
+      "atk": 0,
+      "def": 2,
+      "hp": 5,
+      "item_tier": 1,
+      "base_type": "ring_evasion",
+      "flavor_tags": [
+        "footwork"
+      ],
+      "lore": "Bright when new. Green now.",
+      "drop_weights": [
+        75,
+        18,
+        2,
+        0,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "glass_ring",
+      "name": "Glass Ring",
+      "slot": "ring",
+      "rarity": "uncommon",
+      "tile": "glass.png",
+      "atk": 1,
+      "def": 2,
+      "hp": 8,
+      "item_tier": 1,
+      "base_type": "ring_evasion",
+      "flavor_tags": [
+        "footwork"
+      ],
+      "lore": "Cool. Fragile-feeling. Doesn't shatter.",
+      "drop_weights": [
+        55,
+        30,
+        8,
+        0,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "wooden_ring",
+      "name": "Wooden Ring",
+      "slot": "ring",
+      "rarity": "common",
+      "tile": "wooden.png",
+      "atk": 0,
+      "def": 1,
+      "hp": 8,
+      "item_tier": 1,
+      "base_type": "ring_protection",
+      "flavor_tags": [],
+      "lore": "A whittled circlet. Splinters more than it should.",
+      "drop_weights": [
+        80,
+        15,
+        0,
+        0,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "agate_ring",
+      "name": "Agate Ring",
+      "slot": "ring",
+      "rarity": "rare",
+      "tile": "agate.png",
+      "atk": 2,
+      "def": 1,
+      "hp": 16,
+      "item_tier": 2,
+      "base_type": "ring_dexterity",
+      "flavor_tags": [
+        "footwork"
+      ],
+      "lore": "Banded stone, polished smooth.",
+      "drop_weights": [
+        8,
+        50,
+        35,
+        7,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "iron_ring",
+      "name": "Iron Ring",
+      "slot": "ring",
+      "rarity": "uncommon",
+      "tile": "iron.png",
+      "atk": 0,
+      "def": 3,
+      "hp": 18,
+      "item_tier": 2,
+      "base_type": "ring_protection",
+      "flavor_tags": [
+        "fortified"
+      ],
+      "lore": "Hammered cold. Will not give.",
+      "drop_weights": [
+        15,
+        65,
+        25,
+        3,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "jade_ring",
+      "name": "Jade Ring",
+      "slot": "ring",
+      "rarity": "rare",
+      "tile": "jade.png",
+      "atk": 0,
+      "def": 3,
+      "hp": 24,
+      "item_tier": 2,
+      "base_type": "ring_poison",
+      "flavor_tags": [
+        "poison_res",
+        "regen"
+      ],
+      "lore": "Cold. Always cold. Even when hot.",
+      "drop_weights": [
+        10,
+        55,
+        30,
+        5,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "silver_ring",
+      "name": "Silver Ring",
+      "slot": "ring",
+      "rarity": "rare",
+      "tile": "silver.png",
+      "atk": 0,
+      "def": 2,
+      "hp": 22,
+      "item_tier": 2,
+      "base_type": "ring_willpower",
+      "flavor_tags": [
+        "willpower"
+      ],
+      "lore": "Tingles when spells fly nearby.",
+      "drop_weights": [
+        8,
+        55,
+        32,
+        5,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "steel_ring",
+      "name": "Steel Ring",
+      "slot": "ring",
+      "rarity": "uncommon",
+      "tile": "steel.png",
+      "atk": 3,
+      "def": 1,
+      "hp": 14,
+      "item_tier": 2,
+      "base_type": "ring_slaying",
+      "flavor_tags": [
+        "slaying"
+      ],
+      "lore": "Edge-tempered. Sharper than it looks.",
+      "drop_weights": [
+        12,
+        60,
+        28,
+        5,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "coral_ring",
+      "name": "Coral Ring",
+      "slot": "ring",
+      "rarity": "rare",
+      "tile": "coral.png",
+      "atk": 0,
+      "def": 2,
+      "hp": 28,
+      "item_tier": 3,
+      "base_type": "ring_poison",
+      "flavor_tags": [
+        "poison_res"
+      ],
+      "lore": "Smells faintly of the sea. Always.",
+      "drop_weights": [
+        0,
+        12,
+        55,
+        28,
+        8
+      ],
+      "unique": false
+    },
+    {
+      "id": "granite_ring",
+      "name": "Granite Band",
+      "slot": "ring",
+      "rarity": "rare",
+      "tile": "granite.png",
+      "atk": 0,
+      "def": 5,
+      "hp": 30,
+      "item_tier": 3,
+      "base_type": "ring_protection",
+      "flavor_tags": [
+        "fortified"
+      ],
+      "lore": "Heavy on the finger. Heavier on the mind.",
+      "drop_weights": [
+        0,
+        12,
+        58,
+        25,
+        5
+      ],
+      "unique": false
+    },
+    {
+      "id": "moonstone_ring",
+      "name": "Moonstone Ring",
+      "slot": "ring",
+      "rarity": "rare",
+      "tile": "moonstone.png",
+      "atk": 0,
+      "def": 1,
+      "hp": 30,
+      "item_tier": 3,
+      "base_type": "ring_regen",
+      "flavor_tags": [
+        "regen"
+      ],
+      "lore": "Glows faintly at night. Heals the same.",
+      "drop_weights": [
+        0,
+        18,
+        60,
+        22,
+        4
+      ],
+      "unique": false
+    },
+    {
+      "id": "ring_of_sapphire",
+      "name": "Sapphire Ring",
+      "slot": "ring",
+      "rarity": "rare",
+      "tile": "ring_sapphire.png",
+      "atk": 0,
+      "def": 2,
+      "hp": 28,
+      "item_tier": 3,
+      "base_type": "ring_cold",
+      "flavor_tags": [
+        "cold_res"
+      ],
+      "lore": "Cold despite the air.",
+      "drop_weights": [
+        0,
+        10,
+        55,
+        28,
+        10
+      ],
+      "unique": false
+    },
+    {
+      "id": "ring_of_topaz",
+      "name": "Topaz Ring",
+      "slot": "ring",
+      "rarity": "rare",
+      "tile": "ring_topaz.png",
+      "atk": 0,
+      "def": 2,
+      "hp": 28,
+      "item_tier": 3,
+      "base_type": "ring_fire",
+      "flavor_tags": [
+        "fire_res"
+      ],
+      "lore": "Warm to the touch.",
+      "drop_weights": [
+        0,
+        10,
+        55,
+        28,
+        10
+      ],
+      "unique": false
+    },
+    {
+      "id": "tigers_eye",
+      "name": "Tiger's Eye Ring",
+      "slot": "ring",
+      "rarity": "rare",
+      "tile": "tiger_eye.png",
+      "atk": 4,
+      "def": 0,
+      "hp": 22,
+      "item_tier": 3,
+      "base_type": "ring_strength",
+      "flavor_tags": [
+        "slaying"
+      ],
+      "lore": "It watches. It doesn't blink.",
+      "drop_weights": [
+        0,
+        15,
+        58,
+        25,
+        5
+      ],
+      "unique": false
+    },
+    {
+      "id": "tourmaline_ring",
+      "name": "Tourmaline Ring",
+      "slot": "ring",
+      "rarity": "rare",
+      "tile": "tourmaline.png",
+      "atk": 0,
+      "def": 4,
+      "hp": 25,
+      "item_tier": 3,
+      "base_type": "ring_evasion",
+      "flavor_tags": [
+        "footwork",
+        "swiftness"
+      ],
+      "lore": "The wearer ducks slightly more than necessary.",
+      "drop_weights": [
+        0,
+        12,
+        55,
+        28,
+        8
+      ],
+      "unique": false
+    },
+    {
+      "id": "emerald_ring",
+      "name": "Emerald Ring",
+      "slot": "ring",
+      "rarity": "epic",
+      "tile": "emerald.png",
+      "atk": 4,
+      "def": 3,
+      "hp": 40,
+      "item_tier": 4,
+      "base_type": "ring_dexterity",
+      "flavor_tags": [
+        "footwork",
+        "wisdom"
+      ],
+      "lore": "Green flecks. Always cool.",
+      "drop_weights": [
+        0,
+        0,
+        8,
+        55,
+        38
+      ],
+      "unique": false
+    },
+    {
+      "id": "ivory_ring",
+      "name": "Ivory Ring",
+      "slot": "ring",
+      "rarity": "epic",
+      "tile": "ring_ivory.png",
+      "atk": 0,
+      "def": 2,
+      "hp": 35,
+      "item_tier": 4,
+      "base_type": "ring_stealth",
+      "flavor_tags": [
+        "stealth",
+        "vision"
+      ],
+      "lore": "Old. Yellowed. Forgotten by what made it.",
+      "drop_weights": [
+        0,
+        0,
+        12,
+        58,
+        30
+      ],
+      "unique": false
+    },
+    {
+      "id": "onyx_ring",
+      "name": "Black Onyx Ring",
+      "slot": "ring",
+      "rarity": "epic",
+      "tile": "ring_black_onyx.png",
+      "atk": 3,
+      "def": 3,
+      "hp": 38,
+      "item_tier": 4,
+      "base_type": "ring_stealth",
+      "flavor_tags": [
+        "stealth",
+        "footwork",
+        "vision"
+      ],
+      "lore": "Light declines to land on it. So do gazes.",
+      "drop_weights": [
+        0,
+        0,
+        8,
+        58,
+        35
+      ],
+      "unique": false
+    },
+    {
+      "id": "opal_ring",
+      "name": "Opal Ring",
+      "slot": "ring",
+      "rarity": "epic",
+      "tile": "opal.png",
+      "atk": 3,
+      "def": 3,
+      "hp": 45,
+      "item_tier": 4,
+      "base_type": "ring_magic",
+      "flavor_tags": [
+        "wisdom",
+        "willpower"
+      ],
+      "lore": "Catches every color. Spits some back.",
+      "drop_weights": [
+        0,
+        0,
+        12,
+        55,
+        33
+      ],
+      "unique": false
+    },
+    {
+      "id": "ring_of_flight",
+      "name": "Ring of Flight",
+      "slot": "ring",
+      "rarity": "epic",
+      "tile": "ring_gold_white.png",
+      "atk": 0,
+      "def": 4,
+      "hp": 40,
+      "item_tier": 4,
+      "base_type": "ring_flight",
+      "flavor_tags": [
+        "flying",
+        "swiftness"
+      ],
+      "lore": "Heels barely brush the floor while it's worn.",
+      "drop_weights": [
+        0,
+        0,
+        8,
+        55,
+        38
+      ],
+      "unique": false
+    },
+    {
+      "id": "ruby_ring",
+      "name": "Ruby Ring",
+      "slot": "ring",
+      "rarity": "epic",
+      "tile": "ruby.png",
+      "atk": 6,
+      "def": 1,
+      "hp": 40,
+      "item_tier": 4,
+      "base_type": "ring_strength",
+      "flavor_tags": [
+        "slaying",
+        "fire_res"
+      ],
+      "lore": "Hot to the touch. Hotter when struck.",
+      "drop_weights": [
+        0,
+        0,
+        8,
+        55,
+        38
+      ],
+      "unique": false
+    },
+    {
+      "id": "shiny_ring",
+      "name": "Shiny Ring",
+      "slot": "ring",
+      "rarity": "epic",
+      "tile": "ring_shiny.png",
+      "atk": 0,
+      "def": 5,
+      "hp": 45,
+      "item_tier": 4,
+      "base_type": "ring_protection",
+      "flavor_tags": [
+        "fortified"
+      ],
+      "lore": "Polished beyond reason. Nobody likes the wearer in dim corridors.",
+      "drop_weights": [
+        0,
+        0,
+        8,
+        55,
+        38
+      ],
+      "unique": false
+    },
+    {
+      "id": "twisted_ring",
+      "name": "Twisted Ring",
+      "slot": "ring",
+      "rarity": "epic",
+      "tile": "ring_twisted.png",
+      "atk": 4,
+      "def": 2,
+      "hp": 38,
+      "item_tier": 4,
+      "base_type": "ring_dexterity",
+      "flavor_tags": [
+        "footwork",
+        "swiftness"
+      ],
+      "lore": "Looks like it was bent on purpose. Maybe.",
+      "drop_weights": [
+        0,
+        0,
+        10,
+        58,
+        32
+      ],
+      "unique": false
+    },
+    {
+      "id": "diamond_ring",
+      "name": "Diamond Ring",
+      "slot": "ring",
+      "rarity": "epic",
+      "tile": "diamond.png",
+      "atk": 2,
+      "def": 6,
+      "hp": 50,
+      "item_tier": 5,
+      "base_type": "ring_evasion",
+      "flavor_tags": [
+        "footwork",
+        "fortified"
+      ],
+      "lore": "Catches every light source on the floor.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        18,
+        70
+      ],
+      "unique": false
+    },
+    {
+      "id": "engagement_ring",
+      "name": "Engagement Ring",
+      "slot": "ring",
+      "rarity": "epic",
+      "tile": "ring_engagement.png",
+      "atk": 0,
+      "def": 4,
+      "hp": 65,
+      "item_tier": 5,
+      "base_type": "ring_protection",
+      "flavor_tags": [
+        "fortified",
+        "regen"
+      ],
+      "lore": "Inscribed with a name nobody remembers. Lights up around the right person.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        12,
+        70
+      ],
+      "unique": false
+    },
+    {
+      "id": "gold_ring",
+      "name": "Gold Ring",
+      "slot": "ring",
+      "rarity": "epic",
+      "tile": "gold.png",
+      "atk": 7,
+      "def": 2,
+      "hp": 50,
+      "item_tier": 5,
+      "base_type": "ring_slaying",
+      "flavor_tags": [
+        "slaying",
+        "fortune"
+      ],
+      "lore": "Heavy. Worn by people who could afford a target.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        14,
+        70
+      ],
+      "unique": false
+    },
+    {
+      "id": "mage_ring",
+      "name": "Ring of the Mage",
+      "slot": "ring",
+      "rarity": "legendary",
+      "tile": "urand_mage.png",
+      "atk": 5,
+      "def": 5,
+      "hp": 70,
+      "item_tier": 5,
+      "base_type": "ring_magic",
+      "flavor_tags": [
+        "wisdom",
+        "willpower"
+      ],
+      "lore": "Drained of one mage's worth of magic. Now full of yours.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        4,
+        20
+      ],
+      "unique": true,
+      "future_mechanic": "+50% magic resistance. +25% XP gain."
+    },
+    {
+      "id": "octoring",
+      "name": "The Octoring",
+      "slot": "ring",
+      "rarity": "legendary",
+      "tile": "urand_octoring.png",
+      "atk": 6,
+      "def": 4,
+      "hp": 60,
+      "item_tier": 5,
+      "base_type": "ring_magic",
+      "flavor_tags": [
+        "wisdom",
+        "fortune"
+      ],
+      "lore": "Eight in one. Or one in eight. Depends who's counting.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        25
+      ],
+      "unique": true,
+      "future_mechanic": "Counts as 2 ring slots. Fills both slots, doubles affix slots."
+    },
+    {
+      "id": "pearl_ring",
+      "name": "Pearl Ring",
+      "slot": "ring",
+      "rarity": "epic",
+      "tile": "pearl.png",
+      "atk": 0,
+      "def": 3,
+      "hp": 55,
+      "item_tier": 5,
+      "base_type": "ring_regen",
+      "flavor_tags": [
+        "regen",
+        "willpower"
+      ],
+      "lore": "Iridescent. Cool against the skin.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        14,
+        72
+      ],
+      "unique": false
+    },
+    {
+      "id": "robustness_ring",
+      "name": "Ring of Robustness",
+      "slot": "ring",
+      "rarity": "legendary",
+      "tile": "urand_robustness.png",
+      "atk": 0,
+      "def": 7,
+      "hp": 90,
+      "item_tier": 5,
+      "base_type": "ring_protection",
+      "flavor_tags": [
+        "fortified",
+        "regen",
+        "willpower"
+      ],
+      "lore": "Thick. Indelicate. Effective.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        25
+      ],
+      "unique": true,
+      "future_mechanic": "+15% max HP. Cannot be reduced below 1 HP from a single hit."
+    },
+    {
+      "id": "shadows_ring",
+      "name": "Ring of Shadows",
+      "slot": "ring",
+      "rarity": "legendary",
+      "tile": "urand_shadows_new.png",
+      "atk": 4,
+      "def": 4,
+      "hp": 55,
+      "item_tier": 5,
+      "base_type": "ring_stealth",
+      "flavor_tags": [
+        "stealth",
+        "footwork",
+        "vision"
+      ],
+      "lore": "The wearer's shadow does not always follow.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        4,
+        22
+      ],
+      "unique": true,
+      "future_mechanic": "+20% dodge chance. See-invisible. Lower aggro range."
+    },
+    {
+      "id": "shaolin_ring",
+      "name": "Shaolin Ring",
+      "slot": "ring",
+      "rarity": "legendary",
+      "tile": "urand_shaolin.png",
+      "atk": 8,
+      "def": 3,
+      "hp": 55,
+      "item_tier": 5,
+      "base_type": "ring_dexterity",
+      "flavor_tags": [
+        "footwork",
+        "swiftness",
+        "slaying"
+      ],
+      "lore": "Worn by a fist that ended a war.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        4,
+        22
+      ],
+      "unique": true,
+      "future_mechanic": "+15% attack speed. +10% crit chance."
+    },
+    {
+      "id": "blue_cameo",
+      "name": "Blue Cameo",
+      "slot": "amulet",
+      "rarity": "uncommon",
+      "tile": "cameo_blue.png",
+      "atk": 0,
+      "def": 1,
+      "hp": 22,
+      "item_tier": 1,
+      "base_type": "amulet_faith",
+      "flavor_tags": [
+        "faith"
+      ],
+      "lore": "A face carved into shell. Looks vaguely benevolent.",
+      "drop_weights": [
+        55,
+        35,
+        5,
+        0,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "bone_pendant",
+      "name": "Bone Pendant",
+      "slot": "amulet",
+      "rarity": "common",
+      "tile": "bone_gray.png",
+      "atk": 0,
+      "def": 1,
+      "hp": 18,
+      "item_tier": 1,
+      "base_type": "amulet_regen",
+      "flavor_tags": [
+        "regen"
+      ],
+      "lore": "Bone wrapped in twine. Bleached by something.",
+      "drop_weights": [
+        80,
+        15,
+        0,
+        0,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "celtic_yellow",
+      "name": "Celtic Knot Amulet",
+      "slot": "amulet",
+      "rarity": "uncommon",
+      "tile": "celtic_yellow.png",
+      "atk": 0,
+      "def": 2,
+      "hp": 24,
+      "item_tier": 1,
+      "base_type": "amulet_regen",
+      "flavor_tags": [
+        "regen"
+      ],
+      "lore": "Endless knot. Heals slow.",
+      "drop_weights": [
+        50,
+        35,
+        8,
+        0,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "cylinder_amulet",
+      "name": "Cylinder Amulet",
+      "slot": "amulet",
+      "rarity": "common",
+      "tile": "cylinder_gray.png",
+      "atk": 0,
+      "def": 2,
+      "hp": 14,
+      "item_tier": 1,
+      "base_type": "amulet_reflection",
+      "flavor_tags": [
+        "reflective"
+      ],
+      "lore": "Hollow lead. Rattles.",
+      "drop_weights": [
+        75,
+        18,
+        2,
+        0,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "celtic_red",
+      "name": "Knot of the Faithful",
+      "slot": "amulet",
+      "rarity": "rare",
+      "tile": "celtic_red.png",
+      "atk": 0,
+      "def": 2,
+      "hp": 30,
+      "item_tier": 2,
+      "base_type": "amulet_faith",
+      "flavor_tags": [
+        "faith",
+        "wisdom"
+      ],
+      "lore": "Worn by pilgrims. Their gods listen back.",
+      "drop_weights": [
+        8,
+        55,
+        32,
+        5,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "eye_pendant_green",
+      "name": "Watching Eye",
+      "slot": "amulet",
+      "rarity": "rare",
+      "tile": "eye_green.png",
+      "atk": 0,
+      "def": 4,
+      "hp": 26,
+      "item_tier": 2,
+      "base_type": "amulet_acrobat",
+      "flavor_tags": [
+        "acrobat"
+      ],
+      "lore": "It tracks across the room. So does its wearer.",
+      "drop_weights": [
+        8,
+        50,
+        35,
+        7,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "ring_pendant_red",
+      "name": "Ring Pendant",
+      "slot": "amulet",
+      "rarity": "uncommon",
+      "tile": "ring_red.png",
+      "atk": 2,
+      "def": 0,
+      "hp": 22,
+      "item_tier": 2,
+      "base_type": "amulet_rage",
+      "flavor_tags": [
+        "rage"
+      ],
+      "lore": "Glows when its wearer is angry. Often.",
+      "drop_weights": [
+        12,
+        60,
+        28,
+        5,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "stone_amulet_1",
+      "name": "Standing Stone",
+      "slot": "amulet",
+      "rarity": "uncommon",
+      "tile": "stone_1_cyan.png",
+      "atk": 0,
+      "def": 3,
+      "hp": 28,
+      "item_tier": 2,
+      "base_type": "amulet_reflection",
+      "flavor_tags": [
+        "reflective",
+        "fortified"
+      ],
+      "lore": "Smooth stone with a hole bored through. Older than language.",
+      "drop_weights": [
+        15,
+        65,
+        25,
+        3,
+        0
+      ],
+      "unique": false
+    },
+    {
+      "id": "crystal_green",
+      "name": "Verdant Pendant",
+      "slot": "amulet",
+      "rarity": "rare",
+      "tile": "crystal_green.png",
+      "atk": 0,
+      "def": 2,
+      "hp": 45,
+      "item_tier": 3,
+      "base_type": "amulet_regen",
+      "flavor_tags": [
+        "regen",
+        "elemental"
+      ],
+      "lore": "Living crystal. Drinks light to heal its wearer.",
+      "drop_weights": [
+        0,
+        15,
+        58,
+        25,
+        5
+      ],
+      "unique": false
+    },
+    {
+      "id": "penta_orange",
+      "name": "Pentacle of Wrath",
+      "slot": "amulet",
+      "rarity": "rare",
+      "tile": "penta_orange.png",
+      "atk": 5,
+      "def": 0,
+      "hp": 35,
+      "item_tier": 3,
+      "base_type": "amulet_rage",
+      "flavor_tags": [
+        "rage",
+        "harm"
+      ],
+      "lore": "Five points. Each one a name burned in.",
+      "drop_weights": [
+        0,
+        10,
+        55,
+        28,
+        10
+      ],
+      "unique": false
+    },
+    {
+      "id": "stone_2_red",
+      "name": "Bleeding Stone",
+      "slot": "amulet",
+      "rarity": "rare",
+      "tile": "stone_2_red.png",
+      "atk": 4,
+      "def": -1,
+      "hp": 30,
+      "item_tier": 3,
+      "base_type": "amulet_harm",
+      "flavor_tags": [
+        "harm"
+      ],
+      "lore": "Always slightly damp. Always. The wearer cuts deeper.",
+      "drop_weights": [
+        0,
+        18,
+        60,
+        22,
+        4
+      ],
+      "unique": false
+    },
+    {
+      "id": "stone_3_blue",
+      "name": "Sea-Worn Stone",
+      "slot": "amulet",
+      "rarity": "rare",
+      "tile": "stone_3_blue.png",
+      "atk": 0,
+      "def": 3,
+      "hp": 50,
+      "item_tier": 3,
+      "base_type": "amulet_guardian",
+      "flavor_tags": [
+        "guardian",
+        "willpower"
+      ],
+      "lore": "Smooth as a tide pool. Watches.",
+      "drop_weights": [
+        0,
+        12,
+        55,
+        28,
+        8
+      ],
+      "unique": false
+    },
+    {
+      "id": "crystal_red",
+      "name": "Bloodstone Pendant",
+      "slot": "amulet",
+      "rarity": "epic",
+      "tile": "crystal_red.png",
+      "atk": 7,
+      "def": -2,
+      "hp": 50,
+      "item_tier": 4,
+      "base_type": "amulet_harm",
+      "flavor_tags": [
+        "harm",
+        "rage"
+      ],
+      "lore": "It hungers. The wearer's edges sharpen, their guard slips.",
+      "drop_weights": [
+        0,
+        0,
+        8,
+        55,
+        38
+      ],
+      "unique": false
+    },
+    {
+      "id": "face_amulet_gold",
+      "name": "Saintly Visage",
+      "slot": "amulet",
+      "rarity": "epic",
+      "tile": "face_1_gold.png",
+      "atk": 0,
+      "def": 4,
+      "hp": 60,
+      "item_tier": 4,
+      "base_type": "amulet_faith",
+      "flavor_tags": [
+        "faith",
+        "regen",
+        "fortune"
+      ],
+      "lore": "Cast in gold. Probably copies a real face.",
+      "drop_weights": [
+        0,
+        0,
+        12,
+        58,
+        30
+      ],
+      "unique": false
+    },
+    {
+      "id": "stone_2_green",
+      "name": "Verdant Cabochon",
+      "slot": "amulet",
+      "rarity": "epic",
+      "tile": "stone_2_green.png",
+      "atk": 3,
+      "def": 4,
+      "hp": 55,
+      "item_tier": 4,
+      "base_type": "amulet_acrobat",
+      "flavor_tags": [
+        "acrobat",
+        "footwork"
+      ],
+      "lore": "The wearer's center of gravity shifts.",
+      "drop_weights": [
+        0,
+        0,
+        10,
+        58,
+        32
+      ],
+      "unique": false
+    },
+    {
+      "id": "stone_3_magenta",
+      "name": "Veiled Sigil",
+      "slot": "amulet",
+      "rarity": "epic",
+      "tile": "stone_3_magenta.png",
+      "atk": 0,
+      "def": 5,
+      "hp": 70,
+      "item_tier": 4,
+      "base_type": "amulet_guardian",
+      "flavor_tags": [
+        "guardian",
+        "willpower"
+      ],
+      "lore": "A purple sigil floats above the stone, slightly above. Always.",
+      "drop_weights": [
+        0,
+        0,
+        8,
+        55,
+        38
+      ],
+      "unique": false
+    },
+    {
+      "id": "amulet_bloodlust",
+      "name": "Amulet of Bloodlust",
+      "slot": "amulet",
+      "rarity": "legendary",
+      "tile": "urand_bloodlust_new.png",
+      "atk": 10,
+      "def": -2,
+      "hp": 75,
+      "item_tier": 5,
+      "base_type": "amulet_rage",
+      "flavor_tags": [
+        "rage",
+        "harm"
+      ],
+      "lore": "Beats slightly faster than the wearer's heart. Always slightly faster.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        22
+      ],
+      "unique": true,
+      "future_mechanic": "+20% damage when below 50% HP. -15% DEF (drawback)."
+    },
+    {
+      "id": "amulet_finger",
+      "name": "The Finger",
+      "slot": "amulet",
+      "rarity": "legendary",
+      "tile": "urand_finger.png",
+      "atk": 12,
+      "def": -3,
+      "hp": 60,
+      "item_tier": 5,
+      "base_type": "amulet_harm",
+      "flavor_tags": [
+        "harm",
+        "rage"
+      ],
+      "lore": "A real finger. Old. Don't ask whose.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        3,
+        18
+      ],
+      "unique": true,
+      "future_mechanic": "+30% damage dealt. +20% damage taken (drawback)."
+    },
+    {
+      "id": "amulet_of_air",
+      "name": "Amulet of Air",
+      "slot": "amulet",
+      "rarity": "legendary",
+      "tile": "urand_air_new.png",
+      "atk": 4,
+      "def": 4,
+      "hp": 90,
+      "item_tier": 5,
+      "base_type": "amulet_air",
+      "flavor_tags": [
+        "acrobat",
+        "willpower",
+        "elemental"
+      ],
+      "lore": "Cool wind around the wearer's neck. Always.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        25
+      ],
+      "unique": true,
+      "future_mechanic": "Lightning resistance. +10% movement speed. Periodic dodge."
+    },
+    {
+      "id": "amulet_of_vitality",
+      "name": "Amulet of Vitality",
+      "slot": "amulet",
+      "rarity": "legendary",
+      "tile": "urand_vitality.png",
+      "atk": 0,
+      "def": 5,
+      "hp": 150,
+      "item_tier": 5,
+      "base_type": "amulet_vitality",
+      "flavor_tags": [
+        "vitality",
+        "regen",
+        "fortified"
+      ],
+      "lore": "Worn by those who refused to fall.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        25
+      ],
+      "unique": true,
+      "future_mechanic": "+25% max HP. +50% out-of-combat regen."
+    },
+    {
+      "id": "brooch_of_shielding",
+      "name": "Brooch of Shielding",
+      "slot": "amulet",
+      "rarity": "legendary",
+      "tile": "urand_brooch_of_shielding_new.png",
+      "atk": 0,
+      "def": 9,
+      "hp": 110,
+      "item_tier": 5,
+      "base_type": "amulet_reflection",
+      "flavor_tags": [
+        "reflective",
+        "fortified",
+        "willpower"
+      ],
+      "lore": "A faint shimmer surrounds the wearer in any light.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        25
+      ],
+      "unique": true,
+      "future_mechanic": "+10% block chance. Reflects projectiles back at attacker."
+    },
+    {
+      "id": "cekugob_amulet",
+      "name": "Cekugob's Amulet",
+      "slot": "amulet",
+      "rarity": "legendary",
+      "tile": "urand_cekugob_new.png",
+      "atk": 5,
+      "def": 6,
+      "hp": 120,
+      "item_tier": 5,
+      "base_type": "amulet_guardian",
+      "flavor_tags": [
+        "guardian",
+        "willpower",
+        "fortune"
+      ],
+      "lore": "Cekugob never died. The amulet is the proof.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        4,
+        22
+      ],
+      "unique": true,
+      "future_mechanic": "Once per run, prevent fatal damage and fully heal. Cooldown resets per run."
+    },
+    {
+      "id": "crystal_white",
+      "name": "Pearl of Vitality",
+      "slot": "amulet",
+      "rarity": "epic",
+      "tile": "crystal_white.png",
+      "atk": 0,
+      "def": 4,
+      "hp": 100,
+      "item_tier": 5,
+      "base_type": "amulet_vitality",
+      "flavor_tags": [
+        "vitality",
+        "regen"
+      ],
+      "lore": "Bright. Still. Growing slowly.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        18,
+        70
+      ],
+      "unique": false
+    },
+    {
+      "id": "face_amulet_2",
+      "name": "King's Cameo",
+      "slot": "amulet",
+      "rarity": "epic",
+      "tile": "face_2.png",
+      "atk": 0,
+      "def": 5,
+      "hp": 95,
+      "item_tier": 5,
+      "base_type": "amulet_faith",
+      "flavor_tags": [
+        "faith",
+        "lordly"
+      ],
+      "lore": "Worn by a king who outlived his enemies. Most of them.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        12,
+        70
+      ],
+      "unique": false
+    },
+    {
+      "id": "four_winds",
+      "name": "The Four Winds",
+      "slot": "amulet",
+      "rarity": "legendary",
+      "tile": "urand_four_winds_new.png",
+      "atk": 6,
+      "def": 6,
+      "hp": 100,
+      "item_tier": 5,
+      "base_type": "amulet_air",
+      "flavor_tags": [
+        "acrobat",
+        "elemental",
+        "willpower"
+      ],
+      "lore": "Four directions held in one circle. Each promises something.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        4,
+        22
+      ],
+      "unique": true,
+      "future_mechanic": "All four elemental resistances. +15% dodge while moving."
+    },
+    {
+      "id": "penta_green",
+      "name": "Sigil of the Last Line",
+      "slot": "amulet",
+      "rarity": "epic",
+      "tile": "penta_green.png",
+      "atk": 0,
+      "def": 7,
+      "hp": 85,
+      "item_tier": 5,
+      "base_type": "amulet_reflection",
+      "flavor_tags": [
+        "reflective",
+        "fortified"
+      ],
+      "lore": "Five points held tight. Whatever crosses, returns.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        14,
+        70
+      ],
+      "unique": false
+    }
   ]
 }
