@@ -38,22 +38,30 @@ Gated by `BOTTER_NO_GRADE=1`. Sub-microsecond cost.
 
 ## Queued — high impact, low effort
 
-### Heat haze on T_LAVA tiles
+### ✅ Heat haze on T_LAVA tiles (shipped 2026-05-21)
 
-Vertex-distortion shader applied per-cell to lava tiles AND the row of
-floor/wall tiles directly above. Vertical sine-wave UV warp creates the
-shimmer that makes lava feel hot. Currently lava is just a static red
-sprite — players don't intuit "this damages me."
+Sine-wave UV warp on a Sprite2D covering each lava cell + 2 rows above.
+Vertical falloff so the shimmer is strongest at the lava and fades upward.
+Slight chromatic offset fakes refraction.
 
-Approach:
-- New `assets/heat_haze.gdshader`, applied as material override on
-  T_LAVA cells and their row-above neighbors during render.
-- Uniforms: `time` (animated), `strength` (0.5 default), `frequency`
-  (3.0 default).
-- Cost: per-affected-cell vertex distortion, no full-screen pass.
-  Negligible.
+Pipeline:
+- `assets/heat_haze.gdshader` — `hint_screen_texture` uniform (Godot 4.6
+  required), strength/frequency/speed/vertical_falloff uniforms.
+- `map_renderer.gd::_attach_heat_haze(lava_cells)` — gathers T_LAVA
+  positions during the base-layer pass, creates one Sprite2D per cell
+  on `_heat_haze_layer` (z_index 50). 1×1 white texture scaled to
+  cover cell + 2 rows above.
+- Gated by `BOTTER_NO_HEAT_HAZE=1`. Skipped entirely when no lava
+  cells exist.
 
-~30 lines of shader + ~15 lines of GDScript wiring in `map_renderer.gd`.
+Cost: per-fragment sin/cos + 3 SCREEN_TEXTURE samples (chromatic), only
+within the small affected zones. Total cost scales with lava cell count
+(typically 5-30 cells in forge/lava-vaults).
+
+**Note**: Initial implementation used `SCREEN_TEXTURE` builtin which Godot
+4.6 deprecated — must declare as a `hint_screen_texture` uniform. Same
+fix applied to `color_grade.gdshader` (was also using deprecated builtin
+but hadn't been exercised yet).
 
 ### Water shimmer on T_WATER
 

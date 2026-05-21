@@ -48,6 +48,25 @@ cp "$USER_SS_DIR"/*.png "$DEST/" 2>/dev/null || true
 cp "$USER_SS_DIR"/*.json "$DEST/" 2>/dev/null || true
 
 echo ""
+echo "=== Pass 3: heat haze on forge lava-bridge vault ==="
+unset BOTTER_NO_GRADE
+# This vault always has lava — known reliable heat-haze trigger.
+DEST=logs/screenshots/color_grade_showcase/heat_haze
+mkdir -p "$DEST"
+bash .claude/skills/screenshot/screenshot.sh forge forge_lava_bridge_7x3 || true
+cp "$USER_SS_DIR"/*.png "$DEST/" 2>/dev/null || true
+cp "$USER_SS_DIR"/*.json "$DEST/" 2>/dev/null || true
+mv "$DEST"/*.png "$DEST/with_heat_haze.png" 2>/dev/null || true
+
+# Now WITHOUT heat haze for comparison
+export BOTTER_NO_HEAT_HAZE=1
+bash .claude/skills/screenshot/screenshot.sh forge forge_lava_bridge_7x3 || true
+cp "$USER_SS_DIR"/*.png "$DEST/" 2>/dev/null || true
+cp "$USER_SS_DIR"/*.json "$DEST/" 2>/dev/null || true
+mv "$DEST"/*.png "$DEST/without_heat_haze.png" 2>/dev/null || true
+
+echo ""
 echo "=== ALL SCREENSHOTS CAPTURED ==="
 echo "with grade:    logs/screenshots/color_grade_showcase/with_grade/"
 echo "without grade: logs/screenshots/color_grade_showcase/without_grade/"
+echo "heat haze A/B: logs/screenshots/color_grade_showcase/heat_haze/"

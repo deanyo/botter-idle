@@ -7,6 +7,9 @@ shader_type canvas_item;
 
 render_mode blend_mix;
 
+// Godot 4.6 requires SCREEN_TEXTURE be declared as a uniform.
+uniform sampler2D screen_tex : hint_screen_texture, repeat_disable, filter_linear;
+
 // Tint: multiplied with the base color. (1,1,1) = no tint.
 uniform vec3 tint = vec3(1.0);
 
@@ -30,7 +33,7 @@ uniform vec3 vignette_tint = vec3(0.0);
 uniform float mix_amount : hint_range(0.0, 1.0) = 1.0;
 
 void fragment() {
-	vec3 base = texture(SCREEN_TEXTURE, SCREEN_UV).rgb;
+	vec3 base = texture(screen_tex, SCREEN_UV).rgb;
 
 	// Saturation around luma (Rec. 709 weights).
 	float luma = dot(base, vec3(0.2126, 0.7152, 0.0722));

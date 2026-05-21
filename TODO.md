@@ -419,10 +419,11 @@ FX, edge overlays. Per-biome `modulate` was barely perceptible. New
   the values for: dungeon_dark, mines, forest, snake, shoals, orc,
   spider, hive, labyrinth, abyss, pandemonium, zot, elf, temple,
   depths. ~30 min once the visual direction is locked.
-- ⬜ **Heat haze on T_LAVA tiles** — vertex-distortion shader, sine
-  UV warp on lava + tiles directly above. Makes lava-damage mechanic
-  feel dangerous instead of static red. Cheap (per-cell, not full-
-  screen). ~20 lines.
+- ✅ **Heat haze on T_LAVA tiles** — shipped 2026-05-21. Sprite2D per
+  lava cell + 2 rows above with sine-wave UV warp shader. Vertical
+  falloff + chromatic offset. Gated by `BOTTER_NO_HEAT_HAZE=1`. See
+  `docs/visual-effects-plan.md` and HANDOVER for the screen_tex
+  uniform note (Godot 4.6 deprecation).
 - ⬜ **Water shimmer** — same shape as heat haze but slow UV offset
   on T_WATER. ~20 lines.
 - ⬜ **Light cookies on PointLight2D** — pattern textures projected

@@ -68,6 +68,24 @@ tier  runs  wins  win%   sim_s     last_floor  bosses_killed
 Logs to `logs/playthrough/<ts>_<equip>_<upgrade>_<advance>.log` plus
 one summary line in `logs/playthrough/index.jsonl`.
 
+## Heat haze shader — 2026-05-21
+
+Per-cell vertex-distortion shader on T_LAVA tiles. Sine-wave UV warp
+with vertical falloff (strongest at lava, fades upward). Slight
+chromatic offset fakes refraction. Makes lava feel hot — currently
+it's a static red sprite.
+
+`assets/heat_haze.gdshader` + `map_renderer.gd::_attach_heat_haze`.
+Each lava cell gets one Sprite2D covering itself + 2 rows above on
+`_heat_haze_layer` (z_index 50). Skipped entirely when no lava cells
+exist. Gated by `BOTTER_NO_HEAT_HAZE=1`.
+
+**Important**: Both this shader and `color_grade.gdshader` use Godot
+4.6's required `hint_screen_texture` uniform pattern, NOT the legacy
+`SCREEN_TEXTURE` builtin. Initial implementation hit a `SHADER ERROR`
+when the experiment chain ran into a forge lava-bridge vault — fixed
+by declaring `uniform sampler2D screen_tex : hint_screen_texture`.
+
 ## Color grading shader — 2026-05-21
 
 Per-biome post-process to elevate the visual language without changing

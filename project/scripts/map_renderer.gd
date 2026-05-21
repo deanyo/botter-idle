@@ -53,6 +53,12 @@ var _tileset: TileSet = null
 var _base_layer: TileMapLayer = null
 var _overlay_layer: TileMapLayer = null
 var _vis_material: ShaderMaterial = null
+# Heat-haze layer for lava cells. One small Sprite2D per lava cell
+# covering the cell + the row above. Each carries a ShaderMaterial
+# referencing assets/heat_haze.gdshader. Only created when lava cells
+# exist; disabled via BOTTER_NO_HEAT_HAZE=1.
+const HEAT_HAZE_SHADER := preload("res://assets/heat_haze.gdshader")
+var _heat_haze_layer: Node2D = null
 # Single packed atlas: every unique tile texture this floor uses gets
 # blitted into one big Image, then registered as one TileSetAtlasSource
 # with per-tile atlas_coords. Result: TileMapLayer draws each layer in
@@ -151,6 +157,8 @@ func render(g: Array, rs: Array, biome: Dictionary, rng: RandomNumberGenerator, 
 		String(biome.get("id","?")), floor_primary.size(), wall_primary.size(), overlay_label,
 	])
 
+	# Collect lava cells along the way to attach heat-haze later.
+	var lava_cells: Array[Vector2i] = []
 	# First pass — base layer (floor / wall / terrain / door / stairs).
 	for y in h:
 		for x in w:
@@ -168,6 +176,7 @@ func render(g: Array, rs: Array, biome: Dictionary, rng: RandomNumberGenerator, 
 				tex = _pick_floor_tile(x, y, floor_patches, pool, floor_accent, rng)
 			elif cell == C.T_LAVA:
 				tex = TERRAIN_LAVA
+				lava_cells.append(Vector2i(x, y))
 			elif cell == C.T_WATER:
 				tex = TERRAIN_WATER
 			elif cell == C.T_ICE:
@@ -197,6 +206,11 @@ func render(g: Array, rs: Array, biome: Dictionary, rng: RandomNumberGenerator, 
 	var density: Vector2i = BiomeData.sigil_density(biome)
 	if not sigil_set.is_empty() and density.y > 0 and not rooms.is_empty():
 		_stamp_room_sigils(sigil_set, density, protected_cells, rng)
+	# Heat haze on lava cells. Each lava cell + 1 row above gets a ColorRect
+	# with the heat_haze shader. Sub-microsecond per fragment, only paints
+	# behind visible lava — total cost scales with lava cell count.
+	if not lava_cells.is_empty() and not OS.has_environment("BOTTER_NO_HEAT_HAZE"):
+		_attach_heat_haze(lava_cells)
 
 func _register_texture(tex: Texture2D) -> void:
 	if tex == null:
@@ -534,3 +548,38 @@ func reveal_all() -> void:
 	# reveal_strength so the smoothstep doesn't dim anything.
 	if _vis_material:
 		_vis_material.set_shader_parameter("reveal_strength", 1.0)
+
+# Build per-lava-cell heat-haze rectangles. Each covers the lava cell +
+# 2 rows above (where rising heat would visibly distort whatever is
+# rendered behind). The shader's vertical_falloff fades the effect
+# upward so only the bottom shimmers strongly.
+#
+# Uses Sprite2D (Node2D-native) with a 1×1 white texture scaled to the
+# zone size, so coordinates match the tile grid. ColorRect would force
+# us into Control hierarchy which complicates positioning.
+static var _heat_haze_tex: Texture2D = null
+
+func _attach_heat_haze(lava_cells: Array[Vector2i]) -> void:
+	if _heat_haze_layer != null and _heat_haze_layer.is_inside_tree():
+		_heat_haze_layer.queue_free()
+	_heat_haze_layer = Node2D.new()
+	_heat_haze_layer.z_index = 50  # above tiles, below FX/UI
+	add_child(_heat_haze_layer)
+	# Lazy-init the 1×1 white tex once; shared across every haze sprite.
+	if _heat_haze_tex == null:
+		var img := Image.create(1, 1, false, Image.FORMAT_RGBA8)
+		img.fill(Color(1, 1, 1, 1))
+		_heat_haze_tex = ImageTexture.create_from_image(img)
+	var px := float(C.TILE_SIZE)
+	for cell in lava_cells:
+		var spr := Sprite2D.new()
+		spr.texture = _heat_haze_tex
+		spr.centered = false
+		# Scale 1px → tile_size × tile_size*3 (cell + 2 rows above).
+		spr.scale = Vector2(px, px * 3.0)
+		# Top-left of the affected zone = 2 rows above the lava cell.
+		spr.position = Vector2(cell.x * px, (cell.y - 2) * px)
+		var mat := ShaderMaterial.new()
+		mat.shader = HEAT_HAZE_SHADER
+		spr.material = mat
+		_heat_haze_layer.add_child(spr)
