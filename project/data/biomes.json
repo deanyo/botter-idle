@@ -2,6 +2,21 @@
   "biomes": {
     "dungeon": {
       "display_name": "the Dungeon",
+      "color_grade": {
+        "tint": [
+          0.95,
+          0.97,
+          1.05
+        ],
+        "saturation": 0.85,
+        "contrast": 1.05,
+        "vignette": 0.25,
+        "vignette_tint": [
+          0.04,
+          0.04,
+          0.07
+        ]
+      },
       "floor_primary": [
         "dungeon"
       ],
@@ -247,6 +262,21 @@
     },
     "lair": {
       "display_name": "the Lair",
+      "color_grade": {
+        "tint": [
+          1.0,
+          1.08,
+          0.95
+        ],
+        "saturation": 1.15,
+        "contrast": 1.0,
+        "vignette": 0.2,
+        "vignette_tint": [
+          0.03,
+          0.05,
+          0.02
+        ]
+      },
       "floor_primary": [
         "lair"
       ],
@@ -429,6 +459,21 @@
     },
     "swamp": {
       "display_name": "the Swamp",
+      "color_grade": {
+        "tint": [
+          0.95,
+          1.0,
+          0.78
+        ],
+        "saturation": 0.75,
+        "contrast": 1.05,
+        "vignette": 0.3,
+        "vignette_tint": [
+          0.05,
+          0.06,
+          0.02
+        ]
+      },
       "floor_primary": [
         "swamp"
       ],
@@ -850,6 +895,21 @@
     },
     "crypt": {
       "display_name": "the Crypt",
+      "color_grade": {
+        "tint": [
+          0.85,
+          0.92,
+          1.05
+        ],
+        "saturation": 0.65,
+        "contrast": 1.1,
+        "vignette": 0.4,
+        "vignette_tint": [
+          0.02,
+          0.02,
+          0.05
+        ]
+      },
       "floor_primary": [
         "crypt"
       ],
@@ -953,6 +1013,21 @@
     },
     "tomb": {
       "display_name": "the Tomb",
+      "color_grade": {
+        "tint": [
+          1.1,
+          1.05,
+          0.85
+        ],
+        "saturation": 0.8,
+        "contrast": 1.05,
+        "vignette": 0.25,
+        "vignette_tint": [
+          0.06,
+          0.05,
+          0.02
+        ]
+      },
       "floor_primary": [
         "tomb"
       ],
@@ -1033,6 +1108,21 @@
     },
     "forge": {
       "display_name": "the Forge",
+      "color_grade": {
+        "tint": [
+          1.2,
+          0.95,
+          0.75
+        ],
+        "saturation": 1.2,
+        "contrast": 1.15,
+        "vignette": 0.3,
+        "vignette_tint": [
+          0.1,
+          0.02,
+          0.0
+        ]
+      },
       "floor_primary": [
         "forge"
       ],
@@ -1129,6 +1219,22 @@
     },
     "glacier": {
       "display_name": "the Glacier",
+      "color_grade": {
+        "tint": [
+          0.82,
+          0.95,
+          1.15
+        ],
+        "saturation": 0.75,
+        "contrast": 1.05,
+        "brightness": 0.05,
+        "vignette": 0.22,
+        "vignette_tint": [
+          0.02,
+          0.04,
+          0.08
+        ]
+      },
       "floor_primary": [
         "glacier"
       ],
@@ -1204,6 +1310,21 @@
     },
     "slime": {
       "display_name": "the Slime Pits",
+      "color_grade": {
+        "tint": [
+          0.9,
+          1.1,
+          0.8
+        ],
+        "saturation": 1.05,
+        "contrast": 1.0,
+        "vignette": 0.25,
+        "vignette_tint": [
+          0.02,
+          0.05,
+          0.02
+        ]
+      },
       "floor_primary": [
         "dungeon"
       ],

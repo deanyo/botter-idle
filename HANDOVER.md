@@ -4,7 +4,162 @@ Point-in-time snapshot of what's actually shipping. Updated as we go. The
 durable rules and process live in `CLAUDE.md`; the roadmap and open work
 items live in `TODO.md`.
 
-Last refresh: 2026-05-20 (balance pipeline + items pipeline).
+Last refresh: 2026-05-21 (playthrough harness + color grading + experiment chain).
+
+## Playthrough harness — 2026-05-21
+
+The balance pipeline tests fixed builds against fixed challenges. A
+**playthrough** simulates the full game loop: starter gear → dungeon →
+loot → equip → upgrade → advance → repeat, until tier 5 boss is killed
+or run cap is hit. Lets us calibrate per-tier playtime + difficulty
+curve from data.
+
+### Skill: `/playthrough [--equip POLICY] [--upgrade POLICY] [--advance POLICY]`
+
+Three configurable policies decide what the simulated player does
+between runs:
+
+**Equip policies** (`.claude/skills/playthrough/policies.py`):
+- `score_weighted` — `ATK*3 + DEF*5 + HP*0.5 + Σ(affix_value)`. Mirrors
+  what `bot.recompute_stats` actually values. Default.
+- `pure_dps` — Max ATK on weapon, max DEF on every other slot.
+- `rarity_first` — Highest rarity wins, tiebreak ATK+DEF+HP.
+
+**Upgrade policies**:
+- `round_robin` — Buy cheapest affordable upgrade. Default.
+- `combat_first` — Prioritize combat_training + toughening + conditioning.
+- `hp_first` — Prioritize conditioning + toughening for survival.
+
+**Advancement policies**:
+- `strict` — Try highest-tier unlocked branch. Default (matches game's
+  unlock rule).
+- `cautious` — Need 3 wins in a row at current branch before advancing.
+- `greedy` — Try next tier immediately; retreat one tier if win rate
+  < 30% over last 5 attempts.
+
+### Implementation
+
+`playthrough.py` reads/writes `botter_save_debug.json` directly between
+runs. Each iteration:
+1. Apply advance policy → pick next branch
+2. Apply upgrade policy → spend gold (mutates save)
+3. Apply equip policy → swap gear (mutates save)
+4. Call `balance.run_grind` for one run with `BOTTER_SEED` and
+   `BOTTER_NO_INVINCIBLE=1` (so death is real)
+5. Re-read save (Godot mutated inventory/level/gold during the run)
+6. Record per-tier metrics
+
+Stops when `bosses_killed[<any T5 branch>] > 0` or `--max-runs` hit.
+
+### Output
+
+Per-run line + per-tier summary table:
+```
+tier  runs  wins  win%   sim_s     last_floor  bosses_killed
+1     5     5     100%   142.3     6           1
+2     8     6     75%    268.4     6           1
+3     14    8     57%    498.1     6           1
+4     22    11    50%    827.5     6           1
+5     31    9     29%    1284.6    6           1
+```
+
+`sim_s` is grind seconds at 16x. Real-time playtime ≈ `sim_s × 16`.
+
+Logs to `logs/playthrough/<ts>_<equip>_<upgrade>_<advance>.log` plus
+one summary line in `logs/playthrough/index.jsonl`.
+
+## Color grading shader — 2026-05-21
+
+Per-biome post-process to elevate the visual language without changing
+gameplay. Existing `CanvasModulate` (flat per-channel tint) was barely
+perceptible; the new `ColorGrade` is a full-screen LUT-style shader.
+
+### Pipeline
+
+`assets/color_grade.gdshader` — 6 uniforms:
+- `tint` (vec3, multiplied with base color)
+- `saturation` (around Rec.709 luma)
+- `contrast` (around mid-grey 0.5)
+- `brightness` (additive)
+- `vignette` + `vignette_tint` (corner falloff to a custom color)
+- `mix_amount` (cross-fade for biome transitions)
+
+`scripts/color_grade.gd` — `ColorGrade` CanvasLayer (layer 60, between
+fog and HUD). Reads `current_biome.color_grade` dict, pushes uniforms.
+`transition_to(grade, 0.4)` cross-fades via mix-amount tween — no
+hard pop on biome change.
+
+`dungeon.gd` instantiates next to `ambient_modulate`. Gated by
+`BOTTER_NO_GRADE=1` env var (matches existing `BOTTER_NO_*` perf
+A/B knob pattern).
+
+### Curated biomes (8/24)
+
+`biomes.json` extended with `color_grade` field for:
+
+| Biome   | Mood                       | Tint            | Sat  | Vignette       |
+|---------|----------------------------|-----------------|------|----------------|
+| dungeon | Cool stone-vault           | 0.95/0.97/1.05  | 0.85 | 25% blue-black |
+| lair    | Warm lush green            | 1.0/1.08/0.95   | 1.15 | 20% green      |
+| swamp   | Murky desaturated          | 0.95/1.0/0.78   | 0.75 | 30% olive      |
+| crypt   | Cold washed-out blue-grey  | 0.85/0.92/1.05  | 0.65 | 40% deep blue  |
+| tomb    | Sandy sun-bleached         | 1.10/1.05/0.85  | 0.80 | 25% sand       |
+| forge   | Hot saturated red-orange   | 1.20/0.95/0.75  | 1.20 | 30% blood-red  |
+| glacier | Cold blue-cyan, frosted    | 0.82/0.95/1.15  | 0.75 | 22% deep blue  |
+| slime   | Sickly green murky         | 0.90/1.10/0.80  | 1.05 | 25% green      |
+
+The remaining 16 biomes fall through to identity (no-op). Extend on
+review.
+
+### Perf
+
+One full-screen sample per pixel, ~6 instructions, no expensive math.
+Sub-microsecond impact. Far cheaper than the existing 24-light fog
+ray-march.
+
+## Experiment infrastructure hardening — 2026-05-21
+
+After a sweep died mid-experiment when polling commands SIGTERM'd
+the parent shell, the chain was hardened:
+
+- **`tools/run_experiment.sh`** — wraps any command in nohup + double-fork
+  subshell (macOS lacks setsid). Survives parent SIGTERM. Writes the
+  experiment's PID to `logs/balance/.pids/<name>.pid` and exit code to
+  `<name>.status` on completion. Output streams unbuffered to
+  `logs/balance/<name>.log`.
+- **Sweep durability** — `sweep.py` now persists a `sweep_partial_variant`
+  entry to `index.jsonl` after each variant completes, so a kill mid-
+  experiment loses at most one variant of data.
+- **`balance.run_grind` timeout** — bumped from 60s/run to 90s/run (min
+  120s) after seeing 60s clip live grinds mid-floor-4 on tanky builds.
+
+### Standard pattern for long experiments
+
+```bash
+# Stage script (always use python3 -u for line-buffered output)
+cat > /tmp/myexp.sh <<'EOF'
+python3 -u tools/my_experiment.py
+EOF
+
+# Detach + survive parent shell
+tools/run_experiment.sh my_experiment bash /tmp/myexp.sh
+
+# Monitor without polling
+tail -f logs/balance/my_experiment.log
+cat logs/balance/.pids/my_experiment.status   # exists when done
+```
+
+### Currently in flight (2026-05-21 17:00)
+
+Job chain queued for ~6 hours unattended:
+- `regen5_backfill` — DONE (15/15 grinds, regen5 final win rate 40%)
+- `full_suite` — running, mid Experiment B (cliff investigation
+  N=50 × 3 branches; ~115 min remaining)
+- `playthrough_trio` — queued, waits on full_suite. Three policy combos:
+  score+round_robin+strict, pure_dps+combat_first+strict,
+  score+hp_first+cautious. ~2-3 hr.
+- `color_grade_showcase` — queued, waits on playthrough_trio. Captures
+  16 screenshots (8 biomes × with/without grade) for visual A/B.
 
 ## Balance pipeline — 2026-05-20
 

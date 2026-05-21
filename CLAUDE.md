@@ -38,7 +38,15 @@ Background-friendly. Mobile-first.
   (long-form references).
 - **`project/`** — the Godot project. Open this in the editor.
 - **`tools/`** — atlas builder + viewer, biome editor, item editor +
-  per-slot manifests, `sync_items.py` (manifest → items.json + sprites).
+  per-slot manifests, `sync_items.py` (manifest → items.json + sprites),
+  `inject_save.py` (build-spec → debug save), `parse_grind.py` (grind
+  log → dataclasses), `balance.py` (run_grind harness for /duel/sweep/
+  playthrough), `analyze_*.py` (cross-branch / floor-deaths / affix-
+  curve analyzers), `run_experiment.sh` (nohup wrapper for long jobs).
+- **`logs/`** (gitignored) — `grind/`, `balance/`, `screenshots/`,
+  `playthrough/` subdirs. `balance/index.jsonl` and
+  `playthrough/index.jsonl` are JSONL ledgers — one entry per
+  experiment, queryable with `jq`.
 
 **Hard rule**: **when committing to git, update `HANDOVER.md` and `TODO.md`
 to match what just shipped or got deferred.** They're the source of truth
@@ -61,6 +69,27 @@ reinvent these rituals each session.
   `[run] auto-grind COMPLETE`. Returns a structured summary: per-run
   victory/level/gold, totals (floors, bad-floors, stalls, portals),
   uniqueness (biomes, vaults). Logs in `logs/grind/`.
+- **`/equip "<spec>"`** — write a build to the debug save (no Godot
+  launch). Shorthand: `weapon=demon_blade,Strength5,Crit4 level=30
+  branch=forge`. Validates against items.json/affixes.json/biomes.json.
+  Wraps `tools/inject_save.py`.
+- **`/duel "<a>" -- "<b>" [-N 20]`** — A/B test two builds across the
+  same N seeds. Wilson 95% CI win rate, paired stats, damage by weapon.
+  Logs to `logs/balance/`.
+- **`/sweep --slot W --values @legendary [-N 10]`** — vary one parameter
+  across many runs. `@legendary`/`@epic_weapon` set sugar.
+  `--affix crit --tiers 1,2,3,4,5` for affix curves. Ranked output.
+- **`/playthrough [--equip POLICY] [--upgrade POLICY] [--advance POLICY]`**
+  — simulate full game start-to-end. Three configurable policies decide
+  what the simulated player does between runs. Outputs per-tier playtime
+  + win-rate table. Use to calibrate the difficulty curve.
+
+**Long experiments** — when running anything that takes >5 min, wrap with
+`tools/run_experiment.sh <name> <command>`. Detaches from parent shell
+(survives Bash tool SIGTERMs), streams unbuffered to
+`logs/balance/<name>.log`, writes exit code to
+`logs/balance/.pids/<name>.status` on completion. Use python3 -u for
+line-buffered Python output inside.
 
 **Marker hygiene** (CRITICAL): both skills drive Godot via marker files
 (`AUTO_GRIND.txt` for grind, `DEBUG_FLOOR.txt` for screenshot) under

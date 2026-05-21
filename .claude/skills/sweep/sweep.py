@@ -93,11 +93,16 @@ def parse_values(values_arg: str, slot: str, items: dict) -> list[str]:
 
 
 def run_variants(variants: list[tuple[str, str]], seeds: list[int], speed: int,
-                 invincible: bool) -> dict[str, list[RunResult]]:
-    """variants: [(label, full_spec_str)]. Returns {label: [run_results]}."""
+                 invincible: bool, partial_label: str = "") -> dict[str, list[RunResult]]:
+    """variants: [(label, full_spec_str)]. Returns {label: [run_results]}.
+
+    Persists per-variant partial results to logs/balance/index.jsonl as each
+    variant completes — so if the sweep is killed mid-experiment, the
+    partial data is durable.
+    """
     all_runs = {}
     for variant_label, spec_str in variants:
-        print(f"\n--- variant: {variant_label} ---")
+        print(f"\n--- variant: {variant_label} ---", flush=True)
         runs = []
         for i, s in enumerate(seeds):
             equip_from_spec(spec_str)
@@ -108,16 +113,30 @@ def run_variants(variants: list[tuple[str, str]], seeds: list[int], speed: int,
             g = parse(spawn.log_path)
             if not g.runs:
                 print(f"  WARN: variant {variant_label} seed={s} produced no run",
-                      file=sys.stderr)
+                      file=sys.stderr, flush=True)
                 continue
             if g.runs[0].seed == 0:
                 g.runs[0].seed = s
             r = g.runs[0]
             outcome = "WIN " if r.victory else "LOSS"
             print(f"  [{i+1}/{len(seeds)}] seed={s} {outcome} f={r.end_floor} "
-                  f"kills={r.kills} loot={r.loot} elapsed={r.elapsed_s:.1f}s")
+                  f"kills={r.kills} loot={r.loot} elapsed={r.elapsed_s:.1f}s",
+                  flush=True)
             runs.extend(g.runs)
         all_runs[variant_label] = runs
+
+        # Durability: persist partial result after each variant completes
+        # so a mid-sweep kill doesn't lose the data we already paid for.
+        from duel import summarize
+        if runs:
+            balance.append_index({
+                "kind": "sweep_partial_variant",
+                "label": f"{partial_label}_{variant_label}" if partial_label else variant_label,
+                "params": {"variant": variant_label, "spec": spec_str,
+                           "seeds": list(seeds), "speed": speed,
+                           "invincible": invincible},
+                "summary": summarize(variant_label, runs),
+            })
     return all_runs
 
 
@@ -200,7 +219,10 @@ def main():
             variants.append((label, json.dumps(modified_spec)))
         print(f"Sweep: affix={args.affix}, tiers={tiers} × {args.runs} seeds")
 
-    all_runs = run_variants(variants, seeds, args.speed, args.invincible)
+    sweep_label = (f"slot={args.slot}" if args.slot else f"affix={args.affix}") \
+                  + f"_N{args.runs}_seedbase{args.seed_base}"
+    all_runs = run_variants(variants, seeds, args.speed, args.invincible,
+                            partial_label=sweep_label)
     summaries = [summarize(label, runs) for label, runs in all_runs.items()]
     print_ranked_table(summaries)
 

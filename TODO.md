@@ -402,6 +402,84 @@ debug-jump's per-biome 1-floor mode.
   shows the pattern: an autoload TCP server accepts JSON commands. Worth
   porting if we ever need a 24-biome audit in one shot.
 
+## Visual effects — color grading shipped 2026-05-21, more queued
+
+The bot plays itself, so visual polish is what makes biomes feel
+distinct. Existing render stack: shader fog of war, WorldEnvironment
+bloom, per-light flicker (FastNoiseLite), ember GPUParticles2D, sprite
+FX, edge overlays. Per-biome `modulate` was barely perceptible. New
+`color_grade` shader replaces that with a real LUT-style post-process.
+
+- ✅ **Per-biome color grading** — `assets/color_grade.gdshader` +
+  `scripts/color_grade.gd`. 8 of 24 biomes curated with tint/saturation/
+  contrast/vignette. Layer 60 (between fog and HUD). Gated by
+  `BOTTER_NO_GRADE=1`. See HANDOVER "Color grading shader" section.
+- ⬜ **Extend grades to remaining 16 biomes** — once 8-biome A/B
+  screenshots come back from `color_grade_showcase`, copy/iterate on
+  the values for: dungeon_dark, mines, forest, snake, shoals, orc,
+  spider, hive, labyrinth, abyss, pandemonium, zot, elf, temple,
+  depths. ~30 min once the visual direction is locked.
+- ⬜ **Heat haze on T_LAVA tiles** — vertex-distortion shader, sine
+  UV warp on lava + tiles directly above. Makes lava-damage mechanic
+  feel dangerous instead of static red. Cheap (per-cell, not full-
+  screen). ~20 lines.
+- ⬜ **Water shimmer** — same shape as heat haze but slow UV offset
+  on T_WATER. ~20 lines.
+- ⬜ **Light cookies on PointLight2D** — pattern textures projected
+  through lights (stained glass in elf/temple, prison bars in tomb,
+  webs in spider). Hooks into existing `light_spec` system via a new
+  `texture` field. Diversifies lighting variety without changing how
+  lights work.
+- ⬜ **Threat-tier outline** — subtle pulsing aura around enemies
+  scaled by power-vs-bot. Trivial = dim, dangerous = pulsing red.
+  Functional info layered as visual feedback. Hooks into `light_spec`.
+- ⬜ **Memory desaturation** — tiles in fog memory render with reduced
+  saturation. Fog system already tracks per-cell visibility; data is
+  there. Makes exploration feel weighted.
+- ⬜ **Dithered fog transitions** (bayer) — option for hard-edged
+  pixel-art-authentic fog instead of the current smooth gradient.
+  Subjective.
+- ⬜ **Scanlines / CRT shader** — opt-in graphics option. Polarizing,
+  default off.
+
+## Tooling — playthrough harness (shipped 2026-05-21)
+
+- ✅ `/playthrough --equip POLICY --upgrade POLICY --advance POLICY` —
+  simulates full game start-to-finish. Reads/writes save state directly
+  between runs (Godot mutates inventory/level/gold during runs;
+  policies mutate equipped/upgrades/last_branch between runs).
+  3 equip × 3 upgrade × 3 advance = 27 policy combos, currently 3
+  curated combos chained via `tools/run_playthrough_trio.sh`.
+- ⬜ **Per-tier playtime calibration findings** — once the trio
+  completes, write up tier-by-tier wall-clock estimates and identify
+  any soft walls (tier where progression stalls). Compare across the
+  3 policy archetypes (neutral / DPS / cautious).
+- ⬜ **Loot-pickup policy** — currently `loot_filter` is "common" so
+  the bot grabs everything. A policy that filters (e.g. "epic+ only
+  past tier 3") would simulate gear-pruning gameplay.
+- ⬜ **Build re-spec mid-playthrough** — playthroughs commit to one
+  equip/upgrade policy throughout. A real player might pivot (start
+  combat-first, switch to hp-first when reaching crypt). Worth modeling
+  later.
+
+## Tooling — experiment harness (shipped 2026-05-21)
+
+After a sweep died mid-experiment when a polling Bash command SIGTERM'd
+its parent shell, the chain was hardened:
+
+- ✅ `tools/run_experiment.sh` — nohup + double-fork wrapper. Survives
+  parent SIGTERM. Writes PID + exit-status files. Stream unbuffered
+  output to log file. Standard pattern for any long-running detached job.
+- ✅ Sweep durability — `sweep.py` persists `sweep_partial_variant` to
+  `index.jsonl` after each variant. Kill mid-sweep loses ≤ one variant.
+- ✅ `balance.run_grind` timeout 60s/run → 90s/run (min 120s). Tanky
+  builds were getting clipped mid-floor-4.
+- ⬜ **Parallel runner** (still unbuilt). Sweeps are sequential. Multiple
+  Godot instances would cut wall-clock by core count. Needs save-state
+  isolation per worker (each writes to its own user_data dir, e.g. via
+  a `--user-data-dir` Godot flag — verify this exists or simulate).
+  ~50-min sweep → ~10min on M3 Pro.
+
 ## Tooling — balance pipeline (shipped 2026-05-20)
 
 - ✅ `BOTTER_SEED=<int>` — seeds dungeon rng + Godot global rng. Same

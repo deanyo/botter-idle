@@ -43,6 +43,7 @@ var run_plan: Array = []
 var branch_id: String = ""
 var current_biome: Dictionary = {}
 var ambient_modulate: CanvasModulate = null
+var color_grade: ColorGrade = null
 var fog: FogSystem = null
 var current_renderer: MapRenderer = null
 var bot_light: PointLight2D = null
@@ -154,6 +155,11 @@ func _start_run() -> void:
 	if ambient_modulate == null:
 		ambient_modulate = CanvasModulate.new()
 		add_child(ambient_modulate)
+	# BOTTER_NO_GRADE=1 disables the per-biome color grade (post-process).
+	# Cheap fullscreen pass; included by default.
+	if color_grade == null and not OS.has_environment("BOTTER_NO_GRADE"):
+		color_grade = ColorGrade.new()
+		add_child(color_grade)
 	if world_env == null:
 		world_env = WorldEnvironment.new()
 		var env := Environment.new()
@@ -301,6 +307,8 @@ func _async_build_floor() -> void:
 		current_biome = portal_biome_override
 	if ambient_modulate:
 		ambient_modulate.color = BiomeData.modulate_for(current_biome)
+	if color_grade:
+		color_grade.transition_to(current_biome.get("color_grade", {}), 0.4)
 	var vault_themes: Array = current_biome.get("vault_themes", ["dungeon"])
 
 	var seed_val: int = rng.randi()
