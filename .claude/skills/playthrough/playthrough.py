@@ -195,11 +195,15 @@ def run_playthrough(equip_p: str, upgrade_p: str, advance_p: str,
             _log(f"  gear: {gear_changes}")
         _log(f"  equipped: {equipped_summary_str(state)}")
 
-        # Run the grind (single run, BOTTER_NO_INVINCIBLE so death is real)
+        # Run the grind. BOTTER_FORCE_BIOME pins every floor of the run
+        # to the chosen branch — without this the runtime falls back to
+        # random per-floor biome rolls (because dungeon.branch_id is only
+        # set via the Outpost UI flow, which auto-grind bypasses).
         balance.clean_markers()
         spawn = balance.run_grind(seed=seed, runs=1, speed=16,
                                    label=f"playthrough_t{cur_tier}_r{run_idx+1}",
-                                   invincible=False)
+                                   invincible=False,
+                                   env_extra={"BOTTER_FORCE_BIOME": current_branch})
         if not spawn.completed:
             _log(f"  WARN: grind incomplete (timeout?) at run {run_idx+1}")
 

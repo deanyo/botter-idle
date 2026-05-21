@@ -1,46 +1,40 @@
 shader_type canvas_item;
 
-// Vertex-distortion heat haze. Applied as a material on a screen-space
-// Sprite2D that covers a small region (lava cell + the row of tiles
-// directly above). Reads BACKBUFFER and warps the UV by a vertical
-// sine wave. Effect: things rendered behind shimmer.
+// Heat haze. Applied per T_LAVA cell as a Sprite2D covering cell + 2
+// rows above. Renders a subtle red-orange shimmer as additive overlay,
+// pulsing with TIME and fading with vertical position.
 //
-// Cheap — sin/cos per fragment, no full-screen pass.
+// IMPORTANT: previous version sampled SCREEN_TEXTURE with a per-fragment
+// UV warp. That caused the warp pattern to appear anchored to the screen
+// rather than to the world (because the warp was computed in sprite-
+// local UV but applied to camera-local SCREEN_UV). When the camera
+// panned, the splotches drifted across the world.
+//
+// Fix: drop SCREEN_TEXTURE entirely. Instead emit a small additive tint
+// that pulses with time. Looks like rising heat without distorting
+// what's behind. Cheaper too (no texture sample).
 
-render_mode blend_mix;
+render_mode blend_add;
 
-// Godot 4.6 requires screen_tex be declared as a uniform.
-uniform sampler2D screen_tex : hint_screen_texture, repeat_disable, filter_linear;
-
-// Wave amplitude in UV-space (0..1). 0.005 = subtle ripple; 0.02 = strong.
-uniform float strength : hint_range(0.0, 0.05) = 0.008;
-
-// Wave frequency.
-uniform float frequency : hint_range(1.0, 30.0) = 10.0;
-
-// Wave speed.
-uniform float speed : hint_range(0.0, 10.0) = 1.5;
-
-// Falloff with distance from the heat source (lava cell). The haze is
-// strongest at the bottom of the affected region and fades upward —
-// matches real heat-rising behavior.
-uniform float vertical_falloff : hint_range(0.0, 4.0) = 1.5;
+uniform vec3 heat_color : source_color = vec3(1.0, 0.45, 0.1);
+uniform float intensity : hint_range(0.0, 1.0) = 0.35;
+uniform float frequency : hint_range(1.0, 30.0) = 6.0;
+uniform float speed : hint_range(0.0, 10.0) = 2.5;
+uniform float vertical_falloff : hint_range(0.0, 4.0) = 1.6;
 
 void fragment() {
-	// Vertical fade: 1.0 at bottom, 0.0 at top. UV.y = 0 is top.
+	// Strongest at bottom (lava cell), fades up the heat plume.
 	float fade = pow(1.0 - UV.y, vertical_falloff);
 
-	// Sine warp. Phase shifts horizontally so each column ripples slightly
-	// out of sync (more organic than a single sine wave for the whole region).
-	float phase = UV.x * frequency * 0.5 + TIME * speed;
-	float wave = sin(UV.y * frequency + phase);
-	vec2 warped_uv = SCREEN_UV + vec2(wave * strength * fade, 0.0);
+	// Two superimposed waves at different frequencies create the sense
+	// of multiple heat rivulets rather than a single ripple.
+	float w1 = sin(UV.y * frequency + TIME * speed + UV.x * 4.0);
+	float w2 = sin(UV.y * frequency * 1.7 + TIME * speed * 1.3 + UV.x * 9.0);
+	float pulse = (w1 * 0.5 + w2 * 0.3 + 0.6); // 0..1.4 ish
+	pulse = clamp(pulse, 0.0, 1.0);
 
-	// Chromatic-ish slight offset on the warp — fakes refraction.
-	vec3 col;
-	col.r = textureLod(screen_tex, warped_uv + vec2(0.001 * fade, 0.0), 0.0).r;
-	col.g = textureLod(screen_tex, warped_uv, 0.0).g;
-	col.b = textureLod(screen_tex, warped_uv - vec2(0.001 * fade, 0.0), 0.0).b;
-
-	COLOR = vec4(col, 1.0);
+	// Final additive tint — small enough to not blow out the underlying
+	// pixels, big enough to read as "this is hot".
+	float strength = intensity * fade * pulse;
+	COLOR = vec4(heat_color * strength, strength);
 }

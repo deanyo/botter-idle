@@ -52,6 +52,22 @@ def equip_from_spec(spec_str: str) -> None:
     balance.inject(spec, reset=True)
 
 
+def branch_from_spec(spec_str: str) -> str:
+    """Extract the branch= value (or last_branch from JSON spec). Returns
+    '' if no branch specified — caller falls through to the random-roll
+    path. The dungeon runtime only honors `branch_id` when a non-empty
+    value is passed through BOTTER_FORCE_BIOME, so this is what pins the
+    run plan to a single biome."""
+    if spec_str.strip().startswith("{"):
+        import json
+        spec = json.loads(spec_str)
+        return str(spec.get("last_branch", ""))
+    for tok in shlex.split(spec_str):
+        if tok.startswith("branch="):
+            return tok.split("=", 1)[1]
+    return ""
+
+
 def wilson_ci(k: int, n: int, z: float = 1.96) -> tuple[float, float]:
     """Wilson 95% CI for a binomial proportion (k wins of n)."""
     if n == 0:
@@ -67,12 +83,15 @@ def run_one(label: str, spec_str: str, seeds: list[int], speed: int,
             invincible: bool) -> list[RunResult]:
     """Run N grinds with the given build, one per seed. Returns flat list of RunResults."""
     runs: list[RunResult] = []
+    branch = branch_from_spec(spec_str)
+    env_extra = {"BOTTER_FORCE_BIOME": branch} if branch else None
     for i, s in enumerate(seeds):
         equip_from_spec(spec_str)
         balance.clean_markers()
         spawn = balance.run_grind(seed=s, runs=1, speed=speed,
                                   label=f"duel_{label}_s{s}",
-                                  invincible=invincible)
+                                  invincible=invincible,
+                                  env_extra=env_extra)
         g = parse(spawn.log_path)
         if not g.runs:
             print(f"  WARN: build {label} seed={s} produced no [run] start — log={spawn.log_path}",

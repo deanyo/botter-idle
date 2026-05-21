@@ -104,12 +104,21 @@ def run_variants(variants: list[tuple[str, str]], seeds: list[int], speed: int,
     for variant_label, spec_str in variants:
         print(f"\n--- variant: {variant_label} ---", flush=True)
         runs = []
+        # Pin the run to the spec's branch (BOTTER_FORCE_BIOME). The dungeon
+        # runtime falls back to random-biome roll plans when branch_id is
+        # empty, so without this every floor of every grind is a random
+        # biome — observed in earlier matrix runs that were labeled
+        # "vaults" but mixed glacier/spider/mines/etc.
+        from duel import branch_from_spec
+        branch = branch_from_spec(spec_str)
+        env_extra = {"BOTTER_FORCE_BIOME": branch} if branch else None
         for i, s in enumerate(seeds):
             equip_from_spec(spec_str)
             balance.clean_markers()
             spawn = balance.run_grind(seed=s, runs=1, speed=speed,
                                       label=f"sweep_{variant_label}_s{s}",
-                                      invincible=invincible)
+                                      invincible=invincible,
+                                      env_extra=env_extra)
             g = parse(spawn.log_path)
             if not g.runs:
                 print(f"  WARN: variant {variant_label} seed={s} produced no run",

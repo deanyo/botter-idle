@@ -24,8 +24,14 @@ from duel import summarize
 def run_grind_for_build(label, spec, seed, invincible=False):
     balance.inject(spec, reset=True)
     balance.clean_markers()
+    # Pin run plan to the spec's branch via BOTTER_FORCE_BIOME — without
+    # it, dungeon.gd falls through to random-biome rolls regardless of
+    # last_branch, because branch_id is only set via Outpost UI flow.
+    branch = str(spec.get("last_branch", ""))
+    env_extra = {"BOTTER_FORCE_BIOME": branch} if branch else None
     spawn = balance.run_grind(seed=seed, runs=1, speed=16,
-                              label=label, invincible=invincible)
+                              label=label, invincible=invincible,
+                              env_extra=env_extra)
     g = parse(spawn.log_path)
     return g.runs[0] if g.runs else None
 
