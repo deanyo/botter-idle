@@ -23,12 +23,57 @@ const PRESETS: Array = [
 	{"label": "3840×2160", "value": "3840x2160"},
 ]
 
+# Graphics-effect toggles. Each effect can be turned off independently.
+# Quality presets ("high"/"medium"/"low") pick defaults; users can override
+# individual toggles after that.
+#
+# Subsystems read these via VideoSettings.is_effect_enabled(name). Env-var
+# overrides (BOTTER_NO_<EFFECT>=1) take precedence for dev A/B testing.
+const GFX_EFFECTS := [
+	"color_grade", "heat_haze", "water_shimmer", "memory_desat",
+	"threat_outlines", "light_cookies", "bloom",
+]
+
+# Quality presets. Each lists which effects are on by default.
+const GFX_PRESET_HIGH := {
+	"color_grade": true, "heat_haze": true, "water_shimmer": true,
+	"memory_desat": true, "threat_outlines": true, "light_cookies": true,
+	"bloom": true,
+}
+const GFX_PRESET_MEDIUM := {
+	"color_grade": true, "heat_haze": true, "water_shimmer": true,
+	"memory_desat": true, "threat_outlines": true, "light_cookies": false,
+	"bloom": true,
+}
+const GFX_PRESET_LOW := {
+	"color_grade": false, "heat_haze": false, "water_shimmer": false,
+	"memory_desat": false, "threat_outlines": false, "light_cookies": false,
+	"bloom": false,
+}
+
 static func defaults() -> Dictionary:
+	var gfx: Dictionary = GFX_PRESET_HIGH.duplicate()
 	return {
 		"mode": MODE_WINDOWED,
 		"resolution": "native",
 		"vsync": true,
+		"gfx_quality": "high",  # high | medium | low | custom
+		"gfx": gfx,
 	}
+
+# Read a single effect toggle. Env-var override always wins so dev A/B
+# testing still works after this lands.
+static func is_effect_enabled(effect: String) -> bool:
+	# Env override: BOTTER_NO_HEAT_HAZE=1 disables, BOTTER_FORCE_HEAT_HAZE=1 enables.
+	var upper: String = effect.to_upper()
+	if OS.has_environment("BOTTER_NO_" + upper):
+		return false
+	if OS.has_environment("BOTTER_FORCE_" + upper):
+		return true
+	# Otherwise read from saved settings.
+	var d: Dictionary = load_settings()
+	var gfx: Dictionary = d.get("gfx", {})
+	return bool(gfx.get(effect, true))
 
 static func load_settings() -> Dictionary:
 	var d: Dictionary = defaults()
@@ -43,6 +88,16 @@ static func load_settings() -> Dictionary:
 	for k in d.keys():
 		if parsed.has(k):
 			d[k] = parsed[k]
+	# Forward-compat: merge missing gfx toggles into older saves so
+	# new effects get their default enabled-state without overwriting
+	# existing user choices.
+	var gfx_defaults: Dictionary = defaults()["gfx"]
+	if not d.has("gfx") or typeof(d["gfx"]) != TYPE_DICTIONARY:
+		d["gfx"] = gfx_defaults.duplicate()
+	else:
+		for k in gfx_defaults.keys():
+			if not d["gfx"].has(k):
+				d["gfx"][k] = gfx_defaults[k]
 	return d
 
 static func save_settings(d: Dictionary) -> void:

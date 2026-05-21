@@ -59,6 +59,10 @@ var _vis_material: ShaderMaterial = null
 # exist; disabled via BOTTER_NO_HEAT_HAZE=1.
 const HEAT_HAZE_SHADER := preload("res://assets/heat_haze.gdshader")
 var _heat_haze_layer: Node2D = null
+# Water shimmer: same pattern as heat haze but covers just the water cell
+# (water doesn't rise/distort upward). One Sprite2D per T_WATER cell.
+const WATER_SHIMMER_SHADER := preload("res://assets/water_shimmer.gdshader")
+var _water_shimmer_layer: Node2D = null
 # Single packed atlas: every unique tile texture this floor uses gets
 # blitted into one big Image, then registered as one TileSetAtlasSource
 # with per-tile atlas_coords. Result: TileMapLayer draws each layer in
@@ -157,8 +161,9 @@ func render(g: Array, rs: Array, biome: Dictionary, rng: RandomNumberGenerator, 
 		String(biome.get("id","?")), floor_primary.size(), wall_primary.size(), overlay_label,
 	])
 
-	# Collect lava cells along the way to attach heat-haze later.
+	# Collect lava + water cells along the way to attach effects later.
 	var lava_cells: Array[Vector2i] = []
+	var water_cells: Array[Vector2i] = []
 	# First pass — base layer (floor / wall / terrain / door / stairs).
 	for y in h:
 		for x in w:
@@ -179,6 +184,7 @@ func render(g: Array, rs: Array, biome: Dictionary, rng: RandomNumberGenerator, 
 				lava_cells.append(Vector2i(x, y))
 			elif cell == C.T_WATER:
 				tex = TERRAIN_WATER
+				water_cells.append(Vector2i(x, y))
 			elif cell == C.T_ICE:
 				tex = TERRAIN_ICE
 			if tex:
@@ -206,11 +212,17 @@ func render(g: Array, rs: Array, biome: Dictionary, rng: RandomNumberGenerator, 
 	var density: Vector2i = BiomeData.sigil_density(biome)
 	if not sigil_set.is_empty() and density.y > 0 and not rooms.is_empty():
 		_stamp_room_sigils(sigil_set, density, protected_cells, rng)
-	# Heat haze on lava cells. Each lava cell + 1 row above gets a ColorRect
+	# Heat haze on lava cells. Each lava cell + 2 rows above gets a sprite
 	# with the heat_haze shader. Sub-microsecond per fragment, only paints
 	# behind visible lava — total cost scales with lava cell count.
-	if not lava_cells.is_empty() and not OS.has_environment("BOTTER_NO_HEAT_HAZE"):
+	# Toggleable from video options (gfx.heat_haze); env override
+	# BOTTER_NO_HEAT_HAZE / BOTTER_FORCE_HEAT_HAZE.
+	if not lava_cells.is_empty() and VideoSettings.is_effect_enabled("heat_haze"):
 		_attach_heat_haze(lava_cells)
+	# Water shimmer on water cells. Single-cell sprite per cell (no
+	# vertical extension — water doesn't rise). Cheaper than heat haze.
+	if not water_cells.is_empty() and VideoSettings.is_effect_enabled("water_shimmer"):
+		_attach_water_shimmer(water_cells)
 
 func _register_texture(tex: Texture2D) -> void:
 	if tex == null:
@@ -269,6 +281,10 @@ func _build_tileset_and_layers(w: int, h: int) -> void:
 	_vis_material.set_shader_parameter("grid_size", Vector2(float(w), float(h)))
 	_vis_material.set_shader_parameter("tile_size_px", float(ts))
 	_vis_material.set_shader_parameter("reveal_strength", 1.0)
+	# Memory desaturation strength (0.0 = off, 1.0 = full grayscale in
+	# memory cells). Toggleable from video options (gfx.memory_desat).
+	var memory_strength: float = 0.6 if VideoSettings.is_effect_enabled("memory_desat") else 0.0
+	_vis_material.set_shader_parameter("memory_strength", memory_strength)
 	_base_layer = TileMapLayer.new()
 	_base_layer.tile_set = _tileset
 	_base_layer.material = _vis_material
@@ -583,3 +599,28 @@ func _attach_heat_haze(lava_cells: Array[Vector2i]) -> void:
 		mat.shader = HEAT_HAZE_SHADER
 		spr.material = mat
 		_heat_haze_layer.add_child(spr)
+
+# Water shimmer per T_WATER cell. Mirrors _attach_heat_haze but the
+# sprite covers a single cell — water doesn't visually distort tiles
+# above it the way heat does.
+func _attach_water_shimmer(water_cells: Array[Vector2i]) -> void:
+	if _water_shimmer_layer != null and _water_shimmer_layer.is_inside_tree():
+		_water_shimmer_layer.queue_free()
+	_water_shimmer_layer = Node2D.new()
+	_water_shimmer_layer.z_index = 49  # just below heat haze
+	add_child(_water_shimmer_layer)
+	if _heat_haze_tex == null:
+		var img := Image.create(1, 1, false, Image.FORMAT_RGBA8)
+		img.fill(Color(1, 1, 1, 1))
+		_heat_haze_tex = ImageTexture.create_from_image(img)
+	var px := float(C.TILE_SIZE)
+	for cell in water_cells:
+		var spr := Sprite2D.new()
+		spr.texture = _heat_haze_tex
+		spr.centered = false
+		spr.scale = Vector2(px, px)
+		spr.position = Vector2(cell.x * px, cell.y * px)
+		var mat := ShaderMaterial.new()
+		mat.shader = WATER_SHIMMER_SHADER
+		spr.material = mat
+		_water_shimmer_layer.add_child(spr)

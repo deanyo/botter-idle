@@ -68,6 +68,69 @@ tier  runs  wins  win%   sim_s     last_floor  bosses_killed
 Logs to `logs/playthrough/<ts>_<equip>_<upgrade>_<advance>.log` plus
 one summary line in `logs/playthrough/index.jsonl`.
 
+## Visual-effect suite — 2026-05-21
+
+Five shaders shipped, all wired through the new `VideoSettings.gfx`
+toggle store + UI. Each effect can be toggled per-effect from the
+Video Options menu. Env-var overrides (`BOTTER_NO_<EFFECT>=1` /
+`BOTTER_FORCE_<EFFECT>=1`) take precedence so dev A/B testing still
+works.
+
+### Settings architecture
+
+`VideoSettings` (`scripts/video_settings.gd`):
+- New `gfx` sub-dict with per-effect bools (color_grade, heat_haze,
+  water_shimmer, memory_desat, threat_outlines, light_cookies, bloom)
+- Quality presets: `GFX_PRESET_HIGH/MEDIUM/LOW` (currently unused as
+  presets but in place for future quick-set buttons)
+- `is_effect_enabled(effect)` reads env override → settings, with
+  forward-compat merge for existing saves
+
+`scripts/video_options.gd`:
+- Programmatically appends "Graphics effects" header + one CheckBox
+  per effect to the existing options form. Toggles save+apply
+  instantly. New effects auto-show without .tscn edits.
+
+### The five effects
+
+**Color grading** (`color_grade.gdshader`) — full-screen LUT-style
+post-process. Tint, saturation, contrast, brightness, vignette + tint,
+mix amount. CanvasLayer 60. **All 24 biomes now have curated grades.**
+
+**Heat haze** (`heat_haze.gdshader`) — per-cell sine-wave UV warp on
+T_LAVA tiles, covers cell + 2 rows above. Vertical falloff. Slight
+chromatic refraction.
+
+**Water shimmer** (`water_shimmer.gdshader`) — per-cell horizontal flow
++ wobble on T_WATER tiles. Subtle blue tint fakes water absorption.
+Cheaper than heat haze (single sample).
+
+**Memory desaturation** (`tile_visibility.gdshader` extended) — tiles in
+fog memory render with reduced saturation. Reads `FogSystem.vis_texture`
+which encodes 0/0.5/1.0 for unseen/memory/visible. Saturation shifts
+are far less perceptually jarring than the alpha shifts that caused the
+abandoned per-cell "ticking" artifact.
+
+**Threat outline** (`threat_outline.gdshader`) — 4-direction neighbor
+sample around enemy sprites. Tier 0 (trivial) = no outline, 1 = faint
+white, 2 = orange, 3 = red. Pulse rate uniform. `dungeon._apply_threat_auras()`
+classifies each enemy by hits-to-kill + enemy-damage-as-fraction-of-bot-HP.
+
+**Light cookies** (extended `light_spec.gd`) — optional `cookie` field on
+spec dicts overrides the default radial PointLight2D texture. Four
+starter cookies authored programmatically:
+`assets/lights/cookie_{stained_glass,prison_bars,web,stardust}.png`.
+Currently wired: `sigil` → stained glass, `firefly` → stardust.
+
+### Godot 4.6 SCREEN_TEXTURE deprecation
+
+Both `color_grade.gdshader` and `heat_haze.gdshader` initially used the
+deprecated `SCREEN_TEXTURE` builtin and threw `SHADER ERROR` when first
+exercised. Fixed by declaring `uniform sampler2D screen_tex :
+hint_screen_texture, repeat_disable, filter_linear` and reading from
+`screen_tex` instead. `water_shimmer.gdshader` was authored correctly
+from the start.
+
 ## Heat haze shader — 2026-05-21
 
 Per-cell vertex-distortion shader on T_LAVA tiles. Sine-wave UV warp

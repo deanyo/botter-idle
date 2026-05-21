@@ -37,9 +37,9 @@ const SPECS := {
 	"ice_creature":    { "color": Color(0.6, 0.85, 1.0),  "energy": 0.55, "range": 2.8, "category": "crystal", "freq": 0.7, "amp": 0.15 },
 
 	# --- Magic family (pulse) ---
-	"sigil":           { "color": Color(0.6, 0.4, 1.0),   "energy": 0.55, "range": 2.5, "category": "magic",  "freq": 1.2, "amp": 0.28 },
+	"sigil":           { "color": Color(0.6, 0.4, 1.0),   "energy": 0.55, "range": 2.5, "category": "magic",  "freq": 1.2, "amp": 0.28, "cookie": "res://assets/lights/cookie_stained_glass.png" },
 	"demon_blade":     { "color": Color(0.85, 0.3, 0.6),  "energy": 0.7,  "range": 2.5, "category": "magic",  "freq": 1.5, "amp": 0.30 },
-	"firefly":         { "color": Color(0.85, 1.0, 0.45), "energy": 0.5,  "range": 1.8, "category": "magic",  "freq": 2.0, "amp": 0.35 },
+	"firefly":         { "color": Color(0.85, 1.0, 0.45), "energy": 0.5,  "range": 1.8, "category": "magic",  "freq": 2.0, "amp": 0.35, "cookie": "res://assets/lights/cookie_stardust.png" },
 	"mushroom_glow":   { "color": Color(0.65, 1.0, 0.5),  "energy": 0.45, "range": 2.8, "category": "magic",  "freq": 0.9, "amp": 0.18 },
 	"slime_glow":      { "color": Color(0.7, 1.0, 0.4),   "energy": 0.4,  "range": 2.5, "category": "magic",  "freq": 1.1, "amp": 0.25 },
 
@@ -94,7 +94,16 @@ static func attach(parent: Node2D, spec_id: String, offset_px: Vector2 = Vector2
 	if tier == TIER_DECOR:
 		return null
 	var light := PointLight2D.new()
-	light.texture = _radial_texture()
+	# Cookie textures: pattern projected through the light (stained glass,
+	# prison bars, webs, etc). Hooks via spec's optional "cookie" field
+	# (path under res://assets/lights/). Falls back to default radial glow
+	# when no cookie is set, or when video options have cookies disabled.
+	var cookie_path: String = String(spec.get("cookie", ""))
+	var use_cookies: bool = VideoSettings.is_effect_enabled("light_cookies")
+	if cookie_path != "" and use_cookies and ResourceLoader.exists(cookie_path):
+		light.texture = load(cookie_path)
+	else:
+		light.texture = _radial_texture()
 	light.texture_scale = float(spec.get("range", 3.0))
 	light.offset = offset_px
 	light.energy = float(spec.get("energy", 0.7))

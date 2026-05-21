@@ -36,6 +36,21 @@ mix-amount tween.
 
 Gated by `BOTTER_NO_GRADE=1`. Sub-microsecond cost.
 
+## Settings + UI architecture (shipped 2026-05-21)
+
+All effects are toggleable from the in-game Video Options menu:
+
+- `VideoSettings.gfx` sub-dict persists per-effect bools to
+  `user://video_settings.json`.
+- `VideoSettings.is_effect_enabled(effect)` reads env override
+  (`BOTTER_NO_<EFFECT>` / `BOTTER_FORCE_<EFFECT>`) → settings.
+  Subsystems gate their effect attachment on this.
+- `video_options.gd::_populate_graphics()` programmatically appends
+  one CheckBox per effect to the existing options form. Toggles
+  save+apply on change.
+- Quality presets (`GFX_PRESET_HIGH/MEDIUM/LOW`) defined in
+  `video_settings.gd` but no quick-set UI buttons yet (TODO).
+
 ## Queued — high impact, low effort
 
 ### ✅ Heat haze on T_LAVA tiles (shipped 2026-05-21)
@@ -63,65 +78,65 @@ within the small affected zones. Total cost scales with lava cell count
 fix applied to `color_grade.gdshader` (was also using deprecated builtin
 but hadn't been exercised yet).
 
-### Water shimmer on T_WATER
+### ✅ Water shimmer on T_WATER (shipped 2026-05-21)
 
-Same shape as heat haze, slower frequency, horizontal UV offset
-instead of vertical warp. Makes water look like it's flowing.
+Per-cell horizontal flow + per-row sine wobble shader. Subtle blue
+tint multiplies the sample to fake water light absorption. Single
+sample per fragment (no chromatic offset like heat haze). Cheaper
+than heat haze.
 
-Approach mirrors heat haze. Most code reusable.
+### ✅ Per-biome color grading — all 24 biomes (shipped 2026-05-21)
 
-### Per-biome color grading — extend remaining 16 biomes
-
-Once the 8-biome A/B screenshots come back from `color_grade_showcase`
-(queued after the experiment chain), extend the curated values to:
-
-dungeon_dark, mines, forest, snake, shoals, orc, spider, hive,
-labyrinth, abyss, pandemonium, zot, elf, temple, depths.
-
-~30 min once visual direction is locked.
+All 24 biomes have curated `color_grade` entries. The remaining 16
+were authored from the original 8 as a base — see commit history
+for the per-biome values.
 
 ## Queued — medium impact, medium effort
 
-### Light cookies on PointLight2D
+### ✅ Light cookies on PointLight2D (shipped 2026-05-21)
 
-Pattern textures projected through lights. Adds character without
-changing how lighting works.
+Optional `cookie` field on `light_spec.SPECS` entries. When present
++ enabled, replaces the default radial PointLight2D texture with
+a pattern. Four starter cookies authored programmatically:
+- `cookie_stained_glass.png` — 4-color quadrant pattern
+- `cookie_prison_bars.png` — vertical bar mask
+- `cookie_web.png` — radial spokes + concentric rings
+- `cookie_stardust.png` — random sparkle points
 
-Examples:
-- Stained glass in elf/temple — soft fragmented colors on floor
-- Prison bars in tomb — vertical stripes at low intensity
-- Webs in spider — radial pattern fading outward
+Wired specs: `sigil` → stained glass, `firefly` → stardust. Hand-
+authored cookies for biomes (elf arches, tomb bars, spider webs)
+remain TODO — see TODO.md.
 
-Approach:
-- Add optional `texture` field to `light_spec` definitions.
-- `LightSpec.attach()` reads it, sets `point_light_2d.texture` if
-  present.
-- Author 4-6 cookie textures (seamlessly tileable, monochrome alpha).
+### ✅ Threat-tier outline on enemies (shipped 2026-05-21)
 
-~5 lines of code + asset authoring time.
+4-direction neighbor-sample shader on enemy sprites.
+`Enemy.apply_threat_aura(tier)` swaps in a ShaderMaterial and pushes
+the tier uniform. Tier color table:
+- 0 = trivial (no outline drawn — early-out in shader)
+- 1 = even match (faint white pulse)
+- 2 = dangerous (orange pulse)
+- 3 = lethal/boss (red pulse, brightest)
 
-### Threat-tier outline on enemies
+`dungeon._apply_threat_auras()` walks all spawned enemies after
+`_spawn_enemies()`, classifying by:
+- `e.is_boss` → always 3
+- `e.is_miniboss` → always 2
+- otherwise: hits-to-kill (`e.max_hp / max(1, bot.atk - e.defense)`)
+  + enemy-damage-as-fraction-of-bot-HP (`e.atk / bot.max_hp`)
 
-Pulsing aura scaled to enemy power-vs-bot. Functional info layered as
-visual feedback:
-- Trivial (bot atk × 5 > enemy hp): dim/no aura
-- Even match: faint white pulse
-- Dangerous (enemy hp > bot atk × 5): red pulse, growing intensity
-- Boss/miniboss: always red pulse
+Pulses at 2 Hz, modulated by per-tier color alpha.
 
-Hooks into existing `light_spec` system as a synthetic light tier.
+### ✅ Memory desaturation (shipped 2026-05-21)
 
-### Memory desaturation
+`tile_visibility.gdshader` extended to read `FogSystem.vis_texture`
+(R8, encoding 0/0.5/1.0 = unseen/memory/visible). Memory cells
+desaturate toward 85% gray luma at strength 0.6. Saturation shifts
+are perceptually subtler than the alpha shifts that caused the
+abandoned per-cell "ticking" artifact, so the same per-cell texture
+that was problematic for opacity works fine for saturation.
 
-Tiles previously seen but currently in fog memory render with reduced
-saturation. The fog system already tracks per-cell visibility state;
-data is there.
-
-Approach: extend `tile_visibility.gdshader` with a `memory_saturation`
-mix branch — fog state 1 (memory) blends toward grayscale, state 2
-(visible) stays full color, state 0 (unseen) stays opaque.
-
-Adds visual weight to exploration history without changing readability.
+`memory_strength` uniform is set by `map_renderer.gd::_build_tileset_and_layers`
+from `VideoSettings.is_effect_enabled("memory_desat")`.
 
 ## Queued — toggleable graphics options
 

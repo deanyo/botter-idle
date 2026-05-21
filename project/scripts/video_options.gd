@@ -9,6 +9,21 @@ const VS := preload("res://scripts/video_settings.gd")
 @onready var vsync_opt: OptionButton = $V/Form/VsyncRow/Vsync
 @onready var back_btn: Button = $V/Buttons/Back
 
+# Dynamically-added graphics-effect toggles (built in _ready). Stored
+# here so _on_changed can read their state.
+var _gfx_checks: Dictionary = {}  # effect_name → CheckBox
+
+# Friendly labels for each effect ID.
+const _GFX_LABELS := {
+	"color_grade":      "Per-biome color grading",
+	"heat_haze":        "Heat haze on lava",
+	"water_shimmer":    "Water shimmer",
+	"memory_desat":     "Memory desaturation",
+	"threat_outlines":  "Enemy threat outlines",
+	"light_cookies":    "Light cookies (patterns)",
+	"bloom":            "Bloom",
+}
+
 var settings: Dictionary = {}
 var ready_done: bool = false
 
@@ -17,11 +32,45 @@ func _ready() -> void:
 	_populate_modes()
 	_populate_resolutions()
 	_populate_vsync()
+	_populate_graphics()
 	mode_opt.item_selected.connect(_on_changed)
 	res_opt.item_selected.connect(_on_changed)
 	vsync_opt.item_selected.connect(_on_changed)
 	back_btn.pressed.connect(func(): back_pressed.emit())
 	ready_done = true
+
+func _populate_graphics() -> void:
+	# Append a "Graphics" header + one CheckBox per effect at the end of
+	# the form. Done programmatically so the existing .tscn doesn't need
+	# rewriting every time a new effect lands.
+	var form: Node = $V/Form
+	if form == null:
+		return
+	var header := Label.new()
+	header.text = "Graphics effects"
+	header.add_theme_color_override("font_color", Color(0.92, 0.78, 0.45, 1))
+	header.add_theme_font_size_override("font_size", 18)
+	form.add_child(header)
+	var hint := Label.new()
+	hint.text = "Toggle individual visual effects. Disabling reduces GPU cost."
+	hint.add_theme_color_override("font_color", Color(0.6, 0.55, 0.4, 1))
+	hint.add_theme_font_size_override("font_size", 13)
+	hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	form.add_child(hint)
+	var gfx: Dictionary = settings.get("gfx", {})
+	for eff in VS.GFX_EFFECTS:
+		var row := HBoxContainer.new()
+		row.add_theme_constant_override("separation", 12)
+		var label := Label.new()
+		label.text = String(_GFX_LABELS.get(eff, eff))
+		label.custom_minimum_size = Vector2(220, 0)
+		row.add_child(label)
+		var cb := CheckBox.new()
+		cb.button_pressed = bool(gfx.get(eff, true))
+		cb.toggled.connect(func(_v): _on_changed())
+		_gfx_checks[eff] = cb
+		row.add_child(cb)
+		form.add_child(row)
 
 func _populate_modes() -> void:
 	mode_opt.clear()
@@ -62,5 +111,18 @@ func _on_changed(_idx: int = 0) -> void:
 	settings["mode"] = String(mode_opt.get_item_metadata(mode_opt.selected))
 	settings["resolution"] = String(res_opt.get_item_metadata(res_opt.selected))
 	settings["vsync"] = bool(vsync_opt.get_item_metadata(vsync_opt.selected))
+	# Read graphics-effect checkboxes.
+	var gfx: Dictionary = settings.get("gfx", {})
+	for eff in _gfx_checks.keys():
+		var cb: CheckBox = _gfx_checks[eff]
+		gfx[eff] = cb.button_pressed
+	settings["gfx"] = gfx
+	# Mark quality preset as "custom" once user touches anything (so
+	# next preset selection cleanly overrides).
+	settings["gfx_quality"] = "custom"
 	VS.save_settings(settings)
 	VS.apply(settings)
+	# Note: gfx changes apply on the next floor build (shader uniforms
+	# and effect attachment happen at scene init), not retroactively to
+	# the currently-rendered floor. Acceptable UX — the change is visible
+	# the next time the bot descends or a new run starts.

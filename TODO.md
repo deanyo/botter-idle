@@ -414,34 +414,42 @@ FX, edge overlays. Per-biome `modulate` was barely perceptible. New
   `scripts/color_grade.gd`. 8 of 24 biomes curated with tint/saturation/
   contrast/vignette. Layer 60 (between fog and HUD). Gated by
   `BOTTER_NO_GRADE=1`. See HANDOVER "Color grading shader" section.
-- ⬜ **Extend grades to remaining 16 biomes** — once 8-biome A/B
-  screenshots come back from `color_grade_showcase`, copy/iterate on
-  the values for: dungeon_dark, mines, forest, snake, shoals, orc,
-  spider, hive, labyrinth, abyss, pandemonium, zot, elf, temple,
-  depths. ~30 min once the visual direction is locked.
-- ✅ **Heat haze on T_LAVA tiles** — shipped 2026-05-21. Sprite2D per
-  lava cell + 2 rows above with sine-wave UV warp shader. Vertical
-  falloff + chromatic offset. Gated by `BOTTER_NO_HEAT_HAZE=1`. See
-  `docs/visual-effects-plan.md` and HANDOVER for the screen_tex
-  uniform note (Godot 4.6 deprecation).
-- ⬜ **Water shimmer** — same shape as heat haze but slow UV offset
-  on T_WATER. ~20 lines.
-- ⬜ **Light cookies on PointLight2D** — pattern textures projected
-  through lights (stained glass in elf/temple, prison bars in tomb,
-  webs in spider). Hooks into existing `light_spec` system via a new
-  `texture` field. Diversifies lighting variety without changing how
-  lights work.
-- ⬜ **Threat-tier outline** — subtle pulsing aura around enemies
-  scaled by power-vs-bot. Trivial = dim, dangerous = pulsing red.
-  Functional info layered as visual feedback. Hooks into `light_spec`.
-- ⬜ **Memory desaturation** — tiles in fog memory render with reduced
-  saturation. Fog system already tracks per-cell visibility; data is
-  there. Makes exploration feel weighted.
+- ✅ **Extend grades to remaining 16 biomes** — shipped 2026-05-21.
+  All 24 biomes now have curated `color_grade` entries.
+- ✅ **Heat haze on T_LAVA tiles** — shipped 2026-05-21.
+- ✅ **Water shimmer on T_WATER** — shipped 2026-05-21. Per-cell
+  horizontal flow + wobble shader, slight blue tint.
+- ✅ **Memory desaturation** — shipped 2026-05-21. Modified
+  `tile_visibility.gdshader` to read `FogSystem.vis_texture` and
+  desaturate cells in memory state. Strength tunable via shader
+  uniform, gated by `gfx.memory_desat`.
+- ✅ **Threat-tier outline** — shipped 2026-05-21. 4-direction
+  neighbor-sample shader on enemy sprites. Tier 0/1/2/3 from a
+  hits-to-kill heuristic. Computed in `dungeon._apply_threat_auras()`
+  per floor build.
+- ✅ **Light cookies on PointLight2D** — shipped 2026-05-21. Optional
+  `cookie` field in `light_spec.SPECS`. 4 starter cookies authored
+  programmatically (stained_glass / prison_bars / web / stardust).
+  `sigil` and `firefly` specs use them.
+- ✅ **Video options graphics toggles** — shipped 2026-05-21. Each
+  effect toggleable from in-game Video Options menu via dynamically-
+  added CheckBoxes. Settings persist to `user://video_settings.json`.
+- ⬜ **Light cookies — author themed cookies for biomes** — current 4
+  cookies are programmatically generated test patterns. Hand-authored
+  cookies for elf (stained glass arches), tomb (prison bars), spider
+  (web with center hub), forge (forge-flame plume) would feel more
+  intentional.
+- ⬜ **Quality presets in video options** — `VideoSettings.GFX_PRESET_*`
+  exist but no UI buttons to apply them. Add 3 buttons (Low/Med/High)
+  that batch-set all toggles.
 - ⬜ **Dithered fog transitions** (bayer) — option for hard-edged
   pixel-art-authentic fog instead of the current smooth gradient.
   Subjective.
 - ⬜ **Scanlines / CRT shader** — opt-in graphics option. Polarizing,
   default off.
+- ⬜ **Heat haze on torches** — same shader could apply to fire-tier
+  light specs (campfire, lava actor, etc) for a more dramatic forge
+  feel. Currently only T_LAVA terrain cells.
 
 ## Tooling — playthrough harness (shipped 2026-05-21)
 

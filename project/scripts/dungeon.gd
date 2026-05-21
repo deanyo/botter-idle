@@ -155,9 +155,10 @@ func _start_run() -> void:
 	if ambient_modulate == null:
 		ambient_modulate = CanvasModulate.new()
 		add_child(ambient_modulate)
-	# BOTTER_NO_GRADE=1 disables the per-biome color grade (post-process).
-	# Cheap fullscreen pass; included by default.
-	if color_grade == null and not OS.has_environment("BOTTER_NO_GRADE"):
+	# Per-biome color grade (post-process). Toggleable from video options
+	# (gfx.color_grade); env override BOTTER_NO_COLOR_GRADE / BOTTER_NO_GRADE.
+	if color_grade == null and VideoSettings.is_effect_enabled("color_grade") \
+			and not OS.has_environment("BOTTER_NO_GRADE"):
 		color_grade = ColorGrade.new()
 		add_child(color_grade)
 	if world_env == null:
@@ -412,6 +413,10 @@ func _async_build_floor() -> void:
 	var t_spawn: int = Time.get_ticks_usec()
 	if not DebugJump.showcase:
 		_spawn_enemies()
+	# Threat-tier auras: classify each spawned enemy by power-vs-bot.
+	# Trivial / even / dangerous / lethal.
+	if VideoSettings.is_effect_enabled("threat_outlines"):
+		_apply_threat_auras()
 	t_spawn = Time.get_ticks_usec() - t_spawn
 	_update_biome_hud()
 	floor_starting_hp = bot.hp
@@ -962,6 +967,42 @@ func _branch_tier_mult() -> float:
 	var tier: int = clampi(int(current_biome.get("tier", 1)) - 1, 0, C.TIER_SCALE.size() - 1)
 	var mod_mult: float = RunModifiers.sum_effect(active_modifiers, "enemy_stat_mult", 1.0)
 	return float(C.TIER_SCALE[tier]) * mod_mult
+
+func _apply_threat_auras() -> void:
+	# Classify each living enemy 0..3 based on power-vs-bot. Cheap heuristic:
+	#   ratio = enemy.atk / max(bot.atk - enemy.defense, 1)  (rounds-to-kill)
+	#   * combined with hp ratio
+	# Bosses + minibosses pin to tier 3 / 2 regardless.
+	if not is_instance_valid(bot):
+		return
+	var bot_eff_atk: float = max(1.0, float(bot.atk))
+	var bot_max_hp: float = max(1.0, float(bot.max_hp))
+	for e in enemies:
+		if not is_instance_valid(e) or not e.is_alive:
+			continue
+		var tier: int = 0
+		if e.is_boss:
+			tier = 3
+		elif e.is_miniboss:
+			tier = 2
+		else:
+			# Hits-to-kill from bot's perspective. With heavy DEF the bot
+			# can struggle even on low-HP enemies — factor that in.
+			var net_atk: float = max(1.0, bot_eff_atk - float(e.defense))
+			var hits_to_kill: float = float(e.max_hp) / net_atk
+			# Damage ratio: enemy hp from one bot hit vs bot's max hp
+			# from one enemy hit.
+			var enemy_threat: float = float(e.atk) / bot_max_hp
+			# Combine: many hits to kill OR significant enemy damage = higher tier.
+			if hits_to_kill > 6.0 or enemy_threat > 0.20:
+				tier = 3
+			elif hits_to_kill > 3.0 or enemy_threat > 0.10:
+				tier = 2
+			elif hits_to_kill > 1.5 or enemy_threat > 0.04:
+				tier = 1
+			else:
+				tier = 0
+		e.apply_threat_aura(tier)
 
 func _spawn_branch_boss(id: String, at_cell: Vector2i) -> void:
 	if not enemy_data.has(id):
