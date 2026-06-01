@@ -5,6 +5,29 @@ the durable rules in `CLAUDE.md`. Update this file when committing.
 
 ---
 
+## Up next (planned 2026-05-21)
+
+After tier-pinned experiment data lands and a balance tuning beat is shipped:
+
+1. **Rings/amulets full wiring** (~1.5h). Items exist in items.json and
+   the schema slots are reserved in save_state, but jewellery is invisible
+   in-game. Three subtasks:
+   - `paperdoll_renderer.gd::SLOT_DIRS`: add `ring1`/`ring2`/`amulet`
+     entries with anchor offsets (chest-area amulet, hand-bottom rings)
+   - `outpost.gd::SLOTS` const: extend to all 8 slots
+   - `hud_chrome.gd`: render jewellery slot tooltips, wire equip/unequip
+     interactions
+   - Sprite assets: jewellery overlays don't yet exist in
+     `project/assets/tiles/player/{ring,amulet}/` — need to author or
+     port from DCSS pack
+2. **First flavor-tag mechanic wired** (~45m). Pick the simplest tag
+   (vampiric lifesteal) and wire end-to-end:
+   - `actor.gd::attempt_attack`: read attacker's weapon `flavor_tags`
+   - On `vampiric` tag, heal `dealt * 0.08` after `take_damage`
+   - Validate via /duel: weapon-with-vampiric vs same-weapon-without
+   Validates the 30 flavor tags can become real mechanics rather than
+   affix-bonus aliases. After this, more tags follow the same shape.
+
 ## Gameplay loop overhaul — DONE 2026-05-15
 
 All 10 beats from `docs/gameplay-loop-plan.md` implemented + several
