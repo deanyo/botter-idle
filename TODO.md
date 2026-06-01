@@ -44,32 +44,26 @@ After tier-pinned experiment data lands and a balance tuning beat is shipped:
    - `hud_chrome.gd`: render jewellery slot tooltips in the equip
      panel, wire click-to-unequip
    - **No paperdoll/sprite work.** No new asset authoring needed.
-2. **DCSS-style overlay sprite layers** (~3-5h split into 3 beats).
-   Researched DCSS `tiledoll.cc` — beyond the equipment slots, the
-   paperdoll has 3 status-driven layers we don't have:
+2. **DCSS-style overlay sprite layers** — partly shipped. ENCH ✅,
+   SHADOW + HALO still pending.
 
-   - **SHADOW** (~30min). Static darkened ellipse drawn under every
-     character (bot + enemies). Currently characters look like
-     they're floating on the tile. One sprite + render hook in
-     Actor.gd's rig setup. Cheap, large readability win.
+   - **SHADOW** (~30min) — pending. Static darkened ellipse drawn
+     under every character (bot + enemies). Currently characters
+     look like they're floating on the tile. One sprite + render
+     hook in Actor.gd's rig setup.
 
-   - **ENCH** (~2-3h). Status-effect overlays. Bot on fire (lava),
-     poisoned, frozen, slowed (water), regenerating (fountain
-     blessing), berserking (Trog altar). The mechanical effects
-     ALREADY EXIST but are invisible — players can't tell why bot
-     HP is dropping. Highest gameplay-impact item on this list.
-     Framework: per-actor `_status_overlays` dict + `add_status(id,
-     duration)`/`remove_status(id)` API. Sprites: 5-6 overlay PNGs
-     (fire, poison, freeze, slow, regen, berserk).
+   - ✅ **ENCH** (shipped 2026-06-01). Status-effect overlays.
+     `scripts/status_overlay.gd` registry, Actor extended with
+     add_status/remove_status/tick_statuses, 9 sprite icons, driver
+     hooks for lava/water/altar/low-HP/regen. Toggleable via
+     `gfx.ench`.
 
-   - **HALO** (~1.5h). Aura overlays for active altar blessings.
-     We have 22 altar gods — TSO/Elyvilon halo, Trog rage, Yred dark,
-     Kiku skull, Cheibriados slow-zone, Xom rainbow shimmer.
-     Sprites can be tinted from one halo template. Framework reuses
-     the ENCH per-actor overlay layer.
-
-   Priority order: SHADOW → ENCH → HALO. Each builds on the last
-   (HALO and ENCH share the overlay-layer framework).
+   - **HALO** (~1h) — pending. Per-blessing aura over the bot.
+     Reuses ENCH framework but adds a separate "aura" sub-layer
+     that renders BEHIND the rig (vs ENCH which is above). Per-god
+     halo color/shape: TSO holy gold, Trog rage red, Yred dark
+     purple, Kiku skull green, Xom rainbow. Hooks into the same
+     altar.blessed signal that ENCH already taps.
 
 3. **First flavor-tag mechanic wired** (~45m). Pick the simplest tag
    (vampiric lifesteal) and wire end-to-end:
