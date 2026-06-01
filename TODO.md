@@ -9,6 +9,25 @@ the durable rules in `CLAUDE.md`. Update this file when committing.
 
 After tier-pinned experiment data lands and a balance tuning beat is shipped:
 
+0. **Paperdoll sprite alignment + scaling pass.** With 234 items shipped,
+   the paperdoll bot looks silly — weapons/shields/armor are misplaced
+   and miss-sized for the character base. Symptoms: shield floats off
+   the bot's hand, sword is too small for the silhouette, armor doesn't
+   align with the body, gear stacks weirdly when multiple slots are
+   filled. Each new sprite was added with a single shared anchor offset
+   per slot in `paperdoll_renderer.gd::ANCHOR_OFFSETS`, but real DCSS
+   gear varies in canvas size + pivot point. Two fixes available:
+   - **Per-item visual overrides**: optional `paperdoll_offset` and
+     `paperdoll_scale` fields on items.json entries, with a tool/skill
+     to author them (similar to how visual_scale works for big enemies).
+     Most flexible but requires authoring per item.
+   - **Per-base-type defaults**: `base_type` already exists on items
+     (`dagger`, `long_sword`, `kite_shield`, etc). Author one offset+scale
+     per base_type in a lookup table on PaperdollRenderer. Simpler and
+     covers the family-of-similar-shape problem cleanly.
+   Recommendation: start with the per-base-type approach (covers 80%
+   of cases with ~30 entries), reserve per-item override for outliers.
+   Verify visually with /showcase station for "all items in slot X".
 1. **Rings/amulets full wiring** (~1.5h). Items exist in items.json and
    the schema slots are reserved in save_state, but jewellery is invisible
    in-game. Three subtasks:
