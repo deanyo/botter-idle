@@ -44,7 +44,34 @@ After tier-pinned experiment data lands and a balance tuning beat is shipped:
    - `hud_chrome.gd`: render jewellery slot tooltips in the equip
      panel, wire click-to-unequip
    - **No paperdoll/sprite work.** No new asset authoring needed.
-2. **First flavor-tag mechanic wired** (~45m). Pick the simplest tag
+2. **DCSS-style overlay sprite layers** (~3-5h split into 3 beats).
+   Researched DCSS `tiledoll.cc` — beyond the equipment slots, the
+   paperdoll has 3 status-driven layers we don't have:
+
+   - **SHADOW** (~30min). Static darkened ellipse drawn under every
+     character (bot + enemies). Currently characters look like
+     they're floating on the tile. One sprite + render hook in
+     Actor.gd's rig setup. Cheap, large readability win.
+
+   - **ENCH** (~2-3h). Status-effect overlays. Bot on fire (lava),
+     poisoned, frozen, slowed (water), regenerating (fountain
+     blessing), berserking (Trog altar). The mechanical effects
+     ALREADY EXIST but are invisible — players can't tell why bot
+     HP is dropping. Highest gameplay-impact item on this list.
+     Framework: per-actor `_status_overlays` dict + `add_status(id,
+     duration)`/`remove_status(id)` API. Sprites: 5-6 overlay PNGs
+     (fire, poison, freeze, slow, regen, berserk).
+
+   - **HALO** (~1.5h). Aura overlays for active altar blessings.
+     We have 22 altar gods — TSO/Elyvilon halo, Trog rage, Yred dark,
+     Kiku skull, Cheibriados slow-zone, Xom rainbow shimmer.
+     Sprites can be tinted from one halo template. Framework reuses
+     the ENCH per-actor overlay layer.
+
+   Priority order: SHADOW → ENCH → HALO. Each builds on the last
+   (HALO and ENCH share the overlay-layer framework).
+
+3. **First flavor-tag mechanic wired** (~45m). Pick the simplest tag
    (vampiric lifesteal) and wire end-to-end:
    - `actor.gd::attempt_attack`: read attacker's weapon `flavor_tags`
    - On `vampiric` tag, heal `dealt * 0.08` after `take_damage`
