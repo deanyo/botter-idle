@@ -1306,6 +1306,10 @@ func _on_altar_blessed(altar: Altar, blessing: Dictionary) -> void:
 	if is_instance_valid(altar):
 		var pos: Vector2 = altar.position + Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5)
 		Effects.magic_shimmer(actor_layer, pos)
+	# ENCH: blessed overlay persists for the rest of the run (duration<=0).
+	# clear_blessings() at run-start removes it implicitly via Bot reset.
+	if is_instance_valid(bot) and bot.is_alive:
+		bot.add_status("blessed", 0.0)
 
 func _spawn_portal(at_cell: Vector2i) -> void:
 	var portal := Portal.new()
@@ -1432,6 +1436,25 @@ func _tick_bot(delta: float) -> void:
 	_mark_room_visited_at(bot.cell)
 	_refresh_fog()
 	_check_stuck(delta)
+	bot.tick_statuses(delta)
+	# Continuous status drivers: read terrain under bot and refresh
+	# matching ENCH overlays. The actual mechanical effect is unchanged
+	# (lava damages, water slows); add_status just makes it visible.
+	if bot.is_alive and bot.cell.y >= 0 and bot.cell.y < grid.size() \
+			and bot.cell.x >= 0 and bot.cell.x < grid[0].size():
+		var here: int = grid[bot.cell.y][bot.cell.x]
+		if here == C.T_LAVA:
+			bot.add_status("burning", 0.7)  # short renewal so it fades when stepping off
+		elif here == C.T_WATER:
+			bot.add_status("slowed", 0.5)
+	# Wounded overlay: bot below 30% HP. Cheap binary driver — refreshed
+	# while wounded, fades when healed back up.
+	if bot.is_alive and bot.hp > 0 and float(bot.hp) / float(max(1, bot.max_hp)) < 0.3:
+		bot.add_status("wounded", 1.5)
+	# Regen overlay: visible while bot has any regen-per-sec from gear
+	# or blessings. Small cost — the bot tracks hp_regen_per_sec already.
+	if bot.is_alive and bot.hp_regen_per_sec > 0.1:
+		bot.add_status("regen", 1.0)
 	# Lava damage: if bot is standing on a lava cell, deal 5% max_hp
 	# every 0.5 seconds. Tick accumulator avoids per-frame damage spam.
 	_lava_tick_accum += delta
@@ -2194,6 +2217,8 @@ func _tick_enemies(delta: float) -> void:
 	for e in enemies:
 		if not is_instance_valid(e) or not e.is_alive:
 			continue
+		# Tick ENCH overlays per-enemy. Cheap (skips when no statuses).
+		e.tick_statuses(delta)
 		var dist: int = _chebyshev(e.cell, bot.cell)
 		if dist > e.aggro_range:
 			continue

@@ -31,13 +31,13 @@ const PRESETS: Array = [
 # overrides (BOTTER_NO_<EFFECT>=1) take precedence for dev A/B testing.
 const GFX_EFFECTS := [
 	"color_grade", "heat_haze", "water_shimmer", "memory_desat",
-	"threat_outlines", "light_cookies", "bloom",
+	"threat_outlines", "light_cookies", "ench", "bloom",
 ]
 
 # Quality presets. Each lists which effects are on by default.
 const GFX_PRESET_HIGH := {
 	"color_grade": true, "heat_haze": true, "water_shimmer": true,
-	"memory_desat": true, "threat_outlines": true, "light_cookies": true,
+	"memory_desat": true, "threat_outlines": true, "light_cookies": true, "ench": true,
 	"bloom": true,
 }
 const GFX_PRESET_MEDIUM := {
@@ -47,7 +47,7 @@ const GFX_PRESET_MEDIUM := {
 }
 const GFX_PRESET_LOW := {
 	"color_grade": false, "heat_haze": false, "water_shimmer": false,
-	"memory_desat": false, "threat_outlines": false, "light_cookies": false,
+	"memory_desat": false, "threat_outlines": false, "light_cookies": false, "ench": false,
 	"bloom": false,
 }
 

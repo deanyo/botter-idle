@@ -21,6 +21,7 @@ const _GFX_LABELS := {
 	"memory_desat":     "Memory desaturation",
 	"threat_outlines":  "Enemy threat outlines",
 	"light_cookies":    "Light cookies (patterns)",
+	"ench":             "Status overlays (fire/poison/etc)",
 	"bloom":            "Bloom",
 }
 
