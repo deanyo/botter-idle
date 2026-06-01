@@ -28,17 +28,22 @@ After tier-pinned experiment data lands and a balance tuning beat is shipped:
    Recommendation: start with the per-base-type approach (covers 80%
    of cases with ~30 entries), reserve per-item override for outliers.
    Verify visually with /showcase station for "all items in slot X".
-1. **Rings/amulets full wiring** (~1.5h). Items exist in items.json and
-   the schema slots are reserved in save_state, but jewellery is invisible
-   in-game. Three subtasks:
-   - `paperdoll_renderer.gd::SLOT_DIRS`: add `ring1`/`ring2`/`amulet`
-     entries with anchor offsets (chest-area amulet, hand-bottom rings)
-   - `outpost.gd::SLOTS` const: extend to all 8 slots
-   - `hud_chrome.gd`: render jewellery slot tooltips, wire equip/unequip
-     interactions
-   - Sprite assets: jewellery overlays don't yet exist in
-     `project/assets/tiles/player/{ring,amulet}/` — need to author or
-     port from DCSS pack
+1. **Rings/amulets stat + UI wiring** (~1h). Items exist in items.json
+   and the schema slots are reserved in save_state, but jewellery is
+   stat-inert and not equippable. **Note**: DCSS `tiledoll.cc` confirms
+   rings/amulets are NEVER rendered on the doll — they're purely stat-
+   bearing slots. (DCSS doll categories: BODY, HAND1, HAND2, BOOTS,
+   LEG, HELM, ARM, CLOAK, HAIR, BEARD — no RING/AMULET.) So skip the
+   paperdoll work entirely; jewellery is invisible by design.
+   Subtasks:
+   - `outpost.gd::SLOTS` const: extend to include ring1/ring2/amulet
+     so the equip UI can show empty/filled jewellery slots
+   - `bot.gd::recompute_stats`: ring1/ring2/amulet items contribute
+     atk/def/hp like any other slot (already iterates equipped.keys()
+     defensively, so this might already work — verify and trust)
+   - `hud_chrome.gd`: render jewellery slot tooltips in the equip
+     panel, wire click-to-unequip
+   - **No paperdoll/sprite work.** No new asset authoring needed.
 2. **First flavor-tag mechanic wired** (~45m). Pick the simplest tag
    (vampiric lifesteal) and wire end-to-end:
    - `actor.gd::attempt_attack`: read attacker's weapon `flavor_tags`
