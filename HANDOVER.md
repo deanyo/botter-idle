@@ -4,7 +4,63 @@ Point-in-time snapshot of what's actually shipping. Updated as we go. The
 durable rules and process live in `CLAUDE.md`; the roadmap and open work
 items live in `TODO.md`.
 
-Last refresh: 2026-06-02 (tuning beat — regen + tier-scale rebalance).
+Last refresh: 2026-06-02 (playtest fixes — squish bug, rings collapse,
+rarity tint, tier-gated loot).
+
+## Playtest fixes — 2026-06-02
+
+Four reported issues from a long live playtest, all shipped this beat.
+
+**Bot squish over time.** After ~10 min of play the bot's sprite
+gradually compressed to a few pixels vertically. Root cause was in
+`actor.gd::_set_facing` — when an attack_lunge tween was in flight
+(rig scale animating from 1.0 → 1.15/0.85 → 1.0 over ~0.18s), a facing
+flip happening mid-tween would read `rig.scale` and snapshot the
+transient pinched Y value into `SpriteFX.base_scale` via
+`fx.update_base_scale(rig.scale)`. The next tween then "rested" at
+the corrupted base, and the rot accumulated over thousands of
+flip-during-attack events. Fixed by rebuilding the rest pose from
+`visual_scale` + `_facing_x` instead of reading the live transform:
+
+    var rest := Vector2(visual_scale * _facing_x, visual_scale)
+    rig.scale = rest
+    fx.update_base_scale(rest)
+
+Lesson: never snapshot a Node2D transform into a "base" variable
+while a tween targeting that transform is running. Always build the
+authoritative resting state from canonical inputs.
+
+**Rings collapsed to ring + amulet.** Old layout had `ring1` + `ring2`
++ `amulet`. The HUD's single-tap equip flow couldn't surface "which
+ring slot do I fill" cleanly — once both were full, equipping a third
+ring silently replaced ring1, looking broken. Collapsed to one `ring`
+slot (amulet still fills the trinket role). Save migration in
+`save_state.gd::_migrate` promotes ring1 → ring and pushes ring2's
+item to inventory if both were full. Touches: `save_state.gd`,
+`bot.gd`, `outpost.gd`, `hud_chrome.gd`, `tools/inject_save.py`.
+
+**Rarity-tinted weapon overlays.** Equipped weapons all rendered with
+their stock sprite color regardless of rarity, so a gold legendary
+sword looked indistinguishable from a common blue scimitar once on
+the bot. Added `bot.gd::_apply_rarity_decor` — modulates the overlay
+sprite by `lerp(white, rarity_color, strength)` (common 0% → legendary
+50%) and attaches a soft pulsing radial halo behind epic+ weapons.
+Mirrored on every UI surface via
+`paperdoll_renderer.gd::_apply_rarity_modulate` so inventory /
+outpost / main-menu paperdolls all match. Cheap (<10 nodes per rig),
+reads at dungeon zoom, doesn't blow out the silhouette.
+
+**Source-floor tier caps loot rarity.** A floor-2 wizlab portal was
+showering the bot with T5 legendaries because
+`dungeon.gd::_pick_loot_id` keyed on the portal biome's tier (elf=T2,
+vaults=T4, zot=T5) rather than the home branch's. Added
+`_source_tier()` (always returns the home branch tier, ignoring portal
+overrides) and `_clamp_rarity_to_tier()` (T1=uncommon cap, T2=rare,
+T3=epic, T4+=legendary). Both `_roll_rarity` and `_roll_rarity_with_bias`
+clamp through it now, so enemy drops, chest contents, and vault loot
+marks all respect the home branch's progression. Followup TODO: PoE-
+style low-tier legendaries with capped stats but unique mechanics, so
+the rarity cap doesn't kill aspirational drops at low floors.
 
 ## Tuning beat — 2026-06-02
 
@@ -32,6 +88,14 @@ T5. The 2.0→3.2 jump at T3→T4 (+60%) was the brick wall — no in-between
 difficulty. Softened to T3→T4 +35%, T4→T5 +67%. Goal: T4 should be
 winnable with affixes (~10-20% win rate on un-armored bots), T5 still
 requires gear progression.
+
+**Update 2026-06-02 (T2/T3 cliff fill-in)**: ran the deferred T2/T3
+N=50 cliff and the data corrects this hypothesis. The actual cliff
+is **T2→T3 (86% → 8%)**, not T3→T4. T4/T5 are correctly gear-gated;
+softening them was tweaking the wrong tiers. Next patch should target
+`TIER_SCALE[2]` (T3) — proposed 2.0 → 1.8. Full analysis in
+`docs/balance-findings-2026-06-02.md` "T2/T3 cliff fill-in" section.
+Pending human playtest confirmation.
 
 ### Validation outcome
 
@@ -132,7 +196,8 @@ works.
 
 `VideoSettings` (`scripts/video_settings.gd`):
 - New `gfx` sub-dict with per-effect bools (color_grade, heat_haze,
-  water_shimmer, memory_desat, threat_outlines, light_cookies, bloom)
+  water_shimmer, memory_desat, threat_outlines, light_cookies, ench,
+  shadow, bloom)
 - Quality presets: `GFX_PRESET_HIGH/MEDIUM/LOW` (currently unused as
   presets but in place for future quick-set buttons)
 - `is_effect_enabled(effect)` reads env override → settings, with
@@ -173,6 +238,48 @@ spec dicts overrides the default radial PointLight2D texture. Four
 starter cookies authored programmatically:
 `assets/lights/cookie_{stained_glass,prison_bars,web,stardust}.png`.
 Currently wired: `sigil` → stained glass, `firefly` → stardust.
+
+**Actor shadow** (`scripts/actor_shadow.gd`, shipped 2026-06-02) —
+draw_colored_polygon ellipse at +10px under every actor's rig (z=-1).
+Plants the bot + enemies on the floor visually instead of letting them
+float on the tile. Toggleable via `gfx.shadow`; `BOTTER_NO_SHADOW=1`
+disables. Mirrors DCSS `tilesdl.cc`'s PSE_SHADOW slot but uses a flat
+oval (cheaper than per-figure shadow art for an idle game).
+
+**HALO** (shipped 2026-06-02). Per-god tinted radial glow at rig
+z=-2 (below shadow). 22 god colors in `bot.gd::_HALO_COLORS`. Soft
+1.6s sin-pulse alpha. Spawned from `_apply_halo(god)` inside
+`grant_blessing`; cleared by `clear_blessings`. Also adds `blessed`
+status so it shows up in the WoW-style buff bar.
+
+**Directional facing** (Actor `_facing_x`, shipped 2026-06-02).
+Bot mirrors based on movement direction (`step_movement` flips when
+`abs(dir.x) > 0.5`) AND on attack target side (`attempt_attack`
+flips before the weapon swing). DCSS sprites are right-facing
+default → `_facing_x = -1.0` flips via `rig.scale.x`. Composes with
+`visual_scale` so big-creature scale and facing don't clobber each
+other. Side benefit: solves the "weapon swings across body when
+target is on the wrong side" cosmetic — bot now always faces the
+target before swinging, so the held weapon appears on the swing side.
+
+**Universal Pause menu** (`scripts/pause_menu.gd`, shipped 2026-06-02).
+Esc-key opens a centered panel at any time during live play. Options:
+Resume / Video Settings / Back to Main Menu / Abandon Run (dungeon
+only) / Quit Game. Pauses the SceneTree while open. Mounted at
+`main.gd::_install_pause_menu` after auto-grind/screenshot detection
+so headless modes never paint a UI. `set_context(screen_name)` is
+called from `_swap` so context-dependent buttons (Abandon, Back to
+Main Menu) hide where they don't apply. Re-uses the existing
+`scenes/video_options.tscn` for the settings sub-screen.
+
+**WoW-style buff/debuff bar** (`hud_chrome.gd::_build_buff_bar` +
+`update_buffs`, shipped 2026-06-02). Top-of-screen row of 36×36
+square icons + countdown text, centered above the dungeon canvas
+(excluding sidebar). Pool of 12 cells, hidden until populated. Fed
+from `bot.active_statuses()` each frame; sorted by status `z`
+(important effects leftmost). Persistent buffs (blessed, etc.)
+show no countdown. Per user pref, this runs ALONGSIDE the on-sprite
+ENCH layer for the bot — both layers visible.
 
 ### Godot 4.6 SCREEN_TEXTURE deprecation
 
@@ -506,9 +613,14 @@ filter so the "While You Were Away" pool respects branch tier too.
 ### Save state schema
 
 `save_state.gd::_default()` reserves `ring1`, `ring2`, `amulet` slots in
-the `equipped` dict (null defaults). Existing iterators (`bot.gd::recompute_stats`,
-`offline_progress.gd`, `outpost.gd`, `main_menu.gd`) all use `equipped.get(slot, null)`
-defensively, so null jewellery is a no-op until paperdoll/HUD wiring lands.
+the `equipped` dict (null defaults). Equip routing (added 2026-06-02):
+items have `slot=="ring"` but the equipped dict uses `ring1`/`ring2`.
+`outpost.gd::_resolve_equip_slot` and `bot.gd::equip_from_inventory`
+both pick `ring1` if empty, else `ring2`, else replace `ring1`. Stats
+are summed by the existing `equipped.keys()` defensive iteration in
+`bot.gd::recompute_stats` — no per-slot wiring needed. No paperdoll
+work — DCSS `tiledoll.cc` confirms jewellery is never rendered on the
+doll (categories: BODY/HAND1/HAND2/BOOTS/LEG/HELM/ARM/CLOAK/HAIR/BEARD).
 
 ### Migration outcome
 
@@ -536,12 +648,29 @@ for the editor. Direct edits to those manifest files also flow through
 
 ### What's not yet wired
 
-- **Rings/amulets paperdoll/HUD** — schema slots exist, items in items.json,
-  but `paperdoll_renderer.gd::SLOT_DIRS` has no entries for `ring1/ring2/amulet`,
-  `outpost.gd::SLOTS` only iterates the 5 wired slots, and HUD tooltips
-  don't render jewellery. Bot can technically equip from inventory but
-  nothing visible changes. Next session.
-- **Per-tag mechanics** — flavor tags currently route to affix-bonus stats
+- **Most per-tag mechanics** — 13 tags wired 2026-06-02. Two pipes:
+  weapon tags via `combat_weapon_tags()` (attacker side) and worn
+  tags via `combat_defense_tags()` (defender side; iterates armor/
+  shield/helm/amulet/ring1/ring2/boots).
+  Attacker-side: `vampiric` (8% lifesteal), `precision` (anti-streak
+    +5%/swing crit, cap +50%), `fire` (3-tick burn DoT 4%/tick),
+    `holy` (+50% vs HOLY_HATES undead/demon), `dragon_bane` (+50%
+    vs DRAGON_HATES dragon/wyrm/drake), `cold` (15% freeze + 20%
+    bonus vs frozen), `poison` (4-tick DoT 3%/tick), `brutal`
+    (+25% vs ≤30% HP).
+  Defender-side: `harm` (+25% damage dealt and taken), `thorns`
+    (15% post-defense damage returned to attacker), `reflective`
+    (10% chance to fully negate hit), `vitality` (+1 HP regen/sec),
+    `rage` (+5% atk/kill, 6s window, cap +30%),
+    `thunderous` (boots; on hit, 50% raw to one adjacent live actor
+    via `_find_adjacent_actor`).
+  `take_damage(raw, attacker)` now optionally takes the attacker so
+  thorns can return damage. DoT generalized via `_apply_dot_status()`
+  — `add_burn`/`add_poison` ride on it.
+  Validated 2026-06-02: vampires_tooth +0.38 floors at vaults T4;
+  eos vs bloodbane at crypt confirms holy 1.504× via combat log
+  (raw=182 vs lich, raw=121 vs rat). Other tags currently route to
+  affix-bonus stats
   (documented in `docs/items-plan.md`). Real mechanics (lifesteal, fire DoT,
   freeze chance, dragon-bane, set bonuses) need per-tag wiring in
   `actor.gd`. None implemented yet.

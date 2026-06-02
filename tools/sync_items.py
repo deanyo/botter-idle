@@ -141,6 +141,39 @@ ALL_MANIFESTS = [
     "items_amulets_manifest.json",
 ]
 
+# Bespoke paperdoll art for named uniques. Mirrors DCSS's
+# unrandart_to_doll_tile() (artefact-prop.cc) — each unrand has a
+# hand-drawn sprite under rltiles/player/<slot>/artefact/. Path is
+# relative to dcss-source/.../rltiles/player/.
+#
+# In DCSS only weapons (hand1/artefact/) ship with significant unrand
+# art; non-weapon uniques mostly fall through to the magical-variant or
+# base sprite. We only list items here where DCSS actually has a sprite.
+UNIQUE_PAPERDOLL_OVERRIDES = {
+    "singing_sword":       "hand1/artefact/singing_sword.png",
+    "chilly_death":        "hand1/artefact/chilly_death.png",
+    "firestarter":         "hand1/artefact/firestarter.png",
+    "bloodbane":           "hand1/artefact/bloodbane.png",
+    "wyrmbane":            "hand1/artefact/wyrmbane.png",
+    "gyre":                "hand1/artefact/gyre.png",
+    "doom_knight_blade":   "hand1/artefact/dread_knight.png",
+    "knife_of_accuracy":   "hand1/artefact/knife_of_accuracy.png",
+    "spriggans_knife":     "hand1/artefact/spriggans_knife.png",
+    "vampires_tooth":      "hand1/artefact/vampires_tooth.png",
+    "arc_blade":           "hand1/artefact/arc_blade.png",
+    "eos":                 "hand1/artefact/eos.png",
+    "sword_of_power":      "hand1/artefact/sword_of_power.png",
+    "sword_of_zonguldrok": "hand1/artefact/zonguldrok.png",
+    "majin_bo":            "hand1/artefact/majin.png",
+}
+
+# Rarities that get the DCSS "magical" variant sprite (filename2.png).
+# Maps to DCSS enchant_to_int (tilepick.cc:4960): mundane=0 → base,
+# shiny/runed/glowing=1 → ENCHANTED variant. We collapse all three
+# enchant flavors to the single magical sprite (DCSS does too — only
+# one ENCHANTED variant per weapon family).
+MAGICAL_RARITIES = {"rare", "epic", "legendary"}
+
 
 def stem_for(tile_path):
     """Flatten a DCSS-shaped tile path to a project-relative stem.
@@ -227,6 +260,54 @@ def collect_manifest_items(paths):
     return out
 
 
+def _resolve_paperdoll_src(it, sub, inventory_src, dcss_player_root):
+    """Pick the best DCSS paperdoll sprite for `it`.
+
+    Priority (mirrors DCSS tilepick-p.cc):
+      1. Per-id override in UNIQUE_PAPERDOLL_OVERRIDES (named unrand —
+         e.g. bloodbane, wyrmbane). DCSS unrandart_to_doll_tile().
+      2. Magical-variant sprite for rare/epic/legendary non-uniques —
+         DCSS's enchanted weapon tile (filename2.png). Only triggers
+         when both the base mapping AND a `<base>2.png` sibling exist.
+      3. Base sprite from PAPERDOLL_BY_BASE_TYPE (mundane).
+      4. Inventory sprite as last resort (visible but misaligned).
+
+    Returns an absolute Path. Falls through to `inventory_src` if no
+    DCSS hand-aligned art exists for this item.
+    """
+    item_id = it.get("id", "")
+    base_type = it.get("base_type", "")
+    rarity = it.get("rarity", "common")
+
+    # 1. Bespoke unique override.
+    override = UNIQUE_PAPERDOLL_OVERRIDES.get(item_id)
+    if override:
+        candidate = dcss_player_root / override
+        if candidate.exists():
+            return candidate
+
+    # 2-3. Base-type mapping.
+    base_entry = PAPERDOLL_BY_BASE_TYPE.get(base_type)
+    if base_entry is None:
+        return inventory_src
+    dcss_subdir, dcss_filename = base_entry
+    base_path = dcss_player_root / dcss_subdir / dcss_filename
+
+    # 2. Magical variant (filename2.png) for rare+ non-uniques.
+    if rarity in MAGICAL_RARITIES and not it.get("unique"):
+        stem, _, ext = dcss_filename.rpartition(".")
+        variant_path = dcss_player_root / dcss_subdir / f"{stem}2.{ext}"
+        if variant_path.exists():
+            return variant_path
+
+    # 3. Mundane base.
+    if base_path.exists():
+        return base_path
+
+    # 4. Last resort.
+    return inventory_src
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -294,20 +375,8 @@ def main():
         #      visible — used to be the only path).
         sub = PAPERDOLL_DIRS.get(slot)
         if sub:
-            base_type = it.get("base_type", "")
-            mapping = PAPERDOLL_BY_BASE_TYPE.get(base_type)
-            paperdoll_src = None
-            if mapping:
-                dcss_dir, dcss_fname = mapping
-                cand = DCSS_RLTILES_PLAYER / dcss_dir / dcss_fname
-                # Tiny size filter — skip empty 0-byte or zero-content PNG
-                # placeholders, but don't filter out small DCSS tiles.
-                # cap_blue.png is 156 bytes; long_white.png 193; crown_gold1
-                # 134 — those are tiny but valid hand-aligned glyphs.
-                if cand.exists() and cand.stat().st_size > 80:
-                    paperdoll_src = cand
-            if paperdoll_src is None:
-                paperdoll_src = src  # fall back to inventory sprite
+            paperdoll_src = _resolve_paperdoll_src(it, sub, src,
+                                                    DCSS_RLTILES_PLAYER)
             copy_plan.append((paperdoll_src, ASSETS_PLAYER / sub / stem,
                               f"player/{sub}"))
 

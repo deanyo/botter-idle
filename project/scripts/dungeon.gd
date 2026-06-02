@@ -796,6 +796,8 @@ func _update_biome_hud() -> void:
 	var place_str := "%s  (%s)" % [branch, biome_id]
 	# Stats label updates internally diff each label — cheap when steady.
 	chrome.update_stats(bot, place_str, run_turn)
+	if is_instance_valid(bot):
+		chrome.update_buffs(bot.active_statuses())
 	_hud_full_refresh_accum += get_process_delta_time()
 	var equipped_hash: int = (bot.equipped.hash() if is_instance_valid(bot) else 0)
 	var eq_changed: bool = equipped_hash != _last_equipped_hash
@@ -1335,12 +1337,41 @@ func _on_portal_entered(_portal: Portal, kind: String, biome_id: String, loot_bi
 	# not advance — descending the portal's stairs continues the run normally.
 	_build_floor()
 
-# Pick an item id of the given rarity, weighted by drop_weights[branch_tier-1].
+# Source-floor tier — the home branch's tier, NOT the portal biome's.
+# A bazaar portal (vaults, T4) stamped on a Floor 2 dungeon (T1) returns
+# T1 here, so loot rolls don't escape the home branch's progression.
+# Used as the rarity ceiling and the drop_weights index.
+func _source_tier() -> int:
+	if branch_id != "" and BiomeData.tier_for_biome(branch_id) > 0:
+		return clampi(BiomeData.tier_for_biome(branch_id), 1, 5)
+	return clampi(int(current_biome.get("tier", 1)), 1, 5)
+
+# Cap a rolled rarity by source-floor tier. T1: max uncommon, T2: rare,
+# T3: epic, T4+: legendary. Stops a Floor-2 portal from showering the
+# bot with T5-grade legendaries that the home branch hasn't earned.
+const _TIER_RARITY_CAP := {
+	1: "uncommon",
+	2: "rare",
+	3: "epic",
+	4: "legendary",
+	5: "legendary",
+}
+const _RARITY_RANK := {
+	"common": 0, "uncommon": 1, "rare": 2, "epic": 3, "legendary": 4,
+}
+func _clamp_rarity_to_tier(rarity: String, tier: int = -1) -> String:
+	var t: int = tier if tier > 0 else _source_tier()
+	var cap: String = String(_TIER_RARITY_CAP.get(t, "legendary"))
+	if int(_RARITY_RANK.get(rarity, 0)) <= int(_RARITY_RANK.get(cap, 4)):
+		return rarity
+	return cap
+
+# Pick an item id of the given rarity, weighted by drop_weights[source_tier-1].
 # Items with no drop_weights field still roll (legacy fallback, weight 1).
 # Items already dropped this run AND flagged unique are excluded.
 # Returns "" if no eligible item exists.
 func _pick_loot_id(rarity: String) -> String:
-	var tier: int = clampi(int(current_biome.get("tier", 1)), 1, 5)
+	var tier: int = _source_tier()
 	var idx: int = tier - 1
 	var ids: Array[String] = []
 	var weights: Array[float] = []
@@ -1379,25 +1410,36 @@ func _pick_loot_id(rarity: String) -> String:
 	return ids[ids.size() - 1]
 
 func _roll_rarity(is_boss: bool) -> String:
+	# Tier ceiling: source branch tier (NOT portal-overridden biome tier),
+	# applied last so every other bonus stacks first then gets clamped.
+	# A T1 dungeon boss rolls legendary 50% of the time then drops to
+	# uncommon — keeps boss kills meaningful without trivializing T5
+	# uniques.
+	var src_tier: int = _source_tier()
 	if is_boss:
 		var boss_roll: float = rng.randf()
-		if boss_roll < 0.5: return "legendary"
-		if boss_roll < 0.85: return "epic"
-		return "rare"
+		var rarity_b: String
+		if boss_roll < 0.5: rarity_b = "legendary"
+		elif boss_roll < 0.85: rarity_b = "epic"
+		else: rarity_b = "rare"
+		return _clamp_rarity_to_tier(rarity_b, src_tier)
 	var floor_bonus: float = float(current_floor - 1) * 0.05
 	var blessing_bonus: float = bot.loot_rarity_bonus / 100.0 if is_instance_valid(bot) else 0.0
 	# Tier baseline: tier 1 = 0, tier 5 = +0.20. Higher-tier branches
-	# always lean toward better loot even without modifiers.
-	var tier: int = int(current_biome.get("tier", 1))
-	var tier_bonus: float = float(tier - 1) * 0.05
+	# always lean toward better loot even without modifiers. Uses the
+	# source branch tier so a low-tier portal doesn't double-dip on the
+	# portal biome's tier here.
+	var tier_bonus: float = float(src_tier - 1) * 0.05
 	# Modifier-driven rarity bias (Treasure Hoard, Glittering).
 	var mod_bonus: float = RunModifiers.sum_effect(active_modifiers, "rarity_bonus", 0.0)
 	var r: float = rng.randf() - floor_bonus - blessing_bonus - tier_bonus - mod_bonus
-	if r < 0.02: return "legendary"
-	if r < 0.10: return "epic"
-	if r < 0.25: return "rare"
-	if r < 0.55: return "uncommon"
-	return "common"
+	var rarity: String
+	if r < 0.02: rarity = "legendary"
+	elif r < 0.10: rarity = "epic"
+	elif r < 0.25: rarity = "rare"
+	elif r < 0.55: rarity = "uncommon"
+	else: rarity = "common"
+	return _clamp_rarity_to_tier(rarity, src_tier)
 
 var _turn_accum: float = 0.0
 
@@ -1447,14 +1489,21 @@ func _tick_bot(delta: float) -> void:
 			bot.add_status("burning", 0.7)  # short renewal so it fades when stepping off
 		elif here == C.T_WATER:
 			bot.add_status("slowed", 0.5)
-	# Wounded overlay: bot below 30% HP. Cheap binary driver — refreshed
-	# while wounded, fades when healed back up.
-	if bot.is_alive and bot.hp > 0 and float(bot.hp) / float(max(1, bot.max_hp)) < 0.3:
-		bot.add_status("wounded", 1.5)
+	# Wounded overlay: bot below 30% HP. State-based; add persistent
+	# and remove when healed back above the threshold.
+	var is_wounded: bool = bot.is_alive and bot.hp > 0 and float(bot.hp) / float(max(1, bot.max_hp)) < 0.3
+	if is_wounded and not bot.has_status("wounded"):
+		bot.add_status("wounded", 0.0)
+	elif not is_wounded and bot.has_status("wounded"):
+		bot.remove_status("wounded")
 	# Regen overlay: visible while bot has any regen-per-sec from gear
-	# or blessings. Small cost — the bot tracks hp_regen_per_sec already.
+	# or blessings. State-based, not timed — add persistent (0) and
+	# remove when the condition flips. Avoids buff-bar timer flicker.
 	if bot.is_alive and bot.hp_regen_per_sec > 0.1:
-		bot.add_status("regen", 1.0)
+		if not bot.has_status("regen"):
+			bot.add_status("regen", 0.0)
+	elif bot.has_status("regen"):
+		bot.remove_status("regen")
 	# Lava damage: if bot is standing on a lava cell, deal 5% max_hp
 	# every 0.5 seconds. Tick accumulator avoids per-frame damage spam.
 	_lava_tick_accum += delta
@@ -2178,14 +2227,19 @@ func _spawn_loot_drop_get(instance: Dictionary, at_cell: Vector2i) -> LootDrop:
 	return drop
 
 func _roll_rarity_with_bias(bias: int) -> String:
+	# Chest-pickup variant. Same source-tier clamp as _roll_rarity so
+	# entering a wizlab portal on Floor 2 of the dungeon doesn't dump
+	# T5-grade legendaries from the bonus chests.
 	var floor_bonus: float = float(current_floor - 1) * 0.05
 	var bias_bonus: float = float(bias) * 0.10
 	var r: float = rng.randf() - floor_bonus - bias_bonus
-	if r < 0.02: return "legendary"
-	if r < 0.10: return "epic"
-	if r < 0.25: return "rare"
-	if r < 0.55: return "uncommon"
-	return "common"
+	var rarity: String
+	if r < 0.02: rarity = "legendary"
+	elif r < 0.10: rarity = "epic"
+	elif r < 0.25: rarity = "rare"
+	elif r < 0.55: rarity = "uncommon"
+	else: rarity = "common"
+	return _clamp_rarity_to_tier(rarity)
 
 func _adjacent_walkable_cell(center: Vector2i, idx: int) -> Vector2i:
 	var offsets: Array[Vector2i] = [

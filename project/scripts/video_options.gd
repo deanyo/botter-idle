@@ -22,6 +22,7 @@ const _GFX_LABELS := {
 	"threat_outlines":  "Enemy threat outlines",
 	"light_cookies":    "Light cookies (patterns)",
 	"ench":             "Status overlays (fire/poison/etc)",
+	"shadow":           "Actor shadows",
 	"bloom":            "Bloom",
 }
 

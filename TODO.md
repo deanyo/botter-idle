@@ -5,6 +5,87 @@ the durable rules in `CLAUDE.md`. Update this file when committing.
 
 ---
 
+## Playtest issues (2026-06-02 — high priority, partially shipped)
+
+User reported four issues from a real playtest. Status as of this beat:
+
+- ✅ **Bot vertical squish over a long session.** Sprite progressively
+  squashed to a few pixels after ~10 min of play. Root cause:
+  `actor.gd::_set_facing` was reading `rig.scale` mid-tween (attack_lunge
+  pinches Y to 0.85 for ~50ms) and snapshotting the transient value into
+  `SpriteFX.base_scale` via `update_base_scale(rig.scale)`. Every
+  facing flip that happened to overlap a tween permanently dropped
+  base Y by a small amount; over thousands of attacks the bot
+  collapsed. Fixed by rebuilding the resting scale from
+  `visual_scale` + `_facing_x` instead of reading the live transform.
+
+- ✅ **Ring slot UX — couldn't equip a third ring.** Fixed by
+  collapsing two ring slots → one `ring` slot (amulet covers the
+  trinket role). Save migration in `save_state.gd::_migrate` promotes
+  ring1/ring2 cleanly: ring1 → ring, ring2 → inventory. Updated
+  `bot.gd`, `outpost.gd`, `hud_chrome.gd`, `inject_save.py`. DCSS has
+  two ring slots, but our equip-from-HUD UX is a single-tap interaction
+  and the multi-slot routing was confusing. Simpler is better here.
+
+- ✅ **Weapon rarity tint + glow.** Equipped legendary weapons now
+  modulate by rarity (subtle wash — common neutral, legendary 50%
+  toward rarity color) and epic+ weapons sport a soft pulsing halo
+  behind the held sprite. Wired in `bot.gd::_apply_rarity_decor` for
+  the live bot and `paperdoll_renderer.gd::_apply_rarity_modulate`
+  for every UI surface. Fixes the "blue scimitar even though I just
+  equipped a gold legendary" reported case.
+
+- ✅ **Source-floor tier caps loot rarity.** Entering a wizlab/zig
+  portal on Floor 2 used to pour T5 legendaries into a T1 run because
+  `_pick_loot_id` keyed on the portal-overridden biome's tier
+  (vaults T4 / zot T5) rather than the home branch tier (dungeon T1).
+  Added `dungeon.gd::_source_tier()` (always returns the home branch
+  tier, ignoring portal override) and `_clamp_rarity_to_tier()`
+  (T1=uncommon cap, T2=rare, T3=epic, T4+=legendary). Wired through
+  both `_roll_rarity` and `_roll_rarity_with_bias` so enemy drops,
+  vault loot marks, and chest contents all respect it.
+
+- ⬜ **PoE-style low-tier legendaries.** Followup to the rarity-cap
+  fix: when source tier caps rarity at uncommon/rare, the player still
+  has nothing aspirational to chase at low floors. Path of Exile
+  solves this with low-level uniques that have weak base stats but
+  signature unique stat lines / mechanics — they're build enablers,
+  not stat upgrades. Author 5-10 low-tier legendaries with
+  `drop_weights` heavily front-loaded (T1/T2 only) that carry a
+  flavor_tag a base item couldn't have, but with stats below regular
+  legendaries. Editor: `tools/item_editor.html`. ~1-2h.
+
+- ⬜ **Enemy variation via size + aura + rare/elite packs (PoE-style).**
+  We have ~177 enemies in `enemies.json` but most floors feel sample-y
+  because the same id renders identically each time. Path of Exile
+  (and Diablo) get huge variety from the same base monster pool by
+  layering modifiers:
+  - **Magic / rare / unique pack tiers** — re-skinned versions of
+    the same monster id with extra HP/ATK and 1-3 randomized
+    "monster mods" (extra fast, lightning thorns, vulnerable, on-
+    death AoE, summons phantasms, etc). Each tier has its own
+    visual signature: magic = blue tint + small sparkle aura, rare
+    = yellow tint + larger pulsing aura + named, unique = unique
+    fixed stats + persistent ground effect.
+  - **Size variance** — apply `visual_scale` jitter to non-boss
+    enemies (0.85–1.15× per spawn) so 4 worker ants in a cluster
+    look organic instead of cloned.
+  - **Aura packs** — rare mobs project a colored radial aura the
+    bot's nearby enemies inherit a tag from (e.g. "Hasted aura"
+    speeds nearby allies' attack interval). Same ENCH/HALO machinery
+    we already have for the bot, applied to enemies.
+  - **Pack composition** — DCSS already does some of this with
+    miniboss + mob spawn rules; PoE goes further with named
+    modifier rolls and "rare pack of 6" telegraphs.
+  Implementation sketch: `enemy.gd` gains `pack_tier` (normal/magic/
+  rare/unique) and `pack_mods: Array[String]`. `dungeon.gd::_spawn_*`
+  rolls 5-10% magic, 1-2% rare per spawn (rates increase by branch
+  tier). Mods table in `data/monster_mods.json`. HALO sprite reused
+  for the rare aura. Per-monster size jitter is a one-line change in
+  the spawn path. Read PoE wiki "Monster mods" + "Map difficulty"
+  pages plus DCSS `mon-info.cc` for the existing miniboss/champion
+  hooks. ~1-2 day beat. High variety-per-effort ratio.
+
 ## Future balance beats (deferred per 2026-06-02 validation)
 
 These are beyond tier-value tweaks — they require design work, not just
@@ -26,6 +107,45 @@ patches were directionally right but insufficient.
   `BOSS_TIER_SCALE` separate from `TIER_SCALE` so we can soften bosses
   without nerfing minibosses. Or accept that gear is required for T4
   and surface that progression gate clearly.
+
+- ⬜ **T3 multiplier softening (NEW priority — 2026-06-02 cliff fill-in).**
+  The T2→T3 jump is the actual brick wall (86% → 8% wins, not the
+  T3→T4 we previously assumed). Patch: `TIER_SCALE[2]` from 2.0 → 1.8
+  in `constants.gd`. Validate with swamp N=30 — win rate should rise
+  to ~25-40%. Pending human playtest confirmation. Full data in
+  `docs/balance-findings-2026-06-02.md` "T2/T3 cliff fill-in" section.
+
+## Critical bugs from playtest (2026-06-02 — HIGH PRIORITY)
+
+⚠️ Reported by user — affects every run, breaks the visual contract.
+
+- ⬜ **Mobs/chests stack on a single tile near top of floor.** On lots
+  of floors the spawn distributor lumps everything into one cluster
+  rather than spreading across rooms. Look at
+  `dungeon.gd::_spawn_enemies` + `_place_interactables` — likely the
+  spawn-cell selection is biased to a single bbox row when the
+  generator's room list is empty/sparse, or the floor's accessibility
+  graph from spawn is collapsing. Possibly related to dungeon-layout
+  variants that produce 1 huge region instead of room rectangles.
+
+- ⬜ **Bot descends stairs with no stair visible on the floor.** Tile
+  exists in `grid` (T_DOWN_STAIRS) but `map_renderer` is failing to
+  paint it, OR the stair texture is being occluded by a tile drawn
+  on top of it. Check `map_renderer.gd` z-ordering of features vs
+  floor decals. May share a root cause with #3 below.
+
+- ⬜ **Floor tiles draw ON TOP of monster sprites.** Z-order regression
+  in the renderer. Floor tile cells are at z=0 by convention; actor
+  layer at z>0. Either an ambient_decor sprite or a feature overlay
+  is leaking into the actor z-band. Check `map_renderer.gd::_paint_*`
+  and `ambient_decor.gd` for any sprite that doesn't pin z to a
+  background-only band.
+
+These three may share a single underlying bug. Triage by reproducing
+in `/screenshot dungeon` (the JSON sidecar will show enemy cells +
+floor cell counts; if multiple enemies share a cell the JSON will
+expose it directly). Pin the next session to fixing them before any
+new mechanics ship.
 
 ## Up next (planned 2026-05-21)
 
@@ -50,50 +170,73 @@ After tier-pinned experiment data lands and a balance tuning beat is shipped:
    Recommendation: start with the per-base-type approach (covers 80%
    of cases with ~30 entries), reserve per-item override for outliers.
    Verify visually with /showcase station for "all items in slot X".
-1. **Rings/amulets stat + UI wiring** (~1h). Items exist in items.json
-   and the schema slots are reserved in save_state, but jewellery is
-   stat-inert and not equippable. **Note**: DCSS `tiledoll.cc` confirms
-   rings/amulets are NEVER rendered on the doll — they're purely stat-
-   bearing slots. (DCSS doll categories: BODY, HAND1, HAND2, BOOTS,
-   LEG, HELM, ARM, CLOAK, HAIR, BEARD — no RING/AMULET.) So skip the
-   paperdoll work entirely; jewellery is invisible by design.
-   Subtasks:
-   - `outpost.gd::SLOTS` const: extend to include ring1/ring2/amulet
-     so the equip UI can show empty/filled jewellery slots
-   - `bot.gd::recompute_stats`: ring1/ring2/amulet items contribute
-     atk/def/hp like any other slot (already iterates equipped.keys()
-     defensively, so this might already work — verify and trust)
-   - `hud_chrome.gd`: render jewellery slot tooltips in the equip
-     panel, wire click-to-unequip
-   - **No paperdoll/sprite work.** No new asset authoring needed.
-2. **DCSS-style overlay sprite layers** — partly shipped. ENCH ✅,
-   SHADOW + HALO still pending.
+1. ✅ **Rings/amulets stat + UI wiring** (shipped 2026-06-02). Items
+   route through `_resolve_equip_slot` (slot=="ring" picks ring1 first,
+   then ring2). `outpost.gd::SLOTS` and `hud_chrome.gd::EQUIPPED_SLOTS`
+   extended; bot.gd recompute_stats picks them up via existing
+   defensive iteration. No paperdoll work — DCSS confirms jewellery
+   never renders on the doll.
+2. **DCSS-style overlay sprite layers** — all 3 layers shipped:
+   ENCH ✅, SHADOW ✅, HALO ✅ (all 2026-06-02).
 
-   - **SHADOW** (~30min) — pending. Static darkened ellipse drawn
-     under every character (bot + enemies). Currently characters
-     look like they're floating on the tile. One sprite + render
-     hook in Actor.gd's rig setup.
+   - ✅ **SHADOW**. `scripts/actor_shadow.gd` draws a tinted oval
+     beneath every actor's rig at +10px, z=-1. Toggleable via
+     `gfx.shadow` VideoSetting; `BOTTER_NO_SHADOW=1` disables.
 
-   - ✅ **ENCH** (shipped 2026-06-01). Status-effect overlays.
-     `scripts/status_overlay.gd` registry, Actor extended with
-     add_status/remove_status/tick_statuses, 9 sprite icons, driver
-     hooks for lava/water/altar/low-HP/regen. Toggleable via
-     `gfx.ench`.
+   - ✅ **ENCH**. Status-effect overlays. `scripts/status_overlay.gd`
+     registry, 9 sprite icons, driver hooks for lava/water/altar/
+     low-HP/regen. Toggleable via `gfx.ench`. Plus the WoW-style
+     buff/debuff bar at top of HUD (`hud_chrome._build_buff_bar` +
+     `update_buffs`) — square icons + countdown timers, fed from
+     `bot.active_statuses()` each frame.
 
-   - **HALO** (~1h) — pending. Per-blessing aura over the bot.
-     Reuses ENCH framework but adds a separate "aura" sub-layer
-     that renders BEHIND the rig (vs ENCH which is above). Per-god
-     halo color/shape: TSO holy gold, Trog rage red, Yred dark
-     purple, Kiku skull green, Xom rainbow. Hooks into the same
-     altar.blessed signal that ENCH already taps.
+   - ✅ **HALO**. `bot._apply_halo(god)` spawns a per-god tinted
+     radial glow at z=-2 behind the rig (also behind shadow), with
+     a soft 1.6s sin pulse. 22 god colors in `_HALO_COLORS`. Adds
+     `blessed` status so the buff bar shows the halo icon too.
+     `clear_blessings` queues the sprite free + removes status.
 
-3. **First flavor-tag mechanic wired** (~45m). Pick the simplest tag
-   (vampiric lifesteal) and wire end-to-end:
-   - `actor.gd::attempt_attack`: read attacker's weapon `flavor_tags`
-   - On `vampiric` tag, heal `dealt * 0.08` after `take_damage`
-   - Validate via /duel: weapon-with-vampiric vs same-weapon-without
-   Validates the 30 flavor tags can become real mechanics rather than
-   affix-bonus aliases. After this, more tags follow the same shape.
+3. ✅ **First flavor-tag mechanic wired** (shipped 2026-06-02).
+   `actor.gd::attempt_attack` reads `combat_weapon_tags()` (Bot
+   overrides with equipped weapon's flavor_tags). On `vampiric`,
+   heals `dealt * 0.08` capped at max_hp. Validated via /duel:
+   vampires_tooth vs chilly_death (legendary rapiers, ~equal atk),
+   N=8 vaults T4 — vampiric reached +0.38 floors deeper / +7 kills
+   off near-identical raw damage. Pattern proven; more tags follow
+   the same `if "<tag>" in tags:` shape.
+
+   Tags wired 2026-06-02 (13 total via the `combat_weapon_tags()` /
+   `combat_defense_tags()` pipeline; vampiric was the first):
+   - ✅ Attacker (weapon-side): `vampiric` (8% lifesteal),
+     `precision` (anti-streak crit, +5%/swing cap +50%),
+     `fire` (3-tick burn DoT), `holy` (+50% vs HOLY_HATES),
+     `dragon_bane` (+50% vs DRAGON_HATES),
+     `cold` (15% freeze chance + 20% bonus vs frozen),
+     `poison` (4-tick poison DoT),
+     `brutal` (+25% vs targets ≤30% HP).
+   - ✅ Defender (armor/shield/amulet/ring/boots/helm-side):
+     `harm` (+25% damage dealt and taken),
+     `thorns` (15% returned to attacker, post-defense),
+     `reflective` (10% chance to fully negate the hit),
+     `vitality` (+1 HP regen/sec via recompute_stats),
+     `rage` (+5% atk/kill in 6s window, cap +30%).
+   - HOLY_HATES + DRAGON_HATES live in StatusOverlay constants.
+   - `Actor.take_damage(raw, attacker)` now optionally takes the
+     attacker so thorns can return damage.
+   - DoT generalized via `Actor._apply_dot_status()` — `burning` and
+     `poisoned` both ride on it.
+
+   Also wired 2026-06-02:
+   - ✅ `thunderous` (4 boots) — on a successful hit, finds one cell-
+     adjacent live Actor to the target via `_find_adjacent_actor`
+     (O(siblings), excludes self+target+dead) and deals 50% raw to it.
+     Chain hit doesn't itself re-trigger thunderous (no infinite chain).
+
+   Tags not yet wired (need design decisions):
+   - `dark` (7 weapons) — possibly +damage in low-light tiles?
+   - `psychic` (3 helms) — TBD; mind shield + reflect spell?
+   - `slaying` (5 rings) — currently effectively wired via base atk;
+     no extra mechanic beyond the stat itself.
 
 ## Gameplay loop overhaul — DONE 2026-05-15
 

@@ -45,7 +45,7 @@ Validation:
   - Every affix id must exist in project/data/affixes.json.
   - Every tier must be 1..5.
   - Every branch must exist in project/data/biomes.json.
-  - Slots must be one of weapon/armor/helm/boots/shield/ring1/ring2/amulet.
+  - Slots must be one of weapon/armor/helm/boots/shield/ring/amulet.
 
 Run from the repo root.
 """
@@ -64,7 +64,7 @@ BIOMES_JSON = REPO_ROOT / "project" / "data" / "biomes.json"
 USER_DATA = Path.home() / "Library" / "Application Support" / "Godot" / "app_userdata" / "Botter"
 DEBUG_SAVE = USER_DATA / "botter_save_debug.json"
 
-VALID_SLOTS = {"weapon", "armor", "helm", "boots", "shield", "ring1", "ring2", "amulet"}
+VALID_SLOTS = {"weapon", "armor", "helm", "boots", "shield", "ring", "amulet"}
 VALID_RARITIES = ("common", "uncommon", "rare", "epic", "legendary")
 
 
@@ -131,7 +131,7 @@ def load_existing():
             "equipped": {
                 "weapon": None, "armor": None, "helm": None,
                 "boots": None, "shield": None,
-                "ring1": None, "ring2": None, "amulet": None,
+                "ring": None, "amulet": None,
             },
             "runs_completed": 0,
             "highest_floor": 0,

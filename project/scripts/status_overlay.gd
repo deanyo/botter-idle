@@ -24,16 +24,43 @@ const PLAYER_DIR := "res://assets/tiles/player/status/"
 #   pulse — true = sin-modulated alpha for emphasis
 #   z     — render order within the status layer (higher = on top)
 const STATUSES := {
-	"burning":  { "icon": "fire.png",   "tint": Color(1, 0.55, 0.20), "pulse": true, "z": 5 },
-	"poisoned": { "icon": "poison.png", "tint": Color(0.55, 1, 0.45), "pulse": true, "z": 4 },
-	"frozen":   { "icon": "frost.png",  "tint": Color(0.55, 0.85, 1), "pulse": false, "z": 6 },
-	"slowed":   { "icon": "drop.png",   "tint": Color(0.45, 0.7, 1), "pulse": false, "z": 2 },
-	"regen":    { "icon": "plus.png",   "tint": Color(0.55, 1, 0.6), "pulse": true, "z": 3 },
-	"berserk":  { "icon": "rage.png",   "tint": Color(1, 0.3, 0.2), "pulse": true, "z": 7 },
-	"blessed":  { "icon": "halo.png",   "tint": Color(1, 0.95, 0.55), "pulse": false, "z": 1 },
-	"wounded":  { "icon": "blood.png",  "tint": Color(1, 0.25, 0.25), "pulse": true, "z": 0 },
-	"shielded": { "icon": "ward.png",   "tint": Color(0.6, 0.85, 1), "pulse": false, "z": 8 },
+	"burning":  { "icon": "fire.png",   "tint": Color(1, 0.55, 0.20), "pulse": true,  "z": 5,
+		"label": "Burning", "desc": "Taking fire damage over time." },
+	"poisoned": { "icon": "poison.png", "tint": Color(0.55, 1, 0.45), "pulse": true,  "z": 4,
+		"label": "Poisoned", "desc": "Taking poison damage over time." },
+	"frozen":   { "icon": "frost.png",  "tint": Color(0.55, 0.85, 1), "pulse": false, "z": 6,
+		"label": "Frozen", "desc": "Vulnerable: incoming attacks deal +20%." },
+	"slowed":   { "icon": "drop.png",   "tint": Color(0.45, 0.7, 1), "pulse": false, "z": 2,
+		"label": "Slowed", "desc": "Movement speed reduced (in water)." },
+	"regen":    { "icon": "plus.png",   "tint": Color(0.55, 1, 0.6), "pulse": true,  "z": 3,
+		"label": "Regen", "desc": "Healing per second from gear/blessings." },
+	"berserk":  { "icon": "rage.png",   "tint": Color(1, 0.3, 0.2), "pulse": true,   "z": 7,
+		"label": "Berserk", "desc": "Increased attack speed and power." },
+	"blessed":  { "icon": "halo.png",   "tint": Color(1, 0.95, 0.55), "pulse": false, "z": 1,
+		"label": "Blessed", "desc": "Granted divine favor at an altar." },
+	"wounded":  { "icon": "blood.png",  "tint": Color(1, 0.25, 0.25), "pulse": true,  "z": 0,
+		"label": "Wounded", "desc": "Below 30% HP — retreat or finish the fight." },
+	"shielded": { "icon": "ward.png",   "tint": Color(0.6, 0.85, 1), "pulse": false, "z": 8,
+		"label": "Shielded", "desc": "Reducing or absorbing damage." },
 }
+
+# Enemy-id substrings that classify each holy/bane category. The
+# `holy` weapon tag deals +50% to anything matching `undead` or
+# `demon`; `dragon_bane` matches dragons/wyrms. Substring match is
+# loose on purpose — DCSS does roughly the same via mons-classid.h.
+const HOLY_HATES := ["undead", "zombie", "skeleton", "wraith", "lich",
+	"mummy", "ghost", "vampire", "shadow", "demon", "cacodemon", "imp",
+	"hellion", "balrog", "fiend"]
+const DRAGON_HATES := ["dragon", "wyrm", "drake"]
+
+static func enemy_matches_any(enemy_id: String, needles: Array) -> bool:
+	if enemy_id == "":
+		return false
+	var lc: String = enemy_id.to_lower()
+	for needle in needles:
+		if lc.find(String(needle)) >= 0:
+			return true
+	return false
 
 static func has_status(id: String) -> bool:
 	return STATUSES.has(id)

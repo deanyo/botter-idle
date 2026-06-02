@@ -28,18 +28,18 @@ const PAPERDOLL_SLOT_SIZE := 48
 const INV_CELL_SIZE := 48
 
 # Slots that exist in the data layer today.
-const EQUIPPED_SLOTS := ["weapon", "armor", "helm", "shield", "boots"]
+const EQUIPPED_SLOTS := ["weapon", "armor", "helm", "shield", "boots", "ring", "amulet"]
 
 # Layout — L-shape around a top-left sprite. Active slots intermix with
-# placeholder slots reserved for future gear (amulet/rings/cloak/etc).
+# placeholder slots reserved for future gear (cloak/gloves/belt/etc).
 # Tooltips show the slot name; no on-screen labels.
 const PAPERDOLL_RIGHT_COLUMN := ["helm", "amulet", "cloak", "gloves", "belt"]
-const PAPERDOLL_BOTTOM_ROW := ["weapon", "armor", "shield", "ring1", "ring2", "boots"]
+const PAPERDOLL_BOTTOM_ROW := ["weapon", "armor", "shield", "ring", "boots"]
 const SLOT_TOOLTIPS := {
 	"weapon": "Weapon", "armor": "Body Armor", "helm": "Helm",
 	"shield": "Shield", "boots": "Boots",
 	"amulet": "Amulet", "cloak": "Cloak", "gloves": "Gloves",
-	"belt": "Belt", "ring1": "Ring", "ring2": "Ring",
+	"belt": "Belt", "ring": "Ring",
 }
 const PAPERDOLL_BASE_PX := 32  # source bot sprite is 32×32 native
 
@@ -95,11 +95,23 @@ var equip_request_target: Object = null
 # Debug HUD
 var debug_lbl: Label
 
+# WoW-style buff/debuff bar — top-of-screen row of 36×36 icons with
+# timer text under each. Reads from bot._statuses; cells reused across
+# updates (build pool once, hide unused) to keep cost bounded.
+var _buff_bar_root: Control = null
+var _buff_cells: Array = []  # each: { bg: ColorRect, icon: TextureRect, lbl: Label }
+const BUFF_CELL_SIZE := 36
+const BUFF_CELL_GAP := 4
+const BUFF_BAR_TOP := 4
+const BUFF_BAR_MAX := 12
+const _StatusOverlay := preload("res://scripts/status_overlay.gd")
+
 func _ready() -> void:
 	layer = 50
 	_build_sidebar()
 	_build_bag()
 	_build_debug()
+	_build_buff_bar()
 
 # ============================================================================
 # Construction
@@ -355,6 +367,107 @@ func _build_debug() -> void:
 	debug_lbl.add_theme_font_override("font", _monospace_font())
 	add_child(debug_lbl)
 
+func _build_buff_bar() -> void:
+	# Pool of BUFF_BAR_MAX cells, all hidden until populated by
+	# update_buffs(). Centered horizontally above the dungeon canvas
+	# (i.e. excluding the right sidebar). Re-laid-out on update so
+	# adding/removing buffs re-centers the row.
+	_buff_bar_root = Control.new()
+	_buff_bar_root.position = Vector2(0, BUFF_BAR_TOP)
+	_buff_bar_root.size = Vector2(0, BUFF_CELL_SIZE + 14)
+	_buff_bar_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(_buff_bar_root)
+	for _i in BUFF_BAR_MAX:
+		var cell := Control.new()
+		cell.size = Vector2(BUFF_CELL_SIZE, BUFF_CELL_SIZE + 14)
+		# PASS lets the cell receive hover/tooltip but still allow clicks
+		# through to whatever sits behind it (debug HUD/dungeon canvas).
+		cell.mouse_filter = Control.MOUSE_FILTER_PASS
+		cell.visible = false
+		var bg := ColorRect.new()
+		bg.color = Color(0, 0, 0, 0.65)
+		bg.size = Vector2(BUFF_CELL_SIZE, BUFF_CELL_SIZE)
+		bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		cell.add_child(bg)
+		var border := ReferenceRect.new()
+		border.size = Vector2(BUFF_CELL_SIZE, BUFF_CELL_SIZE)
+		border.border_color = Color(0.4, 0.35, 0.2, 0.9)
+		border.border_width = 1.0
+		border.editor_only = false
+		border.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		cell.add_child(border)
+		var icon := TextureRect.new()
+		icon.position = Vector2(2, 2)
+		icon.size = Vector2(BUFF_CELL_SIZE - 4, BUFF_CELL_SIZE - 4)
+		icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		icon.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		cell.add_child(icon)
+		var lbl := Label.new()
+		lbl.position = Vector2(0, BUFF_CELL_SIZE)
+		lbl.size = Vector2(BUFF_CELL_SIZE, 14)
+		lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		lbl.add_theme_font_size_override("font_size", 11)
+		lbl.add_theme_color_override("font_color", COL_AMBER)
+		lbl.add_theme_color_override("font_outline_color", Color(0, 0, 0))
+		lbl.add_theme_constant_override("outline_size", 2)
+		cell.add_child(lbl)
+		_buff_bar_root.add_child(cell)
+		_buff_cells.append({"cell": cell, "bg": bg, "border": border, "icon": icon, "lbl": lbl})
+
+# Refresh the buff bar from a status dict (Actor._statuses shape:
+# id → {expires_at, sprite, dot?}). Called every frame by dungeon
+# (cheap: reuses pooled cells, only mutates visible/text/texture).
+func update_buffs(statuses: Dictionary) -> void:
+	if _buff_bar_root == null:
+		return
+	var view := get_viewport().get_visible_rect().size
+	var canvas_w: int = int(view.x) - SIDEBAR_W
+	var ids: Array = statuses.keys()
+	# Sort by status `z` (defines render priority too — high z = important
+	# stuff goes leftmost where the eye lands first).
+	ids.sort_custom(func(a, b):
+		var za: int = int(_StatusOverlay.get_def(a).get("z", 0))
+		var zb: int = int(_StatusOverlay.get_def(b).get("z", 0))
+		return za > zb)
+	var n: int = mini(ids.size(), BUFF_BAR_MAX)
+	# Center the visible row horizontally above the dungeon canvas.
+	var row_w: int = n * BUFF_CELL_SIZE + max(0, n - 1) * BUFF_CELL_GAP
+	var start_x: int = max(0, (canvas_w - row_w) / 2)
+	var now: float = float(Time.get_ticks_msec()) / 1000.0
+	for i in BUFF_BAR_MAX:
+		var cell_data: Dictionary = _buff_cells[i]
+		var ctrl: Control = cell_data["cell"]
+		if i >= n:
+			ctrl.visible = false
+			continue
+		var id: String = String(ids[i])
+		var def: Dictionary = _StatusOverlay.get_def(id)
+		var tex: Texture2D = _StatusOverlay.texture_for(id)
+		var icon: TextureRect = cell_data["icon"]
+		icon.texture = tex
+		icon.modulate = def.get("tint", Color(1, 1, 1, 1))
+		# Tooltip on the parent control — shows label + desc on hover.
+		var label_str: String = String(def.get("label", id.capitalize()))
+		var desc_str: String = String(def.get("desc", ""))
+		ctrl.tooltip_text = label_str if desc_str.is_empty() else "%s\n%s" % [label_str, desc_str]
+		var lbl: Label = cell_data["lbl"]
+		var entry: Dictionary = statuses[id]
+		var expires: float = float(entry.get("expires_at", 0.0))
+		if expires > 0.0:
+			# ceil so a renewing driver (e.g. dungeon refreshing regen
+			# every frame at duration=1.0) reads as a stable "1s"
+			# instead of flicking between 0s/1s as fractions tick.
+			var remaining: float = expires - now
+			var secs: int = max(1, int(ceil(remaining)))
+			lbl.text = "%ds" % secs
+		else:
+			# Persistent (e.g. blessings) — no countdown.
+			lbl.text = ""
+		ctrl.position = Vector2(start_x + i * (BUFF_CELL_SIZE + BUFF_CELL_GAP), 0)
+		ctrl.visible = true
+
 func _monospace_font() -> Font:
 	# Godot's default monospace font.
 	var f := SystemFont.new()
@@ -490,49 +603,121 @@ func update_equipped(equipped: Dictionary, items_db: Dictionary) -> void:
 		paperdoll_rig = built.rig
 		paperdoll_holder.add_child(paperdoll_rig)
 
-# Segment-based inventory render. Each segment is {header, items}; the
-# whole VBox is rebuilt when segments change (loot pickup, equip swap, or
-# cooldown tick). Rebuild churn was the perf concern in the old flat-list
-# code — segmenting changes the access pattern, but typical run state is
-# 50–200 items across 5–10 segments, well under the 1700-item stress test
-# that motivated the pool. If perf becomes a problem, segment-level diff
-# (only rebuild the changed segment) is the next step.
+# Segment-based inventory render. Each segment is {header, items}.
+#
+# Diff-rendering: rather than tearing down the whole VBox every loot
+# pickup (the cause of a visible stutter on heavy inventories — 50-100
+# Buttons + decor recreated per pickup), we cache per-segment grids
+# and only rebuild segments whose item count changed. The typical
+# loot-pickup path = 1 segment grew by 1 item; we just append one cell.
+# Equip-swap = 1 segment shrank by 1; we rebuild that segment only.
+# A new floor segment appearing = full rebuild (rare, once per floor).
+var _seg_grids: Array = []  # per-segment Dict {hdr, grid_or_empty, count}
+
 func update_inventory_segments(segments: Array, items_db: Dictionary, slot_cooldowns: Dictionary) -> void:
 	if inventory_box == null:
 		return
-	for c in inventory_box.get_children():
-		c.queue_free()
-	# Render newest-first so the freshest pickups are always visible at the
-	# top of the panel without needing to scroll. Older floors and the Base
-	# stash live below and are reached by scrolling down.
-	for i in range(segments.size() - 1, -1, -1):
-		var seg_idx: int = i
-		var seg: Dictionary = segments[seg_idx]
+	# Detect "shape change" — segment count changed or a header text
+	# differs. If so, full rebuild. Otherwise diff per-segment.
+	var shape_changed: bool = (segments.size() != _seg_grids.size())
+	if not shape_changed:
+		for i in segments.size():
+			if String(segments[i].get("header", "")) != String(_seg_grids[i].get("header", "")):
+				shape_changed = true
+				break
+	if shape_changed:
+		_rebuild_inventory_full(segments, items_db, slot_cooldowns)
+		return
+	# Same shape — diff per segment by item count. If a segment shrank
+	# (equip-swap) or items reordered, do a per-segment full rebuild.
+	# If it grew by N (loot pickup), append the N new cells.
+	for i in segments.size():
+		var seg: Dictionary = segments[i]
 		var items: Array = seg.get("items", [])
-		# Header.
-		var hdr := Label.new()
-		hdr.text = String(seg.get("header", ""))
-		hdr.add_theme_font_size_override("font_size", 12)
-		hdr.add_theme_color_override("font_color", COL_DIM)
-		inventory_box.add_child(hdr)
-		if items.is_empty():
-			var empty := Label.new()
-			empty.text = "  · empty ·"
-			empty.add_theme_font_size_override("font_size", 10)
-			empty.add_theme_color_override("font_color", Color(0.5, 0.45, 0.35))
-			inventory_box.add_child(empty)
-			continue
-		# Grid of cells under the header.
-		var grid := GridContainer.new()
-		grid.columns = _inv_columns
-		grid.add_theme_constant_override("h_separation", 4)
-		grid.add_theme_constant_override("v_separation", 4)
-		inventory_box.add_child(grid)
-		for item_idx in items.size():
-			grid.add_child(_make_inv_button(seg_idx, item_idx, items[item_idx], items_db, slot_cooldowns))
-	# Keep view pinned at the top — newest segment is index 0 in render.
+		var cached: Dictionary = _seg_grids[i]
+		var prev_count: int = int(cached.get("count", 0))
+		var new_count: int = items.size()
+		if new_count == prev_count:
+			continue  # no change
+		if new_count > prev_count and prev_count > 0:
+			# Growth path — append new cells. Replaces the empty-label
+			# case via the prev_count > 0 guard.
+			var grid: GridContainer = cached.get("grid", null)
+			if grid != null and is_instance_valid(grid):
+				for k in range(prev_count, new_count):
+					grid.add_child(_make_inv_button(i, k, items[k], items_db, slot_cooldowns))
+				cached["count"] = new_count
+				continue
+		# Shrink, or grew from 0, or grid missing — rebuild this segment only.
+		_rebuild_one_segment(i, segments, items_db, slot_cooldowns)
 	if inventory_scroll != null:
 		inventory_scroll.scroll_vertical = 0
+
+func _rebuild_inventory_full(segments: Array, items_db: Dictionary, slot_cooldowns: Dictionary) -> void:
+	for c in inventory_box.get_children():
+		c.queue_free()
+	_seg_grids.clear()
+	# Render newest-first so the freshest pickups are always visible at the
+	# top of the panel without needing to scroll. Older floors and the Base
+	# stash live below. We still iterate segments[] in source order though
+	# so _seg_grids[i] aligns with segments[i].
+	# (Visual newest-first is provided by the caller filling segments
+	# with new floor segments at the END of the array — main.gd does
+	# this and renders them at the TOP via the loop's reverse insert.)
+	# Build a placeholder array first so indices line up.
+	for i in segments.size():
+		_seg_grids.append({})
+	for i in range(segments.size() - 1, -1, -1):
+		_build_segment_into(i, segments, items_db, slot_cooldowns)
+	if inventory_scroll != null:
+		inventory_scroll.scroll_vertical = 0
+
+func _rebuild_one_segment(idx: int, segments: Array, items_db: Dictionary, slot_cooldowns: Dictionary) -> void:
+	# Tear down the cached header + grid for this segment.
+	var cached: Dictionary = _seg_grids[idx]
+	for k in ["header_node", "grid", "empty_label"]:
+		var n: Variant = cached.get(k, null)
+		if n != null and is_instance_valid(n):
+			n.queue_free()
+	_seg_grids[idx] = {}
+	_build_segment_into(idx, segments, items_db, slot_cooldowns)
+
+func _build_segment_into(idx: int, segments: Array, items_db: Dictionary, slot_cooldowns: Dictionary) -> void:
+	var seg: Dictionary = segments[idx]
+	var items: Array = seg.get("items", [])
+	var hdr := Label.new()
+	hdr.text = String(seg.get("header", ""))
+	hdr.add_theme_font_size_override("font_size", 12)
+	hdr.add_theme_color_override("font_color", COL_DIM)
+	inventory_box.add_child(hdr)
+	# Insert the new header at the right position so the visual order
+	# (newest segment first) is preserved when this is a one-segment
+	# rebuild rather than a full clear.
+	var pack: Dictionary = {
+		"header": String(seg.get("header", "")),
+		"header_node": hdr,
+		"grid": null,
+		"empty_label": null,
+		"count": items.size(),
+	}
+	if items.is_empty():
+		var empty := Label.new()
+		empty.text = "  · empty ·"
+		empty.add_theme_font_size_override("font_size", 10)
+		empty.add_theme_color_override("font_color", Color(0.5, 0.45, 0.35))
+		inventory_box.add_child(empty)
+		pack["empty_label"] = empty
+		_seg_grids[idx] = pack
+		return
+	var grid := GridContainer.new()
+	grid.columns = _inv_columns
+	grid.add_theme_constant_override("h_separation", 4)
+	grid.add_theme_constant_override("v_separation", 4)
+	inventory_box.add_child(grid)
+	for item_idx in items.size():
+		grid.add_child(_make_inv_button(idx, item_idx, items[item_idx], items_db, slot_cooldowns))
+	pack["grid"] = grid
+	_seg_grids[idx] = pack
 
 func _make_inv_button(seg_idx: int, item_idx: int, inst: Variant, items_db: Dictionary, slot_cooldowns: Dictionary) -> Control:
 	# The clickable Button is the OUTER node of the cell so its hover region

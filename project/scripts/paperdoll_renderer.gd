@@ -91,7 +91,33 @@ static func build_rig(items_db: Dictionary, equipped: Dictionary) -> Dictionary:
 		sprite.z_index = int(SLOT_Z[slot_id])
 		rig.add_child(sprite)
 		slots[slot_id] = sprite
+		# Mirror bot.gd's rarity tint so the inventory/outpost/menu
+		# paperdolls match the in-game render — a gold legendary
+		# weapon should look gold everywhere it appears.
+		_apply_rarity_modulate(sprite, equipped.get(slot_id, null), items_db)
 	return {"rig": rig, "base": base, "slots": slots}
+
+const _RARITY_TINT_STRENGTH := {
+	"common": 0.0, "uncommon": 0.18, "rare": 0.28, "epic": 0.38, "legendary": 0.50,
+}
+
+static func _apply_rarity_modulate(sprite: Sprite2D, inst: Variant, items_db: Dictionary) -> void:
+	if inst == null or typeof(inst) != TYPE_DICTIONARY:
+		return
+	var base_id: String = String(inst.get("base_id", ""))
+	if base_id == "" or not items_db.has(base_id):
+		return
+	var rarity: String = String(items_db[base_id].get("rarity", "common"))
+	var strength: float = float(_RARITY_TINT_STRENGTH.get(rarity, 0.0))
+	if strength <= 0.0:
+		return
+	var col: Color = UITheme.rarity_color(rarity)
+	sprite.modulate = Color(
+		lerp(1.0, col.r, strength),
+		lerp(1.0, col.g, strength),
+		lerp(1.0, col.b, strength),
+		1.0,
+	)
 
 # Resolve `slot_id` → overlay sprite path, or "" if no equipped item.
 static func _resolve_overlay(slot_id: String, equipped: Dictionary, items_db: Dictionary) -> String:

@@ -159,6 +159,84 @@ Defer — small experiment, ~1 hour, but not blocking the regen fix.
 
 ---
 
+## T2/T3 cliff fill-in — N=50 (later same day)
+
+The "tier-2/3 needs more challenge data" deferred item ran. 50 grinds
+each at lair (T2), swamp (T3), vaults (T4 re-confirm). Same build:
+`steel_longsword level=30` no affixes. Vaults sample partial (8/8 LOSS
+at write time) but consistent with the prior 0/50 finding.
+
+| Tier | Branch  | Wins  | Win% | Avg floor | Avg kills |
+|------|---------|-------|------|-----------|-----------|
+| T1   | dungeon | 46/48 | 96%  | (deep)    | (high)    |
+| T2   | lair    | 42/49 | 86%  | 5.84      | 101.9     |
+| T3   | swamp   | 4/50  | 8%   | 5.26      | 137.3     |
+| T4   | vaults  | 0/8   | 0%   | 4.5       | 110       |
+| T5   | forge   | 0/50  | 0%   | (early)   | —         |
+
+T1 + T5 numbers are from the prior 2026-06-02 pinned re-run.
+
+### 🔴 The cliff is between T2 and T3, not T3→T4
+
+The earlier "smooth out the T3→T4 ramp" hypothesis was directionally
+wrong. The actual shape:
+- **T1→T2**: -10 points (96% → 86%) — mild slope, expected
+- **T2→T3**: -78 points (86% → 8%) — **brick wall**
+- **T3→T4**: -8 points (8% → 0%) — already wall-bound
+- **T4→T5**: 0 points (0% → 0%) — same, both gear-gated
+
+The 2026-06-02 patch (`TIER_SCALE [3.2, 5.0] → [2.7, 4.5]` softening
+T4/T5) was tweaking the wrong tiers. T4/T5 are correctly gear-gated;
+the actual problem is that the T3 jump from `1.4× → 2.0×` enemy
+multiplier is where the sub-30 unequipped bot starts getting one-shot
+by miniboss-class enemies.
+
+Important nuance: at T3 the bot reaches **avg floor 5.26 with 137
+kills** before dying — so it's clearing most of the run, just not the
+boss. At T4 it dies on f3-f5 with 110 kills (boss-floor proximity).
+T3 is "doable until the final stretch"; T4 is "doable until the
+midboss."
+
+### Tuning targets (next beat)
+
+The cleanest patch is to soften the T3 multiplier. Currently
+`TIER_SCALE := [1.0, 1.4, 2.0, 2.7, 4.5]` (already softened from the
+original 3.2/5.0). Proposed:
+
+```
+[1.0, 1.4, 1.8, 2.7, 4.5]
+                ^
+                T3: 2.0 → 1.8 (10% softer)
+```
+
+This mirrors what 1.4× → 1.8× would have been in the original linear
+interpretation (smaller jumps from T2 onward). Validation: re-run
+cliff at swamp T3 N=30 with patched scale. Win rate should rise from
+8% to ~25-40% (a level-30 unequipped bot should sometimes clear T3,
+not always; gear is still the path to consistent T3 wins).
+
+Don't simultaneously tweak T4 — the data shows it's gear-gated, not
+multiplier-gated. Leave it alone.
+
+### What this validates about the prior beat
+
+The 2026-06-02 patches (regen cap, T4/T5 softening) were directionally
+fine but addressed the wrong floor. The +0.38-floor improvement for
+agility5/stamina5 in the validation run was real, but didn't produce
+wins because the bottleneck wasn't where we thought.
+
+The pinned-experiment harness keeps earning its keep — the swamp data
+contradicts the "smooth ramp" theory in a way no random-mix data
+could.
+
+### Human playtest validation pending
+
+User to confirm via human playtest that the T3 wall is what the
+numbers describe (an unequipped level-30 hero reaches f5 then gets
+one-shot by a boss-equivalent enemy). If so, the T3 softening lands.
+
+---
+
 ## Validation pass — N=10 × 4 affixes (post-patch)
 
 After applying both patches, ran 4 affixes (regen, strength, agility,

@@ -29,14 +29,14 @@ const TIER_LABELS := {
 const ITEMS_PATH := "res://data/items.json"
 const ITEM_TILE_DIR := "res://assets/tiles/items/"
 
-const SLOTS := ["weapon", "armor", "helm", "boots", "shield"]
+const SLOTS := ["weapon", "armor", "helm", "boots", "shield", "ring", "amulet"]
 const PAPERDOLL_RIGHT_COLUMN := ["helm", "amulet", "cloak", "gloves", "belt"]
-const PAPERDOLL_BOTTOM_ROW := ["weapon", "armor", "shield", "ring1", "ring2", "boots"]
+const PAPERDOLL_BOTTOM_ROW := ["weapon", "armor", "shield", "ring", "boots"]
 const SLOT_TOOLTIPS := {
 	"weapon": "Weapon", "armor": "Body Armor", "helm": "Helm",
 	"shield": "Shield", "boots": "Boots",
 	"amulet": "Amulet", "cloak": "Cloak", "gloves": "Gloves",
-	"belt": "Belt", "ring1": "Ring", "ring2": "Ring",
+	"belt": "Belt", "ring": "Ring",
 }
 const PAPERDOLL_BASE_PX := 32
 
@@ -644,7 +644,7 @@ func _equip(inv_index: int) -> void:
 	var base_id: String = String(inst.get("base_id", ""))
 	if not items_db.has(base_id):
 		return
-	var slot: String = String(items_db[base_id].slot)
+	var slot: String = _resolve_equip_slot(String(items_db[base_id].slot))
 	var current: Variant = state.equipped.get(slot, null)
 	inv.remove_at(inv_index)
 	if current != null and typeof(current) == TYPE_DICTIONARY:
@@ -652,6 +652,12 @@ func _equip(inv_index: int) -> void:
 	state.equipped[slot] = inst
 	SaveState.save_state(state)
 	_render()
+
+# items.json declares slot=="ring"; we collapsed to a single ring slot
+# (amulet covers the other trinket spot). Older saves with ring1/ring2
+# are migrated in save_state._migrate.
+func _resolve_equip_slot(item_slot: String) -> String:
+	return item_slot
 
 func _unequip(slot: String) -> void:
 	var current: Variant = state.equipped.get(slot, null)

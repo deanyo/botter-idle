@@ -25,7 +25,33 @@ static func load_state() -> Dictionary:
 	for k in _default().keys():
 		if not state.has(k):
 			state[k] = _default()[k]
+	_migrate(state)
 	return state
+
+# In-place migrations applied on load. Idempotent — running twice is a no-op.
+static func _migrate(state: Dictionary) -> void:
+	# Ring collapse (2026-06-02): old saves had ring1/ring2 slots; new layout
+	# uses one `ring` slot. Promote ring1 (or ring2 if ring1 was empty); push
+	# the displaced ring2 item, if any, to the inventory so it isn't lost.
+	var equipped: Dictionary = state.get("equipped", {})
+	if not equipped.has("ring") or equipped.get("ring", null) == null:
+		var promote: Variant = equipped.get("ring1", null)
+		if promote == null:
+			promote = equipped.get("ring2", null)
+			equipped["ring2"] = null
+		if promote != null:
+			equipped["ring"] = promote
+	# If both old slots were full, ring1 went into the new `ring` slot above
+	# and ring2's item still lives at equipped.ring2 — push it to inventory
+	# rather than silently drop it.
+	var leftover: Variant = equipped.get("ring2", null)
+	if leftover != null and typeof(leftover) == TYPE_DICTIONARY:
+		var inv: Array = state.get("inventory", [])
+		inv.append(leftover)
+		state["inventory"] = inv
+	equipped.erase("ring1")
+	equipped.erase("ring2")
+	state["equipped"] = equipped
 
 static func save_state(state: Dictionary) -> void:
 	# Stamp the save with the current wall time so launch can compute
@@ -61,10 +87,12 @@ static func _default() -> Dictionary:
 			"helm": null,
 			"boots": null,
 			"shield": null,
-			# Jewellery slots reserved — manifests authored under tools/items_*_manifest.json
-			# but not yet wired to combat/paperdoll. Reading code defaults to null.
-			"ring1": null,
-			"ring2": null,
+			# DCSS has two ring slots; we collapsed to one ring + one amulet
+			# (amulet fills the trinket role) — clearer UX, every slot is
+			# filled by something visually distinct, and players can always
+			# equip a fresh pickup. Old saves with `ring2` still load (load_state
+			# preserves unknown keys) but ring2 is no longer surfaced anywhere.
+			"ring": null,
 			"amulet": null,
 		},
 		"runs_completed": 0,

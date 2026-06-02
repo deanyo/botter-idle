@@ -24,6 +24,18 @@ octa rooms, chequerboard, river/lake, Worley layouts) that we should port
 directly. Same with monsters and items — the data is already balanced. **The
 actual creative work is the bot + idle loop**, not yet another procgen.
 
+**Rule of thumb — lean on DCSS for design decisions, don't reinvent the
+wheel.** Whenever a question comes up about how something *should* feel or
+work (loot rarity bands, branch progression, status-effect mechanics,
+monster aggro shape, vault density, etc.), check what DCSS does first
+(`dcss-source/crawl-ref/source/`) before designing from scratch. DCSS has
+20+ years of playtest tuning baked in — its answers are usually right.
+Then iterate and embellish for the idle-game frame: change number
+ceilings, swap permadeath for retreats, add prestige curves, layer
+modifiers. **Read for shape, not for code.** The GPLv2+ rule (never copy
+code) still applies — read, write a plain-English description, rewrite
+in GDScript. See "HOW TO PORT DCSS CODE" below.
+
 Player fantasy: **being an MMO botter / following someone's autoplay run.**
 Configure your bot, deploy it, watch it explore, gear it better, redeploy.
 Background-friendly. Mobile-first.

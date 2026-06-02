@@ -31,6 +31,17 @@ func _init(r: Node2D, s: Sprite2D = null) -> void:
 	base_rotation = r.rotation
 	base_modulate = r.modulate
 
+# Called by Actor when the rig's "resting" pose changes — e.g. when
+# `_facing_x` flips or `apply_visual_scale` runs. Without this, the
+# captured base_scale stays stale and every attack_lunge snaps the
+# rig back to its original (typically right-facing) pose, undoing
+# the flip mid-fight.
+func update_base_scale(new_scale: Vector2) -> void:
+	base_scale = new_scale
+
+func update_base_position(new_position: Vector2) -> void:
+	base_position = new_position
+
 func _reset() -> void:
 	if transient and transient.is_valid():
 		transient.kill()

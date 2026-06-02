@@ -6,8 +6,12 @@ const OUTPOST_SCENE := preload("res://scenes/outpost.tscn")
 const MAIN_MENU_SCENE := preload("res://scenes/main_menu.tscn")
 const VIDEO_OPTIONS_SCENE := preload("res://scenes/video_options.tscn")
 const VS := preload("res://scripts/video_settings.gd")
+const _PauseMenu := preload("res://scripts/pause_menu.gd")
 
 var current_screen: Node = null
+# Universal Esc-key pause menu. Created lazily after auto-grind/debug
+# detection so headless harness modes don't paint a UI.
+var pause_menu: Node = null  # PauseMenu — typed Node to avoid class-resolve order pain
 var auto_grind: bool = false
 var auto_grind_speed: float = 16.0
 var auto_grind_max_runs: int = 999
@@ -126,7 +130,33 @@ func _ready() -> void:
 		# Skipped in grind/debug-jump because those use the debug save and
 		# the timestamp diff would be misleading.
 		_pending_offline_summary = _apply_offline_progress()
+		# Instantiate the universal pause menu only for live play. Auto-
+		# grind would freeze on its first Esc; screenshot mode would
+		# capture the dimmed pause overlay over the dungeon.
+		_install_pause_menu()
 		_show_main_menu()
+
+func _install_pause_menu() -> void:
+	pause_menu = _PauseMenu.new()
+	add_child(pause_menu)
+	pause_menu.resume_requested.connect(func(): pass)  # no-op
+	pause_menu.video_settings_requested.connect(func(): pass)  # handled in pause_menu
+	pause_menu.main_menu_requested.connect(_pause_to_main_menu)
+	pause_menu.abandon_requested.connect(_pause_abandon_run)
+	pause_menu.quit_requested.connect(func(): get_tree().quit())
+
+# Returning to the main menu mid-run discards the active dungeon. The
+# save state is untouched (no run_ended emit), so loot picked up but
+# not banked is lost. Mirrors Quit-then-relaunch behavior — clean.
+func _pause_to_main_menu() -> void:
+	_show_main_menu()
+
+# Abandoning a run = treat it as a loss. Calls dungeon._end_run(false)
+# so loot, retreats, salvage all flow through normal failure handling
+# and the run report appears.
+func _pause_abandon_run() -> void:
+	if current_screen and current_screen.has_method("_end_run"):
+		current_screen._end_run(false)
 
 var _pending_offline_summary: Dictionary = {}
 
@@ -312,6 +342,19 @@ func _swap(scene: Node) -> void:
 		current_screen.queue_free()
 	current_screen = scene
 	add_child(scene)
+	# Tell the pause menu what kind of screen we're on so it can show
+	# context-appropriate buttons (Abandon Run only in dungeon, etc).
+	if pause_menu != null and is_instance_valid(pause_menu):
+		var ctx: String = ""
+		if scene.scene_file_path == "res://scenes/dungeon.tscn":
+			ctx = "dungeon"
+		elif scene.scene_file_path == "res://scenes/main_menu.tscn":
+			ctx = "main_menu"
+		elif scene.scene_file_path == "res://scenes/outpost.tscn":
+			ctx = "outpost"
+		elif scene.scene_file_path == "res://scenes/run_report.tscn":
+			ctx = "run_report"
+		pause_menu.set_context(ctx)
 
 func _log(msg: String) -> void:
 	GrindLog.log_line("[grind] " + msg)
