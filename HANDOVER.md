@@ -4,7 +4,42 @@ Point-in-time snapshot of what's actually shipping. Updated as we go. The
 durable rules and process live in `CLAUDE.md`; the roadmap and open work
 items live in `TODO.md`.
 
-Last refresh: 2026-05-21 (playthrough harness + color grading + experiment chain).
+Last refresh: 2026-06-02 (tuning beat — regen + tier-scale rebalance).
+
+## Tuning beat — 2026-06-02
+
+First data-driven tuning pass. The pinned-experiment re-run (220 grinds,
+3.5h wall-clock) produced unambiguous numbers across 7 affix-vs-affix
+permutations and 3 tier cliff investigations. Two changes shipped:
+
+### 1. Regen affix capped at 3 HP/sec
+
+`data/affixes.json` regen tiers `[1, 2, 4, 6, 10]` → `[1, 2, 3, 3, 3]`.
+
+Pinned-vaults-T4 matrix showed regen5 median HP-lost = 0 (next-best
+affix at 84-114). The +10 HP/sec at legendary exceeded the chip-damage
+rate of T4 encounters, making it a one-affix free pass on attrition.
+Cap at 3 HP/sec keeps regen as a real defensive option (heals between
+fights, supplements fountains) without trivializing combat.
+
+### 2. TIER_SCALE softened at T4-T5
+
+`scripts/constants.gd::TIER_SCALE` `[1.0, 1.4, 2.0, 3.2, 5.0]` →
+`[1.0, 1.4, 2.0, 2.7, 4.5]`.
+
+Pinned cliff investigations showed 96% wins at T1 vs 0% at both T4 and
+T5. The 2.0→3.2 jump at T3→T4 (+60%) was the brick wall — no in-between
+difficulty. Softened to T3→T4 +35%, T4→T5 +67%. Goal: T4 should be
+winnable with affixes (~10-20% win rate on un-armored bots), T5 still
+requires gear progression.
+
+### Validation pending
+
+40-grind smoke test running (4 affixes × N=10 at vaults). Expectations:
+- regen5 median HP-lost rises from 0 to 30+
+- some variant lands 1-3 wins at T4 (was 0/20 across all 6 affixes pre-patch)
+
+See `docs/balance-findings-2026-06-02.md` for the full analysis.
 
 ## Playthrough harness — 2026-05-21
 

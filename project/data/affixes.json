@@ -5,7 +5,7 @@
     { "id": "strength", "name": "Strength", "applies_to": ["any"], "stat": "atk",            "tiers": [2, 4, 7, 12, 18] },
     { "id": "stamina",  "name": "Stamina",  "applies_to": ["any"], "stat": "hp",             "tiers": [12, 22, 38, 60, 90] },
     { "id": "agility",  "name": "Agility",  "applies_to": ["any"], "stat": "def",            "tiers": [1, 2, 4, 7, 11] },
-    { "id": "regen",    "name": "Regen",    "applies_to": ["any"], "stat": "hp_regen",       "tiers": [1, 2, 4, 6, 10] },
+    { "id": "regen",    "name": "Regen",    "applies_to": ["any"], "stat": "hp_regen",       "tiers": [1, 2, 3, 3, 3] },
     { "id": "crit",     "name": "Crit",     "applies_to": ["any"], "stat": "crit_chance",    "tiers": [3, 6, 10, 15, 22] },
     { "id": "haste",    "name": "Haste",    "applies_to": ["any"], "stat": "atk_speed_pct",  "tiers": [4, 8, 14, 22, 32] }
   ],

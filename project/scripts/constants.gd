@@ -27,8 +27,13 @@ const BOSS_FLOOR := 6
 const MINIBOSS_FLOORS := [3]
 
 # Per-tier enemy stat multiplier. Indexed by branch tier - 1. Tier 1
-# (Dungeon/Mines) is the base; Tier 5 (Forge/Glacier/Zot/etc.) hits 5×
-# baseline so the same enemy IDs scale across the whole tree without
-# bespoke per-tier enemy data. Mirrors the doc's gameplay-loop-plan.md.
-const TIER_SCALE := [1.0, 1.4, 2.0, 3.2, 5.0]
+# (Dungeon/Mines) is the base; Tier 5 hits ~4.5× baseline.
+#
+# 2026-06-02 tuning: was [1.0, 1.4, 2.0, 3.2, 5.0]. Pinned-experiment
+# data showed level-30 unequipped bots at 96% wins on T1 and 0% wins on
+# T4-T5 — the 2.0→3.2 jump (T3→T4, +60%) was the brick wall. Softened
+# to [1.0, 1.4, 2.0, 2.7, 4.5] (T3→T4 now +35%, T4→T5 now +67%). Goal:
+# T4 winnable with affixes, T5 still requires gear.
+# See docs/balance-findings-2026-06-02.md for the full rationale.
+const TIER_SCALE := [1.0, 1.4, 2.0, 2.7, 4.5]
 
