@@ -33,11 +33,28 @@ difficulty. Softened to T3→T4 +35%, T4→T5 +67%. Goal: T4 should be
 winnable with affixes (~10-20% win rate on un-armored bots), T5 still
 requires gear progression.
 
-### Validation pending
+### Validation outcome
 
-40-grind smoke test running (4 affixes × N=10 at vaults). Expectations:
-- regen5 median HP-lost rises from 0 to 30+
-- some variant lands 1-3 wins at T4 (was 0/20 across all 6 affixes pre-patch)
+40-grind smoke test ran post-patch. Mixed result:
+- ✅ **TIER_SCALE softening worked partially.** Avg floor reached ticked
+  up across affixes (regen 4.60→5.10, stamina 4.50→4.90), runs are
+  ~30% longer (60s→80s), strength5 HP-lost dropped 148→92.
+- ❌ **Regen5 median HP-lost still 0.** The 10→3 HP/sec cap reduced
+  stacking but didn't dethrone single-affix dominance. Implication:
+  vaults T4 chip damage is ~1 HP/sec, not 3-5 as assumed.
+- ❌ **No wins at T4 for any affix.** Predicted 1-3 wins didn't happen.
+  T4 boss difficulty is the real bottleneck, not just enemy scaling.
+
+Per "don't tune-spike now, iterate later" guidance, both patches stay
+shipped — they're directionally correct improvements over the original
+values. Carrying forward:
+
+- **Regen mechanic redesign** as a future beat (scale with missing HP,
+  or disable during combat ticks). Tier-value tweaks alone won't fix
+  single-affix dominance.
+- **T4 boss difficulty** is the real wall. Either gear is required
+  (likely intended) or boss-tier multiplier needs separate scaling
+  from regular enemy multiplier.
 
 See `docs/balance-findings-2026-06-02.md` for the full analysis.
 

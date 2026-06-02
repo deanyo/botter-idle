@@ -5,6 +5,28 @@ the durable rules in `CLAUDE.md`. Update this file when committing.
 
 ---
 
+## Future balance beats (deferred per 2026-06-02 validation)
+
+These are beyond tier-value tweaks — they require design work, not just
+JSON edits. Surfaced from the validation experiment showing the 2026-06-02
+patches were directionally right but insufficient.
+
+- ⬜ **Regen mechanic redesign.** Capping regen tiers [10→3] reduced
+  stacking but didn't dethrone single-affix dominance at vaults T4.
+  Implication: vaults T4 chip damage is ~1 HP/sec, not 3-5 as assumed.
+  Tier-value tweaks won't fix this. Two design options:
+  - Path-of-Exile leech model — fast when wounded, slow when full HP
+  - Disable regen during combat ticks (heals between fights only)
+  Both bigger changes than this beat. Pair with the flavor-tag
+  mechanic wiring (so vampiric/regen become competitive defensively).
+
+- ⬜ **T4 boss difficulty separate scaling.** Pinned cliff showed 0%
+  wins at vaults T4 even after softening enemy multiplier 3.2x → 2.7x.
+  The boss floor is the bottleneck, not regular enemies. Add
+  `BOSS_TIER_SCALE` separate from `TIER_SCALE` so we can soften bosses
+  without nerfing minibosses. Or accept that gear is required for T4
+  and surface that progression gate clearly.
+
 ## Up next (planned 2026-05-21)
 
 After tier-pinned experiment data lands and a balance tuning beat is shipped:

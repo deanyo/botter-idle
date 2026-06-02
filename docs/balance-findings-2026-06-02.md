@@ -159,6 +159,64 @@ Defer — small experiment, ~1 hour, but not blocking the regen fix.
 
 ---
 
+## Validation pass — N=10 × 4 affixes (post-patch)
+
+After applying both patches, ran 4 affixes (regen, strength, agility,
+stamina) at vaults T4 with N=10 to confirm the shape changed.
+
+```
+affix     wins/n  avg_floor  med_hp_lost  avg_hp_lost   change vs pre-patch
+regen5    0/10    5.10        0           21            HP-lost flat (still 0)
+strength5 0/10    4.60        92          100           HP-lost 148→92
+agility5  0/10    5.00        80          130           HP-lost 83→80
+stamina5  0/10    4.90        76          131           HP-lost 84→76
+```
+
+**TIER_SCALE softening worked partially.** Avg floor reached ticked up
+across the board (regen 4.60→5.10, stamina 4.50→4.90). Bot survival is
+~10% deeper into the run, run times longer (60s→80s), enemies dying
+faster from strength5. The softening is doing something.
+
+**Win rate still 0% at T4.** Predicted "1-3 wins at T4 with affixes"
+didn't happen. T4 boss-floor difficulty is the bottleneck, and softening
+T4 enemy stats by 16% (3.2x → 2.7x) doesn't bridge the gap on its own.
+Either gear is required (likely the right answer per the design doc)
+or a deeper tier-scale rework is needed.
+
+**Regen5 median HP-lost still 0.** This is the surprise. The cap
+[1,2,4,6,10] → [1,2,3,3,3] reduced legendary regen by 70%, but the bot
+still ends most runs unscathed.
+
+The implication: the chip-damage rate at vaults T4 is lower than the
+~3-5 HP/sec assumed in the rationale section. Probably closer to
+1 HP/sec across the typical encounter density, since:
+- 3 HP/sec × 80s avg run = 240 HP healed total
+- Average HP-lost across other affixes is 76-130
+- So 3 HP/sec still exceeds incoming damage rate
+
+**Decision: don't iterate on regen further this beat.** The cap is
+already a 70% reduction; dropping it further (e.g. all tiers ≤ 2)
+risks making low-tier regen feel useless. The right fix is probably
+either:
+- Make regen scale with missing HP (Path of Exile leech model — fast
+  when wounded, slow when full)
+- Disable regen during combat ticks (heals between fights only)
+
+Both are bigger design changes than tier-value tweaks. Carrying as a
+follow-up beat. The tier values are still better than [1,2,4,6,10] —
+the cap reduces stacking with stamina/agility, just doesn't dethrone
+single-affix dominance at T4.
+
+### What survived the validation
+
+- **TIER_SCALE patch** is doing what it was meant to (deeper survival,
+  longer runs).
+- **Regen patch** is a partial fix — reduces stacking value, doesn't
+  fix the dominance. Acceptable as baseline; revisit when wiring real
+  flavor-tag mechanics that compete defensively.
+
+Per the "iterate later, don't tune-spike now" guidance, both stay shipped.
+
 ## What this run validated about the pipeline
 
 - Branch pinning works correctly. Cliff-dungeon at 96% (was 4% under
