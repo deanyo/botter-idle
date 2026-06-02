@@ -56,6 +56,71 @@ PAPERDOLL_DIRS = {
     "boots":  "boots",
 }
 
+# DCSS source has SEPARATE pre-aligned paperdoll sprites under
+# rltiles/player/{hand1, hand2, body, head, boots} — different files
+# from the inventory tiles (rltiles/item/...). Each is hand-drawn with
+# the grip/anchor at the figure's hand/head/etc position.
+#
+# Mirrors DCSS tilepick-p.cc:_tileidx_player_weapon — per-base-type
+# lookup of inventory_subtype → paperdoll_tile_name. We map each of our
+# base_types to the appropriate DCSS pre-aligned sprite. Same paperdoll
+# tile is reused across all items of a base_type (every dagger looks
+# the same when held); this matches DCSS's behavior.
+#
+# Entry: base_type → (dcss_subdir, dcss_filename). Subdirs are relative
+# to dcss-source/crawl-ref/source/rltiles/player/.
+PAPERDOLL_BY_BASE_TYPE = {
+    # --- Weapons → player/hand1/ ---
+    "dagger":      ("hand1", "dagger_slant.png"),
+    "knife":       ("hand1", "knife.png"),
+    "quick_blade": ("hand1", "dagger.png"),  # DCSS WPN_QUICK_BLADE → DAGGER tile
+    "short_sword": ("hand1", "short_sword_slant.png"),
+    "rapier":      ("hand1", "rapier.png"),
+    "sabre":       ("hand1", "falchion.png"),  # similar curve, no dedicated DCSS tile
+    "falchion":    ("hand1", "falchion.png"),
+    "long_sword":  ("hand1", "long_sword_slant.png"),
+    "scimitar":    ("hand1", "scimitar.png"),
+    "katana":      ("hand1", "katana_slant.png"),
+    "demon_blade": ("hand1", "randart_demon_blade.png"),
+
+    # --- Shields → player/hand2/ ---
+    "buckler":      ("hand2", "buckler_round.png"),
+    "round_shield": ("hand2", "buckler_round.png"),  # same fallback
+    "kite_shield":  ("hand2", "kite_shield_kite1.png"),
+    "tower_shield": ("hand2", "tower_shield_gold.png"),
+
+    # --- Body armor → player/body/ ---
+    "robe":          ("body", "robe_black_gold.png"),
+    "leather":       ("body", "leather_armour.png"),
+    "studded":       ("body", "leather_armour2.png"),  # closest variant
+    "ring_mail":     ("body", "chainmail.png"),  # DCSS lumps mail variants
+    "scale_mail":    ("body", "scalemail.png"),
+    "chain_mail":    ("body", "chainmail.png"),
+    "splint_mail":   ("body", "half_plate.png"),  # heavy plate variant
+    "banded_mail":   ("body", "half_plate.png"),
+    "plate":         ("body", "bplate_metal1.png"),
+    "crystal_plate": ("body", "crystal_plate.png"),
+    "troll_leather": ("body", "deep_troll_leather.png"),
+    "dragon_scales": ("body", "dragonarm_brown.png"),
+
+    # --- Helms → player/head/ ---
+    "skullcap":   ("head", "cap_black1.png"),
+    "cap":        ("head", "cap_blue.png"),
+    "hood":       ("head", "hood_assassin.png"),
+    "wizard_hat": ("head", "cone_blue.png"),  # pointy mage hat
+    "helmet":     ("head", "fhelm_gray3.png"),
+    "great_helm": ("head", "fhelm_horn2.png"),
+    "crown":      ("head", "crown_gold1.png"),
+
+    # --- Boots → player/boots/ ---
+    "sandals":       ("boots", "slippers.png"),
+    "shoes":         ("boots", "short_brown.png"),
+    "leather_boots": ("boots", "middle_brown.png"),
+    "iron_boots":    ("boots", "long_white.png"),
+    "greaves":       ("boots", "long_white.png"),
+    "treads":        ("boots", "seven_league_boots.png"),
+}
+
 ALL_MANIFESTS = [
     "items_manifest.json",          # 1H swords
     "items_helms_manifest.json",
@@ -198,18 +263,39 @@ def main():
 
     # Plan sprite copies.
     copy_plan = []  # [(src, dst, reason)]
+    # DCSS paperdoll source root for the per-base-type lookup.
+    DCSS_RLTILES_PLAYER = REPO_ROOT / "dcss-source" / "crawl-ref" / "source" / "rltiles" / "player"
     for it, slot, tile in raw:
         stem = stem_for(tile)
         src = find_source(tile)
         if src is None:
             print(f"  MISSING SPRITE: {it['id']} <- {tile}", file=sys.stderr)
             continue
-        # Inventory/loot icon copy.
+        # Inventory/loot icon copy — comes from the DCSS item/ tree
+        # (where the standalone, non-figure-aligned art lives).
         copy_plan.append((src, ASSETS_ITEMS / stem, "items"))
-        # Paperdoll overlay copy (only for slots with a body layer).
+        # Paperdoll overlay copy. Two paths:
+        #   A. Item's base_type has a DCSS paperdoll-tree mapping
+        #      (PAPERDOLL_BY_BASE_TYPE) — pull the pre-aligned sprite.
+        #      Multiple items of same base_type share the paperdoll
+        #      file (every dagger looks the same when held). Mirrors
+        #      DCSS tilepick-p.cc behavior.
+        #   B. Fallback: copy the inventory tile (ugly but at least
+        #      visible — used to be the only path).
         sub = PAPERDOLL_DIRS.get(slot)
         if sub:
-            copy_plan.append((src, ASSETS_PLAYER / sub / stem, f"player/{sub}"))
+            base_type = it.get("base_type", "")
+            mapping = PAPERDOLL_BY_BASE_TYPE.get(base_type)
+            paperdoll_src = None
+            if mapping:
+                dcss_dir, dcss_fname = mapping
+                cand = DCSS_RLTILES_PLAYER / dcss_dir / dcss_fname
+                if cand.exists() and cand.stat().st_size > 200:
+                    paperdoll_src = cand
+            if paperdoll_src is None:
+                paperdoll_src = src  # fall back to inventory sprite
+            copy_plan.append((paperdoll_src, ASSETS_PLAYER / sub / stem,
+                              f"player/{sub}"))
 
     # Dedup by destination (multiple items can reference the same sprite).
     seen = set()

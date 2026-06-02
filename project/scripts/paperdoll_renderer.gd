@@ -20,10 +20,24 @@ const SLOT_DIRS := {
 	"shield": "shield/",
 	"boots":  "boots/",
 }
-# Anatomical offsets from rig origin (the 32×32 player base center). The
-# weapon sits in the right hand (slightly down-right), shield in the left.
-# Other slots align to base center because the source art was authored that
-# way.
+# Anatomical offsets from rig origin. The weapon sits in the right
+# hand, shield in the left. Other slots align to base center.
+#
+# 2026-06-02 paperdoll fix: DCSS source confirms paperdoll renders with
+# zero per-item offset (tiledoll.cc::pack_doll_buf line 991: ofs_x = 0,
+# ofs_y = 0). DCSS solves the "different sword sizes look right" problem
+# by maintaining a SEPARATE pre-aligned sprite tree: dcss-source/.../
+# rltiles/player/{hand1, hand2, body, head, boots} — each has the gear
+# drawn with the grip/anchor at the canvas position the player figure's
+# hand/head/etc will be. The inventory sprites (item/weapon/, etc) are
+# DIFFERENT files, drawn standalone for the loot drop / inventory icon.
+#
+# Our prior bug: sync_items.py was copying the inventory-tree sprites
+# into BOTH project/assets/tiles/items/ AND project/assets/tiles/player/
+# weapons/. Those are the standalone art, not the hand-aligned art —
+# hence the misplaced/silly look. Fix: sync_items.py now pulls
+# paperdoll overlays from the player/hand1/ tree where available, and
+# falls back to the inventory tile only for missing entries.
 const SLOT_OFFSETS := {
 	"weapon": Vector2(4, 2),
 	"shield": Vector2(-5, 2),
