@@ -38,9 +38,15 @@ const SLOT_DIRS := {
 # hence the misplaced/silly look. Fix: sync_items.py now pulls
 # paperdoll overlays from the player/hand1/ tree where available, and
 # falls back to the inventory tile only for missing entries.
+# DCSS hand1/hand2/body/head/boots sprites are pre-aligned to a 32×32
+# canvas where the grip/anchor sits at the canvas position the player
+# base figure's hand/head/etc occupies. DCSS pack_doll_buf draws each
+# part at ofs_x=ofs_y=0 (no per-tile offset). So all our paperdoll
+# overlays should also render at (0,0) relative to the rig — they're
+# already pre-aligned by the DCSS artists.
 const SLOT_OFFSETS := {
-	"weapon": Vector2(4, 2),
-	"shield": Vector2(-5, 2),
+	"weapon": Vector2(0, 0),
+	"shield": Vector2(0, 0),
 	"helm":   Vector2(0, 0),
 	"armor":  Vector2(0, 0),
 	"boots":  Vector2(0, 0),

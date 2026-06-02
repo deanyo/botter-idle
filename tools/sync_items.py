@@ -81,32 +81,37 @@ PAPERDOLL_BY_BASE_TYPE = {
     "long_sword":  ("hand1", "long_sword_slant.png"),
     "scimitar":    ("hand1", "scimitar.png"),
     "katana":      ("hand1", "katana_slant.png"),
-    "demon_blade": ("hand1", "randart_demon_blade.png"),
+    "demon_blade": ("hand1", "demonblade.png"),  # DCSS canonical (per tilepick-p.cc)
 
     # --- Shields → player/hand2/ ---
     "buckler":      ("hand2", "buckler_round.png"),
     "round_shield": ("hand2", "buckler_round.png"),  # same fallback
-    "kite_shield":  ("hand2", "kite_shield_kite1.png"),
-    "tower_shield": ("hand2", "tower_shield_gold.png"),
+    "kite_shield":  ("hand2", "kite_shield_kite2.png"),
+    # tower_shield_gold is drawn sideways in DCSS (horizontal tear-drop). Use
+    # the long_red variant which is properly upright.
+    "tower_shield": ("hand2", "tower_shield_long_red.png"),
 
     # --- Body armor → player/body/ ---
+    # We deviate from DCSS canonical (tilepick-p.cc) body mappings here
+    # because DCSS uses many full-figure body sprites (leather_armour,
+    # ringmail, troll_leather, dragonarm_*) — they expect the body to
+    # REPLACE the base figure. We keep the spriggan base visible and
+    # layer overlays, so we need TORSO-ONLY body sprites.
+    #
+    # Each entry below visually verified torso-only — no head, arms, or
+    # legs in the sprite.
     "robe":          ("body", "robe_black_gold.png"),
-    # NOTE: many DCSS body sprites are FULL-FIGURE replacements (head+torso+legs)
-    # rather than torso-only overlays — leather_armour.png shows a complete
-    # warrior figure that visually replaces the player base. We need
-    # torso-only sprites so they layer correctly over our spriggan_female
-    # base. jacket2/jacket_stud are torso-only equivalents.
     "leather":       ("body", "jacket2.png"),
     "studded":       ("body", "jacket_stud.png"),
-    "ring_mail":     ("body", "chainmail.png"),  # DCSS lumps mail variants
+    "ring_mail":     ("body", "chainmail.png"),
     "scale_mail":    ("body", "scalemail.png"),
     "chain_mail":    ("body", "chainmail.png"),
-    "splint_mail":   ("body", "half_plate.png"),  # heavy plate variant
+    "splint_mail":   ("body", "half_plate.png"),
     "banded_mail":   ("body", "half_plate.png"),
     "plate":         ("body", "bplate_metal1.png"),
-    "crystal_plate": ("body", "crystal_plate.png"),
+    "crystal_plate": ("body", "half_plate2.png"),
     "troll_leather": ("body", "deep_troll_leather.png"),
-    "dragon_scales": ("body", "dragonarm_brown.png"),
+    "dragon_scales": ("body", "shoulder_pad.png"),
 
     # --- Helms → player/head/ ---
     "skullcap":   ("head", "cap_black1.png"),
@@ -295,7 +300,11 @@ def main():
             if mapping:
                 dcss_dir, dcss_fname = mapping
                 cand = DCSS_RLTILES_PLAYER / dcss_dir / dcss_fname
-                if cand.exists() and cand.stat().st_size > 200:
+                # Tiny size filter — skip empty 0-byte or zero-content PNG
+                # placeholders, but don't filter out small DCSS tiles.
+                # cap_blue.png is 156 bytes; long_white.png 193; crown_gold1
+                # 134 — those are tiny but valid hand-aligned glyphs.
+                if cand.exists() and cand.stat().st_size > 80:
                     paperdoll_src = cand
             if paperdoll_src is None:
                 paperdoll_src = src  # fall back to inventory sprite
