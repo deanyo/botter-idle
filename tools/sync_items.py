@@ -91,8 +91,13 @@ PAPERDOLL_BY_BASE_TYPE = {
 
     # --- Body armor → player/body/ ---
     "robe":          ("body", "robe_black_gold.png"),
-    "leather":       ("body", "leather_armour.png"),
-    "studded":       ("body", "leather_armour2.png"),  # closest variant
+    # NOTE: many DCSS body sprites are FULL-FIGURE replacements (head+torso+legs)
+    # rather than torso-only overlays — leather_armour.png shows a complete
+    # warrior figure that visually replaces the player base. We need
+    # torso-only sprites so they layer correctly over our spriggan_female
+    # base. jacket2/jacket_stud are torso-only equivalents.
+    "leather":       ("body", "jacket2.png"),
+    "studded":       ("body", "jacket_stud.png"),
     "ring_mail":     ("body", "chainmail.png"),  # DCSS lumps mail variants
     "scale_mail":    ("body", "scalemail.png"),
     "chain_mail":    ("body", "chainmail.png"),
