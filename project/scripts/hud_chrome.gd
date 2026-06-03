@@ -51,7 +51,7 @@ const COL_DIM := Color(0.7, 0.6, 0.4)
 const COL_HP := Color(0.55, 0.95, 0.5)
 const COL_HP_LOW := Color(1.0, 0.45, 0.45)
 const COL_GOLD := Color(1.0, 0.85, 0.3)
-const COL_PANEL := Color(0.04, 0.04, 0.06, 0.85)
+const COL_PANEL := Color(0.0, 0.0, 0.0, 0.85)
 const COL_PANEL_BORDER := Color(0.35, 0.3, 0.18, 0.65)
 
 # Stats panel labels
@@ -850,7 +850,10 @@ func update_minimap(grid: Array, bot_cell: Vector2i, stairs: Vector2i, fog_visib
 		_minimap_image = Image.create(w, h, false, Image.FORMAT_RGBA8)
 		_last_grid_dims = dims
 	# Re-paint each frame is cheap at 80x80.
-	_minimap_image.fill(Color(0.05, 0.05, 0.07, 1))
+	# Pure transparent backdrop so OLED panels don't burn the minimap
+	# rectangle's background; the surrounding chrome's own COL_PANEL
+	# (also pure black now) gives the minimap visual containment.
+	_minimap_image.fill(Color(0, 0, 0, 0))
 	var has_fog: bool = not fog_visible_cells.is_empty()
 	for y in h:
 		for x in w:

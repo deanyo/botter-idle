@@ -4,8 +4,60 @@ Point-in-time snapshot of what's actually shipping. Updated as we go. The
 durable rules and process live in `CLAUDE.md`; the roadmap and open work
 items live in `TODO.md`.
 
-Last refresh: 2026-06-03 (horde density + pack-clustered spawns +
-tier outlines).
+Last refresh: 2026-06-03 (UI overhaul — OLED chrome, item-card
+branch picker, inventory filters/favorites, shop screen).
+
+## UI overhaul — 2026-06-03
+
+Big chrome + inventory pass driven by a playtest report.
+
+**OLED chrome.** Replaced the faint blue-tint backgrounds
+(`Color(0.05, 0.05, 0.07)`, `Color(0.04, 0.04, 0.06)`) with pure
+black across `ui_theme.gd`, `outpost.gd`, `main_menu.gd`,
+`hud_chrome.gd`, `pause_menu.gd`, `video_options.tscn`,
+`run_report.tscn`. Minimap backdrop is now fully transparent — its
+containing panel's pure-black bg gives the visual frame.
+
+**Branch picker as item-style cards.** Old picker was 96px tall
+with cramped horizontal buttons. New layout: 220px tall, each
+branch is a 168×168 vertical card with biome name (rarity-colored),
+tier label, modifier list visible without hover, CR footer, and a
+rarity-tinted halo (T1 white → T5 red). Tier rarity mapping:
+T1 common, T2 uncommon, T3 rare, T4 epic, T5 legendary. Halo
+strength scales with tier so high-tier branches feel "loaded."
+Locked branches dim to 55% modulate. See
+`outpost.gd::_make_branch_card`.
+
+**Inventory filter chips** (`outpost.gd::_build_filter_chips`).
+Slot dropdown (All / Weapon / Armor / Helm / Shield / Boots / Ring /
+Amulet) + rarity dropdown (All / Uncommon+ / Rare+ / Epic+ /
+Legendary) + "★ Favorites only" toggle. Re-renders the inventory
+grid on change.
+
+**Favorite/lock items.** Right-click an inventory cell to toggle
+the favorite flag (`inst.favorite = true`). A gold star icon
+overlays favorited cells. Favorited items skip auto-salvage
+(`dungeon.gd::_maybe_auto_salvage`) and the shop's "sell all junk"
+button. WoW lock-bag pattern.
+
+**Shop screen** (`scenes/shop.tscn` + `scripts/shop.gd`).
+Reachable via "🏪 Shop" button on Outpost. Two-column layout:
+your inventory left, today's stock right. 6 rotating stock items
+refresh every 15 real-time minutes (`SHOP_REFRESH_SECS = 900`).
+Each refresh rolls a daily modifier from
+`data/shop_modifiers.json` (8 modifiers: Weapon Day, Armor Day,
+Trinket Day, Rare Collector, Legendary Seeker, Fire Sale, High
+Demand, Scarcity). Modifier biases buy/sell prices and sometimes
+stock quality. Sell price = 2× salvage × today's modifier.
+Buy price = 10× salvage × modifier. Countdown label ticks each
+second; auto-refreshes when the timer expires while the screen
+is open. "Sell all common/uncommon" bulk button skips favorites
++ starter gear (rusty_dagger, tattered_hide).
+
+**Save schema additions.** `state.shop = {last_refresh_ts,
+stock, modifier_id}`. Forward-compat init in `_default()`.
+
+## Horde density + pack-clustered spawns — 2026-06-03
 
 ## Horde density + pack-clustered spawns — 2026-06-03
 

@@ -3,6 +3,7 @@ extends Node
 const DUNGEON_SCENE := preload("res://scenes/dungeon.tscn")
 const REPORT_SCENE := preload("res://scenes/run_report.tscn")
 const OUTPOST_SCENE := preload("res://scenes/outpost.tscn")
+const SHOP_SCENE := preload("res://scenes/shop.tscn")
 const MAIN_MENU_SCENE := preload("res://scenes/main_menu.tscn")
 const VIDEO_OPTIONS_SCENE := preload("res://scenes/video_options.tscn")
 const FX_TUNER_SCENE := preload("res://scenes/fx_tuner.tscn")
@@ -214,6 +215,13 @@ func _show_outpost() -> void:
 	# call sites (run report, debug-jump) bind via _deploy_branch.
 	if current_screen.has_signal("deploy_pressed"):
 		current_screen.deploy_pressed.connect(_deploy_branch)
+	if current_screen.has_signal("shop_pressed"):
+		current_screen.shop_pressed.connect(_show_shop)
+
+func _show_shop() -> void:
+	var shop: Node = SHOP_SCENE.instantiate()
+	_swap(shop)
+	shop.back_pressed.connect(_show_outpost)
 
 func _deploy_branch(branch_id: String) -> void:
 	_selected_branch = branch_id

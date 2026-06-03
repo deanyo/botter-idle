@@ -2232,6 +2232,12 @@ func _maybe_auto_salvage() -> void:
 			if not items_db.has(base_id):
 				i += 1
 				continue
+			# Favorited items are locked from auto-salvage. The user
+			# starred them deliberately — bulk salvage skips them
+			# regardless of rarity or filter setting.
+			if bool(inst.get("favorite", false)):
+				i += 1
+				continue
 			var item: Dictionary = items_db[base_id]
 			var rarity: String = String(item.get("rarity", "common"))
 			# Anything strictly above the filter is protected.

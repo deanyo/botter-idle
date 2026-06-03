@@ -12,9 +12,9 @@ signal fx_tuner_pressed
 const COL_AMBER := Color(0.92, 0.78, 0.45)
 const COL_DIM := Color(0.7, 0.6, 0.4)
 const COL_GOLD := Color(1.0, 0.85, 0.3)
-const COL_PANEL := Color(0.04, 0.04, 0.06, 0.85)
+const COL_PANEL := Color(0.0, 0.0, 0.0, 0.85)
 const COL_PANEL_BORDER := Color(0.35, 0.3, 0.18, 0.65)
-const COL_BG := Color(0.05, 0.05, 0.07, 1.0)
+const COL_BG := Color(0.0, 0.0, 0.0, 1.0)
 
 const ITEMS_PATH := "res://data/items.json"
 const PAPERDOLL_BASE_PX := 32

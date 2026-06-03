@@ -26,7 +26,7 @@ signal quit_requested
 
 const COL_AMBER := Color(0.92, 0.78, 0.45)
 const COL_DIM := Color(0.7, 0.6, 0.4)
-const COL_PANEL := Color(0.06, 0.06, 0.08, 0.92)
+const COL_PANEL := Color(0.0, 0.0, 0.0, 0.92)
 const COL_PANEL_BORDER := Color(0.45, 0.36, 0.18, 0.85)
 
 var _underlay: ColorRect = null

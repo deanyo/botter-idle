@@ -126,4 +126,14 @@ static func _default() -> Dictionary:
 		"bot_upgrades": {},
 		"shards": 0,
 		"last_seen_timestamp": 0,
+		# Shop state — rotating real-time stock + daily modifier. The
+		# shop refreshes every SHOP_REFRESH_SECS (~15 minutes) measured
+		# against last_refresh_ts. Stock is an array of item instances
+		# (same shape as inventory items), modifier_id is one entry from
+		# data/shop_modifiers.json. shop.gd handles all reads/writes.
+		"shop": {
+			"last_refresh_ts": 0,
+			"stock": [],
+			"modifier_id": "",
+		},
 	}

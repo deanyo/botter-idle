@@ -13,10 +13,12 @@ const COL_GOLD := Color(1.0, 0.85, 0.3)
 const COL_HP := Color(0.55, 0.95, 0.5)
 const COL_HP_LOW := Color(1.0, 0.45, 0.45)
 
-# Panel / chrome
-const COL_PANEL := Color(0.04, 0.04, 0.06, 0.85)
+# Panel / chrome. Pure black for OLED — saves backlight on Apple/AMOLED
+# panels and reads cleaner against rarity-colored borders. The faint
+# blue tint we used to use is gone (was 0.04/0.04/0.06).
+const COL_PANEL := Color(0.0, 0.0, 0.0, 0.85)
 const COL_PANEL_BORDER := Color(0.35, 0.3, 0.18, 0.65)
-const COL_BG := Color(0.05, 0.05, 0.07, 1.0)
+const COL_BG := Color(0.0, 0.0, 0.0, 1.0)
 
 # Rarity tints — used for item borders / tooltips / outline glow.
 const COL_RARITY := {
@@ -160,7 +162,7 @@ static func add_rarity_cell_decor(parent: Control, size_px: int, rarity: String,
 		# with cell size — about 25% in from each side.
 		var inset: int = maxi(4, int(size_px * 0.22))
 		var mask := ColorRect.new()
-		mask.color = Color(0.04, 0.04, 0.06, 0.55)
+		mask.color = Color(0.0, 0.0, 0.0, 0.55)
 		mask.position = Vector2(inset, inset)
 		mask.size = Vector2(size_px - inset * 2, size_px - inset * 2)
 		mask.mouse_filter = Control.MOUSE_FILTER_IGNORE

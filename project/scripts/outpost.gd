@@ -8,6 +8,7 @@ extends Control
 # Built in code so it can mirror the HUD's L-shape paperdoll geometry.
 
 signal deploy_pressed(branch_id: String)
+signal shop_pressed
 
 # Doc Appendix B mapping. Mirrors main.gd's _TIER_BRANCHES — kept in sync
 # manually because GDScript's class members can't share consts cleanly.
@@ -48,9 +49,9 @@ const PANEL_PAD := 16
 const COL_AMBER := Color(0.92, 0.78, 0.45)
 const COL_DIM := Color(0.7, 0.6, 0.4)
 const COL_GOLD := Color(1.0, 0.85, 0.3)
-const COL_PANEL := Color(0.04, 0.04, 0.06, 0.85)
+const COL_PANEL := Color(0.0, 0.0, 0.0, 0.85)
 const COL_PANEL_BORDER := Color(0.35, 0.3, 0.18, 0.65)
-const COL_BG := Color(0.05, 0.05, 0.07, 1.0)
+const COL_BG := Color(0.0, 0.0, 0.0, 1.0)
 const RARITY_COLORS := {
 	"common":    Color(0.85, 0.85, 0.85),
 	"uncommon":  Color(0.4, 0.7, 1.0),
@@ -118,9 +119,21 @@ func _build_layout() -> void:
 	title.add_theme_font_size_override("font_size", 28)
 	title.add_theme_color_override("font_color", COL_AMBER)
 	add_child(title)
-	# Branch picker at bottom — replaces the single Deploy button. Each
-	# branch is a button; clicking deploys directly to that branch.
-	var picker_h := 96
+	# Shop button — top-right, opens the shop screen.
+	var shop_btn := Button.new()
+	shop_btn.text = "🏪 Shop"
+	shop_btn.position = Vector2(int(view.x) - 140, 16)
+	shop_btn.size = Vector2(120, 32)
+	shop_btn.add_theme_font_size_override("font_size", 14)
+	shop_btn.pressed.connect(func(): shop_pressed.emit())
+	add_child(shop_btn)
+	# Branch picker at bottom — item-card-style strip. Each branch is
+	# a tall card with biome name, tier label, modifier list visible
+	# without hover, rarity tint by tier (T1 white, T2 blue, T3 gold,
+	# T4 orange, T5 red), and a soft glow per modifier so the card
+	# reads like a piece of loot. Bigger than the old 96px strip so
+	# it doesn't feel cramped at the bottom of the screen.
+	var picker_h := 220
 	_build_branch_picker(0, int(view.y) - picker_h - 8, int(view.x), picker_h)
 	# Three panes between title (y≈56) and the picker.
 	var top_y: int = 60
@@ -141,77 +154,136 @@ func _build_branch_picker(x: int, y: int, w: int, h: int) -> void:
 	_make_panel(x, y, w, h, "Deploy — choose a branch")
 	# Horizontal scroll so all 24 branches fit even at narrow widths.
 	var scroll := ScrollContainer.new()
-	scroll.position = Vector2(x + 12, y + 28)
-	scroll.size = Vector2(w - 24, h - 36)
+	scroll.position = Vector2(x + 12, y + 32)
+	scroll.size = Vector2(w - 24, h - 40)
 	scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	add_child(scroll)
 	var hbox := HBoxContainer.new()
-	hbox.add_theme_constant_override("separation", 24)
+	hbox.add_theme_constant_override("separation", 16)
 	scroll.add_child(hbox)
 	var unlocked: Array = state.get("unlocked_branches", ["dungeon"])
+	# Render branches grouped by tier with a thin separator between
+	# tiers — keeps tier-scaling readable while letting the cards
+	# breathe. Tier label sits above each tier's card row.
 	for tier in [1, 2, 3, 4, 5]:
 		hbox.add_child(_make_tier_column(tier, unlocked))
 
+# Tier → rarity color, per the user's spec:
+# T1 white (common) → T5 red (legendary). Used to tint card border +
+# header glow so the player reads "this branch is harder = redder."
+const _TIER_TO_RARITY := {
+	1: "common", 2: "uncommon", 3: "rare", 4: "epic", 5: "legendary",
+}
+
 func _make_tier_column(tier: int, unlocked: Array) -> Control:
 	var col := VBoxContainer.new()
-	col.add_theme_constant_override("separation", 4)
+	col.add_theme_constant_override("separation", 6)
 	var hdr := Label.new()
 	hdr.text = String(TIER_LABELS.get(tier, "Tier %d" % tier))
-	hdr.add_theme_font_size_override("font_size", 11)
-	hdr.add_theme_color_override("font_color", COL_DIM)
+	hdr.add_theme_font_size_override("font_size", 12)
+	# Tier header in its rarity color so the column reads as "this is
+	# the legendary tier."
+	var rarity: String = String(_TIER_TO_RARITY.get(tier, "common"))
+	hdr.add_theme_color_override("font_color", UITheme.rarity_color(rarity))
 	col.add_child(hdr)
 	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", 4)
+	row.add_theme_constant_override("separation", 8)
 	col.add_child(row)
 	for branch_id in TIER_BRANCHES.get(tier, []):
-		row.add_child(_make_branch_button(branch_id, unlocked.has(branch_id)))
+		row.add_child(_make_branch_card(branch_id, unlocked.has(branch_id), tier))
 	return col
 
-func _make_branch_button(branch_id: String, is_unlocked: bool) -> Button:
-	# Button is the outer node so the whole cell (name + modifier strip)
-	# is one click target. The display label is set as the Button's text;
-	# modifier strip is a child Label drawn over the button face.
-	var b := Button.new()
-	b.custom_minimum_size = Vector2(150, 64)
-	# Display name from biomes.json — falls back to capitalised id.
-	# biomes use "the Dungeon" style names; trim the article for buttons.
+# Item-card-style branch button. Vertical: name (top), tier label,
+# modifier list (visible without hover), CR recommended (footer).
+# Border + faint halo tinted by tier rarity. Each modifier renders
+# as a chip in COL_AMBER (visible at-a-glance) with a glow gradient
+# behind it for the highest-tier branches so they read as "loaded
+# with effects."
+const _BRANCH_CARD_W := 168
+const _BRANCH_CARD_H := 168
+
+func _make_branch_card(branch_id: String, is_unlocked: bool, tier: int) -> Control:
 	var biome: Dictionary = BiomeData.get_biome(branch_id)
 	var display: String = String(biome.get("display_name", branch_id.capitalize()))
 	if display.to_lower().begins_with("the "):
 		display = display.substr(4)
 	var pretty: String = display.capitalize() if display == display.to_lower() else display
-	b.add_theme_font_size_override("font_size", 13)
-	# Modifier strip — pulled from save.branch_modifiers, set on Outpost open.
 	var mods: Array = state.get("branch_modifiers", {}).get(branch_id, [])
-	var mod_brief: String = RunModifiers.format_brief(mods) if is_unlocked else ""
+	var rarity: String = String(_TIER_TO_RARITY.get(tier, "common"))
+	var rarity_col: Color = UITheme.rarity_color(rarity)
+	# Outer Button is the click target; everything else is decor inside.
+	var btn := Button.new()
+	btn.flat = true
+	btn.custom_minimum_size = Vector2(_BRANCH_CARD_W, _BRANCH_CARD_H)
+	btn.size = Vector2(_BRANCH_CARD_W, _BRANCH_CARD_H)
+	# Card background: black with rarity-tint halo strength scaled by
+	# tier so T5 cards feel "loaded." Reuses UITheme decor helper.
+	var halo_strength: float = float({
+		"common": 0.15, "uncommon": 0.22, "rare": 0.30,
+		"epic": 0.42, "legendary": 0.55,
+	}.get(rarity, 0.20))
+	UITheme.add_rarity_cell_decor(btn, _BRANCH_CARD_W, rarity, halo_strength)
+	# Name label at top.
+	var name_lbl := Label.new()
+	name_lbl.text = pretty
+	name_lbl.position = Vector2(8, 8)
+	name_lbl.size = Vector2(_BRANCH_CARD_W - 16, 24)
+	name_lbl.add_theme_font_size_override("font_size", 16)
+	name_lbl.add_theme_color_override("font_color", rarity_col if is_unlocked else COL_DIM)
+	name_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	name_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	btn.add_child(name_lbl)
+	# Tier label below the name.
+	var tier_lbl := Label.new()
+	tier_lbl.text = "Tier %d" % tier
+	tier_lbl.position = Vector2(8, 32)
+	tier_lbl.size = Vector2(_BRANCH_CARD_W - 16, 16)
+	tier_lbl.add_theme_font_size_override("font_size", 11)
+	tier_lbl.add_theme_color_override("font_color", COL_DIM)
+	tier_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	tier_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	btn.add_child(tier_lbl)
 	if is_unlocked:
-		# Full text: name on top, dim modifier line below. Use Button.text
-		# for the name + a child Label for the colored modifier strip so
-		# the modifier line can be a different color.
-		b.text = pretty
-		b.alignment = HORIZONTAL_ALIGNMENT_CENTER
-		var tooltip: String = "%s (CR %d recommended)" % [display, int(biome.get("cr_recommended", 0))]
+		# Modifier chips, one per line, visible without hover. Each
+		# row is "+ Modifier name". Gold (amber) so they pop against
+		# the rarity tint without competing with the name color.
+		var mod_y: int = 56
+		var line_h: int = 14
+		for mod_id in mods:
+			var mod_def: Dictionary = RunModifiers.get_def(String(mod_id))
+			var label: String = String(mod_def.get("name", mod_id))
+			var chip := Label.new()
+			chip.text = "+ " + label
+			chip.position = Vector2(12, mod_y)
+			chip.size = Vector2(_BRANCH_CARD_W - 24, line_h + 2)
+			chip.add_theme_font_size_override("font_size", 11)
+			chip.add_theme_color_override("font_color", COL_AMBER)
+			chip.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			btn.add_child(chip)
+			mod_y += line_h
+		# CR footer.
+		var cr_lbl := Label.new()
+		cr_lbl.text = "CR %d" % int(biome.get("cr_recommended", 0))
+		cr_lbl.position = Vector2(8, _BRANCH_CARD_H - 22)
+		cr_lbl.size = Vector2(_BRANCH_CARD_W - 16, 16)
+		cr_lbl.add_theme_font_size_override("font_size", 10)
+		cr_lbl.add_theme_color_override("font_color", COL_DIM)
+		cr_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		cr_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		btn.add_child(cr_lbl)
+		# Tooltip kept for full modifier descriptions (hover for detail).
+		var tooltip: String = "%s — CR %d recommended" % [display, int(biome.get("cr_recommended", 0))]
 		var mod_tip: String = RunModifiers.format_tooltip(mods)
 		if mod_tip != "":
 			tooltip += "\n\n" + mod_tip
-		b.tooltip_text = tooltip
-		b.pressed.connect(func(): deploy_pressed.emit(branch_id))
-		if mod_brief != "":
-			var mod_lbl := Label.new()
-			mod_lbl.text = mod_brief
-			mod_lbl.position = Vector2(4, 38)
-			mod_lbl.size = Vector2(142, 24)
-			mod_lbl.add_theme_font_size_override("font_size", 10)
-			mod_lbl.add_theme_color_override("font_color", COL_AMBER)
-			mod_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-			mod_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-			mod_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
-			b.add_child(mod_lbl)
+		btn.tooltip_text = tooltip
+		btn.pressed.connect(func(): deploy_pressed.emit(branch_id))
 	else:
-		b.text = pretty
-		b.disabled = true
-		b.tooltip_text = "%s — locked. Clear all branches in the previous tier to unlock." % display
-	return b
+		btn.disabled = true
+		btn.tooltip_text = "%s — locked. Clear all branches in the previous tier to unlock." % display
+		# Locked overlay: fade the card.
+		btn.modulate = Color(0.55, 0.55, 0.55, 1.0)
+	return btn
 
 func _make_panel(x: int, y: int, w: int, h: int, header: String) -> void:
 	var bg := ColorRect.new()
@@ -473,13 +545,22 @@ func _add_stat(x: int, y: int, size: int, color: Color, txt: String) -> Label:
 	return lbl
 
 func _build_inventory_pane(x: int, y: int, w: int, h: int) -> void:
-	_make_panel(x, y, w, h, "Inventory — click to equip")
+	_make_panel(x, y, w, h, "Inventory — click to equip, right-click to favorite")
 	var inner_x := x + 12
 	var inner_y := y + 36
 	var inner_w := w - 24
-	var inner_h := h - 48
+	# Filter chip row above the grid.
+	var chip_row := HBoxContainer.new()
+	chip_row.position = Vector2(inner_x, inner_y)
+	chip_row.size = Vector2(inner_w, 28)
+	chip_row.add_theme_constant_override("separation", 6)
+	add_child(chip_row)
+	_build_filter_chips(chip_row)
+	# Grid sits below the chip row.
+	var grid_y: int = inner_y + 32
+	var inner_h := h - (grid_y - y) - 12
 	var scroll := ScrollContainer.new()
-	scroll.position = Vector2(inner_x, inner_y)
+	scroll.position = Vector2(inner_x, grid_y)
 	scroll.size = Vector2(inner_w, inner_h)
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	add_child(scroll)
@@ -488,6 +569,81 @@ func _build_inventory_pane(x: int, y: int, w: int, h: int) -> void:
 	inventory_grid.add_theme_constant_override("h_separation", 8)
 	inventory_grid.add_theme_constant_override("v_separation", 8)
 	scroll.add_child(inventory_grid)
+
+# Active filter state. "all" (slot/rarity) means no constraint;
+# "favorites" means only show favorited items. Slot filter constrains
+# to one specific slot id.
+var _filter_slot: String = "all"
+var _filter_rarity: String = "all"
+var _filter_favorites: bool = false
+
+const _SLOT_FILTER_OPTIONS := [
+	{ "id": "all",    "label": "All slots" },
+	{ "id": "weapon", "label": "Weapon" },
+	{ "id": "armor",  "label": "Armor" },
+	{ "id": "helm",   "label": "Helm" },
+	{ "id": "shield", "label": "Shield" },
+	{ "id": "boots",  "label": "Boots" },
+	{ "id": "ring",   "label": "Ring" },
+	{ "id": "amulet", "label": "Amulet" },
+]
+# Rarity ordering — chips toggle by clicking through. Empty = no filter.
+const _RARITY_FILTER_OPTIONS := [
+	{ "id": "all",       "label": "All rarities", "min_rank": -1 },
+	{ "id": "uncommon+", "label": "Uncommon+",    "min_rank": 1 },
+	{ "id": "rare+",     "label": "Rare+",        "min_rank": 2 },
+	{ "id": "epic+",     "label": "Epic+",        "min_rank": 3 },
+	{ "id": "legendary", "label": "Legendary",    "min_rank": 4 },
+]
+
+func _build_filter_chips(parent: HBoxContainer) -> void:
+	# Slot filter dropdown.
+	var slot_opt := OptionButton.new()
+	for i in _SLOT_FILTER_OPTIONS.size():
+		slot_opt.add_item(String(_SLOT_FILTER_OPTIONS[i].label))
+		slot_opt.set_item_metadata(i, String(_SLOT_FILTER_OPTIONS[i].id))
+	slot_opt.select(0)
+	slot_opt.item_selected.connect(func(idx):
+		_filter_slot = String(slot_opt.get_item_metadata(idx))
+		_render_inventory()
+	)
+	parent.add_child(slot_opt)
+	# Rarity filter dropdown.
+	var rarity_opt := OptionButton.new()
+	for i in _RARITY_FILTER_OPTIONS.size():
+		rarity_opt.add_item(String(_RARITY_FILTER_OPTIONS[i].label))
+		rarity_opt.set_item_metadata(i, String(_RARITY_FILTER_OPTIONS[i].id))
+	rarity_opt.select(0)
+	rarity_opt.item_selected.connect(func(idx):
+		_filter_rarity = String(rarity_opt.get_item_metadata(idx))
+		_render_inventory()
+	)
+	parent.add_child(rarity_opt)
+	# Favorites toggle.
+	var fav_btn := CheckButton.new()
+	fav_btn.text = "★ Favorites only"
+	fav_btn.toggled.connect(func(v):
+		_filter_favorites = v
+		_render_inventory()
+	)
+	parent.add_child(fav_btn)
+
+# Returns true if `inst` should render given the active filters.
+func _passes_filter(inst: Dictionary, item: Dictionary) -> bool:
+	if _filter_slot != "all" and String(item.get("slot", "")) != _filter_slot:
+		return false
+	if _filter_rarity != "all":
+		var min_rank: int = -1
+		for opt in _RARITY_FILTER_OPTIONS:
+			if String(opt.id) == _filter_rarity:
+				min_rank = int(opt.min_rank)
+				break
+		var item_rank: int = int(LootDrop.RARITY_RANK.get(String(item.get("rarity", "common")), 0))
+		if item_rank < min_rank:
+			return false
+	if _filter_favorites and not bool(inst.get("favorite", false)):
+		return false
+	return true
 
 # ============================================================================
 # Render
@@ -589,6 +745,8 @@ func _render_equipped() -> void:
 		paperdoll_holder.add_child(paperdoll_rig)
 
 func _render_inventory() -> void:
+	if inventory_grid == null:
+		return
 	for c in inventory_grid.get_children():
 		c.queue_free()
 	var inv: Array = state.inventory
@@ -600,6 +758,8 @@ func _render_inventory() -> void:
 		if not items_db.has(base_id):
 			continue
 		var item: Dictionary = items_db[base_id]
+		if not _passes_filter(inst, item):
+			continue
 		inventory_grid.add_child(_make_inv_cell(i, inst, item))
 
 func _make_inv_cell(inv_index: int, inst: Dictionary, item: Dictionary) -> Control:
@@ -633,9 +793,47 @@ func _make_inv_cell(inv_index: int, inst: Dictionary, item: Dictionary) -> Contr
 	btn.size = Vector2(INV_CELL_SIZE, INV_CELL_SIZE)
 	btn.flat = true
 	btn.tooltip_text = _build_item_tooltip(String(item.get("slot", "")), inst)
+	# Left-click equips, right-click toggles favorite. Godot's Button
+	# only emits `pressed` for left-click; subscribe to gui_input for
+	# the right-click path.
 	btn.pressed.connect(_equip.bind(inv_index))
+	btn.gui_input.connect(_on_inv_cell_input.bind(inv_index))
 	cell.add_child(btn)
+	# Favorite star overlay — top-right of the cell. Always present;
+	# alpha = 0 when not favorited so the layout stays stable.
+	var star := Label.new()
+	star.text = "★"
+	star.add_theme_font_size_override("font_size", 18)
+	star.add_theme_color_override("font_color", Color(1.0, 0.85, 0.30, 1.0))
+	star.position = Vector2(INV_CELL_SIZE - 22, -4)
+	star.size = Vector2(22, 22)
+	star.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	star.modulate = Color(1, 1, 1, 1.0 if bool(inst.get("favorite", false)) else 0.0)
+	cell.add_child(star)
 	return cell
+
+# gui_input handler for inventory cells. Right-click toggles favorite;
+# left-click already routes through Button.pressed → _equip.
+func _on_inv_cell_input(event: InputEvent, inv_index: int) -> void:
+	if not (event is InputEventMouseButton):
+		return
+	var mb: InputEventMouseButton = event
+	if not mb.pressed:
+		return
+	if mb.button_index == MOUSE_BUTTON_RIGHT:
+		_toggle_favorite(inv_index)
+
+func _toggle_favorite(inv_index: int) -> void:
+	var inv: Array = state.inventory
+	if inv_index < 0 or inv_index >= inv.size():
+		return
+	var inst: Variant = inv[inv_index]
+	if typeof(inst) != TYPE_DICTIONARY:
+		return
+	inst["favorite"] = not bool(inst.get("favorite", false))
+	inv[inv_index] = inst
+	SaveState.save_state(state)
+	_render_inventory()
 
 func _build_item_tooltip(slot: String, inst: Variant) -> String:
 	if inst == null or typeof(inst) != TYPE_DICTIONARY:
