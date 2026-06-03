@@ -305,8 +305,15 @@
 
 <script>
 const ATLAS_PATH    = "../project/data/tile_atlas.json";
-const TILE_BASE     = "../dcss/Dungeon Crawl Stone Soup Full/";
-const TILE_BASE_SUP = "../dcss/Dungeon Crawl Stone Soup Supplemental/";
+// Item sprites are flattened into project/assets/tiles/items/ at
+// build time (sync_items.py drops them there with the basename
+// items.json's `tile` field expects). The editor preview reads from
+// that path FIRST so it matches what the game actually shows.
+// dcss/... still serves as a fallback for sprite-picker browsing
+// of un-imported tiles.
+const ITEM_TILE_BASE = "../project/assets/tiles/items/";
+const TILE_BASE      = "../dcss/Dungeon Crawl Stone Soup Full/";
+const TILE_BASE_SUP  = "../dcss/Dungeon Crawl Stone Soup Supplemental/";
 
 // Per-slot config: manifest path + picker root + export name + label.
 // picker_roots controls which atlas paths the sprite picker offers when
@@ -557,7 +564,7 @@ function makeCard(it) {
   const textColor = ['common','uncommon','rare'].includes(it.rarity) ? '#000' : '#fff';
 
   card.innerHTML = `
-    <div class="sprite-wrap"><img src="${tileUrl(it.tile)}" onerror="this.src='';this.style.display='none'"></div>
+    <div class="sprite-wrap"><img src="${tileUrl(it.tile)}" onerror="if(!this.dataset.f){this.dataset.f='1';this.src='${tileUrlDcssFull(it.tile)}'}else if(!this.dataset.s){this.dataset.s='1';this.src='${tileUrlDcssSupp(it.tile)}'}else{this.src='';this.style.display='none'}"></div>
     <div class="card-name">${it.name}</div>
     <div class="card-meta">
       <span class="rarity-pill rarity-${it.rarity}" style="background:${rarityColor};color:${textColor}">${it.rarity}</span>
@@ -572,8 +579,18 @@ function makeCard(it) {
 }
 
 function tileUrl(path) {
-  return TILE_BASE + path;
+  // The editor preview pulls from the flattened items/ dir first
+  // (matches what the game renders). Sprite picker uses TILE_BASE
+  // for browsing the full dcss tree — those paths get a prefix
+  // there. If the items/ image 404s, the <img onerror> falls
+  // through to TILE_BASE.
+  return ITEM_TILE_BASE + path;
 }
+// Fallback used by <img onerror>. Tries dcss/Full first (most items
+// live there) then dcss/Supplemental. Caller chains these with a
+// nested onerror — see makeCard / renderEditBody.
+function tileUrlDcssFull(path) { return TILE_BASE + path; }
+function tileUrlDcssSupp(path) { return TILE_BASE_SUP + path; }
 
 // ---------- Edit panel ----------
 function openEdit(id) {
@@ -649,7 +666,7 @@ function renderEditBody(it) {
 
   body.innerHTML = `
     <div class="edit-sprite-row">
-      <div id="edit-sprite-wrap"><img id="edit-sprite-img" src="${tileUrl(it.tile)}" onerror="this.src='';this.style.display='none'"></div>
+      <div id="edit-sprite-wrap"><img id="edit-sprite-img" src="${tileUrl(it.tile)}" onerror="if(!this.dataset.f){this.dataset.f='1';this.src='${tileUrlDcssFull(it.tile)}'}else if(!this.dataset.s){this.dataset.s='1';this.src='${tileUrlDcssSupp(it.tile)}'}else{this.src='';this.style.display='none'}"></div>
       <div class="right">
         <div class="field-group">
           <label>Tile path</label>
@@ -922,16 +939,27 @@ function renderPicker() {
     const cell = document.createElement('div');
     cell.className = 'pick-cell';
     const shortName = path.split('/').pop().replace('.png','');
+    // Picker thumbnails read from dcss/Full (the source-of-truth tree
+    // with category subfolders). The CHOSEN value stored on the item
+    // is the basename only, because items.json's `tile` field is
+    // basename-only (sync_items.py flattens DCSS into
+    // project/assets/tiles/items/<basename>.png at build time).
     cell.innerHTML = `
-      <img src="${tileUrl(path)}" onerror="this.parentElement.style.opacity='.3'">
+      <img src="${tileUrlDcssFull(path)}" onerror="if(!this.dataset.s){this.dataset.s='1';this.src='${tileUrlDcssSupp(path)}'}else{this.parentElement.style.opacity='.3'}">
       <div class="pick-name">${shortName}</div>
     `;
     cell.onclick = () => {
       const it = items.find(x=>x.id===pickerItemId);
       if (it) {
-        setField(pickerItemId, 'tile', path);
-        document.getElementById('tile-path-input').value = path;
-        document.getElementById('edit-sprite-img').src = tileUrl(path);
+        // Store basename only — game runtime expects items.json tile
+        // to be a basename inside project/assets/tiles/items/.
+        const basename = path.split('/').pop();
+        setField(pickerItemId, 'tile', basename);
+        document.getElementById('tile-path-input').value = basename;
+        // Refresh preview using the same fallback chain as the card.
+        const img = document.getElementById('edit-sprite-img');
+        img.dataset.f = ''; img.dataset.s = '';
+        img.src = tileUrl(basename);
       }
       closePicker();
     };
