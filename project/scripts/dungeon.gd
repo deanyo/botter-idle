@@ -901,13 +901,18 @@ func _spawn_enemies() -> void:
 		var enemy_id: String = String(enemy_pool[rng.randi_range(0, enemy_pool.size() - 1)])
 		_spawn_specific(enemy_id, cell)
 
-	# Crowded modifier multiplies the spawn count.
-	var count_mult: float = RunModifiers.sum_effect(active_modifiers, "enemy_count_mult", 1.0)
-	var count: int = int(round((4 + current_floor * 2) * count_mult))
-	for i in count:
-		var id: String = pool[rng.randi_range(0, pool.size() - 1)]
-		var cell: Vector2i = _random_walkable_cell_far_from_bot()
-		_spawn_specific(id, cell)
+	# Pack-clustered spawn. Replaces the old "for N: spawn random" loop.
+	# We aim for high mob counts (floor 1 ~50, floor 6 ~150) by spawning
+	# a moderate number of pack centers, each surrounded by a cluster
+	# of same-id packmates. Cluster spawning is cheaper than uniform
+	# random because:
+	#   * AI repath cap (3/frame) and 8-cell aggro range mean idle
+	#     packs cost almost nothing per frame
+	#   * Sticky-target combat naturally engages one pack at a time
+	#   * Enemy soft-collision keeps cluster packing reasonable
+	# Pack leaders re-roll for magic/rare at slightly elevated rates so
+	# they're the visual centerpiece.
+	_spawn_packs(pool)
 
 	var chest_count: int = 1 + (1 if rng.randf() < 0.5 else 0)
 	if _is_miniboss_floor(current_floor):
@@ -1056,6 +1061,10 @@ func _spawn_branch_boss(id: String, at_cell: Vector2i) -> void:
 		var bl_spec: String = String(def.get("light_spec", ""))
 		if bl_spec != "":
 			LightSpec.attach(e, bl_spec)
+	# Persistent red outline so the player reads "boss" at a glance,
+	# regardless of bot-relative threat (a tank bot can shred a boss
+	# but the visual identity should stay consistent).
+	e.apply_persistent_outline()
 	e.place_at(at_cell)
 	e.repath_timer = rng.randf_range(0.0, Enemy.REPATH_INTERVAL)
 	e.died.connect(_on_enemy_died)
@@ -1093,6 +1102,9 @@ func _spawn_miniboss(id: String, at_cell: Vector2i) -> void:
 		var ml_spec: String = String(def.get("light_spec", ""))
 		if ml_spec != "":
 			LightSpec.attach(e, ml_spec)
+	# Orange outline for minibosses — telegraphs "elite" without
+	# matching the boss red.
+	e.apply_persistent_outline()
 	e.place_at(at_cell)
 	# Stagger initial repath so a freshly-spawned horde doesn't all repath
 	# on the same frame. Spread across the full REPATH_INTERVAL.
@@ -1100,7 +1112,7 @@ func _spawn_miniboss(id: String, at_cell: Vector2i) -> void:
 	e.died.connect(_on_enemy_died)
 	enemies.append(e)
 
-func _spawn_specific(id: String, at_cell: Vector2i) -> void:
+func _spawn_specific(id: String, at_cell: Vector2i, force_pack_tier: int = -1) -> void:
 	if not enemy_data.has(id):
 		return
 	var def: Dictionary = enemy_data[id]
@@ -1109,9 +1121,13 @@ func _spawn_specific(id: String, at_cell: Vector2i) -> void:
 	var is_champion: bool = (not def.boss) and rng.randf() < 0.012
 	# Pack tier roll. Skip for champions (already special) and bosses
 	# (their own treatment). Magic/rare are PoE-style modifiers on top
-	# of the base creature.
+	# of the base creature. Pack-system callers can force a specific
+	# tier (leaders force magic/rare, packmates force normal) via
+	# force_pack_tier; default -1 means "roll normally."
 	var pack_tier: int = Enemy.PACK_NORMAL
-	if not bool(def.boss) and not is_champion:
+	if force_pack_tier >= 0:
+		pack_tier = force_pack_tier
+	elif not bool(def.boss) and not is_champion:
 		var src_tier: int = int(current_biome.get("tier", 1))
 		pack_tier = _roll_pack_tier(src_tier)
 	var picked_mods: Array = []
@@ -1197,6 +1213,10 @@ func _spawn_specific(id: String, at_cell: Vector2i) -> void:
 	# Pack visuals (tint + aura) — last so they sit on top of any
 	# champion/light effects already applied.
 	e.apply_pack_visuals()
+	# Persistent outline for magic/rare. Threat-aura still sets `tier`
+	# for thickness, but pack_color overrides the color so the outline
+	# reads as "magic" or "rare" rather than threat-relative.
+	e.apply_persistent_outline()
 	if pack_tier != Enemy.PACK_NORMAL and GrindLog._enabled:
 		var tier_label: String = "rare" if pack_tier == Enemy.PACK_RARE else "magic"
 		GrindLog.log_line("[pack] tier=%s id=%s mods=%s" % [tier_label, id, str(e.pack_mods)])
@@ -1251,21 +1271,32 @@ func _on_enemy_died(actor: Actor) -> void:
 		return
 
 func _maybe_drop_item(e: Enemy) -> void:
+	# Drop chance scales by tier — pack-clustered spawns mean 100+
+	# mobs per floor. Normal mobs at the old 15% drop rate would
+	# flood the inventory. Magic/rare leaders carry the loot pressure
+	# instead, so the typical floor stays at ~10-15 drops while
+	# kills 10×.
 	var roll: float = rng.randf()
-	var threshold: float = 0.15
+	var threshold: float = 0.05
+	if e.pack_tier == Enemy.PACK_MAGIC:
+		threshold = 0.30
+	elif e.pack_tier == Enemy.PACK_RARE:
+		threshold = 1.0
 	if e.is_miniboss:
 		threshold = 1.0
 	elif e.is_boss:
 		threshold = 1.0
 	if roll > threshold:
 		return
-	# Boss Hunt modifier: branch boss drops 2× loot.
+	# Drop count: rare leaders + bosses drop multiple items.
 	var drop_count: int = 1
+	if e.pack_tier == Enemy.PACK_RARE:
+		drop_count = 2
 	if e.is_boss:
 		drop_count = int(round(RunModifiers.sum_effect(active_modifiers, "boss_loot_mult", 1.0)))
 		drop_count = maxi(drop_count, 1)
 	for _i in drop_count:
-		var rarity: String = _roll_rarity(e.is_boss or e.is_miniboss)
+		var rarity: String = _roll_rarity(e.is_boss or e.is_miniboss or e.pack_tier == Enemy.PACK_RARE)
 		var picked: String = _pick_loot_id(rarity)
 		if picked == "":
 			continue
@@ -3024,6 +3055,17 @@ func _roll_pack_tier(branch_tier: int) -> int:
 		return Enemy.PACK_MAGIC
 	return Enemy.PACK_NORMAL
 
+# Pack leaders re-roll at elevated rates so the pack-clustered system
+# produces a visible amount of magic/rare leaders even at low tiers.
+# A leader has a 30% (T1) → 80% (T5) chance of being modified. Within
+# the modified pool, ~85% magic / ~15% rare.
+func _roll_leader_pack_tier(branch_tier: int) -> int:
+	var scale: float = pow(1.5, float(maxi(branch_tier - 1, 0)))
+	var modified_chance: float = clampf(0.30 * scale, 0.0, 0.85)
+	if rng.randf() >= modified_chance:
+		return Enemy.PACK_NORMAL
+	return Enemy.PACK_RARE if rng.randf() < 0.18 else Enemy.PACK_MAGIC
+
 # Pick N distinct mods. Random sample without replacement so a rare
 # can't get two copies of "Hasted." Returns array of mod dict refs.
 func _pick_pack_mods(count: int) -> Array:
@@ -3062,3 +3104,69 @@ func _apply_pack_mod(e: Enemy, mod: Dictionary) -> void:
 	# but functionally a no-op until an enemy regen ticker lands. TODO.
 	for tag in mod.get("flavor_tags", []):
 		e.add_pack_defense_tag(String(tag))
+
+# PoE-style pack-clustered spawn. Replaces uniform-random N-spawn so
+# the floor reads as "groups of monsters" rather than thinly scattered
+# individuals. Math: target_total = 40 + floor*20 (modifier-adjusted),
+# split into packs of 6-12 same-id mobs. Each pack has 1 leader
+# (rolls magic/rare at elevated rates) + 5-11 packmates (forced to
+# normal so the leader stays the visual centerpiece).
+const _PACK_SIZE_MIN := 6
+const _PACK_SIZE_MAX := 12
+const _PACK_RADIUS := 4
+
+func _spawn_packs(pool: Array) -> void:
+	if pool.is_empty():
+		return
+	var count_mult: float = RunModifiers.sum_effect(active_modifiers, "enemy_count_mult", 1.0)
+	# Target total mobs for this floor.
+	var target_total: int = int(round((40.0 + float(current_floor) * 20.0) * count_mult))
+	if target_total <= 0:
+		return
+	var src_tier: int = int(current_biome.get("tier", 1))
+	var spawned: int = 0
+	# Safety cap on pack iterations — if all packs come out small (rng
+	# roll low end), don't loop forever trying to hit target_total.
+	var max_iterations: int = 50
+	while spawned < target_total and max_iterations > 0:
+		max_iterations -= 1
+		var pack_size: int = rng.randi_range(_PACK_SIZE_MIN, _PACK_SIZE_MAX)
+		# Don't overshoot target by a full pack.
+		var remaining: int = target_total - spawned
+		if remaining < _PACK_SIZE_MIN:
+			pack_size = remaining
+		# Pack is uniform monster id — that's what makes a pack read
+		# as a pack visually. Different packs roll different ids so
+		# the floor still has variety.
+		var pack_id: String = String(pool[rng.randi_range(0, pool.size() - 1)])
+		var leader_cell: Vector2i = _random_walkable_cell_far_from_bot()
+		var leader_tier: int = _roll_leader_pack_tier(src_tier)
+		_spawn_specific(pack_id, leader_cell, leader_tier)
+		spawned += 1
+		# Spawn packmates clustered around the leader. Try cells within
+		# radius first, fall back to random walkable if cluster is full.
+		for j in range(pack_size - 1):
+			if spawned >= target_total:
+				break
+			var member_cell: Vector2i = _walkable_cell_near(leader_cell, _PACK_RADIUS)
+			if member_cell == leader_cell:
+				member_cell = _random_walkable_cell_far_from_bot()
+			_spawn_specific(pack_id, member_cell, Enemy.PACK_NORMAL)
+			spawned += 1
+
+# Find a walkable cell within `radius` of `center`. Returns center if
+# no nearby cell is open (caller falls back to a global random pick).
+func _walkable_cell_near(center: Vector2i, radius: int) -> Vector2i:
+	# Try `tries` random offsets within the radius — bounded loop so a
+	# tightly-packed cluster doesn't burn time.
+	for _i in 16:
+		var dx: int = rng.randi_range(-radius, radius)
+		var dy: int = rng.randi_range(-radius, radius)
+		if dx == 0 and dy == 0:
+			continue
+		var c: Vector2i = center + Vector2i(dx, dy)
+		if c.y < 0 or c.y >= grid.size() or c.x < 0 or c.x >= grid[0].size():
+			continue
+		if grid[c.y][c.x] == C.T_FLOOR and c != bot.cell:
+			return c
+	return center

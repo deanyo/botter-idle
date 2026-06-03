@@ -4,8 +4,50 @@ Point-in-time snapshot of what's actually shipping. Updated as we go. The
 durable rules and process live in `CLAUDE.md`; the roadmap and open work
 items live in `TODO.md`.
 
-Last refresh: 2026-06-03 (enemy variation pass — pack tiers, size
-jitter, monster mods).
+Last refresh: 2026-06-03 (horde density + pack-clustered spawns +
+tier outlines).
+
+## Horde density + pack-clustered spawns — 2026-06-03
+
+Replaced uniform `4 + floor*2` random mob spawns with PoE-style
+pack clustering. Floor 1 ~50 mobs, floor 6 ~150 — validated with a
+2-run grind logging 535 / 436 kills.
+
+**Spawn shape** (`dungeon.gd::_spawn_packs`). target_total = 40 +
+floor*20. Spawned in packs of 6-12 same-id mobs around a leader.
+Pack count = total / avg_pack_size, so floor 6 produces ~15-20
+packs of ~10 mobs each. Same-id-per-pack is what makes a cluster
+read as a "pack" visually; different packs roll different ids so
+the floor still has variety.
+
+**Pack leaders** (`_roll_leader_pack_tier`). Leaders re-roll for
+modified-tier at elevated rates: 30% (T1) → 80% (T5) chance of
+being magic/rare; within the modified pool ~85% magic / 15% rare.
+Packmates are forced to PACK_NORMAL via the new `force_pack_tier`
+arg on `_spawn_specific` so the leader is always the visual
+centerpiece.
+
+**Loot rebalance** (`_maybe_drop_item`). Normal drop chance
+15% → 5% so 100+ kills don't flood the inventory. Magic leaders
+drop at 30%, rare leaders at 100% with bonus drop count (×2),
+bosses + minibosses unchanged at 100%. Total floor loot stays
+~10-15 items despite 10× the kills — validated 12/11 loot on 94/125
+kill floors.
+
+**Persistent outlines** (`enemy.gd::apply_persistent_outline` +
+extended `threat_outline.gdshader`). The shader now takes an
+optional `pack_color` uniform that overrides the threat color
+table. Boss = red, miniboss = orange, rare = gold, magic = blue.
+Threat tier still drives outline thickness so a deadly rare reads
+brighter than a trivial rare.
+
+**Perf**. Headless 16× grind shows ai_us 300-1100µs (well under
+budget — was hitting 12700µs during the original thundering-herd
+bug). Pack clustering helps: aggro range cap (8 cells), staggered
+repath, 3-paths-per-frame cap, and sticky-target combat all stay
+within their existing ceilings. Mob render cost scales linearly
+with count — 100-150 enemy sprites at 32×32 is still trivial on
+the M3 Pro baseline.
 
 ## Enemy variation pass — 2026-06-03
 

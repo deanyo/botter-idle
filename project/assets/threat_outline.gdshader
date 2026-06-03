@@ -12,6 +12,14 @@ shader_type canvas_item;
 // 0..3, picks outline color.
 uniform int tier = 0;
 
+// Pack-tier override. When alpha > 0, this color replaces the threat
+// table — used to give magic/rare/boss/miniboss enemies a stable
+// visual identity regardless of their bot-relative threat. The
+// threat tier still drives outline thickness via _strength so a
+// rare-but-trivial mob outlines faintly while a rare-and-deadly
+// mob outlines brightly.
+uniform vec4 pack_color = vec4(0.0, 0.0, 0.0, 0.0);
+
 // Pulse rate (Hz).
 uniform float pulse_speed = 2.0;
 
@@ -30,8 +38,9 @@ const vec4 TIER_COLOR[4] = vec4[](
 void fragment() {
 	vec4 base = texture(TEXTURE, UV);
 
-	// Skip the outline math for tier 0 (no aura).
-	if (tier <= 0) {
+	bool has_pack = pack_color.a > 0.001;
+	// Pack tier always outlines; threat tier 0 only draws if no pack.
+	if (tier <= 0 && !has_pack) {
 		COLOR = base;
 	} else {
 		// 4-direction neighbor sample. If the base sprite is transparent
@@ -47,8 +56,14 @@ void fragment() {
 		// Pulse intensity 0..1.
 		float pulse = 0.5 + 0.5 * sin(TIME * pulse_speed * 6.2831);
 
-		int t = clamp(tier, 0, 3);
-		vec4 outline_col = TIER_COLOR[t];
+		// Pick color: pack override if present, else threat table.
+		vec4 outline_col;
+		if (has_pack) {
+			outline_col = pack_color;
+		} else {
+			int t = clamp(tier, 0, 3);
+			outline_col = TIER_COLOR[t];
+		}
 		outline_col.a *= mix(0.6, 1.0, pulse);
 
 		// Mix outline into base. Where base is opaque, base wins (no

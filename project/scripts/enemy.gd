@@ -45,6 +45,41 @@ func apply_threat_aura(tier: int) -> void:
 	# valid "no outline" state — the shader skips the outline math when
 	# tier <= 0 (so we don't pay neighbor-sample cost on weak enemies).
 	threat_tier = tier
+	_ensure_outline_material()
+	(sprite.material as ShaderMaterial).set_shader_parameter("tier", tier)
+
+# Pack/boss outline color. Stable per-enemy regardless of bot-relative
+# threat — magic/rare/boss/miniboss should *always* outline so the
+# player can read the danger at a glance. Threat tier still drives
+# pulse intensity / thickness via the shader's tier path.
+const _PACK_OUTLINE_COLOR := {
+	PACK_MAGIC: Color(0.45, 0.75, 1.00, 0.85),   # cool blue
+	PACK_RARE:  Color(1.00, 0.85, 0.30, 0.95),   # gold yellow
+}
+const _BOSS_OUTLINE_COLOR := Color(1.00, 0.20, 0.20, 0.95)
+const _MINIBOSS_OUTLINE_COLOR := Color(1.00, 0.55, 0.20, 0.90)
+
+# Set the persistent outline color based on pack tier + boss flags.
+# Picks the strongest signal: boss > miniboss > pack rare > pack magic.
+# Called once at spawn after stats and pack tier are known.
+func apply_persistent_outline() -> void:
+	_ensure_outline_material()
+	var col: Color = Color(0, 0, 0, 0)
+	if is_boss:
+		col = _BOSS_OUTLINE_COLOR
+	elif is_miniboss:
+		col = _MINIBOSS_OUTLINE_COLOR
+	elif pack_tier == PACK_RARE:
+		col = _PACK_OUTLINE_COLOR.get(PACK_RARE, col)
+	elif pack_tier == PACK_MAGIC:
+		col = _PACK_OUTLINE_COLOR.get(PACK_MAGIC, col)
+	(sprite.material as ShaderMaterial).set_shader_parameter("pack_color", col)
+	# Make the outline a touch thicker for outlined enemies — easier to
+	# read at the dungeon zoom level.
+	if col.a > 0.0:
+		(sprite.material as ShaderMaterial).set_shader_parameter("thickness", 0.09)
+
+func _ensure_outline_material() -> void:
 	if sprite == null:
 		return
 	if sprite.material == null or not (sprite.material is ShaderMaterial) \
@@ -52,7 +87,6 @@ func apply_threat_aura(tier: int) -> void:
 		var mat := ShaderMaterial.new()
 		mat.shader = THREAT_OUTLINE_SHADER
 		sprite.material = mat
-	(sprite.material as ShaderMaterial).set_shader_parameter("tier", tier)
 
 # Tint colors per pack tier — applied on top of any champion modulate
 # already set by dungeon.gd. Picked to read at zoom against typical

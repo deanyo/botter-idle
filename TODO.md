@@ -97,6 +97,24 @@ User reported four issues from a real playtest. Status as of this beat:
     monster mods would cover more PoE archetypes. Wire as
     additional entries in `monster_mods.json`.
 
+- ✅ **Horde density via pack clusters** (shipped 2026-06-03).
+  Floor 1 ~50 mobs / floor 6 ~150 (validated 535/436 kills/run in
+  2-run grind). Replaced flat random N-spawn with `_spawn_packs`:
+  groups of 6-12 same-id mobs around a leader who rolls magic/rare
+  at elevated rates (30%→80% modified across T1→T5). Loot rebalanced
+  for 10× kill counts: normal drop 15%→5%, magic 30%, rare 100%×2.
+  Persistent outlines on boss/miniboss/rare/magic via extended
+  `threat_outline.gdshader` (red/orange/gold/blue).
+
+  Followups (deferred):
+  - ⬜ **Per-pack difficulty preview.** Flag the leader's modifier
+    visually (icon over head?) so the player can see "this pack is
+    Hasted" before engaging.
+  - ⬜ **Loot drop rebalance validation.** Loot-per-floor target
+    was ~10-15. Confirm with longer-run statistics that this isn't
+    too lean once the cap-driven salvage starts kicking in on
+    deeper floors. Use `/playthrough` harness.
+
 ## Future balance beats (deferred per 2026-06-02 validation)
 
 These are beyond tier-value tweaks — they require design work, not just
