@@ -1,512 +1,1610 @@
 {
   "format_version": 1,
-  "notes": "Source of truth for the item editor. Export via item_editor.html → downloads project/data/items.json section. Tile paths are relative to the DCSS tile pack root (dcss/Dungeon Crawl Stone Soup Full/).",
-
+  "notes": "Source of truth for the item editor. Export via item_editor.html \u2192 downloads project/data/items.json section. Tile paths are relative to the DCSS tile pack root (dcss/Dungeon Crawl Stone Soup Full/).",
   "base_types": {
-    "dagger":     { "label": "Dagger",      "category": "1h_sword", "dcss_dmg": 4,  "dcss_spd": 10, "flavor": "Fast, stabbing. Crit and Agility affixes shine here." },
-    "knife":      { "label": "Knife",       "category": "1h_sword", "dcss_dmg": 4,  "dcss_spd": 13, "flavor": "Improvised edge weapon. Low floor, low ceiling." },
-    "short_sword":{ "label": "Short Sword", "category": "1h_sword", "dcss_dmg": 5,  "dcss_spd": 10, "flavor": "Balanced entry blade. Crit-neutral." },
-    "quick_blade":{ "label": "Quick Blade", "category": "1h_sword", "dcss_dmg": 4,  "dcss_spd": 15, "flavor": "Extreme speed, low raw damage. Future: attack speed scaling." },
-    "rapier":     { "label": "Rapier",      "category": "1h_sword", "dcss_dmg": 7,  "dcss_spd": 12, "flavor": "Thrusting weapon. High crit multiplier flavor. Future: piercing." },
-    "falchion":   { "label": "Falchion",    "category": "1h_sword", "dcss_dmg": 8,  "dcss_spd": 13, "flavor": "Single-edged curved blade. Mid-tier workhorse." },
-    "long_sword":  { "label": "Long Sword", "category": "1h_sword", "dcss_dmg": 10, "dcss_spd": 14, "flavor": "Standard 1H sword. Reliable, slightly boring." },
-    "scimitar":   { "label": "Scimitar",    "category": "1h_sword", "dcss_dmg": 12, "dcss_spd": 14, "flavor": "Wide curved blade. Highest base damage in 1H class." },
-    "sabre":      { "label": "Sabre",       "category": "1h_sword", "dcss_dmg": 10, "dcss_spd": 14, "flavor": "Cavalry sword. Balanced speed/damage." },
-    "katana":     { "label": "Katana",      "category": "1h_sword", "dcss_dmg": 10, "dcss_spd": 13, "flavor": "Precise Eastern blade. High crit flavor." },
-    "demon_blade":{ "label": "Demon Blade", "category": "1h_sword", "dcss_dmg": 13, "dcss_spd": 13, "flavor": "Infernal forge. Future: fire damage on hit." }
+    "dagger": {
+      "label": "Dagger",
+      "category": "1h_sword",
+      "dcss_dmg": 4,
+      "dcss_spd": 10,
+      "flavor": "Fast, stabbing. Crit and Agility affixes shine here."
+    },
+    "knife": {
+      "label": "Knife",
+      "category": "1h_sword",
+      "dcss_dmg": 4,
+      "dcss_spd": 13,
+      "flavor": "Improvised edge weapon. Low floor, low ceiling."
+    },
+    "short_sword": {
+      "label": "Short Sword",
+      "category": "1h_sword",
+      "dcss_dmg": 5,
+      "dcss_spd": 10,
+      "flavor": "Balanced entry blade. Crit-neutral."
+    },
+    "quick_blade": {
+      "label": "Quick Blade",
+      "category": "1h_sword",
+      "dcss_dmg": 4,
+      "dcss_spd": 15,
+      "flavor": "Extreme speed, low raw damage. Future: attack speed scaling."
+    },
+    "rapier": {
+      "label": "Rapier",
+      "category": "1h_sword",
+      "dcss_dmg": 7,
+      "dcss_spd": 12,
+      "flavor": "Thrusting weapon. High crit multiplier flavor. Future: piercing."
+    },
+    "falchion": {
+      "label": "Falchion",
+      "category": "1h_sword",
+      "dcss_dmg": 8,
+      "dcss_spd": 13,
+      "flavor": "Single-edged curved blade. Mid-tier workhorse."
+    },
+    "long_sword": {
+      "label": "Long Sword",
+      "category": "1h_sword",
+      "dcss_dmg": 10,
+      "dcss_spd": 14,
+      "flavor": "Standard 1H sword. Reliable, slightly boring."
+    },
+    "scimitar": {
+      "label": "Scimitar",
+      "category": "1h_sword",
+      "dcss_dmg": 12,
+      "dcss_spd": 14,
+      "flavor": "Wide curved blade. Highest base damage in 1H class."
+    },
+    "sabre": {
+      "label": "Sabre",
+      "category": "1h_sword",
+      "dcss_dmg": 10,
+      "dcss_spd": 14,
+      "flavor": "Cavalry sword. Balanced speed/damage."
+    },
+    "katana": {
+      "label": "Katana",
+      "category": "1h_sword",
+      "dcss_dmg": 10,
+      "dcss_spd": 13,
+      "flavor": "Precise Eastern blade. High crit flavor."
+    },
+    "demon_blade": {
+      "label": "Demon Blade",
+      "category": "1h_sword",
+      "dcss_dmg": 13,
+      "dcss_spd": 13,
+      "flavor": "Infernal forge. Future: fire damage on hit."
+    }
   },
-
   "flavor_tags": {
-    "fire":       { "color": "#ff6633", "desc": "Future: fire damage on hit. Currently: Strength affix bonus." },
-    "ice":        { "color": "#66ccff", "desc": "Future: chill/slow on hit. Currently: Agility affix bonus." },
-    "holy":       { "color": "#ffeebb", "desc": "Future: bonus damage vs undead/demon. Currently: Stamina affix bonus." },
-    "dark":       { "color": "#9966cc", "desc": "Future: defense reduction debuff. Currently: Crit affix bonus." },
-    "vampiric":   { "color": "#cc3366", "desc": "Future: lifesteal per hit. Currently: Regen affix bonus." },
-    "poison":     { "color": "#66cc44", "desc": "Future: damage over time. Currently: no bonus." },
-    "swift":      { "color": "#aaddff", "desc": "Future: attack speed increase. Currently: Agility affix bonus." },
-    "precision":  { "color": "#ffdd88", "desc": "Future: higher crit multiplier (2.0x vs 1.5x). Currently: Crit affix bonus." },
-    "magic":      { "color": "#cc88ff", "desc": "Future: penetrates magic resistance. Currently: no bonus." },
-    "brutal":     { "color": "#ff8844", "desc": "Future: armor penetration. Currently: Strength affix bonus." },
-    "dragon_bane":{ "color": "#ffaa22", "desc": "Future: +50% vs dragon-type enemies. Currently: no bonus." },
-    "arcane":     { "color": "#aa88ff", "desc": "Future: double-strike mechanic. Currently: no bonus." },
-    "crystal":    { "color": "#88ddff", "desc": "Future: chance to shatter (AoE hit). Currently: no bonus." },
-    "sound":      { "color": "#ffccaa", "desc": "Future: scales with kill count. Currently: no bonus." },
-    "death":      { "color": "#884466", "desc": "Future: death mark (target takes +25% damage for 3s). Currently: no bonus." }
+    "fire": {
+      "color": "#ff6633",
+      "desc": "Future: fire damage on hit. Currently: Strength affix bonus."
+    },
+    "ice": {
+      "color": "#66ccff",
+      "desc": "Future: chill/slow on hit. Currently: Agility affix bonus."
+    },
+    "holy": {
+      "color": "#ffeebb",
+      "desc": "Future: bonus damage vs undead/demon. Currently: Stamina affix bonus."
+    },
+    "dark": {
+      "color": "#9966cc",
+      "desc": "Future: defense reduction debuff. Currently: Crit affix bonus."
+    },
+    "vampiric": {
+      "color": "#cc3366",
+      "desc": "Future: lifesteal per hit. Currently: Regen affix bonus."
+    },
+    "poison": {
+      "color": "#66cc44",
+      "desc": "Future: damage over time. Currently: no bonus."
+    },
+    "swift": {
+      "color": "#aaddff",
+      "desc": "Future: attack speed increase. Currently: Agility affix bonus."
+    },
+    "precision": {
+      "color": "#ffdd88",
+      "desc": "Future: higher crit multiplier (2.0x vs 1.5x). Currently: Crit affix bonus."
+    },
+    "magic": {
+      "color": "#cc88ff",
+      "desc": "Future: penetrates magic resistance. Currently: no bonus."
+    },
+    "brutal": {
+      "color": "#ff8844",
+      "desc": "Future: armor penetration. Currently: Strength affix bonus."
+    },
+    "dragon_bane": {
+      "color": "#ffaa22",
+      "desc": "Future: +50% vs dragon-type enemies. Currently: no bonus."
+    },
+    "arcane": {
+      "color": "#aa88ff",
+      "desc": "Future: double-strike mechanic. Currently: no bonus."
+    },
+    "crystal": {
+      "color": "#88ddff",
+      "desc": "Future: chance to shatter (AoE hit). Currently: no bonus."
+    },
+    "sound": {
+      "color": "#ffccaa",
+      "desc": "Future: scales with kill count. Currently: no bonus."
+    },
+    "death": {
+      "color": "#884466",
+      "desc": "Future: death mark (target takes +25% damage for 3s). Currently: no bonus."
+    }
   },
-
-  "drop_weight_schema": "Array of 5 weights [T1,T2,T3,T4,T5] — relative probability this item appears in the loot pool for each dungeon tier. 0 = never drops there. Higher = more likely relative to other items in that tier's pool.",
-
+  "drop_weight_schema": "Array of 5 weights [T1,T2,T3,T4,T5] \u2014 relative probability this item appears in the loot pool for each dungeon tier. 0 = never drops there. Higher = more likely relative to other items in that tier's pool.",
   "items": [
-
     {
-      "id": "rusty_dagger", "name": "Rusty Dagger", "base_type": "dagger",
-      "slot": "weapon", "item_tier": 1, "rarity": "common",
+      "id": "rusty_dagger",
+      "name": "Rusty Dagger",
+      "base_type": "dagger",
+      "slot": "weapon",
+      "item_tier": 1,
+      "rarity": "common",
       "tile": "item/weapon/dagger_3.png",
-      "atk": 12, "def": 0, "hp": 0,
+      "atk": 13,
+      "def": 0,
+      "hp": 2,
       "flavor_tags": [],
       "lore": "A battered blade, more rust than iron.",
-      "drop_weights": [80, 15, 0, 0, 0],
-      "unique": false
+      "drop_weights": [
+        80,
+        15,
+        0,
+        0,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "crit": 30,
+        "haste": 20,
+        "strength": 10,
+        "agility": 10
+      }
     },
     {
-      "id": "bone_knife", "name": "Bone Knife", "base_type": "knife",
-      "slot": "weapon", "item_tier": 1, "rarity": "common",
+      "id": "bone_knife",
+      "name": "Bone Knife",
+      "base_type": "knife",
+      "slot": "weapon",
+      "item_tier": 1,
+      "rarity": "common",
       "tile": "item/weapon/knife.png",
-      "atk": 10, "def": 0, "hp": 0,
+      "atk": 10,
+      "def": 0,
+      "hp": 0,
       "flavor_tags": [],
       "lore": "Fashioned from something that used to be alive.",
-      "drop_weights": [80, 10, 0, 0, 0],
-      "unique": false
+      "drop_weights": [
+        80,
+        10,
+        0,
+        0,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "crit": 30,
+        "haste": 20,
+        "strength": 10,
+        "agility": 10
+      }
     },
     {
-      "id": "shiv", "name": "Shiv", "base_type": "dagger",
-      "slot": "weapon", "item_tier": 1, "rarity": "common",
+      "id": "shiv",
+      "name": "Shiv",
+      "base_type": "dagger",
+      "slot": "weapon",
+      "item_tier": 1,
+      "rarity": "common",
       "tile": "item/weapon/dagger_6.png",
-      "atk": 13, "def": 0, "hp": 0,
+      "atk": 13,
+      "def": 0,
+      "hp": 2,
       "flavor_tags": [],
       "lore": "Improvised. Effective. Ugly.",
-      "drop_weights": [80, 10, 0, 0, 0],
-      "unique": false
+      "drop_weights": [
+        80,
+        10,
+        0,
+        0,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "crit": 30,
+        "haste": 20,
+        "strength": 10,
+        "agility": 10
+      }
     },
     {
-      "id": "chipped_shortsword", "name": "Chipped Short Sword", "base_type": "short_sword",
-      "slot": "weapon", "item_tier": 1, "rarity": "common",
+      "id": "chipped_shortsword",
+      "name": "Chipped Short Sword",
+      "base_type": "short_sword",
+      "slot": "weapon",
+      "item_tier": 1,
+      "rarity": "common",
       "tile": "item/weapon/short_sword_1_new.png",
-      "atk": 16, "def": 0, "hp": 0,
+      "atk": 16,
+      "def": 0,
+      "hp": 0,
       "flavor_tags": [],
       "lore": "A serviceable blade, if you ignore the nicks.",
-      "drop_weights": [80, 15, 2, 0, 0],
-      "unique": false
+      "drop_weights": [
+        80,
+        15,
+        2,
+        0,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "crit": 20,
+        "haste": 15,
+        "strength": 20,
+        "stamina": 10
+      }
     },
     {
-      "id": "iron_dagger", "name": "Iron Dagger", "base_type": "dagger",
-      "slot": "weapon", "item_tier": 1, "rarity": "uncommon",
+      "id": "iron_dagger",
+      "name": "Iron Dagger",
+      "base_type": "dagger",
+      "slot": "weapon",
+      "item_tier": 1,
+      "rarity": "uncommon",
       "tile": "item/weapon/dagger_new.png",
-      "atk": 18, "def": 0, "hp": 2,
+      "atk": 18,
+      "def": 0,
+      "hp": 2,
       "flavor_tags": [],
       "lore": "Standard issue for those who prefer not to be seen.",
-      "drop_weights": [50, 35, 8, 0, 0],
-      "unique": false
+      "drop_weights": [
+        50,
+        35,
+        8,
+        0,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "crit": 30,
+        "haste": 20,
+        "strength": 10,
+        "agility": 10
+      }
     },
     {
-      "id": "short_falchion", "name": "Short Falchion", "base_type": "falchion",
-      "slot": "weapon", "item_tier": 1, "rarity": "uncommon",
+      "id": "short_falchion",
+      "name": "Short Falchion",
+      "base_type": "falchion",
+      "slot": "weapon",
+      "item_tier": 1,
+      "rarity": "uncommon",
       "tile": "item/weapon/falchion_1_new.png",
-      "atk": 20, "def": 0, "hp": 2,
+      "atk": 20,
+      "def": 0,
+      "hp": 2,
       "flavor_tags": [],
       "lore": "A light curved blade. More than it looks.",
-      "drop_weights": [50, 35, 8, 0, 0],
-      "unique": false
+      "drop_weights": [
+        50,
+        35,
+        8,
+        0,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "crit": 15,
+        "strength": 25,
+        "stamina": 10,
+        "haste": 10
+      }
     },
-
     {
-      "id": "steel_shortsword", "name": "Steel Short Sword", "base_type": "short_sword",
-      "slot": "weapon", "item_tier": 2, "rarity": "uncommon",
+      "id": "steel_shortsword",
+      "name": "Steel Short Sword",
+      "base_type": "short_sword",
+      "slot": "weapon",
+      "item_tier": 2,
+      "rarity": "uncommon",
       "tile": "item/weapon/short_sword_2_new.png",
-      "atk": 24, "def": 0, "hp": 4,
+      "atk": 27,
+      "def": 0,
+      "hp": 4,
       "flavor_tags": [],
       "lore": "Properly forged. An honest weapon.",
-      "drop_weights": [15, 65, 25, 3, 0],
-      "unique": false
+      "drop_weights": [
+        15,
+        65,
+        25,
+        3,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "crit": 20,
+        "haste": 15,
+        "strength": 20,
+        "stamina": 10
+      }
     },
     {
-      "id": "elven_dagger", "name": "Elven Dagger", "base_type": "dagger",
-      "slot": "weapon", "item_tier": 2, "rarity": "uncommon",
+      "id": "elven_dagger",
+      "name": "Elven Dagger",
+      "base_type": "dagger",
+      "slot": "weapon",
+      "item_tier": 2,
+      "rarity": "uncommon",
       "tile": "item/weapon/elven_dagger.png",
-      "atk": 22, "def": 0, "hp": 3,
-      "flavor_tags": ["swift"],
+      "atk": 22,
+      "def": 0,
+      "hp": 3,
+      "flavor_tags": [
+        "swift"
+      ],
       "lore": "Light enough to forget you're carrying it, until you aren't.",
-      "drop_weights": [10, 65, 20, 3, 0],
-      "unique": false
+      "drop_weights": [
+        10,
+        65,
+        20,
+        3,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "crit": 30,
+        "haste": 20,
+        "strength": 10,
+        "agility": 10
+      }
     },
     {
-      "id": "iron_falchion", "name": "Iron Falchion", "base_type": "falchion",
-      "slot": "weapon", "item_tier": 2, "rarity": "uncommon",
+      "id": "iron_falchion",
+      "name": "Iron Falchion",
+      "base_type": "falchion",
+      "slot": "weapon",
+      "item_tier": 2,
+      "rarity": "uncommon",
       "tile": "item/weapon/falchion_2_new.png",
-      "atk": 28, "def": 0, "hp": 4,
+      "atk": 28,
+      "def": 0,
+      "hp": 4,
       "flavor_tags": [],
       "lore": "A broad single-edge blade. Prefers wide swings.",
-      "drop_weights": [15, 65, 20, 3, 0],
-      "unique": false
+      "drop_weights": [
+        15,
+        65,
+        20,
+        3,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "crit": 15,
+        "strength": 25,
+        "stamina": 10,
+        "haste": 10
+      }
     },
     {
-      "id": "orcish_shortsword", "name": "Orcish Short Sword", "base_type": "short_sword",
-      "slot": "weapon", "item_tier": 2, "rarity": "uncommon",
+      "id": "orcish_shortsword",
+      "name": "Orcish Short Sword",
+      "base_type": "short_sword",
+      "slot": "weapon",
+      "item_tier": 2,
+      "rarity": "uncommon",
       "tile": "item/weapon/orcish_short_sword.png",
-      "atk": 30, "def": 0, "hp": 5,
-      "flavor_tags": ["brutal"],
+      "atk": 30,
+      "def": 0,
+      "hp": 5,
+      "flavor_tags": [
+        "brutal"
+      ],
       "lore": "Crudely made, but it hits like one anyway.",
-      "drop_weights": [8, 60, 25, 5, 0],
-      "unique": false
+      "drop_weights": [
+        8,
+        60,
+        25,
+        5,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "crit": 20,
+        "haste": 15,
+        "strength": 20,
+        "stamina": 10
+      }
     },
     {
-      "id": "rapier", "name": "Rapier", "base_type": "rapier",
-      "slot": "weapon", "item_tier": 2, "rarity": "rare",
+      "id": "rapier",
+      "name": "Rapier",
+      "base_type": "rapier",
+      "slot": "weapon",
+      "item_tier": 2,
+      "rarity": "rare",
       "tile": "item/weapon/rapier_1.png",
-      "atk": 26, "def": 0, "hp": 3,
-      "flavor_tags": ["precision"],
+      "atk": 26,
+      "def": 0,
+      "hp": 3,
+      "flavor_tags": [
+        "precision"
+      ],
       "lore": "A slender thrusting weapon. Rewards patience.",
-      "drop_weights": [5, 50, 35, 8, 0],
-      "unique": false
+      "drop_weights": [
+        5,
+        50,
+        35,
+        8,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "crit": 35,
+        "haste": 20,
+        "strength": 5,
+        "agility": 10
+      }
     },
     {
-      "id": "quick_blade", "name": "Quick Blade", "base_type": "quick_blade",
-      "slot": "weapon", "item_tier": 2, "rarity": "rare",
+      "id": "quick_blade",
+      "name": "Quick Blade",
+      "base_type": "quick_blade",
+      "slot": "weapon",
+      "item_tier": 2,
+      "rarity": "rare",
       "tile": "item/weapon/quickblade.png",
-      "atk": 20, "def": 0, "hp": 4,
-      "flavor_tags": ["swift", "precision"],
+      "atk": 20,
+      "def": 0,
+      "hp": 4,
+      "flavor_tags": [
+        "swift",
+        "precision"
+      ],
       "lore": "The fastest blade in the Dungeon. Blink and it's already over.",
-      "drop_weights": [3, 40, 40, 10, 0],
-      "unique": false
+      "drop_weights": [
+        3,
+        40,
+        40,
+        10,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "haste": 40,
+        "crit": 30,
+        "strength": 5
+      }
     },
-
     {
-      "id": "steel_falchion", "name": "Steel Falchion", "base_type": "falchion",
-      "slot": "weapon", "item_tier": 3, "rarity": "rare",
+      "id": "steel_falchion",
+      "name": "Steel Falchion",
+      "base_type": "falchion",
+      "slot": "weapon",
+      "item_tier": 3,
+      "rarity": "rare",
       "tile": "item/weapon/falchion_3.png",
-      "atk": 36, "def": 0, "hp": 6,
+      "atk": 36,
+      "def": 0,
+      "hp": 6,
       "flavor_tags": [],
       "lore": "A proper blade, properly made.",
-      "drop_weights": [0, 15, 60, 25, 5],
-      "unique": false
+      "drop_weights": [
+        0,
+        15,
+        60,
+        25,
+        5
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "crit": 15,
+        "strength": 25,
+        "stamina": 10,
+        "haste": 10
+      }
     },
     {
-      "id": "mithril_shortsword", "name": "Mithril Short Sword", "base_type": "short_sword",
-      "slot": "weapon", "item_tier": 3, "rarity": "rare",
+      "id": "mithril_shortsword",
+      "name": "Mithril Short Sword",
+      "base_type": "short_sword",
+      "slot": "weapon",
+      "item_tier": 3,
+      "rarity": "rare",
       "tile": "item/weapon/short_sword_5.png",
-      "atk": 34, "def": 0, "hp": 7,
+      "atk": 34,
+      "def": 0,
+      "hp": 7,
       "flavor_tags": [],
       "lore": "Light. Strong. Expensive to replace.",
-      "drop_weights": [0, 12, 58, 25, 5],
-      "unique": false
+      "drop_weights": [
+        0,
+        12,
+        58,
+        25,
+        5
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "crit": 20,
+        "haste": 15,
+        "strength": 20,
+        "stamina": 10
+      }
     },
     {
-      "id": "iron_longsword", "name": "Iron Long Sword", "base_type": "long_sword",
-      "slot": "weapon", "item_tier": 3, "rarity": "rare",
+      "id": "iron_longsword",
+      "name": "Iron Long Sword",
+      "base_type": "long_sword",
+      "slot": "weapon",
+      "item_tier": 3,
+      "rarity": "rare",
       "tile": "item/weapon/long_sword_1_new.png",
-      "atk": 38, "def": 0, "hp": 6,
+      "atk": 38,
+      "def": 0,
+      "hp": 6,
       "flavor_tags": [],
       "lore": "A proper weapon for a proper fight.",
-      "drop_weights": [0, 15, 60, 22, 3],
-      "unique": false
+      "drop_weights": [
+        0,
+        15,
+        60,
+        22,
+        3
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "strength": 25,
+        "stamina": 15,
+        "agility": 10,
+        "crit": 15
+      }
     },
     {
-      "id": "silver_rapier", "name": "Silver Rapier", "base_type": "rapier",
-      "slot": "weapon", "item_tier": 3, "rarity": "rare",
+      "id": "silver_rapier",
+      "name": "Silver Rapier",
+      "base_type": "rapier",
+      "slot": "weapon",
+      "item_tier": 3,
+      "rarity": "rare",
       "tile": "item/weapon/rapier_2.png",
-      "atk": 32, "def": 0, "hp": 5,
-      "flavor_tags": ["precision", "holy"],
+      "atk": 32,
+      "def": 0,
+      "hp": 5,
+      "flavor_tags": [
+        "precision",
+        "holy"
+      ],
       "lore": "Dipped in holy water before forging. Undead hate it.",
-      "drop_weights": [0, 10, 55, 28, 6],
-      "unique": false
+      "drop_weights": [
+        0,
+        10,
+        55,
+        28,
+        6
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "crit": 35,
+        "haste": 20,
+        "strength": 5,
+        "agility": 10
+      }
     },
     {
-      "id": "scimitar", "name": "Scimitar", "base_type": "scimitar",
-      "slot": "weapon", "item_tier": 3, "rarity": "rare",
+      "id": "scimitar",
+      "name": "Scimitar",
+      "base_type": "scimitar",
+      "slot": "weapon",
+      "item_tier": 3,
+      "rarity": "rare",
       "tile": "item/weapon/scimitar_1_new.png",
-      "atk": 42, "def": 0, "hp": 6,
+      "atk": 42,
+      "def": 0,
+      "hp": 6,
       "flavor_tags": [],
       "lore": "A curve that finds every gap in armor.",
-      "drop_weights": [0, 12, 60, 23, 5],
-      "unique": false
+      "drop_weights": [
+        0,
+        12,
+        60,
+        23,
+        5
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "crit": 20,
+        "haste": 20,
+        "strength": 20,
+        "stamina": 5
+      }
     },
     {
-      "id": "silver_sabre", "name": "Silver Sabre", "base_type": "sabre",
-      "slot": "weapon", "item_tier": 3, "rarity": "rare",
+      "id": "silver_sabre",
+      "name": "Silver Sabre",
+      "base_type": "sabre",
+      "slot": "weapon",
+      "item_tier": 3,
+      "rarity": "rare",
       "tile": "item/weapon/sabre_1_silver.png",
-      "atk": 40, "def": 0, "hp": 5,
-      "flavor_tags": ["holy"],
+      "atk": 40,
+      "def": 0,
+      "hp": 5,
+      "flavor_tags": [
+        "holy"
+      ],
       "lore": "Silver-edged. Blessed. Smells faintly of incense.",
-      "drop_weights": [0, 8, 55, 30, 8],
-      "unique": false
+      "drop_weights": [
+        0,
+        8,
+        55,
+        30,
+        8
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "crit": 25,
+        "haste": 25,
+        "strength": 15,
+        "agility": 5
+      }
     },
-
     {
-      "id": "steel_longsword", "name": "Steel Long Sword", "base_type": "long_sword",
-      "slot": "weapon", "item_tier": 4, "rarity": "rare",
+      "id": "steel_longsword",
+      "name": "Steel Long Sword",
+      "base_type": "long_sword",
+      "slot": "weapon",
+      "item_tier": 4,
+      "rarity": "rare",
       "tile": "item/weapon/long_sword_2.png",
-      "atk": 48, "def": 0, "hp": 8,
+      "atk": 54,
+      "def": 0,
+      "hp": 10,
       "flavor_tags": [],
       "lore": "Dependable. Exactly as good as it needs to be.",
-      "drop_weights": [0, 0, 12, 58, 30],
-      "unique": false
+      "drop_weights": [
+        0,
+        0,
+        12,
+        58,
+        30
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "strength": 25,
+        "stamina": 15,
+        "agility": 10,
+        "crit": 15
+      }
     },
     {
-      "id": "elven_shortsword", "name": "Elven Short Sword", "base_type": "short_sword",
-      "slot": "weapon", "item_tier": 4, "rarity": "epic",
+      "id": "elven_shortsword",
+      "name": "Elven Short Sword",
+      "base_type": "short_sword",
+      "slot": "weapon",
+      "item_tier": 4,
+      "rarity": "epic",
       "tile": "item/weapon/elven_short_sword.png",
-      "atk": 38, "def": 0, "hp": 8,
-      "flavor_tags": ["swift", "precision"],
+      "atk": 38,
+      "def": 0,
+      "hp": 8,
+      "flavor_tags": [
+        "swift",
+        "precision"
+      ],
       "lore": "Almost too light to feel. Compensates by being very sharp.",
-      "drop_weights": [0, 0, 10, 55, 35],
-      "unique": false
+      "drop_weights": [
+        0,
+        0,
+        10,
+        55,
+        35
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "crit": 20,
+        "haste": 15,
+        "strength": 20,
+        "stamina": 10
+      }
     },
     {
-      "id": "runed_falchion", "name": "Runed Falchion", "base_type": "falchion",
-      "slot": "weapon", "item_tier": 4, "rarity": "epic",
+      "id": "runed_falchion",
+      "name": "Runed Falchion",
+      "base_type": "falchion",
+      "slot": "weapon",
+      "item_tier": 4,
+      "rarity": "epic",
       "tile": "item/weapon/falchion_5.png",
-      "atk": 52, "def": 0, "hp": 10,
-      "flavor_tags": ["magic"],
+      "atk": 52,
+      "def": 0,
+      "hp": 10,
+      "flavor_tags": [
+        "magic"
+      ],
       "lore": "Sigils run down the blade, each one a name.",
-      "drop_weights": [0, 0, 8, 58, 35],
-      "unique": false
+      "drop_weights": [
+        0,
+        0,
+        8,
+        58,
+        35
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "crit": 15,
+        "strength": 25,
+        "stamina": 10,
+        "haste": 10
+      }
     },
     {
-      "id": "mithril_longsword", "name": "Mithril Long Sword", "base_type": "long_sword",
-      "slot": "weapon", "item_tier": 4, "rarity": "epic",
+      "id": "mithril_longsword",
+      "name": "Mithril Long Sword",
+      "base_type": "long_sword",
+      "slot": "weapon",
+      "item_tier": 4,
+      "rarity": "epic",
       "tile": "item/weapon/long_sword_3.png",
-      "atk": 56, "def": 0, "hp": 10,
+      "atk": 56,
+      "def": 0,
+      "hp": 10,
       "flavor_tags": [],
       "lore": "Light enough to carry all day, heavy enough to end the day.",
-      "drop_weights": [0, 0, 10, 60, 30],
-      "unique": false
+      "drop_weights": [
+        0,
+        0,
+        10,
+        60,
+        30
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "strength": 25,
+        "stamina": 15,
+        "agility": 10,
+        "crit": 15
+      }
     },
     {
-      "id": "iron_katana", "name": "Katana", "base_type": "katana",
-      "slot": "weapon", "item_tier": 4, "rarity": "epic",
+      "id": "iron_katana",
+      "name": "Katana",
+      "base_type": "katana",
+      "slot": "weapon",
+      "item_tier": 4,
+      "rarity": "epic",
       "tile": "item/weapon/katana.png",
-      "atk": 50, "def": 0, "hp": 9,
-      "flavor_tags": ["precision", "swift"],
+      "atk": 50,
+      "def": 0,
+      "hp": 9,
+      "flavor_tags": [
+        "precision",
+        "swift"
+      ],
       "lore": "Simple. Exact. Deadly.",
-      "drop_weights": [0, 0, 8, 58, 35],
-      "unique": false
+      "drop_weights": [
+        0,
+        0,
+        8,
+        58,
+        35
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "crit": 25,
+        "haste": 20,
+        "strength": 15,
+        "agility": 10
+      }
     },
     {
-      "id": "runed_scimitar", "name": "Runed Scimitar", "base_type": "scimitar",
-      "slot": "weapon", "item_tier": 4, "rarity": "epic",
+      "id": "runed_scimitar",
+      "name": "Runed Scimitar",
+      "base_type": "scimitar",
+      "slot": "weapon",
+      "item_tier": 4,
+      "rarity": "epic",
       "tile": "item/weapon/scimitar_2.png",
-      "atk": 58, "def": 0, "hp": 11,
-      "flavor_tags": ["magic"],
+      "atk": 58,
+      "def": 0,
+      "hp": 11,
+      "flavor_tags": [
+        "magic"
+      ],
       "lore": "The runes pulse when it cuts. Nobody knows why.",
-      "drop_weights": [0, 0, 8, 60, 32],
-      "unique": false
+      "drop_weights": [
+        0,
+        0,
+        8,
+        60,
+        32
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "crit": 20,
+        "haste": 20,
+        "strength": 20,
+        "stamina": 5
+      }
     },
     {
-      "id": "elven_broadsword", "name": "Elven Broadsword", "base_type": "long_sword",
-      "slot": "weapon", "item_tier": 4, "rarity": "epic",
+      "id": "elven_broadsword",
+      "name": "Elven Broadsword",
+      "base_type": "long_sword",
+      "slot": "weapon",
+      "item_tier": 4,
+      "rarity": "epic",
       "tile": "item/weapon/elven_broadsword.png",
-      "atk": 54, "def": 0, "hp": 10,
-      "flavor_tags": ["swift", "magic"],
+      "atk": 54,
+      "def": 0,
+      "hp": 10,
+      "flavor_tags": [
+        "swift",
+        "magic"
+      ],
       "lore": "Longer than it looks. Lighter than possible.",
-      "drop_weights": [0, 0, 8, 55, 38],
-      "unique": false
+      "drop_weights": [
+        0,
+        0,
+        8,
+        55,
+        38
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "strength": 25,
+        "stamina": 15,
+        "agility": 10,
+        "crit": 15
+      }
     },
-
     {
-      "id": "crystal_longsword", "name": "Crystal Long Sword", "base_type": "long_sword",
-      "slot": "weapon", "item_tier": 5, "rarity": "epic",
+      "id": "crystal_longsword",
+      "name": "Crystal Long Sword",
+      "base_type": "long_sword",
+      "slot": "weapon",
+      "item_tier": 5,
+      "rarity": "epic",
       "tile": "item/weapon/long_sword_5.png",
-      "atk": 68, "def": 0, "hp": 14,
-      "flavor_tags": ["magic", "crystal"],
+      "atk": 70,
+      "def": 0,
+      "hp": 15,
+      "flavor_tags": [
+        "magic",
+        "crystal"
+      ],
       "lore": "Carved from a single growth of arcane crystal. Hums when hungry.",
-      "drop_weights": [0, 0, 0, 15, 75],
-      "unique": false
+      "drop_weights": [
+        0,
+        0,
+        0,
+        15,
+        75
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "strength": 25,
+        "stamina": 15,
+        "agility": 10,
+        "crit": 15
+      }
     },
     {
-      "id": "mithril_katana", "name": "Mithril Katana", "base_type": "katana",
-      "slot": "weapon", "item_tier": 5, "rarity": "epic",
+      "id": "mithril_katana",
+      "name": "Mithril Katana",
+      "base_type": "katana",
+      "slot": "weapon",
+      "item_tier": 5,
+      "rarity": "epic",
       "tile": "item/weapon/katana_1.png",
-      "atk": 64, "def": 0, "hp": 13,
-      "flavor_tags": ["precision", "swift"],
+      "atk": 64,
+      "def": 0,
+      "hp": 13,
+      "flavor_tags": [
+        "precision",
+        "swift"
+      ],
       "lore": "Forged over seven years. Used for the rest.",
-      "drop_weights": [0, 0, 0, 12, 72],
-      "unique": false
+      "drop_weights": [
+        0,
+        0,
+        0,
+        12,
+        72
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "crit": 25,
+        "haste": 20,
+        "strength": 15,
+        "agility": 10
+      }
     },
     {
-      "id": "ancient_sword", "name": "Ancient Sword", "base_type": "long_sword",
-      "slot": "weapon", "item_tier": 5, "rarity": "epic",
+      "id": "ancient_sword",
+      "name": "Ancient Sword",
+      "base_type": "long_sword",
+      "slot": "weapon",
+      "item_tier": 5,
+      "rarity": "epic",
       "tile": "item/weapon/ancient_sword.png",
-      "atk": 72, "def": 0, "hp": 16,
-      "flavor_tags": ["dark", "death"],
+      "atk": 72,
+      "def": 0,
+      "hp": 16,
+      "flavor_tags": [
+        "dark",
+        "death"
+      ],
       "lore": "Nobody remembers who made it. Nobody dares ask.",
-      "drop_weights": [0, 0, 0, 14, 70],
-      "unique": false
+      "drop_weights": [
+        0,
+        0,
+        0,
+        14,
+        70
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "strength": 25,
+        "stamina": 15,
+        "agility": 10,
+        "crit": 15
+      }
     },
     {
-      "id": "demon_blade", "name": "Demon Blade", "base_type": "demon_blade",
-      "slot": "weapon", "item_tier": 5, "rarity": "legendary",
+      "id": "demon_blade",
+      "name": "Demon Blade",
+      "base_type": "demon_blade",
+      "slot": "weapon",
+      "item_tier": 5,
+      "rarity": "legendary",
       "tile": "item/weapon/demon_blade.png",
-      "atk": 80, "def": 0, "hp": 16,
-      "flavor_tags": ["fire", "demon"],
+      "atk": 80,
+      "def": 0,
+      "hp": 16,
+      "flavor_tags": [
+        "fire",
+        "demon"
+      ],
       "lore": "Forged in a plane that shouldn't exist. Wants to go back.",
-      "drop_weights": [0, 0, 0, 8, 60],
-      "unique": false
+      "drop_weights": [
+        0,
+        0,
+        0,
+        8,
+        60
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "strength": 25,
+        "crit": 20,
+        "haste": 10,
+        "regen": 5
+      }
     },
-
     {
-      "id": "singing_sword", "name": "The Singing Sword", "base_type": "long_sword",
-      "slot": "weapon", "item_tier": 5, "rarity": "legendary",
+      "id": "singing_sword",
+      "name": "The Singing Sword",
+      "base_type": "long_sword",
+      "slot": "weapon",
+      "item_tier": 5,
+      "rarity": "legendary",
       "tile": "item/weapon/artefact/spwpn_singing_sword.png",
-      "atk": 88, "def": 0, "hp": 20,
-      "flavor_tags": ["magic", "sound"],
+      "atk": 88,
+      "def": 0,
+      "hp": 20,
+      "flavor_tags": [
+        "magic",
+        "sound"
+      ],
       "lore": "A blade said to sing in battle. The tune changes with each kill.",
-      "drop_weights": [0, 0, 0, 5, 25],
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        25
+      ],
       "unique": true,
-      "future_mechanic": "ATK scales with enemies killed this run (+1 ATK per 10 kills, resets on run end)."
+      "future_mechanic": "ATK scales with enemies killed this run (+1 ATK per 10 kills, resets on run end).",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "agility": 10,
+        "regen": 10,
+        "crit": 40,
+        "haste": 30
+      }
     },
     {
-      "id": "chilly_death", "name": "Chilly Death", "base_type": "rapier",
-      "slot": "weapon", "item_tier": 5, "rarity": "legendary",
+      "id": "chilly_death",
+      "name": "Chilly Death",
+      "base_type": "rapier",
+      "slot": "weapon",
+      "item_tier": 5,
+      "rarity": "legendary",
       "tile": "item/weapon/artefact/urand_chilly_death_new.png",
-      "atk": 78, "def": 0, "hp": 18,
-      "flavor_tags": ["ice", "cold"],
+      "atk": 78,
+      "def": 0,
+      "hp": 18,
+      "flavor_tags": [
+        "ice",
+        "cold"
+      ],
       "lore": "Leaves wounds that refuse to close. Cold as the depths of Glacier.",
-      "drop_weights": [0, 0, 0, 5, 25],
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        25
+      ],
       "unique": true,
-      "future_mechanic": "15% chance to freeze enemy on hit (0.5s stun). Frozen enemies take +20% damage."
+      "future_mechanic": "15% chance to freeze enemy on hit (0.5s stun). Frozen enemies take +20% damage.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "agility": 15,
+        "regen": 10,
+        "crit": 20
+      }
     },
     {
-      "id": "firestarter", "name": "Firestarter", "base_type": "falchion",
-      "slot": "weapon", "item_tier": 5, "rarity": "legendary",
+      "id": "firestarter",
+      "name": "Firestarter",
+      "base_type": "falchion",
+      "slot": "weapon",
+      "item_tier": 5,
+      "rarity": "legendary",
       "tile": "item/weapon/artefact/urand_firestarter.png",
-      "atk": 85, "def": 0, "hp": 18,
-      "flavor_tags": ["fire"],
+      "atk": 85,
+      "def": 0,
+      "hp": 18,
+      "flavor_tags": [
+        "fire"
+      ],
       "lore": "A blade wreathed in eternal flame. It doesn't burn you. Yet.",
-      "drop_weights": [0, 0, 0, 5, 25],
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        25
+      ],
       "unique": true,
-      "future_mechanic": "Hits apply a 3-tick burn (5% max HP per tick). Light spec already wired."
+      "future_mechanic": "Hits apply a 3-tick burn (5% max HP per tick). Light spec already wired.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "strength": 20,
+        "crit": 15,
+        "haste": 10
+      }
     },
     {
-      "id": "bloodbane", "name": "Bloodbane", "base_type": "long_sword",
-      "slot": "weapon", "item_tier": 5, "rarity": "legendary",
+      "id": "bloodbane",
+      "name": "Bloodbane",
+      "base_type": "long_sword",
+      "slot": "weapon",
+      "item_tier": 5,
+      "rarity": "legendary",
       "tile": "item/weapon/artefact/urand_bloodbane_new.png",
-      "atk": 80, "def": 0, "hp": 22,
-      "flavor_tags": ["vampiric", "dark"],
+      "atk": 80,
+      "def": 0,
+      "hp": 22,
+      "flavor_tags": [
+        "vampiric",
+        "dark"
+      ],
       "lore": "Drinks deep from those it cuts. Never seems satisfied.",
-      "drop_weights": [0, 0, 0, 4, 22],
+      "drop_weights": [
+        0,
+        0,
+        0,
+        4,
+        22
+      ],
       "unique": true,
-      "future_mechanic": "Lifesteal: heals 8% of damage dealt on every hit."
+      "future_mechanic": "Lifesteal: heals 8% of damage dealt on every hit.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "strength": 35,
+        "crit": 40,
+        "haste": 15
+      }
     },
     {
-      "id": "wyrmbane", "name": "Wyrmbane", "base_type": "scimitar",
-      "slot": "weapon", "item_tier": 5, "rarity": "legendary",
+      "id": "wyrmbane",
+      "name": "Wyrmbane",
+      "base_type": "scimitar",
+      "slot": "weapon",
+      "item_tier": 5,
+      "rarity": "legendary",
       "tile": "item/weapon/artefact/urand_wyrmbane_new.png",
-      "atk": 92, "def": 0, "hp": 20,
-      "flavor_tags": ["holy", "dragon_bane"],
+      "atk": 92,
+      "def": 0,
+      "hp": 20,
+      "flavor_tags": [
+        "holy",
+        "dragon_bane"
+      ],
       "lore": "Forged to end dragons. Still hungry.",
-      "drop_weights": [0, 0, 0, 5, 25],
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        25
+      ],
       "unique": true,
-      "future_mechanic": "+50% damage vs dragon-type enemies. Base vs others."
+      "future_mechanic": "+50% damage vs dragon-type enemies. Base vs others.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "strength": 45,
+        "agility": 10,
+        "crit": 40
+      }
     },
     {
-      "id": "gyre", "name": "Gyre", "base_type": "katana",
-      "slot": "weapon", "item_tier": 5, "rarity": "legendary",
+      "id": "gyre",
+      "name": "Gyre",
+      "base_type": "katana",
+      "slot": "weapon",
+      "item_tier": 5,
+      "rarity": "legendary",
       "tile": "item/weapon/artefact/urand_gyre.png",
-      "atk": 90, "def": 0, "hp": 18,
-      "flavor_tags": ["arcane", "dual"],
+      "atk": 90,
+      "def": 0,
+      "hp": 18,
+      "flavor_tags": [
+        "arcane",
+        "dual"
+      ],
       "lore": "The blade orbits the hand as if alive, striking twice where others strike once.",
-      "drop_weights": [0, 0, 0, 4, 22],
+      "drop_weights": [
+        0,
+        0,
+        0,
+        4,
+        22
+      ],
       "unique": true,
-      "future_mechanic": "Hits twice per attack at 70% damage each. Total DPS roughly 1.4x base ATK."
+      "future_mechanic": "Hits twice per attack at 70% damage each. Total DPS roughly 1.4x base ATK.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "regen": 10,
+        "crit": 40,
+        "haste": 45
+      }
     },
     {
-      "id": "doom_knight_blade", "name": "The Doom Knight's Blade", "base_type": "demon_blade",
-      "slot": "weapon", "item_tier": 5, "rarity": "legendary",
+      "id": "doom_knight_blade",
+      "name": "The Doom Knight's Blade",
+      "base_type": "demon_blade",
+      "slot": "weapon",
+      "item_tier": 5,
+      "rarity": "legendary",
       "tile": "item/weapon/artefact/urand_doom_knight_new.png",
-      "atk": 100, "def": 0, "hp": 24,
-      "flavor_tags": ["dark", "death"],
+      "atk": 100,
+      "def": 0,
+      "hp": 24,
+      "flavor_tags": [
+        "dark",
+        "death"
+      ],
       "lore": "A weapon that has ended civilizations. It prefers it that way.",
-      "drop_weights": [0, 0, 0, 3, 18],
+      "drop_weights": [
+        0,
+        0,
+        0,
+        3,
+        18
+      ],
       "unique": true,
-      "future_mechanic": "Death mark: hit applies a 3s debuff (+25% damage taken). Stacks once."
+      "future_mechanic": "Death mark: hit applies a 3s debuff (+25% damage taken). Stacks once.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "strength": 40,
+        "crit": 35,
+        "haste": 5
+      }
     },
-
-    { "id": "knife_of_accuracy", "name": "Knife of Accuracy", "base_type": "knife",
-      "slot": "weapon", "item_tier": 4, "rarity": "epic",
+    {
+      "id": "knife_of_accuracy",
+      "name": "Knife of Accuracy",
+      "base_type": "knife",
+      "slot": "weapon",
+      "item_tier": 4,
+      "rarity": "epic",
       "tile": "item/weapon/artefact/urand_knife_of_accuracy.png",
-      "atk": 42, "def": 0, "hp": 7,
-      "flavor_tags": ["precision", "swift"],
+      "atk": 42,
+      "def": 0,
+      "hp": 7,
+      "flavor_tags": [
+        "precision",
+        "swift"
+      ],
       "lore": "Always finds the right place to be. Unfortunately for whatever it lands in.",
-      "drop_weights": [0, 0, 8, 50, 35], "unique": false },
-
-    { "id": "spriggans_knife", "name": "Spriggan's Knife", "base_type": "dagger",
-      "slot": "weapon", "item_tier": 5, "rarity": "legendary",
+      "drop_weights": [
+        0,
+        0,
+        8,
+        50,
+        35
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "crit": 30,
+        "haste": 20,
+        "strength": 10,
+        "agility": 10
+      }
+    },
+    {
+      "id": "spriggans_knife",
+      "name": "Spriggan's Knife",
+      "base_type": "dagger",
+      "slot": "weapon",
+      "item_tier": 5,
+      "rarity": "legendary",
       "tile": "item/weapon/artefact/urand_spriggans_knife_new.png",
-      "atk": 70, "def": 0, "hp": 12,
-      "flavor_tags": ["swift", "precision"],
+      "atk": 70,
+      "def": 0,
+      "hp": 12,
+      "flavor_tags": [
+        "swift",
+        "precision"
+      ],
       "lore": "Light as a leaf-stem. Faster than thought.",
-      "drop_weights": [0, 0, 0, 4, 22], "unique": true,
-      "future_mechanic": "+30% attack speed. Lower aggro range while held." },
-
-    { "id": "vampires_tooth", "name": "Vampire's Tooth", "base_type": "rapier",
-      "slot": "weapon", "item_tier": 5, "rarity": "legendary",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        4,
+        22
+      ],
+      "unique": true,
+      "future_mechanic": "+30% attack speed. Lower aggro range while held.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "agility": 15,
+        "crit": 40,
+        "haste": 50
+      }
+    },
+    {
+      "id": "vampires_tooth",
+      "name": "Vampire's Tooth",
+      "base_type": "rapier",
+      "slot": "weapon",
+      "item_tier": 5,
+      "rarity": "legendary",
       "tile": "item/weapon/artefact/spwpn_vampires_tooth.png",
-      "atk": 76, "def": 0, "hp": 18,
-      "flavor_tags": ["vampiric", "dark", "precision"],
+      "atk": 76,
+      "def": 0,
+      "hp": 18,
+      "flavor_tags": [
+        "vampiric",
+        "dark",
+        "precision"
+      ],
       "lore": "It thirsts. Always. The wearer learns to provide.",
-      "drop_weights": [0, 0, 0, 5, 25], "unique": true,
-      "future_mechanic": "Lifesteal: 12% of damage dealt heals the bot. +10% crit." },
-
-    { "id": "arc_blade", "name": "Arc Blade", "base_type": "long_sword",
-      "slot": "weapon", "item_tier": 5, "rarity": "legendary",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        25
+      ],
+      "unique": true,
+      "future_mechanic": "Lifesteal: 12% of damage dealt heals the bot. +10% crit.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "strength": 35,
+        "crit": 80,
+        "haste": 30
+      }
+    },
+    {
+      "id": "arc_blade",
+      "name": "Arc Blade",
+      "base_type": "long_sword",
+      "slot": "weapon",
+      "item_tier": 5,
+      "rarity": "legendary",
       "tile": "item/weapon/artefact/urand_arc_blade.png",
-      "atk": 84, "def": 0, "hp": 18,
-      "flavor_tags": ["magic", "elemental"],
+      "atk": 84,
+      "def": 0,
+      "hp": 18,
+      "flavor_tags": [
+        "magic",
+        "elemental"
+      ],
       "lore": "Lightning runs the length of the blade. It hisses when wet.",
-      "drop_weights": [0, 0, 0, 5, 25], "unique": true,
-      "future_mechanic": "Hits chain to 1 adjacent enemy at 50% damage. Lightning-typed." },
-
-    { "id": "eos", "name": "Eos", "base_type": "long_sword",
-      "slot": "weapon", "item_tier": 5, "rarity": "legendary",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        25
+      ],
+      "unique": true,
+      "future_mechanic": "Hits chain to 1 adjacent enemy at 50% damage. Lightning-typed.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "regen": 20,
+        "crit": 45,
+        "haste": 25
+      }
+    },
+    {
+      "id": "eos",
+      "name": "Eos",
+      "base_type": "long_sword",
+      "slot": "weapon",
+      "item_tier": 5,
+      "rarity": "legendary",
       "tile": "item/weapon/artefact/urand_eos.png",
-      "atk": 86, "def": 0, "hp": 18,
-      "flavor_tags": ["holy", "fire"],
+      "atk": 86,
+      "def": 0,
+      "hp": 18,
+      "flavor_tags": [
+        "holy",
+        "fire"
+      ],
       "lore": "Forged from a fragment of dawn. It does not dim.",
-      "drop_weights": [0, 0, 0, 4, 22], "unique": true,
-      "future_mechanic": "+50% damage vs undead/demon. Emits weak light (sees-invisible)." },
-
-    { "id": "jihad", "name": "The Sword of Jihad", "base_type": "long_sword",
-      "slot": "weapon", "item_tier": 5, "rarity": "legendary",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        4,
+        22
+      ],
+      "unique": true,
+      "future_mechanic": "+50% damage vs undead/demon. Emits weak light (sees-invisible).",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "strength": 35,
+        "agility": 10,
+        "crit": 35,
+        "haste": 10
+      }
+    },
+    {
+      "id": "jihad",
+      "name": "The Sword of Jihad",
+      "base_type": "long_sword",
+      "slot": "weapon",
+      "item_tier": 5,
+      "rarity": "legendary",
       "tile": "item/weapon/artefact/urand_jihad_new.png",
-      "atk": 92, "def": 0, "hp": 16,
-      "flavor_tags": ["holy", "brutal"],
+      "atk": 92,
+      "def": 0,
+      "hp": 16,
+      "flavor_tags": [
+        "holy",
+        "brutal"
+      ],
       "lore": "Each kill draws the bearer further into something they can't quite name.",
-      "drop_weights": [0, 0, 0, 4, 22], "unique": true,
-      "future_mechanic": "Chain-kill bonus: +5% ATK per kill in last 6s, stacks to 30%." },
-
-    { "id": "serpent_scourge", "name": "The Serpent's Scourge", "base_type": "scimitar",
-      "slot": "weapon", "item_tier": 5, "rarity": "legendary",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        4,
+        22
+      ],
+      "unique": true,
+      "future_mechanic": "Chain-kill bonus: +5% ATK per kill in last 6s, stacks to 30%.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "strength": 45,
+        "agility": 10,
+        "crit": 40
+      }
+    },
+    {
+      "id": "serpent_scourge",
+      "name": "The Serpent's Scourge",
+      "base_type": "scimitar",
+      "slot": "weapon",
+      "item_tier": 5,
+      "rarity": "legendary",
       "tile": "item/weapon/artefact/urand_serpent_scourge.png",
-      "atk": 82, "def": 0, "hp": 16,
-      "flavor_tags": ["poison", "swift"],
+      "atk": 82,
+      "def": 0,
+      "hp": 16,
+      "flavor_tags": [
+        "poison",
+        "swift"
+      ],
       "lore": "Drips. Doesn't matter what you wipe it with.",
-      "drop_weights": [0, 0, 0, 4, 22], "unique": true,
-      "future_mechanic": "Hits apply 4-tick poison DoT (4% max HP per tick)." },
-
-    { "id": "sword_of_cerebov", "name": "Sword of Cerebov", "base_type": "demon_blade",
-      "slot": "weapon", "item_tier": 5, "rarity": "legendary",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        4,
+        22
+      ],
+      "unique": true,
+      "future_mechanic": "Hits apply 4-tick poison DoT (4% max HP per tick).",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "agility": 25,
+        "crit": 20,
+        "haste": 50
+      }
+    },
+    {
+      "id": "sword_of_cerebov",
+      "name": "Sword of Cerebov",
+      "base_type": "demon_blade",
+      "slot": "weapon",
+      "item_tier": 5,
+      "rarity": "legendary",
       "tile": "item/weapon/artefact/spwpn_sword_of_cerebov_new.png",
-      "atk": 110, "def": 0, "hp": 22,
-      "flavor_tags": ["fire", "demon", "brutal"],
+      "atk": 110,
+      "def": 0,
+      "hp": 22,
+      "flavor_tags": [
+        "fire",
+        "demon",
+        "brutal"
+      ],
       "lore": "Cerebov never let it go. Even in defeat. Even now.",
-      "drop_weights": [0, 0, 0, 3, 18], "unique": true,
-      "future_mechanic": "+25% damage to bosses. Burning aura damages adjacent enemies." },
-
-    { "id": "sword_of_power", "name": "Sword of Power", "base_type": "long_sword",
-      "slot": "weapon", "item_tier": 5, "rarity": "legendary",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        3,
+        18
+      ],
+      "unique": true,
+      "future_mechanic": "+25% damage to bosses. Burning aura damages adjacent enemies.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "strength": 75,
+        "crit": 50,
+        "haste": 15
+      }
+    },
+    {
+      "id": "sword_of_power",
+      "name": "Sword of Power",
+      "base_type": "long_sword",
+      "slot": "weapon",
+      "item_tier": 5,
+      "rarity": "legendary",
       "tile": "item/weapon/artefact/spwpn_sword_of_power_new.png",
-      "atk": 95, "def": 0, "hp": 20,
-      "flavor_tags": ["magic", "brutal"],
+      "atk": 95,
+      "def": 0,
+      "hp": 20,
+      "flavor_tags": [
+        "magic",
+        "brutal"
+      ],
       "lore": "ATK scales with the bearer's current HP. The healthy hit hardest.",
-      "drop_weights": [0, 0, 0, 3, 18], "unique": true,
-      "future_mechanic": "ATK multiplied by current_hp/max_hp. Full HP = +50% damage; low HP = -50%." },
-
-    { "id": "sword_of_zonguldrok", "name": "Sword of Zonguldrok", "base_type": "long_sword",
-      "slot": "weapon", "item_tier": 5, "rarity": "legendary",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        3,
+        18
+      ],
+      "unique": true,
+      "future_mechanic": "ATK multiplied by current_hp/max_hp. Full HP = +50% damage; low HP = -50%.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "strength": 30,
+        "regen": 10,
+        "crit": 45,
+        "haste": 15
+      }
+    },
+    {
+      "id": "sword_of_zonguldrok",
+      "name": "Sword of Zonguldrok",
+      "base_type": "long_sword",
+      "slot": "weapon",
+      "item_tier": 5,
+      "rarity": "legendary",
       "tile": "item/weapon/artefact/spwpn_sword_of_zonguldrok_new.png",
-      "atk": 90, "def": 0, "hp": 18,
-      "flavor_tags": ["dark", "death", "vampiric"],
+      "atk": 90,
+      "def": 0,
+      "hp": 18,
+      "flavor_tags": [
+        "dark",
+        "death",
+        "vampiric"
+      ],
       "lore": "Each kill rises briefly to fight beside the bearer. Briefly.",
-      "drop_weights": [0, 0, 0, 4, 20], "unique": true,
-      "future_mechanic": "Killed enemies have a 20% chance to rise as a 5s ally." },
-
-    { "id": "majin_bo", "name": "Majin-Bo", "base_type": "katana",
-      "slot": "weapon", "item_tier": 5, "rarity": "legendary",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        4,
+        20
+      ],
+      "unique": true,
+      "future_mechanic": "Killed enemies have a 20% chance to rise as a 5s ally.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "strength": 55,
+        "crit": 60,
+        "haste": 15
+      }
+    },
+    {
+      "id": "majin_bo",
+      "name": "Majin-Bo",
+      "base_type": "katana",
+      "slot": "weapon",
+      "item_tier": 5,
+      "rarity": "legendary",
       "tile": "item/weapon/artefact/spwpn_majin.png",
-      "atk": 100, "def": 0, "hp": 18,
-      "flavor_tags": ["dark", "magic", "vampiric"],
+      "atk": 100,
+      "def": 0,
+      "hp": 18,
+      "flavor_tags": [
+        "dark",
+        "magic",
+        "vampiric"
+      ],
       "lore": "Whispers names of the people the bearer has lost. Or will lose.",
-      "drop_weights": [0, 0, 0, 3, 18], "unique": true,
-      "future_mechanic": "Lifesteal 6% on hit. Drains 1 max HP per kill (recovers between runs)." }
+      "drop_weights": [
+        0,
+        0,
+        0,
+        3,
+        18
+      ],
+      "unique": true,
+      "future_mechanic": "Lifesteal 6% on hit. Drains 1 max HP per kill (recovers between runs).",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "strength": 35,
+        "regen": 10,
+        "crit": 65,
+        "haste": 30
+      }
+    }
   ]
 }

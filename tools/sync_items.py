@@ -236,6 +236,14 @@ def normalize_item(it, slot_default):
     }
     if "future_mechanic" in it:
         out["future_mechanic"] = it["future_mechanic"]
+    # Per-instance enchant + affix override fields. Items pass
+    # 2026-06-03 added these — sync them through if present.
+    if "enchant_chance" in it:
+        out["enchant_chance"] = float(it["enchant_chance"])
+    if "enchant_pool" in it and it["enchant_pool"]:
+        out["enchant_pool"] = list(it["enchant_pool"])
+    if "affix_pool" in it and it["affix_pool"]:
+        out["affix_pool"] = dict(it["affix_pool"])
     return out
 
 

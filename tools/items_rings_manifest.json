@@ -1,290 +1,1202 @@
 {
   "format_version": 1,
   "slot": "ring",
-  "notes": "Source of truth for the item editor (ring tab). DCSS base types from item-prop-enum.h jewellery_type enum: RING_PROTECTION/STRENGTH/SLAYING/EVASION/STEALTH/DEXTERITY/INTELLIGENCE/MAGICAL_POWER/WILLPOWER + protection-from-fire/cold/poison resistance and ring of flight. Two ring slots planned (ring1, ring2). Stats lean small but stack — rings are the affix-spreader slot.",
-
+  "notes": "Source of truth for the item editor (ring tab). DCSS base types from item-prop-enum.h jewellery_type enum: RING_PROTECTION/STRENGTH/SLAYING/EVASION/STEALTH/DEXTERITY/INTELLIGENCE/MAGICAL_POWER/WILLPOWER + protection-from-fire/cold/poison resistance and ring of flight. Two ring slots planned (ring1, ring2). Stats lean small but stack \u2014 rings are the affix-spreader slot.",
   "base_types": {
-    "ring_protection": { "label": "Ring of Protection", "category": "ring", "dcss_base": "RING_PROTECTION",      "flavor": "+DEF. Defensive build cornerstone." },
-    "ring_strength":   { "label": "Ring of Strength",   "category": "ring", "dcss_base": "RING_STRENGTH",        "flavor": "+ATK. Direct damage scaler." },
-    "ring_slaying":    { "label": "Ring of Slaying",    "category": "ring", "dcss_base": "RING_SLAYING",         "flavor": "+ATK and accuracy. The hunter's classic." },
-    "ring_evasion":    { "label": "Ring of Evasion",    "category": "ring", "dcss_base": "RING_EVASION",         "flavor": "+DEF via dodge. Future: dodge mechanic." },
-    "ring_dexterity":  { "label": "Ring of Dexterity",  "category": "ring", "dcss_base": "RING_DEXTERITY",       "flavor": "+Crit/+Haste. Speed-flavored ring." },
-    "ring_regen":      { "label": "Ring of Regeneration","category": "ring", "dcss_base": "RING_REGENERATION",   "flavor": "+HP regen. Sustained build." },
-    "ring_fire":       { "label": "Ring of Fire Res",   "category": "ring", "dcss_base": "RING_PROTECTION_FROM_FIRE","flavor": "Fire resistance. Strong vs Forge." },
-    "ring_cold":       { "label": "Ring of Cold Res",   "category": "ring", "dcss_base": "RING_PROTECTION_FROM_COLD","flavor": "Cold resistance. Strong vs Glacier." },
-    "ring_poison":     { "label": "Ring of Poison Res", "category": "ring", "dcss_base": "RING_POISON_RESISTANCE","flavor": "Poison resistance. Strong vs Swamp/Spider." },
-    "ring_willpower":  { "label": "Ring of Willpower",  "category": "ring", "dcss_base": "RING_WILLPOWER",       "flavor": "Magic resistance. Strong vs casters." },
-    "ring_stealth":    { "label": "Ring of Stealth",    "category": "ring", "dcss_base": "RING_STEALTH",         "flavor": "Lower aggro range. Avoid swarms." },
-    "ring_magic":      { "label": "Ring of Magical Power","category": "ring","dcss_base": "RING_MAGICAL_POWER",  "flavor": "End-game caster ring. Future mechanic-heavy." },
-    "ring_flight":     { "label": "Ring of Flight",     "category": "ring", "dcss_base": "RING_FLIGHT",          "flavor": "Ignore terrain hazards." }
+    "ring_protection": {
+      "label": "Ring of Protection",
+      "category": "ring",
+      "dcss_base": "RING_PROTECTION",
+      "flavor": "+DEF. Defensive build cornerstone."
+    },
+    "ring_strength": {
+      "label": "Ring of Strength",
+      "category": "ring",
+      "dcss_base": "RING_STRENGTH",
+      "flavor": "+ATK. Direct damage scaler."
+    },
+    "ring_slaying": {
+      "label": "Ring of Slaying",
+      "category": "ring",
+      "dcss_base": "RING_SLAYING",
+      "flavor": "+ATK and accuracy. The hunter's classic."
+    },
+    "ring_evasion": {
+      "label": "Ring of Evasion",
+      "category": "ring",
+      "dcss_base": "RING_EVASION",
+      "flavor": "+DEF via dodge. Future: dodge mechanic."
+    },
+    "ring_dexterity": {
+      "label": "Ring of Dexterity",
+      "category": "ring",
+      "dcss_base": "RING_DEXTERITY",
+      "flavor": "+Crit/+Haste. Speed-flavored ring."
+    },
+    "ring_regen": {
+      "label": "Ring of Regeneration",
+      "category": "ring",
+      "dcss_base": "RING_REGENERATION",
+      "flavor": "+HP regen. Sustained build."
+    },
+    "ring_fire": {
+      "label": "Ring of Fire Res",
+      "category": "ring",
+      "dcss_base": "RING_PROTECTION_FROM_FIRE",
+      "flavor": "Fire resistance. Strong vs Forge."
+    },
+    "ring_cold": {
+      "label": "Ring of Cold Res",
+      "category": "ring",
+      "dcss_base": "RING_PROTECTION_FROM_COLD",
+      "flavor": "Cold resistance. Strong vs Glacier."
+    },
+    "ring_poison": {
+      "label": "Ring of Poison Res",
+      "category": "ring",
+      "dcss_base": "RING_POISON_RESISTANCE",
+      "flavor": "Poison resistance. Strong vs Swamp/Spider."
+    },
+    "ring_willpower": {
+      "label": "Ring of Willpower",
+      "category": "ring",
+      "dcss_base": "RING_WILLPOWER",
+      "flavor": "Magic resistance. Strong vs casters."
+    },
+    "ring_stealth": {
+      "label": "Ring of Stealth",
+      "category": "ring",
+      "dcss_base": "RING_STEALTH",
+      "flavor": "Lower aggro range. Avoid swarms."
+    },
+    "ring_magic": {
+      "label": "Ring of Magical Power",
+      "category": "ring",
+      "dcss_base": "RING_MAGICAL_POWER",
+      "flavor": "End-game caster ring. Future mechanic-heavy."
+    },
+    "ring_flight": {
+      "label": "Ring of Flight",
+      "category": "ring",
+      "dcss_base": "RING_FLIGHT",
+      "flavor": "Ignore terrain hazards."
+    }
   },
-
   "flavor_tags": {
-    "fortified":  { "color": "#aaccdd", "desc": "Future: flat damage reduction. Currently: Stamina affix bonus." },
-    "swiftness":  { "color": "#aaddff", "desc": "Future: +move speed. Currently: Agility affix bonus." },
-    "stealth":    { "color": "#666688", "desc": "Future: lower aggro range. Currently: Agility affix bonus." },
-    "regen":      { "color": "#66cc88", "desc": "Future: HP regen tick. Currently: Regen affix bonus." },
-    "fire_res":   { "color": "#ff6633", "desc": "Future: % damage reduction from fire. Currently: Stamina affix bonus." },
-    "cold_res":   { "color": "#66ccff", "desc": "Future: % damage reduction from cold. Currently: Stamina affix bonus." },
-    "poison_res": { "color": "#66cc44", "desc": "Future: immune to poison DoT. Currently: Stamina affix bonus." },
-    "willpower":  { "color": "#ffaa88", "desc": "Future: magic resistance. Currently: Stamina affix bonus." },
-    "slaying":    { "color": "#ff8844", "desc": "Future: +accuracy and +damage. Currently: Strength affix bonus." },
-    "vision":     { "color": "#ffeebb", "desc": "Future: see-invisible / extended fog reveal. Currently: no bonus." },
-    "wisdom":     { "color": "#cc88ff", "desc": "Future: +XP gain. Currently: no bonus." },
-    "footwork":   { "color": "#cc88ff", "desc": "Future: dodge chance. Currently: Crit affix bonus." },
-    "flying":     { "color": "#aaddff", "desc": "Future: ignore lava/water hazards. Currently: Agility affix bonus." },
-    "fortune":    { "color": "#ffdd44", "desc": "Future: bonus gold/loot. Currently: no bonus." }
+    "fortified": {
+      "color": "#aaccdd",
+      "desc": "Future: flat damage reduction. Currently: Stamina affix bonus."
+    },
+    "swiftness": {
+      "color": "#aaddff",
+      "desc": "Future: +move speed. Currently: Agility affix bonus."
+    },
+    "stealth": {
+      "color": "#666688",
+      "desc": "Future: lower aggro range. Currently: Agility affix bonus."
+    },
+    "regen": {
+      "color": "#66cc88",
+      "desc": "Future: HP regen tick. Currently: Regen affix bonus."
+    },
+    "fire_res": {
+      "color": "#ff6633",
+      "desc": "Future: % damage reduction from fire. Currently: Stamina affix bonus."
+    },
+    "cold_res": {
+      "color": "#66ccff",
+      "desc": "Future: % damage reduction from cold. Currently: Stamina affix bonus."
+    },
+    "poison_res": {
+      "color": "#66cc44",
+      "desc": "Future: immune to poison DoT. Currently: Stamina affix bonus."
+    },
+    "willpower": {
+      "color": "#ffaa88",
+      "desc": "Future: magic resistance. Currently: Stamina affix bonus."
+    },
+    "slaying": {
+      "color": "#ff8844",
+      "desc": "Future: +accuracy and +damage. Currently: Strength affix bonus."
+    },
+    "vision": {
+      "color": "#ffeebb",
+      "desc": "Future: see-invisible / extended fog reveal. Currently: no bonus."
+    },
+    "wisdom": {
+      "color": "#cc88ff",
+      "desc": "Future: +XP gain. Currently: no bonus."
+    },
+    "footwork": {
+      "color": "#cc88ff",
+      "desc": "Future: dodge chance. Currently: Crit affix bonus."
+    },
+    "flying": {
+      "color": "#aaddff",
+      "desc": "Future: ignore lava/water hazards. Currently: Agility affix bonus."
+    },
+    "fortune": {
+      "color": "#ffdd44",
+      "desc": "Future: bonus gold/loot. Currently: no bonus."
+    }
   },
-
   "items": [
-    { "id": "wooden_ring", "name": "Wooden Ring", "base_type": "ring_protection",
-      "slot": "ring", "item_tier": 1, "rarity": "common",
+    {
+      "id": "wooden_ring",
+      "name": "Wooden Ring",
+      "base_type": "ring_protection",
+      "slot": "ring",
+      "item_tier": 1,
+      "rarity": "common",
       "tile": "item/ring/wooden.png",
-      "atk": 0, "def": 1, "hp": 8,
-      "flavor_tags": [], "lore": "A whittled circlet. Splinters more than it should.",
-      "drop_weights": [80, 15, 0, 0, 0], "unique": false },
-
-    { "id": "clay_ring", "name": "Clay Ring", "base_type": "ring_strength",
-      "slot": "ring", "item_tier": 1, "rarity": "common",
+      "atk": 0,
+      "def": 2,
+      "hp": 10,
+      "flavor_tags": [],
+      "lore": "A whittled circlet. Splinters more than it should.",
+      "drop_weights": [
+        80,
+        15,
+        0,
+        0,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "stamina": 30,
+        "regen": 20,
+        "agility": 10
+      }
+    },
+    {
+      "id": "clay_ring",
+      "name": "Clay Ring",
+      "base_type": "ring_strength",
+      "slot": "ring",
+      "item_tier": 1,
+      "rarity": "common",
       "tile": "item/ring/clay.png",
-      "atk": 1, "def": 0, "hp": 6,
-      "flavor_tags": [], "lore": "Crude. Almost ceremonial.",
-      "drop_weights": [80, 15, 0, 0, 0], "unique": false },
-
-    { "id": "copper_ring", "name": "Copper Ring", "base_type": "ring_evasion",
-      "slot": "ring", "item_tier": 1, "rarity": "common",
+      "atk": 2,
+      "def": 0,
+      "hp": 8,
+      "flavor_tags": [],
+      "lore": "Crude. Almost ceremonial.",
+      "drop_weights": [
+        80,
+        15,
+        0,
+        0,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "strength": 60,
+        "crit": 10
+      }
+    },
+    {
+      "id": "copper_ring",
+      "name": "Copper Ring",
+      "base_type": "ring_evasion",
+      "slot": "ring",
+      "item_tier": 1,
+      "rarity": "common",
       "tile": "item/ring/copper.png",
-      "atk": 0, "def": 2, "hp": 5,
-      "flavor_tags": ["footwork"], "lore": "Bright when new. Green now.",
-      "drop_weights": [75, 18, 2, 0, 0], "unique": false },
-
-    { "id": "brass_ring", "name": "Brass Ring", "base_type": "ring_protection",
-      "slot": "ring", "item_tier": 1, "rarity": "uncommon",
+      "atk": 1,
+      "def": 2,
+      "hp": 6,
+      "flavor_tags": [
+        "footwork"
+      ],
+      "lore": "Bright when new. Green now.",
+      "drop_weights": [
+        75,
+        18,
+        2,
+        0,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "agility": 50,
+        "haste": 15
+      }
+    },
+    {
+      "id": "brass_ring",
+      "name": "Brass Ring",
+      "base_type": "ring_protection",
+      "slot": "ring",
+      "item_tier": 1,
+      "rarity": "uncommon",
       "tile": "item/ring/brass.png",
-      "atk": 0, "def": 2, "hp": 12,
-      "flavor_tags": ["fortified"], "lore": "Stamped with a rune. The rune doesn't mean anything.",
-      "drop_weights": [55, 35, 5, 0, 0], "unique": false },
-
-    { "id": "bronze_ring", "name": "Bronze Ring", "base_type": "ring_strength",
-      "slot": "ring", "item_tier": 1, "rarity": "uncommon",
+      "atk": 0,
+      "def": 2,
+      "hp": 12,
+      "flavor_tags": [
+        "fortified"
+      ],
+      "lore": "Stamped with a rune. The rune doesn't mean anything.",
+      "drop_weights": [
+        55,
+        35,
+        5,
+        0,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "stamina": 30,
+        "regen": 20,
+        "agility": 10
+      }
+    },
+    {
+      "id": "bronze_ring",
+      "name": "Bronze Ring",
+      "base_type": "ring_strength",
+      "slot": "ring",
+      "item_tier": 1,
+      "rarity": "uncommon",
       "tile": "item/ring/bronze.png",
-      "atk": 2, "def": 0, "hp": 10,
-      "flavor_tags": [], "lore": "Heavy enough to feel.",
-      "drop_weights": [55, 35, 5, 0, 0], "unique": false },
-
-    { "id": "iron_ring", "name": "Iron Ring", "base_type": "ring_protection",
-      "slot": "ring", "item_tier": 2, "rarity": "uncommon",
+      "atk": 2,
+      "def": 0,
+      "hp": 10,
+      "flavor_tags": [],
+      "lore": "Heavy enough to feel.",
+      "drop_weights": [
+        55,
+        35,
+        5,
+        0,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "strength": 60,
+        "crit": 10
+      }
+    },
+    {
+      "id": "iron_ring",
+      "name": "Iron Ring",
+      "base_type": "ring_protection",
+      "slot": "ring",
+      "item_tier": 2,
+      "rarity": "uncommon",
       "tile": "item/ring/iron.png",
-      "atk": 0, "def": 3, "hp": 18,
-      "flavor_tags": ["fortified"], "lore": "Hammered cold. Will not give.",
-      "drop_weights": [15, 65, 25, 3, 0], "unique": false },
-
-    { "id": "steel_ring", "name": "Steel Ring", "base_type": "ring_slaying",
-      "slot": "ring", "item_tier": 2, "rarity": "uncommon",
+      "atk": 0,
+      "def": 3,
+      "hp": 18,
+      "flavor_tags": [
+        "fortified"
+      ],
+      "lore": "Hammered cold. Will not give.",
+      "drop_weights": [
+        15,
+        65,
+        25,
+        3,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "stamina": 30,
+        "regen": 20,
+        "agility": 10
+      }
+    },
+    {
+      "id": "steel_ring",
+      "name": "Steel Ring",
+      "base_type": "ring_slaying",
+      "slot": "ring",
+      "item_tier": 2,
+      "rarity": "uncommon",
       "tile": "item/ring/steel.png",
-      "atk": 3, "def": 1, "hp": 14,
-      "flavor_tags": ["slaying"], "lore": "Edge-tempered. Sharper than it looks.",
-      "drop_weights": [12, 60, 28, 5, 0], "unique": false },
-
-    { "id": "silver_ring", "name": "Silver Ring", "base_type": "ring_willpower",
-      "slot": "ring", "item_tier": 2, "rarity": "rare",
+      "atk": 3,
+      "def": 1,
+      "hp": 14,
+      "flavor_tags": [
+        "slaying"
+      ],
+      "lore": "Edge-tempered. Sharper than it looks.",
+      "drop_weights": [
+        12,
+        60,
+        28,
+        5,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "strength": 40,
+        "crit": 30
+      }
+    },
+    {
+      "id": "silver_ring",
+      "name": "Silver Ring",
+      "base_type": "ring_willpower",
+      "slot": "ring",
+      "item_tier": 2,
+      "rarity": "rare",
       "tile": "item/ring/silver.png",
-      "atk": 0, "def": 2, "hp": 22,
-      "flavor_tags": ["willpower"], "lore": "Tingles when spells fly nearby.",
-      "drop_weights": [8, 55, 32, 5, 0], "unique": false },
-
-    { "id": "agate_ring", "name": "Agate Ring", "base_type": "ring_dexterity",
-      "slot": "ring", "item_tier": 2, "rarity": "rare",
+      "atk": 0,
+      "def": 2,
+      "hp": 22,
+      "flavor_tags": [
+        "willpower"
+      ],
+      "lore": "Tingles when spells fly nearby.",
+      "drop_weights": [
+        8,
+        55,
+        32,
+        5,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "stamina": 30,
+        "regen": 20
+      }
+    },
+    {
+      "id": "agate_ring",
+      "name": "Agate Ring",
+      "base_type": "ring_dexterity",
+      "slot": "ring",
+      "item_tier": 2,
+      "rarity": "rare",
       "tile": "item/ring/agate.png",
-      "atk": 2, "def": 1, "hp": 16,
-      "flavor_tags": ["footwork"], "lore": "Banded stone, polished smooth.",
-      "drop_weights": [8, 50, 35, 7, 0], "unique": false },
-
-    { "id": "moonstone_ring", "name": "Moonstone Ring", "base_type": "ring_regen",
-      "slot": "ring", "item_tier": 3, "rarity": "rare",
+      "atk": 2,
+      "def": 1,
+      "hp": 16,
+      "flavor_tags": [
+        "footwork"
+      ],
+      "lore": "Banded stone, polished smooth.",
+      "drop_weights": [
+        8,
+        50,
+        35,
+        7,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "agility": 30,
+        "haste": 20,
+        "crit": 10
+      }
+    },
+    {
+      "id": "moonstone_ring",
+      "name": "Moonstone Ring",
+      "base_type": "ring_regen",
+      "slot": "ring",
+      "item_tier": 3,
+      "rarity": "rare",
       "tile": "item/ring/moonstone.png",
-      "atk": 0, "def": 1, "hp": 30,
-      "flavor_tags": ["regen"], "lore": "Glows faintly at night. Heals the same.",
-      "drop_weights": [0, 18, 60, 22, 4], "unique": false },
-
-    { "id": "tigers_eye", "name": "Tiger's Eye Ring", "base_type": "ring_strength",
-      "slot": "ring", "item_tier": 3, "rarity": "rare",
+      "atk": 0,
+      "def": 1,
+      "hp": 30,
+      "flavor_tags": [
+        "regen"
+      ],
+      "lore": "Glows faintly at night. Heals the same.",
+      "drop_weights": [
+        0,
+        18,
+        60,
+        22,
+        4
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "regen": 60,
+        "stamina": 10
+      }
+    },
+    {
+      "id": "tigers_eye",
+      "name": "Tiger's Eye Ring",
+      "base_type": "ring_strength",
+      "slot": "ring",
+      "item_tier": 3,
+      "rarity": "rare",
       "tile": "item/ring/tiger_eye.png",
-      "atk": 4, "def": 0, "hp": 22,
-      "flavor_tags": ["slaying"], "lore": "It watches. It doesn't blink.",
-      "drop_weights": [0, 15, 58, 25, 5], "unique": false },
-
-    { "id": "tourmaline_ring", "name": "Tourmaline Ring", "base_type": "ring_evasion",
-      "slot": "ring", "item_tier": 3, "rarity": "rare",
+      "atk": 4,
+      "def": 0,
+      "hp": 22,
+      "flavor_tags": [
+        "slaying"
+      ],
+      "lore": "It watches. It doesn't blink.",
+      "drop_weights": [
+        0,
+        15,
+        58,
+        25,
+        5
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "strength": 60,
+        "crit": 10
+      }
+    },
+    {
+      "id": "tourmaline_ring",
+      "name": "Tourmaline Ring",
+      "base_type": "ring_evasion",
+      "slot": "ring",
+      "item_tier": 3,
+      "rarity": "rare",
       "tile": "item/ring/tourmaline.png",
-      "atk": 0, "def": 4, "hp": 25,
-      "flavor_tags": ["footwork", "swiftness"], "lore": "The wearer ducks slightly more than necessary.",
-      "drop_weights": [0, 12, 55, 28, 8], "unique": false },
-
-    { "id": "coral_ring", "name": "Coral Ring", "base_type": "ring_poison",
-      "slot": "ring", "item_tier": 3, "rarity": "rare",
+      "atk": 0,
+      "def": 4,
+      "hp": 25,
+      "flavor_tags": [
+        "footwork",
+        "swiftness"
+      ],
+      "lore": "The wearer ducks slightly more than necessary.",
+      "drop_weights": [
+        0,
+        12,
+        55,
+        28,
+        8
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "agility": 50,
+        "haste": 15
+      }
+    },
+    {
+      "id": "coral_ring",
+      "name": "Coral Ring",
+      "base_type": "ring_poison",
+      "slot": "ring",
+      "item_tier": 3,
+      "rarity": "rare",
       "tile": "item/ring/coral.png",
-      "atk": 0, "def": 2, "hp": 28,
-      "flavor_tags": ["poison_res"], "lore": "Smells faintly of the sea. Always.",
-      "drop_weights": [0, 12, 55, 28, 8], "unique": false },
-
-    { "id": "ring_of_topaz", "name": "Topaz Ring", "base_type": "ring_fire",
-      "slot": "ring", "item_tier": 3, "rarity": "rare",
+      "atk": 0,
+      "def": 2,
+      "hp": 28,
+      "flavor_tags": [
+        "poison_res"
+      ],
+      "lore": "Smells faintly of the sea. Always.",
+      "drop_weights": [
+        0,
+        12,
+        55,
+        28,
+        8
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "regen": 25,
+        "agility": 25,
+        "crit": 10
+      }
+    },
+    {
+      "id": "ring_of_topaz",
+      "name": "Topaz Ring",
+      "base_type": "ring_fire",
+      "slot": "ring",
+      "item_tier": 3,
+      "rarity": "rare",
       "tile": "item/ring/ring_topaz.png",
-      "atk": 0, "def": 2, "hp": 28,
-      "flavor_tags": ["fire_res"], "lore": "Warm to the touch.",
-      "drop_weights": [0, 10, 55, 28, 10], "unique": false },
-
-    { "id": "ring_of_sapphire", "name": "Sapphire Ring", "base_type": "ring_cold",
-      "slot": "ring", "item_tier": 3, "rarity": "rare",
+      "atk": 0,
+      "def": 2,
+      "hp": 28,
+      "flavor_tags": [
+        "fire_res"
+      ],
+      "lore": "Warm to the touch.",
+      "drop_weights": [
+        0,
+        10,
+        55,
+        28,
+        10
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "strength": 30,
+        "crit": 20,
+        "haste": 10
+      }
+    },
+    {
+      "id": "ring_of_sapphire",
+      "name": "Sapphire Ring",
+      "base_type": "ring_cold",
+      "slot": "ring",
+      "item_tier": 3,
+      "rarity": "rare",
       "tile": "item/ring/ring_sapphire.png",
-      "atk": 0, "def": 2, "hp": 28,
-      "flavor_tags": ["cold_res"], "lore": "Cold despite the air.",
-      "drop_weights": [0, 10, 55, 28, 10], "unique": false },
-
-    { "id": "ivory_ring", "name": "Ivory Ring", "base_type": "ring_stealth",
-      "slot": "ring", "item_tier": 4, "rarity": "epic",
+      "atk": 0,
+      "def": 2,
+      "hp": 28,
+      "flavor_tags": [
+        "cold_res"
+      ],
+      "lore": "Cold despite the air.",
+      "drop_weights": [
+        0,
+        10,
+        55,
+        28,
+        10
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "regen": 30,
+        "stamina": 20,
+        "agility": 10
+      }
+    },
+    {
+      "id": "ivory_ring",
+      "name": "Ivory Ring",
+      "base_type": "ring_stealth",
+      "slot": "ring",
+      "item_tier": 4,
+      "rarity": "epic",
       "tile": "item/ring/ring_ivory.png",
-      "atk": 0, "def": 2, "hp": 35,
-      "flavor_tags": ["stealth", "vision"], "lore": "Old. Yellowed. Forgotten by what made it.",
-      "drop_weights": [0, 0, 12, 58, 30], "unique": false },
-
-    { "id": "twisted_ring", "name": "Twisted Ring", "base_type": "ring_dexterity",
-      "slot": "ring", "item_tier": 4, "rarity": "epic",
+      "atk": 3,
+      "def": 2,
+      "hp": 36,
+      "flavor_tags": [
+        "stealth",
+        "vision"
+      ],
+      "lore": "Old. Yellowed. Forgotten by what made it.",
+      "drop_weights": [
+        0,
+        0,
+        12,
+        58,
+        30
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "haste": 30,
+        "agility": 30
+      }
+    },
+    {
+      "id": "twisted_ring",
+      "name": "Twisted Ring",
+      "base_type": "ring_dexterity",
+      "slot": "ring",
+      "item_tier": 4,
+      "rarity": "epic",
       "tile": "item/ring/ring_twisted.png",
-      "atk": 4, "def": 2, "hp": 38,
-      "flavor_tags": ["footwork", "swiftness"], "lore": "Looks like it was bent on purpose. Maybe.",
-      "drop_weights": [0, 0, 10, 58, 32], "unique": false },
-
-    { "id": "shiny_ring", "name": "Shiny Ring", "base_type": "ring_protection",
-      "slot": "ring", "item_tier": 4, "rarity": "epic",
+      "atk": 4,
+      "def": 2,
+      "hp": 39,
+      "flavor_tags": [
+        "footwork",
+        "swiftness"
+      ],
+      "lore": "Looks like it was bent on purpose. Maybe.",
+      "drop_weights": [
+        0,
+        0,
+        10,
+        58,
+        32
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "agility": 30,
+        "haste": 20,
+        "crit": 10
+      }
+    },
+    {
+      "id": "shiny_ring",
+      "name": "Shiny Ring",
+      "base_type": "ring_protection",
+      "slot": "ring",
+      "item_tier": 4,
+      "rarity": "epic",
       "tile": "item/ring/ring_shiny.png",
-      "atk": 0, "def": 5, "hp": 45,
-      "flavor_tags": ["fortified"], "lore": "Polished beyond reason. Nobody likes the wearer in dim corridors.",
-      "drop_weights": [0, 0, 8, 55, 38], "unique": false },
-
-    { "id": "ruby_ring", "name": "Ruby Ring", "base_type": "ring_strength",
-      "slot": "ring", "item_tier": 4, "rarity": "epic",
+      "atk": 0,
+      "def": 5,
+      "hp": 45,
+      "flavor_tags": [
+        "fortified"
+      ],
+      "lore": "Polished beyond reason. Nobody likes the wearer in dim corridors.",
+      "drop_weights": [
+        0,
+        0,
+        8,
+        55,
+        38
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "stamina": 30,
+        "regen": 20,
+        "agility": 10
+      }
+    },
+    {
+      "id": "ruby_ring",
+      "name": "Ruby Ring",
+      "base_type": "ring_strength",
+      "slot": "ring",
+      "item_tier": 4,
+      "rarity": "epic",
       "tile": "item/ring/ruby.png",
-      "atk": 6, "def": 1, "hp": 40,
-      "flavor_tags": ["slaying", "fire_res"], "lore": "Hot to the touch. Hotter when struck.",
-      "drop_weights": [0, 0, 8, 55, 38], "unique": false },
-
-    { "id": "emerald_ring", "name": "Emerald Ring", "base_type": "ring_dexterity",
-      "slot": "ring", "item_tier": 4, "rarity": "epic",
+      "atk": 6,
+      "def": 1,
+      "hp": 40,
+      "flavor_tags": [
+        "slaying",
+        "fire_res"
+      ],
+      "lore": "Hot to the touch. Hotter when struck.",
+      "drop_weights": [
+        0,
+        0,
+        8,
+        55,
+        38
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "strength": 60,
+        "crit": 10
+      }
+    },
+    {
+      "id": "emerald_ring",
+      "name": "Emerald Ring",
+      "base_type": "ring_dexterity",
+      "slot": "ring",
+      "item_tier": 4,
+      "rarity": "epic",
       "tile": "item/ring/emerald.png",
-      "atk": 4, "def": 3, "hp": 40,
-      "flavor_tags": ["footwork", "wisdom"], "lore": "Green flecks. Always cool.",
-      "drop_weights": [0, 0, 8, 55, 38], "unique": false },
-
-    { "id": "diamond_ring", "name": "Diamond Ring", "base_type": "ring_evasion",
-      "slot": "ring", "item_tier": 5, "rarity": "epic",
+      "atk": 4,
+      "def": 3,
+      "hp": 40,
+      "flavor_tags": [
+        "footwork",
+        "wisdom"
+      ],
+      "lore": "Green flecks. Always cool.",
+      "drop_weights": [
+        0,
+        0,
+        8,
+        55,
+        38
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "agility": 30,
+        "haste": 20,
+        "crit": 10
+      }
+    },
+    {
+      "id": "diamond_ring",
+      "name": "Diamond Ring",
+      "base_type": "ring_evasion",
+      "slot": "ring",
+      "item_tier": 5,
+      "rarity": "epic",
       "tile": "item/ring/diamond.png",
-      "atk": 2, "def": 6, "hp": 50,
-      "flavor_tags": ["footwork", "fortified"], "lore": "Catches every light source on the floor.",
-      "drop_weights": [0, 0, 0, 18, 70], "unique": false },
-
-    { "id": "pearl_ring", "name": "Pearl Ring", "base_type": "ring_regen",
-      "slot": "ring", "item_tier": 5, "rarity": "epic",
+      "atk": 2,
+      "def": 6,
+      "hp": 50,
+      "flavor_tags": [
+        "footwork",
+        "fortified"
+      ],
+      "lore": "Catches every light source on the floor.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        18,
+        70
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "agility": 50,
+        "haste": 15
+      }
+    },
+    {
+      "id": "pearl_ring",
+      "name": "Pearl Ring",
+      "base_type": "ring_regen",
+      "slot": "ring",
+      "item_tier": 5,
+      "rarity": "epic",
       "tile": "item/ring/pearl.png",
-      "atk": 0, "def": 3, "hp": 55,
-      "flavor_tags": ["regen", "willpower"], "lore": "Iridescent. Cool against the skin.",
-      "drop_weights": [0, 0, 0, 14, 72], "unique": false },
-
-    { "id": "gold_ring", "name": "Gold Ring", "base_type": "ring_slaying",
-      "slot": "ring", "item_tier": 5, "rarity": "epic",
+      "atk": 0,
+      "def": 3,
+      "hp": 55,
+      "flavor_tags": [
+        "regen",
+        "willpower"
+      ],
+      "lore": "Iridescent. Cool against the skin.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        14,
+        72
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "regen": 60,
+        "stamina": 10
+      }
+    },
+    {
+      "id": "gold_ring",
+      "name": "Gold Ring",
+      "base_type": "ring_slaying",
+      "slot": "ring",
+      "item_tier": 5,
+      "rarity": "epic",
       "tile": "item/ring/gold.png",
-      "atk": 7, "def": 2, "hp": 50,
-      "flavor_tags": ["slaying", "fortune"], "lore": "Heavy. Worn by people who could afford a target.",
-      "drop_weights": [0, 0, 0, 14, 70], "unique": false },
-
-    { "id": "engagement_ring", "name": "Engagement Ring", "base_type": "ring_protection",
-      "slot": "ring", "item_tier": 5, "rarity": "epic",
+      "atk": 7,
+      "def": 2,
+      "hp": 50,
+      "flavor_tags": [
+        "slaying",
+        "fortune"
+      ],
+      "lore": "Heavy. Worn by people who could afford a target.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        14,
+        70
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "strength": 40,
+        "crit": 30
+      }
+    },
+    {
+      "id": "engagement_ring",
+      "name": "Engagement Ring",
+      "base_type": "ring_protection",
+      "slot": "ring",
+      "item_tier": 5,
+      "rarity": "epic",
       "tile": "item/ring/ring_engagement.png",
-      "atk": 0, "def": 4, "hp": 65,
-      "flavor_tags": ["fortified", "regen"], "lore": "Inscribed with a name nobody remembers. Lights up around the right person.",
-      "drop_weights": [0, 0, 0, 12, 70], "unique": false },
-
-    { "id": "octoring", "name": "The Octoring", "base_type": "ring_magic",
-      "slot": "ring", "item_tier": 5, "rarity": "legendary",
+      "atk": 0,
+      "def": 4,
+      "hp": 65,
+      "flavor_tags": [
+        "fortified",
+        "regen"
+      ],
+      "lore": "Inscribed with a name nobody remembers. Lights up around the right person.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        12,
+        70
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "stamina": 30,
+        "regen": 20,
+        "agility": 10
+      }
+    },
+    {
+      "id": "octoring",
+      "name": "The Octoring",
+      "base_type": "ring_magic",
+      "slot": "ring",
+      "item_tier": 5,
+      "rarity": "legendary",
       "tile": "item/ring/artefact/urand_octoring.png",
-      "atk": 6, "def": 4, "hp": 60,
-      "flavor_tags": ["wisdom", "fortune"], "lore": "Eight in one. Or one in eight. Depends who's counting.",
-      "drop_weights": [0, 0, 0, 5, 25], "unique": true,
-      "future_mechanic": "Counts as 2 ring slots. Fills both slots, doubles affix slots." },
-
-    { "id": "robustness_ring", "name": "Ring of Robustness", "base_type": "ring_protection",
-      "slot": "ring", "item_tier": 5, "rarity": "legendary",
+      "atk": 6,
+      "def": 4,
+      "hp": 60,
+      "flavor_tags": [
+        "wisdom",
+        "fortune"
+      ],
+      "lore": "Eight in one. Or one in eight. Depends who's counting.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        25
+      ],
+      "unique": true,
+      "future_mechanic": "Counts as 2 ring slots. Fills both slots, doubles affix slots.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "agility": 30,
+        "regen": 35,
+        "haste": 25
+      }
+    },
+    {
+      "id": "robustness_ring",
+      "name": "Ring of Robustness",
+      "base_type": "ring_protection",
+      "slot": "ring",
+      "item_tier": 5,
+      "rarity": "legendary",
       "tile": "item/ring/artefact/urand_robustness.png",
-      "atk": 0, "def": 7, "hp": 90,
-      "flavor_tags": ["fortified", "regen", "willpower"], "lore": "Thick. Indelicate. Effective.",
-      "drop_weights": [0, 0, 0, 5, 25], "unique": true,
-      "future_mechanic": "+15% max HP. Cannot be reduced below 1 HP from a single hit." },
-
-    { "id": "shadows_ring", "name": "Ring of Shadows", "base_type": "ring_stealth",
-      "slot": "ring", "item_tier": 5, "rarity": "legendary",
+      "atk": 0,
+      "def": 7,
+      "hp": 90,
+      "flavor_tags": [
+        "fortified",
+        "regen",
+        "willpower"
+      ],
+      "lore": "Thick. Indelicate. Effective.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        25
+      ],
+      "unique": true,
+      "future_mechanic": "+15% max HP. Cannot be reduced below 1 HP from a single hit.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "stamina": 65,
+        "agility": 25,
+        "regen": 55
+      }
+    },
+    {
+      "id": "shadows_ring",
+      "name": "Ring of Shadows",
+      "base_type": "ring_stealth",
+      "slot": "ring",
+      "item_tier": 5,
+      "rarity": "legendary",
       "tile": "item/ring/artefact/urand_shadows_new.png",
-      "atk": 4, "def": 4, "hp": 55,
-      "flavor_tags": ["stealth", "footwork", "vision"], "lore": "The wearer's shadow does not always follow.",
-      "drop_weights": [0, 0, 0, 4, 22], "unique": true,
-      "future_mechanic": "+20% dodge chance. See-invisible. Lower aggro range." },
-
-    { "id": "shaolin_ring", "name": "Shaolin Ring", "base_type": "ring_dexterity",
-      "slot": "ring", "item_tier": 5, "rarity": "legendary",
+      "atk": 4,
+      "def": 4,
+      "hp": 55,
+      "flavor_tags": [
+        "stealth",
+        "footwork",
+        "vision"
+      ],
+      "lore": "The wearer's shadow does not always follow.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        4,
+        22
+      ],
+      "unique": true,
+      "future_mechanic": "+20% dodge chance. See-invisible. Lower aggro range.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "agility": 80,
+        "crit": 25,
+        "haste": 40
+      }
+    },
+    {
+      "id": "shaolin_ring",
+      "name": "Shaolin Ring",
+      "base_type": "ring_dexterity",
+      "slot": "ring",
+      "item_tier": 5,
+      "rarity": "legendary",
       "tile": "item/ring/artefact/urand_shaolin.png",
-      "atk": 8, "def": 3, "hp": 55,
-      "flavor_tags": ["footwork", "swiftness", "slaying"], "lore": "Worn by a fist that ended a war.",
-      "drop_weights": [0, 0, 0, 4, 22], "unique": true,
-      "future_mechanic": "+15% attack speed. +10% crit chance." },
-
-    { "id": "mage_ring", "name": "Ring of the Mage", "base_type": "ring_magic",
-      "slot": "ring", "item_tier": 5, "rarity": "legendary",
+      "atk": 8,
+      "def": 3,
+      "hp": 55,
+      "flavor_tags": [
+        "footwork",
+        "swiftness",
+        "slaying"
+      ],
+      "lore": "Worn by a fist that ended a war.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        4,
+        22
+      ],
+      "unique": true,
+      "future_mechanic": "+15% attack speed. +10% crit chance.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "strength": 25,
+        "agility": 50,
+        "crit": 20,
+        "haste": 50
+      }
+    },
+    {
+      "id": "mage_ring",
+      "name": "Ring of the Mage",
+      "base_type": "ring_magic",
+      "slot": "ring",
+      "item_tier": 5,
+      "rarity": "legendary",
       "tile": "item/ring/artefact/urand_mage.png",
-      "atk": 5, "def": 5, "hp": 70,
-      "flavor_tags": ["wisdom", "willpower"], "lore": "Drained of one mage's worth of magic. Now full of yours.",
-      "drop_weights": [0, 0, 0, 4, 20], "unique": true,
-      "future_mechanic": "+50% magic resistance. +25% XP gain." },
-
-    { "id": "glass_ring", "name": "Glass Ring", "base_type": "ring_evasion",
-      "slot": "ring", "item_tier": 1, "rarity": "uncommon",
+      "atk": 5,
+      "def": 5,
+      "hp": 70,
+      "flavor_tags": [
+        "wisdom",
+        "willpower"
+      ],
+      "lore": "Drained of one mage's worth of magic. Now full of yours.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        4,
+        20
+      ],
+      "unique": true,
+      "future_mechanic": "+50% magic resistance. +25% XP gain.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "stamina": 20,
+        "agility": 25,
+        "regen": 35,
+        "haste": 10
+      }
+    },
+    {
+      "id": "glass_ring",
+      "name": "Glass Ring",
+      "base_type": "ring_evasion",
+      "slot": "ring",
+      "item_tier": 1,
+      "rarity": "uncommon",
       "tile": "item/ring/glass.png",
-      "atk": 1, "def": 2, "hp": 8,
-      "flavor_tags": ["footwork"], "lore": "Cool. Fragile-feeling. Doesn't shatter.",
-      "drop_weights": [55, 30, 8, 0, 0], "unique": false },
-
-    { "id": "jade_ring", "name": "Jade Ring", "base_type": "ring_poison",
-      "slot": "ring", "item_tier": 2, "rarity": "rare",
+      "atk": 1,
+      "def": 2,
+      "hp": 8,
+      "flavor_tags": [
+        "footwork"
+      ],
+      "lore": "Cool. Fragile-feeling. Doesn't shatter.",
+      "drop_weights": [
+        55,
+        30,
+        8,
+        0,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "agility": 50,
+        "haste": 15
+      }
+    },
+    {
+      "id": "jade_ring",
+      "name": "Jade Ring",
+      "base_type": "ring_poison",
+      "slot": "ring",
+      "item_tier": 2,
+      "rarity": "rare",
       "tile": "item/ring/jade.png",
-      "atk": 0, "def": 3, "hp": 24,
-      "flavor_tags": ["poison_res", "regen"], "lore": "Cold. Always cold. Even when hot.",
-      "drop_weights": [10, 55, 30, 5, 0], "unique": false },
-
-    { "id": "granite_ring", "name": "Granite Band", "base_type": "ring_protection",
-      "slot": "ring", "item_tier": 3, "rarity": "rare",
+      "atk": 0,
+      "def": 3,
+      "hp": 24,
+      "flavor_tags": [
+        "poison_res",
+        "regen"
+      ],
+      "lore": "Cold. Always cold. Even when hot.",
+      "drop_weights": [
+        10,
+        55,
+        30,
+        5,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "regen": 25,
+        "agility": 25,
+        "crit": 10
+      }
+    },
+    {
+      "id": "granite_ring",
+      "name": "Granite Band",
+      "base_type": "ring_protection",
+      "slot": "ring",
+      "item_tier": 3,
+      "rarity": "rare",
       "tile": "item/ring/granite.png",
-      "atk": 0, "def": 5, "hp": 30,
-      "flavor_tags": ["fortified"], "lore": "Heavy on the finger. Heavier on the mind.",
-      "drop_weights": [0, 12, 58, 25, 5], "unique": false },
-
-    { "id": "opal_ring", "name": "Opal Ring", "base_type": "ring_magic",
-      "slot": "ring", "item_tier": 4, "rarity": "epic",
+      "atk": 0,
+      "def": 5,
+      "hp": 30,
+      "flavor_tags": [
+        "fortified"
+      ],
+      "lore": "Heavy on the finger. Heavier on the mind.",
+      "drop_weights": [
+        0,
+        12,
+        58,
+        25,
+        5
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "stamina": 30,
+        "regen": 20,
+        "agility": 10
+      }
+    },
+    {
+      "id": "opal_ring",
+      "name": "Opal Ring",
+      "base_type": "ring_magic",
+      "slot": "ring",
+      "item_tier": 4,
+      "rarity": "epic",
       "tile": "item/ring/opal.png",
-      "atk": 3, "def": 3, "hp": 45,
-      "flavor_tags": ["wisdom", "willpower"], "lore": "Catches every color. Spits some back.",
-      "drop_weights": [0, 0, 12, 55, 33], "unique": false },
-
-    { "id": "onyx_ring", "name": "Black Onyx Ring", "base_type": "ring_stealth",
-      "slot": "ring", "item_tier": 4, "rarity": "epic",
+      "atk": 3,
+      "def": 3,
+      "hp": 45,
+      "flavor_tags": [
+        "wisdom",
+        "willpower"
+      ],
+      "lore": "Catches every color. Spits some back.",
+      "drop_weights": [
+        0,
+        0,
+        12,
+        55,
+        33
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "regen": 25,
+        "haste": 25,
+        "crit": 10
+      }
+    },
+    {
+      "id": "onyx_ring",
+      "name": "Black Onyx Ring",
+      "base_type": "ring_stealth",
+      "slot": "ring",
+      "item_tier": 4,
+      "rarity": "epic",
       "tile": "item/ring/ring_black_onyx.png",
-      "atk": 3, "def": 3, "hp": 38,
-      "flavor_tags": ["stealth", "footwork", "vision"], "lore": "Light declines to land on it. So do gazes.",
-      "drop_weights": [0, 0, 8, 58, 35], "unique": false },
-
-    { "id": "ring_of_flight", "name": "Ring of Flight", "base_type": "ring_flight",
-      "slot": "ring", "item_tier": 4, "rarity": "epic",
+      "atk": 3,
+      "def": 3,
+      "hp": 38,
+      "flavor_tags": [
+        "stealth",
+        "footwork",
+        "vision"
+      ],
+      "lore": "Light declines to land on it. So do gazes.",
+      "drop_weights": [
+        0,
+        0,
+        8,
+        58,
+        35
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "haste": 30,
+        "agility": 30
+      }
+    },
+    {
+      "id": "ring_of_flight",
+      "name": "Ring of Flight",
+      "base_type": "ring_flight",
+      "slot": "ring",
+      "item_tier": 4,
+      "rarity": "epic",
       "tile": "item/ring/ring_gold_white.png",
-      "atk": 0, "def": 4, "hp": 40,
-      "flavor_tags": ["flying", "swiftness"], "lore": "Heels barely brush the floor while it's worn.",
-      "drop_weights": [0, 0, 8, 55, 38], "unique": false }
+      "atk": 0,
+      "def": 4,
+      "hp": 40,
+      "flavor_tags": [
+        "flying",
+        "swiftness"
+      ],
+      "lore": "Heels barely brush the floor while it's worn.",
+      "drop_weights": [
+        0,
+        0,
+        8,
+        55,
+        38
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "haste": 35,
+        "agility": 25
+      }
+    }
   ]
 }
