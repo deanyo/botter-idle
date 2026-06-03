@@ -42,6 +42,10 @@ const STATUSES := {
 		"label": "Wounded", "desc": "Below 30% HP — retreat or finish the fight." },
 	"shielded": { "icon": "ward.png",   "tint": Color(0.6, 0.85, 1), "pulse": false, "z": 8,
 		"label": "Shielded", "desc": "Reducing or absorbing damage." },
+	"stunned":  { "icon": "rage.png",   "tint": Color(1, 0.9, 0.4), "pulse": true,   "z": 9,
+		"label": "Stunned", "desc": "Skips next attack." },
+	"stealthy": { "icon": "ward.png",   "tint": Color(0.4, 0.4, 0.8, 0.7), "pulse": false, "z": 0,
+		"label": "Stealthy", "desc": "Next attack lands a +25% bonus." },
 }
 
 # Enemy-id substrings that classify each holy/bane category. The

@@ -77,10 +77,53 @@ const FLAVOR_COLORS := {
 	"dark":        Color(0.55, 0.30, 0.85),   # void purple
 	"dragon_bane": Color(0.85, 0.50, 0.20),   # scaled bronze
 	"brutal":      Color(0.95, 0.30, 0.30),   # menacing red
+	# Less-priority flavors get colors too so the editor preview /
+	# inventory tint reflects them, but they sit lower in the
+	# priority list so a vampiric-fire weapon still tints red.
+	"arcane":      Color(0.70, 0.40, 1.00),   # mage purple
+	"elemental":   Color(0.50, 1.00, 0.85),   # primal teal
+	"willpower":   Color(0.85, 0.70, 1.00),   # mind lavender
+	"fortified":   Color(0.75, 0.75, 0.85),   # iron grey
+	"swiftness":   Color(0.70, 1.00, 0.55),   # spring green
+	"regen":       Color(0.55, 1.00, 0.65),   # life green
+	"stealth":     Color(0.30, 0.30, 0.50),   # shadow indigo
+	"lordly":      Color(1.00, 0.85, 0.45),   # noble gold
+	"footwork":    Color(0.75, 0.95, 1.00),   # quicksilver
+	"warding":     Color(0.55, 0.70, 1.00),   # ward blue
+	"wisdom":      Color(0.65, 0.80, 1.00),   # sky blue
+	"fire_res":    Color(1.00, 0.75, 0.55),   # warm sand
+	"cold_res":    Color(0.85, 0.95, 1.00),   # ice white
+	"poison_res":  Color(0.80, 1.00, 0.65),   # antidote green
+	"vision":      Color(1.00, 0.95, 0.70),   # eye gold
+	"rampaging":   Color(1.00, 0.45, 0.20),   # charge orange
+	"flying":      Color(0.85, 0.95, 1.00),   # sky cyan
+	"fortune":     Color(1.00, 0.80, 0.30),   # luck gold
+	"faith":       Color(0.95, 0.90, 0.65),   # halo cream
+	"acrobat":     Color(0.80, 1.00, 0.85),   # mint
+	"death":       Color(0.40, 0.10, 0.40),   # death purple
+	"earth":       Color(0.65, 0.50, 0.35),   # loam brown
+	"guardian":    Color(0.65, 0.85, 1.00),   # aegis blue
+	"demon":       Color(0.55, 0.20, 0.50),   # demonic magenta
+	"crystal":     Color(0.85, 0.95, 1.00),   # crystal pale
+	"dual":        Color(0.85, 0.85, 0.95),   # twin silver
+	"sound":       Color(0.95, 0.85, 1.00),   # echo lilac
+	"ponderous":   Color(0.55, 0.55, 0.65),   # heavy slate
+	"slaying":     Color(1.00, 0.50, 0.35),   # bloody coral
+	"psychic":     Color(0.90, 0.55, 1.00),   # psi pink
 }
+# Priority order — wired-mechanic flavors first because their COLOR
+# carries the most meaning. Decorative-but-wired ones below. Anything
+# missing here resolves to alpha=0 in flavor_color_for() and falls
+# back to rarity tint.
 const _FLAVOR_PRIORITY := [
-	"vampiric", "fire", "cold", "holy", "poison",
-	"thunderous", "dark", "dragon_bane", "brutal",
+	"vampiric", "fire", "cold", "holy", "poison", "thunderous",
+	"dark", "dragon_bane", "brutal", "arcane", "elemental",
+	"willpower", "fortified", "swiftness", "regen", "stealth",
+	"lordly", "footwork", "warding", "wisdom",
+	"fire_res", "cold_res", "poison_res", "vision",
+	"rampaging", "flying", "fortune", "faith", "acrobat",
+	"death", "earth", "guardian", "demon", "crystal",
+	"dual", "sound", "ponderous", "slaying", "psychic",
 ]
 
 # Pick the flavor color that should drive an item's tint, or empty

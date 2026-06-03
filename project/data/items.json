@@ -20,7 +20,14 @@
         0,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "crit": 30,
+        "haste": 20,
+        "strength": 10,
+        "agility": 10
+      }
     },
     {
       "id": "chipped_shortsword",
@@ -42,7 +49,14 @@
         0,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "crit": 20,
+        "haste": 15,
+        "strength": 20,
+        "stamina": 10
+      }
     },
     {
       "id": "iron_dagger",
@@ -64,7 +78,14 @@
         0,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "crit": 30,
+        "haste": 20,
+        "strength": 10,
+        "agility": 10
+      }
     },
     {
       "id": "rusty_dagger",
@@ -72,9 +93,9 @@
       "slot": "weapon",
       "rarity": "common",
       "tile": "dagger_3.png",
-      "atk": 12,
+      "atk": 13,
       "def": 0,
-      "hp": 0,
+      "hp": 2,
       "item_tier": 1,
       "base_type": "dagger",
       "flavor_tags": [],
@@ -86,7 +107,14 @@
         0,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "crit": 30,
+        "haste": 20,
+        "strength": 10,
+        "agility": 10
+      }
     },
     {
       "id": "shiv",
@@ -96,7 +124,7 @@
       "tile": "dagger_6.png",
       "atk": 13,
       "def": 0,
-      "hp": 0,
+      "hp": 2,
       "item_tier": 1,
       "base_type": "dagger",
       "flavor_tags": [],
@@ -108,7 +136,14 @@
         0,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "crit": 30,
+        "haste": 20,
+        "strength": 10,
+        "agility": 10
+      }
     },
     {
       "id": "short_falchion",
@@ -130,7 +165,14 @@
         0,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "crit": 15,
+        "strength": 25,
+        "stamina": 10,
+        "haste": 10
+      }
     },
     {
       "id": "elven_dagger",
@@ -144,7 +186,7 @@
       "item_tier": 2,
       "base_type": "dagger",
       "flavor_tags": [
-        "swift"
+        "swiftness"
       ],
       "lore": "Light enough to forget you're carrying it, until you aren't.",
       "drop_weights": [
@@ -154,7 +196,14 @@
         3,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "crit": 30,
+        "haste": 20,
+        "strength": 10,
+        "agility": 10
+      }
     },
     {
       "id": "iron_falchion",
@@ -176,7 +225,14 @@
         3,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "crit": 15,
+        "strength": 25,
+        "stamina": 10,
+        "haste": 10
+      }
     },
     {
       "id": "orcish_shortsword",
@@ -200,7 +256,14 @@
         5,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "crit": 20,
+        "haste": 15,
+        "strength": 20,
+        "stamina": 10
+      }
     },
     {
       "id": "quick_blade",
@@ -214,7 +277,7 @@
       "item_tier": 2,
       "base_type": "quick_blade",
       "flavor_tags": [
-        "swift",
+        "swiftness",
         "precision"
       ],
       "lore": "The fastest blade in the Dungeon. Blink and it's already over.",
@@ -225,7 +288,13 @@
         10,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "haste": 40,
+        "crit": 30,
+        "strength": 5
+      }
     },
     {
       "id": "rapier",
@@ -249,7 +318,14 @@
         8,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "crit": 35,
+        "haste": 20,
+        "strength": 5,
+        "agility": 10
+      }
     },
     {
       "id": "steel_shortsword",
@@ -257,7 +333,7 @@
       "slot": "weapon",
       "rarity": "uncommon",
       "tile": "short_sword_2_new.png",
-      "atk": 24,
+      "atk": 27,
       "def": 0,
       "hp": 4,
       "item_tier": 2,
@@ -271,7 +347,14 @@
         3,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "crit": 20,
+        "haste": 15,
+        "strength": 20,
+        "stamina": 10
+      }
     },
     {
       "id": "iron_longsword",
@@ -293,7 +376,14 @@
         22,
         3
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "strength": 25,
+        "stamina": 15,
+        "agility": 10,
+        "crit": 15
+      }
     },
     {
       "id": "mithril_shortsword",
@@ -315,7 +405,14 @@
         25,
         5
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "crit": 20,
+        "haste": 15,
+        "strength": 20,
+        "stamina": 10
+      }
     },
     {
       "id": "scimitar",
@@ -337,7 +434,14 @@
         23,
         5
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "crit": 20,
+        "haste": 20,
+        "strength": 20,
+        "stamina": 5
+      }
     },
     {
       "id": "silver_rapier",
@@ -362,7 +466,14 @@
         28,
         6
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "crit": 35,
+        "haste": 20,
+        "strength": 5,
+        "agility": 10
+      }
     },
     {
       "id": "silver_sabre",
@@ -386,7 +497,14 @@
         30,
         8
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "crit": 25,
+        "haste": 25,
+        "strength": 15,
+        "agility": 5
+      }
     },
     {
       "id": "steel_falchion",
@@ -408,7 +526,14 @@
         25,
         5
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "crit": 15,
+        "strength": 25,
+        "stamina": 10,
+        "haste": 10
+      }
     },
     {
       "id": "elven_broadsword",
@@ -422,8 +547,8 @@
       "item_tier": 4,
       "base_type": "long_sword",
       "flavor_tags": [
-        "swift",
-        "magic"
+        "swiftness",
+        "arcane"
       ],
       "lore": "Longer than it looks. Lighter than possible.",
       "drop_weights": [
@@ -433,7 +558,14 @@
         55,
         38
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "strength": 25,
+        "stamina": 15,
+        "agility": 10,
+        "crit": 15
+      }
     },
     {
       "id": "elven_shortsword",
@@ -447,7 +579,7 @@
       "item_tier": 4,
       "base_type": "short_sword",
       "flavor_tags": [
-        "swift",
+        "swiftness",
         "precision"
       ],
       "lore": "Almost too light to feel. Compensates by being very sharp.",
@@ -458,7 +590,14 @@
         55,
         35
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "crit": 20,
+        "haste": 15,
+        "strength": 20,
+        "stamina": 10
+      }
     },
     {
       "id": "iron_katana",
@@ -473,7 +612,7 @@
       "base_type": "katana",
       "flavor_tags": [
         "precision",
-        "swift"
+        "swiftness"
       ],
       "lore": "Simple. Exact. Deadly.",
       "drop_weights": [
@@ -483,7 +622,14 @@
         58,
         35
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "crit": 25,
+        "haste": 20,
+        "strength": 15,
+        "agility": 10
+      }
     },
     {
       "id": "knife_of_accuracy",
@@ -498,7 +644,7 @@
       "base_type": "knife",
       "flavor_tags": [
         "precision",
-        "swift"
+        "swiftness"
       ],
       "lore": "Always finds the right place to be. Unfortunately for whatever it lands in.",
       "drop_weights": [
@@ -508,7 +654,14 @@
         50,
         35
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "crit": 30,
+        "haste": 20,
+        "strength": 10,
+        "agility": 10
+      }
     },
     {
       "id": "mithril_longsword",
@@ -530,7 +683,14 @@
         60,
         30
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "strength": 25,
+        "stamina": 15,
+        "agility": 10,
+        "crit": 15
+      }
     },
     {
       "id": "runed_falchion",
@@ -544,7 +704,7 @@
       "item_tier": 4,
       "base_type": "falchion",
       "flavor_tags": [
-        "magic"
+        "arcane"
       ],
       "lore": "Sigils run down the blade, each one a name.",
       "drop_weights": [
@@ -554,7 +714,14 @@
         58,
         35
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "crit": 15,
+        "strength": 25,
+        "stamina": 10,
+        "haste": 10
+      }
     },
     {
       "id": "runed_scimitar",
@@ -568,7 +735,7 @@
       "item_tier": 4,
       "base_type": "scimitar",
       "flavor_tags": [
-        "magic"
+        "arcane"
       ],
       "lore": "The runes pulse when it cuts. Nobody knows why.",
       "drop_weights": [
@@ -578,7 +745,14 @@
         60,
         32
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "crit": 20,
+        "haste": 20,
+        "strength": 20,
+        "stamina": 5
+      }
     },
     {
       "id": "steel_longsword",
@@ -586,9 +760,9 @@
       "slot": "weapon",
       "rarity": "rare",
       "tile": "long_sword_2.png",
-      "atk": 48,
+      "atk": 54,
       "def": 0,
-      "hp": 8,
+      "hp": 10,
       "item_tier": 4,
       "base_type": "long_sword",
       "flavor_tags": [],
@@ -600,7 +774,14 @@
         58,
         30
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "strength": 25,
+        "stamina": 15,
+        "agility": 10,
+        "crit": 15
+      }
     },
     {
       "id": "ancient_sword",
@@ -625,7 +806,14 @@
         14,
         70
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "strength": 25,
+        "stamina": 15,
+        "agility": 10,
+        "crit": 15
+      }
     },
     {
       "id": "arc_blade",
@@ -639,7 +827,7 @@
       "item_tier": 5,
       "base_type": "long_sword",
       "flavor_tags": [
-        "magic",
+        "arcane",
         "elemental"
       ],
       "lore": "Lightning runs the length of the blade. It hisses when wet.",
@@ -651,7 +839,13 @@
         25
       ],
       "unique": true,
-      "future_mechanic": "Hits chain to 1 adjacent enemy at 50% damage. Lightning-typed."
+      "future_mechanic": "Hits chain to 1 adjacent enemy at 50% damage. Lightning-typed.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "regen": 20,
+        "crit": 45,
+        "haste": 25
+      }
     },
     {
       "id": "bloodbane",
@@ -677,7 +871,13 @@
         22
       ],
       "unique": true,
-      "future_mechanic": "Lifesteal: heals 8% of damage dealt on every hit."
+      "future_mechanic": "Lifesteal: heals 8% of damage dealt on every hit.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "strength": 35,
+        "crit": 40,
+        "haste": 15
+      }
     },
     {
       "id": "chilly_death",
@@ -691,7 +891,6 @@
       "item_tier": 5,
       "base_type": "rapier",
       "flavor_tags": [
-        "ice",
         "cold"
       ],
       "lore": "Leaves wounds that refuse to close. Cold as the depths of Glacier.",
@@ -703,7 +902,13 @@
         25
       ],
       "unique": true,
-      "future_mechanic": "15% chance to freeze enemy on hit (0.5s stun). Frozen enemies take +20% damage."
+      "future_mechanic": "15% chance to freeze enemy on hit (0.5s stun). Frozen enemies take +20% damage.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "agility": 15,
+        "regen": 10,
+        "crit": 20
+      }
     },
     {
       "id": "crystal_longsword",
@@ -711,13 +916,13 @@
       "slot": "weapon",
       "rarity": "epic",
       "tile": "long_sword_5.png",
-      "atk": 68,
+      "atk": 70,
       "def": 0,
-      "hp": 14,
+      "hp": 15,
       "item_tier": 5,
       "base_type": "long_sword",
       "flavor_tags": [
-        "magic",
+        "arcane",
         "crystal"
       ],
       "lore": "Carved from a single growth of arcane crystal. Hums when hungry.",
@@ -728,7 +933,14 @@
         15,
         75
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "strength": 25,
+        "stamina": 15,
+        "agility": 10,
+        "crit": 15
+      }
     },
     {
       "id": "demon_blade",
@@ -753,7 +965,14 @@
         8,
         60
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "strength": 25,
+        "crit": 20,
+        "haste": 10,
+        "regen": 5
+      }
     },
     {
       "id": "doom_knight_blade",
@@ -779,7 +998,13 @@
         18
       ],
       "unique": true,
-      "future_mechanic": "Death mark: hit applies a 3s debuff (+25% damage taken). Stacks once."
+      "future_mechanic": "Death mark: hit applies a 3s debuff (+25% damage taken). Stacks once.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "strength": 40,
+        "crit": 35,
+        "haste": 5
+      }
     },
     {
       "id": "eos",
@@ -805,7 +1030,14 @@
         22
       ],
       "unique": true,
-      "future_mechanic": "+50% damage vs undead/demon. Emits weak light (sees-invisible)."
+      "future_mechanic": "+50% damage vs undead/demon. Emits weak light (sees-invisible).",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "strength": 35,
+        "agility": 10,
+        "crit": 35,
+        "haste": 10
+      }
     },
     {
       "id": "firestarter",
@@ -830,7 +1062,13 @@
         25
       ],
       "unique": true,
-      "future_mechanic": "Hits apply a 3-tick burn (5% max HP per tick). Light spec already wired."
+      "future_mechanic": "Hits apply a 3-tick burn (5% max HP per tick). Light spec already wired.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "strength": 20,
+        "crit": 15,
+        "haste": 10
+      }
     },
     {
       "id": "gyre",
@@ -856,7 +1094,13 @@
         22
       ],
       "unique": true,
-      "future_mechanic": "Hits twice per attack at 70% damage each. Total DPS roughly 1.4x base ATK."
+      "future_mechanic": "Hits twice per attack at 70% damage each. Total DPS roughly 1.4x base ATK.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "regen": 10,
+        "crit": 40,
+        "haste": 45
+      }
     },
     {
       "id": "jihad",
@@ -882,7 +1126,13 @@
         22
       ],
       "unique": true,
-      "future_mechanic": "Chain-kill bonus: +5% ATK per kill in last 6s, stacks to 30%."
+      "future_mechanic": "Chain-kill bonus: +5% ATK per kill in last 6s, stacks to 30%.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "strength": 45,
+        "agility": 10,
+        "crit": 40
+      }
     },
     {
       "id": "majin_bo",
@@ -897,7 +1147,7 @@
       "base_type": "katana",
       "flavor_tags": [
         "dark",
-        "magic",
+        "arcane",
         "vampiric"
       ],
       "lore": "Whispers names of the people the bearer has lost. Or will lose.",
@@ -909,7 +1159,14 @@
         18
       ],
       "unique": true,
-      "future_mechanic": "Lifesteal 6% on hit. Drains 1 max HP per kill (recovers between runs)."
+      "future_mechanic": "Lifesteal 6% on hit. Drains 1 max HP per kill (recovers between runs).",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "strength": 35,
+        "regen": 10,
+        "crit": 65,
+        "haste": 30
+      }
     },
     {
       "id": "mithril_katana",
@@ -924,7 +1181,7 @@
       "base_type": "katana",
       "flavor_tags": [
         "precision",
-        "swift"
+        "swiftness"
       ],
       "lore": "Forged over seven years. Used for the rest.",
       "drop_weights": [
@@ -934,7 +1191,14 @@
         12,
         72
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "crit": 25,
+        "haste": 20,
+        "strength": 15,
+        "agility": 10
+      }
     },
     {
       "id": "serpent_scourge",
@@ -949,7 +1213,7 @@
       "base_type": "scimitar",
       "flavor_tags": [
         "poison",
-        "swift"
+        "swiftness"
       ],
       "lore": "Drips. Doesn't matter what you wipe it with.",
       "drop_weights": [
@@ -960,7 +1224,13 @@
         22
       ],
       "unique": true,
-      "future_mechanic": "Hits apply 4-tick poison DoT (4% max HP per tick)."
+      "future_mechanic": "Hits apply 4-tick poison DoT (4% max HP per tick).",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "agility": 25,
+        "crit": 20,
+        "haste": 50
+      }
     },
     {
       "id": "singing_sword",
@@ -974,7 +1244,7 @@
       "item_tier": 5,
       "base_type": "long_sword",
       "flavor_tags": [
-        "magic",
+        "arcane",
         "sound"
       ],
       "lore": "A blade said to sing in battle. The tune changes with each kill.",
@@ -986,7 +1256,14 @@
         25
       ],
       "unique": true,
-      "future_mechanic": "ATK scales with enemies killed this run (+1 ATK per 10 kills, resets on run end)."
+      "future_mechanic": "ATK scales with enemies killed this run (+1 ATK per 10 kills, resets on run end).",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "agility": 10,
+        "regen": 10,
+        "crit": 40,
+        "haste": 30
+      }
     },
     {
       "id": "spriggans_knife",
@@ -1000,7 +1277,7 @@
       "item_tier": 5,
       "base_type": "dagger",
       "flavor_tags": [
-        "swift",
+        "swiftness",
         "precision"
       ],
       "lore": "Light as a leaf-stem. Faster than thought.",
@@ -1012,7 +1289,13 @@
         22
       ],
       "unique": true,
-      "future_mechanic": "+30% attack speed. Lower aggro range while held."
+      "future_mechanic": "+30% attack speed. Lower aggro range while held.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "agility": 15,
+        "crit": 40,
+        "haste": 50
+      }
     },
     {
       "id": "sword_of_cerebov",
@@ -1039,7 +1322,13 @@
         18
       ],
       "unique": true,
-      "future_mechanic": "+25% damage to bosses. Burning aura damages adjacent enemies."
+      "future_mechanic": "+25% damage to bosses. Burning aura damages adjacent enemies.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "strength": 75,
+        "crit": 50,
+        "haste": 15
+      }
     },
     {
       "id": "sword_of_power",
@@ -1053,7 +1342,7 @@
       "item_tier": 5,
       "base_type": "long_sword",
       "flavor_tags": [
-        "magic",
+        "arcane",
         "brutal"
       ],
       "lore": "ATK scales with the bearer's current HP. The healthy hit hardest.",
@@ -1065,7 +1354,14 @@
         18
       ],
       "unique": true,
-      "future_mechanic": "ATK multiplied by current_hp/max_hp. Full HP = +50% damage; low HP = -50%."
+      "future_mechanic": "ATK multiplied by current_hp/max_hp. Full HP = +50% damage; low HP = -50%.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "strength": 30,
+        "regen": 10,
+        "crit": 45,
+        "haste": 15
+      }
     },
     {
       "id": "sword_of_zonguldrok",
@@ -1092,7 +1388,13 @@
         20
       ],
       "unique": true,
-      "future_mechanic": "Killed enemies have a 20% chance to rise as a 5s ally."
+      "future_mechanic": "Killed enemies have a 20% chance to rise as a 5s ally.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "strength": 55,
+        "crit": 60,
+        "haste": 15
+      }
     },
     {
       "id": "vampires_tooth",
@@ -1119,7 +1421,13 @@
         25
       ],
       "unique": true,
-      "future_mechanic": "Lifesteal: 12% of damage dealt heals the bot. +10% crit."
+      "future_mechanic": "Lifesteal: 12% of damage dealt heals the bot. +10% crit.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "strength": 35,
+        "crit": 80,
+        "haste": 30
+      }
     },
     {
       "id": "wyrmbane",
@@ -1145,7 +1453,13 @@
         25
       ],
       "unique": true,
-      "future_mechanic": "+50% damage vs dragon-type enemies. Base vs others."
+      "future_mechanic": "+50% damage vs dragon-type enemies. Base vs others.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "strength": 45,
+        "agility": 10,
+        "crit": 40
+      }
     },
     {
       "id": "iron_brigandine",
@@ -1169,7 +1483,13 @@
         0,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "stamina": 25,
+        "agility": 20,
+        "strength": 5
+      }
     },
     {
       "id": "leather_jerkin",
@@ -1191,7 +1511,13 @@
         0,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "agility": 25,
+        "haste": 15,
+        "stamina": 15
+      }
     },
     {
       "id": "orcish_leather",
@@ -1213,7 +1539,13 @@
         0,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "agility": 25,
+        "haste": 15,
+        "stamina": 15
+      }
     },
     {
       "id": "patchwork_robe",
@@ -1237,7 +1569,13 @@
         0,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "regen": 25,
+        "haste": 15,
+        "stamina": 10
+      }
     },
     {
       "id": "studded_leather",
@@ -1259,7 +1597,13 @@
         0,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "agility": 25,
+        "haste": 10,
+        "stamina": 20
+      }
     },
     {
       "id": "tattered_hide",
@@ -1268,8 +1612,8 @@
       "rarity": "common",
       "tile": "animal_skin_1_new.png",
       "atk": 0,
-      "def": 3,
-      "hp": 45,
+      "def": 4,
+      "hp": 55,
       "item_tier": 1,
       "base_type": "leather",
       "flavor_tags": [],
@@ -1281,7 +1625,13 @@
         0,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "agility": 25,
+        "haste": 15,
+        "stamina": 15
+      }
     },
     {
       "id": "elven_leather",
@@ -1306,7 +1656,13 @@
         5,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "agility": 25,
+        "haste": 15,
+        "stamina": 15
+      }
     },
     {
       "id": "fine_chainmail",
@@ -1330,7 +1686,13 @@
         5,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "stamina": 30,
+        "agility": 15,
+        "regen": 5
+      }
     },
     {
       "id": "orcish_chain",
@@ -1340,7 +1702,7 @@
       "tile": "orcish_chain_mail.png",
       "atk": 0,
       "def": 8,
-      "hp": 100,
+      "hp": 102,
       "item_tier": 2,
       "base_type": "chain_mail",
       "flavor_tags": [
@@ -1354,7 +1716,13 @@
         5,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "stamina": 30,
+        "agility": 15,
+        "regen": 5
+      }
     },
     {
       "id": "orcish_ringmail",
@@ -1378,7 +1746,13 @@
         5,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "stamina": 25,
+        "agility": 20,
+        "strength": 5
+      }
     },
     {
       "id": "scale_mail",
@@ -1402,7 +1776,13 @@
         8,
         2
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "stamina": 30,
+        "agility": 15,
+        "regen": 5
+      }
     },
     {
       "id": "scout_robe",
@@ -1427,7 +1807,13 @@
         3,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "regen": 25,
+        "haste": 15,
+        "stamina": 10
+      }
     },
     {
       "id": "troll_hide",
@@ -1451,7 +1837,13 @@
         8,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "regen": 30,
+        "stamina": 25,
+        "agility": 10
+      }
     },
     {
       "id": "banded_mail",
@@ -1475,7 +1867,12 @@
         25,
         5
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "stamina": 35,
+        "agility": 10
+      }
     },
     {
       "id": "elven_scalemail",
@@ -1500,7 +1897,13 @@
         28,
         8
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "stamina": 30,
+        "agility": 15,
+        "regen": 5
+      }
     },
     {
       "id": "orcish_platemail",
@@ -1524,7 +1927,12 @@
         22,
         4
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "stamina": 40,
+        "regen": 10
+      }
     },
     {
       "id": "splint_mail",
@@ -1548,7 +1956,12 @@
         22,
         4
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "stamina": 35,
+        "agility": 10
+      }
     },
     {
       "id": "troll_leather",
@@ -1572,7 +1985,13 @@
         32,
         12
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "regen": 30,
+        "stamina": 25,
+        "agility": 10
+      }
     },
     {
       "id": "fire_dragon_armor",
@@ -1596,7 +2015,13 @@
         55,
         35
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "stamina": 30,
+        "regen": 15,
+        "strength": 10
+      }
     },
     {
       "id": "green_dragon",
@@ -1606,7 +2031,7 @@
       "tile": "green_dragon_scale_mail.png",
       "atk": 0,
       "def": 16,
-      "hp": 165,
+      "hp": 170,
       "item_tier": 4,
       "base_type": "dragon_scales",
       "flavor_tags": [
@@ -1620,7 +2045,13 @@
         55,
         35
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "stamina": 30,
+        "regen": 15,
+        "strength": 10
+      }
     },
     {
       "id": "ice_dragon_armor",
@@ -1644,7 +2075,13 @@
         55,
         35
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "stamina": 30,
+        "regen": 15,
+        "strength": 10
+      }
     },
     {
       "id": "mottled_dragon",
@@ -1669,7 +2106,13 @@
         55,
         35
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "stamina": 30,
+        "regen": 15,
+        "strength": 10
+      }
     },
     {
       "id": "plate_armor",
@@ -1694,7 +2137,12 @@
         60,
         28
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "stamina": 40,
+        "regen": 10
+      }
     },
     {
       "id": "shimmering_armor",
@@ -1718,7 +2166,13 @@
         50,
         40
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "stamina": 30,
+        "regen": 15,
+        "strength": 10
+      }
     },
     {
       "id": "swamp_dragon_armor",
@@ -1728,7 +2182,7 @@
       "tile": "swamp_dragon_armor_new.png",
       "atk": 0,
       "def": 16,
-      "hp": 165,
+      "hp": 170,
       "item_tier": 4,
       "base_type": "dragon_scales",
       "flavor_tags": [
@@ -1742,7 +2196,13 @@
         55,
         35
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "stamina": 30,
+        "regen": 15,
+        "strength": 10
+      }
     },
     {
       "id": "wyrmscale_hauberk",
@@ -1767,7 +2227,13 @@
         55,
         38
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "stamina": 30,
+        "agility": 15,
+        "regen": 5
+      }
     },
     {
       "id": "armor_of_zhor",
@@ -1793,7 +2259,15 @@
         22
       ],
       "unique": true,
-      "future_mechanic": "+12 HP regen tick. Lower aggro range."
+      "future_mechanic": "+12 HP regen tick. Lower aggro range.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "stamina": 15,
+        "agility": 25,
+        "regen": 35,
+        "crit": 10,
+        "haste": 25
+      }
     },
     {
       "id": "crystal_plate",
@@ -1818,7 +2292,13 @@
         10,
         65
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "stamina": 35,
+        "regen": 15,
+        "agility": 5
+      }
     },
     {
       "id": "dragon_kings_robe",
@@ -1845,7 +2325,16 @@
         22
       ],
       "unique": true,
-      "future_mechanic": "+40% damage vs dragon-type. All elemental resistances."
+      "future_mechanic": "+40% damage vs dragon-type. All elemental resistances.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "strength": 15,
+        "stamina": 35,
+        "agility": 10,
+        "regen": 35,
+        "crit": 20,
+        "haste": 10
+      }
     },
     {
       "id": "etheric_cage",
@@ -1871,7 +2360,13 @@
         18
       ],
       "unique": true,
-      "future_mechanic": "+50% magic resist. -10% move speed (drawback)."
+      "future_mechanic": "+50% magic resist. -10% move speed (drawback).",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "stamina": 50,
+        "agility": 25,
+        "regen": 20
+      }
     },
     {
       "id": "faerie_dragon",
@@ -1898,7 +2393,15 @@
         25
       ],
       "unique": true,
-      "future_mechanic": "All elemental resistances. Mana regen scaling."
+      "future_mechanic": "All elemental resistances. Mana regen scaling.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "stamina": 20,
+        "agility": 25,
+        "regen": 25,
+        "crit": 20,
+        "haste": 45
+      }
     },
     {
       "id": "gold_dragon_armor",
@@ -1923,7 +2426,13 @@
         12,
         72
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "stamina": 30,
+        "regen": 15,
+        "strength": 10
+      }
     },
     {
       "id": "lear_chainmail",
@@ -1949,7 +2458,14 @@
         25
       ],
       "unique": true,
-      "future_mechanic": "+15% damage when surrounded by 3+ enemies."
+      "future_mechanic": "+15% damage when surrounded by 3+ enemies.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "strength": 15,
+        "stamina": 35,
+        "agility": 10,
+        "regen": 25
+      }
     },
     {
       "id": "lightning_scales",
@@ -1975,7 +2491,15 @@
         22
       ],
       "unique": true,
-      "future_mechanic": "Reflects 25% of melee as lightning damage to attacker."
+      "future_mechanic": "Reflects 25% of melee as lightning damage to attacker.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "stamina": 20,
+        "agility": 15,
+        "regen": 20,
+        "crit": 20,
+        "haste": 10
+      }
     },
     {
       "id": "pearl_dragon",
@@ -2000,7 +2524,13 @@
         12,
         70
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "stamina": 30,
+        "regen": 15,
+        "strength": 10
+      }
     },
     {
       "id": "quicksilver_dragon",
@@ -2009,8 +2539,8 @@
       "rarity": "epic",
       "tile": "quicksilver_dragon_scale_mail.png",
       "atk": 0,
-      "def": 18,
-      "hp": 215,
+      "def": 20,
+      "hp": 222,
       "item_tier": 5,
       "base_type": "dragon_scales",
       "flavor_tags": [
@@ -2025,7 +2555,13 @@
         12,
         72
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "stamina": 30,
+        "regen": 15,
+        "strength": 10
+      }
     },
     {
       "id": "ratskin_cloak",
@@ -2051,7 +2587,15 @@
         22
       ],
       "unique": true,
-      "future_mechanic": "Disease immunity. Lower aggro range."
+      "future_mechanic": "Disease immunity. Lower aggro range.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "stamina": 15,
+        "agility": 25,
+        "regen": 35,
+        "crit": 10,
+        "haste": 25
+      }
     },
     {
       "id": "robe_of_clouds",
@@ -2078,7 +2622,15 @@
         25
       ],
       "unique": true,
-      "future_mechanic": "+30% dodge while moving. Concealment effect briefly after staying still."
+      "future_mechanic": "+30% dodge while moving. Concealment effect briefly after staying still.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "stamina": 35,
+        "agility": 35,
+        "regen": 50,
+        "crit": 10,
+        "haste": 25
+      }
     },
     {
       "id": "robe_of_folly",
@@ -2104,7 +2656,13 @@
         25
       ],
       "unique": true,
-      "future_mechanic": "Regen 8 HP/s. -20% DEF (drawback)."
+      "future_mechanic": "Regen 8 HP/s. -20% DEF (drawback).",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "stamina": 35,
+        "agility": 10,
+        "regen": 50
+      }
     },
     {
       "id": "robe_of_misfortune",
@@ -2130,7 +2688,13 @@
         20
       ],
       "unique": true,
-      "future_mechanic": "Reflects 15% of melee damage. Random affix swap each floor."
+      "future_mechanic": "Reflects 15% of melee damage. Random affix swap each floor.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "stamina": 40,
+        "agility": 25,
+        "regen": 25
+      }
     },
     {
       "id": "robe_of_night",
@@ -2157,7 +2721,16 @@
         20
       ],
       "unique": true,
-      "future_mechanic": "Darkness aura: enemy aggro range -3 cells. +30% crit at <50% HP."
+      "future_mechanic": "Darkness aura: enemy aggro range -3 cells. +30% crit at <50% HP.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "strength": 20,
+        "stamina": 20,
+        "agility": 35,
+        "regen": 15,
+        "crit": 25,
+        "haste": 30
+      }
     },
     {
       "id": "robe_of_resistance",
@@ -2184,7 +2757,13 @@
         25
       ],
       "unique": true,
-      "future_mechanic": "All elemental resistances at +25%. -10% physical DEF (drawback)."
+      "future_mechanic": "All elemental resistances at +25%. -10% physical DEF (drawback).",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "stamina": 70,
+        "agility": 10,
+        "regen": 45
+      }
     },
     {
       "id": "salamander_hide",
@@ -2210,7 +2789,12 @@
         22
       ],
       "unique": true,
-      "future_mechanic": "Fire immunity. Burning enemies near you take +20% damage."
+      "future_mechanic": "Fire immunity. Burning enemies near you take +20% damage.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "stamina": 40,
+        "regen": 50
+      }
     },
     {
       "id": "shadow_dragon",
@@ -2219,8 +2803,8 @@
       "rarity": "epic",
       "tile": "shadow_dragon_scale_mail.png",
       "atk": 0,
-      "def": 19,
-      "hp": 210,
+      "def": 20,
+      "hp": 222,
       "item_tier": 5,
       "base_type": "dragon_scales",
       "flavor_tags": [
@@ -2235,7 +2819,13 @@
         18,
         70
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "stamina": 30,
+        "regen": 15,
+        "strength": 10
+      }
     },
     {
       "id": "shadow_dragon_scales",
@@ -2244,8 +2834,8 @@
       "rarity": "epic",
       "tile": "shadow_dragon_scales.png",
       "atk": 0,
-      "def": 18,
-      "hp": 200,
+      "def": 20,
+      "hp": 222,
       "item_tier": 5,
       "base_type": "dragon_scales",
       "flavor_tags": [
@@ -2259,7 +2849,13 @@
         14,
         70
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "stamina": 30,
+        "regen": 15,
+        "strength": 10
+      }
     },
     {
       "id": "silver_dragon",
@@ -2284,7 +2880,13 @@
         12,
         72
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "stamina": 30,
+        "regen": 15,
+        "strength": 10
+      }
     },
     {
       "id": "starlight_cloak",
@@ -2310,7 +2912,15 @@
         22
       ],
       "unique": true,
-      "future_mechanic": "Periodically blinks the wearer 3 cells in a random direction during combat."
+      "future_mechanic": "Periodically blinks the wearer 3 cells in a random direction during combat.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "stamina": 20,
+        "agility": 35,
+        "regen": 15,
+        "crit": 10,
+        "haste": 25
+      }
     },
     {
       "id": "battered_skullcap",
@@ -2319,8 +2929,8 @@
       "rarity": "common",
       "tile": "cap_1.png",
       "atk": 0,
-      "def": 1,
-      "hp": 18,
+      "def": 2,
+      "hp": 24,
       "item_tier": 1,
       "base_type": "skullcap",
       "flavor_tags": [],
@@ -2332,7 +2942,13 @@
         0,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "agility": 20,
+        "stamina": 15,
+        "regen": 5
+      }
     },
     {
       "id": "iron_skullcap",
@@ -2354,7 +2970,13 @@
         0,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "agility": 20,
+        "stamina": 15,
+        "regen": 5
+      }
     },
     {
       "id": "jesters_cap",
@@ -2378,7 +3000,13 @@
         0,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "agility": 20,
+        "stamina": 15,
+        "regen": 5
+      }
     },
     {
       "id": "leather_cap",
@@ -2388,7 +3016,7 @@
       "tile": "cap_2.png",
       "atk": 0,
       "def": 1,
-      "hp": 22,
+      "hp": 28,
       "item_tier": 1,
       "base_type": "cap",
       "flavor_tags": [],
@@ -2400,7 +3028,13 @@
         0,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "agility": 20,
+        "stamina": 15,
+        "regen": 5
+      }
     },
     {
       "id": "padded_coif",
@@ -2422,7 +3056,13 @@
         0,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "agility": 20,
+        "stamina": 15,
+        "regen": 5
+      }
     },
     {
       "id": "plumed_helm",
@@ -2446,7 +3086,13 @@
         0,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "agility": 25,
+        "stamina": 20,
+        "strength": 10
+      }
     },
     {
       "id": "ranger_hood",
@@ -2470,7 +3116,13 @@
         0,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "agility": 25,
+        "haste": 10,
+        "stamina": 10
+      }
     },
     {
       "id": "crested_helm",
@@ -2494,7 +3146,13 @@
         5,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "agility": 25,
+        "stamina": 20,
+        "strength": 10
+      }
     },
     {
       "id": "elven_helm",
@@ -2519,7 +3177,13 @@
         5,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "agility": 20,
+        "stamina": 15,
+        "regen": 5
+      }
     },
     {
       "id": "etched_helm",
@@ -2543,7 +3207,13 @@
         8,
         2
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "agility": 25,
+        "stamina": 20,
+        "strength": 10
+      }
     },
     {
       "id": "kettle_helm",
@@ -2553,7 +3223,7 @@
       "tile": "helmet_2.png",
       "atk": 0,
       "def": 4,
-      "hp": 50,
+      "hp": 56,
       "item_tier": 2,
       "base_type": "helmet",
       "flavor_tags": [],
@@ -2565,7 +3235,13 @@
         3,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "agility": 25,
+        "stamina": 20,
+        "strength": 10
+      }
     },
     {
       "id": "champion_helm",
@@ -2590,7 +3266,13 @@
         32,
         12
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "stamina": 30,
+        "agility": 20,
+        "strength": 5
+      }
     },
     {
       "id": "green_mask",
@@ -2615,7 +3297,13 @@
         28,
         8
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "agility": 25,
+        "haste": 10,
+        "stamina": 10
+      }
     },
     {
       "id": "knights_helm",
@@ -2624,8 +3312,8 @@
       "rarity": "rare",
       "tile": "helmet_3_new.png",
       "atk": 0,
-      "def": 6,
-      "hp": 75,
+      "def": 7,
+      "hp": 82,
       "item_tier": 3,
       "base_type": "great_helm",
       "flavor_tags": [
@@ -2639,7 +3327,13 @@
         22,
         4
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "stamina": 30,
+        "agility": 20,
+        "strength": 5
+      }
     },
     {
       "id": "visored_basinet",
@@ -2663,7 +3357,13 @@
         25,
         5
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "stamina": 30,
+        "agility": 20,
+        "strength": 5
+      }
     },
     {
       "id": "wizard_hat",
@@ -2688,7 +3388,13 @@
         28,
         8
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "agility": 15,
+        "regen": 10,
+        "crit": 10
+      }
     },
     {
       "id": "dragonbone_helm",
@@ -2713,7 +3419,13 @@
         55,
         35
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "agility": 25,
+        "stamina": 20,
+        "strength": 10
+      }
     },
     {
       "id": "ego_etched_great_helm",
@@ -2738,7 +3450,13 @@
         52,
         38
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "stamina": 30,
+        "agility": 20,
+        "strength": 5
+      }
     },
     {
       "id": "ego_thane",
@@ -2763,7 +3481,13 @@
         55,
         37
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "stamina": 30,
+        "agility": 20,
+        "strength": 5
+      }
     },
     {
       "id": "ego_visor",
@@ -2773,7 +3497,7 @@
       "tile": "helmet_ego_2.png",
       "atk": 0,
       "def": 9,
-      "hp": 105,
+      "hp": 112,
       "item_tier": 4,
       "base_type": "great_helm",
       "flavor_tags": [
@@ -2788,7 +3512,13 @@
         55,
         35
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "stamina": 30,
+        "agility": 20,
+        "strength": 5
+      }
     },
     {
       "id": "spectres_cowl",
@@ -2813,7 +3543,13 @@
         58,
         30
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "agility": 25,
+        "haste": 10,
+        "stamina": 10
+      }
     },
     {
       "id": "warlords_visor",
@@ -2823,7 +3559,7 @@
       "tile": "helmet_4_visor.png",
       "atk": 0,
       "def": 9,
-      "hp": 110,
+      "hp": 112,
       "item_tier": 4,
       "base_type": "great_helm",
       "flavor_tags": [
@@ -2838,7 +3574,13 @@
         55,
         32
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "stamina": 30,
+        "agility": 20,
+        "strength": 5
+      }
     },
     {
       "id": "wizard_hat_2",
@@ -2864,7 +3606,13 @@
         55,
         33
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "agility": 15,
+        "regen": 10,
+        "crit": 10
+      }
     },
     {
       "id": "cornuthaum",
@@ -2890,7 +3638,14 @@
         22
       ],
       "unique": true,
-      "future_mechanic": "Reveals minimap one floor ahead. Magic resistance buff."
+      "future_mechanic": "Reveals minimap one floor ahead. Magic resistance buff.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "stamina": 25,
+        "agility": 25,
+        "regen": 35,
+        "haste": 10
+      }
     },
     {
       "id": "crown_of_dyrovepreva",
@@ -2916,7 +3671,14 @@
         22
       ],
       "unique": true,
-      "future_mechanic": "See-invisible. Nearby enemies attack each other 5% of attacks."
+      "future_mechanic": "See-invisible. Nearby enemies attack each other 5% of attacks.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "strength": 15,
+        "stamina": 30,
+        "agility": 20,
+        "regen": 20
+      }
     },
     {
       "id": "crystal_crown",
@@ -2941,7 +3703,14 @@
         14,
         72
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "agility": 20,
+        "stamina": 15,
+        "regen": 10,
+        "crit": 10
+      }
     },
     {
       "id": "ego_warden",
@@ -2967,7 +3736,13 @@
         18,
         65
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "stamina": 30,
+        "agility": 20,
+        "strength": 5
+      }
     },
     {
       "id": "halo_of_ascension",
@@ -2992,7 +3767,14 @@
         12,
         70
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "agility": 20,
+        "stamina": 15,
+        "regen": 10,
+        "crit": 10
+      }
     },
     {
       "id": "hat_of_pondering",
@@ -3018,7 +3800,14 @@
         25
       ],
       "unique": true,
-      "future_mechanic": "+25% XP gain. Slowly regenerates HP between fights."
+      "future_mechanic": "+25% XP gain. Slowly regenerates HP between fights.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "stamina": 15,
+        "agility": 15,
+        "regen": 55,
+        "haste": 10
+      }
     },
     {
       "id": "helm_of_high_council",
@@ -3044,7 +3833,14 @@
         22
       ],
       "unique": true,
-      "future_mechanic": "+10% all stats while wearer is at full HP."
+      "future_mechanic": "+10% all stats while wearer is at full HP.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "strength": 15,
+        "stamina": 35,
+        "agility": 10,
+        "regen": 25
+      }
     },
     {
       "id": "helm_of_the_dragon",
@@ -3070,7 +3866,15 @@
         25
       ],
       "unique": true,
-      "future_mechanic": "+50% damage vs dragon-type. Fire resistance."
+      "future_mechanic": "+50% damage vs dragon-type. Fire resistance.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "stamina": 30,
+        "agility": 15,
+        "regen": 15,
+        "crit": 20,
+        "haste": 10
+      }
     },
     {
       "id": "kings_diadem",
@@ -3079,8 +3883,8 @@
       "rarity": "epic",
       "tile": "helmet_art_1.png",
       "atk": 0,
-      "def": 9,
-      "hp": 130,
+      "def": 11,
+      "hp": 145,
       "item_tier": 5,
       "base_type": "crown",
       "flavor_tags": [
@@ -3095,7 +3899,14 @@
         18,
         70
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "agility": 20,
+        "stamina": 15,
+        "regen": 10,
+        "crit": 10
+      }
     },
     {
       "id": "iron_buckler",
@@ -3117,7 +3928,13 @@
         0,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "agility": 20,
+        "haste": 15,
+        "stamina": 10
+      }
     },
     {
       "id": "kite_shield",
@@ -3141,7 +3958,13 @@
         0,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "stamina": 30,
+        "agility": 15,
+        "regen": 5
+      }
     },
     {
       "id": "round_shield",
@@ -3163,7 +3986,13 @@
         0,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "stamina": 20,
+        "agility": 20,
+        "regen": 5
+      }
     },
     {
       "id": "wooden_buckler",
@@ -3172,8 +4001,8 @@
       "rarity": "common",
       "tile": "buckler_1_old.png",
       "atk": 0,
-      "def": 4,
-      "hp": 28,
+      "def": 5,
+      "hp": 33,
       "item_tier": 1,
       "base_type": "buckler",
       "flavor_tags": [],
@@ -3185,7 +4014,13 @@
         0,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "agility": 20,
+        "haste": 15,
+        "stamina": 10
+      }
     },
     {
       "id": "elven_buckler",
@@ -3194,8 +4029,8 @@
       "rarity": "rare",
       "tile": "elven_buckler_1.png",
       "atk": 0,
-      "def": 7,
-      "hp": 60,
+      "def": 8,
+      "hp": 62,
       "item_tier": 2,
       "base_type": "buckler",
       "flavor_tags": [
@@ -3210,7 +4045,13 @@
         5,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "agility": 20,
+        "haste": 15,
+        "stamina": 10
+      }
     },
     {
       "id": "elven_buckler_2",
@@ -3235,7 +4076,13 @@
         7,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "agility": 20,
+        "haste": 15,
+        "stamina": 10
+      }
     },
     {
       "id": "guardsman_kite",
@@ -3259,7 +4106,13 @@
         5,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "stamina": 30,
+        "agility": 15,
+        "regen": 5
+      }
     },
     {
       "id": "reinforced_buckler",
@@ -3281,7 +4134,13 @@
         3,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "agility": 20,
+        "haste": 15,
+        "stamina": 10
+      }
     },
     {
       "id": "dwarven_buckler",
@@ -3290,8 +4149,8 @@
       "rarity": "rare",
       "tile": "dwarven_buckler_1.png",
       "atk": 0,
-      "def": 9,
-      "hp": 75,
+      "def": 10,
+      "hp": 78,
       "item_tier": 3,
       "base_type": "buckler",
       "flavor_tags": [
@@ -3306,7 +4165,13 @@
         25,
         5
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "agility": 20,
+        "haste": 15,
+        "stamina": 10
+      }
     },
     {
       "id": "dwarven_buckler_2",
@@ -3331,7 +4196,13 @@
         28,
         5
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "agility": 20,
+        "haste": 15,
+        "stamina": 10
+      }
     },
     {
       "id": "elven_shield",
@@ -3356,7 +4227,13 @@
         20,
         5
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "stamina": 20,
+        "agility": 20,
+        "regen": 5
+      }
     },
     {
       "id": "large_kite",
@@ -3380,7 +4257,13 @@
         28,
         8
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "stamina": 30,
+        "agility": 15,
+        "regen": 5
+      }
     },
     {
       "id": "spellward_kite",
@@ -3389,8 +4272,8 @@
       "rarity": "rare",
       "tile": "shield_2_new.png",
       "atk": 0,
-      "def": 13,
-      "hp": 95,
+      "def": 14,
+      "hp": 102,
       "item_tier": 3,
       "base_type": "kite_shield",
       "flavor_tags": [
@@ -3405,7 +4288,13 @@
         28,
         8
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "stamina": 30,
+        "agility": 15,
+        "regen": 5
+      }
     },
     {
       "id": "dd_scion_shield",
@@ -3429,7 +4318,12 @@
         55,
         38
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "stamina": 40,
+        "regen": 10
+      }
     },
     {
       "id": "donald_shield",
@@ -3438,7 +4332,7 @@
       "rarity": "epic",
       "tile": "shield_donald.png",
       "atk": 0,
-      "def": 15,
+      "def": 16,
       "hp": 130,
       "item_tier": 4,
       "base_type": "kite_shield",
@@ -3454,7 +4348,13 @@
         58,
         32
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "stamina": 30,
+        "agility": 15,
+        "regen": 5
+      }
     },
     {
       "id": "dragoncrest_shield",
@@ -3479,7 +4379,13 @@
         58,
         32
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "stamina": 30,
+        "agility": 15,
+        "regen": 5
+      }
     },
     {
       "id": "fortress_wall",
@@ -3504,7 +4410,12 @@
         55,
         38
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "stamina": 40,
+        "regen": 10
+      }
     },
     {
       "id": "spriggan_shield",
@@ -3529,7 +4440,13 @@
         55,
         35
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "agility": 20,
+        "haste": 15,
+        "stamina": 10
+      }
     },
     {
       "id": "tower_shield",
@@ -3538,8 +4455,8 @@
       "rarity": "rare",
       "tile": "large_shield_2_new.png",
       "atk": 0,
-      "def": 17,
-      "hp": 130,
+      "def": 20,
+      "hp": 150,
       "item_tier": 4,
       "base_type": "tower_shield",
       "flavor_tags": [
@@ -3553,7 +4470,12 @@
         60,
         28
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "stamina": 40,
+        "regen": 10
+      }
     },
     {
       "id": "bullseye",
@@ -3579,7 +4501,13 @@
         22
       ],
       "unique": true,
-      "future_mechanic": "+50% block chance vs ranged attacks. Reflects projectiles."
+      "future_mechanic": "+50% block chance vs ranged attacks. Reflects projectiles.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "stamina": 40,
+        "agility": 35,
+        "regen": 25
+      }
     },
     {
       "id": "gong_shield",
@@ -3605,7 +4533,14 @@
         22
       ],
       "unique": true,
-      "future_mechanic": "Each block AoE-stuns adjacent enemies for 0.5s. Drawback: increased aggro range."
+      "future_mechanic": "Each block AoE-stuns adjacent enemies for 0.5s. Drawback: increased aggro range.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "strength": 15,
+        "stamina": 35,
+        "agility": 15,
+        "regen": 20
+      }
     },
     {
       "id": "lshield_doomknight",
@@ -3632,7 +4567,13 @@
         22
       ],
       "unique": true,
-      "future_mechanic": "Set bonus with The Doom Knight's Blade: +20% all stats while both equipped."
+      "future_mechanic": "Set bonus with The Doom Knight's Blade: +20% all stats while both equipped.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "stamina": 70,
+        "agility": 40,
+        "regen": 30
+      }
     },
     {
       "id": "lshield_louise",
@@ -3658,7 +4599,13 @@
         25
       ],
       "unique": true,
-      "future_mechanic": "Reflects 20% of melee damage. -10% move speed (drawback)."
+      "future_mechanic": "Reflects 20% of melee damage. -10% move speed (drawback).",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "stamina": 50,
+        "agility": 30,
+        "regen": 15
+      }
     },
     {
       "id": "phantom_aegis",
@@ -3683,7 +4630,13 @@
         18,
         70
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "stamina": 20,
+        "agility": 20,
+        "regen": 5
+      }
     },
     {
       "id": "shield_of_reflection",
@@ -3708,7 +4661,13 @@
         12,
         70
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "stamina": 30,
+        "agility": 15,
+        "regen": 5
+      }
     },
     {
       "id": "shield_of_war",
@@ -3734,7 +4693,14 @@
         25
       ],
       "unique": true,
-      "future_mechanic": "+15% damage when at full HP. +25% damage to bosses."
+      "future_mechanic": "+15% damage when at full HP. +25% damage to bosses.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "strength": 15,
+        "stamina": 45,
+        "agility": 15,
+        "regen": 15
+      }
     },
     {
       "id": "warlords_bulwark",
@@ -3759,7 +4725,12 @@
         15,
         70
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "stamina": 40,
+        "regen": 10
+      }
     },
     {
       "id": "leather_boots",
@@ -3769,7 +4740,7 @@
       "tile": "boots_1_brown_new.png",
       "atk": 0,
       "def": 2,
-      "hp": 24,
+      "hp": 28,
       "item_tier": 1,
       "base_type": "leather_boots",
       "flavor_tags": [],
@@ -3781,7 +4752,13 @@
         0,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "haste": 25,
+        "agility": 25,
+        "stamina": 10
+      }
     },
     {
       "id": "soft_shoes",
@@ -3805,7 +4782,13 @@
         0,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "haste": 30,
+        "agility": 20,
+        "stamina": 5
+      }
     },
     {
       "id": "studded_boots",
@@ -3827,7 +4810,13 @@
         0,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "haste": 25,
+        "agility": 25,
+        "stamina": 10
+      }
     },
     {
       "id": "worn_sandals",
@@ -3851,7 +4840,12 @@
         0,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "haste": 35,
+        "agility": 15
+      }
     },
     {
       "id": "ranger_boots",
@@ -3876,7 +4870,13 @@
         5,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "haste": 25,
+        "agility": 25,
+        "stamina": 10
+      }
     },
     {
       "id": "scouts_treads",
@@ -3885,8 +4885,8 @@
       "rarity": "uncommon",
       "tile": "boots_4_green.png",
       "atk": 0,
-      "def": 3,
-      "hp": 35,
+      "def": 4,
+      "hp": 38,
       "item_tier": 2,
       "base_type": "leather_boots",
       "flavor_tags": [
@@ -3901,7 +4901,13 @@
         3,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "haste": 25,
+        "agility": 25,
+        "stamina": 10
+      }
     },
     {
       "id": "soldier_greaves",
@@ -3925,7 +4931,12 @@
         5,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "stamina": 30,
+        "agility": 20
+      }
     },
     {
       "id": "ironshod_boots",
@@ -3950,7 +4961,13 @@
         22,
         4
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "stamina": 25,
+        "agility": 15,
+        "regen": 10
+      }
     },
     {
       "id": "sentinel_greaves",
@@ -3975,7 +4992,12 @@
         28,
         8
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "stamina": 30,
+        "agility": 20
+      }
     },
     {
       "id": "swiftstep_boots",
@@ -4000,7 +5022,13 @@
         25,
         5
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "haste": 25,
+        "agility": 25,
+        "stamina": 10
+      }
     },
     {
       "id": "earthshaker_treads",
@@ -4025,7 +5053,13 @@
         55,
         38
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "haste": 30,
+        "agility": 20,
+        "stamina": 10
+      }
     },
     {
       "id": "stormrunner_boots",
@@ -4051,7 +5085,13 @@
         55,
         35
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "haste": 25,
+        "agility": 25,
+        "stamina": 10
+      }
     },
     {
       "id": "vanguard_sabatons",
@@ -4077,7 +5117,12 @@
         58,
         30
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "stamina": 30,
+        "agility": 20
+      }
     },
     {
       "id": "assassins_boots",
@@ -4103,7 +5148,13 @@
         25
       ],
       "unique": true,
-      "future_mechanic": "+25% damage on first hit per enemy. Lower aggro range."
+      "future_mechanic": "+25% damage on first hit per enemy. Lower aggro range.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "agility": 40,
+        "crit": 10,
+        "haste": 60
+      }
     },
     {
       "id": "fencer_slippers",
@@ -4129,7 +5180,12 @@
         25
       ],
       "unique": true,
-      "future_mechanic": "+15% dodge chance. +10% crit chance."
+      "future_mechanic": "+15% dodge chance. +10% crit chance.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "agility": 50,
+        "haste": 50
+      }
     },
     {
       "id": "flashboots",
@@ -4156,7 +5212,14 @@
         25
       ],
       "unique": true,
-      "future_mechanic": "Periodic short-range blink in combat."
+      "future_mechanic": "Periodic short-range blink in combat.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "strength": 15,
+        "agility": 35,
+        "crit": 10,
+        "haste": 90
+      }
     },
     {
       "id": "march_of_kings",
@@ -4182,7 +5245,12 @@
         14,
         70
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "stamina": 30,
+        "agility": 20
+      }
     },
     {
       "id": "thiefs_boots",
@@ -4208,7 +5276,13 @@
         22
       ],
       "unique": true,
-      "future_mechanic": "+10% chance to find extra gold per chest. Stealth bonus."
+      "future_mechanic": "+10% chance to find extra gold per chest. Stealth bonus.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "agility": 60,
+        "crit": 10,
+        "haste": 40
+      }
     },
     {
       "id": "treads_apocalypse",
@@ -4235,7 +5309,15 @@
         22
       ],
       "unique": true,
-      "future_mechanic": "Each step damages adjacent enemies. -5% move speed (drawback)."
+      "future_mechanic": "Each step damages adjacent enemies. -5% move speed (drawback).",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "strength": 35,
+        "stamina": 30,
+        "regen": 10,
+        "crit": 10,
+        "haste": 50
+      }
     },
     {
       "id": "windwalker_boots",
@@ -4260,7 +5342,13 @@
         18,
         70
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "haste": 30,
+        "agility": 20,
+        "stamina": 10
+      }
     },
     {
       "id": "brass_ring",
@@ -4284,7 +5372,13 @@
         0,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "stamina": 30,
+        "regen": 20,
+        "agility": 10
+      }
     },
     {
       "id": "bronze_ring",
@@ -4306,7 +5400,12 @@
         0,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "strength": 60,
+        "crit": 10
+      }
     },
     {
       "id": "clay_ring",
@@ -4314,9 +5413,9 @@
       "slot": "ring",
       "rarity": "common",
       "tile": "clay.png",
-      "atk": 1,
+      "atk": 2,
       "def": 0,
-      "hp": 6,
+      "hp": 8,
       "item_tier": 1,
       "base_type": "ring_strength",
       "flavor_tags": [],
@@ -4328,7 +5427,12 @@
         0,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "strength": 60,
+        "crit": 10
+      }
     },
     {
       "id": "copper_ring",
@@ -4336,9 +5440,9 @@
       "slot": "ring",
       "rarity": "common",
       "tile": "copper.png",
-      "atk": 0,
+      "atk": 1,
       "def": 2,
-      "hp": 5,
+      "hp": 6,
       "item_tier": 1,
       "base_type": "ring_evasion",
       "flavor_tags": [
@@ -4352,7 +5456,12 @@
         0,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "agility": 50,
+        "haste": 15
+      }
     },
     {
       "id": "glass_ring",
@@ -4376,7 +5485,12 @@
         0,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "agility": 50,
+        "haste": 15
+      }
     },
     {
       "id": "wooden_ring",
@@ -4385,8 +5499,8 @@
       "rarity": "common",
       "tile": "wooden.png",
       "atk": 0,
-      "def": 1,
-      "hp": 8,
+      "def": 2,
+      "hp": 10,
       "item_tier": 1,
       "base_type": "ring_protection",
       "flavor_tags": [],
@@ -4398,7 +5512,13 @@
         0,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "stamina": 30,
+        "regen": 20,
+        "agility": 10
+      }
     },
     {
       "id": "agate_ring",
@@ -4422,7 +5542,13 @@
         7,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "agility": 30,
+        "haste": 20,
+        "crit": 10
+      }
     },
     {
       "id": "iron_ring",
@@ -4446,7 +5572,13 @@
         3,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "stamina": 30,
+        "regen": 20,
+        "agility": 10
+      }
     },
     {
       "id": "jade_ring",
@@ -4471,7 +5603,13 @@
         5,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "regen": 25,
+        "agility": 25,
+        "crit": 10
+      }
     },
     {
       "id": "silver_ring",
@@ -4495,7 +5633,12 @@
         5,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "stamina": 30,
+        "regen": 20
+      }
     },
     {
       "id": "steel_ring",
@@ -4519,7 +5662,12 @@
         5,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "strength": 40,
+        "crit": 30
+      }
     },
     {
       "id": "coral_ring",
@@ -4543,7 +5691,13 @@
         28,
         8
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "regen": 25,
+        "agility": 25,
+        "crit": 10
+      }
     },
     {
       "id": "granite_ring",
@@ -4567,7 +5721,13 @@
         25,
         5
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "stamina": 30,
+        "regen": 20,
+        "agility": 10
+      }
     },
     {
       "id": "moonstone_ring",
@@ -4591,7 +5751,12 @@
         22,
         4
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "regen": 60,
+        "stamina": 10
+      }
     },
     {
       "id": "ring_of_sapphire",
@@ -4615,7 +5780,13 @@
         28,
         10
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "regen": 30,
+        "stamina": 20,
+        "agility": 10
+      }
     },
     {
       "id": "ring_of_topaz",
@@ -4639,7 +5810,13 @@
         28,
         10
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "strength": 30,
+        "crit": 20,
+        "haste": 10
+      }
     },
     {
       "id": "tigers_eye",
@@ -4663,7 +5840,12 @@
         25,
         5
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "strength": 60,
+        "crit": 10
+      }
     },
     {
       "id": "tourmaline_ring",
@@ -4688,7 +5870,12 @@
         28,
         8
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "agility": 50,
+        "haste": 15
+      }
     },
     {
       "id": "emerald_ring",
@@ -4713,7 +5900,13 @@
         55,
         38
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "agility": 30,
+        "haste": 20,
+        "crit": 10
+      }
     },
     {
       "id": "ivory_ring",
@@ -4721,9 +5914,9 @@
       "slot": "ring",
       "rarity": "epic",
       "tile": "ring_ivory.png",
-      "atk": 0,
+      "atk": 3,
       "def": 2,
-      "hp": 35,
+      "hp": 36,
       "item_tier": 4,
       "base_type": "ring_stealth",
       "flavor_tags": [
@@ -4738,7 +5931,12 @@
         58,
         30
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "haste": 30,
+        "agility": 30
+      }
     },
     {
       "id": "onyx_ring",
@@ -4764,7 +5962,12 @@
         58,
         35
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "haste": 30,
+        "agility": 30
+      }
     },
     {
       "id": "opal_ring",
@@ -4789,7 +5992,13 @@
         55,
         33
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "regen": 25,
+        "haste": 25,
+        "crit": 10
+      }
     },
     {
       "id": "ring_of_flight",
@@ -4814,7 +6023,12 @@
         55,
         38
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "haste": 35,
+        "agility": 25
+      }
     },
     {
       "id": "ruby_ring",
@@ -4839,7 +6053,12 @@
         55,
         38
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "strength": 60,
+        "crit": 10
+      }
     },
     {
       "id": "shiny_ring",
@@ -4863,7 +6082,13 @@
         55,
         38
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "stamina": 30,
+        "regen": 20,
+        "agility": 10
+      }
     },
     {
       "id": "twisted_ring",
@@ -4873,7 +6098,7 @@
       "tile": "ring_twisted.png",
       "atk": 4,
       "def": 2,
-      "hp": 38,
+      "hp": 39,
       "item_tier": 4,
       "base_type": "ring_dexterity",
       "flavor_tags": [
@@ -4888,7 +6113,13 @@
         58,
         32
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "agility": 30,
+        "haste": 20,
+        "crit": 10
+      }
     },
     {
       "id": "diamond_ring",
@@ -4913,7 +6144,12 @@
         18,
         70
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "agility": 50,
+        "haste": 15
+      }
     },
     {
       "id": "engagement_ring",
@@ -4938,7 +6174,13 @@
         12,
         70
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "stamina": 30,
+        "regen": 20,
+        "agility": 10
+      }
     },
     {
       "id": "gold_ring",
@@ -4963,7 +6205,12 @@
         14,
         70
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "strength": 40,
+        "crit": 30
+      }
     },
     {
       "id": "mage_ring",
@@ -4989,7 +6236,14 @@
         20
       ],
       "unique": true,
-      "future_mechanic": "+50% magic resistance. +25% XP gain."
+      "future_mechanic": "+50% magic resistance. +25% XP gain.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "stamina": 20,
+        "agility": 25,
+        "regen": 35,
+        "haste": 10
+      }
     },
     {
       "id": "octoring",
@@ -5015,7 +6269,13 @@
         25
       ],
       "unique": true,
-      "future_mechanic": "Counts as 2 ring slots. Fills both slots, doubles affix slots."
+      "future_mechanic": "Counts as 2 ring slots. Fills both slots, doubles affix slots.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "agility": 30,
+        "regen": 35,
+        "haste": 25
+      }
     },
     {
       "id": "pearl_ring",
@@ -5040,7 +6300,12 @@
         14,
         72
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "regen": 60,
+        "stamina": 10
+      }
     },
     {
       "id": "robustness_ring",
@@ -5067,7 +6332,13 @@
         25
       ],
       "unique": true,
-      "future_mechanic": "+15% max HP. Cannot be reduced below 1 HP from a single hit."
+      "future_mechanic": "+15% max HP. Cannot be reduced below 1 HP from a single hit.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "stamina": 65,
+        "agility": 25,
+        "regen": 55
+      }
     },
     {
       "id": "shadows_ring",
@@ -5094,7 +6365,13 @@
         22
       ],
       "unique": true,
-      "future_mechanic": "+20% dodge chance. See-invisible. Lower aggro range."
+      "future_mechanic": "+20% dodge chance. See-invisible. Lower aggro range.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "agility": 80,
+        "crit": 25,
+        "haste": 40
+      }
     },
     {
       "id": "shaolin_ring",
@@ -5121,7 +6398,14 @@
         22
       ],
       "unique": true,
-      "future_mechanic": "+15% attack speed. +10% crit chance."
+      "future_mechanic": "+15% attack speed. +10% crit chance.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "strength": 25,
+        "agility": 50,
+        "crit": 20,
+        "haste": 50
+      }
     },
     {
       "id": "blue_cameo",
@@ -5145,7 +6429,12 @@
         0,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "regen": 35,
+        "stamina": 15
+      }
     },
     {
       "id": "bone_pendant",
@@ -5154,8 +6443,8 @@
       "rarity": "common",
       "tile": "bone_gray.png",
       "atk": 0,
-      "def": 1,
-      "hp": 18,
+      "def": 2,
+      "hp": 21,
       "item_tier": 1,
       "base_type": "amulet_regen",
       "flavor_tags": [
@@ -5169,7 +6458,12 @@
         0,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "regen": 50,
+        "stamina": 15
+      }
     },
     {
       "id": "celtic_yellow",
@@ -5193,7 +6487,12 @@
         0,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "regen": 50,
+        "stamina": 15
+      }
     },
     {
       "id": "cylinder_amulet",
@@ -5217,7 +6516,12 @@
         0,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "stamina": 25,
+        "agility": 25
+      }
     },
     {
       "id": "celtic_red",
@@ -5242,7 +6546,12 @@
         5,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "regen": 35,
+        "stamina": 15
+      }
     },
     {
       "id": "eye_pendant_green",
@@ -5266,7 +6575,12 @@
         7,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "haste": 30,
+        "agility": 30
+      }
     },
     {
       "id": "ring_pendant_red",
@@ -5290,7 +6604,13 @@
         5,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "strength": 30,
+        "haste": 20,
+        "crit": 10
+      }
     },
     {
       "id": "stone_amulet_1",
@@ -5315,7 +6635,12 @@
         3,
         0
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "stamina": 25,
+        "agility": 25
+      }
     },
     {
       "id": "crystal_green",
@@ -5340,7 +6665,12 @@
         25,
         5
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "regen": 50,
+        "stamina": 15
+      }
     },
     {
       "id": "penta_orange",
@@ -5365,7 +6695,13 @@
         28,
         10
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "strength": 30,
+        "haste": 20,
+        "crit": 10
+      }
     },
     {
       "id": "stone_2_red",
@@ -5389,7 +6725,12 @@
         22,
         4
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "strength": 35,
+        "crit": 20
+      }
     },
     {
       "id": "stone_3_blue",
@@ -5414,7 +6755,12 @@
         28,
         8
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "stamina": 35,
+        "regen": 20
+      }
     },
     {
       "id": "crystal_red",
@@ -5439,7 +6785,12 @@
         55,
         38
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "strength": 35,
+        "crit": 20
+      }
     },
     {
       "id": "face_amulet_gold",
@@ -5465,7 +6816,12 @@
         58,
         30
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "regen": 35,
+        "stamina": 15
+      }
     },
     {
       "id": "stone_2_green",
@@ -5490,7 +6846,12 @@
         58,
         32
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "haste": 30,
+        "agility": 30
+      }
     },
     {
       "id": "stone_3_magenta",
@@ -5515,7 +6876,12 @@
         55,
         38
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "stamina": 35,
+        "regen": 20
+      }
     },
     {
       "id": "amulet_bloodlust",
@@ -5541,7 +6907,13 @@
         22
       ],
       "unique": true,
-      "future_mechanic": "+20% damage when below 50% HP. -15% DEF (drawback)."
+      "future_mechanic": "+20% damage when below 50% HP. -15% DEF (drawback).",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "strength": 55,
+        "crit": 15,
+        "haste": 15
+      }
     },
     {
       "id": "amulet_finger",
@@ -5567,7 +6939,13 @@
         18
       ],
       "unique": true,
-      "future_mechanic": "+30% damage dealt. +20% damage taken (drawback)."
+      "future_mechanic": "+30% damage dealt. +20% damage taken (drawback).",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "strength": 55,
+        "crit": 15,
+        "haste": 15
+      }
     },
     {
       "id": "amulet_of_air",
@@ -5594,7 +6972,15 @@
         25
       ],
       "unique": true,
-      "future_mechanic": "Lightning resistance. +10% movement speed. Periodic dodge."
+      "future_mechanic": "Lightning resistance. +10% movement speed. Periodic dodge.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "stamina": 20,
+        "agility": 40,
+        "regen": 25,
+        "crit": 20,
+        "haste": 25
+      }
     },
     {
       "id": "amulet_of_vitality",
@@ -5621,7 +7007,13 @@
         25
       ],
       "unique": true,
-      "future_mechanic": "+25% max HP. +50% out-of-combat regen."
+      "future_mechanic": "+25% max HP. +50% out-of-combat regen.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "stamina": 65,
+        "agility": 15,
+        "regen": 80
+      }
     },
     {
       "id": "brooch_of_shielding",
@@ -5648,7 +7040,13 @@
         25
       ],
       "unique": true,
-      "future_mechanic": "+10% block chance. Reflects projectiles back at attacker."
+      "future_mechanic": "+10% block chance. Reflects projectiles back at attacker.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "stamina": 65,
+        "agility": 50,
+        "regen": 30
+      }
     },
     {
       "id": "cekugob_amulet",
@@ -5675,7 +7073,14 @@
         22
       ],
       "unique": true,
-      "future_mechanic": "Once per run, prevent fatal damage and fully heal. Cooldown resets per run."
+      "future_mechanic": "Once per run, prevent fatal damage and fully heal. Cooldown resets per run.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "stamina": 45,
+        "agility": 35,
+        "regen": 45,
+        "haste": 15
+      }
     },
     {
       "id": "crystal_white",
@@ -5700,7 +7105,12 @@
         18,
         70
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "regen": 40,
+        "stamina": 25
+      }
     },
     {
       "id": "face_amulet_2",
@@ -5725,7 +7135,12 @@
         12,
         70
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "regen": 35,
+        "stamina": 15
+      }
     },
     {
       "id": "four_winds",
@@ -5752,7 +7167,15 @@
         22
       ],
       "unique": true,
-      "future_mechanic": "All four elemental resistances. +15% dodge while moving."
+      "future_mechanic": "All four elemental resistances. +15% dodge while moving.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "stamina": 20,
+        "agility": 40,
+        "regen": 25,
+        "crit": 20,
+        "haste": 25
+      }
     },
     {
       "id": "penta_green",
@@ -5777,7 +7200,12 @@
         14,
         70
       ],
-      "unique": false
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "stamina": 25,
+        "agility": 25
+      }
     }
   ]
 }

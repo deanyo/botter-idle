@@ -32,6 +32,9 @@ var lifesteal_per_hit: int = 0
 var loot_rarity_bonus: float = 0.0
 var xp_gain_pct: float = 0.0
 var _regen_accum: float = 0.0
+# Vision-tag flavor: read by dungeon AI as a bonus to AGGRO_DISTANCE
+# so a vision-equipped bot engages from further away.
+var aggro_bonus: int = 0
 var weapon_sprite: Sprite2D = null
 var _weapon_swing_tween: Tween
 
@@ -244,8 +247,10 @@ func recompute_stats() -> void:
 	for b in blessings:
 		if String(b.get("kind", "")) == "hp_regen":
 			hp_regen_per_sec += float(b.get("value", 0))
-	# `vitality` flavor tag grants +1 HP/sec per source (amulet, etc).
-	# Stacks across all worn slots, same as other defender-side tags.
+	# Per-tag passive bonuses applied here so they're visible in the
+	# stats UI right after an equip change. All defender-side; iterate
+	# the worn slots once to collect the bag of tags, then apply each.
+	var worn_tags: Array = []
 	for slot in _DEF_SLOTS:
 		var inst: Variant = equipped.get(slot, null)
 		if inst == null or typeof(inst) != TYPE_DICTIONARY:
@@ -253,8 +258,61 @@ func recompute_stats() -> void:
 		var bid: String = String(inst.get("base_id", ""))
 		if bid == "" or not _items_db_cache.has(bid):
 			continue
-		if "vitality" in _items_db_cache[bid].get("flavor_tags", []):
+		# Combined static + per-instance enchant. Enchants count too —
+		# a vitality-enchanted helm grants +1 regen the same as a
+		# vitality-static amulet does.
+		var combined: Array = UITheme.combined_flavor_tags(_items_db_cache[bid], inst)
+		for t in combined:
+			worn_tags.append(t)
+	# `vitality`: +1 HP/sec per source. Stacks linearly.
+	for t in worn_tags:
+		if t == "vitality":
 			hp_regen_per_sec += 1.0
+		elif t == "regen":
+			# Defender-worn `regen` flavor = +0.5 HP/sec (cheaper than
+			# vitality so it can show up on more items without bloating).
+			hp_regen_per_sec += 0.5
+		elif t == "faith":
+			# Faith = +0.5 HP/sec like regen. We also boost fountain
+			# heal by 50% in dungeon._on_fountain_drank reading the
+			# same tag.
+			hp_regen_per_sec += 0.5
+	# `swiftness`: +10% move speed per source, capped at +30% so a
+	# 3-source bot doesn't walk through walls.
+	var swift_count: int = 0
+	for t in worn_tags:
+		if t == "swiftness":
+			swift_count += 1
+	if swift_count > 0:
+		var bonus: float = clampf(float(swift_count) * 0.10, 0.0, 0.30)
+		# Bot's base move_speed is 4.0; multiply.
+		move_speed = 4.0 * (1.0 + bonus)
+	else:
+		move_speed = 4.0
+	# `fortified`: +20% defense per source, additive cap +50%.
+	var fortified_count: int = 0
+	for t in worn_tags:
+		if t == "fortified":
+			fortified_count += 1
+	if fortified_count > 0:
+		var fbonus: float = clampf(float(fortified_count) * 0.20, 0.0, 0.50)
+		defense = int(round(float(defense) * (1.0 + fbonus)))
+	# `ponderous`: -10% attack speed per source. Trade-off — ponderous
+	# weapons hit harder (the +10% damage is in actor.gd) but slower.
+	var ponderous_count: int = 0
+	for t in combat_weapon_tags():
+		if t == "ponderous":
+			ponderous_count += 1
+	if ponderous_count > 0:
+		# attack_interval is "seconds between swings"; bigger = slower.
+		attack_interval = attack_interval * (1.0 + 0.10 * float(ponderous_count))
+	# `vision`: +1 aggro range per source so the bot engages enemies
+	# from further away. Read by dungeon AI via bot.aggro_bonus.
+	var vision_count: int = 0
+	for t in worn_tags:
+		if t == "vision":
+			vision_count += 1
+	aggro_bonus = vision_count
 
 var _gear_sprites: Dictionary = {}  # slot_id → Sprite2D, for swing/light hooks
 
@@ -603,6 +661,16 @@ func attempt_attack(other: Actor, delta: float) -> int:
 	return dealt
 
 func gain_xp(amount: int) -> void:
+	# Flavor-tag XP boosts. lordly = +15%, wisdom = +15%. Stack
+	# multiplicatively so a bot wearing both gets ~32%. Same hook as
+	# the legacy Sif Muna xp_gain_pct blessing (kept additive there
+	# for back-compat).
+	var def_tags: Array = combat_defense_tags()
+	var tag_mult: float = 1.0
+	if "lordly" in def_tags: tag_mult *= 1.15
+	if "wisdom" in def_tags: tag_mult *= 1.15
+	if tag_mult != 1.0:
+		amount = int(round(float(amount) * tag_mult))
 	var bonus: int = int(round(float(amount) * xp_gain_pct / 100.0))
 	xp += amount + bonus
 	while xp >= xp_to_next():

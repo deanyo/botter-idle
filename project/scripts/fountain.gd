@@ -86,7 +86,12 @@ func on_interact_complete(bot: Bot) -> void:
 	consumed = true
 	if pulse and pulse.is_valid():
 		pulse.kill()
-	var heal: int = int(round(float(bot.max_hp) * heal_pct))
+	# `faith` flavor on worn gear boosts fountain healing by 50%.
+	# Reads via the same combat_defense_tags pipe armor uses.
+	var faith_mult: float = 1.0
+	if "faith" in bot.combat_defense_tags():
+		faith_mult = 1.5
+	var heal: int = int(round(float(bot.max_hp) * heal_pct * faith_mult))
 	bot.hp = mini(bot.max_hp, bot.hp + heal)
 	bot._update_hp_bar()
 

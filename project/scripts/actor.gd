@@ -69,6 +69,20 @@ var _precision_streak: int = 0
 var _rage_stacks: int = 0
 var _rage_expires_at: float = 0.0
 
+# Combat-state buckets for the rest of the wired flavor tags. These
+# all share the "expire silently when window lapses" pattern so we
+# don't need a per-actor tick for any of them. Initialized lazy.
+# `arcane`: every Nth swing fires a magic bonus. Counter, not timer.
+var _arcane_swing_count: int = 0
+# `stealth`: bot's NEXT attack lands a +25% bonus while bot has
+# the `stealthy` status. Status is granted at floor-build time
+# (or when the bot has gone N seconds without taking damage). Cleared
+# on first hit landed. We just check has_status("stealthy") at hit
+# time — no extra state needed here.
+# `dual`: 15% chance to deal a second hit on the same target. We
+# guard against infinite recursion via _dual_attacking.
+var _dual_attacking: bool = false
+
 func _ready() -> void:
 	hp = max_hp
 	# rig sits at the tile center so SpriteFX can rotate / scale around the
@@ -204,7 +218,10 @@ func step_movement(delta: float) -> void:
 		var row_size: int = terrain_grid[0].size() if terrain_grid.size() > 0 else 0
 		if cell.x >= 0 and cell.x < row_size:
 			if terrain_grid[cell.y][cell.x] == C.T_WATER:
-				step *= 0.5
+				# `flying` flavor on worn gear ignores water slow
+				# (boots / wings of flight pattern from DCSS).
+				if not ("flying" in combat_defense_tags()):
+					step *= 0.5
 	if dist <= step:
 		position = goal
 		cell = Vector2i(int(goal.x / C.TILE_SIZE), int(goal.y / C.TILE_SIZE))
@@ -216,17 +233,63 @@ func step_movement(delta: float) -> void:
 		position += dir.normalized() * step
 
 func take_damage(raw: int, attacker: Actor = null) -> int:
-	# Defender-side flavor tag pre-checks. `reflective` rolls a 10% chance
-	# to negate the entire incoming hit (true 0 damage). `harm` adds +25%
-	# to incoming damage. Order: reflective first (a full negate beats a
-	# multiplier), then harm.
+	# Defender-side flavor tag pre-checks. Order matters: full-negate
+	# rolls beat any multiplier; resistances apply before harm; element
+	# resists (fire_res/cold_res/poison_res) check the attacker's
+	# weapon tags so a fire dragon hitting a fire_res-armored bot does
+	# half damage.
 	var def_tags: Array = combat_defense_tags()
+	# Atk-side tags (read so resists know what type of attack this is).
+	var atk_tags: Array = []
+	if attacker != null and is_instance_valid(attacker):
+		atk_tags = attacker.combat_weapon_tags()
 	if not def_tags.is_empty():
-		if "reflective" in def_tags and randf() < 0.10:
-			# Hit fully reflected/parried — log a tiny squish and exit.
+		# `footwork` — 8% chance to fully evade. Same shape as reflective
+		# but more common and explicitly tied to dexterity / boots.
+		if "footwork" in def_tags and randf() < 0.08:
 			if fx and is_alive:
 				fx.hit_squish()
 			return 0
+		if "reflective" in def_tags and randf() < 0.10:
+			if fx and is_alive:
+				fx.hit_squish()
+			return 0
+		# Element resists (defender-worn). 50% reduction matches DCSS
+		# rF+ / rC+ pattern. Also grants immunity to the matching DoT
+		# status (handled in _apply_dot_status).
+		if "fire_res" in def_tags and "fire" in atk_tags:
+			raw = int(round(float(raw) * 0.5))
+		if "cold_res" in def_tags and "cold" in atk_tags:
+			raw = int(round(float(raw) * 0.5))
+		# `earth`: -15% from any non-elemental, non-magical attack.
+		# "Physical" = anything without elemental/arcane/holy/dark tags.
+		if "earth" in def_tags:
+			var is_physical: bool = true
+			for t in ["fire", "cold", "elemental", "arcane", "holy", "dark", "thunderous"]:
+				if t in atk_tags:
+					is_physical = false
+					break
+			if is_physical:
+				raw = int(round(float(raw) * 0.85))
+		# `willpower`: -25% from arcane / elemental / magical attackers.
+		if "willpower" in def_tags:
+			for t in ["arcane", "elemental", "fire", "cold"]:
+				if t in atk_tags:
+					raw = int(round(float(raw) * 0.75))
+					break
+		# `warding`: -20% from boss / miniboss attackers (anti-elite armor).
+		if "warding" in def_tags and attacker is Enemy:
+			var e: Enemy = attacker as Enemy
+			if e.is_boss or e.is_miniboss:
+				raw = int(round(float(raw) * 0.8))
+		# `acrobat`: when below 30% HP, +20% def. Translates to ~17%
+		# damage reduction at the take_damage layer.
+		if "acrobat" in def_tags and max_hp > 0 and float(hp) / float(max_hp) <= 0.30:
+			raw = int(round(float(raw) * 0.83))
+		# `guardian`: flat -10% damage taken. Smaller than other resists
+		# but always-on so it stacks well as a backup armor.
+		if "guardian" in def_tags:
+			raw = int(round(float(raw) * 0.9))
 		if "harm" in def_tags:
 			raw = int(round(float(raw) * 1.25))
 	var dmg: int = maxi(1, raw - defense)
@@ -246,6 +309,16 @@ func take_damage(raw: int, attacker: Actor = null) -> int:
 			attacker.damaged.emit(attacker, thorn_dmg)
 			attacker._update_hp_bar()
 			if attacker.hp <= 0:
+				attacker.is_alive = false
+				attacker._play_death_then_emit()
+		# `crystal`: smaller passive thorn that fires regardless. 5% of
+		# raw is a gentle constant bleed when an attacker keeps poking.
+		if "crystal" in def_tags:
+			var c_dmg: int = maxi(1, int(round(float(dmg) * 0.05)))
+			attacker.hp = maxi(0, attacker.hp - c_dmg)
+			attacker.damaged.emit(attacker, c_dmg)
+			attacker._update_hp_bar()
+			if attacker.hp <= 0 and attacker.is_alive:
 				attacker.is_alive = false
 				attacker._play_death_then_emit()
 	if hp <= 0:
@@ -283,6 +356,13 @@ func _find_adjacent_actor(near: Actor) -> Actor:
 	return null
 
 func attempt_attack(other: Actor, delta: float) -> int:
+	# `stunned`: attacker skips this swing entirely. Sound enchant
+	# triggers it on a defender, so when that defender becomes the
+	# attacker on its next tick, it loses one swing. The status
+	# auto-expires on its tick — we just bail here.
+	if has_status("stunned"):
+		attack_cooldown -= delta
+		return 0
 	attack_cooldown -= delta
 	if attack_cooldown > 0.0:
 		return 0
@@ -321,6 +401,35 @@ func attempt_attack(other: Actor, delta: float) -> int:
 		# NEXT swing's bonus, not this one).
 		if "cold" in tags and is_instance_valid(other) and other.has_status("frozen"):
 			dmg_mult *= 1.20
+		# `elemental`: bonus damage scales with character level. Weapon
+		# grows with the wielder. Bot's level via cast; enemies skip
+		# (no level concept beyond the floor multiplier).
+		if "elemental" in tags and self is Bot:
+			var lvl: int = (self as Bot).level
+			dmg_mult *= 1.0 + 0.01 * float(lvl)
+		# `arcane`: every 4th swing fires a +50% magic burst.
+		if "arcane" in tags:
+			_arcane_swing_count += 1
+			if _arcane_swing_count >= 4:
+				_arcane_swing_count = 0
+				dmg_mult *= 1.5
+		# `demon`: inverse of holy — +25% damage vs HOLY_HATES targets
+		# (undead/demon already favored by holy; demon stacks with it
+		# rather than gating). Lore: a demonic weapon hates the same
+		# things holy ones do, but for different reasons.
+		var target_id_d: String = other.combat_label() if is_instance_valid(other) else ""
+		if "demon" in tags and _StatusOverlay.enemy_matches_any(target_id_d, _StatusOverlay.HOLY_HATES):
+			dmg_mult *= 1.25
+		# `ponderous`: heavy weapon — +10% damage but slower swing
+		# (swing-rate handled in recompute_stats; here just the dmg).
+		if "ponderous" in tags:
+			dmg_mult *= 1.10
+		# `stealth` / first-strike: bot under "stealthy" status lands
+		# +25% damage. Status is a one-shot — clear after the hit
+		# below. Granted at floor build via the stealthy flavor on gear
+		# (see Bot._refresh_stealthy_status).
+		if has_status("stealthy"):
+			dmg_mult *= 1.25
 	# `harm` (defender-worn): +25% damage dealt and +25% damage taken
 	# (the receive side is in take_damage). Applies regardless of weapon.
 	if "harm" in def_tags:
@@ -374,11 +483,43 @@ func attempt_attack(other: Actor, delta: float) -> int:
 			# per tick). Uses the existing `poisoned` ENCH overlay.
 			var poison_per_tick: int = maxi(1, int(round(float(other.max_hp) * 0.03)))
 			other.add_poison(poison_per_tick, 4, 0.5)
+	# Stealth single-strike consumed.
+	if has_status("stealthy"):
+		remove_status("stealthy")
+	# `sound`: 10% chance to stun the target for 1s on a successful hit.
+	if dealt > 0 and "sound" in tags and is_instance_valid(other) and other.is_alive and randf() < 0.10:
+		other.add_status("stunned", 1.0)
+	# `dual`: 15% chance to fire a second swing immediately. Guarded
+	# against recursion via _dual_attacking flag — the second swing
+	# CAN'T trigger another double or the player gets infinite swings
+	# off a lucky chain. Skips the cooldown, doesn't refresh other tag
+	# state to keep it simple.
+	if dealt > 0 and "dual" in tags and is_instance_valid(other) and other.is_alive and not _dual_attacking:
+		if randf() < 0.15:
+			_dual_attacking = true
+			# Reuse the same atk roll for the second hit; no animation
+			# tween (would feel laggy if fired every time).
+			var raw2: int = atk
+			other.take_damage(raw2, self)
+			_dual_attacking = false
 	# Rage: each KILL by this attacker adds a stack (cap +30%, refresh
 	# 6s window). Defender-worn so only the wearer accumulates stacks.
 	if killed and "rage" in def_tags:
 		_rage_stacks = mini(_rage_stacks + 1, 6)
 		_rage_expires_at = float(Time.get_ticks_msec()) / 1000.0 + 6.0
+	# `rampaging`: on a kill, refund the next attack's cooldown so
+	# the bot can move/attack again immediately. PoE-Headhunter shape.
+	if killed and ("rampaging" in tags or "rampaging" in def_tags):
+		attack_cooldown = 0.0
+	# `death`: on a kill, 25% chance to splash 5% atk to one adjacent
+	# enemy. Tagged on a weapon — defender-worn `death` doesn't fire
+	# (defender doesn't kill anyone here). Doesn't recurse.
+	if killed and "death" in tags and is_instance_valid(other):
+		if randf() < 0.25:
+			var nearby: Actor = _find_adjacent_actor(other)
+			if nearby != null:
+				var blast: int = maxi(1, int(round(float(atk) * 0.05)))
+				nearby.take_damage(blast, self)
 	# `thunderous` (boots): chain 50% damage to one enemy adjacent to
 	# the primary target. Defender-worn (boots are a defense slot).
 	# Skipped if dealt<=0 (the chain is meant to read as "hit splashes
@@ -506,9 +647,17 @@ func add_status(id: String, duration: float = 1.0) -> void:
 # armor) and the status auto-expires after `ticks * interval` seconds.
 # Re-applying refreshes the timer and replaces tick params.
 func add_burn(per_tick: int, ticks: int, interval: float) -> void:
+	# fire_res grants immunity to burn DoT (matches DCSS rF+ stops
+	# being on fire). Resists are wired on every actor; non-bot
+	# actors return [] from combat_defense_tags so this is a no-op
+	# for them.
+	if "fire_res" in combat_defense_tags():
+		return
 	_apply_dot_status("burning", per_tick, ticks, interval)
 
 func add_poison(per_tick: int, ticks: int, interval: float) -> void:
+	if "poison_res" in combat_defense_tags():
+		return
 	_apply_dot_status("poisoned", per_tick, ticks, interval)
 
 func _apply_dot_status(status_id: String, per_tick: int, ticks: int, interval: float) -> void:

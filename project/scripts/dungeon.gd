@@ -439,6 +439,12 @@ func _async_build_floor() -> void:
 	t_spawn = Time.get_ticks_usec() - t_spawn
 	_update_biome_hud()
 	floor_starting_hp = bot.hp
+	# `stealth` flavor on worn gear grants the bot a one-shot "stealthy"
+	# status at floor start — the next attack lands +25% damage. Per-
+	# floor refresh keeps it as a strong-opener bonus rather than a
+	# permanent buff.
+	if is_instance_valid(bot) and "stealth" in bot.combat_defense_tags():
+		bot.add_status("stealthy", 0.0)  # persistent until first hit
 	t_total = Time.get_ticks_usec() - t_total
 	_floor_ready = true
 	GrindLog.log_line("[build-floor] f=%d total_ms=%.1f gen_ms=%.1f render_ms=%.1f decor_ms=%.1f spawn_ms=%.1f enemies=%d" % [
@@ -1276,7 +1282,13 @@ func _maybe_drop_item(e: Enemy) -> void:
 	# flood the inventory. Magic/rare leaders carry the loot pressure
 	# instead, so the typical floor stays at ~10-15 drops while
 	# kills 10×.
-	var roll: float = rng.randf()
+	# `fortune` flavor: +20% drop chance per source on the bot's gear.
+	var fortune_mult: float = 1.0
+	if is_instance_valid(bot):
+		for t in bot.combat_defense_tags():
+			if t == "fortune":
+				fortune_mult += 0.20
+	var roll: float = rng.randf() / fortune_mult
 	var threshold: float = 0.05
 	if e.pack_tier == Enemy.PACK_MAGIC:
 		threshold = 0.30
@@ -1811,7 +1823,10 @@ func _tick_bot(delta: float) -> void:
 
 	# Pursue nearby enemy only within aggro range. Distant ones get ignored
 	# so we don't beeline 30 cells across the map.
-	if nearby_enemy != null and _chebyshev(bot.cell, nearby_enemy.cell) <= AGGRO_DISTANCE:
+	# Vision flavor tag adds to aggro distance so the bot engages from
+	# further away when wearing such gear.
+	var aggro_dist: int = AGGRO_DISTANCE + bot.aggro_bonus
+	if nearby_enemy != null and _chebyshev(bot.cell, nearby_enemy.cell) <= aggro_dist:
 		var p_enemy: PackedVector2Array = pathing.path(bot.cell, nearby_enemy.cell)
 		if p_enemy.size() > 1:
 			bot.set_path(p_enemy.slice(1))
