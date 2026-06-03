@@ -19,6 +19,8 @@ const SLOT_DIRS := {
 	"helm":   "helm/",
 	"shield": "shield/",
 	"boots":  "boots/",
+	"gloves": "gloves/",
+	"cloak":  "cloak/",
 }
 # Anatomical offsets from rig origin. The weapon sits in the right
 # hand, shield in the left. Other slots align to base center.
@@ -50,14 +52,20 @@ const SLOT_OFFSETS := {
 	"helm":   Vector2(0, 0),
 	"armor":  Vector2(0, 0),
 	"boots":  Vector2(0, 0),
+	"gloves": Vector2(0, 0),
+	"cloak":  Vector2(0, 0),
 }
-# Z-order within the rig.
+# Z-order within the rig. Cloak goes BENEATH armor (it's the back
+# layer), gloves go ABOVE armor (forward of body) but below the
+# weapon. Helm above gloves so it tops the figure.
 const SLOT_Z := {
+	"cloak":  0,
 	"boots":  1,
 	"armor":  2,
-	"helm":   3,
-	"shield": 4,
-	"weapon": 5,
+	"gloves": 3,
+	"helm":   4,
+	"shield": 5,
+	"weapon": 6,
 }
 
 # Returns: { rig: Node2D, base_sprite: Sprite2D, slots: { slot_id: Sprite2D } }
@@ -111,7 +119,8 @@ static func _apply_rarity_modulate(sprite: Sprite2D, inst: Variant, items_db: Di
 	var item: Dictionary = items_db[base_id]
 	var rarity: String = String(item.get("rarity", "common"))
 	var flavor_tags: Array = UITheme.combined_flavor_tags(item, inst)
-	sprite.modulate = UITheme.item_modulate(rarity, flavor_tags)
+	var meta: String = String(inst.get("meta_rarity", "")) if typeof(inst) == TYPE_DICTIONARY else ""
+	sprite.modulate = UITheme.item_modulate(rarity, flavor_tags, meta)
 
 # Sprite-localised glow on the weapon slot only — mirrors bot.gd. Uses
 # the alpha-edge shader so the glow follows the silhouette instead of

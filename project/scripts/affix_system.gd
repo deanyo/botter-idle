@@ -131,12 +131,24 @@ static func tier_index_for_rarity(rarity: String) -> int:
 	_ensure_loaded()
 	return int(_rarity_idx.get(rarity, 0))
 
-static func format_item_name(base_name: String, affixes: Array) -> String:
+static func format_item_name(base_name: String, affixes: Array, inst: Variant = null) -> String:
 	# Simplified to "BaseName [+Stat, +Stat]" — every affix is just an affix,
 	# no prefix/suffix grammar. Empty-affix items show just the base name.
+	# Optional `inst` arg: when supplied and inst.meta_rarity is set,
+	# prefix the name with "Ancient" / "Primal" so the meta-rarity is
+	# visible everywhere format_item_name is called from (HUD inv,
+	# Outpost, run report, tooltips).
 	_ensure_loaded()
+	var prefix: String = ""
+	if typeof(inst) == TYPE_DICTIONARY:
+		var meta: String = String(inst.get("meta_rarity", ""))
+		if meta == "ancient":
+			prefix = "Ancient "
+		elif meta == "primal":
+			prefix = "Primal "
+	var name_with_prefix: String = prefix + base_name
 	if affixes.is_empty():
-		return base_name
+		return name_with_prefix
 	var tags: Array = []
 	for af_inst in affixes:
 		var def: Dictionary = _affixes_by_id.get(af_inst.id, {})
@@ -144,8 +156,8 @@ static func format_item_name(base_name: String, affixes: Array) -> String:
 			continue
 		tags.append("+" + String(def.name))
 	if tags.is_empty():
-		return base_name
-	return "%s [%s]" % [base_name, ", ".join(tags)]
+		return name_with_prefix
+	return "%s [%s]" % [name_with_prefix, ", ".join(tags)]
 
 static func format_affix_lines(affixes: Array) -> Array:
 	_ensure_loaded()
@@ -180,10 +192,35 @@ static func format_item_tooltip(item_def: Dictionary, inst: Variant) -> String:
 	var affixes: Array = []
 	if typeof(inst) == TYPE_DICTIONARY:
 		affixes = inst.get("affixes", [])
-	var disp_name: String = format_item_name(String(item_def.get("name", "")), affixes)
+	var disp_name: String = format_item_name(String(item_def.get("name", "")), affixes, inst)
 	var rarity: String = String(item_def.get("rarity", "")).capitalize()
 	var lines: Array = []
 	lines.append("%s [%s]" % [disp_name, rarity] if rarity != "" else disp_name)
+	# Meta-rarity line — Ancient (1%) or Primal (0.1%) per drop. Stat
+	# multiplier is +20% / +50% baked into bot.recompute_stats so the
+	# numbers in the line below already reflect it; this line just
+	# tells the player WHY their stats look beefier than usual.
+	if typeof(inst) == TYPE_DICTIONARY:
+		var meta: String = String(inst.get("meta_rarity", ""))
+		if meta == "ancient":
+			lines.append("[Ancient]  +20% base stats")
+		elif meta == "primal":
+			lines.append("[Primal]  +50% base stats — extremely rare")
+		# Tint roll line — describes what visual treatment the item
+		# rolled and the stat lean that came with it.
+		var tint: Variant = inst.get("tint", null)
+		if typeof(tint) == TYPE_DICTIONARY:
+			var mode: String = String(tint.get("mode", "normal"))
+			var lean: String = String(tint.get("lean", ""))
+			var lean_pct: float = float(tint.get("lean_pct", 0.0))
+			var mode_labels: Dictionary = {
+				"normal": "Tinted",
+				"shimmer": "✦ Shimmering",
+				"inverted": "⌧ Inverted",
+				"prismatic": "◇ Prismatic",
+			}
+			var mode_label: String = String(mode_labels.get(mode, "Tinted"))
+			lines.append("[%s]  +%.0f%% %s" % [mode_label, lean_pct, lean])
 	var base_parts: Array = []
 	var atk_v: int = int(item_def.get("atk", 0))
 	var def_v: int = int(item_def.get("def", 0))
@@ -191,6 +228,14 @@ static func format_item_tooltip(item_def: Dictionary, inst: Variant) -> String:
 	if atk_v > 0: base_parts.append("+%d ATK" % atk_v)
 	if def_v > 0: base_parts.append("+%d DEF" % def_v)
 	if hp_v > 0: base_parts.append("+%d HP" % hp_v)
+	# Item secondary stats — direct contributions distinct from
+	# rolled affixes. Hidden when zero so most items stay clean.
+	var crit_v: float = float(item_def.get("crit_chance", 0))
+	var hst_v: float = float(item_def.get("atk_speed_pct", 0))
+	var rgn_v: float = float(item_def.get("hp_regen", 0))
+	if crit_v > 0: base_parts.append("+%d%% Crit" % int(round(crit_v)))
+	if hst_v > 0: base_parts.append("+%d%% Haste" % int(round(hst_v)))
+	if rgn_v > 0: base_parts.append("+%.1f HP/s" % rgn_v)
 	if not base_parts.is_empty():
 		lines.append("  ".join(base_parts))
 	var affix_lines: Array = format_affix_lines(affixes)

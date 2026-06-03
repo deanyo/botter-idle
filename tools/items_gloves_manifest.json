@@ -1,0 +1,79 @@
+{
+  "format_version": 2,
+  "notes": "Gloves slot \u2014 DCSS ARM_GLOVES. Sprites under item/armor/ matching glove/gauntlet shapes.",
+  "base_types": {
+    "gloves": {
+      "label": "Gloves / Gauntlets"
+    }
+  },
+  "flavor_tags": {},
+  "drop_weight_schema": {
+    "description": "5 ints, T1..T5"
+  },
+  "items": [
+    {
+      "id": "gauntlets_of_war",
+      "name": "Gauntlets of War",
+      "base_type": "gloves",
+      "slot": "gloves",
+      "item_tier": 5,
+      "rarity": "legendary",
+      "tile": "item/armor/artefact/urand_war.png",
+      "atk": 0,
+      "def": 22,
+      "hp": 200,
+      "flavor_tags": [
+        "lordly",
+        "fortified"
+      ],
+      "lore": "Carried to a thousand battles. Always returned home.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        25
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "strength": 15,
+        "stamina": 45,
+        "agility": 15,
+        "regen": 15
+      },
+      "future_mechanic": "+15% damage when at full HP. +25% damage to bosses."
+    },
+    {
+      "id": "fencer_gauntlets",
+      "name": "Fencer's Gauntlets",
+      "base_type": "gloves",
+      "slot": "gloves",
+      "item_tier": 5,
+      "rarity": "legendary",
+      "tile": "item/armor/artefact/urand_fencer_new.png",
+      "atk": 0,
+      "def": 7,
+      "hp": 100,
+      "flavor_tags": [
+        "footwork",
+        "swiftness"
+      ],
+      "lore": "They lead. The rest of the body follows.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        25
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "agility": 50,
+        "haste": 50
+      },
+      "future_mechanic": "+15% dodge chance. +10% crit chance."
+    }
+  ]
+}

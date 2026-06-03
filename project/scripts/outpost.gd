@@ -30,7 +30,7 @@ const TIER_LABELS := {
 const ITEMS_PATH := "res://data/items.json"
 const ITEM_TILE_DIR := "res://assets/tiles/items/"
 
-const SLOTS := ["weapon", "armor", "helm", "boots", "shield", "ring", "amulet"]
+const SLOTS := ["weapon", "armor", "helm", "boots", "shield", "gloves", "cloak", "ring", "amulet"]
 const PAPERDOLL_RIGHT_COLUMN := ["helm", "amulet", "cloak", "gloves", "belt"]
 const PAPERDOLL_BOTTOM_ROW := ["weapon", "armor", "shield", "ring", "boots"]
 const SLOT_TOOLTIPS := {
@@ -709,7 +709,7 @@ func _render_equipped() -> void:
 			var base_id: String = String(inst.get("base_id", ""))
 			if items_db.has(base_id):
 				var item: Dictionary = items_db[base_id]
-				item_name = AffixSystem.format_item_name(String(item.name), inst.get("affixes", []))
+				item_name = AffixSystem.format_item_name(String(item.name), inst.get("affixes", []), inst)
 				rarity = String(item.get("rarity", ""))
 				var tile_path: String = ITEM_TILE_DIR + String(item.get("tile", ""))
 				if ResourceLoader.exists(tile_path):
@@ -722,7 +722,10 @@ func _render_equipped() -> void:
 			var bid: String = String(inst.get("base_id", ""))
 			if items_db.has(bid):
 				tint_flavor = UITheme.combined_flavor_tags(items_db[bid], inst)
-		sprite.modulate = UITheme.item_modulate(rarity, tint_flavor)
+		var meta_r: String = ""
+		if inst != null and typeof(inst) == TYPE_DICTIONARY:
+			meta_r = String(inst.get("meta_rarity", ""))
+		sprite.modulate = UITheme.item_modulate(rarity, tint_flavor, meta_r)
 		var base_tooltip: String = SLOT_TOOLTIPS.get(slot, slot.capitalize())
 		btn.tooltip_text = base_tooltip if item_name.is_empty() else _build_item_tooltip(slot, inst)
 		# Rarity-tint border when something's equipped (kept for empty
@@ -787,7 +790,10 @@ func _make_inv_cell(inv_index: int, inst: Dictionary, item: Dictionary) -> Contr
 	var tile_path: String = ITEM_TILE_DIR + String(item.get("tile", ""))
 	if ResourceLoader.exists(tile_path):
 		sprite.texture = load(tile_path)
-	sprite.modulate = UITheme.item_modulate(rarity, UITheme.combined_flavor_tags(item, inst))
+	sprite.modulate = UITheme.item_modulate(rarity, UITheme.combined_flavor_tags(item, inst), String(inst.get("meta_rarity", "")))
+	var op_recolor: ShaderMaterial = UITheme.recolor_material_for(inst)
+	if op_recolor != null:
+		sprite.material = op_recolor
 	cell.add_child(sprite)
 	var btn := Button.new()
 	btn.size = Vector2(INV_CELL_SIZE, INV_CELL_SIZE)

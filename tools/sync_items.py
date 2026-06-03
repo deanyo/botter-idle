@@ -54,6 +54,8 @@ PAPERDOLL_DIRS = {
     "helm":   "helm",
     "shield": "shield",
     "boots":  "boots",
+    "gloves": "gloves",
+    "cloak":  "cloak",
 }
 
 # DCSS source has SEPARATE pre-aligned paperdoll sprites under
@@ -133,12 +135,15 @@ PAPERDOLL_BY_BASE_TYPE = {
 
 ALL_MANIFESTS = [
     "items_manifest.json",          # 1H swords
+    "items_weapons_extended_manifest.json",  # axes, maces, polearms, 2H, staves, exotics
     "items_helms_manifest.json",
     "items_armor_manifest.json",
     "items_shields_manifest.json",
     "items_boots_manifest.json",
     "items_rings_manifest.json",
     "items_amulets_manifest.json",
+    "items_gloves_manifest.json",
+    "items_cloaks_manifest.json",
 ]
 
 # Bespoke paperdoll art for named uniques. Mirrors DCSS's
@@ -244,6 +249,15 @@ def normalize_item(it, slot_default):
         out["enchant_pool"] = list(it["enchant_pool"])
     if "affix_pool" in it and it["affix_pool"]:
         out["affix_pool"] = dict(it["affix_pool"])
+    # Item secondary stats added 2026-06-03 (L4 of diversity beat).
+    # Items.json carries crit_chance / atk_speed_pct / hp_regen as
+    # direct contributions distinct from affix rolls.
+    if "crit_chance" in it and float(it["crit_chance"]):
+        out["crit_chance"] = float(it["crit_chance"])
+    if "atk_speed_pct" in it and float(it["atk_speed_pct"]):
+        out["atk_speed_pct"] = float(it["atk_speed_pct"])
+    if "hp_regen" in it and float(it["hp_regen"]):
+        out["hp_regen"] = float(it["hp_regen"])
     return out
 
 

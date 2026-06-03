@@ -7,6 +7,106 @@ items live in `TODO.md`.
 Last refresh: 2026-06-03 (UI overhaul — OLED chrome, item-card
 branch picker, inventory filters/favorites, shop screen).
 
+## Item diversity pass — 2026-06-03
+
+Massive single-push beat covering slot schema, weapon family
+expansion, meta-rarity above legendary, per-instance sprite
+recoloring with stat lean, and item secondary stats. 309 items
+total (was 251). Slot audit tool ensures sprite/slot/base_type
+alignment matches DCSS source-of-truth (`art-data.txt`).
+
+### Foundation
+
+* **Gloves + cloak slots added** to save schema, paperdoll renderer,
+  HUD chrome, Outpost, Bot._DEF_SLOTS, inject_save.py. Forward-compat
+  migration in `save_state._migrate`. `paperdoll_renderer.SLOT_Z`
+  layered: cloak (back) → boots → armor → gloves → helm → shield →
+  weapon. Asset dirs `project/assets/tiles/player/{gloves,cloak}/`
+  created.
+
+* **9 DCSS-mismatched items fixed** by parsing
+  `dcss-source/.../art-data.txt`. e.g. `urand_fencer` is
+  *Fencer's Gloves* (`ARM_GLOVES`), `urand_flash` is *Cloak of
+  Flash* (`ARM_CLOAK`). Items renamed where the lore was wrong:
+  `fencer_slippers` → `fencer_gauntlets`, `flashboots` →
+  `cloak_of_flash`, `thiefs_boots` → `cloak_of_the_thief`,
+  `shield_of_war` → `gauntlets_of_war`. Plus reslotting
+  `etheric_cage` → helm, `lightning_scales` → boots,
+  `robe_of_resistance` → shield (it's a kite_shield in DCSS),
+  `ratskin_cloak` + `starlight_cloak` → cloak.
+
+* **17 starter items** for the new slots authored: 10 gloves + 8
+  cloaks spanning common→epic. With the existing 6 unique
+  gauntlets/cloaks → 23 items in the new slots.
+
+* **`tools/check_item_slots.py`** validates every item's
+  sprite/slot/base_type alignment per DCSS source. Exits non-zero
+  on mismatch; CI gate. Currently 309/309 pass.
+
+### Meta-rarity (Ancient / Primal) — D3 pattern
+
+* `dungeon._create_item_instance` rolls `inst.meta_rarity` per drop:
+  1.0% Ancient (gold tint, +20% base stats, "Ancient" prefix),
+  0.1% Primal (red tint, +50% base stats, "Primal" prefix).
+* `bot.recompute_stats` reads it and multiplies item.atk/def/hp.
+* `UITheme.item_modulate` honors meta_rarity and tints OVER flavor
+  + rarity (gold/red dominates so you can't miss the drop).
+* `AffixSystem.format_item_name` prepends "Ancient" / "Primal".
+* Tooltip line announces the meta-rarity tier.
+
+### Per-instance recoloring + stat lean
+
+New `assets/item_recolor.gdshader` — hue rotation + saturation +
+mode (normal / shimmer / inverted / prismatic). 8-instruction
+fragment shader, runs cheap per inv-cell sprite.
+
+Roll rates per drop:
+* Plain hue shift: ~25%
+* Shimmer (animated highlight): ~3%
+* Inverted (palette flipped): ~1%
+* Prismatic (animated rainbow): ~0.5%
+* Vanilla: ~70.5% (no shader cost)
+
+`inst.tint = {hue, sat, mode, lean, lean_pct}`. Hue determines the
+stat lean per `dungeon._hue_to_stat_lean()`: red→atk, orange→hp,
+yellow/green→haste, cyan→def, blue→regen, purple→crit. lean_pct
+varies by mode (7% normal → 15% prismatic). Stat lean applied in
+`bot.recompute_stats` and shown in tooltip.
+
+Materials applied in HUD inventory cells, Outpost inv, Shop inv.
+Paperdoll bot rig stays clean (existing glow shader takes priority
+on weapon slot).
+
+### Weapon family expansion
+
+58 new weapon items spanning 27 new base_types: hand_axe / war_axe /
+battle_axe / broad_axe / executioner_axe / club / mace / morningstar
+/ eveningstar / flail / dire_flail / hammer / giant_club / spear /
+halberd / bardiche / scythe / greatsword / claymore / double_sword /
+triple_sword / quarterstaff / lajatang / bullwhip / demon_whip /
+ankus / cutlass. New manifest:
+`tools/items_weapons_extended_manifest.json`. Item editor gets a
+new "Weapons (extended)" tab. base_type_affixes entries authored
+for every new family (axes lean strength+crit, polearms lean
+crit+haste, 2H lean strength+stamina, lajatang/double_sword lean
+haste+crit for dual-wield-style speed).
+
+### Item secondary stats
+
+items.json now carries optional `crit_chance`, `atk_speed_pct`,
+`hp_regen` as DIRECT contributions (separate from rolled affixes).
+Bot.recompute_stats reads them. 24 uniques retroactively get
+secondary stats matching their lore (quick_blade +25% atk_speed,
+spriggans_knife +15% crit / +15% atk_speed, salamander_hide
++1.5 HP/sec, etc). Item editor exposes sliders. sync_items.py
+carries the fields through.
+
+### Validation
+
+`/grind 5 16` → 5/5 victories, ~50 loot/run, no script errors. Slot
+audit 309/309 pass. Meta-rarity probability matches authored rates
+(~2.5 ancient, ~0.25 primal, ~75 tinted across ~250 drops).
+
 ## Authoring portal + sanity pass — 2026-06-03
 
 **Sanity-check pass.** Wrote `tools/check_biome_assets.py` to expand

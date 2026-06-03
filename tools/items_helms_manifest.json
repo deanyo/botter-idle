@@ -1082,6 +1082,38 @@
         "regen": 10,
         "crit": 10
       }
+    },
+    {
+      "id": "etheric_cage",
+      "name": "Maxwell's Etheric Cage",
+      "base_type": "great_helm",
+      "slot": "helm",
+      "item_tier": 5,
+      "rarity": "legendary",
+      "tile": "item/armor/artefact/urand_etheric_cage.png",
+      "atk": 0,
+      "def": 28,
+      "hp": 300,
+      "flavor_tags": [
+        "fortified",
+        "willpower"
+      ],
+      "lore": "An armor that holds its wearer in place. Spells slide off the bars.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        3,
+        18
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "stamina": 50,
+        "agility": 25,
+        "regen": 20
+      },
+      "future_mechanic": "+50% magic resist. -10% move speed (drawback)."
     }
   ]
 }

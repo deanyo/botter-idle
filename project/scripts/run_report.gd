@@ -76,6 +76,6 @@ func _format_instance(inst: Dictionary, items_db: Dictionary, dimmed: bool) -> S
 	if not items_db.has(base_id):
 		return "(unknown)"
 	var item: Dictionary = items_db[base_id]
-	var disp: String = AffixSystem.format_item_name(String(item.name), inst.get("affixes", []))
+	var disp: String = AffixSystem.format_item_name(String(item.name), inst.get("affixes", []), inst)
 	var color: String = "666" if dimmed else RARITY_COLORS.get(str(item.rarity), "cccccc")
 	return "[color=#%s]%s[/color]" % [color, disp]

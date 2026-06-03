@@ -381,6 +381,35 @@ const SLOTS = [
       { key:'amulet', label:'Amulets', keywords:['amulet','bone','cameo','celtic','crystal','cylinder','eye','face','penta','ring_','stone'] },
       { key:'artefact', label:'Artefacts', path_includes:'/artefact/' }
     ] },
+  { id:'gloves', label:'Gloves',
+    manifest:'items_gloves_manifest.json',
+    export_key:'items_gloves', export_file:'items_gloves.json',
+    picker_roots:['item/armor/hands/','item/armor/artefact/'],
+    picker_extras:[
+      { key:'gloves', label:'Gloves', keywords:['glove','gauntlet','mitt'] },
+      { key:'artefact', label:'Artefacts', path_includes:'/artefact/' }
+    ] },
+  { id:'cloak', label:'Cloaks',
+    manifest:'items_cloaks_manifest.json',
+    export_key:'items_cloaks', export_file:'items_cloaks.json',
+    picker_roots:['item/armor/back/','item/armor/artefact/'],
+    picker_extras:[
+      { key:'cloak', label:'Cloaks', keywords:['cloak','cape','scarf'] },
+      { key:'artefact', label:'Artefacts', path_includes:'/artefact/' }
+    ] },
+  { id:'weapons_ext', label:'Weapons (extended)',
+    manifest:'items_weapons_extended_manifest.json',
+    export_key:'items_weapons_extended', export_file:'items_weapons_extended.json',
+    picker_roots:['item/weapon/','item/weapon/artefact/'],
+    picker_extras:[
+      { key:'axes',   label:'Axes',     keywords:['axe','battle_axe','war_axe','hand_axe','broad_axe','executioner_axe'] },
+      { key:'maces',  label:'Maces',    keywords:['mace','morningstar','eveningstar','flail','hammer','club','ankus'] },
+      { key:'polearms', label:'Polearms', keywords:['spear','halberd','bardiche','scythe','trident'] },
+      { key:'2h_swords', label:'2H Swords', keywords:['greatsword','claymore','double_sword','triple_sword'] },
+      { key:'staves', label:'Staves',   keywords:['quarterstaff','lajatang','staff'] },
+      { key:'exotics', label:'Exotics',  keywords:['bullwhip','demon_whip','cutlass'] },
+      { key:'artefact', label:'Artefacts', path_includes:'/artefact/' }
+    ] },
 ];
 
 const TIER_COLORS = ['','#aaaaaa','#6699ff','#88dd66','#ffaa44','#ff6655'];
@@ -716,6 +745,21 @@ function renderEditBody(it) {
     </div>
 
     <div class="field-group">
+      <label>Secondary stats (item-built-in — separate from rolled affixes)</label>
+      <div class="field-row">
+        <span style="font-size:11px;color:var(--muted)">Crit %</span>
+        <input type="number" value="${it.crit_chance||0}" min="0" max="100" step="1" onchange="setField('${it.id}','crit_chance',+this.value)">
+        <span style="font-size:11px;color:var(--muted)">Atk Speed %</span>
+        <input type="number" value="${it.atk_speed_pct||0}" min="0" max="100" step="1" onchange="setField('${it.id}','atk_speed_pct',+this.value)">
+        <span style="font-size:11px;color:var(--muted)">HP Regen /s</span>
+        <input type="number" value="${it.hp_regen||0}" min="0" max="20" step="0.5" onchange="setField('${it.id}','hp_regen',+this.value)">
+      </div>
+      <div style="font-size:10px;color:var(--muted);margin-top:4px">
+        Use these for items where the stat IS the special (e.g. quick blade always +25% atk speed).
+      </div>
+    </div>
+
+    <div class="field-group">
       <label>Flavor tags (always-on for this item — uniques like vampires_tooth carry "vampiric" here)</label>
       <div class="tag-grid">${tagGrid}</div>
     </div>
@@ -994,6 +1038,9 @@ function exportJSON() {
       ...(it.enchant_chance ? {enchant_chance: it.enchant_chance} : {}),
       ...(it.enchant_pool && it.enchant_pool.length ? {enchant_pool: it.enchant_pool} : {}),
       ...(it.affix_pool && Object.keys(it.affix_pool).length ? {affix_pool: it.affix_pool} : {}),
+      ...(it.crit_chance ? {crit_chance: it.crit_chance} : {}),
+      ...(it.atk_speed_pct ? {atk_speed_pct: it.atk_speed_pct} : {}),
+      ...(it.hp_regen ? {hp_regen: it.hp_regen} : {}),
       ...(it.future_mechanic ? {future_mechanic: it.future_mechanic} : {})
     }))
   };
@@ -1032,6 +1079,9 @@ function singleItemPayload(it) {
     ...(it.enchant_chance ? {enchant_chance: it.enchant_chance} : {}),
     ...(it.enchant_pool && it.enchant_pool.length ? {enchant_pool: it.enchant_pool} : {}),
     ...(it.affix_pool && Object.keys(it.affix_pool).length ? {affix_pool: it.affix_pool} : {}),
+    ...(it.crit_chance ? {crit_chance: it.crit_chance} : {}),
+    ...(it.atk_speed_pct ? {atk_speed_pct: it.atk_speed_pct} : {}),
+    ...(it.hp_regen ? {hp_regen: it.hp_regen} : {}),
     ...(it.future_mechanic ? {future_mechanic: it.future_mechanic} : {})
   };
 }

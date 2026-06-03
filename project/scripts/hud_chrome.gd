@@ -28,11 +28,11 @@ const PAPERDOLL_SLOT_SIZE := 48
 const INV_CELL_SIZE := 48
 
 # Slots that exist in the data layer today.
-const EQUIPPED_SLOTS := ["weapon", "armor", "helm", "shield", "boots", "ring", "amulet"]
+const EQUIPPED_SLOTS := ["weapon", "armor", "helm", "shield", "boots", "gloves", "cloak", "ring", "amulet"]
 
-# Layout — L-shape around a top-left sprite. Active slots intermix with
-# placeholder slots reserved for future gear (cloak/gloves/belt/etc).
-# Tooltips show the slot name; no on-screen labels.
+# Layout — L-shape around a top-left sprite. Gloves/cloak now ACTIVE
+# slots (added 2026-06-03 per DCSS source-of-truth). Belt placeholder
+# kept for any future expansion.
 const PAPERDOLL_RIGHT_COLUMN := ["helm", "amulet", "cloak", "gloves", "belt"]
 const PAPERDOLL_BOTTOM_ROW := ["weapon", "armor", "shield", "ring", "boots"]
 const SLOT_TOOLTIPS := {
@@ -580,7 +580,10 @@ func update_equipped(equipped: Dictionary, items_db: Dictionary) -> void:
 		sprite.texture = tex
 		# Tint the equipped slot icon — flavor tag wins, rarity falls
 		# back. Matches the bot rig overlay so HUD ↔ game stay in sync.
-		sprite.modulate = UITheme.item_modulate(slot_rarity, slot_flavor)
+		var meta: String = ""
+		if inst != null and typeof(inst) == TYPE_DICTIONARY:
+			meta = String(inst.get("meta_rarity", ""))
+		sprite.modulate = UITheme.item_modulate(slot_rarity, slot_flavor, meta)
 		var border: ReferenceRect = cell.get("border", null)
 		# Tooltip: empty slot shows "Wpn / Bdy / etc"; equipped slot shows
 		# the canonical multi-line item tooltip used everywhere else.
@@ -809,7 +812,13 @@ func _make_inv_button(seg_idx: int, item_idx: int, inst: Variant, items_db: Dict
 	var tile_path: String = "res://assets/tiles/items/" + String(item_def.get("tile", ""))
 	if ResourceLoader.exists(tile_path):
 		sprite.texture = load(tile_path)
-	sprite.modulate = UITheme.item_modulate(rarity, flavor)
+	sprite.modulate = UITheme.item_modulate(rarity, flavor, String(inst.get("meta_rarity", "")))
+	# Per-instance recolor shader (hue/sat/inverted/shimmer/prismatic).
+	# Null when the instance has no tint roll — short-circuit means
+	# vanilla items pay zero shader cost.
+	var recolor_mat: ShaderMaterial = UITheme.recolor_material_for(inst)
+	if recolor_mat != null:
+		sprite.material = recolor_mat
 	btn.add_child(sprite)
 	return btn
 

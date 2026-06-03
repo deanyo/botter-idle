@@ -1323,6 +1323,61 @@ func _create_item_instance(base_id: String) -> Dictionary:
 		"instance_id": _gen_instance_id(),
 		"affixes": affixes,
 	}
+	# Meta-rarity roll (D3 Ancient / Primal pattern). Independent of
+	# the rarity tier — any drop, even a common, can roll "ancient"
+	# (1%) for +20% stats or "primal" (0.1%) for +50% stats. Visual
+	# tint changes (gold for ancient, red for primal) plus a name
+	# prefix. This is the "screenshot brag" lever the user asked for.
+	var meta_roll: float = rng.randf()
+	if meta_roll < 0.001:
+		inst["meta_rarity"] = "primal"
+	elif meta_roll < 0.011:  # 1% (after the 0.1% primal slice)
+		inst["meta_rarity"] = "ancient"
+	# Per-instance recolor roll (~30% of drops get a hue shift; tiny
+	# fractions get shimmer/inverted/prismatic). Each hue carries a
+	# small stat lean — red leans strength, blue leans regen, etc.
+	# Even non-recolored items keep `tint` absent so the runtime
+	# can short-circuit the shader for free.
+	var tint_roll: float = rng.randf()
+	if tint_roll < 0.005:
+		# Prismatic — animated rainbow. ~0.5%.
+		inst["tint"] = {
+			"hue": rng.randf_range(0.0, 360.0),
+			"sat": 1.0,
+			"mode": "prismatic",
+			"lean": _hue_to_stat_lean(rng.randf_range(0.0, 360.0)),
+			"lean_pct": 15.0,
+		}
+	elif tint_roll < 0.015:
+		# Inverted — palette flipped. ~1%.
+		var h: float = rng.randf_range(0.0, 360.0)
+		inst["tint"] = {
+			"hue": h,
+			"sat": rng.randf_range(0.6, 1.2),
+			"mode": "inverted",
+			"lean": _hue_to_stat_lean(h),
+			"lean_pct": 12.0,
+		}
+	elif tint_roll < 0.045:
+		# Shimmer — animated highlight sweep. ~3%.
+		var h2: float = rng.randf_range(0.0, 360.0)
+		inst["tint"] = {
+			"hue": h2,
+			"sat": rng.randf_range(0.9, 1.3),
+			"mode": "shimmer",
+			"lean": _hue_to_stat_lean(h2),
+			"lean_pct": 10.0,
+		}
+	elif tint_roll < 0.30:
+		# Plain hue shift. ~25%.
+		var h3: float = rng.randf_range(0.0, 360.0)
+		inst["tint"] = {
+			"hue": h3,
+			"sat": rng.randf_range(0.7, 1.2),
+			"mode": "normal",
+			"lean": _hue_to_stat_lean(h3),
+			"lean_pct": 7.0,
+		}
 	# Per-instance "enchant" flavor roll. Static `flavor_tags` on the
 	# base item still apply (vampires_tooth is always vampiric); this
 	# layer adds an optional ADDITIONAL flavor on top, e.g. "Iron
@@ -1355,6 +1410,23 @@ func _create_item_instance(base_id: String) -> Dictionary:
 
 func _gen_instance_id() -> String:
 	return "%d_%d" % [Time.get_unix_time_from_system(), rng.randi()]
+
+# Map a hue (0–360°) to which stat the recolored item leans toward.
+# Mirrors the color-wheel intuition: red→strength, green→haste, etc.
+# Used by Bot.recompute_stats to apply a per-instance percentage
+# bonus on top of the base item stats.
+func _hue_to_stat_lean(hue: float) -> String:
+	hue = fmod(hue, 360.0)
+	if hue < 0.0:
+		hue += 360.0
+	if hue < 30.0:    return "atk"        # red
+	if hue < 60.0:    return "hp"         # orange — stamina-leaning
+	if hue < 100.0:   return "atk_speed"  # yellow → haste
+	if hue < 160.0:   return "haste"      # green
+	if hue < 200.0:   return "def"        # cyan → agility
+	if hue < 260.0:   return "regen"      # blue
+	if hue < 300.0:   return "crit"       # purple
+	return "atk"                          # magenta — back to red family
 
 func _spawn_loot_drop(instance: Dictionary, at_cell: Vector2i) -> void:
 	var base_id: String = String(instance.get("base_id", ""))
@@ -2167,7 +2239,7 @@ func _tick_interaction(delta: float) -> void:
 func _complete_loot_pickup(drop: LootDrop) -> void:
 	var inst: Dictionary = drop.instance
 	var item: Dictionary = drop.item
-	var display_name: String = AffixSystem.format_item_name(String(item.name), inst.get("affixes", []))
+	var display_name: String = AffixSystem.format_item_name(String(item.name), inst.get("affixes", []), inst)
 	floor_loot_picked += 1
 	dropped_items.append(inst)
 	# Append into this floor's segment (lazy-create on first pickup).

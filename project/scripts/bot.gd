@@ -209,10 +209,50 @@ func recompute_stats() -> void:
 		if base_id == "" or not _items_db_cache.has(base_id):
 			continue
 		var item: Dictionary = _items_db_cache[base_id]
-		max_hp += int(item.get("hp", 0))
-		atk += int(item.get("atk", 0))
-		defense += int(item.get("def", 0))
+		# Meta-rarity multiplier — Ancient = +20%, Primal = +50% on
+		# the item's BASE stats (atk/def/hp). Affixes are unaffected
+		# (they have their own tier ladder).
+		var meta: String = String(inst.get("meta_rarity", ""))
+		var meta_mult: float = 1.0
+		if meta == "ancient":
+			meta_mult = 1.20
+		elif meta == "primal":
+			meta_mult = 1.50
+		max_hp += int(round(float(item.get("hp", 0)) * meta_mult))
+		atk += int(round(float(item.get("atk", 0)) * meta_mult))
+		defense += int(round(float(item.get("def", 0)) * meta_mult))
+		# Per-instance recolor stat lean: a hue-tinted item gains a
+		# small percentage bonus to ONE stat depending on its hue
+		# (red→atk, blue→regen, etc — see dungeon._hue_to_stat_lean).
+		# This makes the recolor mechanically meaningful, not just a
+		# screenshot trinket.
+		var tint: Variant = inst.get("tint", null)
+		if typeof(tint) == TYPE_DICTIONARY:
+			var lean: String = String(tint.get("lean", ""))
+			var lean_pct: float = float(tint.get("lean_pct", 0.0)) / 100.0
+			match lean:
+				"atk":
+					atk += int(round(float(item.get("atk", 0)) * lean_pct))
+				"hp":
+					max_hp += int(round(float(item.get("hp", 0)) * lean_pct))
+				"def":
+					defense += int(round(float(item.get("def", 0)) * lean_pct))
+				# crit/haste/regen/atk_speed leans pile into the affix
+				# ladder downstream — accumulate intent in scratch
+				# vars consumed below.
+				"crit":      crit_sum += lean_pct * 100.0  # treat lean_pct as % chance
+				"haste":     haste_sum += lean_pct * 100.0
+				"atk_speed": haste_sum += lean_pct * 100.0
+				"regen":     gear_regen += lean_pct * 4.0  # ~4 regen-equivalent
 
+		# Item secondary stats — direct contributions from items.json
+		# fields, separate from the affix ladder. Lets uniques carry
+		# bespoke "this is what the item DOES" stats (e.g. amulet of
+		# air with built-in haste) without consuming an affix slot.
+		# All four are optional; missing = 0 contribution.
+		crit_sum  += float(item.get("crit_chance", 0))
+		haste_sum += float(item.get("atk_speed_pct", 0))
+		gear_regen += float(item.get("hp_regen", 0))
 		var sums: Dictionary = AffixSystem.sum_affix_stats(inst.get("affixes", []))
 		max_hp += int(sums.get("hp", 0))
 		atk += int(sums.get("atk", 0))
@@ -387,7 +427,7 @@ func _apply_rarity_decor(sprite: Sprite2D, inst: Variant, slot_id: String) -> vo
 	var flavor_tags: Array = UITheme.combined_flavor_tags(item, inst)
 	# Modulate folds in flavor color (vampiric=red, fire=orange, etc).
 	# Falls back to rarity tint when no priority tag is present.
-	sprite.modulate = UITheme.item_modulate(rarity, flavor_tags)
+	sprite.modulate = UITheme.item_modulate(rarity, flavor_tags, String(inst.get("meta_rarity", "")))
 	# Glow: sprite-localised via shader. Tags drive color first, rarity
 	# second. Returns alpha=0 when no glow should draw — short-circuit.
 	var glow_color: Color = UITheme.item_glow_color(rarity, flavor_tags)
@@ -516,7 +556,7 @@ func combat_weapon_tags() -> Array:
 # defensive flavor tags (thorns, reflective, harm, rage). Helms also
 # count for completeness. Multiple sources stack — a thorns shield +
 # thorns armor will return damage twice per hit, by design.
-const _DEF_SLOTS := ["armor", "shield", "helm", "amulet", "ring", "boots"]
+const _DEF_SLOTS := ["armor", "shield", "helm", "amulet", "ring", "boots", "gloves", "cloak"]
 
 func combat_defense_tags() -> Array:
 	var out: Array = []

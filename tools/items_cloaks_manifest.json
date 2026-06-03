@@ -1,0 +1,149 @@
+{
+  "format_version": 2,
+  "notes": "Cloak slot \u2014 DCSS ARM_CLOAK. Sprites under item/armor/ matching cloak shapes.",
+  "base_types": {
+    "cloak": {
+      "label": "Cloak"
+    }
+  },
+  "flavor_tags": {},
+  "drop_weight_schema": {
+    "description": "5 ints, T1..T5"
+  },
+  "items": [
+    {
+      "id": "ratskin_cloak",
+      "name": "Ratskin Cloak",
+      "base_type": "cloak",
+      "slot": "cloak",
+      "item_tier": 5,
+      "rarity": "legendary",
+      "tile": "item/armor/artefact/urand_ratskin_cloak.png",
+      "atk": 0,
+      "def": 16,
+      "hp": 230,
+      "flavor_tags": [
+        "stealth",
+        "regen"
+      ],
+      "lore": "Stitched from a thousand rats. They were a problem first.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        22
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "stamina": 15,
+        "agility": 25,
+        "regen": 35,
+        "crit": 10,
+        "haste": 25
+      },
+      "future_mechanic": "Disease immunity. Lower aggro range."
+    },
+    {
+      "id": "starlight_cloak",
+      "name": "Cloak of Starlight",
+      "base_type": "cloak",
+      "slot": "cloak",
+      "item_tier": 5,
+      "rarity": "legendary",
+      "tile": "item/armor/artefact/urand_starlight.png",
+      "atk": 0,
+      "def": 18,
+      "hp": 240,
+      "flavor_tags": [
+        "stealth",
+        "willpower"
+      ],
+      "lore": "Twilight clings to it. So does whatever's hunting you.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        4,
+        22
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "stamina": 20,
+        "agility": 35,
+        "regen": 15,
+        "crit": 10,
+        "haste": 25
+      },
+      "future_mechanic": "Periodically blinks the wearer 3 cells in a random direction during combat."
+    },
+    {
+      "id": "cloak_of_flash",
+      "name": "Cloak of Flash",
+      "base_type": "cloak",
+      "slot": "cloak",
+      "item_tier": 5,
+      "rarity": "legendary",
+      "tile": "item/armor/artefact/urand_flash.png",
+      "atk": 0,
+      "def": 10,
+      "hp": 130,
+      "flavor_tags": [
+        "swiftness",
+        "flying",
+        "thunderous"
+      ],
+      "lore": "When they move, light moves out of the way.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        25
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "strength": 15,
+        "agility": 35,
+        "crit": 10,
+        "haste": 90
+      },
+      "future_mechanic": "Periodic short-range blink in combat."
+    },
+    {
+      "id": "cloak_of_the_thief",
+      "name": "Cloak of the Thief",
+      "base_type": "cloak",
+      "slot": "cloak",
+      "item_tier": 5,
+      "rarity": "legendary",
+      "tile": "item/armor/artefact/urand_thief.png",
+      "atk": 0,
+      "def": 7,
+      "hp": 100,
+      "flavor_tags": [
+        "stealth",
+        "footwork"
+      ],
+      "lore": "They've left more places than they've entered.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        4,
+        22
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "agility": 60,
+        "crit": 10,
+        "haste": 40
+      },
+      "future_mechanic": "+10% chance to find extra gold per chest. Stealth bonus."
+    }
+  ]
+}

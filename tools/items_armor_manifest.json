@@ -925,74 +925,6 @@
       }
     },
     {
-      "id": "ratskin_cloak",
-      "name": "Ratskin Cloak",
-      "base_type": "leather",
-      "slot": "armor",
-      "item_tier": 5,
-      "rarity": "legendary",
-      "tile": "item/armor/artefact/urand_ratskin_cloak.png",
-      "atk": 0,
-      "def": 16,
-      "hp": 230,
-      "flavor_tags": [
-        "stealth",
-        "regen"
-      ],
-      "lore": "Stitched from a thousand rats. They were a problem first.",
-      "drop_weights": [
-        0,
-        0,
-        0,
-        5,
-        22
-      ],
-      "unique": true,
-      "future_mechanic": "Disease immunity. Lower aggro range.",
-      "enchant_chance": 0.0,
-      "affix_pool": {
-        "stamina": 15,
-        "agility": 25,
-        "regen": 35,
-        "crit": 10,
-        "haste": 25
-      }
-    },
-    {
-      "id": "starlight_cloak",
-      "name": "Starlight Cloak",
-      "base_type": "robe",
-      "slot": "armor",
-      "item_tier": 5,
-      "rarity": "legendary",
-      "tile": "item/armor/artefact/urand_starlight.png",
-      "atk": 0,
-      "def": 18,
-      "hp": 240,
-      "flavor_tags": [
-        "stealth",
-        "willpower"
-      ],
-      "lore": "Twilight clings to it. So does whatever's hunting you.",
-      "drop_weights": [
-        0,
-        0,
-        0,
-        4,
-        22
-      ],
-      "unique": true,
-      "future_mechanic": "Periodically blinks the wearer 3 cells in a random direction during combat.",
-      "enchant_chance": 0.0,
-      "affix_pool": {
-        "stamina": 20,
-        "agility": 35,
-        "regen": 15,
-        "crit": 10,
-        "haste": 25
-      }
-    },
-    {
       "id": "robe_of_misfortune",
       "name": "Robe of Misfortune",
       "base_type": "robe",
@@ -1022,38 +954,6 @@
         "stamina": 40,
         "agility": 25,
         "regen": 25
-      }
-    },
-    {
-      "id": "etheric_cage",
-      "name": "Etheric Cage",
-      "base_type": "plate",
-      "slot": "armor",
-      "item_tier": 5,
-      "rarity": "legendary",
-      "tile": "item/armor/artefact/urand_etheric_cage.png",
-      "atk": 0,
-      "def": 28,
-      "hp": 300,
-      "flavor_tags": [
-        "fortified",
-        "willpower"
-      ],
-      "lore": "An armor that holds its wearer in place. Spells slide off the bars.",
-      "drop_weights": [
-        0,
-        0,
-        0,
-        3,
-        18
-      ],
-      "unique": true,
-      "future_mechanic": "+50% magic resist. -10% move speed (drawback).",
-      "enchant_chance": 0.0,
-      "affix_pool": {
-        "stamina": 50,
-        "agility": 25,
-        "regen": 20
       }
     },
     {
@@ -1425,73 +1325,6 @@
       "affix_pool": {
         "stamina": 40,
         "regen": 50
-      }
-    },
-    {
-      "id": "lightning_scales",
-      "name": "Lightning Scales",
-      "base_type": "dragon_scales",
-      "slot": "armor",
-      "item_tier": 5,
-      "rarity": "legendary",
-      "tile": "item/armor/artefact/urand_lightning_scales.png",
-      "atk": 6,
-      "def": 20,
-      "hp": 215,
-      "flavor_tags": [
-        "thorns",
-        "elemental"
-      ],
-      "lore": "Crackles when struck. Doesn't always wait to be struck.",
-      "drop_weights": [
-        0,
-        0,
-        0,
-        5,
-        22
-      ],
-      "unique": true,
-      "future_mechanic": "Reflects 25% of melee as lightning damage to attacker.",
-      "enchant_chance": 0.0,
-      "affix_pool": {
-        "stamina": 20,
-        "agility": 15,
-        "regen": 20,
-        "crit": 20,
-        "haste": 10
-      }
-    },
-    {
-      "id": "robe_of_resistance",
-      "name": "Robe of Resistance",
-      "base_type": "robe",
-      "slot": "armor",
-      "item_tier": 5,
-      "rarity": "legendary",
-      "tile": "item/armor/artefact/urand_resistance.png",
-      "atk": 0,
-      "def": 14,
-      "hp": 220,
-      "flavor_tags": [
-        "fire_res",
-        "cold_res",
-        "willpower"
-      ],
-      "lore": "Worn by spell-eaters. Charred at the cuffs.",
-      "drop_weights": [
-        0,
-        0,
-        0,
-        5,
-        25
-      ],
-      "unique": true,
-      "future_mechanic": "All elemental resistances at +25%. -10% physical DEF (drawback).",
-      "enchant_chance": 0.0,
-      "affix_pool": {
-        "stamina": 70,
-        "agility": 10,
-        "regen": 45
       }
     },
     {

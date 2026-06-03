@@ -654,39 +654,6 @@
       }
     },
     {
-      "id": "shield_of_war",
-      "name": "The Shield of War",
-      "base_type": "kite_shield",
-      "slot": "shield",
-      "item_tier": 5,
-      "rarity": "legendary",
-      "tile": "item/armor/artefact/urand_war.png",
-      "atk": 0,
-      "def": 22,
-      "hp": 200,
-      "flavor_tags": [
-        "lordly",
-        "fortified"
-      ],
-      "lore": "Carried to a thousand battles. Always returned home.",
-      "drop_weights": [
-        0,
-        0,
-        0,
-        5,
-        25
-      ],
-      "unique": true,
-      "future_mechanic": "+15% damage when at full HP. +25% damage to bosses.",
-      "enchant_chance": 0.0,
-      "affix_pool": {
-        "strength": 15,
-        "stamina": 45,
-        "agility": 15,
-        "regen": 15
-      }
-    },
-    {
       "id": "bullseye",
       "name": "Bullseye",
       "base_type": "round_shield",
@@ -905,6 +872,39 @@
         "agility": 40,
         "regen": 30
       }
+    },
+    {
+      "id": "shield_of_resistance",
+      "name": "Shield of Resistance",
+      "base_type": "kite_shield",
+      "slot": "shield",
+      "item_tier": 5,
+      "rarity": "legendary",
+      "tile": "item/armor/artefact/urand_resistance.png",
+      "atk": 0,
+      "def": 14,
+      "hp": 220,
+      "flavor_tags": [
+        "fire_res",
+        "cold_res",
+        "willpower"
+      ],
+      "lore": "Worn by spell-eaters. Charred at the cuffs.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        25
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "stamina": 70,
+        "agility": 10,
+        "regen": 45
+      },
+      "future_mechanic": "All elemental resistances at +25%. -10% physical DEF (drawback)."
     }
   ]
 }

@@ -64,7 +64,7 @@ BIOMES_JSON = REPO_ROOT / "project" / "data" / "biomes.json"
 USER_DATA = Path.home() / "Library" / "Application Support" / "Godot" / "app_userdata" / "Botter"
 DEBUG_SAVE = USER_DATA / "botter_save_debug.json"
 
-VALID_SLOTS = {"weapon", "armor", "helm", "boots", "shield", "ring", "amulet"}
+VALID_SLOTS = {"weapon", "armor", "helm", "boots", "shield", "gloves", "cloak", "ring", "amulet"}
 VALID_RARITIES = ("common", "uncommon", "rare", "epic", "legendary")
 
 
@@ -131,6 +131,7 @@ def load_existing():
             "equipped": {
                 "weapon": None, "armor": None, "helm": None,
                 "boots": None, "shield": None,
+                "gloves": None, "cloak": None,
                 "ring": None, "amulet": None,
             },
             "runs_completed": 0,

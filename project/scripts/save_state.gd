@@ -34,6 +34,14 @@ static func _migrate(state: Dictionary) -> void:
 	# uses one `ring` slot. Promote ring1 (or ring2 if ring1 was empty); push
 	# the displaced ring2 item, if any, to the inventory so it isn't lost.
 	var equipped: Dictionary = state.get("equipped", {})
+	# Gloves + cloak slots added 2026-06-03. Ensure existing saves
+	# have the keys present (default null) so equip flow can populate
+	# them without missing-key errors. Forward-compat only — nothing
+	# to migrate AWAY from since these slots didn't exist before.
+	if not equipped.has("gloves"):
+		equipped["gloves"] = null
+	if not equipped.has("cloak"):
+		equipped["cloak"] = null
 	if not equipped.has("ring") or equipped.get("ring", null) == null:
 		var promote: Variant = equipped.get("ring1", null)
 		if promote == null:
@@ -87,6 +95,12 @@ static func _default() -> Dictionary:
 			"helm": null,
 			"boots": null,
 			"shield": null,
+			# DCSS-faithful slot list: ARM_GLOVES + ARM_CLOAK are
+			# distinct from boots/armor in DCSS. Adding them lets us
+			# correctly carry items like Fencer's Gloves and the
+			# Ratskin Cloak instead of forcing them into boots/armor.
+			"gloves": null,
+			"cloak": null,
 			# DCSS has two ring slots; we collapsed to one ring + one amulet
 			# (amulet fills the trinket role) — clearer UX, every slot is
 			# filled by something visually distinct, and players can always

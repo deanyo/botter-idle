@@ -53,6 +53,37 @@ static func combined_flavor_tags(item: Dictionary, inst: Variant) -> Array:
 			tags.append(enchant)
 	return tags
 
+# Meta-rarity tint colors. Ancient = warm gold, Primal = saturated
+# red. Returned as full Color (alpha=1.0) so callers can lerp toward
+# them with the same strength scheme used for rarity tints.
+const META_COLORS := {
+	"ancient": Color(1.0, 0.78, 0.30),
+	"primal":  Color(1.0, 0.18, 0.20),
+}
+
+static func meta_rarity_color(meta: String) -> Color:
+	return META_COLORS.get(meta, Color(0, 0, 0, 0))
+
+# Per-instance recoloring shader (item_recolor.gdshader). Returns a
+# ShaderMaterial when inst has a `tint` dict, else null. Caller assigns
+# to sprite.material. Cheap fragment shader so applying to many cells
+# is fine.
+const _ITEM_RECOLOR_SHADER := preload("res://assets/item_recolor.gdshader")
+const _MODE_INDEX := { "normal": 0, "shimmer": 1, "inverted": 2, "prismatic": 3 }
+
+static func recolor_material_for(inst: Variant) -> ShaderMaterial:
+	if typeof(inst) != TYPE_DICTIONARY:
+		return null
+	var tint: Variant = inst.get("tint", null)
+	if typeof(tint) != TYPE_DICTIONARY:
+		return null
+	var mat := ShaderMaterial.new()
+	mat.shader = _ITEM_RECOLOR_SHADER
+	mat.set_shader_parameter("hue", float(tint.get("hue", 0.0)))
+	mat.set_shader_parameter("saturation", float(tint.get("sat", 1.0)))
+	mat.set_shader_parameter("mode", int(_MODE_INDEX.get(String(tint.get("mode", "normal")), 0)))
+	return mat
+
 # Subtle rarity wash applied to item icons (paperdoll slots, inventory
 # cells, equipped slots) so the bot's gold legendary sword looks gold
 # in the inventory too — matches bot.gd::_apply_rarity_decor and
@@ -136,20 +167,30 @@ static func flavor_color_for(flavor_tags: Array) -> Color:
 			return FLAVOR_COLORS.get(tag, Color(0, 0, 0, 0))
 	return Color(0, 0, 0, 0)
 
-# Resolve the *effective* color for an item: a flavor tag wins over
-# rarity, and we lerp at the rarity strength so a common vampiric ring
+# Resolve the *effective* color for an item: meta-rarity > flavor tag
+# > rarity. Lerp at the rarity strength so a common vampiric ring
 # still tints (faintly) and a legendary vampiric ring is deep blood
-# red. Returns Color(1,1,1,1) when no tint applies.
-static func item_modulate(rarity: String, flavor_tags: Array = []) -> Color:
+# red. An Ancient item lerps toward gold; a Primal item lerps deep
+# red regardless of rarity/flavor. Returns Color(1,1,1,1) when no
+# tint applies.
+static func item_modulate(rarity: String, flavor_tags: Array = [], meta_rarity: String = "") -> Color:
 	var strength: float = float(_ICON_TINT_STRENGTH.get(rarity, 0.0))
-	# Multiply by the FX Tuner item_tint_strength slider (default 1.0)
-	# so dragging the slider visibly remaps every item's tint without
-	# touching the per-rarity table.
 	var slider: float = VideoSettings.tunable("item_tint_strength", 1.0)
 	strength = clampf(strength * slider, 0.0, 1.0)
-	# Flavor tags also imply at least uncommon-strength — items with
-	# meaningful tags should always read tagged, even on commons. The
-	# slider also scales the flavor floor so "0" really means "no tint."
+	# Meta-rarity wins over flavor + rarity. Always at least
+	# "epic-strength" lerp so it reads dramatically.
+	var meta_col: Color = meta_rarity_color(meta_rarity)
+	if meta_col.a > 0.0:
+		var ms: float = max(strength, clampf(0.55 * slider, 0.0, 1.0))
+		return Color(
+			lerp(1.0, meta_col.r, ms),
+			lerp(1.0, meta_col.g, ms),
+			lerp(1.0, meta_col.b, ms),
+			1.0,
+		)
+	# Flavor tags imply at least uncommon-strength — items with
+	# meaningful tags always read tagged, even on commons. Slider
+	# scales the flavor floor so "0" really means "no tint."
 	var fc: Color = flavor_color_for(flavor_tags)
 	if fc.a > 0.0:
 		strength = max(strength, clampf(0.30 * slider, 0.0, 1.0))

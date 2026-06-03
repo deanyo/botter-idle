@@ -365,7 +365,10 @@ func _make_item_cell(idx: int, inst: Dictionary, item: Dictionary, is_inventory:
 	var tile_path: String = ITEM_TILE_DIR + String(item.get("tile", ""))
 	if ResourceLoader.exists(tile_path):
 		sprite.texture = load(tile_path)
-	sprite.modulate = UITheme.item_modulate(rarity, UITheme.combined_flavor_tags(item, inst))
+	sprite.modulate = UITheme.item_modulate(rarity, UITheme.combined_flavor_tags(item, inst), String(inst.get("meta_rarity", "")))
+	var sh_recolor: ShaderMaterial = UITheme.recolor_material_for(inst)
+	if sh_recolor != null:
+		sprite.material = sh_recolor
 	cell.add_child(sprite)
 	# Price label below the sprite.
 	var price: int = _sell_price(inst, item) if is_inventory else _buy_price(item)

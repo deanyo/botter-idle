@@ -536,37 +536,6 @@
       }
     },
     {
-      "id": "fencer_slippers",
-      "name": "Fencer's Slippers",
-      "base_type": "shoes",
-      "slot": "boots",
-      "item_tier": 5,
-      "rarity": "legendary",
-      "tile": "item/armor/artefact/urand_fencer_new.png",
-      "atk": 0,
-      "def": 7,
-      "hp": 100,
-      "flavor_tags": [
-        "footwork",
-        "swiftness"
-      ],
-      "lore": "They lead. The rest of the body follows.",
-      "drop_weights": [
-        0,
-        0,
-        0,
-        5,
-        25
-      ],
-      "unique": true,
-      "future_mechanic": "+15% dodge chance. +10% crit chance.",
-      "enchant_chance": 0.0,
-      "affix_pool": {
-        "agility": 50,
-        "haste": 50
-      }
-    },
-    {
       "id": "assassins_boots",
       "name": "Assassin's Boots",
       "base_type": "shoes",
@@ -596,72 +565,6 @@
         "agility": 40,
         "crit": 10,
         "haste": 60
-      }
-    },
-    {
-      "id": "thiefs_boots",
-      "name": "Thief's Boots",
-      "base_type": "shoes",
-      "slot": "boots",
-      "item_tier": 5,
-      "rarity": "legendary",
-      "tile": "item/armor/artefact/urand_thief.png",
-      "atk": 0,
-      "def": 7,
-      "hp": 100,
-      "flavor_tags": [
-        "stealth",
-        "footwork"
-      ],
-      "lore": "They've left more places than they've entered.",
-      "drop_weights": [
-        0,
-        0,
-        0,
-        4,
-        22
-      ],
-      "unique": true,
-      "future_mechanic": "+10% chance to find extra gold per chest. Stealth bonus.",
-      "enchant_chance": 0.0,
-      "affix_pool": {
-        "agility": 60,
-        "crit": 10,
-        "haste": 40
-      }
-    },
-    {
-      "id": "flashboots",
-      "name": "Boots of Flash",
-      "base_type": "treads",
-      "slot": "boots",
-      "item_tier": 5,
-      "rarity": "legendary",
-      "tile": "item/armor/artefact/urand_flash.png",
-      "atk": 0,
-      "def": 10,
-      "hp": 130,
-      "flavor_tags": [
-        "swiftness",
-        "flying",
-        "thunderous"
-      ],
-      "lore": "When they move, light moves out of the way.",
-      "drop_weights": [
-        0,
-        0,
-        0,
-        5,
-        25
-      ],
-      "unique": true,
-      "future_mechanic": "Periodic short-range blink in combat.",
-      "enchant_chance": 0.0,
-      "affix_pool": {
-        "strength": 15,
-        "agility": 35,
-        "crit": 10,
-        "haste": 90
       }
     },
     {
@@ -698,6 +601,40 @@
         "crit": 10,
         "haste": 50
       }
+    },
+    {
+      "id": "lightning_scales",
+      "name": "Lightning Scales",
+      "base_type": "iron_boots",
+      "slot": "boots",
+      "item_tier": 5,
+      "rarity": "legendary",
+      "tile": "item/armor/artefact/urand_lightning_scales.png",
+      "atk": 6,
+      "def": 20,
+      "hp": 215,
+      "flavor_tags": [
+        "thorns",
+        "elemental"
+      ],
+      "lore": "Crackles when struck. Doesn't always wait to be struck.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        22
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "stamina": 20,
+        "agility": 15,
+        "regen": 20,
+        "crit": 20,
+        "haste": 10
+      },
+      "future_mechanic": "Reflects 25% of melee as lightning damage to attacker."
     }
   ]
 }
