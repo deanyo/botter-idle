@@ -55,36 +55,47 @@ User reported four issues from a real playtest. Status as of this beat:
   flavor_tag a base item couldn't have, but with stats below regular
   legendaries. Editor: `tools/item_editor.html`. ~1-2h.
 
-- ⬜ **Enemy variation via size + aura + rare/elite packs (PoE-style).**
-  We have ~177 enemies in `enemies.json` but most floors feel sample-y
-  because the same id renders identically each time. Path of Exile
-  (and Diablo) get huge variety from the same base monster pool by
-  layering modifiers:
-  - **Magic / rare / unique pack tiers** — re-skinned versions of
-    the same monster id with extra HP/ATK and 1-3 randomized
-    "monster mods" (extra fast, lightning thorns, vulnerable, on-
-    death AoE, summons phantasms, etc). Each tier has its own
-    visual signature: magic = blue tint + small sparkle aura, rare
-    = yellow tint + larger pulsing aura + named, unique = unique
-    fixed stats + persistent ground effect.
-  - **Size variance** — apply `visual_scale` jitter to non-boss
-    enemies (0.85–1.15× per spawn) so 4 worker ants in a cluster
-    look organic instead of cloned.
-  - **Aura packs** — rare mobs project a colored radial aura the
-    bot's nearby enemies inherit a tag from (e.g. "Hasted aura"
-    speeds nearby allies' attack interval). Same ENCH/HALO machinery
-    we already have for the bot, applied to enemies.
-  - **Pack composition** — DCSS already does some of this with
-    miniboss + mob spawn rules; PoE goes further with named
-    modifier rolls and "rare pack of 6" telegraphs.
-  Implementation sketch: `enemy.gd` gains `pack_tier` (normal/magic/
-  rare/unique) and `pack_mods: Array[String]`. `dungeon.gd::_spawn_*`
-  rolls 5-10% magic, 1-2% rare per spawn (rates increase by branch
-  tier). Mods table in `data/monster_mods.json`. HALO sprite reused
-  for the rare aura. Per-monster size jitter is a one-line change in
-  the spawn path. Read PoE wiki "Monster mods" + "Map difficulty"
-  pages plus DCSS `mon-info.cc` for the existing miniboss/champion
-  hooks. ~1-2 day beat. High variety-per-effort ratio.
+- ✅ **Weapon-swing particle trails per flavor tag** (shipped 2026-06-02).
+  `weapon_trails.gd` builds GPUParticles2D bursts per flavor (fire ember
+  sparks, cold frost shards, vampiric blood drips, thunderous arcs,
+  holy gold motes, poison wisps) and emits on every swing. Lazy node
+  creation, one_shot particles. Slider-tunable amount + lifetime via
+  FX Tuner.
+
+- ✅ **Bot-side enchant glow on the wielding hand** (shipped 2026-06-02).
+  `bot.gd::_apply_hand_enchant_ambience` parents a soft radial glow
+  to the rig at -8x offset (anatomical weapon hand on DCSS sprite).
+  Auto-mirrors when the bot flips facing because the offset rides on
+  rig.scale.x. Slider-tunable alpha + scale.
+
+- ✅ **Enemy variation: size jitter + magic/rare pack mods** (shipped
+  2026-06-03). Per-spawn `visual_scale` jitter 0.85-1.15× on
+  non-boss/non-miniboss/non-champion enemies. PoE-style pack tier
+  system: 7%/1.2% magic/rare base rates at T1, scaling 1.5× per
+  branch tier (T5 ≈ 35%/6%). 6 starter mods in `data/monster_mods.json`
+  (hasted/tough/vicious/vampiric_pack/regenerating/stalwart) compose
+  via random sampling without replacement. Magic = +20% HP/+10% ATK
+  + 1 mod + blue tint + small aura; rare = +60% HP/+30% ATK + 2 mods
+  + yellow tint + larger pulsing aura + named ("Hasted Vicious Goblin").
+  Vampiric pack mod feeds through `combat_defense_tags()` so existing
+  Bot tag mechanics apply automatically. Validated 2-run grind:
+  61 pack spawns, every mod fired, no stutters.
+
+  Followups (deferred):
+  - ⬜ **Pack auras affect nearby allies.** Currently mods are self-
+    only — a rare with "Hasted" speeds itself but doesn't grant
+    haste to packmates. PoE-style aura wiring would need a per-
+    frame proximity scan. Skip until needed.
+  - ⬜ **Unique-tier monsters.** Hand-authored single-instance bosses
+    with persistent ground effects, spawned once per floor (or per
+    branch). Big design lift; defer.
+  - ⬜ **Enemy regen tick.** `regenerating` mod is currently a no-op
+    because `Actor.tick_statuses` doesn't tick `hp_regen_per_sec`
+    on enemies (only Bot.process does). Add a generic actor-side
+    regen tick path so the mod actually heals.
+  - ⬜ **More mod variety.** Reflective/thorns/elemental_aura
+    monster mods would cover more PoE archetypes. Wire as
+    additional entries in `monster_mods.json`.
 
 ## Future balance beats (deferred per 2026-06-02 validation)
 

@@ -16,6 +16,7 @@ extends CanvasLayer
 
 const VS := preload("res://scripts/video_settings.gd")
 const VIDEO_OPTIONS_SCENE := preload("res://scenes/video_options.tscn")
+const FX_TUNER_SCENE := preload("res://scenes/fx_tuner.tscn")
 
 signal resume_requested
 signal video_settings_requested
@@ -91,8 +92,8 @@ func _build() -> void:
 	_panel_root.anchor_bottom = 0.5
 	_panel_root.offset_left = -180
 	_panel_root.offset_right = 180
-	_panel_root.offset_top = -210
-	_panel_root.offset_bottom = 210
+	_panel_root.offset_top = -240
+	_panel_root.offset_bottom = 240
 	_panel_root.mouse_filter = Control.MOUSE_FILTER_PASS
 	add_child(_panel_root)
 
@@ -140,12 +141,13 @@ func _rebuild_buttons() -> void:
 		_button_holder.queue_free()
 	_button_holder = VBoxContainer.new()
 	_button_holder.position = Vector2(40, 100)
-	_button_holder.size = Vector2(280, 290)
+	_button_holder.size = Vector2(280, 350)
 	_button_holder.add_theme_constant_override("separation", 10)
 	_panel_root.add_child(_button_holder)
 
 	_button_holder.add_child(_make_button("Resume", _resume))
 	_button_holder.add_child(_make_button("Video Settings", _open_video_settings))
+	_button_holder.add_child(_make_button("FX Tuner", _open_fx_tuner))
 	if in_dungeon:
 		_button_holder.add_child(_make_button("Abandon Run", _abandon, COL_DIM))
 	if not in_main_menu:
@@ -163,9 +165,15 @@ func _make_button(text: String, on_pressed: Callable, fg: Color = COL_AMBER) -> 
 	return btn
 
 func _open_video_settings() -> void:
+	_open_overlay(VIDEO_OPTIONS_SCENE)
+
+func _open_fx_tuner() -> void:
+	_open_overlay(FX_TUNER_SCENE)
+
+func _open_overlay(scene: PackedScene) -> void:
 	_panel_root.visible = false
-	var opts: Node = VIDEO_OPTIONS_SCENE.instantiate()
-	# Keep the underlay so the screen stays dimmed under settings.
+	var opts: Node = scene.instantiate()
+	# Keep the underlay so the screen stays dimmed beneath the overlay.
 	_video_overlay = opts as Control
 	add_child(_video_overlay)
 	if _video_overlay.has_signal("back_pressed"):

@@ -13,10 +13,14 @@ signal boss_killed(branch_id: String)
 
 const ENEMIES_PATH := "res://data/enemies.json"
 const ITEMS_PATH := "res://data/items.json"
+const MONSTER_MODS_PATH := "res://data/monster_mods.json"
 const ENEMY_TILE_DIR := "res://assets/tiles/enemies/"
 
 var enemy_data: Dictionary = {}
 var items_db: Dictionary = {}
+# Pack-tier modifiers (PoE-style). Loaded once at run start; rolled
+# per-spawn for non-boss/non-miniboss/non-champion enemies.
+var monster_mods: Array = []
 var pathing: Path
 var grid: Array
 var rooms: Array
@@ -111,6 +115,11 @@ var _boss_floor: int = 6
 var _inventory_cap: int = 50
 var _run_salvaged_count: int = 0
 var _run_salvaged_gold: int = 0
+# Auto-salvage runs deferred (floor end + run end) so each individual
+# pickup never pays for the segment-shrink HUD rebuild. The previous
+# inline call ran on every pickup once cap was hit, which was the
+# loot-pickup stutter the user reported.
+var _pending_salvage_check: bool = false
 const MAX_TICKS_WITHOUT_MOVE := 30
 var chrome: HudChrome = null
 var run_turn: int = 0
@@ -138,6 +147,16 @@ func _ready() -> void:
 		rng.randomize()
 	enemy_data = _load_json(ENEMIES_PATH)
 	items_db = _load_items(ITEMS_PATH)
+	monster_mods = _load_monster_mods()
+	# Layer ordering: floor base + wall/edge overlays draw at z=0/1 inside
+	# MapLayer. Pin ActorLayer to z=10 so every actor + interactable +
+	# ambient decor sits above ALL map tiles. Without this, the
+	# overlay_layer (z=1) renders ON TOP of stairs/altars/chests/enemies
+	# in dense biomes like hive — user-reported bug 2026-06-03.
+	# Enemies + interactables don't need per-instance z_index after this;
+	# the layer's z_index sets the floor for all of them.
+	if actor_layer != null:
+		actor_layer.z_index = 10
 	# FlickerDriver animates every PointLight2D with a "flicker" meta dict.
 	# Single shared driver keeps cost predictable.
 	add_child(FlickerDriver.new())
@@ -1088,18 +1107,61 @@ func _spawn_specific(id: String, at_cell: Vector2i) -> void:
 	var e := Enemy.new()
 	actor_layer.add_child(e)
 	var is_champion: bool = (not def.boss) and rng.randf() < 0.012
+	# Pack tier roll. Skip for champions (already special) and bosses
+	# (their own treatment). Magic/rare are PoE-style modifiers on top
+	# of the base creature.
+	var pack_tier: int = Enemy.PACK_NORMAL
+	if not bool(def.boss) and not is_champion:
+		var src_tier: int = int(current_biome.get("tier", 1))
+		pack_tier = _roll_pack_tier(src_tier)
+	var picked_mods: Array = []
+	if pack_tier == Enemy.PACK_MAGIC:
+		picked_mods = _pick_pack_mods(1)
+	elif pack_tier == Enemy.PACK_RARE:
+		picked_mods = _pick_pack_mods(2)
+	# Build the display name: rare gets its mod labels prefixed
+	# (e.g. "Hasted Vicious Goblin"), magic gets a faint marker, normal
+	# stays vanilla.
+	var base_name: String = String(def.name)
+	if is_champion:
+		base_name = "Champion " + base_name
+	if pack_tier == Enemy.PACK_RARE:
+		var prefix: PackedStringArray = []
+		for m in picked_mods:
+			prefix.append(String(m.get("label", "")))
+		e.display_name = " ".join(prefix) + " " + base_name
+		e.display_name = e.display_name.strip_edges()
+	elif pack_tier == Enemy.PACK_MAGIC and not picked_mods.is_empty():
+		e.display_name = "%s %s" % [String(picked_mods[0].get("label", "")), base_name]
+	else:
+		e.display_name = base_name
 	e.enemy_id = id
-	e.display_name = ("Champion " + str(def.name)) if is_champion else def.name
-	e.xp_reward = int(def.xp) * (3 if is_champion else 1)
+	# Pack-tier xp scaling — magic 1.5x, rare 3x. Same shape as champion.
+	var pack_xp_mult: float = 1.0
+	if pack_tier == Enemy.PACK_MAGIC: pack_xp_mult = 1.5
+	elif pack_tier == Enemy.PACK_RARE: pack_xp_mult = 3.0
+	e.xp_reward = int(round(float(def.xp) * (3.0 if is_champion else 1.0) * pack_xp_mult))
 	e.is_boss = bool(def.boss)
+	e.pack_tier = pack_tier
 	var floor_mult: float = pow(1.10, current_floor - 1)
 	# Branch tier multiplier — turns the same enemy IDs into Tier-5
 	# nightmares without bespoke per-tier enemy data. See constants.gd
 	# TIER_SCALE.
 	var tier_mult: float = _branch_tier_mult()
 	var champ_mult: float = 1.5 if is_champion else 1.0
-	e.max_hp = int(round(float(def.hp) * floor_mult * tier_mult * champ_mult))
-	e.atk = int(round(float(def.atk) * floor_mult * tier_mult * champ_mult))
+	# Pack stat bumps — magic +20% HP/+10% ATK, rare +60% HP/+30% ATK.
+	# Multiplicative on top of champion/floor/tier so the strongest
+	# scenarios (T5 floor 6 rare champion) read as appropriately scary.
+	var pack_hp_mult: float = 1.0
+	var pack_atk_mult: float = 1.0
+	if pack_tier == Enemy.PACK_MAGIC:
+		pack_hp_mult = 1.20
+		pack_atk_mult = 1.10
+	elif pack_tier == Enemy.PACK_RARE:
+		pack_hp_mult = 1.60
+		pack_atk_mult = 1.30
+	e.max_hp = int(round(float(def.hp) * floor_mult * tier_mult * champ_mult * pack_hp_mult))
+	e.atk = int(round(float(def.atk) * floor_mult * tier_mult * champ_mult * pack_atk_mult))
 	e.defense = int(round(float(def.def) * floor_mult * tier_mult * (1.2 if is_champion else 1.0)))
 	e.hp = e.max_hp
 	e.move_speed = float(def.speed) * 4.0
@@ -1107,11 +1169,18 @@ func _spawn_specific(id: String, at_cell: Vector2i) -> void:
 	if tex:
 		e.set_texture(tex)
 		# Data-driven visual scale. Champion variants stack on top of base.
+		# Per-spawn jitter (0.85..1.15) keeps a cluster of identical mob
+		# IDs from looking like clones — only applied to rank-and-file
+		# (non-boss / non-miniboss / non-champion) so important silhouettes
+		# stay recognizable.
 		var base_scale: float = float(def.get("visual_scale", 1.0))
 		var anchor: String = String(def.get("visual_anchor", "centre"))
 		var vz: int = int(def.get("visual_z", 1 if base_scale > 1.0 else 0))
 		var champ_visual: float = 1.25 if is_champion else 1.0
-		e.apply_visual_scale(base_scale * champ_visual, anchor, vz)
+		var jitter: float = 1.0
+		if not bool(def.boss) and not is_champion:
+			jitter = rng.randf_range(0.85, 1.15)
+		e.apply_visual_scale(base_scale * champ_visual * jitter, anchor, vz)
 		if is_champion and e.rig:
 			e.rig.modulate = Color(1.0, 0.85, 1.3)
 			e.fx = SpriteFX.new(e.rig, e.sprite)
@@ -1120,6 +1189,17 @@ func _spawn_specific(id: String, at_cell: Vector2i) -> void:
 		var enemy_light_spec: String = String(def.get("light_spec", ""))
 		if enemy_light_spec != "":
 			LightSpec.attach(e, enemy_light_spec)
+	# Apply pack mods after stat init so they multiply / add to the
+	# champion-scaled values.
+	for mod in picked_mods:
+		e.pack_mods.append(String(mod.get("id", "")))
+		_apply_pack_mod(e, mod)
+	# Pack visuals (tint + aura) — last so they sit on top of any
+	# champion/light effects already applied.
+	e.apply_pack_visuals()
+	if pack_tier != Enemy.PACK_NORMAL and GrindLog._enabled:
+		var tier_label: String = "rare" if pack_tier == Enemy.PACK_RARE else "magic"
+		GrindLog.log_line("[pack] tier=%s id=%s mods=%s" % [tier_label, id, str(e.pack_mods)])
 	e.place_at(at_cell)
 	# Stagger initial repath so a freshly-spawned horde doesn't all repath
 	# on the same frame. Spread across the full REPATH_INTERVAL.
@@ -2025,10 +2105,12 @@ func _complete_loot_pickup(drop: LootDrop) -> void:
 	_ensure_current_floor_segment()
 	(_loot_segments[_current_floor_segment_index].items as Array).append(inst)
 	_rebuild_inv_cache()
-	# If the cap is now exceeded, auto-salvage the oldest filtered-rarity
-	# items to gold. Player's loot filter doubles as the salvage threshold —
-	# anything strictly above it is protected.
-	_maybe_auto_salvage()
+	# Auto-salvage is deferred to floor-end / run-end so the HUD never
+	# pays the segment-shrink rebuild cost mid-combat. The cap is a
+	# soft cap during a run; the next descent / death flushes overflow.
+	# Inline call ran on every pickup once cap was hit, which was the
+	# loot stutter we tracked down.
+	_pending_salvage_check = true
 	_push_inventory_to_hud()
 	loot_log.append("Looted: [%s] %s" % [item.rarity, display_name])
 	_log("Found: %s [%s]" % [display_name, item.rarity], "loot")
@@ -2329,6 +2411,11 @@ func _room_center(r: Rect2i) -> Vector2i:
 	return Vector2i(r.position.x + int(r.size.x / 2.0), r.position.y + int(r.size.y / 2.0))
 
 func _descend() -> void:
+	# Flush any deferred auto-salvage now that the floor is over —
+	# the HUD rebuild happens during the load screen, not mid-combat.
+	if _pending_salvage_check:
+		_pending_salvage_check = false
+		_maybe_auto_salvage()
 	# Per-floor summary line — one structured row per cleared floor. Emitted
 	# before floor_cleared so consumers see the data first.
 	var ticks: int = Engine.get_process_frames() - floor_start_tick
@@ -2401,6 +2488,12 @@ func _try_death_retreat(reason: String) -> bool:
 	return true
 
 func _end_run(victory: bool) -> void:
+	# Final salvage pass before we serialize. Done unconditionally so
+	# the saved inventory respects the cap even if the run ended on a
+	# pickup that overflowed without a chance to flush.
+	if _pending_salvage_check or _hud_inv_cache.size() > _inventory_cap:
+		_pending_salvage_check = false
+		_maybe_auto_salvage()
 	# Loot is loot — banked on victory or death. The idle-game loop is "watch
 	# the bot fill your stash"; a 50% death tax punishes idle play.
 	var save: Dictionary = SaveState.load_state()
@@ -2454,6 +2547,13 @@ func _chebyshev(a: Vector2i, b: Vector2i) -> int:
 	return maxi(abs(a.x - b.x), abs(a.y - b.y))
 
 func _random_walkable_cell_far_from_bot() -> Vector2i:
+	# Try the strict ≥6 chebyshev pick first. If the rolling loop fails
+	# (tight floors / caves layouts with bot in the middle), DO NOT fall
+	# through to a deterministic top-left scan — that's the bug that
+	# stacks every enemy + interactable on the north tile when the
+	# strict path rejects too many candidates. Instead, collect all
+	# valid floor cells and weight-pick by chebyshev so we still get
+	# spread without a hard floor on distance.
 	for _i in 200:
 		var x: int
 		var y: int
@@ -2471,12 +2571,23 @@ func _random_walkable_cell_far_from_bot() -> Vector2i:
 		var cell := Vector2i(x, y)
 		if _chebyshev(cell, bot.cell) > 6:
 			return cell
-	# fallback: any walkable cell
+	# Fallback: collect every walkable cell, prefer the farthest from
+	# the bot but pick randomly within the top decile so spawn waves
+	# don't deterministically pile on a single cell.
+	var candidates: Array[Vector2i] = []
 	for y in grid.size():
 		for x in grid[0].size():
-			if grid[y][x] == C.T_FLOOR and Vector2i(x, y) != bot.cell:
-				return Vector2i(x, y)
-	return bot.cell
+			if grid[y][x] == C.T_FLOOR:
+				var c := Vector2i(x, y)
+				if c != bot.cell:
+					candidates.append(c)
+	if candidates.is_empty():
+		return bot.cell
+	# Sort by chebyshev DESC; sample from the farthest 25% so caller
+	# still gets a "far from bot" cell but not the same one every call.
+	candidates.sort_custom(func(a, b): return _chebyshev(a, bot.cell) > _chebyshev(b, bot.cell))
+	var pool_size: int = maxi(1, int(candidates.size() / 4))
+	return candidates[rng.randi_range(0, pool_size - 1)]
 
 func _pick_boss_room() -> Vector2i:
 	if not rooms.is_empty():
@@ -2886,3 +2997,68 @@ func _load_items(path: String) -> Dictionary:
 	for it in raw.get("items", []):
 		by_id[it.id] = it
 	return by_id
+
+func _load_monster_mods() -> Array:
+	var raw: Dictionary = _load_json(MONSTER_MODS_PATH)
+	return raw.get("mods", [])
+
+# PoE-style pack tier system. Roll a tier per non-boss/non-miniboss/
+# non-champion spawn; magic = +20% HP / +10% ATK / 1 mod, rare =
+# +60% HP / +30% ATK / 2 mods. Roll rate scales with branch tier so
+# T1 stays mostly normal mobs while T5 packs visible color/aura
+# variety. Champions skip the roll — they already have their own
+# visual treatment, double-tagging would clash.
+const _PACK_RARE_BASE_RATE := 0.012   # 1.2% at T1, scales up
+const _PACK_MAGIC_BASE_RATE := 0.07   # 7% at T1, scales up
+
+func _roll_pack_tier(branch_tier: int) -> int:
+	# Branch tier scales each rate by ~1.5× per tier. T1: 1.2/7%,
+	# T2: 1.8/10.5, T3: 2.7/15.7, T4: 4/24, T5: 6/35.
+	var scale: float = pow(1.5, float(maxi(branch_tier - 1, 0)))
+	var rare_rate: float = _PACK_RARE_BASE_RATE * scale
+	var magic_rate: float = _PACK_MAGIC_BASE_RATE * scale
+	var r: float = rng.randf()
+	if r < rare_rate:
+		return Enemy.PACK_RARE
+	if r < rare_rate + magic_rate:
+		return Enemy.PACK_MAGIC
+	return Enemy.PACK_NORMAL
+
+# Pick N distinct mods. Random sample without replacement so a rare
+# can't get two copies of "Hasted." Returns array of mod dict refs.
+func _pick_pack_mods(count: int) -> Array:
+	if monster_mods.is_empty() or count <= 0:
+		return []
+	var pool: Array = monster_mods.duplicate()
+	pool.shuffle()
+	return pool.slice(0, mini(count, pool.size()))
+
+# Apply a mod's stat / behavior payload to a freshly-spawned enemy.
+# Operates BEFORE pack-tier hp/atk multipliers so the percentages
+# compose cleanly. The mod's flavor_tags get pushed onto the enemy's
+# defender-tag pipeline so existing combat hooks (vampiric leech etc)
+# fire without per-mod special-casing.
+func _apply_pack_mod(e: Enemy, mod: Dictionary) -> void:
+	var atk_pct: float = float(mod.get("atk_pct", 0.0))
+	var def_pct: float = float(mod.get("def_pct", 0.0))
+	var hp_pct: float = float(mod.get("hp_pct", 0.0))
+	if atk_pct != 0.0:
+		e.atk = int(round(float(e.atk) * (1.0 + atk_pct / 100.0)))
+	if def_pct != 0.0:
+		e.defense = int(round(float(e.defense) * (1.0 + def_pct / 100.0)))
+	if hp_pct != 0.0:
+		e.max_hp = int(round(float(e.max_hp) * (1.0 + hp_pct / 100.0)))
+		e.hp = e.max_hp
+	var atk_speed_pct: float = float(mod.get("atk_speed_pct", 0.0))
+	if atk_speed_pct != 0.0:
+		# Same shape as bot's haste: shorten the attack interval.
+		e.attack_interval = e.attack_interval / (1.0 + atk_speed_pct / 100.0)
+	var move_speed_mult: float = float(mod.get("move_speed_mult", 1.0))
+	if move_speed_mult != 1.0:
+		e.move_speed *= move_speed_mult
+	# hp_regen_per_sec: Actor doesn't tick its own regen (only Bot does),
+	# so a regenerating monster mod would need an enemy regen tick path.
+	# Stub for now — declared in monster_mods.json so the slot exists,
+	# but functionally a no-op until an enemy regen ticker lands. TODO.
+	for tag in mod.get("flavor_tags", []):
+		e.add_pack_defense_tag(String(tag))

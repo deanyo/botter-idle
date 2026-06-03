@@ -5,6 +5,7 @@ const REPORT_SCENE := preload("res://scenes/run_report.tscn")
 const OUTPOST_SCENE := preload("res://scenes/outpost.tscn")
 const MAIN_MENU_SCENE := preload("res://scenes/main_menu.tscn")
 const VIDEO_OPTIONS_SCENE := preload("res://scenes/video_options.tscn")
+const FX_TUNER_SCENE := preload("res://scenes/fx_tuner.tscn")
 const VS := preload("res://scripts/video_settings.gd")
 const _PauseMenu := preload("res://scripts/pause_menu.gd")
 
@@ -192,11 +193,18 @@ func _show_main_menu() -> void:
 	_swap(menu)
 	menu.play_pressed.connect(_show_outpost)
 	menu.video_options_pressed.connect(_show_video_options)
+	if menu.has_signal("fx_tuner_pressed"):
+		menu.fx_tuner_pressed.connect(_show_fx_tuner)
 
 func _show_video_options() -> void:
 	var opts: Node = VIDEO_OPTIONS_SCENE.instantiate()
 	_swap(opts)
 	opts.back_pressed.connect(_show_main_menu)
+
+func _show_fx_tuner() -> void:
+	var tuner: Node = FX_TUNER_SCENE.instantiate()
+	_swap(tuner)
+	tuner.back_pressed.connect(_show_main_menu)
 
 var _selected_branch: String = ""
 

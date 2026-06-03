@@ -272,6 +272,44 @@ When porting a DCSS algorithm:
   used in this program are from the public domain roguelike tileset
   RLTiles. http://rltiles.sf.net"* and credit DCSS contributors (CC0).
 
+## Visual-tuning UIs — the FX Tuner pattern
+
+Whenever a visual subsystem ships a "how strong should this be" knob
+(glow alpha, particle count, shader thickness, etc.), expose it via
+the **FX Tuner pattern** rather than baking magic numbers into code:
+
+1. **Persist as a tunable in `VideoSettings.GFX_TUNABLE_DEFAULTS`**
+   (`scripts/video_settings.gd`). Add a key, default, and forward-
+   compat merge logic. Read at the call site via
+   `VideoSettings.tunable("key", fallback)`.
+2. **Add a slider row to FX Tuner** in `fx_tuner.gd::_TUNABLE_ROWS`
+   (`scripts/fx_tuner.gd`). The screen rebuilds the live preview
+   on every slider change.
+3. **Expose flavor / mode pickers** when the effect has variants
+   the user might want to A/B (flavor tag colors, effect type,
+   pack tier, etc.). The Effect picker lets the user isolate
+   *just* the thing they're tuning so it doesn't get masked.
+4. **Save the FX Tuner settings to the JSON store via the same
+   `VideoSettings` save pipeline** — no parallel persistence layer.
+5. **Export to clipboard** is mandatory — the user pastes their
+   preferred setup back for review/merging into defaults. The
+   button's already in `fx_tuner.gd::_export_settings`; new
+   tunables ride on top automatically.
+
+Entry points: Main Menu → "FX Tuner" button + Pause Menu → "FX
+Tuner" button. **Both** must work — the user shouldn't have to be
+in a run to tune visuals.
+
+The FX Tuner panel uses pure-black background (`Color(0,0,0,1)`) so
+faint alpha effects read against neutral, not the slightly-blue
+chrome panels. **Visibility** of low-alpha glows / trails matters
+more than UI palette consistency on this specific screen.
+
+When in doubt: if a magic number controls a visual, it should be a
+slider. If a visual has variants, it should be a picker. If the user
+ever asks "can you tweak X", the answer should already be "go to FX
+Tuner."
+
 ## Plan mode for multi-step work
 
 When a request will touch **4+ files** or changes architecture (new

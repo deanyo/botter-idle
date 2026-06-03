@@ -4,8 +4,59 @@ Point-in-time snapshot of what's actually shipping. Updated as we go. The
 durable rules and process live in `CLAUDE.md`; the roadmap and open work
 items live in `TODO.md`.
 
-Last refresh: 2026-06-02 (playtest fixes — squish bug, rings collapse,
-rarity tint, tier-gated loot).
+Last refresh: 2026-06-03 (enemy variation pass — pack tiers, size
+jitter, monster mods).
+
+## Enemy variation pass — 2026-06-03
+
+PoE-style pack-tier system on top of the existing champion roll.
+Cheap visual variety knob — same enemy IDs, dramatically different
+read on screen.
+
+**Per-spawn visual jitter** (`dungeon.gd::_spawn_specific`). Every
+non-boss/non-miniboss/non-champion enemy multiplies its `visual_scale`
+by `randf_range(0.85, 1.15)` at spawn. A cluster of 6 worker ants no
+longer reads as "clones."
+
+**Pack tier roll**. After the champion roll, non-boss enemies roll
+for magic/rare. Rates scale with branch tier:
+- T1: 1.2% rare / 7% magic
+- T5: 6% rare / 35% magic
+
+Magic = +20% HP / +10% ATK / 1 random mod / blue tint + small aura /
+"Hasted Goblin"-style display name.
+Rare = +60% HP / +30% ATK / 2 random mods / yellow tint + larger
+pulsing aura / "Hasted Vicious Goblin" prefix.
+
+**Mods** (`data/monster_mods.json`):
+- hasted (+35% atk speed, +30% move speed)
+- tough (+50% HP, +25% DEF)
+- vicious (+35% ATK)
+- vampiric_pack (vampiric flavor tag → Bot's existing tag pipe)
+- regenerating (stub — needs enemy-side regen tick, not yet wired)
+- stalwart (+60% DEF, +15% HP)
+
+Mod payload merges into stat init *before* the pack HP/ATK
+multipliers so the percentages compose cleanly. Flavor tags route
+through `Enemy.combat_defense_tags()` so existing Bot-side mechanics
+(vampiric leech back from bot when it hits a vampiric pack mob)
+fire automatically.
+
+**Visual signature** (`enemy.gd::apply_pack_visuals`). Multiplicative
+modulate on the rig (preserves champion's existing pinkish wash) +
+LootDrop glow texture as an aura sprite at z=-2 with a per-tier
+pulse rate. Magic pulses every 1.6s, rare every 1.0s.
+
+**Logging**. `[pack]` log line per spawn during instrumented runs
+(`grind`, `benchmark`) so we can audit roll rates and mod
+distribution. Two-run grind validation: 61 pack spawns, every mod
+fired at least once, no errors.
+
+Deferred followups in TODO.md: pack auras affecting nearby allies,
+unique-tier hand-authored monsters, enemy regen tick path,
+reflective/thorns mods.
+
+## Playtest fixes — 2026-06-02
 
 ## Playtest fixes — 2026-06-02
 

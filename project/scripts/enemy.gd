@@ -10,6 +10,21 @@ var aggro_range: int = 8
 var repath_timer: float = 0.0
 const REPATH_INTERVAL := 0.8
 
+# PoE-style pack tier (normal / magic / rare). Applied at spawn time
+# alongside (and ON TOP of) the existing champion roll. Magic gets +20%
+# HP / +10% ATK / 1 mod, rare gets +60% HP / +30% ATK / 2 mods. Rare
+# also gets a named title (e.g. "Hasted Vicious Goblin"). The visual
+# differentiator is set up in apply_pack_visuals().
+const PACK_NORMAL := 0
+const PACK_MAGIC := 1
+const PACK_RARE := 2
+var pack_tier: int = PACK_NORMAL
+var pack_mods: Array[String] = []
+# Defender-side flavor tags coming from pack mods (e.g. ["vampiric"])
+# get folded into combat_defense_tags() so existing tag-driven combat
+# mechanics work without any per-mod special-case wiring.
+var _pack_defense_tags: Array[String] = []
+
 # Threat tier 0..3. Set by dungeon.gd::_apply_threat_auras after spawn,
 # based on power-vs-bot. Drives the threat_outline.gdshader pulse color.
 # 0 = trivial, 1 = even match, 2 = dangerous, 3 = lethal/boss.
@@ -18,6 +33,12 @@ const THREAT_OUTLINE_SHADER := preload("res://assets/threat_outline.gdshader")
 
 func combat_label() -> String:
 	return enemy_id if enemy_id != "" else "enemy"
+
+# Pack mods that grant defender-worn flavor tags (vampiric pack mod →
+# ["vampiric"]) feed back through the same combat pipe Bot uses for
+# armor/shield tags, so we get those mechanics for free.
+func combat_defense_tags() -> Array:
+	return _pack_defense_tags
 
 func apply_threat_aura(tier: int) -> void:
 	# Apply the threat-outline shader as a sprite material. tier=0 is a
@@ -32,3 +53,69 @@ func apply_threat_aura(tier: int) -> void:
 		mat.shader = THREAT_OUTLINE_SHADER
 		sprite.material = mat
 	(sprite.material as ShaderMaterial).set_shader_parameter("tier", tier)
+
+# Tint colors per pack tier — applied on top of any champion modulate
+# already set by dungeon.gd. Picked to read at zoom against typical
+# DCSS palette. Magic = blue wash (subtle), rare = saturated yellow.
+const _PACK_TINT := {
+	PACK_MAGIC: Color(0.75, 0.85, 1.10),   # blue
+	PACK_RARE:  Color(1.20, 1.05, 0.55),   # yellow / gold
+}
+const _PACK_AURA_COLOR := {
+	PACK_MAGIC: Color(0.55, 0.75, 1.00, 0.55),
+	PACK_RARE:  Color(1.00, 0.90, 0.35, 0.75),
+}
+const _PACK_AURA_SCALE := {
+	PACK_MAGIC: 1.5,
+	PACK_RARE:  2.2,
+}
+
+# Apply pack tier visuals. Called from dungeon.gd::_spawn_specific
+# after the base creature is set up but before threat auras roll. The
+# stat boosts associated with the tier are applied separately at the
+# spawn site so they compose with floor/branch/champion multipliers.
+func apply_pack_visuals() -> void:
+	if pack_tier == PACK_NORMAL or rig == null:
+		return
+	# Multiplicative tint — preserves whatever modulate dungeon.gd
+	# already wrote (champion's pinkish wash, miniboss's red).
+	var tint: Color = _PACK_TINT.get(pack_tier, Color(1, 1, 1))
+	var existing: Color = rig.modulate
+	rig.modulate = Color(
+		existing.r * tint.r,
+		existing.g * tint.g,
+		existing.b * tint.b,
+		existing.a,
+	)
+	# Refresh the SpriteFX base modulate so attack_lunge "rests" at the
+	# new pack-tinted color rather than snapping back to the original.
+	if fx != null:
+		fx.base_modulate = rig.modulate
+	# Aura behind the rig — same radial glow asset Bot's halo uses.
+	# Reused via the LootDrop static factory.
+	var glow := Sprite2D.new()
+	glow.texture = preload("res://scripts/loot_drop.gd")._make_glow_texture()
+	glow.centered = true
+	glow.position = Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5) - rig.position
+	glow.scale = Vector2.ONE * float(_PACK_AURA_SCALE.get(pack_tier, 1.5))
+	glow.z_index = -2
+	glow.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	var c: Color = _PACK_AURA_COLOR.get(pack_tier, Color(1, 1, 1, 0.5))
+	glow.modulate = c
+	rig.add_child(glow)
+	# Pulse — slower for magic, faster + brighter for rare. Tween owned
+	# by glow so it dies cleanly with the enemy.
+	var dim := Color(c.r, c.g, c.b, c.a * 0.45)
+	var period: float = 1.6 if pack_tier == PACK_MAGIC else 1.0
+	var pulse := glow.create_tween().set_loops()
+	pulse.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	pulse.tween_property(glow, "modulate", dim, period)
+	pulse.tween_property(glow, "modulate", c, period)
+
+# Add a defender-worn flavor tag that combat_defense_tags() will return.
+# Used by dungeon.gd to wire vampiric/etc pack mods through the existing
+# Bot-side tag combat machinery (no new per-mod hooks needed).
+func add_pack_defense_tag(tag: String) -> void:
+	if tag == "" or tag in _pack_defense_tags:
+		return
+	_pack_defense_tags.append(tag)

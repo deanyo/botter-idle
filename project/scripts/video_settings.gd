@@ -59,7 +59,42 @@ static func defaults() -> Dictionary:
 		"vsync": true,
 		"gfx_quality": "high",  # high | medium | low | custom
 		"gfx": gfx,
+		# Continuous tunables for visuals that have a "how strong" knob,
+		# not just on/off. Live-applied where possible; some require the
+		# next gear refresh / floor build to pick up.
+		"gfx_tunables": GFX_TUNABLE_DEFAULTS.duplicate(),
 	}
+
+# Defaults match the literals in code (bot.gd, paperdoll_renderer.gd,
+# weapon_trails.gd). When tweaks land, change here AND those literals
+# need to be replaced with VideoSettings.tunable() lookups so the
+# slider takes effect.
+# Defaults curated from a real FX-Tuner export — feel right at first
+# load. User can still slide them around; this is just a better
+# starting point than every-knob-at-1.0.
+const GFX_TUNABLE_DEFAULTS := {
+	# Sprite-localised glow.
+	"glow_strength":        1.65,
+	"glow_pulse_amount":    1.25,
+	"glow_thickness":       0.05,
+	# Hand-side enchant ambience.
+	"hand_enchant_alpha":   0.80,
+	"hand_enchant_scale":   0.50,
+	# Weapon swing trails.
+	"trail_amount":         1.30,
+	"trail_lifetime":       1.20,
+	# Item modulate strength (rarity/flavor wash on inventory + rig).
+	"item_tint_strength":   0.50,
+}
+
+static func tunable(key: String, fallback: float = 0.0) -> float:
+	var d: Dictionary = load_settings()
+	var t: Dictionary = d.get("gfx_tunables", {})
+	if t.has(key):
+		return float(t[key])
+	if GFX_TUNABLE_DEFAULTS.has(key):
+		return float(GFX_TUNABLE_DEFAULTS[key])
+	return fallback
 
 # Read a single effect toggle. Env-var override always wins so dev A/B
 # testing still works after this lands.
@@ -98,6 +133,13 @@ static func load_settings() -> Dictionary:
 		for k in gfx_defaults.keys():
 			if not d["gfx"].has(k):
 				d["gfx"][k] = gfx_defaults[k]
+	# Forward-compat for tunables — same pattern as gfx.
+	if not d.has("gfx_tunables") or typeof(d["gfx_tunables"]) != TYPE_DICTIONARY:
+		d["gfx_tunables"] = GFX_TUNABLE_DEFAULTS.duplicate()
+	else:
+		for k in GFX_TUNABLE_DEFAULTS.keys():
+			if not d["gfx_tunables"].has(k):
+				d["gfx_tunables"][k] = GFX_TUNABLE_DEFAULTS[k]
 	return d
 
 static func save_settings(d: Dictionary) -> void:

@@ -304,15 +304,17 @@ func _refresh_gear_overlays() -> void:
 		var weapon_light_id: String = String(WEAPON_LIGHTS.get(base_id, ""))
 		if weapon_light_id != "":
 			LightSpec.attach(weapon_sprite, weapon_light_id, Vector2.ZERO)
+		# Hand-side enchant ambience — soft radial glow under the weapon
+		# pivot tinted by the weapon's flavor tag color. Ties bot+weapon
+		# visually so the enchant doesn't read as "weapon glows but the
+		# wielder has nothing to do with it". Skipped when no flavor
+		# match (a vanilla weapon shouldn't haze).
+		_apply_hand_enchant_ambience(wpn)
 
-# Subtle modulate per rarity. Common stays neutral so the art reads as-is;
-# higher rarities pick up a light wash in the rarity color. Strengths
-# tuned by eye — too strong washes out the silhouette, too weak doesn't
-# read at the dungeon zoom level.
-const _RARITY_TINT_STRENGTH := {
-	"common": 0.0, "uncommon": 0.18, "rare": 0.28, "epic": 0.38, "legendary": 0.50,
-}
-const _RARITY_GLOW_RARITIES := { "epic": true, "legendary": true }
+# Sprite-localised glow shader. Hugs the actual silhouette of the
+# weapon/gear sprite via 8-direction alpha sampling instead of drawing
+# a fat circular blob behind it — see assets/item_glow.gdshader.
+const _ITEM_GLOW_SHADER := preload("res://assets/item_glow.gdshader")
 
 func _apply_rarity_decor(sprite: Sprite2D, inst: Variant, slot_id: String) -> void:
 	if inst == null or typeof(inst) != TYPE_DICTIONARY:
@@ -320,38 +322,107 @@ func _apply_rarity_decor(sprite: Sprite2D, inst: Variant, slot_id: String) -> vo
 	var base_id: String = String(inst.get("base_id", ""))
 	if base_id == "" or not _items_db_cache.has(base_id):
 		return
-	var rarity: String = String(_items_db_cache[base_id].get("rarity", "common"))
-	var strength: float = float(_RARITY_TINT_STRENGTH.get(rarity, 0.0))
-	if strength > 0.0:
-		var col: Color = UITheme.rarity_color(rarity)
-		# Lerp from white → rarity color by `strength`. White preserves the
-		# base sprite art; the lerp keeps brightness up rather than darkening.
-		sprite.modulate = Color(
-			lerp(1.0, col.r, strength),
-			lerp(1.0, col.g, strength),
-			lerp(1.0, col.b, strength),
-			1.0,
-		)
-	# Glow halo: same texture LootDrop uses for floor sparkle. Behind the
-	# weapon sprite (z=-1 within the overlay), softly pulses. Only for the
-	# weapon slot for now — ATK is the primary "what is the bot wielding"
-	# read, and 5 simultaneous halos on the rig would be visual noise.
-	if slot_id == "weapon" and _RARITY_GLOW_RARITIES.has(rarity):
-		var glow := Sprite2D.new()
-		glow.texture = LootDrop._make_glow_texture()
-		glow.centered = true
-		glow.scale = Vector2(1.6, 1.6)
-		glow.z_index = -1
-		glow.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-		var col_g: Color = UITheme.rarity_color(rarity)
-		var base_alpha: float = 0.55 if rarity == "legendary" else 0.40
-		glow.modulate = Color(col_g.r, col_g.g, col_g.b, base_alpha)
-		sprite.add_child(glow)
-		var dim: Color = Color(col_g.r, col_g.g, col_g.b, base_alpha * 0.55)
-		var pulse := glow.create_tween().set_loops()
-		pulse.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-		pulse.tween_property(glow, "modulate", dim, 1.4)
-		pulse.tween_property(glow, "modulate", Color(col_g.r, col_g.g, col_g.b, base_alpha), 1.4)
+	var item: Dictionary = _items_db_cache[base_id]
+	var rarity: String = String(item.get("rarity", "common"))
+	var flavor_tags: Array = item.get("flavor_tags", [])
+	# Modulate folds in flavor color (vampiric=red, fire=orange, etc).
+	# Falls back to rarity tint when no priority tag is present.
+	sprite.modulate = UITheme.item_modulate(rarity, flavor_tags)
+	# Glow: sprite-localised via shader. Tags drive color first, rarity
+	# second. Returns alpha=0 when no glow should draw — short-circuit.
+	var glow_color: Color = UITheme.item_glow_color(rarity, flavor_tags)
+	if glow_color.a <= 0.0:
+		return
+	# Only the weapon slot gets the glow on the live bot. ATK is the
+	# primary "what's the bot wielding" read, and 5 simultaneous shader
+	# materials on the rig would be visual noise.
+	if slot_id != "weapon":
+		return
+	var mat := ShaderMaterial.new()
+	mat.shader = _ITEM_GLOW_SHADER
+	mat.set_shader_parameter("glow_color", glow_color)
+	# Strength + thickness driven by the video-options sliders so the
+	# user can dial these live from the paperdoll preview.
+	var base_strength: float = VideoSettings.tunable("glow_strength", 1.2)
+	mat.set_shader_parameter("glow_strength", base_strength)
+	var slider_thickness: float = VideoSettings.tunable("glow_thickness", 0.12)
+	# Boost thickness slightly for legendary/flavor items so they pop.
+	var thickness: float = slider_thickness * (1.20 if rarity == "legendary" or _has_priority_flavor(flavor_tags) else 1.0)
+	mat.set_shader_parameter("thickness", thickness)
+	sprite.material = mat
+	var pulse_amt: float = VideoSettings.tunable("glow_pulse_amount", 0.30)
+	# Soft pulse via glow_strength uniform — shader-side, so we don't
+	# replace the modulate (which already carries flavor tint).
+	# Tween is owned by the sprite so it auto-dies when the gear is
+	# unequipped (queue_freed by _refresh_gear_overlays).
+	var pulse := sprite.create_tween().set_loops()
+	pulse.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	pulse.tween_method(_set_glow_strength.bind(mat), base_strength - pulse_amt * 0.5, base_strength + pulse_amt * 0.5, 1.4)
+	pulse.tween_method(_set_glow_strength.bind(mat), base_strength + pulse_amt * 0.5, base_strength - pulse_amt * 0.5, 1.4)
+
+func _set_glow_strength(value: float, mat: ShaderMaterial) -> void:
+	if mat == null:
+		return
+	mat.set_shader_parameter("glow_strength", value)
+
+func _has_priority_flavor(flavor_tags: Array) -> bool:
+	for tag in UITheme.FLAVOR_COLORS.keys():
+		if tag in flavor_tags:
+			return true
+	return false
+
+# Hand-side enchant glow. Soft radial Sprite2D parented to the RIG
+# (not the weapon sprite) at an anatomical hand offset, tinted by
+# weapon flavor. Living on the rig means:
+#   1. it sits over the actual hand, not the torso (weapon sprite
+#      pivot is at rig center which reads as "torso" on DCSS art);
+#   2. it doesn't rotate/scale with the swing tween (which targets
+#      weapon_sprite directly);
+#   3. it auto-mirrors when the bot flips facing (`rig.scale.x = -1`
+#      cascades, so +X offset becomes -X without extra code).
+# Removed/replaced on every gear refresh so old enchants don't leak.
+var _hand_enchant_sprite: Sprite2D = null
+# DCSS spriggan_female draws the WEAPON hand on viewer-left, so the
+# enchant offset is -8 (lands on the sword side). The rig auto-flips
+# this when the bot turns around — see paperdoll_renderer comment.
+const _HAND_OFFSET_X := -8.0
+const _HAND_OFFSET_Y := 1.0
+
+func _apply_hand_enchant_ambience(weapon_inst: Variant) -> void:
+	if _hand_enchant_sprite != null and is_instance_valid(_hand_enchant_sprite):
+		_hand_enchant_sprite.queue_free()
+	_hand_enchant_sprite = null
+	if rig == null:
+		return
+	if weapon_inst == null or typeof(weapon_inst) != TYPE_DICTIONARY:
+		return
+	var base_id: String = String(weapon_inst.get("base_id", ""))
+	if base_id == "" or not _items_db_cache.has(base_id):
+		return
+	var flavor_tags: Array = _items_db_cache[base_id].get("flavor_tags", [])
+	var fc: Color = UITheme.flavor_color_for(flavor_tags)
+	if fc.a <= 0.0:
+		return
+	var glow := Sprite2D.new()
+	glow.texture = LootDrop._make_glow_texture()
+	glow.centered = true
+	# z=4 = above body/helm/shield, below the weapon sprite (z=5) so
+	# the blade silhouette stays the foreground read.
+	glow.z_index = 4
+	var hand_scale: float = VideoSettings.tunable("hand_enchant_scale", 0.95)
+	glow.scale = Vector2(hand_scale, hand_scale)
+	glow.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	glow.position = Vector2(_HAND_OFFSET_X, _HAND_OFFSET_Y)
+	var base_alpha: float = VideoSettings.tunable("hand_enchant_alpha", 0.30)
+	glow.modulate = Color(fc.r, fc.g, fc.b, base_alpha)
+	rig.add_child(glow)
+	_hand_enchant_sprite = glow
+	var dim := Color(fc.r, fc.g, fc.b, base_alpha * 0.45)
+	var bright := Color(fc.r, fc.g, fc.b, base_alpha)
+	var pulse := glow.create_tween().set_loops()
+	pulse.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	pulse.tween_property(glow, "modulate", dim, 1.6)
+	pulse.tween_property(glow, "modulate", bright, 1.6)
 
 func combat_label() -> String:
 	return "bot"
@@ -396,6 +467,18 @@ func swing_weapon(toward: Vector2) -> void:
 		return
 	if _weapon_swing_tween and _weapon_swing_tween.is_valid():
 		_weapon_swing_tween.kill()
+	# Flavor-tag swing trail (fire/cold/vampiric/holy/poison/thunderous).
+	# Emit BEFORE the animation tween so the burst aligns with the
+	# windup → strike beat. Cheap: GPUParticles2D is one_shot, lazily
+	# created the first time per weapon, restarted on each swing.
+	var wpn: Variant = equipped.get("weapon", null)
+	if wpn != null and typeof(wpn) == TYPE_DICTIONARY:
+		var base_id: String = String(wpn.get("base_id", ""))
+		if base_id != "" and _items_db_cache.has(base_id):
+			var tags: Array = _items_db_cache[base_id].get("flavor_tags", [])
+			var trail_flavor: String = WeaponTrails.flavor_for_tags(tags)
+			if trail_flavor != "":
+				WeaponTrails.emit_burst(weapon_sprite, trail_flavor)
 	# Three flavors based on target direction:
 	#   - Mostly-horizontal: classic side sweep (cock back, swing across).
 	#   - Mostly-vertical down: overhead chop (raise weapon, slam down).

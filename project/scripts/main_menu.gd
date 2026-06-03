@@ -6,6 +6,7 @@ extends Control
 
 signal play_pressed
 signal video_options_pressed
+signal fx_tuner_pressed
 
 # Colors mirror UITheme — see hud_chrome.gd note for why these are inline.
 const COL_AMBER := Color(0.92, 0.78, 0.45)
@@ -125,6 +126,7 @@ func _build_buttons(x: int, y: int, w: int, h: int) -> void:
 	_make_button("PLAY", col_x, by, col_w, btn_h, 24, false, _on_play); by += btn_h + gap
 	_make_button("Create Character (soon)", col_x, by, col_w, 44, 16, true, Callable()); by += 44 + gap
 	_make_button("Video Options", col_x, by, col_w, 44, 16, false, _on_options); by += 44 + gap
+	_make_button("FX Tuner", col_x, by, col_w, 44, 16, false, _on_fx_tuner); by += 44 + gap
 	_make_button("Reset Save", col_x, by, col_w, 44, 16, false, _on_reset); by += 44 + gap
 	_make_button("Quit", col_x, by, col_w, 44, 16, false, _on_quit)
 
@@ -154,6 +156,9 @@ func _on_play() -> void:
 
 func _on_options() -> void:
 	video_options_pressed.emit()
+
+func _on_fx_tuner() -> void:
+	fx_tuner_pressed.emit()
 
 func _on_quit() -> void:
 	get_tree().quit()

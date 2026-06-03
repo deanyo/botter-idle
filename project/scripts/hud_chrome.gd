@@ -566,14 +566,21 @@ func update_equipped(equipped: Dictionary, items_db: Dictionary) -> void:
 		var base_tooltip: String = SLOT_TOOLTIPS.get(slot, slot.capitalize())
 		var tex: Texture2D = null
 		var item_name: String = ""
+		var slot_rarity: String = ""
+		var slot_flavor: Array = []
 		if inst != null and typeof(inst) == TYPE_DICTIONARY:
 			var item_id: String = String(inst.get("base_id", inst.get("id", "")))
 			var item_def: Dictionary = items_db.get(item_id, {})
 			item_name = String(item_def.get("name", item_id))
+			slot_rarity = String(item_def.get("rarity", ""))
+			slot_flavor = item_def.get("flavor_tags", [])
 			var tile_path: String = "res://assets/tiles/items/" + String(item_def.get("tile", ""))
 			if ResourceLoader.exists(tile_path):
 				tex = load(tile_path)
 		sprite.texture = tex
+		# Tint the equipped slot icon — flavor tag wins, rarity falls
+		# back. Matches the bot rig overlay so HUD ↔ game stay in sync.
+		sprite.modulate = UITheme.item_modulate(slot_rarity, slot_flavor)
 		var border: ReferenceRect = cell.get("border", null)
 		# Tooltip: empty slot shows "Wpn / Bdy / etc"; equipped slot shows
 		# the canonical multi-line item tooltip used everywhere else.
@@ -617,17 +624,28 @@ var _seg_grids: Array = []  # per-segment Dict {hdr, grid_or_empty, count}
 func update_inventory_segments(segments: Array, items_db: Dictionary, slot_cooldowns: Dictionary) -> void:
 	if inventory_box == null:
 		return
-	# Detect "shape change" — segment count changed or a header text
-	# differs. If so, full rebuild. Otherwise diff per-segment.
-	var shape_changed: bool = (segments.size() != _seg_grids.size())
-	if not shape_changed:
-		for i in segments.size():
-			if String(segments[i].get("header", "")) != String(_seg_grids[i].get("header", "")):
-				shape_changed = true
-				break
+	# A "shape change" is when existing segment headers reorder or
+	# disappear — that requires a full teardown. The common case
+	# of segments[].size() growing by 1 (new floor reached) only
+	# needs the new segment appended; the old grids stay valid. The
+	# previous code rebuilt the whole panel on every floor descent,
+	# which is the visible stutter we're tracking down.
+	var prev_n: int = _seg_grids.size()
+	var new_n: int = segments.size()
+	var headers_match: bool = true
+	for i in mini(prev_n, new_n):
+		if String(segments[i].get("header", "")) != String(_seg_grids[i].get("header", "")):
+			headers_match = false
+			break
+	var shape_changed: bool = not headers_match or new_n < prev_n
 	if shape_changed:
 		_rebuild_inventory_full(segments, items_db, slot_cooldowns)
 		return
+	# Same-or-grown shape. Append-only-new-segments path: build any
+	# segments past the cached count without touching existing grids.
+	for i in range(prev_n, new_n):
+		_seg_grids.append({})
+		_build_segment_into(i, segments, items_db, slot_cooldowns)
 	# Same shape — diff per segment by item count. If a segment shrank
 	# (equip-swap) or items reordered, do a per-segment full rebuild.
 	# If it grew by N (loot pickup), append the N new cells.
@@ -639,16 +657,44 @@ func update_inventory_segments(segments: Array, items_db: Dictionary, slot_coold
 		var new_count: int = items.size()
 		if new_count == prev_count:
 			continue  # no change
-		if new_count > prev_count and prev_count > 0:
-			# Growth path — append new cells. Replaces the empty-label
-			# case via the prev_count > 0 guard.
+		if new_count > prev_count:
+			# Growth path. If we already have a grid (segment had items
+			# before), append new cells. If this segment was empty
+			# previously (prev_count == 0, empty_label was rendered),
+			# tear out the empty label and create the grid in place
+			# without queue_freeing the cached header — that header
+			# rebuild was the visible loot-pickup stutter on the first
+			# item of every new floor segment.
 			var grid: GridContainer = cached.get("grid", null)
 			if grid != null and is_instance_valid(grid):
 				for k in range(prev_count, new_count):
 					grid.add_child(_make_inv_button(i, k, items[k], items_db, slot_cooldowns))
 				cached["count"] = new_count
 				continue
-		# Shrink, or grew from 0, or grid missing — rebuild this segment only.
+			if prev_count == 0:
+				# Replace empty-label with a fresh grid, leave the
+				# header alone, append cells. Saves an Outpost-sized
+				# tree rebuild on every floor's first pickup.
+				var empty: Variant = cached.get("empty_label", null)
+				if empty != null and is_instance_valid(empty):
+					empty.queue_free()
+				var new_grid := GridContainer.new()
+				new_grid.columns = _inv_columns
+				new_grid.add_theme_constant_override("h_separation", 4)
+				new_grid.add_theme_constant_override("v_separation", 4)
+				# Insert grid right after the header in the segment's
+				# slot so visual order is preserved.
+				var hdr_node: Variant = cached.get("header_node", null)
+				inventory_box.add_child(new_grid)
+				if hdr_node != null and is_instance_valid(hdr_node):
+					inventory_box.move_child(new_grid, hdr_node.get_index() + 1)
+				for k in items.size():
+					new_grid.add_child(_make_inv_button(i, k, items[k], items_db, slot_cooldowns))
+				cached["grid"] = new_grid
+				cached["empty_label"] = null
+				cached["count"] = new_count
+				continue
+		# Shrink or grid missing — rebuild this segment only.
 		_rebuild_one_segment(i, segments, items_db, slot_cooldowns)
 	if inventory_scroll != null:
 		inventory_scroll.scroll_vertical = 0
@@ -733,6 +779,7 @@ func _make_inv_button(seg_idx: int, item_idx: int, inst: Variant, items_db: Dict
 	var item_def: Dictionary = items_db.get(item_id, {})
 	var slot: String = String(item_def.get("slot", ""))
 	var rarity: String = String(item_def.get("rarity", ""))
+	var flavor: Array = item_def.get("flavor_tags", [])
 	var cd: float = float(slot_cooldowns.get(slot, 0.0))
 	var tooltip: String = AffixSystem.format_item_tooltip(item_def, inst)
 	if cd > 0.0:
@@ -762,6 +809,7 @@ func _make_inv_button(seg_idx: int, item_idx: int, inst: Variant, items_db: Dict
 	var tile_path: String = "res://assets/tiles/items/" + String(item_def.get("tile", ""))
 	if ResourceLoader.exists(tile_path):
 		sprite.texture = load(tile_path)
+	sprite.modulate = UITheme.item_modulate(rarity, flavor)
 	btn.add_child(sprite)
 	return btn
 

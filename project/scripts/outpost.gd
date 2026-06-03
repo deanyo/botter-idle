@@ -559,6 +559,14 @@ func _render_equipped() -> void:
 				if ResourceLoader.exists(tile_path):
 					tex = load(tile_path)
 		sprite.texture = tex
+		# Tint the icon — flavor tag wins over rarity (vampiric=red,
+		# fire=orange) so equipped paperdoll slots match the bot rig.
+		var tint_flavor: Array = []
+		if inst != null and typeof(inst) == TYPE_DICTIONARY:
+			var bid: String = String(inst.get("base_id", ""))
+			if items_db.has(bid):
+				tint_flavor = items_db[bid].get("flavor_tags", [])
+		sprite.modulate = UITheme.item_modulate(rarity, tint_flavor)
 		var base_tooltip: String = SLOT_TOOLTIPS.get(slot, slot.capitalize())
 		btn.tooltip_text = base_tooltip if item_name.is_empty() else _build_item_tooltip(slot, inst)
 		# Rarity-tint border when something's equipped (kept for empty
@@ -619,6 +627,7 @@ func _make_inv_cell(inv_index: int, inst: Dictionary, item: Dictionary) -> Contr
 	var tile_path: String = ITEM_TILE_DIR + String(item.get("tile", ""))
 	if ResourceLoader.exists(tile_path):
 		sprite.texture = load(tile_path)
+	sprite.modulate = UITheme.item_modulate(rarity, item.get("flavor_tags", []))
 	cell.add_child(sprite)
 	var btn := Button.new()
 	btn.size = Vector2(INV_CELL_SIZE, INV_CELL_SIZE)

@@ -91,15 +91,16 @@ static func build_rig(items_db: Dictionary, equipped: Dictionary) -> Dictionary:
 		sprite.z_index = int(SLOT_Z[slot_id])
 		rig.add_child(sprite)
 		slots[slot_id] = sprite
-		# Mirror bot.gd's rarity tint so the inventory/outpost/menu
-		# paperdolls match the in-game render — a gold legendary
-		# weapon should look gold everywhere it appears.
+		# Mirror bot.gd's rarity tint AND glow halo so the inventory/
+		# outpost/menu paperdolls match the in-game render — a gold
+		# legendary weapon should look gold and pulse everywhere it
+		# appears, not just on the live bot.
 		_apply_rarity_modulate(sprite, equipped.get(slot_id, null), items_db)
+		_apply_rarity_glow(sprite, equipped.get(slot_id, null), items_db, slot_id)
+		_apply_hand_enchant(rig, equipped.get(slot_id, null), items_db, slot_id)
 	return {"rig": rig, "base": base, "slots": slots}
 
-const _RARITY_TINT_STRENGTH := {
-	"common": 0.0, "uncommon": 0.18, "rare": 0.28, "epic": 0.38, "legendary": 0.50,
-}
+const _ITEM_GLOW_SHADER := preload("res://assets/item_glow.gdshader")
 
 static func _apply_rarity_modulate(sprite: Sprite2D, inst: Variant, items_db: Dictionary) -> void:
 	if inst == null or typeof(inst) != TYPE_DICTIONARY:
@@ -107,17 +108,98 @@ static func _apply_rarity_modulate(sprite: Sprite2D, inst: Variant, items_db: Di
 	var base_id: String = String(inst.get("base_id", ""))
 	if base_id == "" or not items_db.has(base_id):
 		return
-	var rarity: String = String(items_db[base_id].get("rarity", "common"))
-	var strength: float = float(_RARITY_TINT_STRENGTH.get(rarity, 0.0))
-	if strength <= 0.0:
+	var item: Dictionary = items_db[base_id]
+	var rarity: String = String(item.get("rarity", "common"))
+	var flavor_tags: Array = item.get("flavor_tags", [])
+	sprite.modulate = UITheme.item_modulate(rarity, flavor_tags)
+
+# Sprite-localised glow on the weapon slot only — mirrors bot.gd. Uses
+# the alpha-edge shader so the glow follows the silhouette instead of
+# drawing a fat radial blob behind it.
+static func _apply_rarity_glow(sprite: Sprite2D, inst: Variant, items_db: Dictionary, slot_id: String) -> void:
+	if slot_id != "weapon":
 		return
-	var col: Color = UITheme.rarity_color(rarity)
-	sprite.modulate = Color(
-		lerp(1.0, col.r, strength),
-		lerp(1.0, col.g, strength),
-		lerp(1.0, col.b, strength),
-		1.0,
-	)
+	if inst == null or typeof(inst) != TYPE_DICTIONARY:
+		return
+	var base_id: String = String(inst.get("base_id", ""))
+	if base_id == "" or not items_db.has(base_id):
+		return
+	var item: Dictionary = items_db[base_id]
+	var rarity: String = String(item.get("rarity", "common"))
+	var flavor_tags: Array = item.get("flavor_tags", [])
+	var glow_color: Color = UITheme.item_glow_color(rarity, flavor_tags)
+	if glow_color.a <= 0.0:
+		return
+	var mat := ShaderMaterial.new()
+	mat.shader = _ITEM_GLOW_SHADER
+	mat.set_shader_parameter("glow_color", glow_color)
+	var base_strength: float = VideoSettings.tunable("glow_strength", 1.2)
+	mat.set_shader_parameter("glow_strength", base_strength)
+	var has_flavor: bool = false
+	for tag in UITheme.FLAVOR_COLORS.keys():
+		if tag in flavor_tags:
+			has_flavor = true
+			break
+	var slider_thickness: float = VideoSettings.tunable("glow_thickness", 0.12)
+	var thickness: float = slider_thickness * (1.20 if rarity == "legendary" or has_flavor else 1.0)
+	mat.set_shader_parameter("thickness", thickness)
+	sprite.material = mat
+	var pulse_amt: float = VideoSettings.tunable("glow_pulse_amount", 0.30)
+	var pulse := sprite.create_tween().set_loops()
+	pulse.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	pulse.tween_method(func(v): mat.set_shader_parameter("glow_strength", v), base_strength - pulse_amt * 0.5, base_strength + pulse_amt * 0.5, 1.4)
+	pulse.tween_method(func(v): mat.set_shader_parameter("glow_strength", v), base_strength + pulse_amt * 0.5, base_strength - pulse_amt * 0.5, 1.4)
+
+# Anatomical hand offset on a 32×32 DCSS player sprite. The rig is
+# centered at (0,0). DCSS spriggan_female draws the WEAPON hand on
+# viewer-left (negative X) in the default _facing_x=1.0 pose; shield
+# is on viewer-right. So the enchant offset is -8 to land on the
+# weapon hand. When the rig flips (`rig.scale.x = -1` for right-
+# facing movement), the negative X auto-flips to +X and the glow
+# tracks to the correctly-mirrored weapon hand. Don't bake the flip
+# into the glow's own scale — double-flip puts it back on the shield.
+const HAND_OFFSET_X := -8.0
+const HAND_OFFSET_Y := 1.0
+
+# Hand-side enchant ambience — soft radial glow over the wielding
+# hand tinted by flavor color. Parented to the RIG (not the weapon
+# sprite) so it doesn't rotate during the swing tween, sits at a
+# fixed hand offset, and mirrors automatically when the rig flips
+# facing. Mirrors bot.gd::_apply_hand_enchant_ambience so HUD /
+# Outpost / FX Tuner paperdolls match the live bot. Weapon slot only.
+static func _apply_hand_enchant(rig: Node2D, inst: Variant, items_db: Dictionary, slot_id: String) -> void:
+	if slot_id != "weapon":
+		return
+	if inst == null or typeof(inst) != TYPE_DICTIONARY:
+		return
+	if rig == null:
+		return
+	var base_id: String = String(inst.get("base_id", ""))
+	if base_id == "" or not items_db.has(base_id):
+		return
+	var flavor_tags: Array = items_db[base_id].get("flavor_tags", [])
+	var fc: Color = UITheme.flavor_color_for(flavor_tags)
+	if fc.a <= 0.0:
+		return
+	var glow := Sprite2D.new()
+	glow.texture = LootDrop._make_glow_texture()
+	glow.centered = true
+	# Behind the weapon sprite (z_index in renderer SLOT_Z["weapon"]=5),
+	# above body/helm so it reads as "weapon hand specifically."
+	glow.z_index = 4
+	var hand_scale: float = VideoSettings.tunable("hand_enchant_scale", 0.95)
+	glow.scale = Vector2(hand_scale, hand_scale)
+	glow.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	glow.position = Vector2(HAND_OFFSET_X, HAND_OFFSET_Y)
+	var base_alpha: float = VideoSettings.tunable("hand_enchant_alpha", 0.30)
+	glow.modulate = Color(fc.r, fc.g, fc.b, base_alpha)
+	rig.add_child(glow)
+	var dim := Color(fc.r, fc.g, fc.b, base_alpha * 0.45)
+	var bright := Color(fc.r, fc.g, fc.b, base_alpha)
+	var pulse := glow.create_tween().set_loops()
+	pulse.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	pulse.tween_property(glow, "modulate", dim, 1.6)
+	pulse.tween_property(glow, "modulate", bright, 1.6)
 
 # Resolve `slot_id` → overlay sprite path, or "" if no equipped item.
 static func _resolve_overlay(slot_id: String, equipped: Dictionary, items_db: Dictionary) -> String:
