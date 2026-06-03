@@ -7,6 +7,44 @@ items live in `TODO.md`.
 Last refresh: 2026-06-03 (UI overhaul — OLED chrome, item-card
 branch picker, inventory filters/favorites, shop screen).
 
+## Authoring portal + sanity pass — 2026-06-03
+
+**Sanity-check pass.** Wrote `tools/check_biome_assets.py` to expand
+every biome's `floor_*` / `wall_*` / `edge_overlay` / `sigil_set`
+prefix references against actual files in `project/assets/tiles/`.
+Caught **18 broken references across 7 biomes** — bare-stem entries
+like `tree_1_yellow`, `boulder`, `crumbled_column`, `lava_0`,
+`mangrove_1..3`, `mold_1/2`, `deep_water_*` that were used as
+prefixes (which expand `entry + "_"`) but pointed at literal files
+without the trailing underscore. Fixed by patching them to `@stem`
+literal-tile syntax (the system already supported it). After patch:
+all 24 biomes resolve cleanly. This is what the user reported as
+biomes "drifting from their atlas."
+
+**Authoring portal** (`tools/index.html`). Landing page that links
+to atlas viewer + biome editor + item editor + new affix editor,
+with badge states (live / soon) and a "sharing what you build"
+section explaining the no-backend export-to-issue flow.
+
+**GitHub Pages workflow** (`.github/workflows/pages.yml`). Stages a
+clean `_site/` containing `tools/`, `project/data/`, and
+`project/assets/tiles/`, plus a root `index.html` that redirects
+into `tools/`. Publishes on push to main. Browser editors fetch
+from `../project/data/...` so the relative paths just work in
+both local-server and GitHub-Pages contexts.
+
+**Affix / Enchant Editor** (`tools/affix_editor.html`). New
+browser-based editor with:
+- Sidebar list of all affixes
+- Form fields: id, display name, stat dropdown (8 wired stats),
+  color picker, applies_to list, tier values (5 columns colored
+  by rarity), lore textarea
+- Live preview card showing tier values as rarity-colored pills
+- Auto-default color per stat (Strength→red, Crit→yellow,
+  Haste→cyan, etc — matches the in-game flavor color story)
+- Add/delete affix buttons
+- Export downloads complete `affixes.json` for review/merge
+
 ## UI overhaul — 2026-06-03
 
 Big chrome + inventory pass driven by a playtest report.

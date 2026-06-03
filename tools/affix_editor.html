@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Botter — Affix / Enchant Editor</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --bg: #0a0a0d;
+    --panel: #15151c;
+    --panel-2: #1c1c25;
+    --border: #2a2a35;
+    --text: #e4e4e8;
+    --muted: #8a8a95;
+    --accent: #ffb84d;
+    --accent-dim: #b88836;
+    --hot: #ff6b6b;
+    --col-common: #d8d8d8;
+    --col-uncommon: #4dabff;
+    --col-rare: #ffd84d;
+    --col-epic: #ff8a3a;
+    --col-legendary: #ff5252;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 13px -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+  header {
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-shrink: 0;
+  }
+  header h1 { margin: 0; color: var(--accent); font-size: 15px; font-weight: 600; }
+  header a { color: var(--accent-dim); text-decoration: none; font-size: 12px; }
+  header a:hover { color: var(--accent); }
+  .spacer { flex: 1; }
+  button {
+    background: var(--panel-2);
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 6px 14px;
+    font-size: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  button:hover { background: #25252e; border-color: var(--accent-dim); }
+  button.primary { background: var(--accent); color: #1a1a1f; border-color: var(--accent); font-weight: 600; }
+  button.primary:hover { background: #ffd47a; border-color: #ffd47a; }
+  .body {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    overflow: hidden;
+  }
+  aside {
+    background: var(--panel);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  }
+  aside h2 {
+    color: var(--accent);
+    margin: 16px 16px 8px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .affix-list { padding: 0 8px 16px; }
+  .affix-row {
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 2px;
+    border: 1px solid transparent;
+  }
+  .affix-row:hover { background: var(--panel-2); border-color: var(--border); }
+  .affix-row.active { background: var(--panel-2); border-color: var(--accent-dim); }
+  .affix-row .name { font-weight: 600; }
+  .affix-row .meta { color: var(--muted); font-size: 11px; }
+  .new-row { padding: 8px 16px; }
+  main {
+    overflow-y: auto;
+    padding: 24px 32px;
+  }
+  .form-grid {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 12px 16px;
+    align-items: center;
+    max-width: 720px;
+  }
+  .form-grid label { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+  input[type=text], input[type=number], select, textarea {
+    background: var(--panel-2);
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 6px 10px;
+    border-radius: 3px;
+    font: inherit;
+    width: 100%;
+  }
+  textarea { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12px; min-height: 64px; }
+  input[type=color] {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    width: 64px;
+    height: 32px;
+    cursor: pointer;
+  }
+  .tiers-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+  }
+  .tier-cell label {
+    display: block;
+    font-size: 10px;
+    margin-bottom: 4px;
+    text-align: center;
+    text-transform: uppercase;
+  }
+  .tier-cell:nth-child(1) label { color: var(--col-common); }
+  .tier-cell:nth-child(2) label { color: var(--col-uncommon); }
+  .tier-cell:nth-child(3) label { color: var(--col-rare); }
+  .tier-cell:nth-child(4) label { color: var(--col-epic); }
+  .tier-cell:nth-child(5) label { color: var(--col-legendary); }
+  .tier-cell input { text-align: center; }
+  .preview-card {
+    margin-top: 24px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    max-width: 720px;
+  }
+  .preview-card h3 { color: var(--accent); margin: 0 0 12px; font-size: 13px; }
+  .preview-name {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .preview-tier-line {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    font-size: 12px;
+  }
+  .preview-tier-line .pill {
+    padding: 3px 10px;
+    border-radius: 12px;
+    color: #1a1a1f;
+    font-weight: 600;
+  }
+  .preview-tier-line .pill.t0 { background: var(--col-common); }
+  .preview-tier-line .pill.t1 { background: var(--col-uncommon); color: #fff; }
+  .preview-tier-line .pill.t2 { background: var(--col-rare); }
+  .preview-tier-line .pill.t3 { background: var(--col-epic); color: #fff; }
+  .preview-tier-line .pill.t4 { background: var(--col-legendary); color: #fff; }
+  .footer-meta { color: var(--muted); font-size: 12px; margin-top: 8px; }
+  .delete-btn { color: var(--hot); border-color: rgba(255,107,107,0.3); }
+  .empty-state { color: var(--muted); text-align: center; padding: 64px 24px; }
+  .help {
+    color: var(--muted);
+    font-size: 11px;
+    margin-top: 4px;
+    line-height: 1.4;
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Botter — Affix / Enchant Editor</h1>
+  <a href="index.html">← Portal</a>
+  <a href="atlas_viewer.html">Atlas</a>
+  <a href="biome_editor.html">Biomes</a>
+  <a href="item_editor.html">Items</a>
+  <span class="spacer"></span>
+  <span id="status" style="font-size: 12px; color: var(--muted);"></span>
+  <button onclick="addNew()">+ New affix</button>
+  <button class="primary" onclick="exportJSON()">⬇ Export affixes.json</button>
+</header>
+<div class="body">
+  <aside>
+    <h2>Affixes</h2>
+    <div class="affix-list" id="affix-list"></div>
+  </aside>
+  <main id="editor">
+    <div class="empty-state">Select an affix on the left, or click <strong>+ New affix</strong> to create one.</div>
+  </main>
+</div>
+<script>
+const AFFIXES_PATH = "../project/data/affixes.json";
+
+// Stats Bot/Actor combat actually reads. Adding a new entry here is
+// safe; the runtime ignores unknown stats. Surfaces in the dropdown
+// so authors don't typo a stat key.
+const STATS = [
+  { id: "atk",            label: "ATK (flat)" },
+  { id: "hp",             label: "HP (flat)" },
+  { id: "def",            label: "DEF (flat)" },
+  { id: "hp_pct",         label: "HP %" },
+  { id: "atk_pct",        label: "ATK %" },
+  { id: "crit_chance",    label: "Crit chance %" },
+  { id: "atk_speed_pct",  label: "Attack speed %" },
+  { id: "hp_regen",       label: "HP regen / sec" },
+];
+
+const RARITY_TIERS = ["common", "uncommon", "rare", "epic", "legendary"];
+
+let doc = { _comment: "", affixes: [], rarity_affix_count: {}, rarity_tier_index: {} };
+let activeId = null;
+let dirty = false;
+
+async function load() {
+  try {
+    const res = await fetch(AFFIXES_PATH);
+    if (!res.ok) throw new Error("not found");
+    doc = await res.json();
+  } catch (e) {
+    setStatus("⚠ Couldn't load affixes.json — starting blank.");
+    doc = {
+      _comment: "Authored via affix_editor.html",
+      affixes: [],
+      rarity_affix_count: { common:0, uncommon:1, rare:2, epic:3, legendary:4 },
+      rarity_tier_index: { common:0, uncommon:1, rare:2, epic:3, legendary:4 },
+    };
+  }
+  // Forward-compat: ensure `color` field on affixes loaded from older
+  // saves so the color picker has something to bind to.
+  for (const a of doc.affixes) {
+    if (!a.color) a.color = rarityHexForStat(a.stat);
+  }
+  renderList();
+  if (doc.affixes.length) selectAffix(doc.affixes[0].id);
+}
+
+function rarityHexForStat(stat) {
+  // Sensible defaults — matches our flavor color story so a Strength
+  // affix lands on red, Crit on yellow, Haste on cyan, etc.
+  switch (stat) {
+    case "atk":           return "#ff5252";
+    case "atk_pct":       return "#ff5252";
+    case "hp":            return "#5fc878";
+    case "hp_pct":        return "#5fc878";
+    case "def":           return "#bababa";
+    case "crit_chance":   return "#ffd84d";
+    case "atk_speed_pct": return "#4dabff";
+    case "hp_regen":      return "#a85eff";
+  }
+  return "#ffb84d";
+}
+
+function setStatus(msg) {
+  document.getElementById("status").textContent = msg;
+  if (msg) setTimeout(() => {
+    if (document.getElementById("status").textContent === msg) {
+      document.getElementById("status").textContent = "";
+    }
+  }, 4500);
+}
+
+function renderList() {
+  const root = document.getElementById("affix-list");
+  root.innerHTML = "";
+  for (const a of doc.affixes) {
+    const row = document.createElement("div");
+    row.className = "affix-row" + (a.id === activeId ? " active" : "");
+    row.onclick = () => selectAffix(a.id);
+    row.innerHTML = `
+      <div class="name" style="color: ${a.color || rarityHexForStat(a.stat)}">${escapeHtml(a.name || a.id)}</div>
+      <div class="meta">${escapeHtml(a.stat)} — t1..t5: ${(a.tiers || []).join(", ")}</div>
+    `;
+    root.appendChild(row);
+  }
+}
+
+function selectAffix(id) {
+  activeId = id;
+  renderList();
+  renderEditor();
+}
+
+function getActive() {
+  return doc.affixes.find(a => a.id === activeId);
+}
+
+function renderEditor() {
+  const a = getActive();
+  const root = document.getElementById("editor");
+  if (!a) {
+    root.innerHTML = '<div class="empty-state">Select an affix on the left, or click <strong>+ New affix</strong>.</div>';
+    return;
+  }
+  // Build form. Auto-saves on blur / change. Author hits Export
+  // when ready.
+  root.innerHTML = `
+    <h2 style="color: var(--accent); margin: 0 0 16px; font-size: 18px;">Edit: ${escapeHtml(a.name || a.id)}</h2>
+    <div class="form-grid">
+      <label>ID</label>
+      <input id="f-id" type="text" value="${escapeAttr(a.id)}">
+      <label>Display name</label>
+      <input id="f-name" type="text" value="${escapeAttr(a.name || '')}">
+      <label>Stat</label>
+      <select id="f-stat">
+        ${STATS.map(s => `<option value="${s.id}" ${s.id === a.stat ? "selected" : ""}>${escapeHtml(s.label)}</option>`).join("")}
+      </select>
+      <label>Color</label>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <input id="f-color" type="color" value="${escapeAttr(a.color || rarityHexForStat(a.stat))}">
+        <span class="help">Drives item-card tint when this affix appears on a piece of gear.</span>
+      </div>
+      <label>Applies to</label>
+      <input id="f-applies" type="text" value="${escapeAttr((a.applies_to || ['any']).join(', '))}">
+      <label>Tier values</label>
+      <div class="tiers-row">
+        ${RARITY_TIERS.map((r, i) => `
+          <div class="tier-cell">
+            <label>${r}</label>
+            <input class="f-tier" data-i="${i}" type="number" step="any" value="${(a.tiers || [0,0,0,0,0])[i] ?? 0}">
+          </div>
+        `).join("")}
+      </div>
+      <label>Lore (optional)</label>
+      <textarea id="f-lore">${escapeHtml(a.lore || '')}</textarea>
+    </div>
+
+    <div class="preview-card">
+      <h3>Preview</h3>
+      <div class="preview-name" id="p-name" style="color: ${a.color || rarityHexForStat(a.stat)}">${escapeHtml(a.name || a.id)}</div>
+      <div class="preview-tier-line" id="p-tiers"></div>
+      <div class="footer-meta">Stat: <span id="p-stat">${escapeHtml(a.stat)}</span> · applies to <span id="p-applies">${escapeHtml((a.applies_to || ['any']).join(', '))}</span></div>
+    </div>
+
+    <div style="margin-top: 24px;">
+      <button class="delete-btn" onclick="deleteAffix()">Delete affix</button>
+    </div>
+  `;
+  // Wire up auto-save handlers.
+  document.getElementById("f-id").oninput = () => mutate(a, "id", document.getElementById("f-id").value);
+  document.getElementById("f-name").oninput = () => mutate(a, "name", document.getElementById("f-name").value);
+  document.getElementById("f-stat").onchange = () => {
+    mutate(a, "stat", document.getElementById("f-stat").value);
+    // If color was the default for the old stat, slide to the new stat's default.
+    document.getElementById("f-color").value = rarityHexForStat(a.stat);
+    mutate(a, "color", document.getElementById("f-color").value);
+  };
+  document.getElementById("f-color").oninput = () => mutate(a, "color", document.getElementById("f-color").value);
+  document.getElementById("f-applies").oninput = () => {
+    const list = document.getElementById("f-applies").value.split(",").map(s => s.trim()).filter(Boolean);
+    mutate(a, "applies_to", list.length ? list : ["any"]);
+  };
+  document.querySelectorAll(".f-tier").forEach(input => {
+    input.oninput = () => {
+      const i = parseInt(input.dataset.i, 10);
+      const val = parseFloat(input.value);
+      const tiers = (a.tiers || [0,0,0,0,0]).slice();
+      tiers[i] = isNaN(val) ? 0 : val;
+      mutate(a, "tiers", tiers);
+      refreshPreview();
+    };
+  });
+  document.getElementById("f-lore").oninput = () => mutate(a, "lore", document.getElementById("f-lore").value);
+  refreshPreview();
+}
+
+function refreshPreview() {
+  const a = getActive();
+  if (!a) return;
+  const name = document.getElementById("p-name");
+  const tiers = document.getElementById("p-tiers");
+  const stat = document.getElementById("p-stat");
+  const applies = document.getElementById("p-applies");
+  if (name) {
+    name.textContent = a.name || a.id;
+    name.style.color = a.color || rarityHexForStat(a.stat);
+  }
+  if (tiers) {
+    const t = a.tiers || [0,0,0,0,0];
+    tiers.innerHTML = RARITY_TIERS.map((r, i) =>
+      `<span class="pill t${i}">${r}: ${t[i] ?? 0}</span>`
+    ).join("");
+  }
+  if (stat) stat.textContent = a.stat;
+  if (applies) applies.textContent = (a.applies_to || ["any"]).join(", ");
+}
+
+function mutate(a, key, value) {
+  a[key] = value;
+  dirty = true;
+  // Update sidebar in place.
+  renderList();
+}
+
+function addNew() {
+  const seq = doc.affixes.length + 1;
+  const a = {
+    id: `affix_${seq}`,
+    name: `Affix ${seq}`,
+    applies_to: ["any"],
+    stat: "atk",
+    tiers: [1, 2, 3, 5, 8],
+    color: rarityHexForStat("atk"),
+  };
+  doc.affixes.push(a);
+  dirty = true;
+  selectAffix(a.id);
+}
+
+function deleteAffix() {
+  const a = getActive();
+  if (!a) return;
+  if (!confirm(`Delete affix "${a.name || a.id}"?`)) return;
+  doc.affixes = doc.affixes.filter(x => x.id !== a.id);
+  dirty = true;
+  activeId = doc.affixes[0]?.id || null;
+  renderList();
+  renderEditor();
+}
+
+function exportJSON() {
+  const json = JSON.stringify(doc, null, 2);
+  const blob = new Blob([json], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "affixes.json";
+  a.click();
+  URL.revokeObjectURL(url);
+  setStatus(`Exported affixes.json (${doc.affixes.length} affixes).`);
+}
+
+function escapeHtml(s) {
+  return String(s ?? "").replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"
+  }[c]));
+}
+function escapeAttr(s) { return escapeHtml(s); }
+
+load();
+</script>
+</body>
+</html>

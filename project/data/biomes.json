@@ -324,7 +324,7 @@
         {
           "weight": 12,
           "prefixes": [
-            "tree_1_yellow",
+            "@tree_1_yellow",
             "@dungeon_alt_0",
             "@dungeon_alt_1",
             "@dungeon_alt_2",
@@ -433,7 +433,7 @@
         {
           "weight": 30,
           "prefixes": [
-            "tree_1_lightred",
+            "@tree_1_lightred",
             "@forest_alt_0",
             "@forest_alt_1",
             "@forest_alt_2",
@@ -534,31 +534,31 @@
         {
           "weight": 25,
           "prefixes": [
-            "deep_water_murky_0"
+            "@deep_water_murky_0"
           ]
         },
         {
           "weight": 15,
           "prefixes": [
-            "deep_water_0"
+            "@deep_water_0"
           ]
         },
         {
           "weight": 15,
           "prefixes": [
-            "mangrove_1"
+            "@mangrove_1"
           ]
         },
         {
           "weight": 15,
           "prefixes": [
-            "mangrove_2"
+            "@mangrove_2"
           ]
         },
         {
           "weight": 10,
           "prefixes": [
-            "mangrove_3"
+            "@mangrove_3"
           ]
         }
       ],
@@ -737,19 +737,19 @@
         {
           "weight": 35,
           "prefixes": [
-            "deep_water_0"
+            "@deep_water_0"
           ]
         },
         {
           "weight": 25,
           "prefixes": [
-            "deep_water_1"
+            "@deep_water_1"
           ]
         },
         {
           "weight": 15,
           "prefixes": [
-            "shallow_water_2"
+            "@shallow_water_2"
           ]
         }
       ],
@@ -1028,7 +1028,7 @@
         {
           "weight": 15,
           "prefixes": [
-            "crumbled_column",
+            "@crumbled_column",
             "@crypt_alt_0",
             "@crypt_alt_1",
             "@crypt_alt_2",
@@ -1040,7 +1040,7 @@
         {
           "weight": 10,
           "prefixes": [
-            "boulder"
+            "@boulder"
           ]
         }
       ],
@@ -1257,7 +1257,7 @@
         {
           "weight": 20,
           "prefixes": [
-            "lava_0"
+            "@lava_0"
           ]
         }
       ],
@@ -1443,19 +1443,19 @@
         {
           "weight": 25,
           "prefixes": [
-            "deep_water_murky_0"
+            "@deep_water_murky_0"
           ]
         },
         {
           "weight": 15,
           "prefixes": [
-            "mold_1"
+            "@mold_1"
           ]
         },
         {
           "weight": 15,
           "prefixes": [
-            "mold_2"
+            "@mold_2"
           ]
         }
       ],
