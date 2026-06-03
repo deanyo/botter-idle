@@ -343,7 +343,9 @@ function renderEditor() {
       <div class="footer-meta">Stat: <span id="p-stat">${escapeHtml(a.stat)}</span> · applies to <span id="p-applies">${escapeHtml((a.applies_to || ['any']).join(', '))}</span></div>
     </div>
 
-    <div style="margin-top: 24px;">
+    <div style="margin-top: 24px; display: flex; gap: 8px; flex-wrap: wrap;">
+      <button onclick="exportSingleAffix()" title="Download just this affix's JSON — paste into a GitHub issue to share">⬇ Export this affix</button>
+      <button onclick="copySingleAffixToClipboard()" title="Copy this affix's JSON to clipboard">⧉ Copy to clipboard</button>
       <button class="delete-btn" onclick="deleteAffix()">Delete affix</button>
     </div>
   `;
@@ -439,6 +441,34 @@ function exportJSON() {
   a.click();
   URL.revokeObjectURL(url);
   setStatus(`Exported affixes.json (${doc.affixes.length} affixes).`);
+}
+
+// One-affix export — single entry from the affixes[] array, ready to
+// paste into a GitHub issue or merge into project/data/affixes.json.
+function exportSingleAffix() {
+  const a = getActive();
+  if (!a) return;
+  const json = JSON.stringify(a, null, 2) + "\n";
+  const blob = new Blob([json], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `affix_${a.id}.json`;
+  link.click();
+  URL.revokeObjectURL(url);
+  setStatus(`Exported affix_${a.id}.json`);
+}
+
+async function copySingleAffixToClipboard() {
+  const a = getActive();
+  if (!a) return;
+  const json = JSON.stringify(a, null, 2) + "\n";
+  try {
+    await navigator.clipboard.writeText(json);
+    setStatus(`Copied "${a.id}" JSON to clipboard.`);
+  } catch (e) {
+    setStatus("Clipboard write blocked — use ⬇ Export this affix instead.");
+  }
 }
 
 function escapeHtml(s) {

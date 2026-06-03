@@ -278,6 +278,8 @@
     <div id="edit-panel" class="hidden">
       <div id="edit-head">
         <h2 id="edit-title">Edit Item</h2>
+        <button onclick="exportSingleItem()" title="Download this item's JSON — paste into a GitHub issue to share">⬇ Export item</button>
+        <button onclick="copySingleItemToClipboard()" title="Copy this item's JSON to clipboard">⧉ Copy</button>
         <button onclick="deleteItem()" style="color:#ff8888;font-size:11px;">Delete</button>
         <button onclick="closeEdit()">✕</button>
       </div>
@@ -897,6 +899,58 @@ function exportJSON() {
   setTimeout(() => setStatus(''), 4000);
   renderSidebar();
   renderGrid();
+}
+
+// One-item snapshot — the same shape items.json's items[] entries
+// have, so a reviewer can paste it straight into the array. Used by
+// the share-back loop where someone authors ONE item and posts it.
+function singleItemPayload(it) {
+  return {
+    id: it.id,
+    name: it.name,
+    slot: it.slot || activeSlot.id,
+    base_type: it.base_type,
+    item_tier: it.item_tier,
+    rarity: it.rarity,
+    tile: it.tile,
+    atk: it.atk || 0,
+    def: it.def || 0,
+    hp: it.hp || 0,
+    flavor_tags: it.flavor_tags || [],
+    lore: it.lore || '',
+    drop_weights: it.drop_weights || [0,0,0,0,0],
+    unique: it.unique || false,
+    ...(it.future_mechanic ? {future_mechanic: it.future_mechanic} : {})
+  };
+}
+
+function exportSingleItem() {
+  if (!selectedId) return;
+  const it = items.find(x => x.id === selectedId);
+  if (!it) return;
+  const json = JSON.stringify(singleItemPayload(it), null, 2) + '\n';
+  const blob = new Blob([json], {type: 'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `item_${it.id}.json`;
+  a.click();
+  setStatus('Exported item_'+it.id+'.json');
+  setTimeout(() => setStatus(''), 2400);
+}
+
+async function copySingleItemToClipboard() {
+  if (!selectedId) return;
+  const it = items.find(x => x.id === selectedId);
+  if (!it) return;
+  const json = JSON.stringify(singleItemPayload(it), null, 2) + '\n';
+  try {
+    await navigator.clipboard.writeText(json);
+    setStatus('Copied "'+it.id+'" JSON to clipboard.');
+    setTimeout(() => setStatus(''), 2400);
+  } catch (e) {
+    setStatus('Clipboard write blocked — use ⬇ Export instead.', true);
+    setTimeout(() => setStatus(''), 3500);
+  }
 }
 
 // ---------- Drop weight visualiser legend ----------

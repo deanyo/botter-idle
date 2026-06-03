@@ -343,7 +343,9 @@ function renderEditor() {
   bar.innerHTML = `
     <h1>${escape(activeId)}</h1>
     <span class="small">${escape(b.display_name || "")}</span>
-    <button class="primary" onclick="exportJSON()">⬇ Export biomes.json</button>
+    <button onclick="exportSingleBiome()" title="Download just this biome — paste into a GitHub issue to share">⬇ Export this biome</button>
+    <button onclick="copySingleBiomeToClipboard()" title="Copy this biome's JSON to clipboard">⧉ Copy to clipboard</button>
+    <button class="primary" onclick="exportJSON()" title="Download the full biomes.json with all biomes">⬇ Export full biomes.json</button>
     <span class="small" id="dirty-count"></span>
   `;
   main.appendChild(bar);
@@ -719,6 +721,46 @@ function exportJSON() {
   a.click();
   URL.revokeObjectURL(a.href);
   // Don't clear dirty — user might re-export after more edits.
+}
+
+// Single-biome export: emit just the active biome's JSON with its id.
+// The shape mirrors how `biomes.json::biomes` keys an entry — we
+// wrap in `{ id: biome }` so a reviewer can `jq -s '.[]' biome.json
+// | jq 'add'` straight into the main file. Designed for the share-
+// back loop where someone authors ONE biome and wants to paste it
+// into a GitHub issue.
+function singleBiomeJSON() {
+  if (!activeId) return null;
+  const wrapped = {};
+  wrapped[activeId] = biomes[activeId];
+  return JSON.stringify(wrapped, null, 2) + "\n";
+}
+
+function exportSingleBiome() {
+  const json = singleBiomeJSON();
+  if (json === null) return;
+  const blob = new Blob([json], {type: "application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `biome_${activeId}.json`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+async function copySingleBiomeToClipboard() {
+  const json = singleBiomeJSON();
+  if (json === null) return;
+  try {
+    await navigator.clipboard.writeText(json);
+    const dc = document.getElementById("dirty-count");
+    if (dc) {
+      const prev = dc.textContent;
+      dc.textContent = `Copied "${activeId}" JSON to clipboard.`;
+      setTimeout(() => { dc.textContent = prev; }, 2400);
+    }
+  } catch (e) {
+    alert("Clipboard write blocked — use ⬇ Export this biome instead.");
+  }
 }
 
 function escape(s) {
