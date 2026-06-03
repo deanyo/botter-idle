@@ -53,10 +53,12 @@ Mobile port deferred.
 
 ## Authoring tools
 
-Browser-based editors, hosted on GitHub Pages:
+Browser-based editors, hosted at:
 
-> **https://deanyo.github.io/botter-idle/** *(once Pages is enabled in
-> repo settings — see `.github/workflows/pages.yml`)*
+> **https://dnyo.co.uk/botter-idle/**
+
+Built and deployed automatically on push to main via the workflow at
+`.github/workflows/pages.yml`.
 
 - **Atlas Viewer** — browse 6,945 catalogued tiles by category, biome,
   class, subdir.

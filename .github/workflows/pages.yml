@@ -39,20 +39,22 @@ jobs:
 
       - name: Stage portal artifact
         run: |
-          # Build a clean staging directory containing only what the
-          # browser editors need — keeps the upload small and avoids
-          # exposing build scripts / Godot scene metadata.
+          # Build a clean staging directory with what the editors need.
+          # Atlas viewer + item editor reference the full dcss/ pack
+          # for sprite previews; biome editor only uses the curated
+          # subset under project/assets/tiles/.
           mkdir -p _site
-          # Tools (HTML editors + manifests).
           cp -R tools _site/tools
-          # Data the editors fetch (atlas, biomes, items, affixes,
-          # modifiers) plus tile sprites.
           mkdir -p _site/project
           cp -R project/data _site/project/data
           mkdir -p _site/project/assets
           cp -R project/assets/tiles _site/project/assets/tiles
-          # Root index.html → redirect to the tools landing page so
-          # https://<user>.github.io/<repo>/ lands somewhere useful.
+          # Full DCSS tile pack (CC0). ~35 MB. Atlas viewer + item
+          # editor's sprite picker fall back to `../dcss/...` paths.
+          if [ -d dcss ]; then
+            cp -R dcss _site/dcss
+          fi
+          # Root redirect into tools/.
           cat > _site/index.html <<'HTML'
           <!DOCTYPE html>
           <meta http-equiv="refresh" content="0; url=tools/">

@@ -1,9 +1,11 @@
-# Big trees not to ship — re-fetch as needed
-# DCSS source: GPLv2+ research-only clone (132 MB)
+# DCSS source: GPLv2+ research-only clone (132 MB). Don't ship — would
+# infect the project with GPL obligations on game logic.
 dcss-source/
-# DCSS raw tile pack: CC0 art, but 35 MB — only the curated subset under
-# project/assets/tiles/ is shipped with the game.
-dcss/
+
+# Note: dcss/ (the CC0 tile pack, ~35 MB) IS tracked. The authoring
+# portal hosted on GitHub Pages reads tiles from `dcss/...` for the
+# atlas viewer + item editor. CC0 license; no attribution required
+# but credited in the in-game credits screen.
 
 # macOS metadata
 .DS_Store
