@@ -7,6 +7,7 @@ extends Control
 signal play_pressed
 signal video_options_pressed
 signal fx_tuner_pressed
+signal create_character_pressed
 
 # Colors mirror UITheme — see hud_chrome.gd note for why these are inline.
 const COL_AMBER := Color(0.92, 0.78, 0.45)
@@ -85,7 +86,7 @@ func _build_vignette(x: int, y: int, w: int, h: int) -> void:
 	holder.position = Vector2(frame_x + frame_w / 2.0, frame_y + frame_h / 2.0)
 	holder.scale = Vector2(rig_scale, rig_scale)
 	add_child(holder)
-	var built: Dictionary = PaperdollRenderer.build_rig(items_db, state.equipped)
+	var built: Dictionary = PaperdollRenderer.build_rig(items_db, state.equipped, String(state.get("species", "")))
 	holder.add_child(built.rig)
 	# Stat strip beneath the frame.
 	var strip_y: int = frame_y + frame_h + 18
@@ -124,7 +125,7 @@ func _build_buttons(x: int, y: int, w: int, h: int) -> void:
 	var btn_h := 56
 	var gap := 12
 	_make_button("PLAY", col_x, by, col_w, btn_h, 24, false, _on_play); by += btn_h + gap
-	_make_button("Create Character (soon)", col_x, by, col_w, 44, 16, true, Callable()); by += 44 + gap
+	_make_button("Create Character", col_x, by, col_w, 44, 16, false, _on_create_character); by += 44 + gap
 	_make_button("Video Options", col_x, by, col_w, 44, 16, false, _on_options); by += 44 + gap
 	_make_button("FX Tuner", col_x, by, col_w, 44, 16, false, _on_fx_tuner); by += 44 + gap
 	_make_button("Reset Save", col_x, by, col_w, 44, 16, false, _on_reset); by += 44 + gap
@@ -159,6 +160,9 @@ func _on_options() -> void:
 
 func _on_fx_tuner() -> void:
 	fx_tuner_pressed.emit()
+
+func _on_create_character() -> void:
+	create_character_pressed.emit()
 
 func _on_quit() -> void:
 	get_tree().quit()

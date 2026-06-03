@@ -554,7 +554,7 @@ func push_log(msg: String, tag: String = "combat") -> void:
 		else:
 			log_lines[i].text = ""
 
-func update_equipped(equipped: Dictionary, items_db: Dictionary) -> void:
+func update_equipped(equipped: Dictionary, items_db: Dictionary, species: String = "") -> void:
 	# equipped: slot → instance dict; items_db: id → static def. The L-shape
 	# slot grid keeps using the item-card icon; the bot rig draws actual
 	# body/weapon/helm overlay sprites.
@@ -609,7 +609,7 @@ func update_equipped(equipped: Dictionary, items_db: Dictionary) -> void:
 	if paperdoll_holder != null:
 		if is_instance_valid(paperdoll_rig):
 			paperdoll_rig.queue_free()
-		var built: Dictionary = PaperdollRenderer.build_rig(items_db, equipped)
+		var built: Dictionary = PaperdollRenderer.build_rig(items_db, equipped, species)
 		paperdoll_rig = built.rig
 		paperdoll_holder.add_child(paperdoll_rig)
 

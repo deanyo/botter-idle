@@ -743,7 +743,7 @@ func _render_equipped() -> void:
 	if paperdoll_holder != null:
 		if is_instance_valid(paperdoll_rig):
 			paperdoll_rig.queue_free()
-		var built: Dictionary = PaperdollRenderer.build_rig(items_db, state.equipped)
+		var built: Dictionary = PaperdollRenderer.build_rig(items_db, state.equipped, String(state.get("species", "")))
 		paperdoll_rig = built.rig
 		paperdoll_holder.add_child(paperdoll_rig)
 

@@ -139,17 +139,35 @@ var _items_db_cache: Dictionary = {}
 # Snapshot of save.bot_upgrades at run start. Used by recompute_stats to
 # stack upgrade ranks on top of base + gear stats. Set by apply_gear.
 var upgrade_state: Dictionary = {}
+# Species id (read from save_state). Set in apply_gear; consumed in
+# recompute_stats to apply the species' stat modifiers. Defaults to
+# "spriggan" so a fresh Bot before apply_gear still renders + computes
+# stats reasonably.
+var species_id: String = "spriggan"
 
 func apply_gear(items_db: Dictionary, equipped_instances: Dictionary, save_state: Dictionary = {}) -> void:
 	_items_db_cache = items_db
 	equipped = equipped_instances.duplicate(true)
 	upgrade_state = save_state
+	species_id = String(save_state.get("species", "spriggan")) if not save_state.is_empty() else "spriggan"
 	# Run-stable upgrade contributions to "blessing-style" stats. recompute
 	# doesn't touch these (blessings can keep adding mid-run), so we apply
 	# them once here at run start and let the rest of the run's flow stack
 	# on top.
 	if not upgrade_state.is_empty():
 		loot_rarity_bonus = BotUpgrades.total_for_stat(upgrade_state, "loot_rarity_bonus")
+	# Species loot_pct is a passive contribution — apply once at run
+	# start so it stacks with bot upgrades / blessings instead of being
+	# wiped each recompute.
+	var sp: Dictionary = SpeciesData.get_def(species_id)
+	if not sp.is_empty():
+		loot_rarity_bonus += float(sp.get("loot_pct", 0))
+		xp_gain_pct += float(sp.get("xp_pct", 0))
+	# Apply species sprite swap. set_texture is idempotent — safe to
+	# call repeatedly.
+	var sp_path: String = SpeciesData.sprite_path_for(species_id)
+	if sp_path != "" and ResourceLoader.exists(sp_path):
+		set_texture(load(sp_path))
 	recompute_stats()
 	hp = max_hp
 	_update_hp_bar()
@@ -233,17 +251,31 @@ func recompute_stats() -> void:
 	var up_hp: float = BotUpgrades.total_for_stat(upgrade_state, "max_hp") if not upgrade_state.is_empty() else 0.0
 	var up_atk: float = BotUpgrades.total_for_stat(upgrade_state, "atk") if not upgrade_state.is_empty() else 0.0
 	var up_def: float = BotUpgrades.total_for_stat(upgrade_state, "def") if not upgrade_state.is_empty() else 0.0
-	max_hp = base_max_hp + (level - 1) * 8 + int(up_hp)
-	atk = base_atk + (level - 1) + int(up_atk)
-	defense = base_def + int(level / 3.0) + int(up_def)
+	# Species stat multipliers — applied BEFORE gear so an item's
+	# +10 atk on a Minotaur (atk_pct=20) doesn't get the 20% boost on
+	# top of the item, just on the BASE atk. Keeps gear feeling
+	# species-agnostic ("a +10 sword is a +10 sword") while species
+	# defines the bot's underlying constitution.
+	var sp: Dictionary = SpeciesData.get_def(species_id)
+	var sp_hp_mult: float = 1.0 + float(sp.get("hp_pct", 0)) / 100.0
+	var sp_atk_mult: float = 1.0 + float(sp.get("atk_pct", 0)) / 100.0
+	var sp_def_mult: float = 1.0 + float(sp.get("def_pct", 0)) / 100.0
+	max_hp = int(round(float(base_max_hp + (level - 1) * 8 + int(up_hp)) * sp_hp_mult))
+	atk = int(round(float(base_atk + (level - 1) + int(up_atk)) * sp_atk_mult))
+	defense = int(round(float(base_def + int(level / 3.0) + int(up_def)) * sp_def_mult))
+	# Aggro range bonus from species (drives AGGRO_DISTANCE in dungeon AI).
+	# Vision-tag flavor adds on top later.
+	aggro_bonus = int(sp.get("aggro_flat", 0))
 
 	var pct_hp: float = 0.0
 	var pct_atk: float = 0.0
 	# Affix stats from the simplified 6-affix system. Crit/Haste are summed
 	# across all gear slots; gear-regen stacks with altar blessings.
-	var crit_sum: float = 0.0
-	var haste_sum: float = 0.0
-	var gear_regen: float = 0.0
+	# Species seed values from species.json — additive on top of any
+	# affix / item / blessing contributions.
+	var crit_sum: float = float(sp.get("crit_flat", 0))
+	var haste_sum: float = float(sp.get("haste_pct", 0))
+	var gear_regen: float = float(sp.get("regen_flat", 0))
 	for slot in equipped.keys():
 		var inst: Variant = equipped[slot]
 		if inst == null or typeof(inst) != TYPE_DICTIONARY:
@@ -593,6 +625,13 @@ func combat_weapon_tags() -> Array:
 	var enchant: String = String(wpn.get("enchant", ""))
 	if enchant != "" and not (enchant in tags):
 		tags.append(enchant)
+	# Species innate tags — vampire/demonspawn carry their flavor
+	# even on a vanilla weapon. Read from the same SpeciesData lookup
+	# combat_defense_tags uses.
+	var sp: Dictionary = SpeciesData.get_def(species_id)
+	for t in sp.get("innate_tags", []):
+		if not (String(t) in tags):
+			tags.append(String(t))
 	return tags
 
 # Defender-worn tags — armor / shield / amulet / rings provide the
@@ -603,6 +642,14 @@ const _DEF_SLOTS := ["armor", "shield", "helm", "amulet", "ring", "boots", "glov
 
 func combat_defense_tags() -> Array:
 	var out: Array = []
+	# Species innate tags. A vampire always carries "vampiric" so its
+	# weapon hits gain lifesteal even with no vampiric gear; a
+	# demonspawn always carries "demon" so it gets +25% vs holy_hates.
+	# Read first so they show up on tooltips alongside gear tags.
+	var sp: Dictionary = SpeciesData.get_def(species_id)
+	for t in sp.get("innate_tags", []):
+		if not (String(t) in out):
+			out.append(String(t))
 	for slot in _DEF_SLOTS:
 		var inst: Variant = equipped.get(slot, null)
 		if inst == null or typeof(inst) != TYPE_DICTIONARY:

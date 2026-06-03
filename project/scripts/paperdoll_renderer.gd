@@ -70,13 +70,20 @@ const SLOT_Z := {
 
 # Returns: { rig: Node2D, base_sprite: Sprite2D, slots: { slot_id: Sprite2D } }
 # Caller adds `rig` as a child wherever they want the bot to render. `slots`
-# lets the bot swing the weapon Sprite2D, etc.
-static func build_rig(items_db: Dictionary, equipped: Dictionary) -> Dictionary:
+# lets the bot swing the weapon Sprite2D, etc. Optional `species` arg
+# swaps the base sprite to the species-specific sprite (e.g. "minotaur"
+# → minotaur_male.png). Falls back to BASE_TEX_PATH (spriggan_female)
+# when species is empty or unknown — keeps existing call sites working.
+static func build_rig(items_db: Dictionary, equipped: Dictionary, species: String = "") -> Dictionary:
 	var rig := Node2D.new()
 	var base := Sprite2D.new()
 	base.centered = true
 	base.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	var base_path := BASE_TEX_PATH
+	if species != "":
+		var sp_path: String = SpeciesData.sprite_path_for(species)
+		if sp_path != "" and ResourceLoader.exists(sp_path):
+			base_path = sp_path
 	if not ResourceLoader.exists(base_path):
 		base_path = FALLBACK_TEX_PATH
 	if ResourceLoader.exists(base_path):

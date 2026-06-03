@@ -42,6 +42,11 @@ static func _migrate(state: Dictionary) -> void:
 		equipped["gloves"] = null
 	if not equipped.has("cloak"):
 		equipped["cloak"] = null
+	# Species selector added 2026-06-03. Existing saves had no species
+	# field; default to "spriggan" since that's the sprite they were
+	# wearing. New characters can pick any species at creation.
+	if not state.has("species") or String(state["species"]) == "":
+		state["species"] = "spriggan"
 	if not equipped.has("ring") or equipped.get("ring", null) == null:
 		var promote: Variant = equipped.get("ring1", null)
 		if promote == null:
@@ -77,6 +82,10 @@ static func _default() -> Dictionary:
 	# the weapon overlay sprite has something to render. Chosen for shape
 	# (dagger -> simple silhouette) and balance (low stats).
 	return {
+		# Picked at character creation; locked per character. Defaults
+		# to "spriggan" because that matches the historic bot sprite —
+		# pre-character-select saves migrate to spriggan via _migrate.
+		"species": "spriggan",
 		"gold": 0,
 		"level": 1,
 		"xp": 0,

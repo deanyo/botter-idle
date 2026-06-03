@@ -7,6 +7,7 @@ const SHOP_SCENE := preload("res://scenes/shop.tscn")
 const MAIN_MENU_SCENE := preload("res://scenes/main_menu.tscn")
 const VIDEO_OPTIONS_SCENE := preload("res://scenes/video_options.tscn")
 const FX_TUNER_SCENE := preload("res://scenes/fx_tuner.tscn")
+const CHARACTER_CREATE_SCENE := preload("res://scenes/character_create.tscn")
 const VS := preload("res://scripts/video_settings.gd")
 const _PauseMenu := preload("res://scripts/pause_menu.gd")
 
@@ -196,6 +197,8 @@ func _show_main_menu() -> void:
 	menu.video_options_pressed.connect(_show_video_options)
 	if menu.has_signal("fx_tuner_pressed"):
 		menu.fx_tuner_pressed.connect(_show_fx_tuner)
+	if menu.has_signal("create_character_pressed"):
+		menu.create_character_pressed.connect(_show_character_create)
 
 func _show_video_options() -> void:
 	var opts: Node = VIDEO_OPTIONS_SCENE.instantiate()
@@ -206,6 +209,15 @@ func _show_fx_tuner() -> void:
 	var tuner: Node = FX_TUNER_SCENE.instantiate()
 	_swap(tuner)
 	tuner.back_pressed.connect(_show_main_menu)
+
+func _show_character_create() -> void:
+	var screen: Node = CHARACTER_CREATE_SCENE.instantiate()
+	_swap(screen)
+	screen.back_pressed.connect(_show_main_menu)
+	# Confirming a species writes to save and routes back to main menu
+	# so the player can immediately deploy with the new bot.
+	if screen.has_signal("character_confirmed"):
+		screen.character_confirmed.connect(func(_id): _show_main_menu())
 
 var _selected_branch: String = ""
 

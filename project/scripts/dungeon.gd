@@ -827,7 +827,7 @@ func _update_biome_hud() -> void:
 	var equipped_hash: int = (bot.equipped.hash() if is_instance_valid(bot) else 0)
 	var eq_changed: bool = equipped_hash != _last_equipped_hash
 	if eq_changed:
-		chrome.update_equipped(bot.equipped if is_instance_valid(bot) else {}, items_db)
+		chrome.update_equipped(bot.equipped if is_instance_valid(bot) else {}, items_db, bot.species_id if is_instance_valid(bot) else "")
 		_last_equipped_hash = equipped_hash
 	# Inventory updates are pushed via _push_inventory_to_hud() whenever
 	# segments mutate (loot pickup, equip). First-tick push covers the case
