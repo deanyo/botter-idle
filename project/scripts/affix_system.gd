@@ -195,7 +195,11 @@ static func format_item_tooltip(item_def: Dictionary, inst: Variant) -> String:
 	var disp_name: String = format_item_name(String(item_def.get("name", "")), affixes, inst)
 	var rarity: String = String(item_def.get("rarity", "")).capitalize()
 	var lines: Array = []
-	lines.append("%s [%s]" % [disp_name, rarity] if rarity != "" else disp_name)
+	# Append 2H badge to the rarity slot when applicable.
+	var rarity_chunk: String = rarity
+	if Bot.is_two_handed_base_type(String(item_def.get("base_type", ""))):
+		rarity_chunk = (rarity + " · 2H") if rarity != "" else "2H"
+	lines.append("%s [%s]" % [disp_name, rarity_chunk] if rarity_chunk != "" else disp_name)
 	# Meta-rarity line — Ancient (1%) or Primal (0.1%) per drop. Stat
 	# multiplier is +20% / +50% baked into bot.recompute_stats so the
 	# numbers in the line below already reflect it; this line just

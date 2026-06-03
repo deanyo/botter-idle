@@ -2394,13 +2394,16 @@ func try_equip_from_segment(seg_idx: int, item_idx: int) -> bool:
 		return false
 	if not is_instance_valid(bot):
 		return false
-	var displaced: Variant = bot.equip_from_inventory(inst)
+	# 2H ↔ shield exclusion can return up to TWO displaced items.
+	var displaced_arr: Array = bot.equip_from_inventory(inst)
 	# Remove the picked item from its segment.
 	items.remove_at(item_idx)
-	# Stash the displaced item back at the same segment so the player can
-	# unequip-then-pick another in succession without searching the list.
-	if displaced != null and typeof(displaced) == TYPE_DICTIONARY:
-		items.append(displaced)
+	# Stash all displaced items back at the same segment so the player
+	# can find them. Newest at the end so equipped→unequipped order
+	# is preserved.
+	for d in displaced_arr:
+		if typeof(d) == TYPE_DICTIONARY:
+			items.append(d)
 	_slot_cooldowns[slot] = EQUIP_COOLDOWN_SECONDS
 	_rebuild_inv_cache()
 	_push_inventory_to_hud()

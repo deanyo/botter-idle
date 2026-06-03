@@ -857,7 +857,25 @@ func _equip(inv_index: int) -> void:
 	var base_id: String = String(inst.get("base_id", ""))
 	if not items_db.has(base_id):
 		return
-	var slot: String = _resolve_equip_slot(String(items_db[base_id].slot))
+	var item: Dictionary = items_db[base_id]
+	var slot: String = _resolve_equip_slot(String(item.get("slot", "")))
+	# 2H ↔ shield exclusion (mirrors Bot.equip_from_inventory). A 2H
+	# weapon clears the shield slot back to inventory; a shield
+	# clears a 2H weapon back to inventory. Per-base_type list lives
+	# on Bot so paperdoll/UI/tooltip share one source of truth.
+	if slot == "weapon" and Bot.is_two_handed_base_type(String(item.get("base_type", ""))):
+		var current_shield: Variant = state.equipped.get("shield", null)
+		if current_shield != null and typeof(current_shield) == TYPE_DICTIONARY:
+			inv.append(current_shield)
+			state.equipped["shield"] = null
+	elif slot == "shield":
+		var current_weapon: Variant = state.equipped.get("weapon", null)
+		if current_weapon != null and typeof(current_weapon) == TYPE_DICTIONARY:
+			var w_id: String = String(current_weapon.get("base_id", ""))
+			if w_id != "" and items_db.has(w_id):
+				if Bot.is_two_handed_base_type(String(items_db[w_id].get("base_type", ""))):
+					inv.append(current_weapon)
+					state.equipped["weapon"] = null
 	var current: Variant = state.equipped.get(slot, null)
 	inv.remove_at(inv_index)
 	if current != null and typeof(current) == TYPE_DICTIONARY:

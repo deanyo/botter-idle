@@ -155,28 +155,71 @@ func apply_gear(items_db: Dictionary, equipped_instances: Dictionary, save_state
 	_update_hp_bar()
 	_refresh_gear_overlays()
 
-# Swap an inventory item into its slot. Returns the displaced instance
-# (or null if the slot was empty), so the caller can re-insert it into the
-# inventory at whichever segment makes sense. Stat recompute preserves
-# current HP delta (no cheesing full-heal by re-equipping).
-func equip_from_inventory(inst: Dictionary) -> Variant:
+# Two-handed weapon base_types — equipping a 2H weapon auto-unequips
+# the shield, and vice versa. Per-base_type list (consistent with
+# DCSS — every claymore/halberd/battle_axe is 2H regardless of
+# specific item). Worth keeping centralized so paperdoll/UI/tooltip
+# can all reference the same source of truth.
+const TWO_HANDED_BASE_TYPES := [
+	# 2H axes
+	"battle_axe", "broad_axe", "executioner_axe",
+	# 2H polearms (everything but spear is 2H)
+	"halberd", "bardiche", "scythe",
+	# 2H swords
+	"greatsword", "claymore", "double_sword", "triple_sword",
+	# Big bludgeons
+	"giant_club", "dire_flail",
+	# Staves (always 2H)
+	"quarterstaff", "lajatang",
+]
+
+static func is_two_handed_base_type(base_type: String) -> bool:
+	return base_type in TWO_HANDED_BASE_TYPES
+
+# Swap an inventory item into its slot. Returns an array of DISPLACED
+# instances (0..2) so the caller can re-insert them into inventory.
+# Most equips displace 0 or 1 items. The 2H↔shield exclusion can
+# displace TWO at once: equipping a 2H weapon when both weapon AND
+# shield are filled returns [old_weapon, old_shield].
+# Stat recompute preserves current HP delta (no full-heal cheese).
+func equip_from_inventory(inst: Dictionary) -> Array:
 	if typeof(inst) != TYPE_DICTIONARY:
-		return null
+		return []
 	var base_id: String = String(inst.get("base_id", ""))
 	if base_id == "" or not _items_db_cache.has(base_id):
-		return null
-	var slot: String = String(_items_db_cache[base_id].get("slot", ""))
+		return []
+	var item: Dictionary = _items_db_cache[base_id]
+	var slot: String = String(item.get("slot", ""))
 	if slot == "":
-		return null
+		return []
 	# items.json declares slot=="ring"; the equipped dict uses one `ring`
 	# slot (collapsed from ring1/ring2 — see save_state._migrate).
 	if slot == "ring":
 		slot = "ring"
-	var displaced: Variant = equipped.get(slot, null)
+	var displaced: Array = []
+	# 2H weapon ↔ shield exclusion. Equipping a 2H weapon clears the
+	# shield slot back to inventory; equipping a shield clears a 2H
+	# weapon back to inventory. PoE/Diablo pattern — kindest UX.
+	if slot == "weapon" and is_two_handed_base_type(String(item.get("base_type", ""))):
+		var current_shield: Variant = equipped.get("shield", null)
+		if current_shield != null and typeof(current_shield) == TYPE_DICTIONARY:
+			displaced.append(current_shield)
+			equipped["shield"] = null
+	elif slot == "shield":
+		var current_weapon: Variant = equipped.get("weapon", null)
+		if current_weapon != null and typeof(current_weapon) == TYPE_DICTIONARY:
+			var w_id: String = String(current_weapon.get("base_id", ""))
+			if w_id != "" and _items_db_cache.has(w_id):
+				if is_two_handed_base_type(String(_items_db_cache[w_id].get("base_type", ""))):
+					displaced.append(current_weapon)
+					equipped["weapon"] = null
+	# Direct displace of the slot we're filling.
+	var direct: Variant = equipped.get(slot, null)
+	if direct != null and typeof(direct) == TYPE_DICTIONARY:
+		displaced.append(direct)
 	equipped[slot] = inst.duplicate(true)
 	var prev_max: int = max_hp
 	recompute_stats()
-	# Preserve the player's HP delta — equip does not heal or hurt.
 	hp = clampi(hp + (max_hp - prev_max), 0, max_hp)
 	_update_hp_bar()
 	_refresh_gear_overlays()
