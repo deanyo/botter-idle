@@ -110,7 +110,7 @@ static func _apply_rarity_modulate(sprite: Sprite2D, inst: Variant, items_db: Di
 		return
 	var item: Dictionary = items_db[base_id]
 	var rarity: String = String(item.get("rarity", "common"))
-	var flavor_tags: Array = item.get("flavor_tags", [])
+	var flavor_tags: Array = UITheme.combined_flavor_tags(item, inst)
 	sprite.modulate = UITheme.item_modulate(rarity, flavor_tags)
 
 # Sprite-localised glow on the weapon slot only — mirrors bot.gd. Uses
@@ -126,7 +126,7 @@ static func _apply_rarity_glow(sprite: Sprite2D, inst: Variant, items_db: Dictio
 		return
 	var item: Dictionary = items_db[base_id]
 	var rarity: String = String(item.get("rarity", "common"))
-	var flavor_tags: Array = item.get("flavor_tags", [])
+	var flavor_tags: Array = UITheme.combined_flavor_tags(item, inst)
 	var glow_color: Color = UITheme.item_glow_color(rarity, flavor_tags)
 	if glow_color.a <= 0.0:
 		return
@@ -177,7 +177,7 @@ static func _apply_hand_enchant(rig: Node2D, inst: Variant, items_db: Dictionary
 	var base_id: String = String(inst.get("base_id", ""))
 	if base_id == "" or not items_db.has(base_id):
 		return
-	var flavor_tags: Array = items_db[base_id].get("flavor_tags", [])
+	var flavor_tags: Array = UITheme.combined_flavor_tags(items_db[base_id], inst)
 	var fc: Color = UITheme.flavor_color_for(flavor_tags)
 	if fc.a <= 0.0:
 		return

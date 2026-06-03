@@ -354,7 +354,7 @@ func _make_item_cell(idx: int, inst: Dictionary, item: Dictionary, is_inventory:
 		"common": 0.0, "uncommon": 0.18, "rare": 0.30,
 		"epic": 0.42, "legendary": 0.55,
 	}.get(rarity, 0.0)
-	UITheme.add_rarity_cell_decor(cell, INV_CELL_SIZE, rarity, halo)
+	UITheme.add_item_cell_decor(cell, INV_CELL_SIZE, rarity, UITheme.combined_flavor_tags(item, inst), halo)
 	# Sprite.
 	var sprite := TextureRect.new()
 	sprite.size = Vector2(INV_CELL_SIZE, INV_CELL_SIZE)
@@ -365,7 +365,7 @@ func _make_item_cell(idx: int, inst: Dictionary, item: Dictionary, is_inventory:
 	var tile_path: String = ITEM_TILE_DIR + String(item.get("tile", ""))
 	if ResourceLoader.exists(tile_path):
 		sprite.texture = load(tile_path)
-	sprite.modulate = UITheme.item_modulate(rarity, item.get("flavor_tags", []))
+	sprite.modulate = UITheme.item_modulate(rarity, UITheme.combined_flavor_tags(item, inst))
 	cell.add_child(sprite)
 	# Price label below the sprite.
 	var price: int = _sell_price(inst, item) if is_inventory else _buy_price(item)

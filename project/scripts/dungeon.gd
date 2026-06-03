@@ -1311,6 +1311,29 @@ func _create_item_instance(base_id: String) -> Dictionary:
 		"instance_id": _gen_instance_id(),
 		"affixes": affixes,
 	}
+	# Per-instance "enchant" flavor roll. Static `flavor_tags` on the
+	# base item still apply (vampires_tooth is always vampiric); this
+	# layer adds an optional ADDITIONAL flavor on top, e.g. "Iron
+	# Dagger" rolling fire 5% of the time. Distinct from rarity rolls
+	# so it's a separate axis of surprise on drops.
+	# items.json controls:
+	#   enchant_chance: 0..1 (default 0.05 if pool present, else 0)
+	#   enchant_pool:   array of flavor ids that can roll; falls back
+	#                   to UITheme's full FLAVOR_COLORS list when omitted
+	var enchant_chance: float = float(base.get("enchant_chance", 0.0))
+	if enchant_chance > 0.0 and rng.randf() < enchant_chance:
+		var pool: Array = base.get("enchant_pool", [])
+		if pool.is_empty():
+			pool = UITheme.FLAVOR_COLORS.keys()
+		# Don't roll an enchant that duplicates a static tag — pointless
+		# and visually noisy (double trails, double glow).
+		var existing: Array = base.get("flavor_tags", [])
+		var candidates: Array = []
+		for p in pool:
+			if not (p in existing):
+				candidates.append(p)
+		if not candidates.is_empty():
+			inst["enchant"] = String(candidates[rng.randi_range(0, candidates.size() - 1)])
 	if String(base.get("rarity", "")) == "legendary":
 		var slot: String = String(base.get("slot", "armor"))
 		var artefact: String = ArtefactPool.pick_for_slot(slot, rng)

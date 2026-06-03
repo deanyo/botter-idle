@@ -324,7 +324,9 @@ func _apply_rarity_decor(sprite: Sprite2D, inst: Variant, slot_id: String) -> vo
 		return
 	var item: Dictionary = _items_db_cache[base_id]
 	var rarity: String = String(item.get("rarity", "common"))
-	var flavor_tags: Array = item.get("flavor_tags", [])
+	# Combined static + per-instance enchant tags. Shared helper on
+	# UITheme so HUD/Outpost/floor-loot all see the same union.
+	var flavor_tags: Array = UITheme.combined_flavor_tags(item, inst)
 	# Modulate folds in flavor color (vampiric=red, fire=orange, etc).
 	# Falls back to rarity tint when no priority tag is present.
 	sprite.modulate = UITheme.item_modulate(rarity, flavor_tags)
@@ -399,7 +401,7 @@ func _apply_hand_enchant_ambience(weapon_inst: Variant) -> void:
 	var base_id: String = String(weapon_inst.get("base_id", ""))
 	if base_id == "" or not _items_db_cache.has(base_id):
 		return
-	var flavor_tags: Array = _items_db_cache[base_id].get("flavor_tags", [])
+	var flavor_tags: Array = UITheme.combined_flavor_tags(_items_db_cache[base_id], weapon_inst)
 	var fc: Color = UITheme.flavor_color_for(flavor_tags)
 	if fc.a <= 0.0:
 		return
@@ -440,7 +442,17 @@ func combat_weapon_tags() -> Array:
 	var base_id: String = String(wpn.get("base_id", ""))
 	if base_id == "" or not _items_db_cache.has(base_id):
 		return []
-	return _items_db_cache[base_id].get("flavor_tags", [])
+	# Combine static base tags with the per-instance enchant roll
+	# (dungeon._create_item_instance writes inst.enchant). The
+	# enchant adds ONE additional flavor on top of whatever the
+	# base item already carries — e.g. an Iron Dagger rolled with
+	# fire enchant returns ["fire"]; a vampires_tooth rolled with
+	# cold enchant returns ["vampiric", "cold"].
+	var tags: Array = (_items_db_cache[base_id].get("flavor_tags", []) as Array).duplicate()
+	var enchant: String = String(wpn.get("enchant", ""))
+	if enchant != "" and not (enchant in tags):
+		tags.append(enchant)
+	return tags
 
 # Defender-worn tags — armor / shield / amulet / rings provide the
 # defensive flavor tags (thorns, reflective, harm, rage). Helms also
@@ -457,9 +469,15 @@ func combat_defense_tags() -> Array:
 		var base_id: String = String(inst.get("base_id", ""))
 		if base_id == "" or not _items_db_cache.has(base_id):
 			continue
+		# Static tags + per-instance enchant (defender-worn slots
+		# also read enchant; thorns enchant on a chest plate works
+		# the same as a static thorns armor).
 		for t in _items_db_cache[base_id].get("flavor_tags", []):
 			if not (t in out):
 				out.append(t)
+		var enchant: String = String(inst.get("enchant", ""))
+		if enchant != "" and not (enchant in out):
+			out.append(enchant)
 	return out
 
 func swing_weapon(toward: Vector2) -> void:

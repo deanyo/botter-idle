@@ -573,7 +573,7 @@ func update_equipped(equipped: Dictionary, items_db: Dictionary) -> void:
 			var item_def: Dictionary = items_db.get(item_id, {})
 			item_name = String(item_def.get("name", item_id))
 			slot_rarity = String(item_def.get("rarity", ""))
-			slot_flavor = item_def.get("flavor_tags", [])
+			slot_flavor = UITheme.combined_flavor_tags(item_def, inst)
 			var tile_path: String = "res://assets/tiles/items/" + String(item_def.get("tile", ""))
 			if ResourceLoader.exists(tile_path):
 				tex = load(tile_path)
@@ -779,7 +779,7 @@ func _make_inv_button(seg_idx: int, item_idx: int, inst: Variant, items_db: Dict
 	var item_def: Dictionary = items_db.get(item_id, {})
 	var slot: String = String(item_def.get("slot", ""))
 	var rarity: String = String(item_def.get("rarity", ""))
-	var flavor: Array = item_def.get("flavor_tags", [])
+	var flavor: Array = UITheme.combined_flavor_tags(item_def, inst)
 	var cd: float = float(slot_cooldowns.get(slot, 0.0))
 	var tooltip: String = AffixSystem.format_item_tooltip(item_def, inst)
 	if cd > 0.0:
@@ -798,7 +798,7 @@ func _make_inv_button(seg_idx: int, item_idx: int, inst: Variant, items_db: Dict
 			"common": 0.0, "uncommon": 0.18, "rare": 0.30,
 			"epic": 0.42, "legendary": 0.55,
 		}.get(rarity, 0.0)
-		UITheme.add_rarity_cell_decor(btn, INV_CELL_SIZE, rarity, halo)
+		UITheme.add_item_cell_decor(btn, INV_CELL_SIZE, rarity, flavor, halo)
 	# Sprite on top.
 	var sprite := TextureRect.new()
 	sprite.size = Vector2(INV_CELL_SIZE, INV_CELL_SIZE)

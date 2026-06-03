@@ -40,6 +40,19 @@ const FS_DEBUG := 12
 static func rarity_color(rarity: String) -> Color:
 	return COL_RARITY.get(rarity, Color(0.5, 0.5, 0.5))
 
+# Union of an item's static flavor_tags + the per-instance `enchant`
+# rolled at drop time (see dungeon._create_item_instance). Shared by
+# every surface that needs flavor info — bot rig, paperdolls, HUD,
+# floor loot, run report — so a Vampires Tooth rolled with a fire
+# enchant reads as both vampiric AND fire everywhere consistently.
+static func combined_flavor_tags(item: Dictionary, inst: Variant) -> Array:
+	var tags: Array = (item.get("flavor_tags", []) as Array).duplicate()
+	if typeof(inst) == TYPE_DICTIONARY:
+		var enchant: String = String(inst.get("enchant", ""))
+		if enchant != "" and not (enchant in tags):
+			tags.append(enchant)
+	return tags
+
 # Subtle rarity wash applied to item icons (paperdoll slots, inventory
 # cells, equipped slots) so the bot's gold legendary sword looks gold
 # in the inventory too — matches bot.gd::_apply_rarity_decor and
@@ -149,6 +162,47 @@ static func item_glow_color(rarity: String, flavor_tags: Array = []) -> Color:
 #      carving out the center so only the edge ring stays tinted
 #   3. border: ReferenceRect at full cell size in rarity color
 # The caller adds the sprite + button on top so they sit above the halo.
+# Enchant-aware version of add_rarity_cell_decor. When `flavor_tags`
+# contains a priority flavor (vampiric/fire/cold/holy/etc.), the
+# border color tweens between the rarity color and the flavor color
+# in a slow pulse — visually telegraphs "this item rolled an enchant"
+# without an extra widget. Falls back to the static version when no
+# flavor is present.
+static func add_item_cell_decor(parent: Control, size_px: int, rarity: String, flavor_tags: Array, halo_strength: float = 0.35) -> void:
+	var fc: Color = flavor_color_for(flavor_tags)
+	if fc.a <= 0.0:
+		# No enchant — same as before.
+		add_rarity_cell_decor(parent, size_px, rarity, halo_strength)
+		return
+	var col: Color = rarity_color(rarity)
+	if halo_strength > 0.0:
+		var halo := ColorRect.new()
+		halo.color = Color(col.r, col.g, col.b, halo_strength)
+		halo.size = Vector2(size_px, size_px)
+		halo.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		parent.add_child(halo)
+		var inset: int = maxi(4, int(size_px * 0.22))
+		var mask := ColorRect.new()
+		mask.color = Color(0.0, 0.0, 0.0, 0.55)
+		mask.position = Vector2(inset, inset)
+		mask.size = Vector2(size_px - inset * 2, size_px - inset * 2)
+		mask.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		parent.add_child(mask)
+	# Border pulses between rarity color and flavor color so the cell
+	# reads as both "rare/legendary" AND "enchanted with fire."
+	var border := ReferenceRect.new()
+	border.position = Vector2.ZERO
+	border.size = Vector2(size_px, size_px)
+	border.border_color = col
+	border.border_width = 1.5
+	border.editor_only = false
+	border.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	parent.add_child(border)
+	var pulse := border.create_tween().set_loops()
+	pulse.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	pulse.tween_property(border, "border_color", fc, 1.2)
+	pulse.tween_property(border, "border_color", col, 1.2)
+
 static func add_rarity_cell_decor(parent: Control, size_px: int, rarity: String, halo_strength: float = 0.35) -> void:
 	var col: Color = rarity_color(rarity)
 	if halo_strength > 0.0:

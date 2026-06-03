@@ -622,6 +622,30 @@ function renderEditBody(it) {
     return `<button class="tag-toggle${on?' on':''}" style="${on?'background:'+info.color+';color:#000;border-color:'+info.color:''}"
       onclick="toggleTag('${it.id}','${tag}')" title="${info.desc}">${tag}</button>`;
   }).join('');
+  // Same tag toggles, but bound to it.enchant_pool — selects which
+  // flavors are eligible to be rolled on a drop. Empty pool = any
+  // flavor allowed (matches dungeon._create_item_instance fallback).
+  const enchantPoolGrid = flavorKeys.map(tag => {
+    const on = (it.enchant_pool||[]).includes(tag);
+    const info = manifest.flavor_tags[tag];
+    return `<button class="tag-toggle${on?' on':''}" style="${on?'background:'+info.color+';color:#000;border-color:'+info.color:''}"
+      onclick="toggleEnchantPool('${it.id}','${tag}')" title="${info.desc}">${tag}</button>`;
+  }).join('');
+
+  // Affix pool override — six 0..100 sliders, one per affix id. When
+  // any value > 0, this dict replaces the base_type/global pool. All
+  // zero = inherit base_type defaults (the common case; authors only
+  // touch this for items with bespoke affix preferences).
+  const AFFIX_IDS = ['strength','stamina','agility','regen','crit','haste'];
+  const ap = it.affix_pool || {};
+  const affixPoolRows = AFFIX_IDS.map(aid => {
+    const w = ap[aid] || 0;
+    return `<div class="drop-weight-row">
+      <label style="min-width:70px">${aid}</label>
+      <input type="range" min="0" max="100" value="${w}" oninput="setAffixPool('${it.id}','${aid}',+this.value);this.nextElementSibling.textContent=this.value">
+      <span class="dw-val">${w}</span>
+    </div>`;
+  }).join('');
 
   body.innerHTML = `
     <div class="edit-sprite-row">
@@ -675,8 +699,34 @@ function renderEditBody(it) {
     </div>
 
     <div class="field-group">
-      <label>Flavor tags (hold future mechanic intent)</label>
+      <label>Flavor tags (always-on for this item — uniques like vampires_tooth carry "vampiric" here)</label>
       <div class="tag-grid">${tagGrid}</div>
+    </div>
+
+    <div class="field-group">
+      <label>Enchant roll (per-drop chance to gain ONE additional flavor on top of static tags)</label>
+      <div style="display:flex;align-items:center;gap:8px">
+        <input type="range" min="0" max="100" step="1"
+          value="${Math.round((it.enchant_chance||0)*100)}"
+          oninput="setField('${it.id}','enchant_chance',this.value/100);this.nextElementSibling.textContent=this.value+'%'"
+          style="flex:1">
+        <span style="min-width:48px;text-align:right;font-variant-numeric:tabular-nums">${Math.round((it.enchant_chance||0)*100)}%</span>
+      </div>
+      <div style="font-size:10px;color:var(--muted);margin-top:4px">
+        0% = never rolls an extra enchant (default). 100% = always rolls one (use for uniques where the flavor IS the item).
+      </div>
+      <div style="margin-top:6px">
+        <label style="font-size:11px;color:var(--muted);text-transform:none;letter-spacing:0">Enchant pool — leave all unchecked to allow ANY flavor</label>
+        <div class="tag-grid" style="margin-top:4px">${enchantPoolGrid}</div>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label>Affix pool override (per-item — higher weight = more likely. Leave all 0 to use base-type defaults from base_type_affixes.json)</label>
+      ${affixPoolRows}
+      <div style="font-size:10px;color:var(--muted);margin-top:4px">
+        Affix priority: this override (when any value &gt; 0) → base_type defaults → global pool fallback.
+      </div>
     </div>
 
     <div class="field-group">
@@ -733,6 +783,34 @@ function toggleTag(id, tag) {
   dirty.add(id);
   updateCard(id);
   renderEditBody(it);
+}
+
+// Per-item enchant pool toggle. enchant_pool is the allowlist of
+// flavors that can roll on a drop when enchant_chance fires.
+function toggleEnchantPool(id, tag) {
+  const it = items.find(x=>x.id===id);
+  if (!it) return;
+  if (!it.enchant_pool) it.enchant_pool=[];
+  const i = it.enchant_pool.indexOf(tag);
+  if (i>=0) it.enchant_pool.splice(i,1); else it.enchant_pool.push(tag);
+  dirty.add(id);
+  renderEditBody(it);
+}
+
+// Per-item affix_pool weight setter. When any weight > 0, the dict
+// replaces the base_type/global pool at roll time. Setting all
+// weights back to 0 deletes the field so the item inherits defaults.
+function setAffixPool(id, affixId, weight) {
+  const it = items.find(x=>x.id===id);
+  if (!it) return;
+  if (!it.affix_pool) it.affix_pool = {};
+  if (weight > 0) {
+    it.affix_pool[affixId] = weight;
+  } else {
+    delete it.affix_pool[affixId];
+  }
+  if (Object.keys(it.affix_pool).length === 0) delete it.affix_pool;
+  dirty.add(id);
 }
 function updateCard(id) {
   const it = items.find(x=>x.id===id);
@@ -885,6 +963,9 @@ function exportJSON() {
       lore: it.lore || '',
       drop_weights: it.drop_weights || [0,0,0,0,0],
       unique: it.unique || false,
+      ...(it.enchant_chance ? {enchant_chance: it.enchant_chance} : {}),
+      ...(it.enchant_pool && it.enchant_pool.length ? {enchant_pool: it.enchant_pool} : {}),
+      ...(it.affix_pool && Object.keys(it.affix_pool).length ? {affix_pool: it.affix_pool} : {}),
       ...(it.future_mechanic ? {future_mechanic: it.future_mechanic} : {})
     }))
   };
@@ -920,6 +1001,9 @@ function singleItemPayload(it) {
     lore: it.lore || '',
     drop_weights: it.drop_weights || [0,0,0,0,0],
     unique: it.unique || false,
+    ...(it.enchant_chance ? {enchant_chance: it.enchant_chance} : {}),
+    ...(it.enchant_pool && it.enchant_pool.length ? {enchant_pool: it.enchant_pool} : {}),
+    ...(it.affix_pool && Object.keys(it.affix_pool).length ? {affix_pool: it.affix_pool} : {}),
     ...(it.future_mechanic ? {future_mechanic: it.future_mechanic} : {})
   };
 }

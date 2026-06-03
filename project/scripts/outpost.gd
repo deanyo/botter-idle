@@ -721,7 +721,7 @@ func _render_equipped() -> void:
 		if inst != null and typeof(inst) == TYPE_DICTIONARY:
 			var bid: String = String(inst.get("base_id", ""))
 			if items_db.has(bid):
-				tint_flavor = items_db[bid].get("flavor_tags", [])
+				tint_flavor = UITheme.combined_flavor_tags(items_db[bid], inst)
 		sprite.modulate = UITheme.item_modulate(rarity, tint_flavor)
 		var base_tooltip: String = SLOT_TOOLTIPS.get(slot, slot.capitalize())
 		btn.tooltip_text = base_tooltip if item_name.is_empty() else _build_item_tooltip(slot, inst)
@@ -776,7 +776,7 @@ func _make_inv_cell(inv_index: int, inst: Dictionary, item: Dictionary) -> Contr
 		"common": 0.0, "uncommon": 0.18, "rare": 0.30,
 		"epic": 0.42, "legendary": 0.55,
 	}.get(rarity, 0.0)
-	UITheme.add_rarity_cell_decor(cell, INV_CELL_SIZE, rarity, halo)
+	UITheme.add_item_cell_decor(cell, INV_CELL_SIZE, rarity, UITheme.combined_flavor_tags(item, inst), halo)
 	# Sprite on top of the decor.
 	var sprite := TextureRect.new()
 	sprite.size = Vector2(INV_CELL_SIZE, INV_CELL_SIZE)
@@ -787,7 +787,7 @@ func _make_inv_cell(inv_index: int, inst: Dictionary, item: Dictionary) -> Contr
 	var tile_path: String = ITEM_TILE_DIR + String(item.get("tile", ""))
 	if ResourceLoader.exists(tile_path):
 		sprite.texture = load(tile_path)
-	sprite.modulate = UITheme.item_modulate(rarity, item.get("flavor_tags", []))
+	sprite.modulate = UITheme.item_modulate(rarity, UITheme.combined_flavor_tags(item, inst))
 	cell.add_child(sprite)
 	var btn := Button.new()
 	btn.size = Vector2(INV_CELL_SIZE, INV_CELL_SIZE)
