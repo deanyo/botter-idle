@@ -14,14 +14,13 @@
     {
       "id": "ratskin_cloak",
       "name": "Ratskin Cloak",
-      "base_type": "cloak",
       "slot": "cloak",
-      "item_tier": 5,
       "rarity": "legendary",
       "tile": "item/armor/artefact/urand_ratskin_cloak.png",
-      "atk": 0,
-      "def": 16,
-      "hp": 230,
+      "base_type": "cloak",
+      "armor": 6,
+      "evasion": 36,
+      "item_tier": 5,
       "flavor_tags": [
         "stealth",
         "regen"
@@ -35,27 +34,37 @@
         22
       ],
       "unique": true,
+      "enchant_chance": 0.05,
+      "implicit_affixes": [],
       "affix_pool": {
-        "stamina": 15,
-        "agility": 25,
-        "regen": 35,
-        "crit": 10,
-        "haste": 25
-      },
-      "hp_regen": 0.5,
-      "future_mechanic": "Disease immunity. Lower aggro range."
+        "of_might": 10,
+        "of_finesse": 12,
+        "of_wisdom": 14,
+        "of_vitality": 18,
+        "of_the_bear": 12,
+        "of_the_cat": 22,
+        "of_fire_resist": 14,
+        "of_cold_resist": 14,
+        "of_lightning_resist": 14,
+        "of_holy_resist": 8,
+        "of_poison_resist": 10,
+        "of_dark_resist": 8,
+        "of_resonance": 12,
+        "of_lingering": 14,
+        "of_haste": 10,
+        "of_regen": 8
+      }
     },
     {
       "id": "starlight_cloak",
       "name": "Cloak of Starlight",
-      "base_type": "cloak",
       "slot": "cloak",
-      "item_tier": 5,
       "rarity": "legendary",
       "tile": "item/armor/artefact/urand_starlight.png",
-      "atk": 0,
-      "def": 18,
-      "hp": 240,
+      "base_type": "cloak",
+      "armor": 6,
+      "evasion": 36,
+      "item_tier": 5,
       "flavor_tags": [
         "stealth",
         "willpower"
@@ -69,27 +78,37 @@
         22
       ],
       "unique": true,
+      "enchant_chance": 0.05,
+      "implicit_affixes": [],
       "affix_pool": {
-        "stamina": 20,
-        "agility": 35,
-        "regen": 15,
-        "crit": 10,
-        "haste": 25
-      },
-      "hp_regen": 0.5,
-      "future_mechanic": "Periodically blinks the wearer 3 cells in a random direction during combat."
+        "of_might": 10,
+        "of_finesse": 12,
+        "of_wisdom": 14,
+        "of_vitality": 18,
+        "of_the_bear": 12,
+        "of_the_cat": 22,
+        "of_fire_resist": 14,
+        "of_cold_resist": 14,
+        "of_lightning_resist": 14,
+        "of_holy_resist": 8,
+        "of_poison_resist": 10,
+        "of_dark_resist": 8,
+        "of_resonance": 12,
+        "of_lingering": 14,
+        "of_haste": 10,
+        "of_regen": 8
+      }
     },
     {
       "id": "cloak_of_flash",
       "name": "Cloak of Flash",
-      "base_type": "cloak",
       "slot": "cloak",
-      "item_tier": 5,
       "rarity": "legendary",
       "tile": "item/armor/artefact/urand_flash.png",
-      "atk": 0,
-      "def": 10,
-      "hp": 130,
+      "base_type": "cloak",
+      "armor": 6,
+      "evasion": 36,
+      "item_tier": 5,
       "flavor_tags": [
         "swiftness",
         "flying",
@@ -104,25 +123,37 @@
         25
       ],
       "unique": true,
+      "enchant_chance": 0.05,
+      "implicit_affixes": [],
       "affix_pool": {
-        "strength": 15,
-        "agility": 35,
-        "crit": 10,
-        "haste": 90
-      },
-      "future_mechanic": "Periodic short-range blink in combat."
+        "of_might": 10,
+        "of_finesse": 12,
+        "of_wisdom": 14,
+        "of_vitality": 18,
+        "of_the_bear": 12,
+        "of_the_cat": 22,
+        "of_fire_resist": 14,
+        "of_cold_resist": 14,
+        "of_lightning_resist": 14,
+        "of_holy_resist": 8,
+        "of_poison_resist": 10,
+        "of_dark_resist": 8,
+        "of_resonance": 12,
+        "of_lingering": 14,
+        "of_haste": 10,
+        "of_regen": 8
+      }
     },
     {
       "id": "cloak_of_the_thief",
       "name": "Cloak of the Thief",
-      "base_type": "cloak",
       "slot": "cloak",
-      "item_tier": 5,
       "rarity": "legendary",
       "tile": "item/armor/artefact/urand_thief.png",
-      "atk": 0,
-      "def": 7,
-      "hp": 100,
+      "base_type": "cloak",
+      "armor": 6,
+      "evasion": 36,
+      "item_tier": 5,
       "flavor_tags": [
         "stealth",
         "footwork"
@@ -136,24 +167,37 @@
         22
       ],
       "unique": true,
+      "enchant_chance": 0.05,
+      "implicit_affixes": [],
       "affix_pool": {
-        "agility": 60,
-        "crit": 10,
-        "haste": 40
-      },
-      "future_mechanic": "+10% chance to find extra gold per chest. Stealth bonus."
+        "of_might": 10,
+        "of_finesse": 12,
+        "of_wisdom": 14,
+        "of_vitality": 18,
+        "of_the_bear": 12,
+        "of_the_cat": 22,
+        "of_fire_resist": 14,
+        "of_cold_resist": 14,
+        "of_lightning_resist": 14,
+        "of_holy_resist": 8,
+        "of_poison_resist": 10,
+        "of_dark_resist": 8,
+        "of_resonance": 12,
+        "of_lingering": 14,
+        "of_haste": 10,
+        "of_regen": 8
+      }
     },
     {
       "id": "leather_cloak",
       "name": "Leather Cloak",
-      "base_type": "cloak",
       "slot": "cloak",
-      "item_tier": 1,
       "rarity": "common",
       "tile": "item/armor/back/cloak_1_leather.png",
-      "atk": 0,
-      "def": 1,
-      "hp": 18,
+      "base_type": "cloak",
+      "armor": 1,
+      "evasion": 6,
+      "item_tier": 1,
       "flavor_tags": [],
       "lore": "",
       "drop_weights": [
@@ -164,19 +208,37 @@
         0
       ],
       "unique": false,
-      "enchant_chance": 0.05
+      "enchant_chance": 0.05,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_might": 10,
+        "of_finesse": 12,
+        "of_wisdom": 14,
+        "of_vitality": 18,
+        "of_the_bear": 12,
+        "of_the_cat": 22,
+        "of_fire_resist": 14,
+        "of_cold_resist": 14,
+        "of_lightning_resist": 14,
+        "of_holy_resist": 8,
+        "of_poison_resist": 10,
+        "of_dark_resist": 8,
+        "of_resonance": 12,
+        "of_lingering": 14,
+        "of_haste": 10,
+        "of_regen": 8
+      }
     },
     {
       "id": "travelers_cloak",
       "name": "Traveler's Cloak",
-      "base_type": "cloak",
       "slot": "cloak",
-      "item_tier": 1,
       "rarity": "common",
       "tile": "item/armor/back/cloak_2.png",
-      "atk": 0,
-      "def": 2,
-      "hp": 24,
+      "base_type": "cloak",
+      "armor": 1,
+      "evasion": 6,
+      "item_tier": 1,
       "flavor_tags": [],
       "lore": "",
       "drop_weights": [
@@ -187,19 +249,37 @@
         0
       ],
       "unique": false,
-      "enchant_chance": 0.05
+      "enchant_chance": 0.05,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_might": 10,
+        "of_finesse": 12,
+        "of_wisdom": 14,
+        "of_vitality": 18,
+        "of_the_bear": 12,
+        "of_the_cat": 22,
+        "of_fire_resist": 14,
+        "of_cold_resist": 14,
+        "of_lightning_resist": 14,
+        "of_holy_resist": 8,
+        "of_poison_resist": 10,
+        "of_dark_resist": 8,
+        "of_resonance": 12,
+        "of_lingering": 14,
+        "of_haste": 10,
+        "of_regen": 8
+      }
     },
     {
       "id": "wool_cloak",
       "name": "Wool Cloak",
-      "base_type": "cloak",
       "slot": "cloak",
-      "item_tier": 2,
       "rarity": "uncommon",
       "tile": "item/armor/back/cloak_3.png",
-      "atk": 0,
-      "def": 3,
-      "hp": 30,
+      "base_type": "cloak",
+      "armor": 2,
+      "evasion": 9,
+      "item_tier": 2,
       "flavor_tags": [
         "stealth"
       ],
@@ -212,19 +292,37 @@
         0
       ],
       "unique": false,
-      "enchant_chance": 0.05
+      "enchant_chance": 0.05,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_might": 10,
+        "of_finesse": 12,
+        "of_wisdom": 14,
+        "of_vitality": 18,
+        "of_the_bear": 12,
+        "of_the_cat": 22,
+        "of_fire_resist": 14,
+        "of_cold_resist": 14,
+        "of_lightning_resist": 14,
+        "of_holy_resist": 8,
+        "of_poison_resist": 10,
+        "of_dark_resist": 8,
+        "of_resonance": 12,
+        "of_lingering": 14,
+        "of_haste": 10,
+        "of_regen": 8
+      }
     },
     {
       "id": "hooded_cloak",
       "name": "Hooded Cloak",
-      "base_type": "cloak",
       "slot": "cloak",
-      "item_tier": 2,
       "rarity": "uncommon",
       "tile": "item/armor/back/cloak_4.png",
-      "atk": 0,
-      "def": 4,
-      "hp": 35,
+      "base_type": "cloak",
+      "armor": 2,
+      "evasion": 9,
+      "item_tier": 2,
       "flavor_tags": [
         "stealth"
       ],
@@ -237,19 +335,37 @@
         0
       ],
       "unique": false,
-      "enchant_chance": 0.05
+      "enchant_chance": 0.05,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_might": 10,
+        "of_finesse": 12,
+        "of_wisdom": 14,
+        "of_vitality": 18,
+        "of_the_bear": 12,
+        "of_the_cat": 22,
+        "of_fire_resist": 14,
+        "of_cold_resist": 14,
+        "of_lightning_resist": 14,
+        "of_holy_resist": 8,
+        "of_poison_resist": 10,
+        "of_dark_resist": 8,
+        "of_resonance": 12,
+        "of_lingering": 14,
+        "of_haste": 10,
+        "of_regen": 8
+      }
     },
     {
       "id": "woven_cloak",
       "name": "Woven Cloak",
-      "base_type": "cloak",
       "slot": "cloak",
-      "item_tier": 3,
       "rarity": "rare",
       "tile": "item/armor/back/cloak_2.png",
-      "atk": 0,
-      "def": 5,
-      "hp": 50,
+      "base_type": "cloak",
+      "armor": 2,
+      "evasion": 14,
+      "item_tier": 3,
       "flavor_tags": [
         "stealth",
         "willpower"
@@ -263,19 +379,37 @@
         5
       ],
       "unique": false,
-      "enchant_chance": 0.1
+      "enchant_chance": 0.1,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_might": 10,
+        "of_finesse": 12,
+        "of_wisdom": 14,
+        "of_vitality": 18,
+        "of_the_bear": 12,
+        "of_the_cat": 22,
+        "of_fire_resist": 14,
+        "of_cold_resist": 14,
+        "of_lightning_resist": 14,
+        "of_holy_resist": 8,
+        "of_poison_resist": 10,
+        "of_dark_resist": 8,
+        "of_resonance": 12,
+        "of_lingering": 14,
+        "of_haste": 10,
+        "of_regen": 8
+      }
     },
     {
       "id": "rangers_cloak",
       "name": "Ranger's Cloak",
-      "base_type": "cloak",
       "slot": "cloak",
-      "item_tier": 3,
       "rarity": "rare",
       "tile": "item/armor/back/cloak_4.png",
-      "atk": 0,
-      "def": 4,
-      "hp": 55,
+      "base_type": "cloak",
+      "armor": 2,
+      "evasion": 14,
+      "item_tier": 3,
       "flavor_tags": [
         "stealth",
         "swiftness"
@@ -289,19 +423,37 @@
         10
       ],
       "unique": false,
-      "enchant_chance": 0.1
+      "enchant_chance": 0.1,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_might": 10,
+        "of_finesse": 12,
+        "of_wisdom": 14,
+        "of_vitality": 18,
+        "of_the_bear": 12,
+        "of_the_cat": 22,
+        "of_fire_resist": 14,
+        "of_cold_resist": 14,
+        "of_lightning_resist": 14,
+        "of_holy_resist": 8,
+        "of_poison_resist": 10,
+        "of_dark_resist": 8,
+        "of_resonance": 12,
+        "of_lingering": 14,
+        "of_haste": 10,
+        "of_regen": 8
+      }
     },
     {
       "id": "silken_cloak",
       "name": "Silken Cloak",
-      "base_type": "cloak",
       "slot": "cloak",
-      "item_tier": 4,
       "rarity": "epic",
       "tile": "item/armor/back/cloak_3.png",
-      "atk": 2,
-      "def": 6,
-      "hp": 70,
+      "base_type": "cloak",
+      "armor": 4,
+      "evasion": 22,
+      "item_tier": 4,
       "flavor_tags": [
         "stealth",
         "willpower",
@@ -316,19 +468,37 @@
         30
       ],
       "unique": false,
-      "enchant_chance": 0.15
+      "enchant_chance": 0.15,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_might": 10,
+        "of_finesse": 12,
+        "of_wisdom": 14,
+        "of_vitality": 18,
+        "of_the_bear": 12,
+        "of_the_cat": 22,
+        "of_fire_resist": 14,
+        "of_cold_resist": 14,
+        "of_lightning_resist": 14,
+        "of_holy_resist": 8,
+        "of_poison_resist": 10,
+        "of_dark_resist": 8,
+        "of_resonance": 12,
+        "of_lingering": 14,
+        "of_haste": 10,
+        "of_regen": 8
+      }
     },
     {
       "id": "warlord_cloak",
       "name": "Warlord's Cloak",
-      "base_type": "cloak",
       "slot": "cloak",
-      "item_tier": 4,
       "rarity": "epic",
       "tile": "item/armor/back/cloak_1_leather.png",
-      "atk": 3,
-      "def": 7,
-      "hp": 80,
+      "base_type": "cloak",
+      "armor": 4,
+      "evasion": 22,
+      "item_tier": 4,
       "flavor_tags": [
         "lordly",
         "fortified"
@@ -342,7 +512,26 @@
         40
       ],
       "unique": false,
-      "enchant_chance": 0.15
+      "enchant_chance": 0.15,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_might": 10,
+        "of_finesse": 12,
+        "of_wisdom": 14,
+        "of_vitality": 18,
+        "of_the_bear": 12,
+        "of_the_cat": 22,
+        "of_fire_resist": 14,
+        "of_cold_resist": 14,
+        "of_lightning_resist": 14,
+        "of_holy_resist": 8,
+        "of_poison_resist": 10,
+        "of_dark_resist": 8,
+        "of_resonance": 12,
+        "of_lingering": 14,
+        "of_haste": 10,
+        "of_regen": 8
+      }
     }
   ]
 }

@@ -119,8 +119,27 @@ static func _roll_from_weighted(pool: Array, want: int, used_ids: Dictionary, in
 			continue
 		used_ids[picked.id] = true
 		var tiers: Array = picked.tiers
-		var value: int = int(tiers[mini(tier_idx, tiers.size() - 1)])
-		into.append({"id": picked.id, "value": value})
+		var tier_entry = tiers[mini(tier_idx, tiers.size() - 1)]
+		# v2 schema: tier is [min, max]. v1 schema: tier is a single int.
+		# Handle both — single int means "fixed value, no range roll."
+		var rolled: Dictionary = {"id": picked.id}
+		if tier_entry is Array and tier_entry.size() >= 2:
+			var lo: int = int(tier_entry[0])
+			var hi: int = int(tier_entry[1])
+			if String(picked.get("kind", "flat")) == "range":
+				# Range affixes carry both bounds — used by tooltip to
+				# render "+X-Y" lines and by combat to roll per-hit.
+				rolled["value_min"] = lo
+				rolled["value_max"] = hi
+				# Legacy single-value field gets the midpoint so
+				# sum_affix_stats keeps working for callers that don't
+				# read value_min/max yet.
+				rolled["value"] = int(round((lo + hi) / 2.0))
+			else:
+				rolled["value"] = rng.randi_range(lo, hi)
+		else:
+			rolled["value"] = int(tier_entry)
+		into.append(rolled)
 		want -= 1
 
 static func get_affix_def(id: String) -> Dictionary:
@@ -333,5 +352,13 @@ static func sum_affix_stats(affixes: Array) -> Dictionary:
 		if def.is_empty():
 			continue
 		var stat: String = String(def.stat)
-		sums[stat] = sums.get(stat, 0) + int(af_inst.value)
+		sums[stat] = sums.get(stat, 0) + int(af_inst.get("value", 0))
+		# Range affixes (kind=range, e.g. of_embers, of_sharpness) also
+		# carry value_min / value_max so combat can roll a fresh value
+		# per hit. We accumulate the bounds under "<stat>_min" /
+		# "<stat>_max" keys so callers can reach them without re-walking
+		# the affix list.
+		if af_inst.has("value_min") and af_inst.has("value_max"):
+			sums[stat + "_min"] = sums.get(stat + "_min", 0) + int(af_inst["value_min"])
+			sums[stat + "_max"] = sums.get(stat + "_max", 0) + int(af_inst["value_max"])
 	return sums

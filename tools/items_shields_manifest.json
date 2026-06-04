@@ -85,14 +85,13 @@
     {
       "id": "wooden_buckler",
       "name": "Wooden Buckler",
-      "base_type": "buckler",
       "slot": "shield",
-      "item_tier": 1,
       "rarity": "common",
       "tile": "item/armor/shields/buckler_1_old.png",
-      "atk": 0,
-      "def": 5,
-      "hp": 33,
+      "base_type": "buckler",
+      "armor": 6,
+      "evasion": 2,
+      "item_tier": 1,
       "flavor_tags": [],
       "lore": "Round, plain, splintery.",
       "drop_weights": [
@@ -104,23 +103,31 @@
       ],
       "unique": false,
       "enchant_chance": 0.05,
+      "implicit_affixes": [],
       "affix_pool": {
-        "agility": 20,
-        "haste": 15,
-        "stamina": 10
+        "of_might": 16,
+        "of_finesse": 8,
+        "of_wisdom": 10,
+        "of_vitality": 22,
+        "of_the_bear": 30,
+        "of_fire_resist": 14,
+        "of_cold_resist": 14,
+        "of_lightning_resist": 14,
+        "of_holy_resist": 8,
+        "of_poison_resist": 10,
+        "of_dark_resist": 8
       }
     },
     {
       "id": "iron_buckler",
       "name": "Iron Buckler",
-      "base_type": "buckler",
       "slot": "shield",
-      "item_tier": 1,
       "rarity": "common",
       "tile": "item/armor/shields/buckler_1_new.png",
-      "atk": 0,
-      "def": 6,
-      "hp": 38,
+      "base_type": "buckler",
+      "armor": 6,
+      "evasion": 2,
+      "item_tier": 1,
       "flavor_tags": [],
       "lore": "Hammered iron disc with a strap.",
       "drop_weights": [
@@ -132,23 +139,31 @@
       ],
       "unique": false,
       "enchant_chance": 0.05,
+      "implicit_affixes": [],
       "affix_pool": {
-        "agility": 20,
-        "haste": 15,
-        "stamina": 10
+        "of_might": 16,
+        "of_finesse": 8,
+        "of_wisdom": 10,
+        "of_vitality": 22,
+        "of_the_bear": 30,
+        "of_fire_resist": 14,
+        "of_cold_resist": 14,
+        "of_lightning_resist": 14,
+        "of_holy_resist": 8,
+        "of_poison_resist": 10,
+        "of_dark_resist": 8
       }
     },
     {
       "id": "round_shield",
       "name": "Round Shield",
-      "base_type": "round_shield",
       "slot": "shield",
-      "item_tier": 1,
       "rarity": "uncommon",
       "tile": "item/armor/shields/shield_3_round.png",
-      "atk": 0,
-      "def": 7,
-      "hp": 50,
+      "base_type": "round_shield",
+      "armor": 7,
+      "evasion": 2,
+      "item_tier": 1,
       "flavor_tags": [],
       "lore": "Worn down by decades of arrow strikes.",
       "drop_weights": [
@@ -160,23 +175,31 @@
       ],
       "unique": false,
       "enchant_chance": 0.05,
+      "implicit_affixes": [],
       "affix_pool": {
-        "stamina": 20,
-        "agility": 20,
-        "regen": 5
+        "of_might": 16,
+        "of_finesse": 8,
+        "of_wisdom": 10,
+        "of_vitality": 22,
+        "of_the_bear": 30,
+        "of_fire_resist": 14,
+        "of_cold_resist": 14,
+        "of_lightning_resist": 14,
+        "of_holy_resist": 8,
+        "of_poison_resist": 10,
+        "of_dark_resist": 8
       }
     },
     {
       "id": "kite_shield",
       "name": "Kite Shield",
-      "base_type": "kite_shield",
       "slot": "shield",
-      "item_tier": 1,
       "rarity": "uncommon",
       "tile": "item/armor/shields/shield_2_kite.png",
-      "atk": 0,
-      "def": 9,
-      "hp": 65,
+      "base_type": "kite_shield",
+      "armor": 7,
+      "evasion": 2,
+      "item_tier": 1,
       "flavor_tags": [
         "fortified"
       ],
@@ -190,23 +213,31 @@
       ],
       "unique": false,
       "enchant_chance": 0.05,
+      "implicit_affixes": [],
       "affix_pool": {
-        "stamina": 30,
-        "agility": 15,
-        "regen": 5
+        "of_might": 16,
+        "of_finesse": 8,
+        "of_wisdom": 10,
+        "of_vitality": 22,
+        "of_the_bear": 30,
+        "of_fire_resist": 14,
+        "of_cold_resist": 14,
+        "of_lightning_resist": 14,
+        "of_holy_resist": 8,
+        "of_poison_resist": 10,
+        "of_dark_resist": 8
       }
     },
     {
       "id": "elven_buckler",
       "name": "Elven Buckler",
-      "base_type": "buckler",
       "slot": "shield",
-      "item_tier": 2,
       "rarity": "rare",
       "tile": "item/armor/shields/elven_buckler_1.png",
-      "atk": 0,
-      "def": 8,
-      "hp": 62,
+      "base_type": "buckler",
+      "armor": 10,
+      "evasion": 3,
+      "item_tier": 2,
       "flavor_tags": [
         "swiftness",
         "warding"
@@ -221,23 +252,31 @@
       ],
       "unique": false,
       "enchant_chance": 0.1,
+      "implicit_affixes": [],
       "affix_pool": {
-        "agility": 20,
-        "haste": 15,
-        "stamina": 10
+        "of_might": 16,
+        "of_finesse": 8,
+        "of_wisdom": 10,
+        "of_vitality": 22,
+        "of_the_bear": 30,
+        "of_fire_resist": 14,
+        "of_cold_resist": 14,
+        "of_lightning_resist": 14,
+        "of_holy_resist": 8,
+        "of_poison_resist": 10,
+        "of_dark_resist": 8
       }
     },
     {
       "id": "reinforced_buckler",
       "name": "Reinforced Buckler",
-      "base_type": "buckler",
       "slot": "shield",
-      "item_tier": 2,
       "rarity": "uncommon",
       "tile": "item/armor/shields/buckler_2_new.png",
-      "atk": 0,
-      "def": 8,
-      "hp": 62,
+      "base_type": "buckler",
+      "armor": 9,
+      "evasion": 3,
+      "item_tier": 2,
       "flavor_tags": [],
       "lore": "Iron rim welded over wood. Twice the weight, twice the life.",
       "drop_weights": [
@@ -249,23 +288,31 @@
       ],
       "unique": false,
       "enchant_chance": 0.05,
+      "implicit_affixes": [],
       "affix_pool": {
-        "agility": 20,
-        "haste": 15,
-        "stamina": 10
+        "of_might": 16,
+        "of_finesse": 8,
+        "of_wisdom": 10,
+        "of_vitality": 22,
+        "of_the_bear": 30,
+        "of_fire_resist": 14,
+        "of_cold_resist": 14,
+        "of_lightning_resist": 14,
+        "of_holy_resist": 8,
+        "of_poison_resist": 10,
+        "of_dark_resist": 8
       }
     },
     {
       "id": "guardsman_kite",
       "name": "Guardsman's Kite",
-      "base_type": "kite_shield",
       "slot": "shield",
-      "item_tier": 2,
       "rarity": "uncommon",
       "tile": "item/armor/shields/shield_1.png",
-      "atk": 0,
-      "def": 11,
-      "hp": 80,
+      "base_type": "kite_shield",
+      "armor": 9,
+      "evasion": 3,
+      "item_tier": 2,
       "flavor_tags": [
         "fortified"
       ],
@@ -279,23 +326,31 @@
       ],
       "unique": false,
       "enchant_chance": 0.05,
+      "implicit_affixes": [],
       "affix_pool": {
-        "stamina": 30,
-        "agility": 15,
-        "regen": 5
+        "of_might": 16,
+        "of_finesse": 8,
+        "of_wisdom": 10,
+        "of_vitality": 22,
+        "of_the_bear": 30,
+        "of_fire_resist": 14,
+        "of_cold_resist": 14,
+        "of_lightning_resist": 14,
+        "of_holy_resist": 8,
+        "of_poison_resist": 10,
+        "of_dark_resist": 8
       }
     },
     {
       "id": "elven_shield",
       "name": "Elven Shield",
-      "base_type": "round_shield",
       "slot": "shield",
-      "item_tier": 3,
       "rarity": "rare",
       "tile": "item/armor/shields/shield_1_elven.png",
-      "atk": 0,
-      "def": 10,
-      "hp": 85,
+      "base_type": "round_shield",
+      "armor": 14,
+      "evasion": 5,
+      "item_tier": 3,
       "flavor_tags": [
         "swiftness",
         "warding"
@@ -310,23 +365,31 @@
       ],
       "unique": false,
       "enchant_chance": 0.1,
+      "implicit_affixes": [],
       "affix_pool": {
-        "stamina": 20,
-        "agility": 20,
-        "regen": 5
+        "of_might": 16,
+        "of_finesse": 8,
+        "of_wisdom": 10,
+        "of_vitality": 22,
+        "of_the_bear": 30,
+        "of_fire_resist": 14,
+        "of_cold_resist": 14,
+        "of_lightning_resist": 14,
+        "of_holy_resist": 8,
+        "of_poison_resist": 10,
+        "of_dark_resist": 8
       }
     },
     {
       "id": "dwarven_buckler",
       "name": "Dwarven Buckler",
-      "base_type": "buckler",
       "slot": "shield",
-      "item_tier": 3,
       "rarity": "rare",
       "tile": "item/armor/shields/dwarven_buckler_1.png",
-      "atk": 0,
-      "def": 10,
-      "hp": 78,
+      "base_type": "buckler",
+      "armor": 14,
+      "evasion": 5,
+      "item_tier": 3,
       "flavor_tags": [
         "fortified",
         "reflective"
@@ -341,23 +404,31 @@
       ],
       "unique": false,
       "enchant_chance": 0.1,
+      "implicit_affixes": [],
       "affix_pool": {
-        "agility": 20,
-        "haste": 15,
-        "stamina": 10
+        "of_might": 16,
+        "of_finesse": 8,
+        "of_wisdom": 10,
+        "of_vitality": 22,
+        "of_the_bear": 30,
+        "of_fire_resist": 14,
+        "of_cold_resist": 14,
+        "of_lightning_resist": 14,
+        "of_holy_resist": 8,
+        "of_poison_resist": 10,
+        "of_dark_resist": 8
       }
     },
     {
       "id": "spellward_kite",
       "name": "Spellward Kite",
-      "base_type": "kite_shield",
       "slot": "shield",
-      "item_tier": 3,
       "rarity": "rare",
       "tile": "item/armor/shields/shield_2_new.png",
-      "atk": 0,
-      "def": 14,
-      "hp": 102,
+      "base_type": "kite_shield",
+      "armor": 14,
+      "evasion": 5,
+      "item_tier": 3,
       "flavor_tags": [
         "willpower",
         "warding"
@@ -372,23 +443,31 @@
       ],
       "unique": false,
       "enchant_chance": 0.1,
+      "implicit_affixes": [],
       "affix_pool": {
-        "stamina": 30,
-        "agility": 15,
-        "regen": 5
+        "of_might": 16,
+        "of_finesse": 8,
+        "of_wisdom": 10,
+        "of_vitality": 22,
+        "of_the_bear": 30,
+        "of_fire_resist": 14,
+        "of_cold_resist": 14,
+        "of_lightning_resist": 14,
+        "of_holy_resist": 8,
+        "of_poison_resist": 10,
+        "of_dark_resist": 8
       }
     },
     {
       "id": "large_kite",
       "name": "Large Kite",
-      "base_type": "kite_shield",
       "slot": "shield",
-      "item_tier": 3,
       "rarity": "rare",
       "tile": "item/armor/shields/large_shield_1_new.png",
-      "atk": 0,
-      "def": 14,
-      "hp": 110,
+      "base_type": "kite_shield",
+      "armor": 14,
+      "evasion": 5,
+      "item_tier": 3,
       "flavor_tags": [
         "fortified"
       ],
@@ -402,23 +481,31 @@
       ],
       "unique": false,
       "enchant_chance": 0.1,
+      "implicit_affixes": [],
       "affix_pool": {
-        "stamina": 30,
-        "agility": 15,
-        "regen": 5
+        "of_might": 16,
+        "of_finesse": 8,
+        "of_wisdom": 10,
+        "of_vitality": 22,
+        "of_the_bear": 30,
+        "of_fire_resist": 14,
+        "of_cold_resist": 14,
+        "of_lightning_resist": 14,
+        "of_holy_resist": 8,
+        "of_poison_resist": 10,
+        "of_dark_resist": 8
       }
     },
     {
       "id": "tower_shield",
       "name": "Tower Shield",
-      "base_type": "tower_shield",
       "slot": "shield",
-      "item_tier": 4,
       "rarity": "rare",
       "tile": "item/armor/shields/large_shield_2_new.png",
-      "atk": 0,
-      "def": 20,
-      "hp": 150,
+      "base_type": "tower_shield",
+      "armor": 20,
+      "evasion": 7,
+      "item_tier": 4,
       "flavor_tags": [
         "fortified"
       ],
@@ -432,22 +519,31 @@
       ],
       "unique": false,
       "enchant_chance": 0.1,
+      "implicit_affixes": [],
       "affix_pool": {
-        "stamina": 40,
-        "regen": 10
+        "of_might": 16,
+        "of_finesse": 8,
+        "of_wisdom": 10,
+        "of_vitality": 22,
+        "of_the_bear": 30,
+        "of_fire_resist": 14,
+        "of_cold_resist": 14,
+        "of_lightning_resist": 14,
+        "of_holy_resist": 8,
+        "of_poison_resist": 10,
+        "of_dark_resist": 8
       }
     },
     {
       "id": "spriggan_shield",
       "name": "Spriggan Shield",
-      "base_type": "buckler",
       "slot": "shield",
-      "item_tier": 4,
       "rarity": "epic",
       "tile": "item/armor/shields/shield_4_spriggan.png",
-      "atk": 0,
-      "def": 11,
-      "hp": 110,
+      "base_type": "buckler",
+      "armor": 22,
+      "evasion": 7,
+      "item_tier": 4,
       "flavor_tags": [
         "swiftness",
         "warding"
@@ -462,23 +558,31 @@
       ],
       "unique": false,
       "enchant_chance": 0.15,
+      "implicit_affixes": [],
       "affix_pool": {
-        "agility": 20,
-        "haste": 15,
-        "stamina": 10
+        "of_might": 16,
+        "of_finesse": 8,
+        "of_wisdom": 10,
+        "of_vitality": 22,
+        "of_the_bear": 30,
+        "of_fire_resist": 14,
+        "of_cold_resist": 14,
+        "of_lightning_resist": 14,
+        "of_holy_resist": 8,
+        "of_poison_resist": 10,
+        "of_dark_resist": 8
       }
     },
     {
       "id": "dragoncrest_shield",
       "name": "Dragoncrest Shield",
-      "base_type": "kite_shield",
       "slot": "shield",
-      "item_tier": 4,
       "rarity": "epic",
       "tile": "item/armor/shields/shield_3.png",
-      "atk": 0,
-      "def": 16,
-      "hp": 130,
+      "base_type": "kite_shield",
+      "armor": 22,
+      "evasion": 7,
+      "item_tier": 4,
       "flavor_tags": [
         "fortified",
         "elemental"
@@ -493,23 +597,31 @@
       ],
       "unique": false,
       "enchant_chance": 0.15,
+      "implicit_affixes": [],
       "affix_pool": {
-        "stamina": 30,
-        "agility": 15,
-        "regen": 5
+        "of_might": 16,
+        "of_finesse": 8,
+        "of_wisdom": 10,
+        "of_vitality": 22,
+        "of_the_bear": 30,
+        "of_fire_resist": 14,
+        "of_cold_resist": 14,
+        "of_lightning_resist": 14,
+        "of_holy_resist": 8,
+        "of_poison_resist": 10,
+        "of_dark_resist": 8
       }
     },
     {
       "id": "fortress_wall",
       "name": "Fortress Wall",
-      "base_type": "tower_shield",
       "slot": "shield",
-      "item_tier": 4,
       "rarity": "epic",
       "tile": "item/armor/shields/large_shield_3_new.png",
-      "atk": 0,
-      "def": 21,
-      "hp": 150,
+      "base_type": "tower_shield",
+      "armor": 22,
+      "evasion": 7,
+      "item_tier": 4,
       "flavor_tags": [
         "fortified",
         "thorns"
@@ -524,22 +636,31 @@
       ],
       "unique": false,
       "enchant_chance": 0.15,
+      "implicit_affixes": [],
       "affix_pool": {
-        "stamina": 40,
-        "regen": 10
+        "of_might": 16,
+        "of_finesse": 8,
+        "of_wisdom": 10,
+        "of_vitality": 22,
+        "of_the_bear": 30,
+        "of_fire_resist": 14,
+        "of_cold_resist": 14,
+        "of_lightning_resist": 14,
+        "of_holy_resist": 8,
+        "of_poison_resist": 10,
+        "of_dark_resist": 8
       }
     },
     {
       "id": "phantom_aegis",
       "name": "Phantom Aegis",
-      "base_type": "round_shield",
       "slot": "shield",
-      "item_tier": 5,
       "rarity": "epic",
       "tile": "item/armor/shields/shield_3.png",
-      "atk": 0,
-      "def": 14,
-      "hp": 145,
+      "base_type": "round_shield",
+      "armor": 31,
+      "evasion": 10,
+      "item_tier": 5,
       "flavor_tags": [
         "warding",
         "willpower"
@@ -554,23 +675,31 @@
       ],
       "unique": false,
       "enchant_chance": 0.15,
+      "implicit_affixes": [],
       "affix_pool": {
-        "stamina": 20,
-        "agility": 20,
-        "regen": 5
+        "of_might": 16,
+        "of_finesse": 8,
+        "of_wisdom": 10,
+        "of_vitality": 22,
+        "of_the_bear": 30,
+        "of_fire_resist": 14,
+        "of_cold_resist": 14,
+        "of_lightning_resist": 14,
+        "of_holy_resist": 8,
+        "of_poison_resist": 10,
+        "of_dark_resist": 8
       }
     },
     {
       "id": "warlords_bulwark",
       "name": "Warlord's Bulwark",
-      "base_type": "tower_shield",
       "slot": "shield",
-      "item_tier": 5,
       "rarity": "epic",
       "tile": "item/armor/shields/shield_dd.png",
-      "atk": 0,
-      "def": 24,
-      "hp": 200,
+      "base_type": "tower_shield",
+      "armor": 31,
+      "evasion": 10,
+      "item_tier": 5,
       "flavor_tags": [
         "fortified",
         "lordly"
@@ -585,22 +714,31 @@
       ],
       "unique": false,
       "enchant_chance": 0.15,
+      "implicit_affixes": [],
       "affix_pool": {
-        "stamina": 40,
-        "regen": 10
+        "of_might": 16,
+        "of_finesse": 8,
+        "of_wisdom": 10,
+        "of_vitality": 22,
+        "of_the_bear": 30,
+        "of_fire_resist": 14,
+        "of_cold_resist": 14,
+        "of_lightning_resist": 14,
+        "of_holy_resist": 8,
+        "of_poison_resist": 10,
+        "of_dark_resist": 8
       }
     },
     {
       "id": "shield_of_reflection",
       "name": "Shield of Reflection",
-      "base_type": "kite_shield",
       "slot": "shield",
-      "item_tier": 5,
       "rarity": "epic",
       "tile": "item/armor/shields/shield_of_reflection.png",
-      "atk": 0,
-      "def": 20,
-      "hp": 175,
+      "base_type": "kite_shield",
+      "armor": 31,
+      "evasion": 10,
+      "item_tier": 5,
       "flavor_tags": [
         "reflective",
         "warding"
@@ -615,23 +753,31 @@
       ],
       "unique": false,
       "enchant_chance": 0.15,
+      "implicit_affixes": [],
       "affix_pool": {
-        "stamina": 30,
-        "agility": 15,
-        "regen": 5
+        "of_might": 16,
+        "of_finesse": 8,
+        "of_wisdom": 10,
+        "of_vitality": 22,
+        "of_the_bear": 30,
+        "of_fire_resist": 14,
+        "of_cold_resist": 14,
+        "of_lightning_resist": 14,
+        "of_holy_resist": 8,
+        "of_poison_resist": 10,
+        "of_dark_resist": 8
       }
     },
     {
       "id": "lshield_louise",
       "name": "Louise's Shield",
-      "base_type": "tower_shield",
       "slot": "shield",
-      "item_tier": 5,
       "rarity": "legendary",
       "tile": "item/armor/shields/lshield_louise.png",
-      "atk": 0,
-      "def": 26,
-      "hp": 220,
+      "base_type": "tower_shield",
+      "armor": 36,
+      "evasion": 12,
+      "item_tier": 5,
       "flavor_tags": [
         "fortified",
         "thorns"
@@ -645,25 +791,32 @@
         25
       ],
       "unique": true,
-      "future_mechanic": "Reflects 20% of melee damage. -10% move speed (drawback).",
       "enchant_chance": 0.0,
+      "implicit_affixes": [],
       "affix_pool": {
-        "stamina": 50,
-        "agility": 30,
-        "regen": 15
+        "of_might": 16,
+        "of_finesse": 8,
+        "of_wisdom": 10,
+        "of_vitality": 22,
+        "of_the_bear": 30,
+        "of_fire_resist": 14,
+        "of_cold_resist": 14,
+        "of_lightning_resist": 14,
+        "of_holy_resist": 8,
+        "of_poison_resist": 10,
+        "of_dark_resist": 8
       }
     },
     {
       "id": "bullseye",
       "name": "Bullseye",
-      "base_type": "round_shield",
       "slot": "shield",
-      "item_tier": 5,
       "rarity": "legendary",
       "tile": "item/armor/artefact/urand_bullseye.png",
-      "atk": 0,
-      "def": 18,
-      "hp": 175,
+      "base_type": "round_shield",
+      "armor": 36,
+      "evasion": 12,
+      "item_tier": 5,
       "flavor_tags": [
         "reflective",
         "warding"
@@ -677,25 +830,32 @@
         22
       ],
       "unique": true,
-      "future_mechanic": "+50% block chance vs ranged attacks. Reflects projectiles.",
       "enchant_chance": 0.0,
+      "implicit_affixes": [],
       "affix_pool": {
-        "stamina": 40,
-        "agility": 35,
-        "regen": 25
+        "of_might": 16,
+        "of_finesse": 8,
+        "of_wisdom": 10,
+        "of_vitality": 22,
+        "of_the_bear": 30,
+        "of_fire_resist": 14,
+        "of_cold_resist": 14,
+        "of_lightning_resist": 14,
+        "of_holy_resist": 8,
+        "of_poison_resist": 10,
+        "of_dark_resist": 8
       }
     },
     {
       "id": "gong_shield",
       "name": "The Gong",
-      "base_type": "buckler",
       "slot": "shield",
-      "item_tier": 5,
       "rarity": "legendary",
       "tile": "item/armor/artefact/urand_gong.png",
-      "atk": 0,
-      "def": 16,
-      "hp": 165,
+      "base_type": "buckler",
+      "armor": 36,
+      "evasion": 12,
+      "item_tier": 5,
       "flavor_tags": [
         "lordly",
         "thorns"
@@ -709,26 +869,32 @@
         22
       ],
       "unique": true,
-      "future_mechanic": "Each block AoE-stuns adjacent enemies for 0.5s. Drawback: increased aggro range.",
       "enchant_chance": 0.0,
+      "implicit_affixes": [],
       "affix_pool": {
-        "strength": 15,
-        "stamina": 35,
-        "agility": 15,
-        "regen": 20
+        "of_might": 16,
+        "of_finesse": 8,
+        "of_wisdom": 10,
+        "of_vitality": 22,
+        "of_the_bear": 30,
+        "of_fire_resist": 14,
+        "of_cold_resist": 14,
+        "of_lightning_resist": 14,
+        "of_holy_resist": 8,
+        "of_poison_resist": 10,
+        "of_dark_resist": 8
       }
     },
     {
       "id": "elven_buckler_2",
       "name": "Elven Targe",
-      "base_type": "buckler",
       "slot": "shield",
-      "item_tier": 2,
       "rarity": "rare",
       "tile": "item/armor/shields/elven_buckler_2.png",
-      "atk": 0,
-      "def": 8,
-      "hp": 65,
+      "base_type": "buckler",
+      "armor": 10,
+      "evasion": 3,
+      "item_tier": 2,
       "flavor_tags": [
         "swiftness",
         "warding"
@@ -743,23 +909,31 @@
       ],
       "unique": false,
       "enchant_chance": 0.1,
+      "implicit_affixes": [],
       "affix_pool": {
-        "agility": 20,
-        "haste": 15,
-        "stamina": 10
+        "of_might": 16,
+        "of_finesse": 8,
+        "of_wisdom": 10,
+        "of_vitality": 22,
+        "of_the_bear": 30,
+        "of_fire_resist": 14,
+        "of_cold_resist": 14,
+        "of_lightning_resist": 14,
+        "of_holy_resist": 8,
+        "of_poison_resist": 10,
+        "of_dark_resist": 8
       }
     },
     {
       "id": "dwarven_buckler_2",
       "name": "Dwarven Roundel",
-      "base_type": "buckler",
       "slot": "shield",
-      "item_tier": 3,
       "rarity": "rare",
       "tile": "item/armor/shields/dwarven_buckler_2.png",
-      "atk": 0,
-      "def": 10,
-      "hp": 80,
+      "base_type": "buckler",
+      "armor": 14,
+      "evasion": 5,
+      "item_tier": 3,
       "flavor_tags": [
         "fortified",
         "thorns"
@@ -774,23 +948,31 @@
       ],
       "unique": false,
       "enchant_chance": 0.1,
+      "implicit_affixes": [],
       "affix_pool": {
-        "agility": 20,
-        "haste": 15,
-        "stamina": 10
+        "of_might": 16,
+        "of_finesse": 8,
+        "of_wisdom": 10,
+        "of_vitality": 22,
+        "of_the_bear": 30,
+        "of_fire_resist": 14,
+        "of_cold_resist": 14,
+        "of_lightning_resist": 14,
+        "of_holy_resist": 8,
+        "of_poison_resist": 10,
+        "of_dark_resist": 8
       }
     },
     {
       "id": "donald_shield",
       "name": "Donald's Shield",
-      "base_type": "kite_shield",
       "slot": "shield",
-      "item_tier": 4,
       "rarity": "epic",
       "tile": "item/armor/shields/shield_donald.png",
-      "atk": 0,
-      "def": 16,
-      "hp": 130,
+      "base_type": "kite_shield",
+      "armor": 22,
+      "evasion": 7,
+      "item_tier": 4,
       "flavor_tags": [
         "fortified",
         "lordly"
@@ -805,23 +987,31 @@
       ],
       "unique": false,
       "enchant_chance": 0.15,
+      "implicit_affixes": [],
       "affix_pool": {
-        "stamina": 30,
-        "agility": 15,
-        "regen": 5
+        "of_might": 16,
+        "of_finesse": 8,
+        "of_wisdom": 10,
+        "of_vitality": 22,
+        "of_the_bear": 30,
+        "of_fire_resist": 14,
+        "of_cold_resist": 14,
+        "of_lightning_resist": 14,
+        "of_holy_resist": 8,
+        "of_poison_resist": 10,
+        "of_dark_resist": 8
       }
     },
     {
       "id": "dd_scion_shield",
       "name": "Scion's Bulwark",
-      "base_type": "tower_shield",
       "slot": "shield",
-      "item_tier": 4,
       "rarity": "epic",
       "tile": "item/armor/shields/shield_dd_scion.png",
-      "atk": 0,
-      "def": 20,
-      "hp": 165,
+      "base_type": "tower_shield",
+      "armor": 22,
+      "evasion": 7,
+      "item_tier": 4,
       "flavor_tags": [
         "fortified"
       ],
@@ -835,22 +1025,31 @@
       ],
       "unique": false,
       "enchant_chance": 0.15,
+      "implicit_affixes": [],
       "affix_pool": {
-        "stamina": 40,
-        "regen": 10
+        "of_might": 16,
+        "of_finesse": 8,
+        "of_wisdom": 10,
+        "of_vitality": 22,
+        "of_the_bear": 30,
+        "of_fire_resist": 14,
+        "of_cold_resist": 14,
+        "of_lightning_resist": 14,
+        "of_holy_resist": 8,
+        "of_poison_resist": 10,
+        "of_dark_resist": 8
       }
     },
     {
       "id": "lshield_doomknight",
       "name": "The Doom Knight's Shield",
-      "base_type": "tower_shield",
       "slot": "shield",
-      "item_tier": 5,
       "rarity": "legendary",
       "tile": "item/armor/shields/lshield_dd_dk.png",
-      "atk": 0,
-      "def": 24,
-      "hp": 220,
+      "base_type": "tower_shield",
+      "armor": 36,
+      "evasion": 12,
+      "item_tier": 5,
       "flavor_tags": [
         "fortified",
         "thorns",
@@ -865,25 +1064,32 @@
         22
       ],
       "unique": true,
-      "future_mechanic": "Set bonus with The Doom Knight's Blade: +20% all stats while both equipped.",
       "enchant_chance": 0.0,
+      "implicit_affixes": [],
       "affix_pool": {
-        "stamina": 70,
-        "agility": 40,
-        "regen": 30
+        "of_might": 16,
+        "of_finesse": 8,
+        "of_wisdom": 10,
+        "of_vitality": 22,
+        "of_the_bear": 30,
+        "of_fire_resist": 14,
+        "of_cold_resist": 14,
+        "of_lightning_resist": 14,
+        "of_holy_resist": 8,
+        "of_poison_resist": 10,
+        "of_dark_resist": 8
       }
     },
     {
       "id": "shield_of_resistance",
       "name": "Shield of Resistance",
-      "base_type": "kite_shield",
       "slot": "shield",
-      "item_tier": 5,
       "rarity": "legendary",
       "tile": "item/armor/artefact/urand_resistance.png",
-      "atk": 0,
-      "def": 14,
-      "hp": 220,
+      "base_type": "kite_shield",
+      "armor": 36,
+      "evasion": 12,
+      "item_tier": 5,
       "flavor_tags": [
         "fire_res",
         "cold_res",
@@ -899,12 +1105,20 @@
       ],
       "unique": true,
       "enchant_chance": 0.0,
+      "implicit_affixes": [],
       "affix_pool": {
-        "stamina": 70,
-        "agility": 10,
-        "regen": 45
-      },
-      "future_mechanic": "All elemental resistances at +25%. -10% physical DEF (drawback)."
+        "of_might": 16,
+        "of_finesse": 8,
+        "of_wisdom": 10,
+        "of_vitality": 22,
+        "of_the_bear": 30,
+        "of_fire_resist": 14,
+        "of_cold_resist": 14,
+        "of_lightning_resist": 14,
+        "of_holy_resist": 8,
+        "of_poison_resist": 10,
+        "of_dark_resist": 8
+      }
     }
   ]
 }

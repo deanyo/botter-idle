@@ -256,8 +256,8 @@ func _build_sidebar() -> void:
 	add_child(hp_bar_fill)
 	sy += 18
 	# Two-column stat block: combat on the left, support on the right.
-	lbl_atk = _add_label("ATK: 0", sx, sy, 14, COL_AMBER)
-	lbl_def = _add_label("DEF: 0", sx + 140, sy, 14, COL_AMBER); sy += 22
+	lbl_atk = _add_label("Dmg: 1-2", sx, sy, 14, COL_AMBER)
+	lbl_def = _add_label("Armor: 0", sx + 140, sy, 14, COL_AMBER); sy += 22
 	lbl_crit = _add_label("Crit: 0%", sx, sy, 14, COL_DIM)
 	lbl_haste = _add_label("Haste: 0%", sx + 140, sy, 14, COL_DIM); sy += 22
 	lbl_regen = _add_label("Regen: 0/s", sx, sy, 14, COL_DIM)
@@ -611,12 +611,18 @@ func update_stats(bot_ref: Bot, place_str: String, _turn: int) -> void:
 		hp_bar_fill.color = COL_HP_LOW if hp_pct < 0.3 else COL_HP
 		_last_hp = bot_ref.hp
 		_last_max_hp = bot_ref.max_hp
-	if bot_ref.atk != _last_atk:
-		lbl_atk.text = "ATK: %d" % bot_ref.atk
-		_last_atk = bot_ref.atk
-	if bot_ref.defense != _last_def:
-		lbl_def.text = "DEF: %d" % bot_ref.defense
-		_last_def = bot_ref.defense
+	# Item-overhaul v2: damage line shows min-max + element + speed.
+	# Defense splits into Armor (flat phys) and Evasion%.
+	if bot_ref.damage_max != _last_atk:
+		var dtype: String = String(bot_ref.weapon_damage_type)
+		# Capitalize element label; "Phys" for physical for compactness.
+		var dtype_label: String = dtype.capitalize() if dtype != "physical" else "Phys"
+		lbl_atk.text = "Dmg: %d-%d %s · %.1fs" % [bot_ref.damage_min, bot_ref.damage_max, dtype_label, bot_ref.weapon_speed]
+		_last_atk = bot_ref.damage_max
+	if bot_ref.armor != _last_def:
+		var ev_int: int = int(round(bot_ref.evasion))
+		lbl_def.text = "Armor: %d · Eva: %d%%" % [bot_ref.armor, ev_int]
+		_last_def = bot_ref.armor
 	# Crit / Haste / Regen come from the new affix system. Display rounded
 	# ints — fractional precision isn't meaningful at the player surface.
 	var crit_int: int = int(round(bot_ref.crit_chance))

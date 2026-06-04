@@ -493,8 +493,8 @@ func _build_stats_pane(x: int, y: int, w: int, h: int) -> void:
 	hdr.add_theme_color_override("font_color", COL_DIM)
 	add_child(hdr); sy += 22
 	lbl_hp = _add_stat(sx, sy, 18, COL_AMBER, "HP —"); sy += 24
-	lbl_atk = _add_stat(sx, sy, 18, COL_AMBER, "ATK —"); sy += 24
-	lbl_def = _add_stat(sx, sy, 18, COL_AMBER, "DEF —"); sy += 24
+	lbl_atk = _add_stat(sx, sy, 18, COL_AMBER, "Dmg —"); sy += 24
+	lbl_def = _add_stat(sx, sy, 18, COL_AMBER, "Armor —"); sy += 24
 	# Primary axis trio. Drawn in their class colors so the player sees
 	# Str/Dex/Int as the same red/green/blue scheme as the spell cells.
 	lbl_str = _add_stat(sx, sy, 16, UITheme.spell_class_color("str"), "Str —"); sy += 22
@@ -796,21 +796,28 @@ func _render() -> void:
 	_render_inventory()
 
 func _render_stats() -> void:
-	# Mirror Bot.recompute_stats for the equipped set so the Outpost shows
-	# what the bot will actually have on deploy.
-	var max_hp := 50 + (int(state.level) - 1) * 8
-	var atk := 5 + (int(state.level) - 1)
-	var defense := 1 + int(int(state.level) / 3.0)
+	# Mirror Bot.recompute_stats v2 for the equipped set so the Outpost
+	# shows what the bot will actually have on deploy.
+	var max_hp := 80 + (int(state.level) - 1) * 8
+	var armor: int = 0
+	var evasion: float = 0.0
 	var crit_sum: float = 0.0
 	var haste_sum: float = 0.0
 	var regen_sum: float = 0.0
-	# Primary stats — base 5/5/5 + species + level + gear affixes. Mirrors
-	# bot.gd::recompute_stats so the outpost preview matches the in-run value.
+	# Weapon-derived display values default to bare-handed.
+	var dmin: int = 1
+	var dmax: int = 2
+	var w_speed: float = 1.0
+	var w_dtype: String = "physical"
+	# Primary stats — base 5/5/5 + species + level + alloc + gear affixes.
 	var sp_def: Dictionary = SpeciesData.get_def(String(state.get("species", "")))
 	var lvl_bonus: int = max(0, int(state.level) - 1)
-	var str_v: int = 5 + int(sp_def.get("str_flat", 0)) + lvl_bonus
-	var dex_v: int = 5 + int(sp_def.get("dex_flat", 0)) + lvl_bonus
-	var int_v: int = 5 + int(sp_def.get("int_flat", 0)) + lvl_bonus
+	var alloc_str: int = int(state.get("stat_alloc_str", 0))
+	var alloc_dex: int = int(state.get("stat_alloc_dex", 0))
+	var alloc_int: int = int(state.get("stat_alloc_int", 0))
+	var str_v: int = 5 + int(sp_def.get("str_flat", 0)) + lvl_bonus + alloc_str
+	var dex_v: int = 5 + int(sp_def.get("dex_flat", 0)) + lvl_bonus + alloc_dex
+	var int_v: int = 5 + int(sp_def.get("int_flat", 0)) + lvl_bonus + alloc_int
 	for slot in SLOTS:
 		var inst: Variant = state.equipped.get(slot, null)
 		if inst == null or typeof(inst) != TYPE_DICTIONARY:
@@ -819,35 +826,43 @@ func _render_stats() -> void:
 		if not items_db.has(base_id):
 			continue
 		var item: Dictionary = items_db[base_id]
-		max_hp += int(item.get("hp", 0))
-		atk += int(item.get("atk", 0))
-		defense += int(item.get("def", 0))
+		if slot == "weapon":
+			dmin = int(item.get("damage_min", 1))
+			dmax = int(item.get("damage_max", 2))
+			w_speed = float(item.get("speed", 1.0))
+			w_dtype = String(item.get("damage_type", "physical"))
+		else:
+			armor += int(item.get("armor", 0))
+			evasion += float(item.get("evasion", 0))
 		var sums: Dictionary = AffixSystem.sum_affix_stats(inst.get("affixes", []))
 		max_hp += int(sums.get("hp", 0))
-		atk += int(sums.get("atk", 0))
-		defense += int(sums.get("def", 0))
+		armor += int(sums.get("armor", 0))
+		evasion += float(sums.get("evasion", 0))
 		crit_sum += float(sums.get("crit_chance", 0))
-		haste_sum += float(sums.get("atk_speed_pct", 0))
+		haste_sum += float(sums.get("haste_pct", 0))
 		regen_sum += float(sums.get("hp_regen", 0))
 		str_v += int(sums.get("str", 0))
 		dex_v += int(sums.get("dex", 0))
 		int_v += int(sums.get("int", 0))
-	# Mirror the derived contributions in bot.gd::recompute_stats.
+	# Mirror Bot.recompute_stats derived contributions.
 	var str_excess: int = str_v - 5
 	var dex_excess: int = dex_v - 5
-	max_hp = int(round(max_hp * (1.0 + float(str_excess) * 0.015)))
-	atk = int(round(atk * (1.0 + float(str_excess) * 0.020)))
+	max_hp = int(round(float(max_hp) * (1.0 + float(str_excess) * 0.015)))
 	crit_sum += float(dex_excess) * 0.5
 	haste_sum += float(dex_excess) * 1.0
-	# Match the bot's caps so the displayed value equals the in-game value.
+	# Caps to match in-game values exactly.
 	crit_sum = clampf(crit_sum, 0.0, 75.0)
 	haste_sum = clampf(haste_sum, 0.0, 200.0)
+	evasion = clampf(evasion, 0.0, 75.0)
+	# Effective attack interval: weapon speed / haste mult.
+	var interval: float = max(0.15, w_speed / (1.0 + haste_sum / 100.0))
+	var dtype_label: String = w_dtype.capitalize() if w_dtype != "physical" else "Phys"
 	lbl_level.text = "Level %d" % int(state.level)
 	lbl_xp.text = "XP %d" % int(state.xp)
 	lbl_floor.text = "Highest floor: %d" % int(state.highest_floor)
 	lbl_hp.text = "HP  %d" % max_hp
-	lbl_atk.text = "ATK %d" % atk
-	lbl_def.text = "DEF %d" % defense
+	lbl_atk.text = "Dmg %d-%d %s · %.1fs" % [dmin, dmax, dtype_label, interval]
+	lbl_def.text = "Armor %d · Eva %d%%" % [armor, int(round(evasion))]
 	lbl_str.text = "Str %d" % str_v
 	lbl_dex.text = "Dex %d" % dex_v
 	lbl_int.text = "Int %d" % int_v

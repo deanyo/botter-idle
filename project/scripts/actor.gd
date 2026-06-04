@@ -232,7 +232,28 @@ func step_movement(delta: float) -> void:
 	else:
 		position += dir.normalized() * step
 
-func take_damage(raw: int, attacker: Actor = null) -> int:
+func take_damage(raw: int, attacker: Actor = null, damage_type: String = "") -> int:
+	# Item-overhaul v2 (2026-06-04). damage_type is the new typed-damage
+	# hint — physical / fire / cold / lightning / holy / poison / dark.
+	# Empty string falls through to the legacy flavor-tag-based path so
+	# enemy attacks (which don't yet pass damage_type) still mitigate via
+	# fire_res / cold_res / earth / etc.
+	#
+	# New PoE-style defenses:
+	#   - evasion (% chance to fully dodge any incoming hit) → 0 damage
+	#   - armor (flat) subtracts from PHYSICAL damage only
+	#   - resistances[damage_type] subtract a percentage from typed damage
+	# Old `defense` field is kept (mirrors armor for log compat).
+	if damage_type == "":
+		damage_type = "physical"  # default for legacy callers
+	# Evasion roll first — applies to any damage type. Resolves the hit
+	# entirely (no subsequent armor / resist math).
+	if "evasion" in self:
+		var eva: float = float(self.evasion)
+		if eva > 0.0 and randf() * 100.0 < eva:
+			if fx and is_alive:
+				fx.hit_squish()
+			return 0
 	# Defender-side flavor tag pre-checks. Order matters: full-negate
 	# rolls beat any multiplier; resistances apply before harm; element
 	# resists (fire_res/cold_res/poison_res) check the attacker's
@@ -292,7 +313,19 @@ func take_damage(raw: int, attacker: Actor = null) -> int:
 			raw = int(round(float(raw) * 0.9))
 		if "harm" in def_tags:
 			raw = int(round(float(raw) * 1.25))
-	var dmg: int = maxi(1, raw - defense)
+	# Type-aware mitigation. Physical → flat armor subtraction. Elemental
+	# → percent resistance from the defender's resistances dict (defaults
+	# to 0 when the actor doesn't declare one — enemies with no resistances
+	# field eat full damage). Floor of 1 so a 100%-resisted hit still pings
+	# (gameplay-feel; nobody should ignore a hit completely except evasion).
+	var dmg: int
+	if damage_type == "physical":
+		dmg = maxi(1, raw - defense)
+	else:
+		var resist_pct: float = 0.0
+		if "resistances" in self:
+			resist_pct = float(self.resistances.get(damage_type, 0))
+		dmg = maxi(1, int(round(float(raw) * (1.0 - resist_pct / 100.0))))
 	hp -= dmg
 	damaged.emit(self, dmg)
 	_update_hp_bar()
@@ -445,20 +478,65 @@ func attempt_attack(other: Actor, delta: float) -> int:
 			_rage_stacks = 0
 		dmg_mult *= 1.0 + 0.05 * float(_rage_stacks)
 
-	# Crit roll: on success multiply raw damage before defense subtraction so
-	# crit feels meaningful even against high-DEF targets.
-	var raw: int = atk
-	if dmg_mult != 1.0:
-		raw = int(round(float(raw) * dmg_mult))
+	# Item-overhaul v2: weapon damage is a roll over [damage_min,
+	# damage_max] of weapon_damage_type. extra_damage adds typed bonus
+	# rolls (one per element a +X-Y affix has loaded). The base swing's
+	# Str scaling (+2% per stat point above baseline) lives here so it
+	# multiplies the final pre-crit total.
+	var dmin: int = int(self.get("damage_min")) if "damage_min" in self else atk
+	var dmax: int = int(self.get("damage_max")) if "damage_max" in self else atk
+	var base_type: String = String(self.get("weapon_damage_type")) if "weapon_damage_type" in self else "physical"
+	# Per-type accumulators: one int per element key the swing actually
+	# touches. Keyed by damage_type so the take_damage loop below routes
+	# armor vs resistance properly.
+	var typed: Dictionary = {}
+	typed[base_type] = randi_range(dmin, max(dmin, dmax))
+	# Extra damage from "of Embers"-style affixes — kept on the bot via
+	# recompute_stats. Each element's {min, max} bounds get rolled here
+	# so a single weapon can hit three types in one swing.
+	var extra: Variant = self.get("extra_damage") if "extra_damage" in self else null
+	if extra is Dictionary:
+		for elem in extra.keys():
+			var rng_dict: Dictionary = extra[elem]
+			var lo: int = int(rng_dict.get("min", 0))
+			var hi: int = int(rng_dict.get("max", 0))
+			if hi <= 0:
+				continue
+			typed[elem] = int(typed.get(elem, 0)) + randi_range(lo, max(lo, hi))
+	# Str scaling on the whole swing — affects all damage types so a
+	# Strength build buffs hybrid weapons evenly.
+	var str_excess: int = 0
+	if "str_stat" in self:
+		str_excess = int(self.str_stat) - 5
+	var str_mult: float = 1.0 + float(str_excess) * 0.02
+	if dmg_mult != 1.0 or str_mult != 1.0:
+		var combo: float = dmg_mult * str_mult
+		for k in typed.keys():
+			typed[k] = int(round(float(typed[k]) * combo))
 	var crit: bool = false
 	var roll_chance: float = crit_chance + crit_bonus
 	if roll_chance > 0.0 and randf() * 100.0 < roll_chance:
-		raw = int(round(float(raw) * CRIT_MULTIPLIER))
+		for k in typed.keys():
+			typed[k] = int(round(float(typed[k]) * CRIT_MULTIPLIER))
 		crit = true
 	# Update precision streak — reset on crit, grow on miss-of-crit.
 	if "precision" in tags:
 		_precision_streak = 0 if crit else _precision_streak + 1
-	var dealt: int = other.take_damage(raw, self)
+	# Apply each typed component as a separate take_damage call. The
+	# defender's evasion fires once on the first call (full miss); the
+	# subsequent components also evasion-roll fresh — that's fine because
+	# defender state mutates between calls (HP drops, evasion stays).
+	# `raw` retained as the top-line value for downstream tag procs that
+	# need a single number (thunderous chain splash, etc).
+	var raw: int = 0
+	for k in typed.keys():
+		raw += int(typed[k])
+	var dealt: int = 0
+	for k in typed.keys():
+		var part: int = int(typed[k])
+		if part <= 0:
+			continue
+		dealt += other.take_damage(part, self, k)
 	var killed: bool = is_instance_valid(other) and not other.is_alive
 	# Post-attack tag mechanics. `vampiric` heals 8% of damage dealt
 	# back to the attacker — capped at max_hp. Defended/dodged hits

@@ -14,14 +14,13 @@
     {
       "id": "gauntlets_of_war",
       "name": "Gauntlets of War",
-      "base_type": "gloves",
       "slot": "gloves",
-      "item_tier": 5,
       "rarity": "legendary",
       "tile": "item/armor/artefact/urand_war.png",
-      "atk": 0,
-      "def": 22,
-      "hp": 200,
+      "base_type": "gloves",
+      "armor": 12,
+      "evasion": 18,
+      "item_tier": 5,
       "flavor_tags": [
         "lordly",
         "fortified"
@@ -35,25 +34,38 @@
         25
       ],
       "unique": true,
+      "enchant_chance": 0.05,
+      "implicit_affixes": [],
       "affix_pool": {
-        "strength": 15,
-        "stamina": 45,
-        "agility": 15,
-        "regen": 15
-      },
-      "future_mechanic": "+15% damage when at full HP. +25% damage to bosses."
+        "of_might": 16,
+        "of_finesse": 18,
+        "of_wisdom": 10,
+        "of_the_bear": 14,
+        "of_the_cat": 16,
+        "of_sharpness": 14,
+        "of_embers": 10,
+        "of_frost": 10,
+        "of_storms": 10,
+        "of_devotion": 8,
+        "of_venom": 8,
+        "of_shadows": 8,
+        "of_crit": 18,
+        "of_haste": 18,
+        "of_lifesteal": 10,
+        "of_channeling": 10,
+        "of_velocity": 12
+      }
     },
     {
       "id": "fencer_gauntlets",
       "name": "Fencer's Gauntlets",
-      "base_type": "gloves",
       "slot": "gloves",
-      "item_tier": 5,
       "rarity": "legendary",
       "tile": "item/armor/artefact/urand_fencer_new.png",
-      "atk": 0,
-      "def": 7,
-      "hp": 100,
+      "base_type": "gloves",
+      "armor": 12,
+      "evasion": 18,
+      "item_tier": 5,
       "flavor_tags": [
         "footwork",
         "swiftness"
@@ -67,25 +79,38 @@
         25
       ],
       "unique": true,
+      "enchant_chance": 0.05,
+      "implicit_affixes": [],
       "affix_pool": {
-        "agility": 50,
-        "haste": 50
-      },
-      "crit_chance": 12,
-      "atk_speed_pct": 8,
-      "future_mechanic": "+15% dodge chance. +10% crit chance."
+        "of_might": 16,
+        "of_finesse": 18,
+        "of_wisdom": 10,
+        "of_the_bear": 14,
+        "of_the_cat": 16,
+        "of_sharpness": 14,
+        "of_embers": 10,
+        "of_frost": 10,
+        "of_storms": 10,
+        "of_devotion": 8,
+        "of_venom": 8,
+        "of_shadows": 8,
+        "of_crit": 18,
+        "of_haste": 18,
+        "of_lifesteal": 10,
+        "of_channeling": 10,
+        "of_velocity": 12
+      }
     },
     {
       "id": "leather_gloves",
       "name": "Leather Gloves",
-      "base_type": "gloves",
       "slot": "gloves",
-      "item_tier": 1,
       "rarity": "common",
       "tile": "item/armor/hands/glove_1_old.png",
-      "atk": 0,
-      "def": 1,
-      "hp": 12,
+      "base_type": "gloves",
+      "armor": 2,
+      "evasion": 3,
+      "item_tier": 1,
       "flavor_tags": [],
       "lore": "",
       "drop_weights": [
@@ -96,19 +121,38 @@
         0
       ],
       "unique": false,
-      "enchant_chance": 0.05
+      "enchant_chance": 0.05,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_might": 16,
+        "of_finesse": 18,
+        "of_wisdom": 10,
+        "of_the_bear": 14,
+        "of_the_cat": 16,
+        "of_sharpness": 14,
+        "of_embers": 10,
+        "of_frost": 10,
+        "of_storms": 10,
+        "of_devotion": 8,
+        "of_venom": 8,
+        "of_shadows": 8,
+        "of_crit": 18,
+        "of_haste": 18,
+        "of_lifesteal": 10,
+        "of_channeling": 10,
+        "of_velocity": 12
+      }
     },
     {
       "id": "studded_gloves",
       "name": "Studded Gloves",
-      "base_type": "gloves",
       "slot": "gloves",
-      "item_tier": 1,
       "rarity": "common",
       "tile": "item/armor/hands/glove_2_old.png",
-      "atk": 0,
-      "def": 2,
-      "hp": 18,
+      "base_type": "gloves",
+      "armor": 2,
+      "evasion": 3,
+      "item_tier": 1,
       "flavor_tags": [],
       "lore": "",
       "drop_weights": [
@@ -119,19 +163,38 @@
         0
       ],
       "unique": false,
-      "enchant_chance": 0.05
+      "enchant_chance": 0.05,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_might": 16,
+        "of_finesse": 18,
+        "of_wisdom": 10,
+        "of_the_bear": 14,
+        "of_the_cat": 16,
+        "of_sharpness": 14,
+        "of_embers": 10,
+        "of_frost": 10,
+        "of_storms": 10,
+        "of_devotion": 8,
+        "of_venom": 8,
+        "of_shadows": 8,
+        "of_crit": 18,
+        "of_haste": 18,
+        "of_lifesteal": 10,
+        "of_channeling": 10,
+        "of_velocity": 12
+      }
     },
     {
       "id": "riveted_gloves",
       "name": "Riveted Gloves",
-      "base_type": "gloves",
       "slot": "gloves",
-      "item_tier": 2,
       "rarity": "uncommon",
       "tile": "item/armor/hands/glove_2_new.png",
-      "atk": 0,
-      "def": 3,
-      "hp": 25,
+      "base_type": "gloves",
+      "armor": 3,
+      "evasion": 5,
+      "item_tier": 2,
       "flavor_tags": [],
       "lore": "",
       "drop_weights": [
@@ -142,19 +205,38 @@
         0
       ],
       "unique": false,
-      "enchant_chance": 0.05
+      "enchant_chance": 0.05,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_might": 16,
+        "of_finesse": 18,
+        "of_wisdom": 10,
+        "of_the_bear": 14,
+        "of_the_cat": 16,
+        "of_sharpness": 14,
+        "of_embers": 10,
+        "of_frost": 10,
+        "of_storms": 10,
+        "of_devotion": 8,
+        "of_venom": 8,
+        "of_shadows": 8,
+        "of_crit": 18,
+        "of_haste": 18,
+        "of_lifesteal": 10,
+        "of_channeling": 10,
+        "of_velocity": 12
+      }
     },
     {
       "id": "plate_gauntlets",
       "name": "Plate Gauntlets",
-      "base_type": "gloves",
       "slot": "gloves",
-      "item_tier": 2,
       "rarity": "uncommon",
       "tile": "item/armor/hands/glove_4_gauntlets.png",
-      "atk": 0,
-      "def": 4,
-      "hp": 32,
+      "base_type": "gloves",
+      "armor": 3,
+      "evasion": 5,
+      "item_tier": 2,
       "flavor_tags": [
         "fortified"
       ],
@@ -167,19 +249,38 @@
         0
       ],
       "unique": false,
-      "enchant_chance": 0.05
+      "enchant_chance": 0.05,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_might": 16,
+        "of_finesse": 18,
+        "of_wisdom": 10,
+        "of_the_bear": 14,
+        "of_the_cat": 16,
+        "of_sharpness": 14,
+        "of_embers": 10,
+        "of_frost": 10,
+        "of_storms": 10,
+        "of_devotion": 8,
+        "of_venom": 8,
+        "of_shadows": 8,
+        "of_crit": 18,
+        "of_haste": 18,
+        "of_lifesteal": 10,
+        "of_channeling": 10,
+        "of_velocity": 12
+      }
     },
     {
       "id": "dwarven_gloves",
       "name": "Dwarven Gloves",
-      "base_type": "gloves",
       "slot": "gloves",
-      "item_tier": 3,
       "rarity": "rare",
       "tile": "item/armor/hands/glove_1_new.png",
-      "atk": 0,
-      "def": 5,
-      "hp": 45,
+      "base_type": "gloves",
+      "armor": 5,
+      "evasion": 7,
+      "item_tier": 3,
       "flavor_tags": [
         "fortified"
       ],
@@ -192,19 +293,38 @@
         5
       ],
       "unique": false,
-      "enchant_chance": 0.1
+      "enchant_chance": 0.1,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_might": 16,
+        "of_finesse": 18,
+        "of_wisdom": 10,
+        "of_the_bear": 14,
+        "of_the_cat": 16,
+        "of_sharpness": 14,
+        "of_embers": 10,
+        "of_frost": 10,
+        "of_storms": 10,
+        "of_devotion": 8,
+        "of_venom": 8,
+        "of_shadows": 8,
+        "of_crit": 18,
+        "of_haste": 18,
+        "of_lifesteal": 10,
+        "of_channeling": 10,
+        "of_velocity": 12
+      }
     },
     {
       "id": "elven_gauntlets",
       "name": "Elven Gauntlets",
-      "base_type": "gloves",
       "slot": "gloves",
-      "item_tier": 3,
       "rarity": "rare",
       "tile": "item/armor/hands/glove_3_old.png",
-      "atk": 0,
-      "def": 4,
-      "hp": 50,
+      "base_type": "gloves",
+      "armor": 5,
+      "evasion": 7,
+      "item_tier": 3,
       "flavor_tags": [
         "agility",
         "footwork"
@@ -218,19 +338,38 @@
         10
       ],
       "unique": false,
-      "enchant_chance": 0.1
+      "enchant_chance": 0.1,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_might": 16,
+        "of_finesse": 18,
+        "of_wisdom": 10,
+        "of_the_bear": 14,
+        "of_the_cat": 16,
+        "of_sharpness": 14,
+        "of_embers": 10,
+        "of_frost": 10,
+        "of_storms": 10,
+        "of_devotion": 8,
+        "of_venom": 8,
+        "of_shadows": 8,
+        "of_crit": 18,
+        "of_haste": 18,
+        "of_lifesteal": 10,
+        "of_channeling": 10,
+        "of_velocity": 12
+      }
     },
     {
       "id": "ring_inlaid_gloves",
       "name": "Ring-Inlaid Gloves",
-      "base_type": "gloves",
       "slot": "gloves",
-      "item_tier": 4,
       "rarity": "epic",
       "tile": "item/armor/hands/glove_3_new.png",
-      "atk": 2,
-      "def": 6,
-      "hp": 60,
+      "base_type": "gloves",
+      "armor": 7,
+      "evasion": 11,
+      "item_tier": 4,
       "flavor_tags": [
         "arcane"
       ],
@@ -243,19 +382,38 @@
         30
       ],
       "unique": false,
-      "enchant_chance": 0.15
+      "enchant_chance": 0.15,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_might": 16,
+        "of_finesse": 18,
+        "of_wisdom": 10,
+        "of_the_bear": 14,
+        "of_the_cat": 16,
+        "of_sharpness": 14,
+        "of_embers": 10,
+        "of_frost": 10,
+        "of_storms": 10,
+        "of_devotion": 8,
+        "of_venom": 8,
+        "of_shadows": 8,
+        "of_crit": 18,
+        "of_haste": 18,
+        "of_lifesteal": 10,
+        "of_channeling": 10,
+        "of_velocity": 12
+      }
     },
     {
       "id": "warlord_gauntlets",
       "name": "Warlord's Gauntlets",
-      "base_type": "gloves",
       "slot": "gloves",
-      "item_tier": 4,
       "rarity": "epic",
       "tile": "item/armor/hands/glove_4_new.png",
-      "atk": 4,
-      "def": 7,
-      "hp": 70,
+      "base_type": "gloves",
+      "armor": 7,
+      "evasion": 11,
+      "item_tier": 4,
       "flavor_tags": [
         "lordly",
         "slaying"
@@ -269,19 +427,38 @@
         40
       ],
       "unique": false,
-      "enchant_chance": 0.15
+      "enchant_chance": 0.15,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_might": 16,
+        "of_finesse": 18,
+        "of_wisdom": 10,
+        "of_the_bear": 14,
+        "of_the_cat": 16,
+        "of_sharpness": 14,
+        "of_embers": 10,
+        "of_frost": 10,
+        "of_storms": 10,
+        "of_devotion": 8,
+        "of_venom": 8,
+        "of_shadows": 8,
+        "of_crit": 18,
+        "of_haste": 18,
+        "of_lifesteal": 10,
+        "of_channeling": 10,
+        "of_velocity": 12
+      }
     },
     {
       "id": "storm_gauntlets",
       "name": "Storm Gauntlets",
-      "base_type": "gloves",
       "slot": "gloves",
-      "item_tier": 5,
       "rarity": "legendary",
       "tile": "item/armor/hands/glove_5.png",
-      "atk": 5,
-      "def": 8,
-      "hp": 80,
+      "base_type": "gloves",
+      "armor": 12,
+      "evasion": 18,
+      "item_tier": 5,
       "flavor_tags": [
         "thunderous",
         "swiftness"
@@ -296,7 +473,26 @@
       ],
       "unique": false,
       "enchant_chance": 0.15,
-      "atk_speed_pct": 15
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_might": 16,
+        "of_finesse": 18,
+        "of_wisdom": 10,
+        "of_the_bear": 14,
+        "of_the_cat": 16,
+        "of_sharpness": 14,
+        "of_embers": 10,
+        "of_frost": 10,
+        "of_storms": 10,
+        "of_devotion": 8,
+        "of_venom": 8,
+        "of_shadows": 8,
+        "of_crit": 18,
+        "of_haste": 18,
+        "of_lifesteal": 10,
+        "of_channeling": 10,
+        "of_velocity": 12
+      }
     }
   ]
 }

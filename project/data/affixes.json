@@ -1,32 +1,6 @@
 {
-  "_comment": "Affix definitions. The original 6 (strength/stamina/agility/regen/crit/haste) cover melee + survivability. Added 2026-06-04 with the autocast pivot: 3 primary-stat affixes (might/finesse/wisdom = +str/+dex/+int), 6 spell-modifier affixes (cdr/proj_count/proj_speed/area/duration/spell_dmg), and 6 element-damage affixes (fire/cold/lightning/holy/poison/dark). Per-affix `applies_to` filters which slot a given affix can roll on. Tiers index by rarity (common=0 ... legendary=4).",
-
-  "affixes": [
-    { "id": "strength", "name": "Strength", "applies_to": ["any"], "stat": "atk",            "tiers": [2, 4, 7, 12, 18] },
-    { "id": "stamina",  "name": "Stamina",  "applies_to": ["any"], "stat": "hp",             "tiers": [12, 22, 38, 60, 90] },
-    { "id": "agility",  "name": "Agility",  "applies_to": ["any"], "stat": "def",            "tiers": [1, 2, 4, 7, 11] },
-    { "id": "regen",    "name": "Regen",    "applies_to": ["any"], "stat": "hp_regen",       "tiers": [1, 2, 3, 3, 3] },
-    { "id": "crit",     "name": "Crit",     "applies_to": ["any"], "stat": "crit_chance",    "tiers": [3, 6, 10, 15, 22] },
-    { "id": "haste",    "name": "Haste",    "applies_to": ["any"], "stat": "atk_speed_pct",  "tiers": [4, 8, 14, 22, 32] },
-
-    { "id": "might",    "name": "Might",    "applies_to": ["amulet","ring","helm","gloves","cloak","weapon","armor","boots","shield"], "stat": "str", "tiers": [1, 2, 3, 5, 8] },
-    { "id": "finesse",  "name": "Finesse",  "applies_to": ["amulet","ring","helm","gloves","cloak","weapon","armor","boots","shield"], "stat": "dex", "tiers": [1, 2, 3, 5, 8] },
-    { "id": "wisdom",   "name": "Wisdom",   "applies_to": ["amulet","ring","helm","gloves","cloak","weapon","armor","boots","shield"], "stat": "int", "tiers": [1, 2, 3, 5, 8] },
-
-    { "id": "spell_cdr",       "name": "Quickcast",   "applies_to": ["amulet","ring","helm","gloves","cloak","spell"], "stat": "spell_cdr_pct",        "tiers": [3, 6, 10, 14, 20] },
-    { "id": "spell_proj",      "name": "Multicast",   "applies_to": ["amulet","ring","spell"],                          "stat": "spell_proj_bonus",     "tiers": [0, 1, 1, 2, 3] },
-    { "id": "spell_proj_speed","name": "Velocity",    "applies_to": ["gloves","ring","amulet","spell"],                 "stat": "spell_proj_speed_pct", "tiers": [10, 20, 35, 55, 80] },
-    { "id": "spell_area",      "name": "Resonance",   "applies_to": ["amulet","ring","helm","cloak","spell"],           "stat": "spell_area_pct",       "tiers": [8, 16, 26, 38, 55] },
-    { "id": "spell_duration",  "name": "Lingering",   "applies_to": ["amulet","ring","cloak","spell"],                  "stat": "spell_duration_pct",   "tiers": [10, 20, 35, 55, 80] },
-    { "id": "spell_damage",    "name": "Channeling",  "applies_to": ["amulet","ring","helm","gloves","cloak","spell"],  "stat": "spell_damage_pct",     "tiers": [8, 16, 28, 45, 65] },
-
-    { "id": "fire_dmg",      "name": "of Embers",       "applies_to": ["amulet","ring","helm","gloves","cloak","spell"], "stat": "fire_dmg_pct",       "tiers": [10, 20, 35, 55, 80] },
-    { "id": "cold_dmg",      "name": "of Frost",        "applies_to": ["amulet","ring","helm","gloves","cloak","spell"], "stat": "cold_dmg_pct",       "tiers": [10, 20, 35, 55, 80] },
-    { "id": "lightning_dmg", "name": "of Storms",       "applies_to": ["amulet","ring","helm","gloves","cloak","spell"], "stat": "thunderous_dmg_pct", "tiers": [10, 20, 35, 55, 80] },
-    { "id": "holy_dmg",      "name": "of Devotion",     "applies_to": ["amulet","ring","helm","gloves","cloak","spell"], "stat": "holy_dmg_pct",       "tiers": [10, 20, 35, 55, 80] },
-    { "id": "poison_dmg",    "name": "of Venom",        "applies_to": ["amulet","ring","helm","gloves","cloak","spell"], "stat": "poison_dmg_pct",     "tiers": [10, 20, 35, 55, 80] },
-    { "id": "dark_dmg",      "name": "of Shadows",      "applies_to": ["amulet","ring","helm","gloves","cloak","spell"], "stat": "dark_dmg_pct",       "tiers": [10, 20, 35, 55, 80] }
-  ],
+  "_doc": "Item-overhaul v2 affixes (2026-06-04). Three families: generic (apply to any spell + any gear), class (boost one Str/Dex/Int spell class), archetype (per-spell uniques, only via implicit_affixes). Tiers are [min, max] 2-arrays per rarity (common→legendary) so each affix rolls a real range. AffixSystem.roll_affixes_for picks an integer in [min, max] inclusive at the correct rarity tier. Range damage affixes (e.g. of_embers) emit two values: bonus_min and bonus_max for the X-Y damage line in tooltips. The 'kind' field on each affix tells the formatter how to display it ('flat', 'pct', 'range', 'flag').",
+  "_format_version": 3,
 
   "rarity_affix_count": {
     "common": 0,
@@ -42,5 +16,232 @@
     "rare": 2,
     "epic": 3,
     "legendary": 4
-  }
+  },
+
+  "affixes": [
+    {
+      "id": "of_might",       "family": "generic", "kind": "flat",
+      "name": "of Might",     "stat": "str",
+      "applies_to": ["amulet","ring","helm","gloves","cloak","weapon","armor","boots","shield"],
+      "tiers": [[1,2],[2,3],[3,5],[5,8],[8,12]]
+    },
+    {
+      "id": "of_finesse",     "family": "generic", "kind": "flat",
+      "name": "of Finesse",   "stat": "dex",
+      "applies_to": ["amulet","ring","helm","gloves","cloak","weapon","armor","boots","shield"],
+      "tiers": [[1,2],[2,3],[3,5],[5,8],[8,12]]
+    },
+    {
+      "id": "of_wisdom",      "family": "generic", "kind": "flat",
+      "name": "of Wisdom",    "stat": "int",
+      "applies_to": ["amulet","ring","helm","gloves","cloak","weapon","armor","boots","shield","spell"],
+      "tiers": [[1,2],[2,3],[3,5],[5,8],[8,12]]
+    },
+    {
+      "id": "of_vitality",    "family": "generic", "kind": "flat",
+      "name": "of Vitality",  "stat": "hp",
+      "applies_to": ["amulet","ring","helm","cloak","armor","boots"],
+      "tiers": [[10,18],[18,32],[32,55],[55,90],[90,160]]
+    },
+    {
+      "id": "of_the_bear",    "family": "generic", "kind": "flat",
+      "name": "of the Bear",  "stat": "armor",
+      "applies_to": ["helm","cloak","armor","boots","gloves","shield"],
+      "tiers": [[2,4],[4,7],[7,12],[12,20],[20,35]]
+    },
+    {
+      "id": "of_the_cat",     "family": "generic", "kind": "pct",
+      "name": "of the Cat",   "stat": "evasion",
+      "applies_to": ["cloak","boots","gloves","helm"],
+      "tiers": [[2,4],[4,6],[6,9],[9,14],[14,20]]
+    },
+    {
+      "id": "of_quickcast",   "family": "generic", "kind": "pct",
+      "name": "of Quickcast", "stat": "spell_cdr_pct",
+      "applies_to": ["amulet","ring","helm","gloves","cloak","spell"],
+      "tiers": [[2,4],[4,7],[7,11],[11,16],[16,22]]
+    },
+    {
+      "id": "of_resonance",   "family": "generic", "kind": "pct",
+      "name": "of Resonance", "stat": "spell_area_pct",
+      "applies_to": ["amulet","ring","helm","cloak","spell"],
+      "tiers": [[5,10],[10,18],[18,28],[28,40],[40,55]]
+    },
+    {
+      "id": "of_lingering",   "family": "generic", "kind": "pct",
+      "name": "of Lingering", "stat": "spell_duration_pct",
+      "applies_to": ["amulet","ring","cloak","spell"],
+      "tiers": [[8,15],[15,25],[25,40],[40,55],[55,75]]
+    },
+    {
+      "id": "of_velocity",    "family": "generic", "kind": "pct",
+      "name": "of Velocity",  "stat": "spell_proj_speed_pct",
+      "applies_to": ["gloves","ring","amulet","spell"],
+      "tiers": [[8,15],[15,25],[25,40],[40,55],[55,80]]
+    },
+    {
+      "id": "of_multicast",   "family": "generic", "kind": "flat",
+      "name": "of Multicast", "stat": "spell_proj_bonus",
+      "applies_to": ["amulet","ring","spell"],
+      "tiers": [[0,0],[0,1],[1,1],[1,2],[2,3]]
+    },
+    {
+      "id": "of_channeling",  "family": "generic", "kind": "pct",
+      "name": "of Channeling","stat": "spell_damage_pct",
+      "applies_to": ["amulet","ring","helm","gloves","cloak","spell"],
+      "tiers": [[5,10],[10,18],[18,30],[30,45],[45,65]]
+    },
+    {
+      "id": "of_sharpness",   "family": "generic", "kind": "range",
+      "name": "of Sharpness", "stat": "physical_extra",
+      "applies_to": ["weapon","gloves","ring"],
+      "tiers": [[1,2],[2,4],[4,7],[7,12],[12,20]]
+    },
+    {
+      "id": "of_embers",      "family": "generic", "kind": "range",
+      "name": "of Embers",    "stat": "fire_extra",
+      "applies_to": ["weapon","gloves","ring","amulet","helm"],
+      "tiers": [[1,3],[3,6],[6,10],[10,16],[16,25]]
+    },
+    {
+      "id": "of_frost",       "family": "generic", "kind": "range",
+      "name": "of Frost",     "stat": "cold_extra",
+      "applies_to": ["weapon","gloves","ring","amulet","helm"],
+      "tiers": [[1,3],[3,6],[6,10],[10,16],[16,25]]
+    },
+    {
+      "id": "of_storms",      "family": "generic", "kind": "range",
+      "name": "of Storms",    "stat": "lightning_extra",
+      "applies_to": ["weapon","gloves","ring","amulet","helm"],
+      "tiers": [[1,3],[3,6],[6,10],[10,16],[16,25]]
+    },
+    {
+      "id": "of_devotion",    "family": "generic", "kind": "range",
+      "name": "of Devotion",  "stat": "holy_extra",
+      "applies_to": ["weapon","gloves","ring","amulet","helm"],
+      "tiers": [[1,3],[3,6],[6,10],[10,16],[16,25]]
+    },
+    {
+      "id": "of_venom",       "family": "generic", "kind": "range",
+      "name": "of Venom",     "stat": "poison_extra",
+      "applies_to": ["weapon","gloves","ring","amulet","helm"],
+      "tiers": [[1,3],[3,6],[6,10],[10,16],[16,25]]
+    },
+    {
+      "id": "of_shadows",     "family": "generic", "kind": "range",
+      "name": "of Shadows",   "stat": "dark_extra",
+      "applies_to": ["weapon","gloves","ring","amulet","helm"],
+      "tiers": [[1,3],[3,6],[6,10],[10,16],[16,25]]
+    },
+    {
+      "id": "of_fire_resist", "family": "generic", "kind": "pct",
+      "name": "of Fire Resistance", "stat": "fire_res",
+      "applies_to": ["armor","helm","cloak","ring","amulet","boots","gloves","shield"],
+      "tiers": [[5,10],[10,15],[15,22],[22,32],[32,45]]
+    },
+    {
+      "id": "of_cold_resist", "family": "generic", "kind": "pct",
+      "name": "of Cold Resistance", "stat": "cold_res",
+      "applies_to": ["armor","helm","cloak","ring","amulet","boots","gloves","shield"],
+      "tiers": [[5,10],[10,15],[15,22],[22,32],[32,45]]
+    },
+    {
+      "id": "of_lightning_resist", "family": "generic", "kind": "pct",
+      "name": "of Lightning Resistance", "stat": "lightning_res",
+      "applies_to": ["armor","helm","cloak","ring","amulet","boots","gloves","shield"],
+      "tiers": [[5,10],[10,15],[15,22],[22,32],[32,45]]
+    },
+    {
+      "id": "of_holy_resist", "family": "generic", "kind": "pct",
+      "name": "of Holy Resistance", "stat": "holy_res",
+      "applies_to": ["armor","helm","cloak","ring","amulet","boots","gloves","shield"],
+      "tiers": [[5,10],[10,15],[15,22],[22,32],[32,45]]
+    },
+    {
+      "id": "of_poison_resist", "family": "generic", "kind": "pct",
+      "name": "of Poison Resistance", "stat": "poison_res",
+      "applies_to": ["armor","helm","cloak","ring","amulet","boots","gloves","shield"],
+      "tiers": [[5,10],[10,15],[15,22],[22,32],[32,45]]
+    },
+    {
+      "id": "of_dark_resist", "family": "generic", "kind": "pct",
+      "name": "of Dark Resistance", "stat": "dark_res",
+      "applies_to": ["armor","helm","cloak","ring","amulet","boots","gloves","shield"],
+      "tiers": [[5,10],[10,15],[15,22],[22,32],[32,45]]
+    },
+    {
+      "id": "of_crit",        "family": "generic", "kind": "pct",
+      "name": "of Crit",      "stat": "crit_chance",
+      "applies_to": ["amulet","ring","gloves","weapon","helm"],
+      "tiers": [[2,4],[4,7],[7,11],[11,16],[16,22]]
+    },
+    {
+      "id": "of_haste",       "family": "generic", "kind": "pct",
+      "name": "of Haste",     "stat": "haste_pct",
+      "applies_to": ["amulet","ring","gloves","boots","cloak","weapon"],
+      "tiers": [[3,6],[6,10],[10,16],[16,24],[24,32]]
+    },
+    {
+      "id": "of_lifesteal",   "family": "generic", "kind": "pct",
+      "name": "of Lifesteal", "stat": "lifesteal_pct",
+      "applies_to": ["amulet","ring","weapon","gloves"],
+      "tiers": [[1,2],[2,3],[3,5],[5,8],[8,12]]
+    },
+    {
+      "id": "of_regen",       "family": "generic", "kind": "flat",
+      "name": "of Regen",     "stat": "hp_regen",
+      "applies_to": ["amulet","ring","cloak","armor","boots","helm"],
+      "tiers": [[1,1],[1,2],[2,3],[3,4],[4,6]]
+    },
+
+    {
+      "id": "of_str_mastery", "family": "class", "kind": "pct",
+      "name": "of Strength Mastery", "stat": "str_spell_dmg_pct",
+      "applies_to": ["helm","amulet","spell"],
+      "tiers": [[5,10],[10,18],[18,28],[28,40],[40,55]]
+    },
+    {
+      "id": "of_dex_mastery", "family": "class", "kind": "pct",
+      "name": "of Dexterity Mastery", "stat": "dex_spell_dmg_pct",
+      "applies_to": ["helm","amulet","spell"],
+      "tiers": [[5,10],[10,18],[18,28],[28,40],[40,55]]
+    },
+    {
+      "id": "of_int_mastery", "family": "class", "kind": "pct",
+      "name": "of Intelligence Mastery", "stat": "int_spell_dmg_pct",
+      "applies_to": ["helm","amulet","spell"],
+      "tiers": [[5,10],[10,18],[18,28],[28,40],[40,55]]
+    },
+
+    {
+      "id": "bleeding_edge",  "family": "archetype", "kind": "flag",
+      "name": "Bleeding Edge","stat": "spell_axes_bleed",
+      "applies_to": ["spell"],
+      "tiers": [[1,1],[1,1],[1,1],[1,1],[1,1]]
+    },
+    {
+      "id": "comet_trail",    "family": "archetype", "kind": "flag",
+      "name": "Comet Trail",  "stat": "spell_fireball_ground",
+      "applies_to": ["spell"],
+      "tiers": [[1,1],[1,1],[1,1],[1,1],[1,1]]
+    },
+    {
+      "id": "frostbite",      "family": "archetype", "kind": "flag",
+      "name": "Frostbite",    "stat": "spell_frost_root",
+      "applies_to": ["spell"],
+      "tiers": [[1,1],[1,1],[1,1],[1,1],[1,1]]
+    },
+    {
+      "id": "storm_brand",    "family": "archetype", "kind": "flag",
+      "name": "Storm Brand",  "stat": "spell_chain_extra_jumps",
+      "applies_to": ["spell"],
+      "tiers": [[2,2],[2,2],[2,2],[2,2],[2,2]]
+    },
+    {
+      "id": "radiance",       "family": "archetype", "kind": "flag",
+      "name": "Radiance",     "stat": "spell_holy_radiance",
+      "applies_to": ["spell"],
+      "tiers": [[1,1],[1,1],[1,1],[1,1],[1,1]]
+    }
+  ]
 }

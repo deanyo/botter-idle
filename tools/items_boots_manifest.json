@@ -84,14 +84,13 @@
     {
       "id": "worn_sandals",
       "name": "Worn Sandals",
-      "base_type": "sandals",
       "slot": "boots",
-      "item_tier": 1,
       "rarity": "common",
       "tile": "item/armor/feet/low_boots.png",
-      "atk": 0,
-      "def": 1,
-      "hp": 13,
+      "base_type": "sandals",
+      "armor": 3,
+      "evasion": 4,
+      "item_tier": 1,
       "flavor_tags": [
         "swiftness"
       ],
@@ -105,22 +104,28 @@
       ],
       "unique": false,
       "enchant_chance": 0.05,
+      "implicit_affixes": [],
       "affix_pool": {
-        "haste": 35,
-        "agility": 15
+        "of_finesse": 22,
+        "of_might": 12,
+        "of_wisdom": 10,
+        "of_vitality": 14,
+        "of_the_bear": 16,
+        "of_the_cat": 26,
+        "of_haste": 26,
+        "of_regen": 10
       }
     },
     {
       "id": "soft_shoes",
       "name": "Soft Shoes",
-      "base_type": "shoes",
       "slot": "boots",
-      "item_tier": 1,
       "rarity": "common",
       "tile": "item/armor/feet/boots_3_stripe_old.png",
-      "atk": 0,
-      "def": 1,
-      "hp": 18,
+      "base_type": "shoes",
+      "armor": 3,
+      "evasion": 4,
+      "item_tier": 1,
       "flavor_tags": [
         "stealth"
       ],
@@ -134,23 +139,28 @@
       ],
       "unique": false,
       "enchant_chance": 0.05,
+      "implicit_affixes": [],
       "affix_pool": {
-        "haste": 30,
-        "agility": 20,
-        "stamina": 5
+        "of_finesse": 22,
+        "of_might": 12,
+        "of_wisdom": 10,
+        "of_vitality": 14,
+        "of_the_bear": 16,
+        "of_the_cat": 26,
+        "of_haste": 26,
+        "of_regen": 10
       }
     },
     {
       "id": "leather_boots",
       "name": "Leather Boots",
-      "base_type": "leather_boots",
       "slot": "boots",
-      "item_tier": 1,
       "rarity": "common",
       "tile": "item/armor/feet/boots_1_brown_new.png",
-      "atk": 0,
-      "def": 2,
-      "hp": 28,
+      "base_type": "leather_boots",
+      "armor": 3,
+      "evasion": 4,
+      "item_tier": 1,
       "flavor_tags": [],
       "lore": "Cracked, weather-beaten, comfortable.",
       "drop_weights": [
@@ -162,23 +172,28 @@
       ],
       "unique": false,
       "enchant_chance": 0.05,
+      "implicit_affixes": [],
       "affix_pool": {
-        "haste": 25,
-        "agility": 25,
-        "stamina": 10
+        "of_finesse": 22,
+        "of_might": 12,
+        "of_wisdom": 10,
+        "of_vitality": 14,
+        "of_the_bear": 16,
+        "of_the_cat": 26,
+        "of_haste": 26,
+        "of_regen": 10
       }
     },
     {
       "id": "studded_boots",
       "name": "Studded Boots",
-      "base_type": "leather_boots",
       "slot": "boots",
-      "item_tier": 1,
       "rarity": "uncommon",
       "tile": "item/armor/feet/boots_2_jackboots.png",
-      "atk": 0,
-      "def": 3,
-      "hp": 32,
+      "base_type": "leather_boots",
+      "armor": 3,
+      "evasion": 4,
+      "item_tier": 1,
       "flavor_tags": [],
       "lore": "Brass studs. Loud on stone.",
       "drop_weights": [
@@ -190,23 +205,28 @@
       ],
       "unique": false,
       "enchant_chance": 0.05,
+      "implicit_affixes": [],
       "affix_pool": {
-        "haste": 25,
-        "agility": 25,
-        "stamina": 10
+        "of_finesse": 22,
+        "of_might": 12,
+        "of_wisdom": 10,
+        "of_vitality": 14,
+        "of_the_bear": 16,
+        "of_the_cat": 26,
+        "of_haste": 26,
+        "of_regen": 10
       }
     },
     {
       "id": "scouts_treads",
       "name": "Scout's Treads",
-      "base_type": "leather_boots",
       "slot": "boots",
-      "item_tier": 2,
       "rarity": "uncommon",
       "tile": "item/armor/feet/boots_4_green.png",
-      "atk": 0,
-      "def": 4,
-      "hp": 38,
+      "base_type": "leather_boots",
+      "armor": 5,
+      "evasion": 6,
+      "item_tier": 2,
       "flavor_tags": [
         "stealth",
         "swiftness"
@@ -221,23 +241,28 @@
       ],
       "unique": false,
       "enchant_chance": 0.05,
+      "implicit_affixes": [],
       "affix_pool": {
-        "haste": 25,
-        "agility": 25,
-        "stamina": 10
+        "of_finesse": 22,
+        "of_might": 12,
+        "of_wisdom": 10,
+        "of_vitality": 14,
+        "of_the_bear": 16,
+        "of_the_cat": 26,
+        "of_haste": 26,
+        "of_regen": 10
       }
     },
     {
       "id": "soldier_greaves",
       "name": "Soldier's Greaves",
-      "base_type": "greaves",
       "slot": "boots",
-      "item_tier": 2,
       "rarity": "uncommon",
       "tile": "item/armor/feet/boots_iron_2.png",
-      "atk": 0,
-      "def": 5,
-      "hp": 50,
+      "base_type": "greaves",
+      "armor": 5,
+      "evasion": 6,
+      "item_tier": 2,
       "flavor_tags": [
         "fortified"
       ],
@@ -251,22 +276,28 @@
       ],
       "unique": false,
       "enchant_chance": 0.05,
+      "implicit_affixes": [],
       "affix_pool": {
-        "stamina": 30,
-        "agility": 20
+        "of_finesse": 22,
+        "of_might": 12,
+        "of_wisdom": 10,
+        "of_vitality": 14,
+        "of_the_bear": 16,
+        "of_the_cat": 26,
+        "of_haste": 26,
+        "of_regen": 10
       }
     },
     {
       "id": "ranger_boots",
       "name": "Ranger Boots",
-      "base_type": "leather_boots",
       "slot": "boots",
-      "item_tier": 2,
       "rarity": "rare",
       "tile": "item/armor/feet/boots_3_stripe_new.png",
-      "atk": 0,
-      "def": 4,
-      "hp": 42,
+      "base_type": "leather_boots",
+      "armor": 5,
+      "evasion": 7,
+      "item_tier": 2,
       "flavor_tags": [
         "stealth",
         "footwork"
@@ -281,23 +312,28 @@
       ],
       "unique": false,
       "enchant_chance": 0.1,
+      "implicit_affixes": [],
       "affix_pool": {
-        "haste": 25,
-        "agility": 25,
-        "stamina": 10
+        "of_finesse": 22,
+        "of_might": 12,
+        "of_wisdom": 10,
+        "of_vitality": 14,
+        "of_the_bear": 16,
+        "of_the_cat": 26,
+        "of_haste": 26,
+        "of_regen": 10
       }
     },
     {
       "id": "ironshod_boots",
       "name": "Ironshod Boots",
-      "base_type": "iron_boots",
       "slot": "boots",
-      "item_tier": 3,
       "rarity": "rare",
       "tile": "item/armor/feet/boots_iron_2.png",
-      "atk": 0,
-      "def": 6,
-      "hp": 60,
+      "base_type": "iron_boots",
+      "armor": 7,
+      "evasion": 10,
+      "item_tier": 3,
       "flavor_tags": [
         "fortified",
         "thunderous"
@@ -312,23 +348,28 @@
       ],
       "unique": false,
       "enchant_chance": 0.1,
+      "implicit_affixes": [],
       "affix_pool": {
-        "stamina": 25,
-        "agility": 15,
-        "regen": 10
+        "of_finesse": 22,
+        "of_might": 12,
+        "of_wisdom": 10,
+        "of_vitality": 14,
+        "of_the_bear": 16,
+        "of_the_cat": 26,
+        "of_haste": 26,
+        "of_regen": 10
       }
     },
     {
       "id": "swiftstep_boots",
       "name": "Swiftstep Boots",
-      "base_type": "leather_boots",
       "slot": "boots",
-      "item_tier": 3,
       "rarity": "rare",
       "tile": "item/armor/feet/boots_1_brown_old.png",
-      "atk": 0,
-      "def": 4,
-      "hp": 48,
+      "base_type": "leather_boots",
+      "armor": 7,
+      "evasion": 10,
+      "item_tier": 3,
       "flavor_tags": [
         "swiftness",
         "footwork"
@@ -343,23 +384,28 @@
       ],
       "unique": false,
       "enchant_chance": 0.1,
+      "implicit_affixes": [],
       "affix_pool": {
-        "haste": 25,
-        "agility": 25,
-        "stamina": 10
+        "of_finesse": 22,
+        "of_might": 12,
+        "of_wisdom": 10,
+        "of_vitality": 14,
+        "of_the_bear": 16,
+        "of_the_cat": 26,
+        "of_haste": 26,
+        "of_regen": 10
       }
     },
     {
       "id": "sentinel_greaves",
       "name": "Sentinel Greaves",
-      "base_type": "greaves",
       "slot": "boots",
-      "item_tier": 3,
       "rarity": "rare",
       "tile": "item/armor/feet/boots_iron_2.png",
-      "atk": 0,
-      "def": 7,
-      "hp": 75,
+      "base_type": "greaves",
+      "armor": 7,
+      "evasion": 10,
+      "item_tier": 3,
       "flavor_tags": [
         "fortified",
         "rampaging"
@@ -374,22 +420,28 @@
       ],
       "unique": false,
       "enchant_chance": 0.1,
+      "implicit_affixes": [],
       "affix_pool": {
-        "stamina": 30,
-        "agility": 20
+        "of_finesse": 22,
+        "of_might": 12,
+        "of_wisdom": 10,
+        "of_vitality": 14,
+        "of_the_bear": 16,
+        "of_the_cat": 26,
+        "of_haste": 26,
+        "of_regen": 10
       }
     },
     {
       "id": "vanguard_sabatons",
       "name": "Vanguard Sabatons",
-      "base_type": "greaves",
       "slot": "boots",
-      "item_tier": 4,
       "rarity": "epic",
       "tile": "item/armor/feet/boots_iron_2.png",
-      "atk": 0,
-      "def": 9,
-      "hp": 95,
+      "base_type": "greaves",
+      "armor": 11,
+      "evasion": 15,
+      "item_tier": 4,
       "flavor_tags": [
         "fortified",
         "rampaging",
@@ -405,22 +457,28 @@
       ],
       "unique": false,
       "enchant_chance": 0.15,
+      "implicit_affixes": [],
       "affix_pool": {
-        "stamina": 30,
-        "agility": 20
+        "of_finesse": 22,
+        "of_might": 12,
+        "of_wisdom": 10,
+        "of_vitality": 14,
+        "of_the_bear": 16,
+        "of_the_cat": 26,
+        "of_haste": 26,
+        "of_regen": 10
       }
     },
     {
       "id": "stormrunner_boots",
       "name": "Stormrunner Boots",
-      "base_type": "leather_boots",
       "slot": "boots",
-      "item_tier": 4,
       "rarity": "epic",
       "tile": "item/armor/feet/boots_4_green.png",
-      "atk": 0,
-      "def": 6,
-      "hp": 80,
+      "base_type": "leather_boots",
+      "armor": 11,
+      "evasion": 15,
+      "item_tier": 4,
       "flavor_tags": [
         "swiftness",
         "flying",
@@ -436,23 +494,28 @@
       ],
       "unique": false,
       "enchant_chance": 0.15,
+      "implicit_affixes": [],
       "affix_pool": {
-        "haste": 25,
-        "agility": 25,
-        "stamina": 10
+        "of_finesse": 22,
+        "of_might": 12,
+        "of_wisdom": 10,
+        "of_vitality": 14,
+        "of_the_bear": 16,
+        "of_the_cat": 26,
+        "of_haste": 26,
+        "of_regen": 10
       }
     },
     {
       "id": "earthshaker_treads",
       "name": "Earthshaker Treads",
-      "base_type": "treads",
       "slot": "boots",
-      "item_tier": 4,
       "rarity": "epic",
       "tile": "item/armor/feet/boots_iron_2.png",
-      "atk": 0,
-      "def": 11,
-      "hp": 110,
+      "base_type": "treads",
+      "armor": 11,
+      "evasion": 15,
+      "item_tier": 4,
       "flavor_tags": [
         "earth",
         "thunderous"
@@ -467,23 +530,28 @@
       ],
       "unique": false,
       "enchant_chance": 0.15,
+      "implicit_affixes": [],
       "affix_pool": {
-        "haste": 30,
-        "agility": 20,
-        "stamina": 10
+        "of_finesse": 22,
+        "of_might": 12,
+        "of_wisdom": 10,
+        "of_vitality": 14,
+        "of_the_bear": 16,
+        "of_the_cat": 26,
+        "of_haste": 26,
+        "of_regen": 10
       }
     },
     {
       "id": "windwalker_boots",
       "name": "Windwalkers",
-      "base_type": "treads",
       "slot": "boots",
-      "item_tier": 5,
       "rarity": "epic",
       "tile": "item/armor/feet/boots_3_stripe_new.png",
-      "atk": 0,
-      "def": 8,
-      "hp": 110,
+      "base_type": "treads",
+      "armor": 16,
+      "evasion": 21,
+      "item_tier": 5,
       "flavor_tags": [
         "swiftness",
         "flying"
@@ -498,23 +566,28 @@
       ],
       "unique": false,
       "enchant_chance": 0.15,
+      "implicit_affixes": [],
       "affix_pool": {
-        "haste": 30,
-        "agility": 20,
-        "stamina": 10
+        "of_finesse": 22,
+        "of_might": 12,
+        "of_wisdom": 10,
+        "of_vitality": 14,
+        "of_the_bear": 16,
+        "of_the_cat": 26,
+        "of_haste": 26,
+        "of_regen": 10
       }
     },
     {
       "id": "march_of_kings",
       "name": "March of Kings",
-      "base_type": "greaves",
       "slot": "boots",
-      "item_tier": 5,
       "rarity": "epic",
       "tile": "item/armor/feet/boots_iron_2.png",
-      "atk": 0,
-      "def": 13,
-      "hp": 135,
+      "base_type": "greaves",
+      "armor": 16,
+      "evasion": 21,
+      "item_tier": 5,
       "flavor_tags": [
         "lordly",
         "rampaging",
@@ -530,22 +603,28 @@
       ],
       "unique": false,
       "enchant_chance": 0.15,
+      "implicit_affixes": [],
       "affix_pool": {
-        "stamina": 30,
-        "agility": 20
+        "of_finesse": 22,
+        "of_might": 12,
+        "of_wisdom": 10,
+        "of_vitality": 14,
+        "of_the_bear": 16,
+        "of_the_cat": 26,
+        "of_haste": 26,
+        "of_regen": 10
       }
     },
     {
       "id": "assassins_boots",
       "name": "Assassin's Boots",
-      "base_type": "shoes",
       "slot": "boots",
-      "item_tier": 5,
       "rarity": "legendary",
       "tile": "item/armor/artefact/urand_assassin.png",
-      "atk": 0,
-      "def": 8,
-      "hp": 105,
+      "base_type": "shoes",
+      "armor": 18,
+      "evasion": 24,
+      "item_tier": 5,
       "flavor_tags": [
         "stealth",
         "swiftness"
@@ -559,25 +638,29 @@
         25
       ],
       "unique": true,
-      "future_mechanic": "+25% damage on first hit per enemy. Lower aggro range.",
       "enchant_chance": 0.0,
+      "implicit_affixes": [],
       "affix_pool": {
-        "agility": 40,
-        "crit": 10,
-        "haste": 60
+        "of_finesse": 22,
+        "of_might": 12,
+        "of_wisdom": 10,
+        "of_vitality": 14,
+        "of_the_bear": 16,
+        "of_the_cat": 26,
+        "of_haste": 26,
+        "of_regen": 10
       }
     },
     {
       "id": "treads_apocalypse",
       "name": "Treads of Apocalypse",
-      "base_type": "treads",
       "slot": "boots",
-      "item_tier": 5,
       "rarity": "legendary",
       "tile": "item/armor/feet/boots_iron_2.png",
-      "atk": 0,
-      "def": 14,
-      "hp": 160,
+      "base_type": "treads",
+      "armor": 18,
+      "evasion": 24,
+      "item_tier": 5,
       "flavor_tags": [
         "earth",
         "thunderous",
@@ -592,27 +675,29 @@
         22
       ],
       "unique": true,
-      "future_mechanic": "Each step damages adjacent enemies. -5% move speed (drawback).",
       "enchant_chance": 0.0,
+      "implicit_affixes": [],
       "affix_pool": {
-        "strength": 35,
-        "stamina": 30,
-        "regen": 10,
-        "crit": 10,
-        "haste": 50
+        "of_finesse": 22,
+        "of_might": 12,
+        "of_wisdom": 10,
+        "of_vitality": 14,
+        "of_the_bear": 16,
+        "of_the_cat": 26,
+        "of_haste": 26,
+        "of_regen": 10
       }
     },
     {
       "id": "lightning_scales",
       "name": "Lightning Scales",
-      "base_type": "iron_boots",
       "slot": "boots",
-      "item_tier": 5,
       "rarity": "legendary",
       "tile": "item/armor/artefact/urand_lightning_scales.png",
-      "atk": 6,
-      "def": 20,
-      "hp": 215,
+      "base_type": "iron_boots",
+      "armor": 18,
+      "evasion": 24,
+      "item_tier": 5,
       "flavor_tags": [
         "thorns",
         "elemental"
@@ -627,14 +712,17 @@
       ],
       "unique": true,
       "enchant_chance": 0.0,
+      "implicit_affixes": [],
       "affix_pool": {
-        "stamina": 20,
-        "agility": 15,
-        "regen": 20,
-        "crit": 20,
-        "haste": 10
-      },
-      "future_mechanic": "Reflects 25% of melee as lightning damage to attacker."
+        "of_finesse": 22,
+        "of_might": 12,
+        "of_wisdom": 10,
+        "of_vitality": 14,
+        "of_the_bear": 16,
+        "of_the_cat": 26,
+        "of_haste": 26,
+        "of_regen": 10
+      }
     }
   ]
 }
