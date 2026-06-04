@@ -43,8 +43,11 @@ func _ready() -> void:
 	_root = Control.new()
 	_root.anchor_right = 1.0
 	_root.anchor_bottom = 1.0
-	_root.mouse_filter = Control.MOUSE_FILTER_STOP  # eat clicks during loading
-	_root.modulate = Color(1, 1, 1, 0)  # start hidden
+	# Start with mouse filter IGNORE so the invisible curtain doesn't
+	# eat clicks meant for the screen below. Flipped to STOP only
+	# while the curtain is actively displayed (show_curtain).
+	_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_root.modulate = Color(1, 1, 1, 0)
 	_root.visible = false
 	add_child(_root)
 	_bg = ColorRect.new()
@@ -118,10 +121,13 @@ func show_curtain(label: String = "Loading…") -> void:
 		_label.text = label
 	if is_instance_valid(_root):
 		_root.visible = true
-	# Pause game tick + force arrow cursor so macOS spinner doesn't
-	# peek through during heavy scene swap work.
-	_was_paused = get_tree().paused
-	get_tree().paused = true
+		_root.mouse_filter = Control.MOUSE_FILTER_STOP  # eat clicks while up
+	# Force arrow cursor so the macOS spinner doesn't peek through.
+	# Note: we deliberately do NOT pause the tree here — pausing was
+	# blocking await get_tree().process_frame which deadlocked the
+	# scene swap (player click did nothing visible). The curtain is
+	# only up for ~one frame each direction so dungeon ticks during
+	# the brief overlap don't matter.
 	Input.set_default_cursor_shape(Input.CURSOR_ARROW)
 	# Fade in.
 	if _tween != null and _tween.is_valid():
@@ -134,7 +140,7 @@ func hide_curtain() -> void:
 	if not _active:
 		return
 	_active = false
-	# Fade out → restore pause state → hide root.
+	# Fade out → hide root.
 	if _tween != null and _tween.is_valid():
 		_tween.kill()
 	_tween = create_tween()
@@ -142,7 +148,7 @@ func hide_curtain() -> void:
 	_tween.tween_callback(func():
 		if is_instance_valid(_root):
 			_root.visible = false
-		get_tree().paused = _was_paused
+			_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		hidden.emit()
 	)
 
