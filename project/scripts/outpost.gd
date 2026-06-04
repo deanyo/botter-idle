@@ -100,7 +100,28 @@ func _ready() -> void:
 	# at the outpost level keeps the per-cell wiring trivial.
 	if DragManager and not DragManager.drag_ended.is_connected(_on_drag_ended):
 		DragManager.drag_ended.connect(_on_drag_ended)
+	# Live resize — debounced 250ms via UILayout. Tear down + rebuild
+	# the layout so new sidebar widths / pane percentages take effect
+	# on aspect-ratio crossings. UI polish 2026-06-04.
+	UILayout.subscribe_resize(self, _on_viewport_resized)
 	set_process(true)
+
+func _on_viewport_resized() -> void:
+	# Tear down everything and rebuild from scratch. State (state,
+	# items_db) survives because they're cached on `self`. _render()
+	# refreshes labels + grid post-rebuild.
+	for child in get_children():
+		# Skip auxiliary nodes that aren't part of the layout (Timers
+		# from UILayout.subscribe_resize, paperdoll_holder cache, etc).
+		if child is Timer:
+			continue
+		child.queue_free()
+	equipped_cells.clear()
+	paperdoll_holder = null
+	paperdoll_rig = null
+	inventory_grid = null
+	_build_layout()
+	_render()
 
 func _exit_tree() -> void:
 	if DragManager and DragManager.drag_ended.is_connected(_on_drag_ended):

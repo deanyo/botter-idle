@@ -27,10 +27,17 @@ signal hud_drag_drop(payload: Dictionary, dst_slot: String)
 
 const C := preload("res://scripts/constants.gd")
 
-const SIDEBAR_W := 356
+const SIDEBAR_W := 356  # default fallback only — _sidebar_w is the live value
 const SIDEBAR_PAD := 10
-const MINIMAP_SIZE := SIDEBAR_W - SIDEBAR_PAD * 2
+const MINIMAP_SIZE := SIDEBAR_W - SIDEBAR_PAD * 2  # default fallback only
 const BAG_H := 180
+
+# Live, viewport-sized values — set in _build_sidebar from
+# UILayout.sidebar_width(view). Replaces the hardcoded SIDEBAR_W in
+# the build path so ultrawide / smaller windows scale cleanly.
+# UI polish pass 2026-06-04.
+var _sidebar_w: int = SIDEBAR_W
+var _minimap_size: int = MINIMAP_SIZE
 
 const PAPERDOLL_SLOT_SIZE := 48
 const INV_CELL_SIZE := 48
@@ -238,12 +245,16 @@ func _on_drag_ended(payload: Dictionary, dropped_on: Variant) -> void:
 
 func _build_sidebar() -> void:
 	var view := get_viewport().get_visible_rect().size
-	var x0: int = int(view.x) - SIDEBAR_W
+	# UI polish 2026-06-04: sidebar width scales with viewport. 25% of
+	# screen width clamped 320..480. Replaces the hardcoded 356px.
+	_sidebar_w = UILayout.sidebar_width(view)
+	_minimap_size = _sidebar_w - SIDEBAR_PAD * 2
+	var x0: int = int(view.x) - _sidebar_w
 	# Background panel.
 	var bg := ColorRect.new()
 	bg.color = COL_PANEL
 	bg.position = Vector2(x0, 0)
-	bg.size = Vector2(SIDEBAR_W, view.y)
+	bg.size = Vector2(_sidebar_w, view.y)
 	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(bg)
 	var border := ColorRect.new()
@@ -258,16 +269,16 @@ func _build_sidebar() -> void:
 	# / stairs marker) render. The sidebar's BG_PANEL behind it provides
 	# the dark backdrop on OLED panels — keeps the minimap from looking
 	# like it lives in a grey square.
-	var mm_origin := Vector2(x0 + (SIDEBAR_W - MINIMAP_SIZE) / 2, SIDEBAR_PAD)
+	var mm_origin := Vector2(x0 + (_sidebar_w - _minimap_size) / 2, SIDEBAR_PAD)
 	var mm_bg := ColorRect.new()
 	mm_bg.color = Color(0, 0, 0, 0)
 	mm_bg.position = mm_origin
-	mm_bg.size = Vector2(MINIMAP_SIZE, MINIMAP_SIZE)
+	mm_bg.size = Vector2(_minimap_size, _minimap_size)
 	mm_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(mm_bg)
 	minimap_root = TextureRect.new()
 	minimap_root.position = mm_origin
-	minimap_root.size = Vector2(MINIMAP_SIZE, MINIMAP_SIZE)
+	minimap_root.size = Vector2(_minimap_size, _minimap_size)
 	minimap_root.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	minimap_root.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	minimap_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -286,7 +297,7 @@ func _build_sidebar() -> void:
 
 	# Stats column (below minimap).
 	var sx: int = x0 + SIDEBAR_PAD
-	var sy: int = SIDEBAR_PAD + MINIMAP_SIZE + 10
+	var sy: int = SIDEBAR_PAD + _minimap_size + 10
 	lbl_name = _add_label("Bot the Adventurer", sx, sy, 18, COL_AMBER); sy += 22
 	lbl_place = _add_label("Place: D:1", sx, sy, 14, COL_DIM); sy += 22
 	# HP row
@@ -294,12 +305,12 @@ func _build_sidebar() -> void:
 	hp_bar_bg = ColorRect.new()
 	hp_bar_bg.color = Color(0.18, 0.05, 0.05, 1.0)
 	hp_bar_bg.position = Vector2(sx, sy)
-	hp_bar_bg.size = Vector2(SIDEBAR_W - SIDEBAR_PAD * 2, 8)
+	hp_bar_bg.size = Vector2(_sidebar_w - SIDEBAR_PAD * 2, 8)
 	add_child(hp_bar_bg)
 	hp_bar_fill = ColorRect.new()
 	hp_bar_fill.color = COL_HP
 	hp_bar_fill.position = Vector2(sx, sy)
-	hp_bar_fill.size = Vector2(SIDEBAR_W - SIDEBAR_PAD * 2, 8)
+	hp_bar_fill.size = Vector2(_sidebar_w - SIDEBAR_PAD * 2, 8)
 	add_child(hp_bar_fill)
 	sy += 18
 	# Two-column stat block: combat on the left, support on the right.
@@ -317,7 +328,7 @@ func _build_paperdoll(sidebar_x0: int, top_y: int, bottom_y: int) -> void:
 	# L-shape: bot sprite top-left, slots run down the right column and across
 	# the bottom row. Slots have no on-screen labels — hover for tooltip.
 	var slot := PAPERDOLL_SLOT_SIZE
-	var inner_w: int = SIDEBAR_W - SIDEBAR_PAD * 2
+	var inner_w: int = _sidebar_w - SIDEBAR_PAD * 2
 	var header_h: int = 18
 	var gap: int = 6
 	# Header
@@ -447,7 +458,7 @@ func _make_paperdoll_slot(slot_id: String, x: int, y: int) -> void:
 
 func _build_bag() -> void:
 	var view := get_viewport().get_visible_rect().size
-	var canvas_w: int = int(view.x) - SIDEBAR_W
+	var canvas_w: int = int(view.x) - _sidebar_w
 	var bg := ColorRect.new()
 	bg.color = COL_PANEL
 	bg.position = Vector2(0, view.y - BAG_H)
@@ -567,7 +578,7 @@ func update_buffs(statuses: Dictionary) -> void:
 	if _buff_bar_root == null:
 		return
 	var view := get_viewport().get_visible_rect().size
-	var canvas_w: int = int(view.x) - SIDEBAR_W
+	var canvas_w: int = int(view.x) - _sidebar_w
 	var ids: Array = statuses.keys()
 	# Sort by status `z` (defines render priority too — high z = important
 	# stuff goes leftmost where the eye lands first).
@@ -655,7 +666,7 @@ func update_stats(bot_ref: Bot, place_str: String, _turn: int) -> void:
 	if bot_ref.hp != _last_hp or bot_ref.max_hp != _last_max_hp:
 		lbl_hp.text = "HP: %d / %d" % [bot_ref.hp, bot_ref.max_hp]
 		var hp_pct: float = clampf(float(bot_ref.hp) / maxf(1.0, float(bot_ref.max_hp)), 0.0, 1.0)
-		hp_bar_fill.size = Vector2((SIDEBAR_W - SIDEBAR_PAD * 2) * hp_pct, 8)
+		hp_bar_fill.size = Vector2((_sidebar_w - SIDEBAR_PAD * 2) * hp_pct, 8)
 		hp_bar_fill.color = COL_HP_LOW if hp_pct < 0.3 else COL_HP
 		_last_hp = bot_ref.hp
 		_last_max_hp = bot_ref.max_hp

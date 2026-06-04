@@ -5,6 +5,47 @@ the durable rules in `CLAUDE.md`. Update this file when committing.
 
 ---
 
+## UI follow-ups (HIGH priority — 2026-06-04)
+
+The Phase A+B+C-min UI pass landed: OLED-pure-black panels (was
+0.85 alpha bleed), LoadingCurtain autoload wrapping every scene
+swap, `UILayout` helper class, HUD sidebar width scales with
+viewport (320..480 clamp instead of fixed 356), outpost rebuilds
+on debounced resize, minimap backplate transparent.
+
+Phase D polish work deferred — these are the next-pass items:
+
+- **Outpost spell row clipping** — when the paperdoll pane is
+  narrow on small viewports, the 5 spell cells overflow the right
+  edge. Constrain to pane bounds and wrap to a second row when too
+  narrow.
+- **HUD log feed fade gradient** — old messages should soften with
+  a top + bottom alpha gradient instead of just clipping.
+- **Run report defeat header** — center, larger font, full-width
+  rarity-color-tinted underline.
+- **Character create grid alignment** — species cards align to a
+  proper grid; current species highlighted with its class color
+  border.
+- **Main menu bot picker tile theme** — match the new pure-black
+  + amber accent palette.
+- **Pause menu theme alignment** — same treatment as the rest.
+- **Focus + hover styleboxes** — every Button gets a default focus
+  ring + hover background shift. Currently default Godot styles.
+- **Min font size 11px audit** — sweep every script for font sizes
+  below 11 and bump.
+- **Min touch target 44×44px audit** — same sweep for Button +
+  ItemCell hit regions.
+- **Tall / portrait layout branch** — UILayout.Shape.TALL is
+  defined but no screen actually picks it yet. When Phase D ships,
+  each screen needs a TALL branch with stacked + scroll layout.
+- **Custom in-game cursor sprite** — replace the OS arrow with a
+  themed cursor. Loading curtain already overrides the spinner;
+  this is the next step.
+- **Animated scene transitions** beyond LoadingCurtain — slide-in /
+  slide-out effects between screens.
+
+---
+
 ## Enchant combos (HIGH priority — 2026-06-04)
 
 Today an item rolls AT MOST one enchant from `enchant_pool` at drop
