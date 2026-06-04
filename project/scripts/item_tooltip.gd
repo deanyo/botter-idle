@@ -239,7 +239,7 @@ func render_for(item_def: Dictionary, instance: Variant, db: Dictionary) -> void
 			qt.tween_property(q_lbl, "modulate", Color(1.0, 1.0, 1.0), 0.85)
 		# Alt-extended quality detail — show the percentile (top X%
 		# odds) so the player can read "this was a lucky drop."
-		if Input.is_key_pressed(KEY_ALT):
+		if UILayout.alt_held():
 			var pctile: int = Quality.percentile_for(quality_tier, slot)
 			var rank_label: String = ""
 			if quality_mult >= 1.0:
@@ -288,7 +288,7 @@ func render_for(item_def: Dictionary, instance: Variant, db: Dictionary) -> void
 					desc_lbl.custom_minimum_size = Vector2(TOOLTIP_W - PADDING * 2, 0)
 					_vbox.add_child(desc_lbl)
 				# Alt-extended detail for combos.
-				if Input.is_key_pressed(KEY_ALT):
+				if UILayout.alt_held():
 					var components: Array = combo_def.get("components", [])
 					var detail: String = "  %s · %s · effect: %s" % [
 						combo_id_v,
@@ -354,7 +354,7 @@ func _render_damage_block() -> void:
 # element's color; flat affixes show "+N Strength" etc.
 func _build_affix_lines() -> Array:
 	var out: Array = []
-	var alt_held: bool = Input.is_key_pressed(KEY_ALT)
+	var alt_held: bool = UILayout.alt_held()
 	# Implicit affixes first — rendered in item-defining gold tint
 	# layered onto the per-stat color, so a "of_lifesteal" implicit
 	# still reads "lifesteal red" but with a slightly hot warmer cast.

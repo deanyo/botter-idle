@@ -143,7 +143,7 @@ func _on_cell_tooltip(cell: ItemCell, show: bool) -> void:
 		return
 	_hover_cell = cell
 	_show_main_tooltip(cell)
-	if Input.is_key_pressed(KEY_SHIFT):
+	if UILayout.shift_held():
 		_show_compare_tooltips(cell)
 		_shift_was_held = true
 
@@ -151,7 +151,7 @@ func _process(_delta: float) -> void:
 	if _hover_cell == null or not is_instance_valid(_hover_cell):
 		return
 	# Shift-state polling so the compare panel appears/disappears live.
-	var shift_now: bool = Input.is_key_pressed(KEY_SHIFT)
+	var shift_now: bool = UILayout.shift_held()
 	if shift_now and not _shift_was_held:
 		_show_compare_tooltips(_hover_cell)
 	elif not shift_now and _shift_was_held:
@@ -160,7 +160,7 @@ func _process(_delta: float) -> void:
 	# Alt-state polling — re-renders the main tooltip so the extended
 	# affix-detail lines toggle live. Tooltip reads Input.is_key_pressed
 	# at render time, so we just rebuild content on Alt edge.
-	var alt_now: bool = Input.is_key_pressed(KEY_ALT)
+	var alt_now: bool = UILayout.alt_held()
 	if alt_now != _alt_was_held and _tooltip != null and is_instance_valid(_tooltip):
 		_tooltip.render_for(_hover_cell.item, _hover_cell.inst, items_db)
 	_alt_was_held = alt_now

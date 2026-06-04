@@ -18,6 +18,23 @@ extends RefCounted
 
 enum Shape { WIDE, TALL }
 
+# Cross-platform modifier-key checks. macOS reports shift/alt as
+# KEY_SHIFT_LEFT/RIGHT and KEY_ALT_LEFT/RIGHT separately; the
+# unified KEY_SHIFT/KEY_ALT keycodes don't match physical presses
+# on Mac. Use these helpers everywhere instead of
+# Input.is_key_pressed(KEY_SHIFT) directly.
+static func shift_held() -> bool:
+	return (
+		Input.is_physical_key_pressed(KEY_SHIFT)
+		or Input.is_key_pressed(KEY_SHIFT)
+	)
+
+static func alt_held() -> bool:
+	return (
+		Input.is_physical_key_pressed(KEY_ALT)
+		or Input.is_key_pressed(KEY_ALT)
+	)
+
 const ASPECT_THRESHOLD: float = 1.20
 const RESIZE_DEBOUNCE_SEC: float = 0.25
 # Centered panoramic content band on ultrawide displays — content

@@ -132,7 +132,7 @@ func _process(_delta: float) -> void:
 	# toggles live while the cursor is over a shop item.
 	if _shop_hover_cell != null and is_instance_valid(_shop_hover_cell) \
 			and _shop_tooltip != null and is_instance_valid(_shop_tooltip):
-		var alt_now: bool = Input.is_key_pressed(KEY_ALT)
+		var alt_now: bool = UILayout.alt_held()
 		if alt_now != _shop_alt_was_held:
 			_shop_tooltip.render_for(_shop_hover_cell.item, _shop_hover_cell.inst, items_db)
 			_shop_alt_was_held = alt_now

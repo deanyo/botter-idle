@@ -173,7 +173,7 @@ func _process(_delta: float) -> void:
 		return
 	if _hud_tooltip == null or not is_instance_valid(_hud_tooltip):
 		return
-	var alt_now: bool = Input.is_key_pressed(KEY_ALT)
+	var alt_now: bool = UILayout.alt_held()
 	if alt_now != _hud_alt_was_held:
 		_hud_tooltip.render_for(_hud_hover_cell.item, _hud_hover_cell.inst, _items_db_cache)
 		_hud_alt_was_held = alt_now
