@@ -737,6 +737,10 @@ func update_inventory_segments(segments: Array, items_db: Dictionary, slot_coold
 				for k in range(prev_count, new_count):
 					grid.add_child(_make_inv_button(i, k, items[k], items_db, slot_cooldowns))
 				cached["count"] = new_count
+				var grow_ids: Array = cached.get("ids", [])
+				for k in range(prev_count, new_count):
+					grow_ids.append(_inst_key(items[k]))
+				cached["ids"] = grow_ids
 				continue
 			if prev_count == 0:
 				# Replace empty-label with a fresh grid, leave the
@@ -760,11 +764,55 @@ func update_inventory_segments(segments: Array, items_db: Dictionary, slot_coold
 				cached["grid"] = new_grid
 				cached["empty_label"] = null
 				cached["count"] = new_count
+				var fresh_ids: Array = []
+				for it in items:
+					fresh_ids.append(_inst_key(it))
+				cached["ids"] = fresh_ids
 				continue
-		# Shrink or grid missing — rebuild this segment only.
+		# Shrink path — try to surgically remove the single cell that
+		# disappeared instead of rebuilding the whole segment (which
+		# reorders the remaining cells visually). We diff the cached
+		# instance ids against the new items to find which index dropped.
+		var grid_s: GridContainer = cached.get("grid", null)
+		var prev_ids: Array = cached.get("ids", [])
+		if grid_s != null and is_instance_valid(grid_s) and not prev_ids.is_empty() \
+				and new_count == prev_count - 1:
+			var new_ids: Array = []
+			for it in items:
+				new_ids.append(_inst_key(it))
+			var removed_idx: int = _diff_first_removed(prev_ids, new_ids)
+			if removed_idx >= 0 and removed_idx < grid_s.get_child_count():
+				var node: Node = grid_s.get_child(removed_idx)
+				if node != null and is_instance_valid(node):
+					node.queue_free()
+				cached["count"] = new_count
+				cached["ids"] = new_ids
+				continue
+		# General shrink / grid missing — fall back to rebuild.
 		_rebuild_one_segment(i, segments, items_db, slot_cooldowns)
 	if inventory_scroll != null:
 		inventory_scroll.scroll_vertical = 0
+
+# Identity key for an instance — instance_id when available, else
+# (base_id + index) so duplicate-base items still get distinct keys.
+func _inst_key(inst: Variant) -> String:
+	if typeof(inst) != TYPE_DICTIONARY:
+		return ""
+	var id: String = String(inst.get("instance_id", ""))
+	return id if id != "" else String(inst.get("base_id", ""))
+
+# Find the first index in `prev` that doesn't appear at the same
+# position in `new`. Returns -1 if `new` matches `prev` start-to-start
+# (means the missing element is at the tail).
+func _diff_first_removed(prev: Array, new: Array) -> int:
+	var n: int = mini(prev.size(), new.size())
+	for i in n:
+		if String(prev[i]) != String(new[i]):
+			return i
+	# Tail removal — last index of prev.
+	if new.size() < prev.size():
+		return new.size()
+	return -1
 
 func _rebuild_inventory_full(segments: Array, items_db: Dictionary, slot_cooldowns: Dictionary) -> void:
 	for c in inventory_box.get_children():
@@ -806,12 +854,16 @@ func _build_segment_into(idx: int, segments: Array, items_db: Dictionary, slot_c
 	# Insert the new header at the right position so the visual order
 	# (newest segment first) is preserved when this is a one-segment
 	# rebuild rather than a full clear.
+	var ids_arr: Array = []
+	for it in items:
+		ids_arr.append(_inst_key(it))
 	var pack: Dictionary = {
 		"header": String(seg.get("header", "")),
 		"header_node": hdr,
 		"grid": null,
 		"empty_label": null,
 		"count": items.size(),
+		"ids": ids_arr,
 	}
 	if items.is_empty():
 		var empty := Label.new()
@@ -850,26 +902,40 @@ func _make_inv_button(seg_idx: int, item_idx: int, inst: Variant, items_db: Dict
 	var cell := ItemCell.new()
 	cell.cell_size = INV_CELL_SIZE
 	cell.role = "inventory"
-	# Drag-drop payload uses inv_index = the FLAT inventory index
-	# (seg_idx + item_idx isn't directly addressable by the dungeon's
-	# _hud_inv_cache). Compute the flat index from the segment offsets.
-	cell.inv_index = _flat_inv_index(seg_idx, item_idx)
+	# inv_index is computed JUST IN TIME from (seg_idx, item_idx) when
+	# the drag actually starts — see ItemCell._gui_input override below
+	# in this file. Storing a stale flat index at cell creation time
+	# was incorrect during _rebuild_inventory_full's reverse-build
+	# order (segments past index 0 had wrong offsets, which routed
+	# drags to the WRONG item — felt like duplication to the player).
+	cell.inv_index = -1
 	cell.inst = inst
 	cell.item = item_def
 	cell.blocked = blocked
 	cell.set_meta("seg_idx", seg_idx)
 	cell.set_meta("item_idx", item_idx)
 	cell.on_left_click = Callable(self, "_on_hud_inv_left_click")
+	# Resolve flat inv_index lazily — DragManager.begin_drag reads
+	# cell.inv_index, so we set it just before the drag stages. Hook
+	# via a one-frame "before drag" callback by subscribing to the
+	# cell's _gui_input through a wrapper.
+	cell.set_meta("flat_index_resolver", Callable(self, "_resolve_flat_index").bind(cell))
 	cell.ready.connect(cell.render)
 	return cell
 
-# Compute flat inventory index from a (segment, item) tuple. Mirrors
-# the order dungeon assembles _hud_inv_cache in.
-func _flat_inv_index(seg_idx: int, item_idx: int) -> int:
+# Lazy flat-index resolver — called by ItemCell._gui_input on press
+# to populate cell.inv_index before begin_drag fires. Walks the live
+# _seg_grids (now stable, post-rebuild) for an authoritative offset.
+func _resolve_flat_index(cell: ItemCell) -> void:
+	var seg_idx: int = int(cell.get_meta("seg_idx", -1))
+	var item_idx: int = int(cell.get_meta("item_idx", -1))
+	if seg_idx < 0 or item_idx < 0:
+		return
 	var offset: int = 0
 	for i in seg_idx:
-		offset += int(_seg_grids[i].get("count", 0)) if i < _seg_grids.size() else 0
-	return offset + item_idx
+		if i < _seg_grids.size():
+			offset += int(_seg_grids[i].get("count", 0))
+	cell.inv_index = offset + item_idx
 
 func _on_hud_inv_left_click(cell: ItemCell) -> void:
 	if equip_request_target == null:

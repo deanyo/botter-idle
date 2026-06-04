@@ -188,6 +188,12 @@ func _gui_input(event: InputEvent) -> void:
 	var has_item: bool = (inst != null and typeof(inst) == TYPE_DICTIONARY)
 	if mb.button_index == MOUSE_BUTTON_LEFT:
 		if mb.pressed:
+			# Pre-drag hook — let owners (e.g. HUD) resolve a stale
+			# flat inv_index right before the drag stages. Avoids
+			# storing indices that drift across inventory rebuilds.
+			var resolver: Variant = get_meta("flat_index_resolver", null)
+			if resolver != null and (resolver as Callable).is_valid():
+				(resolver as Callable).call()
 			if has_item and not blocked and DragManager:
 				var preview_tex: Texture2D = _sprite.texture
 				DragManager.begin_drag(_drag_payload(), preview_tex, _sprite.modulate)
