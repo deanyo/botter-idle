@@ -599,7 +599,7 @@ function makeCard(it) {
       <span class="rarity-pill rarity-${it.rarity}" style="background:${rarityColor};color:${textColor}">${it.rarity}</span>
       ${it.unique ? '<span class="unique-badge">unique</span>' : ''}
     </div>
-    <div class="card-stats">ATK <span>${it.atk}</span>${it.hp?' HP <span>+'+it.hp+'</span>':''}</div>
+    <div class="card-stats">${(it.damage_min || it.damage_max) ? `Dmg <span>${it.damage_min||0}-${it.damage_max||0}</span> ${it.damage_type ? '<span style="opacity:0.7">'+it.damage_type+'</span>' : ''} ${it.speed ? '<span style="opacity:0.6">'+it.speed+'s</span>' : ''}` : ''}${it.armor ? ` Armor <span>${it.armor}</span>` : ''}${it.evasion ? ` Eva <span>${it.evasion}%</span>` : ''}</div>
     <div class="drop-bar" title="Drop weight per dungeon tier">${segs}</div>
     <div class="tag-strip">${tags}</div>
   `;
@@ -733,29 +733,54 @@ function renderEditBody(it) {
     </div>
 
     <div class="field-group">
-      <label>Stats</label>
-      <div class="field-row">
-        <span style="font-size:11px;color:var(--muted)">ATK</span>
-        <input type="number" value="${it.atk}" min="0" max="999" onchange="setField('${it.id}','atk',+this.value)">
-        <span style="font-size:11px;color:var(--muted)">HP</span>
-        <input type="number" value="${it.hp||0}" min="0" max="999" onchange="setField('${it.id}','hp',+this.value)">
-        <span style="font-size:11px;color:var(--muted)">DEF</span>
-        <input type="number" value="${it.def||0}" min="0" max="999" onchange="setField('${it.id}','def',+this.value)">
-      </div>
+      <label>Stats (item-overhaul v2 — schema depends on slot)</label>
+      ${(it.slot === 'weapon' || it.slot === 'spell') ? `
+        <div class="field-row">
+          <span style="font-size:11px;color:var(--muted)">Dmg min</span>
+          <input type="number" value="${it.damage_min||0}" min="0" max="999" onchange="setField('${it.id}','damage_min',+this.value)">
+          <span style="font-size:11px;color:var(--muted)">Dmg max</span>
+          <input type="number" value="${it.damage_max||0}" min="0" max="999" onchange="setField('${it.id}','damage_max',+this.value)">
+          <span style="font-size:11px;color:var(--muted)">Type</span>
+          <select onchange="setField('${it.id}','damage_type',this.value)">
+            ${["physical","fire","cold","lightning","holy","poison","dark"].map(t => `<option value="${t}" ${t === (it.damage_type || 'physical') ? 'selected' : ''}>${t}</option>`).join("")}
+          </select>
+        </div>
+        ${it.slot === 'weapon' ? `
+          <div class="field-row">
+            <span style="font-size:11px;color:var(--muted)">Speed (s)</span>
+            <input type="number" value="${it.speed||1.0}" min="0.1" max="3.0" step="0.05" onchange="setField('${it.id}','speed',+this.value)">
+            <span style="font-size:11px;color:var(--muted)">Class</span>
+            <select onchange="setField('${it.id}','weapon_class',this.value)">
+              ${["1H","2H"].map(t => `<option value="${t}" ${t === (it.weapon_class || '1H') ? 'selected' : ''}>${t}</option>`).join("")}
+            </select>
+          </div>
+        ` : `
+          <div class="field-row">
+            <span style="font-size:11px;color:var(--muted)">Cooldown (s)</span>
+            <input type="number" value="${it.spell_cooldown||3.0}" min="0.5" max="20" step="0.1" onchange="setField('${it.id}','spell_cooldown',+this.value)">
+            <span style="font-size:11px;color:var(--muted)">Primary stat</span>
+            <select onchange="setField('${it.id}','primary_stat',this.value)">
+              ${["str","dex","int"].map(t => `<option value="${t}" ${t === (it.primary_stat || 'int') ? 'selected' : ''}>${t}</option>`).join("")}
+            </select>
+          </div>
+        `}
+      ` : (["armor","helm","boots","gloves","cloak","shield"].includes(it.slot) ? `
+        <div class="field-row">
+          <span style="font-size:11px;color:var(--muted)">Armor</span>
+          <input type="number" value="${it.armor||0}" min="0" max="200" onchange="setField('${it.id}','armor',+this.value)">
+          <span style="font-size:11px;color:var(--muted)">Evasion %</span>
+          <input type="number" value="${it.evasion||0}" min="0" max="50" onchange="setField('${it.id}','evasion',+this.value)">
+        </div>
+      ` : `
+        <div style="font-size:11px;color:var(--muted)">Jewelry — no baseline stats. Affix pool below drives all rolled bonuses.</div>
+      `)}
     </div>
 
     <div class="field-group">
-      <label>Secondary stats (item-built-in — separate from rolled affixes)</label>
-      <div class="field-row">
-        <span style="font-size:11px;color:var(--muted)">Crit %</span>
-        <input type="number" value="${it.crit_chance||0}" min="0" max="100" step="1" onchange="setField('${it.id}','crit_chance',+this.value)">
-        <span style="font-size:11px;color:var(--muted)">Atk Speed %</span>
-        <input type="number" value="${it.atk_speed_pct||0}" min="0" max="100" step="1" onchange="setField('${it.id}','atk_speed_pct',+this.value)">
-        <span style="font-size:11px;color:var(--muted)">HP Regen /s</span>
-        <input type="number" value="${it.hp_regen||0}" min="0" max="20" step="0.5" onchange="setField('${it.id}','hp_regen',+this.value)">
-      </div>
+      <label>Implicit affixes (item-defining — never roll, always present; uniques only)</label>
+      <input type="text" placeholder="e.g. of_lifesteal, of_embers" value="${(it.implicit_affixes || []).join(', ')}" onchange="setField('${it.id}','implicit_affixes', this.value.split(',').map(s=>s.trim()).filter(Boolean))" style="width:100%;font-size:12px;">
       <div style="font-size:10px;color:var(--muted);margin-top:4px">
-        Use these for items where the stat IS the special (e.g. quick blade always +25% atk speed).
+        Comma-separated affix ids — these get stamped on every drop and add to the rolled affixes.
       </div>
     </div>
 

@@ -271,16 +271,34 @@ function setStatus(msg) {
   }, 4500);
 }
 
+let activeFamilyFilter = "all";  // generic / class / archetype / all
+
 function renderList() {
   const root = document.getElementById("affix-list");
   root.innerHTML = "";
+  // Family filter chip row at the top.
+  const chipRow = document.createElement("div");
+  chipRow.style.cssText = "display:flex; gap:4px; padding: 4px 0 8px 0; flex-wrap: wrap;";
+  for (const fam of ["all", "generic", "class", "archetype"]) {
+    const chip = document.createElement("button");
+    chip.textContent = fam;
+    chip.style.cssText = `font-size: 10px; padding: 3px 8px; ${fam === activeFamilyFilter ? 'background: var(--accent); color: #1a1a1f;' : ''}`;
+    chip.onclick = () => { activeFamilyFilter = fam; renderList(); };
+    chipRow.appendChild(chip);
+  }
+  root.appendChild(chipRow);
   for (const a of doc.affixes) {
+    if (activeFamilyFilter !== "all" && (a.family || "generic") !== activeFamilyFilter) continue;
     const row = document.createElement("div");
     row.className = "affix-row" + (a.id === activeId ? " active" : "");
     row.onclick = () => selectAffix(a.id);
+    // Tier preview — show min-max ranges as compact text.
+    const tierStr = (a.tiers || []).map(t => Array.isArray(t) ? `${t[0]}-${t[1]}` : String(t)).join(" ");
+    const fam = a.family || "generic";
+    const famPill = `<span style="display:inline-block;padding:1px 6px;border-radius:8px;font-size:9px;background:${fam==='archetype'?'#9b59b6':fam==='class'?'#3498db':'#666'};color:white;margin-right:4px;">${fam}</span>`;
     row.innerHTML = `
-      <div class="name" style="color: ${a.color || rarityHexForStat(a.stat)}">${escapeHtml(a.name || a.id)}</div>
-      <div class="meta">${escapeHtml(a.stat)} — t1..t5: ${(a.tiers || []).join(", ")}</div>
+      <div class="name" style="color: ${a.color || rarityHexForStat(a.stat)}">${famPill}${escapeHtml(a.name || a.id)}</div>
+      <div class="meta">${escapeHtml(a.stat)} · ${a.kind || 'flat'} — ${tierStr}</div>
     `;
     root.appendChild(row);
   }
@@ -323,14 +341,30 @@ function renderEditor() {
       </div>
       <label>Applies to</label>
       <input id="f-applies" type="text" value="${escapeAttr((a.applies_to || ['any']).join(', '))}">
-      <label>Tier values</label>
+      <label>Family</label>
+      <select id="f-family">
+        ${["generic","class","archetype"].map(fam => `<option value="${fam}" ${fam === (a.family || 'generic') ? 'selected' : ''}>${fam}</option>`).join("")}
+      </select>
+      <label>Kind</label>
+      <select id="f-kind">
+        ${["flat","pct","range","flag"].map(k => `<option value="${k}" ${k === (a.kind || 'flat') ? 'selected' : ''}>${k}</option>`).join("")}
+      </select>
+      <label>Tier ranges <span class="help" style="margin-left:6px">[min, max] per rarity</span></label>
       <div class="tiers-row">
-        ${RARITY_TIERS.map((r, i) => `
-          <div class="tier-cell">
-            <label>${r}</label>
-            <input class="f-tier" data-i="${i}" type="number" step="any" value="${(a.tiers || [0,0,0,0,0])[i] ?? 0}">
-          </div>
-        `).join("")}
+        ${RARITY_TIERS.map((r, i) => {
+          const tier_entry = (a.tiers || [[0,0],[0,0],[0,0],[0,0],[0,0]])[i];
+          const lo = Array.isArray(tier_entry) ? (tier_entry[0] ?? 0) : (tier_entry ?? 0);
+          const hi = Array.isArray(tier_entry) ? (tier_entry[1] ?? 0) : (tier_entry ?? 0);
+          return `
+            <div class="tier-cell">
+              <label>${r}</label>
+              <div style="display:flex;gap:2px;">
+                <input class="f-tier-min" data-i="${i}" type="number" step="any" value="${lo}" style="width:48%;">
+                <input class="f-tier-max" data-i="${i}" type="number" step="any" value="${hi}" style="width:48%;">
+              </div>
+            </div>
+          `;
+        }).join("")}
       </div>
       <label>Lore (optional)</label>
       <textarea id="f-lore">${escapeHtml(a.lore || '')}</textarea>
@@ -363,12 +397,21 @@ function renderEditor() {
     const list = document.getElementById("f-applies").value.split(",").map(s => s.trim()).filter(Boolean);
     mutate(a, "applies_to", list.length ? list : ["any"]);
   };
-  document.querySelectorAll(".f-tier").forEach(input => {
+  document.getElementById("f-family").onchange = () => mutate(a, "family", document.getElementById("f-family").value);
+  document.getElementById("f-kind").onchange = () => mutate(a, "kind", document.getElementById("f-kind").value);
+  // Tier ranges — both min + max inputs feed the same tiers[i] = [lo, hi] array.
+  function _readTier(i) {
+    const lo_el = document.querySelector(`.f-tier-min[data-i="${i}"]`);
+    const hi_el = document.querySelector(`.f-tier-max[data-i="${i}"]`);
+    const lo = lo_el ? parseFloat(lo_el.value) : 0;
+    const hi = hi_el ? parseFloat(hi_el.value) : 0;
+    return [isNaN(lo) ? 0 : lo, isNaN(hi) ? 0 : hi];
+  }
+  document.querySelectorAll(".f-tier-min, .f-tier-max").forEach(input => {
     input.oninput = () => {
       const i = parseInt(input.dataset.i, 10);
-      const val = parseFloat(input.value);
-      const tiers = (a.tiers || [0,0,0,0,0]).slice();
-      tiers[i] = isNaN(val) ? 0 : val;
+      const tiers = (a.tiers || [[0,0],[0,0],[0,0],[0,0],[0,0]]).slice();
+      tiers[i] = _readTier(i);
       mutate(a, "tiers", tiers);
       refreshPreview();
     };
@@ -389,9 +432,12 @@ function refreshPreview() {
     name.style.color = a.color || rarityHexForStat(a.stat);
   }
   if (tiers) {
-    const t = a.tiers || [0,0,0,0,0];
-    tiers.innerHTML = RARITY_TIERS.map((r, i) =>
-      `<span class="pill t${i}">${r}: ${t[i] ?? 0}</span>`
+    const t = a.tiers || [[0,0],[0,0],[0,0],[0,0],[0,0]];
+    tiers.innerHTML = RARITY_TIERS.map((r, i) => {
+      const e = t[i];
+      const lbl = Array.isArray(e) ? `${e[0]}-${e[1]}` : `${e ?? 0}`;
+      return `<span class="pill t${i}">${r}: ${lbl}</span>`;
+    }
     ).join("");
   }
   if (stat) stat.textContent = a.stat;
@@ -411,9 +457,11 @@ function addNew() {
     id: `affix_${seq}`,
     name: `Affix ${seq}`,
     applies_to: ["any"],
-    stat: "atk",
-    tiers: [1, 2, 3, 5, 8],
-    color: rarityHexForStat("atk"),
+    family: "generic",
+    kind: "flat",
+    stat: "str",
+    tiers: [[1,2], [2,3], [3,5], [5,8], [8,12]],
+    color: rarityHexForStat("str"),
   };
   doc.affixes.push(a);
   dirty = true;

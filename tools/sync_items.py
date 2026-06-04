@@ -221,17 +221,18 @@ def copy_if_changed(src, dst):
 
 
 def normalize_item(it, slot_default):
-    """Strip manifest-only fields, rewrite tile to flat stem."""
+    """Strip manifest-only fields, rewrite tile to flat stem.
+
+    Item-overhaul v2 schema (2026-06-04). Weapons carry damage_min/max
+    /damage_type/speed/weapon_class. Body slots carry armor + evasion.
+    Jewelry + spells carry no baseline (just affixes). Old atk/def/hp
+    fields no longer emitted — runtime fully migrated."""
     out = {
         "id":           it["id"],
         "name":         it["name"],
         "slot":         it.get("slot", slot_default),
         "rarity":       it["rarity"],
         "tile":         stem_for(it["tile"]),
-        "atk":          int(it.get("atk", 0)),
-        "def":          int(it.get("def", 0)),
-        "hp":           int(it.get("hp", 0)),
-        # New fields — runtime ignores unknown keys via .get() defaults.
         "item_tier":    int(it.get("item_tier", 1)),
         "base_type":    it.get("base_type", ""),
         "flavor_tags":  list(it.get("flavor_tags", [])),
@@ -239,25 +240,29 @@ def normalize_item(it, slot_default):
         "drop_weights": list(it.get("drop_weights", [0, 0, 0, 0, 0])),
         "unique":       bool(it.get("unique", False)),
     }
+    # Weapon fields.
+    if "damage_min" in it: out["damage_min"] = int(it["damage_min"])
+    if "damage_max" in it: out["damage_max"] = int(it["damage_max"])
+    if "damage_type" in it: out["damage_type"] = it["damage_type"]
+    if "speed" in it: out["speed"] = float(it["speed"])
+    if "weapon_class" in it: out["weapon_class"] = it["weapon_class"]
+    # Body fields.
+    if "armor" in it: out["armor"] = int(it["armor"])
+    if "evasion" in it: out["evasion"] = int(it["evasion"])
+    # Spell fields.
+    if "spell_cooldown" in it: out["spell_cooldown"] = float(it["spell_cooldown"])
+    if "primary_stat" in it: out["primary_stat"] = it["primary_stat"]
+    # Implicit affixes (uniques carry these — never roll).
+    if "implicit_affixes" in it: out["implicit_affixes"] = list(it["implicit_affixes"])
     if "future_mechanic" in it:
         out["future_mechanic"] = it["future_mechanic"]
-    # Per-instance enchant + affix override fields. Items pass
-    # 2026-06-03 added these — sync them through if present.
+    # Per-instance enchant + affix override fields.
     if "enchant_chance" in it:
         out["enchant_chance"] = float(it["enchant_chance"])
     if "enchant_pool" in it and it["enchant_pool"]:
         out["enchant_pool"] = list(it["enchant_pool"])
     if "affix_pool" in it and it["affix_pool"]:
         out["affix_pool"] = dict(it["affix_pool"])
-    # Item secondary stats added 2026-06-03 (L4 of diversity beat).
-    # Items.json carries crit_chance / atk_speed_pct / hp_regen as
-    # direct contributions distinct from affix rolls.
-    if "crit_chance" in it and float(it["crit_chance"]):
-        out["crit_chance"] = float(it["crit_chance"])
-    if "atk_speed_pct" in it and float(it["atk_speed_pct"]):
-        out["atk_speed_pct"] = float(it["atk_speed_pct"])
-    if "hp_regen" in it and float(it["hp_regen"]):
-        out["hp_regen"] = float(it["hp_regen"])
     return out
 
 
