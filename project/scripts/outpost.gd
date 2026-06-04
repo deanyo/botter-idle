@@ -223,6 +223,24 @@ func _make_branch_card(branch_id: String, is_unlocked: bool, tier: int) -> Contr
 		"epic": 0.42, "legendary": 0.55,
 	}.get(rarity, 0.20))
 	UITheme.add_rarity_cell_decor(btn, _BRANCH_CARD_W, rarity, halo_strength)
+	# Biome icon — large, centered, sits BEHIND the text labels at
+	# low alpha so it reads as a watermark identifying the area.
+	# Curated under project/assets/tiles/biome_icons/<id>.png. DCSS
+	# enter_<branch>.png where available; thematic substitutes
+	# (lava cell, ice tile, mangrove tree) for branches without a
+	# direct gateway sprite.
+	var icon_path: String = "res://assets/tiles/biome_icons/" + branch_id + ".png"
+	if ResourceLoader.exists(icon_path):
+		var icon := TextureRect.new()
+		icon.texture = load(icon_path)
+		icon.position = Vector2((_BRANCH_CARD_W - 80) / 2, 28)
+		icon.size = Vector2(80, 80)
+		icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		icon.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		icon.modulate = Color(1, 1, 1, 0.50 if is_unlocked else 0.25)
+		icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		btn.add_child(icon)
 	# Name label at top.
 	var name_lbl := Label.new()
 	name_lbl.text = pretty
@@ -232,6 +250,9 @@ func _make_branch_card(branch_id: String, is_unlocked: bool, tier: int) -> Contr
 	name_lbl.add_theme_color_override("font_color", rarity_col if is_unlocked else COL_DIM)
 	name_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	name_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	# Drop-shadow so the name reads cleanly over the icon watermark.
+	name_lbl.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.85))
+	name_lbl.add_theme_constant_override("outline_size", 4)
 	btn.add_child(name_lbl)
 	# Tier label below the name.
 	var tier_lbl := Label.new()
@@ -240,6 +261,8 @@ func _make_branch_card(branch_id: String, is_unlocked: bool, tier: int) -> Contr
 	tier_lbl.size = Vector2(_BRANCH_CARD_W - 16, 16)
 	tier_lbl.add_theme_font_size_override("font_size", 11)
 	tier_lbl.add_theme_color_override("font_color", COL_DIM)
+	tier_lbl.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.85))
+	tier_lbl.add_theme_constant_override("outline_size", 4)
 	tier_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	tier_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	btn.add_child(tier_lbl)
@@ -247,7 +270,7 @@ func _make_branch_card(branch_id: String, is_unlocked: bool, tier: int) -> Contr
 		# Modifier chips, one per line, visible without hover. Each
 		# row is "+ Modifier name". Gold (amber) so they pop against
 		# the rarity tint without competing with the name color.
-		var mod_y: int = 56
+		var mod_y: int = _BRANCH_CARD_H - 22 - 14 * mods.size()
 		var line_h: int = 14
 		for mod_id in mods:
 			var mod_def: Dictionary = RunModifiers.get_def(String(mod_id))
@@ -258,19 +281,29 @@ func _make_branch_card(branch_id: String, is_unlocked: bool, tier: int) -> Contr
 			chip.size = Vector2(_BRANCH_CARD_W - 24, line_h + 2)
 			chip.add_theme_font_size_override("font_size", 11)
 			chip.add_theme_color_override("font_color", COL_AMBER)
+			chip.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.85))
+			chip.add_theme_constant_override("outline_size", 4)
+			chip.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 			chip.mouse_filter = Control.MOUSE_FILTER_IGNORE
 			btn.add_child(chip)
 			mod_y += line_h
 		# CR footer.
-		var cr_lbl := Label.new()
-		cr_lbl.text = "CR %d" % int(biome.get("cr_recommended", 0))
-		cr_lbl.position = Vector2(8, _BRANCH_CARD_H - 22)
-		cr_lbl.size = Vector2(_BRANCH_CARD_W - 16, 16)
-		cr_lbl.add_theme_font_size_override("font_size", 10)
-		cr_lbl.add_theme_color_override("font_color", COL_DIM)
-		cr_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		cr_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		btn.add_child(cr_lbl)
+		# Tier label MOVED to under name (right after Tier label) is
+		# already there. CR footer pinned to the bottom of the card.
+		# Skip rendering it if there are mods so the chips own the
+		# bottom of the card cleanly.
+		if mods.is_empty():
+			var cr_lbl := Label.new()
+			cr_lbl.text = "CR %d" % int(biome.get("cr_recommended", 0))
+			cr_lbl.position = Vector2(8, _BRANCH_CARD_H - 22)
+			cr_lbl.size = Vector2(_BRANCH_CARD_W - 16, 16)
+			cr_lbl.add_theme_font_size_override("font_size", 10)
+			cr_lbl.add_theme_color_override("font_color", COL_DIM)
+			cr_lbl.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.85))
+			cr_lbl.add_theme_constant_override("outline_size", 4)
+			cr_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			cr_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			btn.add_child(cr_lbl)
 		# Tooltip kept for full modifier descriptions (hover for detail).
 		var tooltip: String = "%s — CR %d recommended" % [display, int(biome.get("cr_recommended", 0))]
 		var mod_tip: String = RunModifiers.format_tooltip(mods)
