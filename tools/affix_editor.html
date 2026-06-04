@@ -203,18 +203,55 @@
 <script>
 const AFFIXES_PATH = "../project/data/affixes.json";
 
-// Stats Bot/Actor combat actually reads. Adding a new entry here is
-// safe; the runtime ignores unknown stats. Surfaces in the dropdown
-// so authors don't typo a stat key.
+// Stats Bot/Actor combat actually reads. Item-overhaul v2 (2026-06-04)
+// schema. Adding a new entry here is safe; the runtime ignores unknown
+// stats. Surfaces in the dropdown so authors don't typo a stat key.
 const STATS = [
-  { id: "atk",            label: "ATK (flat)" },
-  { id: "hp",             label: "HP (flat)" },
-  { id: "def",            label: "DEF (flat)" },
-  { id: "hp_pct",         label: "HP %" },
-  { id: "atk_pct",        label: "ATK %" },
-  { id: "crit_chance",    label: "Crit chance %" },
-  { id: "atk_speed_pct",  label: "Attack speed %" },
-  { id: "hp_regen",       label: "HP regen / sec" },
+  // Primary stats.
+  { id: "str",                  label: "Strength" },
+  { id: "dex",                  label: "Dexterity" },
+  { id: "int",                  label: "Intelligence" },
+  // Defensive baseline.
+  { id: "hp",                   label: "HP (flat)" },
+  { id: "armor",                label: "Armor (flat)" },
+  { id: "evasion",              label: "Evasion %" },
+  { id: "hp_regen",             label: "HP regen / sec" },
+  // Universal combat.
+  { id: "crit_chance",          label: "Crit chance %" },
+  { id: "haste_pct",            label: "Haste %" },
+  { id: "lifesteal_pct",        label: "Lifesteal %" },
+  // Spell modifiers.
+  { id: "spell_cdr_pct",        label: "Spell cooldown reduction %" },
+  { id: "spell_proj_bonus",     label: "+N spell projectiles" },
+  { id: "spell_proj_speed_pct", label: "Projectile speed %" },
+  { id: "spell_area_pct",       label: "Spell area %" },
+  { id: "spell_duration_pct",   label: "Spell duration %" },
+  { id: "spell_damage_pct",     label: "Spell damage %" },
+  // Class spell-mastery.
+  { id: "str_spell_dmg_pct",    label: "Strength spell damage %" },
+  { id: "dex_spell_dmg_pct",    label: "Dexterity spell damage %" },
+  { id: "int_spell_dmg_pct",    label: "Intelligence spell damage %" },
+  // Range affixes — bonus weapon / spell damage of an element.
+  { id: "physical_extra",       label: "+X-Y Physical (range)" },
+  { id: "fire_extra",           label: "+X-Y Fire (range)" },
+  { id: "cold_extra",           label: "+X-Y Cold (range)" },
+  { id: "lightning_extra",      label: "+X-Y Lightning (range)" },
+  { id: "holy_extra",           label: "+X-Y Holy (range)" },
+  { id: "poison_extra",         label: "+X-Y Poison (range)" },
+  { id: "dark_extra",           label: "+X-Y Dark (range)" },
+  // Element resistances.
+  { id: "fire_res",             label: "Fire resistance %" },
+  { id: "cold_res",             label: "Cold resistance %" },
+  { id: "lightning_res",        label: "Lightning resistance %" },
+  { id: "holy_res",             label: "Holy resistance %" },
+  { id: "poison_res",           label: "Poison resistance %" },
+  { id: "dark_res",             label: "Dark resistance %" },
+  // Archetype unique-affix flags (one per spell).
+  { id: "spell_axes_bleed",          label: "Spinning Axes leave bleed (flag)" },
+  { id: "spell_fireball_ground",     label: "Fireball ignites ground (flag)" },
+  { id: "spell_frost_root",          label: "Frost Nova roots (flag)" },
+  { id: "spell_chain_extra_jumps",   label: "Chain Lightning extra jumps (flag)" },
+  { id: "spell_holy_radiance",       label: "Holy Beam radiance (flag)" },
 ];
 
 const RARITY_TIERS = ["common", "uncommon", "rare", "epic", "legendary"];
@@ -247,17 +284,56 @@ async function load() {
 }
 
 function rarityHexForStat(stat) {
-  // Sensible defaults — matches our flavor color story so a Strength
-  // affix lands on red, Crit on yellow, Haste on cyan, etc.
+  // Item-overhaul v2: matches in-game UITheme palette so the affix
+  // editor's preview chips reflect the actual tooltip colors. Primary
+  // stats use the spell-class trio (Str=red, Dex=green, Int=blue);
+  // elemental damage / resist affixes match the game's element colors.
   switch (stat) {
-    case "atk":           return "#ff5252";
-    case "atk_pct":       return "#ff5252";
-    case "hp":            return "#5fc878";
-    case "hp_pct":        return "#5fc878";
-    case "def":           return "#bababa";
-    case "crit_chance":   return "#ffd84d";
-    case "atk_speed_pct": return "#4dabff";
-    case "hp_regen":      return "#a85eff";
+    // Primary stats — red/green/blue, mirrors UITheme.spell_class_color.
+    case "str":                  return "#f24d4d";
+    case "dex":                  return "#80f266";
+    case "int":                  return "#73d9ff";
+    // Defensive baseline.
+    case "hp":                   return "#5fc878";
+    case "hp_regen":             return "#a85eff";
+    case "armor":                return "#bababa";
+    case "evasion":              return "#dadada";
+    // Universal combat stats.
+    case "crit_chance":          return "#ffd84d";
+    case "haste_pct":            return "#ffaa3a";
+    case "lifesteal_pct":        return "#d83a3a";
+    // Spell modifiers — soft purple/cyan family so they read as "magic".
+    case "spell_cdr_pct":        return "#b18ddf";
+    case "spell_proj_bonus":     return "#cdb0ff";
+    case "spell_proj_speed_pct": return "#cdb0ff";
+    case "spell_area_pct":       return "#a890ff";
+    case "spell_duration_pct":   return "#9bb6ff";
+    case "spell_damage_pct":     return "#a3aaff";
+    // Class spell-mastery (red/green/blue tinted toward the affix purple).
+    case "str_spell_dmg_pct":    return "#e07b9a";
+    case "dex_spell_dmg_pct":    return "#9be08a";
+    case "int_spell_dmg_pct":    return "#88c0e0";
+    // Range-affix elemental damage adders ("of Embers", "of Frost", etc).
+    case "physical_extra":       return "#ebebd8";
+    case "fire_extra":           return "#ff8c2e";
+    case "cold_extra":           return "#73d9ff";
+    case "lightning_extra":      return "#a6ccff";
+    case "holy_extra":           return "#ffea8c";
+    case "poison_extra":         return "#80f266";
+    case "dark_extra":           return "#8c4ddc";
+    // Element resistance affixes — same hue as their element, dimmer.
+    case "fire_res":             return "#cc6e26";
+    case "cold_res":             return "#5cadcc";
+    case "lightning_res":        return "#85a6cc";
+    case "holy_res":             return "#ccba6e";
+    case "poison_res":           return "#66c252";
+    case "dark_res":             return "#704bb0";
+    // Archetype unique-affix flags — gold (item-defining).
+    case "spell_axes_bleed":
+    case "spell_fireball_ground":
+    case "spell_frost_root":
+    case "spell_chain_extra_jumps":
+    case "spell_holy_radiance":  return "#ffd478";
   }
   return "#ffb84d";
 }
