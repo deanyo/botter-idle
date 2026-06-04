@@ -140,6 +140,7 @@ func _exit_tree() -> void:
 # an outpost-level ritual). Item-overhaul v2 2026-06-04.
 var _hud_tooltip: ItemTooltip = null
 var _hud_hover_cell: ItemCell = null
+var _hud_alt_was_held: bool = false
 
 func _on_cell_tooltip(cell: ItemCell, show: bool) -> void:
 	if not show:
@@ -155,6 +156,20 @@ func _on_cell_tooltip(cell: ItemCell, show: bool) -> void:
 	add_child(_hud_tooltip)
 	_hud_tooltip.render_for(cell.item, cell.inst, _items_db_cache)
 	_hud_tooltip.position = _hud_clamp_tooltip(get_viewport().get_mouse_position() + Vector2(16, 16))
+
+# Per-frame poll for Alt-key state so the extended-affix view toggles
+# live while the tooltip is up. CanvasLayer doesn't tick by default —
+# the existing _process call in dungeon.gd handles game logic, so we
+# add a lightweight _process here just for tooltip state.
+func _process(_delta: float) -> void:
+	if _hud_hover_cell == null or not is_instance_valid(_hud_hover_cell):
+		return
+	if _hud_tooltip == null or not is_instance_valid(_hud_tooltip):
+		return
+	var alt_now: bool = Input.is_key_pressed(KEY_ALT)
+	if alt_now != _hud_alt_was_held:
+		_hud_tooltip.render_for(_hud_hover_cell.item, _hud_hover_cell.inst, _items_db_cache)
+		_hud_alt_was_held = alt_now
 
 func _hud_clamp_tooltip(anchor: Vector2) -> Vector2:
 	var view: Vector2 = get_viewport().get_visible_rect().size

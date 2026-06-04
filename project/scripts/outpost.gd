@@ -113,6 +113,7 @@ var _tooltip: ItemTooltip = null
 var _compare_tooltips: Array = []   # sibling tooltips when Shift held
 var _hover_cell: ItemCell = null
 var _shift_was_held: bool = false
+var _alt_was_held: bool = false
 
 func _on_cell_tooltip(cell: ItemCell, show: bool) -> void:
 	if not show:
@@ -135,6 +136,13 @@ func _process(_delta: float) -> void:
 	elif not shift_now and _shift_was_held:
 		_destroy_compare_tooltips()
 	_shift_was_held = shift_now
+	# Alt-state polling — re-renders the main tooltip so the extended
+	# affix-detail lines toggle live. Tooltip reads Input.is_key_pressed
+	# at render time, so we just rebuild content on Alt edge.
+	var alt_now: bool = Input.is_key_pressed(KEY_ALT)
+	if alt_now != _alt_was_held and _tooltip != null and is_instance_valid(_tooltip):
+		_tooltip.render_for(_hover_cell.item, _hover_cell.inst, items_db)
+	_alt_was_held = alt_now
 	# Keep tooltip glued near cursor so it doesn't hover off the cell.
 	if _tooltip != null and is_instance_valid(_tooltip):
 		_tooltip.position = _clamp_tooltip_position(_compute_anchor(_hover_cell), _tooltip.size)

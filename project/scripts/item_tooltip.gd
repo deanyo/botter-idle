@@ -223,9 +223,14 @@ func render_for(item_def: Dictionary, instance: Variant, db: Dictionary) -> void
 		# tint dim + smaller — the visual cue is enough.
 		_vbox.add_child(flavor_lbl)
 		_vbox.add_child(_make_separator())
-	# Hotkey hint (gear only — spells don't compare).
+	# Hotkey hint. Compare-on-Shift only for gear (spells skip per
+	# design); Alt-extended affix detail works for everything.
+	var hotkey_text: String = ""
 	if slot != "spell" and slot != "":
-		_vbox.add_child(_make_label("Hold [Shift] to compare", 10, COLOR_HOTKEY, false))
+		hotkey_text = "[Shift] compare · [Alt] affix detail"
+	else:
+		hotkey_text = "[Alt] affix detail"
+	_vbox.add_child(_make_label(hotkey_text, 10, COLOR_HOTKEY, false))
 	# Resize the tooltip's height to fit the vbox.
 	# Wait one frame for the vbox to lay out, then size ourselves.
 	await get_tree().process_frame
@@ -257,29 +262,80 @@ func _render_damage_block() -> void:
 # element's color; flat affixes show "+N Strength" etc.
 func _build_affix_lines() -> Array:
 	var out: Array = []
-	# Implicit affixes first — rendered in gold (item-defining).
+	var alt_held: bool = Input.is_key_pressed(KEY_ALT)
+	# Implicit affixes first — rendered in item-defining gold tint
+	# layered onto the per-stat color, so a "of_lifesteal" implicit
+	# still reads "lifesteal red" but with a slightly hot warmer cast.
 	for a in item.get("implicit_affixes", []):
 		var def: Dictionary = AffixSystem.get_affix_def(String(a))
 		if def.is_empty():
 			continue
-		var line_text: String = _format_affix_line(def, _implicit_value_at_rarity(def, String(item.get("rarity", "common"))))
-		out.append(_make_label(line_text, 12, Color(1.0, 0.85, 0.30), false))
-	# Rolled affixes — uncommon-blue.
+		var rolled: Dictionary = _implicit_value_at_rarity(def, String(item.get("rarity", "common")))
+		var line_text: String = _format_affix_line(def, rolled)
+		var stat_col: Color = UITheme.affix_stat_color(String(def.get("stat", "")))
+		# Implicits get a +20% value boost toward gold so they read as
+		# item-defining. Mix the stat color with gold at 0.35 strength.
+		var gold: Color = Color(1.0, 0.85, 0.30)
+		var line_color: Color = stat_col.lerp(gold, 0.35)
+		out.append(_make_label(line_text, 12, line_color, false))
+		if alt_held:
+			out.append(_make_alt_line(def, rolled, true))
+	# Rolled affixes — colored by their stat per the affix-editor map.
 	if typeof(inst) == TYPE_DICTIONARY:
 		for af_inst in inst.get("affixes", []):
 			var def: Dictionary = AffixSystem.get_affix_def(String(af_inst.get("id", "")))
 			if def.is_empty():
 				continue
 			var line_text: String = _format_affix_line(def, af_inst)
-			# Colour by family: range affixes use damage-type color, flat
-			# affixes default to magic blue.
-			var line_color: Color = COLOR_AFFIX
-			if String(def.get("kind", "flat")) == "range":
-				var stat: String = String(def.get("stat", ""))
-				var elem: String = stat.replace("_extra", "")
-				line_color = UITheme.damage_type_color(elem)
+			var line_color: Color = UITheme.affix_stat_color(String(def.get("stat", "")))
 			out.append(_make_label(line_text, 12, line_color, false))
+			if alt_held:
+				out.append(_make_alt_line(def, af_inst, false))
 	return out
+
+# Alt-extended detail line — surfaces the underlying mechanics of an
+# affix roll for build inspection. Renders dim + smaller below the
+# rendered stat line. Includes affix id, family, tier label, raw
+# value(s), and tier-position-in-band so the player can see "this is
+# a low-rolled rare" at a glance.
+func _make_alt_line(def: Dictionary, af_inst: Dictionary, is_implicit: bool) -> Label:
+	var affix_id: String = String(def.get("id", ""))
+	var family: String = String(def.get("family", "generic"))
+	var kind: String = String(def.get("kind", "flat"))
+	var item_rarity: String = String(item.get("rarity", "common"))
+	var tier_idx: int = AffixSystem.tier_index_for_rarity(item_rarity)
+	var tiers: Array = def.get("tiers", [])
+	var tier_label: String = ["T1","T2","T3","T4","T5"][clampi(tier_idx, 0, 4)]
+	var rarity_label: String = item_rarity.capitalize()
+	var detail: String = ""
+	if kind == "range" and af_inst.has("value_min"):
+		var lo: int = int(af_inst.get("value_min", 0))
+		var hi: int = int(af_inst.get("value_max", 0))
+		var range_lbl: String = "?"
+		if tier_idx < tiers.size() and tiers[tier_idx] is Array and tiers[tier_idx].size() >= 2:
+			range_lbl = "%d-%d..%d-%d" % [int(tiers[tier_idx][0]), int(tiers[tier_idx][0]), int(tiers[tier_idx][1]), int(tiers[tier_idx][1])]
+		detail = "%s · %s · %s · roll %d-%d (band %s)" % [
+			affix_id, family, tier_label, lo, hi, range_lbl,
+		]
+	else:
+		var v: int = int(af_inst.get("value", 0))
+		var band_lbl: String = "?"
+		if tier_idx < tiers.size():
+			var t = tiers[tier_idx]
+			if t is Array and t.size() >= 2:
+				band_lbl = "%d-%d" % [int(t[0]), int(t[1])]
+			else:
+				band_lbl = String(t)
+		detail = "%s · %s · %s · roll %d (band %s)" % [
+			affix_id, family, tier_label, v, band_lbl,
+		]
+	if is_implicit:
+		detail = "[implicit] " + detail
+	var lbl := _make_label(detail, 9, Color(0.55, 0.55, 0.55), false)
+	# Indent the alt line slightly so it visually attaches to its
+	# parent stat line.
+	lbl.add_theme_color_override("font_color", Color(0.55, 0.55, 0.5))
+	return lbl
 
 # Synthesize a value dict for an implicit affix at the given item rarity.
 # Implicits don't have rolled values — we approximate the mid-tier

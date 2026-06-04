@@ -74,13 +74,17 @@ func _exit_tree() -> void:
 
 # WoW-style tooltip in shop. Same shape as HUD — main panel only.
 var _shop_tooltip: ItemTooltip = null
+var _shop_hover_cell: ItemCell = null
+var _shop_alt_was_held: bool = false
 
 func _on_cell_tooltip(cell: ItemCell, show: bool) -> void:
 	if not show:
+		_shop_hover_cell = null
 		if _shop_tooltip != null and is_instance_valid(_shop_tooltip):
 			_shop_tooltip.queue_free()
 			_shop_tooltip = null
 		return
+	_shop_hover_cell = cell
 	if _shop_tooltip != null and is_instance_valid(_shop_tooltip):
 		_shop_tooltip.queue_free()
 	_shop_tooltip = ItemTooltip.new()
@@ -124,6 +128,14 @@ func _process(_delta: float) -> void:
 		if _seconds_until_refresh() <= 0:
 			_maybe_refresh_stock(true)
 			_render()
+	# Alt-extended tooltip — poll edge so the affix-detail view
+	# toggles live while the cursor is over a shop item.
+	if _shop_hover_cell != null and is_instance_valid(_shop_hover_cell) \
+			and _shop_tooltip != null and is_instance_valid(_shop_tooltip):
+		var alt_now: bool = Input.is_key_pressed(KEY_ALT)
+		if alt_now != _shop_alt_was_held:
+			_shop_tooltip.render_for(_shop_hover_cell.item, _shop_hover_cell.inst, items_db)
+			_shop_alt_was_held = alt_now
 
 func _build_layout() -> void:
 	var view := get_viewport().get_visible_rect().size

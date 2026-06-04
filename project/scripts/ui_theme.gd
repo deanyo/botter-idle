@@ -150,6 +150,61 @@ const DAMAGE_TYPE_COLORS := {
 static func damage_type_color(damage_type: String) -> Color:
 	return DAMAGE_TYPE_COLORS.get(damage_type, Color(0.92, 0.92, 0.85))
 
+# Per-stat color used by tooltips + (mirror of) the affix-editor's
+# rarityHexForStat(). One source of truth so the in-game tooltip
+# matches what authors see in dnyo.co.uk/botter-idle/tools/affix_editor.html.
+# Item-overhaul v2 + tooltip flair pass 2026-06-04.
+const AFFIX_STAT_COLORS := {
+	# Primary stats — Str/Dex/Int red/green/blue.
+	"str":                  Color(0.95, 0.30, 0.30),
+	"dex":                  Color(0.50, 0.95, 0.40),
+	"int":                  Color(0.45, 0.85, 1.00),
+	# Defensive baseline.
+	"hp":                   Color(0.37, 0.78, 0.47),
+	"hp_regen":             Color(0.66, 0.37, 1.00),
+	"armor":                Color(0.73, 0.73, 0.73),
+	"evasion":              Color(0.85, 0.85, 0.85),
+	# Universal combat.
+	"crit_chance":          Color(1.00, 0.85, 0.30),
+	"haste_pct":            Color(1.00, 0.67, 0.23),
+	"lifesteal_pct":        Color(0.85, 0.23, 0.23),
+	# Spell modifiers — soft purple/cyan family.
+	"spell_cdr_pct":        Color(0.69, 0.55, 0.87),
+	"spell_proj_bonus":     Color(0.80, 0.69, 1.00),
+	"spell_proj_speed_pct": Color(0.80, 0.69, 1.00),
+	"spell_area_pct":       Color(0.66, 0.56, 1.00),
+	"spell_duration_pct":   Color(0.61, 0.71, 1.00),
+	"spell_damage_pct":     Color(0.64, 0.67, 1.00),
+	# Class spell-mastery (matches primary, dimmed toward purple).
+	"str_spell_dmg_pct":    Color(0.88, 0.48, 0.60),
+	"dex_spell_dmg_pct":    Color(0.61, 0.88, 0.54),
+	"int_spell_dmg_pct":    Color(0.53, 0.75, 0.88),
+	# Range-affix elemental damage adders.
+	"physical_extra":       Color(0.92, 0.92, 0.85),
+	"fire_extra":           Color(1.00, 0.55, 0.18),
+	"cold_extra":           Color(0.45, 0.85, 1.00),
+	"lightning_extra":      Color(0.65, 0.80, 1.00),
+	"holy_extra":           Color(1.00, 0.92, 0.55),
+	"poison_extra":         Color(0.50, 0.95, 0.40),
+	"dark_extra":           Color(0.55, 0.30, 0.85),
+	# Element resistances — dimmer shade of each element.
+	"fire_res":             Color(0.80, 0.43, 0.15),
+	"cold_res":             Color(0.36, 0.68, 0.80),
+	"lightning_res":        Color(0.52, 0.65, 0.80),
+	"holy_res":             Color(0.80, 0.73, 0.43),
+	"poison_res":           Color(0.40, 0.76, 0.32),
+	"dark_res":             Color(0.44, 0.29, 0.69),
+	# Archetype unique-affix flags — gold (item-defining).
+	"spell_axes_bleed":          Color(1.00, 0.83, 0.47),
+	"spell_fireball_ground":     Color(1.00, 0.83, 0.47),
+	"spell_frost_root":          Color(1.00, 0.83, 0.47),
+	"spell_chain_extra_jumps":   Color(1.00, 0.83, 0.47),
+	"spell_holy_radiance":       Color(1.00, 0.83, 0.47),
+}
+
+static func affix_stat_color(stat: String) -> Color:
+	return AFFIX_STAT_COLORS.get(stat, Color(1.00, 0.72, 0.30))  # amber default
+
 const FLAVOR_COLORS := {
 	"vampiric":    Color(0.85, 0.15, 0.15),   # blood red
 	"fire":        Color(1.00, 0.55, 0.18),   # ember orange
