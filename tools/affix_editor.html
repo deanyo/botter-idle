@@ -188,11 +188,15 @@
   <a href="item_editor.html">Items</a>
   <a href="drop_tuning.html">Drop Tuning</a>
   <span class="spacer"></span>
+  <span id="mode-tabs" style="display:flex; gap:4px;">
+    <button id="mode-affixes" class="primary" onclick="setMode('affixes')">Affixes</button>
+    <button id="mode-enchants" onclick="setMode('enchants')">Enchants</button>
+  </span>
   <span id="status" style="font-size: 12px; color: var(--muted);"></span>
-  <button onclick="addNew()">+ New affix</button>
-  <button class="primary" onclick="exportJSON()">⬇ Export affixes.json</button>
+  <button id="btn-new-affix" onclick="addNew()">+ New affix</button>
+  <button id="btn-export" class="primary" onclick="exportJSON()">⬇ Export affixes.json</button>
 </header>
-<div class="body">
+<div class="body" id="affixes-body">
   <aside>
     <h2>Affixes</h2>
     <div class="affix-list" id="affix-list"></div>
@@ -200,6 +204,15 @@
   <main id="editor">
     <div class="empty-state">Select an affix on the left, or click <strong>+ New affix</strong> to create one.</div>
   </main>
+</div>
+<div id="enchants-body" style="display:none; padding: 24px; max-width: 1100px; margin: 0 auto; overflow:auto; height: calc(100vh - 56px);">
+  <p style="color:var(--muted); font-size:12px; margin: 0 0 16px;">
+    Enchants are flavor-tag rolls that drop on items via <code>enchant_chance</code>. They drive combat procs (vampiric lifesteal, fire DoT, holy +vs undead, etc), the tooltip glow color, and the per-tag passive bonuses on worn gear. Combos appear when a drop rolls TWO enchants from the pool and the pair has a registered compound — the compound replaces both individuals, gets a unique combat effect, and renders with a blended color. Read-only view; effect handlers live in <code>actor.gd</code> + <code>EnchantCombos.gd</code>.
+  </p>
+  <h2 style="margin: 0 0 8px; color: var(--accent); font-size: 14px;">Base flavors</h2>
+  <div id="base-flavor-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap:10px; margin-bottom:24px;"></div>
+  <h2 style="margin: 0 0 8px; color: var(--accent); font-size: 14px;">Compound combos <span style="color:var(--muted); font-size:11px; font-weight:normal;">(21 — every pair of base flavors)</span></h2>
+  <div id="combo-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap:10px;"></div>
 </div>
 <script>
 const AFFIXES_PATH = "../project/data/affixes.json";
@@ -260,6 +273,24 @@ const RARITY_TIERS = ["common", "uncommon", "rare", "epic", "legendary"];
 let doc = { _comment: "", affixes: [], rarity_affix_count: {}, rarity_tier_index: {} };
 let activeId = null;
 let dirty = false;
+let combosDoc = { combos: [] };  // loaded from enchant_combos.json
+let mode = "affixes";  // "affixes" | "enchants"
+
+const ENCHANT_COMBOS_PATH = "../project/data/enchant_combos.json";
+
+// 7 base flavors + their canonical color + a one-line combat-effect
+// summary. Mirrors actor.gd's per-tag procs so the read-only view
+// describes what each flavor actually DOES in combat. Color values
+// match UITheme.FLAVOR_COLORS in GDScript.
+const BASE_FLAVORS = [
+  { id: "fire",      color: "#ff8c2e", proc: "Burn DoT — 3 ticks × 4% max HP per tick (1.5s total)." },
+  { id: "cold",      color: "#73d9ff", proc: "15% chance to freeze the target for 0.5s on hit." },
+  { id: "lightning", color: "#a6ccff", proc: "Chain damage to one adjacent foe (50% damage)." },
+  { id: "holy",      color: "#ffea8c", proc: "+50% damage vs undead and demons." },
+  { id: "poison",    color: "#80f266", proc: "Poison DoT — 4 ticks × 3% max HP per tick (2s total)." },
+  { id: "dark",      color: "#8c4ddc", proc: "+25% damage vs holy-hated targets (undead/demon)." },
+  { id: "vampiric",  color: "#d83a3a", proc: "Lifesteal: heal 8% of damage dealt back to attacker." },
+];
 
 async function load() {
   try {
@@ -280,8 +311,79 @@ async function load() {
   for (const a of doc.affixes) {
     if (!a.color) a.color = rarityHexForStat(a.stat);
   }
+  // Fetch enchant combo registry for the Enchants tab.
+  try {
+    const r2 = await fetch(ENCHANT_COMBOS_PATH);
+    if (r2.ok) combosDoc = await r2.json();
+  } catch (e) {
+    console.warn("Couldn't load enchant_combos.json:", e);
+  }
   renderList();
+  renderEnchantsView();
   if (doc.affixes.length) selectAffix(doc.affixes[0].id);
+}
+
+// Toggle between the existing affix editor and the new enchants
+// browse-only view. Hides the export+addnew buttons in enchants
+// mode since there's no edit surface yet.
+function setMode(next) {
+  mode = next;
+  document.getElementById("affixes-body").style.display = (mode === "affixes") ? "" : "none";
+  document.getElementById("enchants-body").style.display = (mode === "enchants") ? "" : "none";
+  document.getElementById("btn-new-affix").style.display = (mode === "affixes") ? "" : "none";
+  document.getElementById("btn-export").style.display = (mode === "affixes") ? "" : "none";
+  // Toggle highlighted tab.
+  document.getElementById("mode-affixes").className = (mode === "affixes") ? "primary" : "";
+  document.getElementById("mode-enchants").className = (mode === "enchants") ? "primary" : "";
+}
+
+function renderEnchantsView() {
+  // Base flavors grid — one card per flavor showing color swatch +
+  // proc summary.
+  const baseRoot = document.getElementById("base-flavor-grid");
+  if (baseRoot) {
+    baseRoot.innerHTML = BASE_FLAVORS.map(f => `
+      <div style="background: var(--panel-2); border: 1px solid var(--border); border-radius: 6px; padding: 12px; border-left: 4px solid ${f.color};">
+        <div style="font-size: 13px; font-weight: 600; color: ${f.color}; margin-bottom: 4px; text-transform: capitalize;">
+          <span style="display:inline-block; width:10px; height:10px; border-radius:2px; background:${f.color}; margin-right:6px; vertical-align:middle;"></span>
+          ${escapeHtml(f.id)}
+        </div>
+        <div style="font-size: 11px; color: var(--muted); line-height: 1.4;">${escapeHtml(f.proc)}</div>
+      </div>
+    `).join("");
+  }
+  // Combos grid — one card per combo, blended swatch on the left,
+  // pair labels with their colors, name + description. Sorted by
+  // first component then second so related combos cluster.
+  const comboRoot = document.getElementById("combo-grid");
+  if (comboRoot) {
+    const colorById = Object.fromEntries(BASE_FLAVORS.map(f => [f.id, f.color]));
+    const sorted = (combosDoc.combos || []).slice().sort((a, b) => {
+      const aKey = (a.components || []).join("|");
+      const bKey = (b.components || []).join("|");
+      return aKey < bKey ? -1 : (aKey > bKey ? 1 : 0);
+    });
+    comboRoot.innerHTML = sorted.map(c => {
+      const a = (c.components || [])[0] || "?";
+      const b = (c.components || [])[1] || "?";
+      const ac = colorById[a] || "#888";
+      const bc = colorById[b] || "#888";
+      const blendCss = `linear-gradient(135deg, ${ac} 0%, ${bc} 100%)`;
+      return `
+        <div style="background: var(--panel-2); border: 1px solid var(--border); border-radius: 6px; padding: 12px; display: grid; grid-template-columns: 32px 1fr; gap: 10px; align-items: start;">
+          <div style="width: 32px; height: 32px; border-radius: 6px; background: ${blendCss}; box-shadow: 0 0 8px ${ac}55;"></div>
+          <div>
+            <div style="font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 2px;">${escapeHtml(c.name || c.id)}</div>
+            <div style="font-size: 10px; color: var(--muted); margin-bottom: 6px;">
+              <span style="color:${ac}">${escapeHtml(a)}</span> + <span style="color:${bc}">${escapeHtml(b)}</span>
+              · effect: <code style="font-size:10px;">${escapeHtml(c.effect_id || "")}</code>
+            </div>
+            <div style="font-size: 11px; color: var(--text); line-height: 1.4;">${escapeHtml(c.description || "")}</div>
+          </div>
+        </div>
+      `;
+    }).join("");
+  }
 }
 
 function rarityHexForStat(stat) {
