@@ -231,14 +231,19 @@ func _make_branch_card(branch_id: String, is_unlocked: bool, tier: int) -> Contr
 	# direct gateway sprite.
 	var icon_path: String = "res://assets/tiles/biome_icons/" + branch_id + ".png"
 	if ResourceLoader.exists(icon_path):
+		# Center the icon in the FULL card (the title sits over it
+		# with an outline, so true-center reads better than
+		# top-biased). 96px feels like a stronger watermark on a
+		# 168px card than the previous 80px.
+		var icon_size: int = 96
 		var icon := TextureRect.new()
 		icon.texture = load(icon_path)
-		icon.position = Vector2((_BRANCH_CARD_W - 80) / 2, 28)
-		icon.size = Vector2(80, 80)
+		icon.position = Vector2((_BRANCH_CARD_W - icon_size) / 2, (_BRANCH_CARD_H - icon_size) / 2)
+		icon.size = Vector2(icon_size, icon_size)
 		icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		icon.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-		icon.modulate = Color(1, 1, 1, 0.50 if is_unlocked else 0.25)
+		icon.modulate = Color(1, 1, 1, 0.85 if is_unlocked else 0.40)
 		icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		btn.add_child(icon)
 	# Name label at top.
