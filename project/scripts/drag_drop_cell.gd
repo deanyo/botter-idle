@@ -32,6 +32,14 @@ var is_empty: bool = false
 # them on every render anyway.
 var on_swap: Callable = Callable()
 
+func _ready() -> void:
+	# Disable focus so click-drag isn't intercepted by Godot's focus
+	# transition. Drag-and-drop in Godot 4 needs the control to be
+	# mouse-stopping but NOT focus-grabbing — focus changes consume
+	# the press event before drag detection kicks in.
+	focus_mode = Control.FOCUS_NONE
+	mouse_filter = Control.MOUSE_FILTER_STOP
+
 func _get_drag_data(_at_position: Vector2) -> Variant:
 	# Empty cells can't initiate drags.
 	if is_empty:

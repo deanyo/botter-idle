@@ -458,6 +458,7 @@ func _make_paperdoll_slot(slot_id: String, x: int, y: int) -> void:
 	slot_bg.color = Color(0, 0, 0, 0.55) if not is_placeholder else Color(0, 0, 0, 0.30)
 	slot_bg.position = Vector2(x, y)
 	slot_bg.size = Vector2(slot, slot)
+	slot_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(slot_bg)
 	var slot_border := ReferenceRect.new()
 	slot_border.position = Vector2(x, y)
@@ -467,6 +468,7 @@ func _make_paperdoll_slot(slot_id: String, x: int, y: int) -> void:
 		slot_border.border_color = Color(0.45, 0.20, 0.20, 0.7)
 	slot_border.border_width = 1.0
 	slot_border.editor_only = false
+	slot_border.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(slot_border)
 	# DragDropCell replaces the old Button — it handles both click
 	# (unequip) and drag (drop a different item onto this slot to
@@ -1036,16 +1038,12 @@ func _make_inv_cell(inv_index: int, inst: Dictionary, item: Dictionary) -> Contr
 		cell.add_child(x_lbl)
 		# Dim the underlying sprite so the X is the dominant read.
 		sprite.modulate.a = 0.45
-	var btn := Button.new()
-	btn.size = Vector2(INV_CELL_SIZE, INV_CELL_SIZE)
-	btn.flat = true
-	btn.tooltip_text = _build_item_tooltip(String(item.get("slot", "")), inst)
-	# Left-click equips, right-click toggles favorite. Godot's Button
-	# only emits `pressed` for left-click; subscribe to gui_input for
-	# the right-click path.
-	btn.pressed.connect(_equip.bind(inv_index))
-	btn.gui_input.connect(_on_inv_cell_input.bind(inv_index))
-	cell.add_child(btn)
+	# Click + drag handling lives on the DragDropCell itself — putting
+	# a Button child here would eat mouse events before the cell could
+	# detect a drag-start. Tooltip + click → equip via gui_input.
+	cell.tooltip_text = _build_item_tooltip(String(item.get("slot", "")), inst)
+	cell.mouse_filter = Control.MOUSE_FILTER_STOP
+	cell.gui_input.connect(_on_inv_cell_input.bind(inv_index))
 	# Favorite star overlay — top-right of the cell. Always present;
 	# alpha = 0 when not favorited so the layout stays stable.
 	var star := Label.new()
@@ -1067,7 +1065,12 @@ func _on_inv_cell_input(event: InputEvent, inv_index: int) -> void:
 	var mb: InputEventMouseButton = event
 	if not mb.pressed:
 		return
-	if mb.button_index == MOUSE_BUTTON_RIGHT:
+	# Left-click: auto-equip (legacy behavior preserved for one-handed
+	# play). Right-click: toggle favorite. Drag-and-drop is handled
+	# directly by DragDropCell._get_drag_data — no input plumbing here.
+	if mb.button_index == MOUSE_BUTTON_LEFT:
+		_equip(inv_index)
+	elif mb.button_index == MOUSE_BUTTON_RIGHT:
 		_toggle_favorite(inv_index)
 
 func _toggle_favorite(inv_index: int) -> void:
