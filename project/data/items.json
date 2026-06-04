@@ -364,7 +364,7 @@
       "flavor_tags": [
         "brutal"
       ],
-      "lore": "Crudely made, but it hits like one anyway.",
+      "lore": "Hacked from black iron. Bites first, asks nothing.",
       "drop_weights": [
         8,
         60,
@@ -2556,7 +2556,7 @@
         "stealth",
         "swiftness"
       ],
-      "lore": "Patterns dyed for grass shadow.",
+      "lore": "Dyed in grass-shadow. Nobody sees it coming.",
       "drop_weights": [
         15,
         65,
@@ -6501,7 +6501,7 @@
         "stealth",
         "swiftness"
       ],
-      "lore": "Patterned for forest floor.",
+      "lore": "Patterned to match the forest floor \u2014 and the boots that crossed it.",
       "drop_weights": [
         15,
         65,
@@ -9880,7 +9880,7 @@
       "evasion": 3,
       "item_tier": 1,
       "flavor_tags": [],
-      "lore": "",
+      "lore": "Stiff leather, palm-worn smooth.",
       "drop_weights": [
         50,
         30,
@@ -9922,7 +9922,7 @@
       "evasion": 3,
       "item_tier": 1,
       "flavor_tags": [],
-      "lore": "",
+      "lore": "Brass studs at the knuckle. Loud where it lands.",
       "drop_weights": [
         40,
         35,
@@ -9964,7 +9964,7 @@
       "evasion": 5,
       "item_tier": 2,
       "flavor_tags": [],
-      "lore": "",
+      "lore": "Iron rivets staked through cured hide.",
       "drop_weights": [
         10,
         40,
@@ -10008,7 +10008,7 @@
       "flavor_tags": [
         "fortified"
       ],
-      "lore": "",
+      "lore": "Articulated steel \u2014 every knuckle covers itself.",
       "drop_weights": [
         5,
         40,
@@ -10052,7 +10052,7 @@
       "flavor_tags": [
         "fortified"
       ],
-      "lore": "",
+      "lore": "Lighter than they should be. Stronger too.",
       "drop_weights": [
         0,
         15,
@@ -10097,7 +10097,7 @@
         "agility",
         "footwork"
       ],
-      "lore": "",
+      "lore": "Plates fitted to every knuckle.",
       "drop_weights": [
         0,
         10,
@@ -10141,7 +10141,7 @@
       "flavor_tags": [
         "arcane"
       ],
-      "lore": "",
+      "lore": "Each ring inlaid by hand, said to deflect spite.",
       "drop_weights": [
         0,
         0,
@@ -10186,7 +10186,7 @@
         "lordly",
         "slaying"
       ],
-      "lore": "",
+      "lore": "Fingerprints of an old champion still on the grip.",
       "drop_weights": [
         0,
         0,
@@ -10231,7 +10231,7 @@
         "thunderous",
         "swiftness"
       ],
-      "lore": "",
+      "lore": "The leather hisses faintly, as though it remembers.",
       "drop_weights": [
         0,
         0,
@@ -10273,7 +10273,7 @@
       "evasion": 6,
       "item_tier": 1,
       "flavor_tags": [],
-      "lore": "",
+      "lore": "Coarse weave. Keeps the rain out, mostly.",
       "drop_weights": [
         50,
         30,
@@ -10314,7 +10314,7 @@
       "evasion": 6,
       "item_tier": 1,
       "flavor_tags": [],
-      "lore": "",
+      "lore": "Worn in the rain. Still warm enough.",
       "drop_weights": [
         45,
         32,
@@ -10357,7 +10357,7 @@
       "flavor_tags": [
         "stealth"
       ],
-      "lore": "",
+      "lore": "Hood deep enough to hide a face.",
       "drop_weights": [
         10,
         40,
@@ -10400,7 +10400,7 @@
       "flavor_tags": [
         "stealth"
       ],
-      "lore": "",
+      "lore": "Hood deep enough to hide a face.",
       "drop_weights": [
         5,
         40,
@@ -10444,7 +10444,7 @@
         "stealth",
         "willpower"
       ],
-      "lore": "",
+      "lore": "Tailored for those who do not wish to be seen.",
       "drop_weights": [
         0,
         15,
@@ -10488,7 +10488,7 @@
         "stealth",
         "swiftness"
       ],
-      "lore": "",
+      "lore": "Tailored for those who do not wish to be seen.",
       "drop_weights": [
         0,
         10,
@@ -10533,7 +10533,7 @@
         "willpower",
         "regen"
       ],
-      "lore": "",
+      "lore": "Bears the high marshal's clasp.",
       "drop_weights": [
         0,
         0,
@@ -10577,7 +10577,7 @@
         "lordly",
         "fortified"
       ],
-      "lore": "",
+      "lore": "Silk so fine the wind passes through it twice.",
       "drop_weights": [
         0,
         0,
@@ -10621,7 +10621,7 @@
       "speed": 0.65,
       "item_tier": 1,
       "flavor_tags": [],
-      "lore": "",
+      "lore": "Plain hardwood haft, head bound with iron.",
       "drop_weights": [
         50,
         30,
@@ -10664,7 +10664,7 @@
       "speed": 0.65,
       "item_tier": 2,
       "flavor_tags": [],
-      "lore": "",
+      "lore": "Orcish iron, crude and heavy at the head.",
       "drop_weights": [
         10,
         40,
@@ -10707,7 +10707,7 @@
       "speed": 0.65,
       "item_tier": 3,
       "flavor_tags": [],
-      "lore": "",
+      "lore": "Steel forged tight \u2014 splits more than wood now.",
       "drop_weights": [
         0,
         15,
@@ -10750,7 +10750,7 @@
       "speed": 0.75,
       "item_tier": 1,
       "flavor_tags": [],
-      "lore": "",
+      "lore": "Plain head, plain shaft. Plain damage.",
       "drop_weights": [
         40,
         35,
@@ -10795,7 +10795,7 @@
       "flavor_tags": [
         "fortified"
       ],
-      "lore": "",
+      "lore": "Dwarven iron, balanced for both hands or one.",
       "drop_weights": [
         10,
         40,
@@ -10838,7 +10838,7 @@
       "speed": 0.75,
       "item_tier": 3,
       "flavor_tags": [],
-      "lore": "",
+      "lore": "Steel run thin enough to whistle on the swing.",
       "drop_weights": [
         0,
         15,
@@ -10883,7 +10883,7 @@
       "flavor_tags": [
         "arcane"
       ],
-      "lore": "",
+      "lore": "Runes dyed dark in the blade \u2014 no one remembers their meaning.",
       "drop_weights": [
         0,
         0,
@@ -10928,7 +10928,7 @@
       "flavor_tags": [
         "ponderous"
       ],
-      "lore": "",
+      "lore": "Two-handed iron. Pretends to nothing.",
       "drop_weights": [
         10,
         40,
@@ -10973,7 +10973,7 @@
       "flavor_tags": [
         "ponderous"
       ],
-      "lore": "",
+      "lore": "Steel head and ash haft, balanced cruelly.",
       "drop_weights": [
         0,
         15,
@@ -11019,7 +11019,7 @@
         "ponderous",
         "arcane"
       ],
-      "lore": "",
+      "lore": "Runes burn cold along the blade in winter air.",
       "drop_weights": [
         0,
         0,
@@ -11066,7 +11066,7 @@
         "brutal",
         "lordly"
       ],
-      "lore": "",
+      "lore": "Carried into three hundred fights. Still hungry.",
       "drop_weights": [
         0,
         0,
@@ -11111,7 +11111,7 @@
       "flavor_tags": [
         "slaying"
       ],
-      "lore": "",
+      "lore": "Wide bite. Wider crater.",
       "drop_weights": [
         10,
         40,
@@ -11156,7 +11156,7 @@
       "flavor_tags": [
         "slaying"
       ],
-      "lore": "",
+      "lore": "Steel forged thick \u2014 splits shields like kindling.",
       "drop_weights": [
         0,
         15,
@@ -11202,7 +11202,7 @@
         "slaying",
         "arcane"
       ],
-      "lore": "",
+      "lore": "Runed at the throat. The wind groans before it lands.",
       "drop_weights": [
         0,
         0,
@@ -11248,7 +11248,7 @@
         "ponderous",
         "brutal"
       ],
-      "lore": "",
+      "lore": "A cold weight. Nothing struck by it twice.",
       "drop_weights": [
         0,
         0,
@@ -11295,7 +11295,7 @@
         "brutal",
         "death"
       ],
-      "lore": "",
+      "lore": "Said to fall by its own will once a name is spoken.",
       "drop_weights": [
         0,
         0,
@@ -11338,7 +11338,7 @@
       "speed": 0.7,
       "item_tier": 1,
       "flavor_tags": [],
-      "lore": "",
+      "lore": "Knotted wood. Crude, certain.",
       "drop_weights": [
         60,
         25,
@@ -11381,7 +11381,7 @@
       "speed": 0.7,
       "item_tier": 1,
       "flavor_tags": [],
-      "lore": "",
+      "lore": "A weight that ends arguments.",
       "drop_weights": [
         50,
         30,
@@ -11424,7 +11424,7 @@
       "speed": 0.8,
       "item_tier": 1,
       "flavor_tags": [],
-      "lore": "",
+      "lore": "Iron flanged. Settles bone disputes.",
       "drop_weights": [
         50,
         30,
@@ -11467,7 +11467,7 @@
       "speed": 0.8,
       "item_tier": 2,
       "flavor_tags": [],
-      "lore": "",
+      "lore": "Steel head, heavy as a verdict.",
       "drop_weights": [
         10,
         40,
@@ -11512,7 +11512,7 @@
       "flavor_tags": [
         "fortified"
       ],
-      "lore": "",
+      "lore": "Dwarven steel, fluted to crack plate.",
       "drop_weights": [
         0,
         15,
@@ -11557,7 +11557,7 @@
       "flavor_tags": [
         "sound"
       ],
-      "lore": "",
+      "lore": "Spikes for the spaces armor forgets.",
       "drop_weights": [
         10,
         40,
@@ -11602,7 +11602,7 @@
       "flavor_tags": [
         "sound"
       ],
-      "lore": "",
+      "lore": "Steel and starlight; a heavier kind of light.",
       "drop_weights": [
         0,
         15,
@@ -11648,7 +11648,7 @@
         "sound",
         "arcane"
       ],
-      "lore": "",
+      "lore": "Each spike etched with a saint's name.",
       "drop_weights": [
         0,
         0,
@@ -11693,7 +11693,7 @@
       "flavor_tags": [
         "dark"
       ],
-      "lore": "",
+      "lore": "Heavier than it ought to be. Quieter, too.",
       "drop_weights": [
         0,
         15,
@@ -11739,7 +11739,7 @@
         "dark",
         "arcane"
       ],
-      "lore": "",
+      "lore": "Cools the air around it. Steady. Silent. Inevitable.",
       "drop_weights": [
         0,
         0,
@@ -11782,7 +11782,7 @@
       "speed": 0.8,
       "item_tier": 2,
       "flavor_tags": [],
-      "lore": "",
+      "lore": "A hinged answer to a shielded question.",
       "drop_weights": [
         10,
         40,
@@ -11827,7 +11827,7 @@
       "flavor_tags": [
         "ponderous"
       ],
-      "lore": "",
+      "lore": "Two heads, one purpose. Both of them final.",
       "drop_weights": [
         0,
         15,
@@ -11872,7 +11872,7 @@
       "flavor_tags": [
         "sound"
       ],
-      "lore": "",
+      "lore": "A hinged answer to a shielded question.",
       "drop_weights": [
         0,
         15,
@@ -11917,7 +11917,7 @@
       "flavor_tags": [
         "ponderous"
       ],
-      "lore": "",
+      "lore": "Squared head, square purpose.",
       "drop_weights": [
         10,
         40,
@@ -11962,7 +11962,7 @@
       "flavor_tags": [
         "ponderous"
       ],
-      "lore": "",
+      "lore": "Squared head, square purpose.",
       "drop_weights": [
         0,
         15,
@@ -12008,7 +12008,7 @@
         "ponderous",
         "brutal"
       ],
-      "lore": "",
+      "lore": "A whole thigh of oak. Listens for ribs.",
       "drop_weights": [
         0,
         15,
@@ -12051,7 +12051,7 @@
       "speed": 0.7,
       "item_tier": 1,
       "flavor_tags": [],
-      "lore": "",
+      "lore": "A pole, a point. The simplest mathematics.",
       "drop_weights": [
         50,
         30,
@@ -12094,7 +12094,7 @@
       "speed": 0.7,
       "item_tier": 2,
       "flavor_tags": [],
-      "lore": "",
+      "lore": "A pole, a point. The simplest mathematics.",
       "drop_weights": [
         10,
         40,
@@ -12137,7 +12137,7 @@
       "speed": 0.7,
       "item_tier": 3,
       "flavor_tags": [],
-      "lore": "",
+      "lore": "A pole, a point. The simplest mathematics.",
       "drop_weights": [
         0,
         15,
@@ -12180,7 +12180,7 @@
       "speed": 0.7,
       "item_tier": 3,
       "flavor_tags": [],
-      "lore": "",
+      "lore": "A pole, a point. The simplest mathematics.",
       "drop_weights": [
         0,
         15,
@@ -12225,7 +12225,7 @@
       "flavor_tags": [
         "ponderous"
       ],
-      "lore": "",
+      "lore": "Half axe, half spear, all decision.",
       "drop_weights": [
         10,
         40,
@@ -12270,7 +12270,7 @@
       "flavor_tags": [
         "ponderous"
       ],
-      "lore": "",
+      "lore": "Half axe, half spear, all decision.",
       "drop_weights": [
         0,
         15,
@@ -12316,7 +12316,7 @@
         "ponderous",
         "brutal"
       ],
-      "lore": "",
+      "lore": "A long blade on a longer haft. Reach kills.",
       "drop_weights": [
         0,
         15,
@@ -12363,7 +12363,7 @@
         "brutal",
         "arcane"
       ],
-      "lore": "",
+      "lore": "A long blade on a longer haft. Reach kills.",
       "drop_weights": [
         0,
         0,
@@ -12408,7 +12408,7 @@
       "flavor_tags": [
         "dark"
       ],
-      "lore": "",
+      "lore": "Curved for harvest. Any kind of harvest.",
       "drop_weights": [
         10,
         40,
@@ -12454,7 +12454,7 @@
         "dark",
         "death"
       ],
-      "lore": "",
+      "lore": "Tall, thin, patient. Gathers what was promised.",
       "drop_weights": [
         0,
         0,
@@ -12497,7 +12497,7 @@
       "speed": 1.0,
       "item_tier": 2,
       "flavor_tags": [],
-      "lore": "",
+      "lore": "Two-handed. Honest about it.",
       "drop_weights": [
         10,
         40,
@@ -12540,7 +12540,7 @@
       "speed": 1.0,
       "item_tier": 3,
       "flavor_tags": [],
-      "lore": "",
+      "lore": "Steel run long. Long enough to mind.",
       "drop_weights": [
         0,
         15,
@@ -12585,7 +12585,7 @@
       "flavor_tags": [
         "ponderous"
       ],
-      "lore": "",
+      "lore": "Heavy steel, balanced against itself.",
       "drop_weights": [
         0,
         15,
@@ -12631,7 +12631,7 @@
         "ponderous",
         "arcane"
       ],
-      "lore": "",
+      "lore": "A wall of edge, swung like weather.",
       "drop_weights": [
         0,
         0,
@@ -12676,7 +12676,7 @@
       "flavor_tags": [
         "holy"
       ],
-      "lore": "",
+      "lore": "A wall of edge, swung like weather.",
       "drop_weights": [
         0,
         0,
@@ -12721,7 +12721,7 @@
       "flavor_tags": [
         "dual"
       ],
-      "lore": "",
+      "lore": "Two blades fused at the spine. Twice the verdict.",
       "drop_weights": [
         0,
         0,
@@ -12767,7 +12767,7 @@
         "dual",
         "brutal"
       ],
-      "lore": "",
+      "lore": "Three edges nest like petals. Each finds its own.",
       "drop_weights": [
         0,
         0,
@@ -12810,7 +12810,7 @@
       "speed": 0.8,
       "item_tier": 1,
       "flavor_tags": [],
-      "lore": "",
+      "lore": "Two ends. Both wrong to stand near.",
       "drop_weights": [
         50,
         30,
@@ -12853,7 +12853,7 @@
       "speed": 0.8,
       "item_tier": 2,
       "flavor_tags": [],
-      "lore": "",
+      "lore": "Two ends. Both wrong to stand near.",
       "drop_weights": [
         10,
         40,
@@ -12898,7 +12898,7 @@
       "flavor_tags": [
         "dual"
       ],
-      "lore": "",
+      "lore": "Twin blades on a single shaft. Nothing slips between.",
       "drop_weights": [
         0,
         15,
@@ -12943,7 +12943,7 @@
       "flavor_tags": [
         "thunderous"
       ],
-      "lore": "",
+      "lore": "Forged with care, used with intent.",
       "drop_weights": [
         10,
         40,
@@ -12988,7 +12988,7 @@
       "flavor_tags": [
         "thunderous"
       ],
-      "lore": "",
+      "lore": "Made by a hand that knew what it was for.",
       "drop_weights": [
         0,
         15,
@@ -13035,7 +13035,7 @@
         "demon",
         "fire"
       ],
-      "lore": "",
+      "lore": "The leather is not leather. The cracking is not air.",
       "drop_weights": [
         0,
         0,
@@ -13078,7 +13078,7 @@
       "speed": 0.6,
       "item_tier": 3,
       "flavor_tags": [],
-      "lore": "",
+      "lore": "Made by a hand that knew what it was for.",
       "drop_weights": [
         0,
         15,
@@ -13121,7 +13121,7 @@
       "speed": 0.6,
       "item_tier": 2,
       "flavor_tags": [],
-      "lore": "",
+      "lore": "Forged with care, used with intent.",
       "drop_weights": [
         10,
         40,
@@ -13166,7 +13166,7 @@
       "flavor_tags": [
         "precision"
       ],
-      "lore": "",
+      "lore": "Made by a hand that knew what it was for.",
       "drop_weights": [
         0,
         15,
