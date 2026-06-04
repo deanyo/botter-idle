@@ -1123,7 +1123,12 @@ func _make_inv_cell(inv_index: int, inst: Dictionary, item: Dictionary) -> Contr
 	var cell := ItemCell.new()
 	cell.cell_size = INV_CELL_SIZE
 	cell.role = "inventory"
+	# inv_index is informational only — equip resolves the live position
+	# by instance_id at click time. Using the stale index would let a
+	# rapid-fire double-click target whatever item happened to fall into
+	# that slot after the first equip (the duplication bug).
 	cell.inv_index = inv_index
+	cell.set_meta("instance_id", String(inst.get("instance_id", "")))
 	cell.inst = inst
 	cell.item = item
 	cell.blocked = blocked
@@ -1140,7 +1145,16 @@ func _make_inv_cell(inv_index: int, inst: Dictionary, item: Dictionary) -> Contr
 #   shop/sell  → handled by shop screen, not outpost
 func _on_cell_left_click(cell: ItemCell) -> void:
 	if cell.role == "inventory":
-		_equip(cell.inv_index)
+		# Resolve the LIVE inventory index by instance_id at click time.
+		# Stale index from cell-construction is not safe — a rapid-fire
+		# second click on a queue_freed-but-not-yet-deleted cell would
+		# equip whichever item fell into that slot after the first
+		# equip (presents as "duplication" to the player).
+		var iid: String = String(cell.get_meta("instance_id", ""))
+		var live_idx: int = _live_inv_index(iid)
+		if live_idx < 0:
+			return  # already equipped / removed — second click no-ops
+		_equip(live_idx)
 	elif cell.role == "paperdoll":
 		_unequip(cell.slot_id)
 
@@ -1149,7 +1163,23 @@ func _on_cell_right_click(cell: ItemCell) -> void:
 	# right-click is reserved for a future "compare with currently
 	# equipped" tooltip.
 	if cell.role == "inventory":
-		_toggle_favorite(cell.inv_index)
+		var iid: String = String(cell.get_meta("instance_id", ""))
+		var live_idx: int = _live_inv_index(iid)
+		if live_idx >= 0:
+			_toggle_favorite(live_idx)
+
+# Resolve the current state.inventory index for the given instance_id.
+# Returns -1 if the item isn't in inventory anymore (already equipped,
+# salvaged, or removed). Same anti-stale-index pattern as the HUD's
+# flat_index_resolver.
+func _live_inv_index(instance_id: String) -> int:
+	if instance_id == "":
+		return -1
+	for i in state.inventory.size():
+		var inst: Variant = state.inventory[i]
+		if typeof(inst) == TYPE_DICTIONARY and String(inst.get("instance_id", "")) == instance_id:
+			return i
+	return -1
 
 # Hover-time check for whether a paperdoll slot can accept a drag
 # payload. Called from ItemCell._on_mouse_entered while a drag is
@@ -1196,7 +1226,13 @@ func _on_drag_ended(payload: Dictionary, dropped_on: Variant) -> void:
 	var src_role: String = String(payload.get("role", ""))
 	if dst.role == "paperdoll":
 		if src_role == "inventory":
-			_drag_equip_from_inv(int(payload.get("inv_index", -1)), dst.slot_id)
+			# Resolve LIVE inv index by instance_id rather than the
+			# stale cell-built index (anti-duplication).
+			var iid: String = String(payload.get("instance_id", ""))
+			var live_idx: int = _live_inv_index(iid)
+			if live_idx < 0:
+				return
+			_drag_equip_from_inv(live_idx, dst.slot_id)
 		elif src_role == "paperdoll":
 			_drag_swap_slots(String(payload.get("slot_id", "")), dst.slot_id)
 		SaveState.save_state(state)

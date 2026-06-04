@@ -174,11 +174,15 @@ func _slot_label(sid: String) -> String:
 # Build the payload describing what's being dragged from this cell.
 # DragManager.begin_drag eats this verbatim; outpost reads it on drop.
 func _drag_payload() -> Dictionary:
+	# instance_id is the stable identity — handlers resolve live array
+	# positions from this rather than trusting cell-built indices that
+	# may have drifted across mutations.
 	return {
 		"role": role,
 		"slot_id": slot_id,
 		"inv_index": inv_index,
 		"shop_index": shop_index,
+		"instance_id": String(inst.get("instance_id", "")) if (inst != null and typeof(inst) == TYPE_DICTIONARY) else "",
 		"item_slot": String(item.get("slot", "")) if not item.is_empty() else "",
 	}
 

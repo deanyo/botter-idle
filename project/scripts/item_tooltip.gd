@@ -34,6 +34,14 @@ var items_db: Dictionary = {}
 var _vbox: VBoxContainer = null
 var _bg: ColorRect = null
 var _border: ReferenceRect = null
+# Glow / aura layer painted via custom _draw. Pulses on rare+ items,
+# colored by primary flavor element (or rarity if no element).
+var _glow_color: Color = Color(0, 0, 0, 0)
+var _glow_alpha: float = 0.0
+var _glow_pulse_t: float = 0.0
+var _shimmer_t: float = 0.0
+var _is_legendary: bool = false
+var _is_meta_rarity: bool = false  # ancient / primal
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE  # tooltip never eats clicks
@@ -59,6 +67,40 @@ func _ready() -> void:
 	_vbox.add_theme_constant_override("separation", LINE_GAP)
 	_vbox.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(_vbox)
+	set_process(true)
+
+# Draw a glow halo behind the tooltip panel — multi-layer expanding
+# rectangle stack with falloff alpha. Color comes from item flavor
+# tags (vampiric/fire/cold/etc) or rarity. Pulse intensity tracks the
+# rarity tier so legendaries breathe noticeably; commons stay static.
+func _draw() -> void:
+	if _glow_color.a <= 0.001 or size.x <= 0.0 or size.y <= 0.0:
+		return
+	# Layered halo — 5 expanding rects, each alpha-decreasing as the
+	# expand grows. A pulse modulates the strongest layers in/out so
+	# legendaries breathe.
+	var layers: int = 6
+	var pulse: float = 1.0
+	if _is_legendary or _is_meta_rarity:
+		pulse = 0.65 + 0.35 * sin(_glow_pulse_t * 2.6)
+	for i in range(layers, 0, -1):
+		var off: float = float(i) * 5.0
+		var layer_alpha: float = _glow_alpha * pow(1.0 - float(i) / float(layers + 1), 1.8) * pulse
+		var c: Color = Color(_glow_color.r, _glow_color.g, _glow_color.b, layer_alpha)
+		draw_rect(Rect2(Vector2(-off, -off), size + Vector2(off * 2.0, off * 2.0)), c, false, 1.5)
+	# Corner sigil glints on rare+ — four small dots in the rarity color.
+	if _is_legendary or _is_meta_rarity:
+		var glint_alpha: float = 0.4 + 0.4 * sin(_shimmer_t * 4.0)
+		var dot_col: Color = Color(_glow_color.r, _glow_color.g, _glow_color.b, glint_alpha)
+		var corners := [Vector2(0, 0), Vector2(size.x, 0), Vector2(0, size.y), Vector2(size.x, size.y)]
+		for p in corners:
+			draw_circle(p, 2.5, dot_col)
+
+func _process(delta: float) -> void:
+	if _glow_alpha > 0.0:
+		_glow_pulse_t += delta
+		_shimmer_t += delta
+		queue_redraw()
 
 # Build the tooltip content from item + inst. Caller positions the
 # tooltip and adds it to the scene tree.
@@ -73,6 +115,47 @@ func render_for(item_def: Dictionary, instance: Variant, db: Dictionary) -> void
 	var rarity: String = String(item.get("rarity", "common"))
 	var rarity_col: Color = UITheme.rarity_color(rarity)
 	_border.border_color = rarity_col
+	# Resolve the glow color: meta-rarity (ancient/primal) wins, then
+	# weapon damage_type if it's elemental, then primary flavor tag,
+	# then fall back to rarity. Glow alpha scales with rarity tier so
+	# commons get a faint outline and legendaries get a real halo.
+	_is_legendary = (rarity == "legendary")
+	_is_meta_rarity = false
+	var meta_rarity: String = ""
+	if typeof(inst) == TYPE_DICTIONARY:
+		meta_rarity = String(inst.get("meta_rarity", ""))
+	if meta_rarity == "ancient":
+		_glow_color = Color(1.0, 0.78, 0.30)
+		_is_meta_rarity = true
+	elif meta_rarity == "primal":
+		_glow_color = Color(1.0, 0.18, 0.20)
+		_is_meta_rarity = true
+	else:
+		# Element override — a Lightning Sword / Fireball Tome glows the
+		# matching element instead of the rarity color. Looks more alive.
+		var dtype: String = String(item.get("damage_type", ""))
+		if dtype != "" and dtype != "physical":
+			_glow_color = UITheme.damage_type_color(dtype)
+		else:
+			# Flavor tag check for items that don't carry a damage_type
+			# (jewelry, body slots) — pick up vampiric / fire / etc tags.
+			var flavor: Color = UITheme.flavor_color_for(item.get("flavor_tags", []))
+			if flavor.a > 0.0:
+				_glow_color = Color(flavor.r, flavor.g, flavor.b, 1.0)
+			else:
+				_glow_color = rarity_col
+	# Glow alpha by rarity. Common = no glow, legendary + meta-rarity
+	# get the strongest. Pulse adds a 0.65→1.0 modulation per frame.
+	var rarity_alpha: float = {
+		"common": 0.0, "uncommon": 0.10, "rare": 0.20,
+		"epic": 0.32, "legendary": 0.45,
+	}.get(rarity, 0.0)
+	if _is_meta_rarity:
+		rarity_alpha = max(rarity_alpha, 0.55)
+	_glow_alpha = rarity_alpha
+	_glow_pulse_t = 0.0
+	_shimmer_t = 0.0
+	queue_redraw()
 	# Title — meta-rarity prefix folded in if present (Ancient/Primal).
 	var disp_name: String = String(item.get("name", item.get("id", "?")))
 	if typeof(inst) == TYPE_DICTIONARY:
@@ -83,6 +166,21 @@ func render_for(item_def: Dictionary, instance: Variant, db: Dictionary) -> void
 			disp_name = "Primal " + disp_name
 	var title := _make_label(disp_name, 16, rarity_col, true)
 	_vbox.add_child(title)
+	# Border thickness escalates with rarity so the panel reads as
+	# "weight" before the player starts parsing text.
+	_border.border_width = {
+		"common": 1.0, "uncommon": 1.5, "rare": 2.0,
+		"epic": 2.5, "legendary": 3.0,
+	}.get(rarity, 1.5)
+	if _is_meta_rarity:
+		_border.border_width = max(_border.border_width, 3.0)
+	# Pulse the title color on legendary / meta-rarity. Tween between
+	# rarity_col and glow_color over ~1.4s so the name "shines."
+	if _is_legendary or _is_meta_rarity:
+		var t := title.create_tween().set_loops()
+		t.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		t.tween_property(title, "modulate", Color(1.15, 1.10, 0.95), 0.7)
+		t.tween_property(title, "modulate", Color(1.0, 1.0, 1.0), 0.7)
 	# Subtitle: rarity · slot · weapon class (if weapon)
 	var slot: String = String(item.get("slot", ""))
 	var subtitle_parts: Array = [rarity.capitalize()]
