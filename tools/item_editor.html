@@ -305,6 +305,7 @@
 
 <script>
 const ATLAS_PATH    = "../project/data/tile_atlas.json";
+const AFFIXES_PATH  = "../project/data/affixes.json";
 // Item sprites are flattened into project/assets/tiles/items/ at
 // build time (sync_items.py drops them there with the basename
 // items.json's `tile` field expects). The editor preview reads from
@@ -426,6 +427,11 @@ const RARITY_COLORS = {common:'#cccccc',uncommon:'#6699ff',rare:'#ffdd44',epic:'
 
 let activeSlot = SLOTS[0];
 let manifest  = {};
+// Live affixes registry — fetched from project/data/affixes.json on
+// init. Used to populate the per-item affix-pool UI dynamically (no
+// more hardcoded v1 affix list). Each entry has id, name, family,
+// kind, stat, applies_to, tiers.
+let affixesRegistry = { affixes: [], byId: {} };
 let atlas     = {};
 let items     = [];   // working copy for the active slot
 let dirty     = new Set();
@@ -442,12 +448,62 @@ async function init() {
   setStatus('Loading…');
   try {
     atlas = await fetch(ATLAS_PATH).then(r=>r.json());
+    // Fetch affixes registry — drives the affix-pool UI for every item.
+    try {
+      const a = await fetch(AFFIXES_PATH).then(r => r.json());
+      affixesRegistry.affixes = a.affixes || [];
+      affixesRegistry.byId = {};
+      for (const af of affixesRegistry.affixes) affixesRegistry.byId[af.id] = af;
+    } catch (e) {
+      console.warn('Could not load affixes.json:', e);
+    }
     renderSlotTabs();
     await loadSlot(SLOTS[0]);
     setStatus('');
   } catch(e) {
     setStatus('Load error: '+e.message, true);
   }
+}
+
+// Filter affixes to those whose applies_to matches the given slot.
+// Family filter optional ('generic'/'class'/'archetype'). Returns
+// list sorted by family then name for stable display.
+function affixesForSlot(slot, family) {
+  const out = [];
+  for (const af of affixesRegistry.affixes) {
+    const applies = af.applies_to || [];
+    if (!applies.includes(slot) && !applies.includes('any')) continue;
+    if (family && (af.family || 'generic') !== family) continue;
+    out.push(af);
+  }
+  out.sort((a,b) => {
+    const fa = a.family || 'generic', fb = b.family || 'generic';
+    if (fa !== fb) return fa < fb ? -1 : 1;
+    return (a.name||a.id) < (b.name||b.id) ? -1 : 1;
+  });
+  return out;
+}
+
+// Color helper — mirrors UITheme.affix_stat_color() in GDScript so the
+// editor preview reads with the same per-stat tint as the in-game
+// tooltip.
+function affixColorFor(stat) {
+  const map = {
+    str:'#f24d4d', dex:'#80f266', int:'#73d9ff',
+    hp:'#5fc878', hp_regen:'#a85eff', armor:'#bababa', evasion:'#dadada',
+    crit_chance:'#ffd84d', haste_pct:'#ffaa3a', lifesteal_pct:'#d83a3a',
+    spell_cdr_pct:'#b18ddf', spell_proj_bonus:'#cdb0ff',
+    spell_proj_speed_pct:'#cdb0ff', spell_area_pct:'#a890ff',
+    spell_duration_pct:'#9bb6ff', spell_damage_pct:'#a3aaff',
+    str_spell_dmg_pct:'#e07b9a', dex_spell_dmg_pct:'#9be08a',
+    int_spell_dmg_pct:'#88c0e0',
+    physical_extra:'#ebebd8', fire_extra:'#ff8c2e', cold_extra:'#73d9ff',
+    lightning_extra:'#a6ccff', holy_extra:'#ffea8c',
+    poison_extra:'#80f266', dark_extra:'#8c4ddc',
+    fire_res:'#cc6e26', cold_res:'#5cadcc', lightning_res:'#85a6cc',
+    holy_res:'#ccba6e', poison_res:'#66c252', dark_res:'#704bb0',
+  };
+  return map[stat] || '#ffb84d';
 }
 
 function renderSlotTabs() {
@@ -678,20 +734,43 @@ function renderEditBody(it) {
       onclick="toggleEnchantPool('${it.id}','${tag}')" title="${info.desc}">${tag}</button>`;
   }).join('');
 
-  // Affix pool override — six 0..100 sliders, one per affix id. When
-  // any value > 0, this dict replaces the base_type/global pool. All
-  // zero = inherit base_type defaults (the common case; authors only
-  // touch this for items with bespoke affix preferences).
-  const AFFIX_IDS = ['strength','stamina','agility','regen','crit','haste'];
+  // Affix pool override — dynamic from affixes.json (item-overhaul v2).
+  // Filtered to only affixes whose applies_to covers this item's slot.
+  // Each row gets a slider + the affix's stat color chip + family tag.
+  // When any value > 0, this dict replaces the global pool. All zero =
+  // ignore (no rolls — the item drops with no affixes).
   const ap = it.affix_pool || {};
-  const affixPoolRows = AFFIX_IDS.map(aid => {
-    const w = ap[aid] || 0;
-    return `<div class="drop-weight-row">
-      <label style="min-width:70px">${aid}</label>
-      <input type="range" min="0" max="100" value="${w}" oninput="setAffixPool('${it.id}','${aid}',+this.value);this.nextElementSibling.textContent=this.value">
+  const slotAffixes = affixesForSlot(it.slot);
+  let lastFamily = '';
+  const affixPoolRows = slotAffixes.map(af => {
+    const w = ap[af.id] || 0;
+    const fam = af.family || 'generic';
+    let header = '';
+    if (fam !== lastFamily) {
+      const famLabel = fam.charAt(0).toUpperCase() + fam.slice(1);
+      header = `<div style="grid-column:1/-1;margin-top:8px;font-size:10px;text-transform:uppercase;color:var(--muted);letter-spacing:0.05em">${famLabel} affixes</div>`;
+      lastFamily = fam;
+    }
+    const swatch = `<span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:${affixColorFor(af.stat)};margin-right:6px;vertical-align:middle"></span>`;
+    return `${header}<div class="drop-weight-row">
+      <label style="min-width:130px">${swatch}${af.name||af.id}</label>
+      <input type="range" min="0" max="100" value="${w}" oninput="setAffixPool('${it.id}','${af.id}',+this.value);this.nextElementSibling.textContent=this.value">
       <span class="dw-val">${w}</span>
     </div>`;
   }).join('');
+
+  // Implicit affixes — chip picker driven by affixesRegistry. Click
+  // toggles. Filtered to affixes that apply to this slot AND aren't
+  // archetype-flag types unless this is a spell tome.
+  const implicits = it.implicit_affixes || [];
+  const implicitChips = slotAffixes
+    .filter(af => (af.family || 'generic') !== 'archetype' || it.slot === 'spell')
+    .map(af => {
+      const on = implicits.includes(af.id);
+      const swatch = `background:${affixColorFor(af.stat)}`;
+      const className = on ? 'tag-chip on' : 'tag-chip';
+      return `<span class="${className}" data-implicit="${af.id}" style="border-color:${affixColorFor(af.stat)}${on ? ';' + swatch : ''}" onclick="toggleImplicit('${it.id}','${af.id}')">${af.name||af.id}</span>`;
+    }).join('');
 
   body.innerHTML = `
     <div class="edit-sprite-row">
@@ -777,20 +856,23 @@ function renderEditBody(it) {
     </div>
 
     <div class="field-group">
-      <label>Implicit affixes (item-defining — never roll, always present; uniques only)</label>
-      <input type="text" placeholder="e.g. of_lifesteal, of_embers" value="${(it.implicit_affixes || []).join(', ')}" onchange="setField('${it.id}','implicit_affixes', this.value.split(',').map(s=>s.trim()).filter(Boolean))" style="width:100%;font-size:12px;">
+      <label>Implicit affixes (item-defining — always present, never roll; uniques only)</label>
+      <div class="tag-grid">${implicitChips}</div>
       <div style="font-size:10px;color:var(--muted);margin-top:4px">
-        Comma-separated affix ids — these get stamped on every drop and add to the rolled affixes.
+        Click an affix to toggle. These get stamped on every drop and add to the rolled affixes.
       </div>
     </div>
 
     <div class="field-group">
-      <label>Flavor tags (always-on for this item — uniques like vampires_tooth carry "vampiric" here)</label>
+      <label>Flavor tags (combat procs — vampiric=lifesteal, fire=DoT, holy=+vs undead, etc)</label>
       <div class="tag-grid">${tagGrid}</div>
+      <div style="font-size:10px;color:var(--muted);margin-top:4px">
+        Always-on for this item. Drives in-game procs (actor.gd::attempt_attack reads them) AND the tooltip glow color (vampiric→red glow, fire→orange, etc). Uniques like Vampire's Tooth carry "vampiric" here.
+      </div>
     </div>
 
     <div class="field-group">
-      <label>Enchant roll (per-drop chance to gain ONE additional flavor on top of static tags)</label>
+      <label>Enchant roll — per-drop chance to add ONE random flavor tag on top</label>
       <div style="display:flex;align-items:center;gap:8px">
         <input type="range" min="0" max="100" step="1"
           value="${Math.round((it.enchant_chance||0)*100)}"
@@ -799,10 +881,10 @@ function renderEditBody(it) {
         <span style="min-width:48px;text-align:right;font-variant-numeric:tabular-nums">${Math.round((it.enchant_chance||0)*100)}%</span>
       </div>
       <div style="font-size:10px;color:var(--muted);margin-top:4px">
-        0% = never rolls an extra enchant (default). 100% = always rolls one (use for uniques where the flavor IS the item).
+        At drop time, dungeon._create_item_instance rolls this chance and (on hit) picks one flavor from the pool below to STACK with the static tags above. 0% = no enchant rolls. 100% = always rolls one (use for uniques where the flavor IS the item).
       </div>
       <div style="margin-top:6px">
-        <label style="font-size:11px;color:var(--muted);text-transform:none;letter-spacing:0">Enchant pool — leave all unchecked to allow ANY flavor</label>
+        <label style="font-size:11px;color:var(--muted);text-transform:none;letter-spacing:0">Enchant pool — which flavors can roll. Leave all unchecked to allow any flavor.</label>
         <div class="tag-grid" style="margin-top:4px">${enchantPoolGrid}</div>
       </div>
     </div>
@@ -868,6 +950,20 @@ function toggleTag(id, tag) {
   if (i>=0) it.flavor_tags.splice(i,1); else it.flavor_tags.push(tag);
   dirty.add(id);
   updateCard(id);
+  renderEditBody(it);
+}
+
+// Implicit affix chip toggle. implicit_affixes is the always-present
+// affix list — stamped on every drop in addition to rolled affixes.
+// Used for uniques (e.g. Vampire's Tooth → ['of_lifesteal']).
+function toggleImplicit(id, affixId) {
+  const it = items.find(x=>x.id===id);
+  if (!it) return;
+  if (!it.implicit_affixes) it.implicit_affixes = [];
+  const i = it.implicit_affixes.indexOf(affixId);
+  if (i>=0) it.implicit_affixes.splice(i,1);
+  else it.implicit_affixes.push(affixId);
+  dirty.add(id);
   renderEditBody(it);
 }
 
