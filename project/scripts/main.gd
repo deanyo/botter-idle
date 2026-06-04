@@ -385,19 +385,18 @@ func _on_run_ended(victory: bool, report: Dictionary) -> void:
 	rpt.back_to_garage.connect(_show_outpost)
 
 func _swap(scene: Node) -> void:
-	# UI polish 2026-06-04 — wrap every scene transition in the loading
-	# curtain so the player sees a deliberate "Loading…" frame instead
-	# of the macOS spinner cursor + scene-swap flicker. Skip the curtain
-	# in headless / auto-grind mode since there's no human watching and
-	# the pause-game-during-show would slow the grind.
-	var use_curtain: bool = (
-		typeof(LoadingCurtain) != TYPE_NIL
-		and not auto_grind
-		and not OS.has_feature("dedicated_server")
-	)
-	if use_curtain:
-		LoadingCurtain.show_curtain()
-		await get_tree().process_frame
+	# UI polish 2026-06-04 — fire the loading curtain over every scene
+	# transition. Synchronous swap (no await) so signal callers can
+	# connect on the new scene immediately afterward. The curtain
+	# auto-hides after a short delay set in show_for_swap; on heavy
+	# scene loads (dungeon), this provides a brief deliberate
+	# "Loading…" frame instead of the macOS spinner.
+	#
+	# Auto-bypassed in auto_grind so headless runs don't pay the
+	# cosmetic delay.
+	var use_curtain: bool = not auto_grind and not OS.has_feature("dedicated_server")
+	if use_curtain and LoadingCurtain:
+		LoadingCurtain.show_for_swap()
 	if current_screen:
 		current_screen.queue_free()
 	current_screen = scene
@@ -415,12 +414,6 @@ func _swap(scene: Node) -> void:
 		elif scene.scene_file_path == "res://scenes/run_report.tscn":
 			ctx = "run_report"
 		pause_menu.set_context(ctx)
-	if use_curtain:
-		# Give the new scene one frame to lay out before lifting the
-		# curtain. Heavy scenes (dungeon) finish their _ready before
-		# this frame yields, so the player never sees a half-built UI.
-		await get_tree().process_frame
-		LoadingCurtain.hide_curtain()
 
 func _log(msg: String) -> void:
 	GrindLog.log_line("[grind] " + msg)

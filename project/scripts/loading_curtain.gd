@@ -41,8 +41,10 @@ func _ready() -> void:
 	layer = 200
 	process_mode = Node.PROCESS_MODE_ALWAYS  # keep ticking while paused
 	_root = Control.new()
-	_root.anchor_right = 1.0
-	_root.anchor_bottom = 1.0
+	# CanvasLayer parents don't drive Control anchors — set size
+	# explicitly each frame in _process. Anchors here would resolve
+	# against an undefined parent rect and end up at (0,0) → invisible.
+	_root.size = get_viewport().get_visible_rect().size
 	# Start with mouse filter IGNORE so the invisible curtain doesn't
 	# eat clicks meant for the screen below. Flipped to STOP only
 	# while the curtain is actively displayed (show_curtain).
@@ -52,8 +54,7 @@ func _ready() -> void:
 	add_child(_root)
 	_bg = ColorRect.new()
 	_bg.color = Color(0, 0, 0, 1.0)
-	_bg.anchor_right = 1.0
-	_bg.anchor_bottom = 1.0
+	_bg.size = _root.size
 	_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_root.add_child(_bg)
 	# Spinner — Node2D with custom _draw painting an arc + the radial
@@ -77,8 +78,14 @@ func _process(delta: float) -> void:
 		return
 	_spinner_t += delta * 4.0  # arc rotation speed
 	_pulse_t += delta * 1.5    # halo pulse speed
-	# Center spinner each frame (handles window resize while curtain up).
+	# Resize the root + bg to match the viewport every frame so the
+	# curtain always covers the full window even after a resize.
+	# CanvasLayer parents don't drive anchor layout for Controls.
 	var view: Vector2 = get_viewport().get_visible_rect().size
+	if is_instance_valid(_root):
+		_root.size = view
+	if is_instance_valid(_bg):
+		_bg.size = view
 	if is_instance_valid(_spinner):
 		_spinner.position = view * 0.5
 		_spinner.queue_redraw()
@@ -109,6 +116,27 @@ func _draw_spinner() -> void:
 	_spinner.draw_circle(Vector2.ZERO, 4.0, Color(1.0, 0.92, 0.55, dot_alpha))
 
 # Public API ──────────────────────────────────────────────────────────
+
+# Convenience: drop the curtain over a scene swap. Fades in fast,
+# holds, fades out — total ~700ms so the player sees a real loading
+# beat regardless of how fast the swap actually completes.
+# Replaces the manual show → await → hide pattern (which deadlocked
+# main._swap when the tree paused). Item-overhaul UI pass 2026-06-04.
+const SWAP_HOLD_SEC: float = 0.30
+func show_for_swap(label: String = "Loading…") -> void:
+	show_curtain(label)
+	# Hide after the hold via a one-shot timer. Timer is process_mode
+	# ALWAYS so it ticks even if some caller paused the tree.
+	var t := Timer.new()
+	t.one_shot = true
+	t.wait_time = FADE_IN_SEC + SWAP_HOLD_SEC
+	t.process_mode = Node.PROCESS_MODE_ALWAYS
+	add_child(t)
+	t.timeout.connect(func():
+		hide_curtain()
+		t.queue_free()
+	)
+	t.start()
 
 func show_curtain(label: String = "Loading…") -> void:
 	if _active:
