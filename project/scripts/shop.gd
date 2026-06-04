@@ -328,6 +328,17 @@ func _seconds_until_refresh() -> int:
 func _maybe_refresh_stock(force: bool = false) -> void:
 	var now: int = int(Time.get_unix_time_from_system())
 	var last: int = int(state["shop"].get("last_refresh_ts", 0))
+	# Schema check: if any stock item is missing the current schema
+	# stamp, the stock was rolled by an older version (no affixes,
+	# old stat shape, etc) — force-refresh so the player isn't stuck
+	# with blank items until SHOP_REFRESH_SECS expires.
+	var stale: bool = false
+	for s in state["shop"].get("stock", []):
+		if int(s.get("shop_schema_v", 0)) < _SHOP_SCHEMA_VERSION:
+			stale = true
+			break
+	if stale:
+		force = true
 	if not force and last > 0 and (now - last) < SHOP_REFRESH_SECS:
 		return
 	# Roll a fresh modifier and stock list. Modifier rolls before stock
@@ -368,12 +379,23 @@ func _roll_stock(rng: RandomNumberGenerator, mod_def: Dictionary) -> Array:
 		if pool.is_empty():
 			continue
 		var picked: String = String(pool[rng.randi() % pool.size()])
+		# Roll affixes the same way the dungeon does so shop items have
+		# real stat rolls. Without this, jewelry / spell tomes (which
+		# have zero baseline stats by design) show up totally blank.
+		var picked_def: Dictionary = items_db[picked]
+		var rolled: Array = AffixSystem.roll_affixes_for(picked_def, rng)
 		stock.append({
 			"base_id": picked,
 			"instance_id": "shop_%d_%d" % [int(Time.get_unix_time_from_system()), i],
-			"affixes": [],
+			"affixes": rolled,
+			"shop_schema_v": _SHOP_SCHEMA_VERSION,
 		})
 	return stock
+
+# Bump this when stock-rolling logic changes so existing saves
+# auto-refresh. Item-overhaul v2 (2026-06-04) — shop items now roll
+# real affixes instead of being blank.
+const _SHOP_SCHEMA_VERSION := 2
 
 # ---- Pricing ----
 
