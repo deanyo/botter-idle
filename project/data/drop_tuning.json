@@ -1,0 +1,33 @@
+{
+  "_doc": "Centralized drop-rate tuning. The Drop Tuning portal page edits this file via export/clipboard. Runtime reads it on dungeon start and at quality.gd / dungeon._create_item_instance call sites. Anything not present falls back to the hardcoded default in the consuming module so removing a key doesn't break the game.",
+  "_format_version": 1,
+
+  "meta_rarity": {
+    "primal_chance":  0.001,
+    "ancient_chance": 0.011,
+    "_doc": "Independent of rarity tier. Stacks with quality + base rarity. Primal = +50% baseline, Ancient = +20% baseline. Affixes unaffected (have their own tier band)."
+  },
+
+  "quality": {
+    "tail_weight_mult": 1.0,
+    "_doc": "Multiplier applied to the tail weights (Rusted/Worn/Battered + Mastercrafted/Masterwork) so a tuner can make extreme rolls more or less common without rewriting the table. 1.0 = ship default. 2.0 = double tail probability. 0.5 = halve."
+  },
+
+  "enchant": {
+    "global_chance_mult": 1.0,
+    "combo_chance":       0.03,
+    "_doc": "global_chance_mult scales every item's authored enchant_chance — set to 0 to disable enchant rolls globally; set to 2 to double everything. combo_chance is the secondary roll AFTER the first enchant lands; if it fires + the resulting pair has a registered combo, both flavors are replaced by the compound."
+  },
+
+  "tint_recolor": {
+    "any_tint_chance":   0.30,
+    "shimmer_chance":    0.005,
+    "inverted_chance":   0.001,
+    "prismatic_chance":  0.0005,
+    "_doc": "Per-instance hue/sat recolor rolls (drives item_recolor.gdshader). Adjust to make recolored drops more or less common."
+  },
+
+  "tier_drop_band": {
+    "_doc": "Reserved for future per-tier loot bias controls. Empty for now."
+  }
+}

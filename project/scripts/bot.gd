@@ -813,6 +813,16 @@ func combat_weapon_tags() -> Array:
 	var enchant: String = String(wpn.get("enchant", ""))
 	if enchant != "" and not (enchant in tags):
 		tags.append(enchant)
+	# Enchant combo — when an item rolled a compound, expand it into
+	# the two component flavors so the existing per-tag procs (burn,
+	# freeze, lifesteal, etc) all fire on combo hits. The combo's
+	# layered effect fires separately via EnchantCombos.apply_on_hit
+	# in actor.attempt_attack.
+	var combo_id: String = String(wpn.get("enchant_combo", ""))
+	if combo_id != "":
+		for ct in EnchantCombos.components_for(combo_id):
+			if not (String(ct) in tags):
+				tags.append(String(ct))
 	# Species innate tags — vampire/demonspawn carry their flavor
 	# even on a vanilla weapon. Read from the same SpeciesData lookup
 	# combat_defense_tags uses.
@@ -821,6 +831,15 @@ func combat_weapon_tags() -> Array:
 		if not (String(t) in tags):
 			tags.append(String(t))
 	return tags
+
+# Returns the equipped weapon's enchant_combo id (or "") so combat
+# can dispatch combo-specific layered effects. Item-overhaul follow-up
+# 2026-06-04.
+func combat_weapon_combo_id() -> String:
+	var wpn: Variant = equipped.get("weapon", null)
+	if wpn == null or typeof(wpn) != TYPE_DICTIONARY:
+		return ""
+	return String(wpn.get("enchant_combo", ""))
 
 # Defender-worn tags — armor / shield / amulet / rings provide the
 # defensive flavor tags (thorns, reflective, harm, rage). Helms also

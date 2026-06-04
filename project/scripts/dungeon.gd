@@ -1490,9 +1490,11 @@ func _create_item_instance(base_id: String) -> Dictionary:
 	# tint changes (gold for ancient, red for primal) plus a name
 	# prefix. This is the "screenshot brag" lever the user asked for.
 	var meta_roll: float = rng.randf()
-	if meta_roll < 0.001:
+	var primal_t: float = DropTuning.primal_chance()
+	var ancient_t: float = DropTuning.ancient_chance()
+	if meta_roll < primal_t:
 		inst["meta_rarity"] = "primal"
-	elif meta_roll < 0.011:  # 1% (after the 0.1% primal slice)
+	elif meta_roll < ancient_t:
 		inst["meta_rarity"] = "ancient"
 	# Per-instance recolor roll (~30% of drops get a hue shift; tiny
 	# fractions get shimmer/inverted/prismatic). Each hue carries a
@@ -1500,8 +1502,13 @@ func _create_item_instance(base_id: String) -> Dictionary:
 	# Even non-recolored items keep `tint` absent so the runtime
 	# can short-circuit the shader for free.
 	var tint_roll: float = rng.randf()
-	if tint_roll < 0.005:
-		# Prismatic — animated rainbow. ~0.5%.
+	# Tint thresholds layer in priority order (rarest first). Each one
+	# pulls from DropTuning so the portal can scale them.
+	var prismatic_t: float = DropTuning.tint_prismatic_chance()
+	var inverted_t: float = prismatic_t + DropTuning.tint_inverted_chance()
+	var shimmer_t: float = inverted_t + DropTuning.tint_shimmer_chance()
+	var any_t: float = DropTuning.tint_any_chance()  # absolute, not cumulative
+	if tint_roll < prismatic_t:
 		inst["tint"] = {
 			"hue": rng.randf_range(0.0, 360.0),
 			"sat": 1.0,
@@ -1509,35 +1516,23 @@ func _create_item_instance(base_id: String) -> Dictionary:
 			"lean": _hue_to_stat_lean(rng.randf_range(0.0, 360.0)),
 			"lean_pct": 15.0,
 		}
-	elif tint_roll < 0.015:
-		# Inverted — palette flipped. ~1%.
+	elif tint_roll < inverted_t:
 		var h: float = rng.randf_range(0.0, 360.0)
 		inst["tint"] = {
-			"hue": h,
-			"sat": rng.randf_range(0.6, 1.2),
-			"mode": "inverted",
-			"lean": _hue_to_stat_lean(h),
-			"lean_pct": 12.0,
+			"hue": h, "sat": rng.randf_range(0.6, 1.2), "mode": "inverted",
+			"lean": _hue_to_stat_lean(h), "lean_pct": 12.0,
 		}
-	elif tint_roll < 0.045:
-		# Shimmer — animated highlight sweep. ~3%.
+	elif tint_roll < shimmer_t:
 		var h2: float = rng.randf_range(0.0, 360.0)
 		inst["tint"] = {
-			"hue": h2,
-			"sat": rng.randf_range(0.9, 1.3),
-			"mode": "shimmer",
-			"lean": _hue_to_stat_lean(h2),
-			"lean_pct": 10.0,
+			"hue": h2, "sat": rng.randf_range(0.9, 1.3), "mode": "shimmer",
+			"lean": _hue_to_stat_lean(h2), "lean_pct": 10.0,
 		}
-	elif tint_roll < 0.30:
-		# Plain hue shift. ~25%.
+	elif tint_roll < any_t:
 		var h3: float = rng.randf_range(0.0, 360.0)
 		inst["tint"] = {
-			"hue": h3,
-			"sat": rng.randf_range(0.7, 1.2),
-			"mode": "normal",
-			"lean": _hue_to_stat_lean(h3),
-			"lean_pct": 7.0,
+			"hue": h3, "sat": rng.randf_range(0.7, 1.2), "mode": "normal",
+			"lean": _hue_to_stat_lean(h3), "lean_pct": 7.0,
 		}
 	# Per-instance "enchant" flavor roll. Static `flavor_tags` on the
 	# base item still apply (vampires_tooth is always vampiric); this
@@ -1548,7 +1543,7 @@ func _create_item_instance(base_id: String) -> Dictionary:
 	#   enchant_chance: 0..1 (default 0.05 if pool present, else 0)
 	#   enchant_pool:   array of flavor ids that can roll; falls back
 	#                   to UITheme's full FLAVOR_COLORS list when omitted
-	var enchant_chance: float = float(base.get("enchant_chance", 0.0))
+	var enchant_chance: float = float(base.get("enchant_chance", 0.0)) * DropTuning.enchant_chance_mult()
 	if enchant_chance > 0.0 and rng.randf() < enchant_chance:
 		var pool: Array = base.get("enchant_pool", [])
 		if pool.is_empty():
@@ -1561,7 +1556,32 @@ func _create_item_instance(base_id: String) -> Dictionary:
 			if not (p in existing):
 				candidates.append(p)
 		if not candidates.is_empty():
-			inst["enchant"] = String(candidates[rng.randi_range(0, candidates.size() - 1)])
+			var first_enchant: String = String(candidates[rng.randi_range(0, candidates.size() - 1)])
+			inst["enchant"] = first_enchant
+			# Enchant combo roll — secondary enchant pick that, if it
+			# matches a registered combo with the first, replaces both
+			# with the compound. Item-overhaul follow-up 2026-06-04.
+			var combo_chance: float = DropTuning.enchant_combo_chance()
+			if combo_chance > 0.0 and rng.randf() < combo_chance:
+				# Build a fresh candidate list excluding the already-rolled
+				# enchant + static tags so we don't pair fire+fire.
+				var combo_candidates: Array = []
+				for p2 in candidates:
+					if String(p2) != first_enchant:
+						combo_candidates.append(p2)
+				if not combo_candidates.is_empty():
+					var second_enchant: String = String(combo_candidates[rng.randi_range(0, combo_candidates.size() - 1)])
+					var combo: Dictionary = EnchantCombos.combo_for_pair(first_enchant, second_enchant)
+					if not combo.is_empty():
+						# Replace both individual enchants with the
+						# compound. Tooltip + combat read inst.enchant_combo.
+						inst["enchant_combo"] = String(combo.id)
+						inst.erase("enchant")  # the compound is the merged
+												# representation; component
+												# flavors still fire via
+												# combat_weapon_tags, which
+												# expands the combo into
+												# its pair at attack time.
 	if String(base.get("rarity", "")) == "legendary":
 		var slot: String = String(base.get("slot", "armor"))
 		var artefact: String = ArtefactPool.pick_for_slot(slot, rng)

@@ -51,6 +51,13 @@ static func combined_flavor_tags(item: Dictionary, inst: Variant) -> Array:
 		var enchant: String = String(inst.get("enchant", ""))
 		if enchant != "" and not (enchant in tags):
 			tags.append(enchant)
+		# Compound enchants — fold both component flavors into the tag
+		# list so tint / glow / paperdoll color pipelines blend them.
+		var combo_id: String = String(inst.get("enchant_combo", ""))
+		if combo_id != "":
+			for ct in EnchantCombos.components_for(combo_id):
+				if not (String(ct) in tags):
+					tags.append(String(ct))
 	return tags
 
 # Meta-rarity tint colors. Ancient = warm gold, Primal = saturated

@@ -269,6 +269,41 @@ func render_for(item_def: Dictionary, instance: Variant, db: Dictionary) -> void
 		_vbox.add_child(line)
 	if not affix_lines.is_empty():
 		_vbox.add_child(_make_separator())
+	# Enchant + enchant-combo display. inst.enchant is the single-flavor
+	# roll path (existing); inst.enchant_combo is the new compound that
+	# replaces both individual rolls when a registered pair lands.
+	if typeof(inst) == TYPE_DICTIONARY:
+		var combo_id_v: String = String(inst.get("enchant_combo", ""))
+		var single_enchant: String = String(inst.get("enchant", ""))
+		if combo_id_v != "":
+			var combo_def: Dictionary = EnchantCombos.get_combo(combo_id_v)
+			if not combo_def.is_empty():
+				var combo_color: Color = EnchantCombos.combo_color(combo_id_v)
+				var combo_name: String = String(combo_def.get("name", ""))
+				var combo_desc: String = String(combo_def.get("description", ""))
+				_vbox.add_child(_make_label("✦ " + combo_name, 12, combo_color, true))
+				if combo_desc != "":
+					var desc_lbl := _make_label(combo_desc, 10, COLOR_FLAVOR, false)
+					desc_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+					desc_lbl.custom_minimum_size = Vector2(TOOLTIP_W - PADDING * 2, 0)
+					_vbox.add_child(desc_lbl)
+				# Alt-extended detail for combos.
+				if Input.is_key_pressed(KEY_ALT):
+					var components: Array = combo_def.get("components", [])
+					var detail: String = "  %s · %s · effect: %s" % [
+						combo_id_v,
+						" + ".join(components),
+						String(combo_def.get("effect_id", "")),
+					]
+					_vbox.add_child(_make_label(detail, 9, Color(0.55, 0.55, 0.5), false))
+				_vbox.add_child(_make_separator())
+		elif single_enchant != "":
+			# Single-enchant line — color matches the flavor.
+			var ec: Color = UITheme.flavor_color_for([single_enchant])
+			if ec.a <= 0.0:
+				ec = COLOR_BODY
+			_vbox.add_child(_make_label("✦ Enchant: %s" % single_enchant.capitalize(), 12, ec, false))
+			_vbox.add_child(_make_separator())
 	# Flavor / lore.
 	var lore: String = String(item.get("lore", ""))
 	if lore != "":

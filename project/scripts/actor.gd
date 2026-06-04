@@ -509,16 +509,28 @@ func attempt_attack(other: Actor, delta: float) -> int:
 	if "str_stat" in self:
 		str_excess = int(self.str_stat) - 5
 	var str_mult: float = 1.0 + float(str_excess) * 0.02
-	if dmg_mult != 1.0 or str_mult != 1.0:
-		var combo: float = dmg_mult * str_mult
+	# Enchant-combo damage modifier — fires per damage type so combos
+	# like Brittle Storm (+50% lightning vs frozen) and Quench (+100%
+	# fire vs frozen) interact correctly with hybrid weapons.
+	var combo_id: String = combat_weapon_combo_id()
+	if combo_id != "":
 		for k in typed.keys():
-			typed[k] = int(round(float(typed[k]) * combo))
+			var combo_mult: float = EnchantCombos.apply_damage_mod(combo_id, self, other, int(typed[k]), String(k))
+			typed[k] = int(round(float(typed[k]) * combo_mult))
+	if dmg_mult != 1.0 or str_mult != 1.0:
+		var combo_mult_full: float = dmg_mult * str_mult
+		for k in typed.keys():
+			typed[k] = int(round(float(typed[k]) * combo_mult_full))
 	var crit: bool = false
-	var roll_chance: float = crit_chance + crit_bonus
+	# Combo crit bonus (e.g. Judgement +10%).
+	var roll_chance: float = crit_chance + crit_bonus + EnchantCombos.crit_bonus_for(combo_id)
 	if roll_chance > 0.0 and randf() * 100.0 < roll_chance:
 		for k in typed.keys():
 			typed[k] = int(round(float(typed[k]) * CRIT_MULTIPLIER))
 		crit = true
+	# Stash crit state on a meta flag so combo on-hit handlers (e.g.
+	# Judgement: crits chain to adjacent foe) can read it.
+	set_meta("just_crit", crit)
 	# Update precision streak — reset on crit, grow on miss-of-crit.
 	if "precision" in tags:
 		_precision_streak = 0 if crit else _precision_streak + 1
@@ -617,6 +629,13 @@ func attempt_attack(other: Actor, delta: float) -> int:
 	# for cleaves so the visual + logged feedback stay consistent.
 	if dealt > 0 and is_instance_valid(other):
 		_apply_base_type_proc(other, raw)
+	# Enchant-combo on-hit + on-kill handlers (Combustion, Plasma,
+	# Pyre, etc). Component flavor procs already fired above via the
+	# tag loop; combos add the layered effect on top.
+	if combo_id != "" and dealt > 0 and is_instance_valid(other):
+		EnchantCombos.apply_on_hit(combo_id, self, other, dealt, raw)
+	if combo_id != "" and killed:
+		EnchantCombos.apply_on_kill(combo_id, self, other)
 	# [combat] emitted only during instrumented runs (GrindLog enabled = grind/
 	# benchmark mode). Per-attack volume is fine in batches but spams playtests.
 	if GrindLog._enabled:
@@ -651,6 +670,11 @@ func combat_weapon_tags() -> Array:
 # "battle_axe", etc.) so per-base-type procs can fire in attempt_attack.
 # Default empty for enemies.
 func combat_weapon_base_type() -> String:
+	return ""
+
+# Override on Bot — returns the equipped weapon's enchant_combo id or
+# "" if none. Used by EnchantCombos.apply_* dispatch in attempt_attack.
+func combat_weapon_combo_id() -> String:
 	return ""
 
 # Per-base-type combat procs. Daggers bleed, axes cleave, maces stun,
