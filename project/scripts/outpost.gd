@@ -95,6 +95,14 @@ func _ready() -> void:
 	_reroll_branch_modifiers()
 	_build_layout()
 	_render()
+	# Listen for drag drops anywhere in the outpost. Single subscription
+	# at the outpost level keeps the per-cell wiring trivial.
+	if DragManager and not DragManager.drag_ended.is_connected(_on_drag_ended):
+		DragManager.drag_ended.connect(_on_drag_ended)
+
+func _exit_tree() -> void:
+	if DragManager and DragManager.drag_ended.is_connected(_on_drag_ended):
+		DragManager.drag_ended.disconnect(_on_drag_ended)
 
 # Per-Outpost-visit modifier roll. Every unlocked branch gets a fresh
 # 1-2 modifier set; the player picks based on what tonight's offer
@@ -446,74 +454,26 @@ func _build_paperdoll_pane(x: int, y: int, w: int, h: int) -> void:
 
 func _make_paperdoll_slot(slot_id: String, x: int, y: int) -> void:
 	var slot := PAPERDOLL_SLOT_SIZE
-	# Extra ring slots (ring2/ring3/ring4) come from species
-	# conversions; treat them as real, not placeholders.
-	var is_real_slot: bool = (slot_id in SLOTS) or slot_id.begins_with("ring")
+	var is_real_slot: bool = (slot_id in SLOTS) or slot_id.begins_with("ring") or slot_id.begins_with("spell")
 	var is_placeholder: bool = not is_real_slot
-	# Species body-shape lock — slot is greyed out + crossed for
-	# species that can't wear it. Layout stays stable so other species'
-	# saves render the same row positions.
-	var species_blocked: bool = not SpeciesData.can_wear(String(state.get("species", "")), slot_id)
-	var slot_bg := ColorRect.new()
-	slot_bg.color = Color(0, 0, 0, 0.55) if not is_placeholder else Color(0, 0, 0, 0.30)
-	slot_bg.position = Vector2(x, y)
-	slot_bg.size = Vector2(slot, slot)
-	slot_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(slot_bg)
-	var slot_border := ReferenceRect.new()
-	slot_border.position = Vector2(x, y)
-	slot_border.size = Vector2(slot, slot)
-	slot_border.border_color = Color(0.4, 0.35, 0.2, 0.8) if not is_placeholder else Color(0.25, 0.22, 0.14, 0.55)
-	if species_blocked:
-		slot_border.border_color = Color(0.45, 0.20, 0.20, 0.7)
-	slot_border.border_width = 1.0
-	slot_border.editor_only = false
-	slot_border.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(slot_border)
-	# DragDropCell replaces the old Button — it handles both click
-	# (unequip) and drag (drop a different item onto this slot to
-	# swap). gui_input fires for clicks, _drop_data for drops.
-	# Combat pivot 2026-06-04.
-	var btn := DragDropCell.new()
-	btn.source_kind = "slot"
-	btn.slot_id = slot_id
-	# Resolve item_slot from the equipped instance so drag-from-slot
-	# routing works (a spell1 cell holding a spell knows its item_slot
-	# is "spell"). Set later in _render_equipped once the inst is known.
-	btn.item_slot = ""
-	btn.is_empty = true
-	btn.on_swap = Callable(self, "_on_drag_swap")
-	btn.position = Vector2(x, y)
-	btn.size = Vector2(slot, slot)
-	btn.tooltip_text = _tooltip_for_slot(slot_id)
-	if species_blocked:
-		btn.tooltip_text += " — your species cannot wear this."
-		btn.mouse_filter = Control.MOUSE_FILTER_IGNORE  # disabled
-	else:
-		btn.gui_input.connect(_on_paperdoll_cell_input.bind(slot_id))
-	add_child(btn)
-	var sprite := TextureRect.new()
-	sprite.position = Vector2(x + 6, y + 6)
-	sprite.size = Vector2(slot - 12, slot - 12)
-	sprite.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	sprite.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	sprite.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(sprite)
-	# 🚫 overlay for species-blocked slots.
-	if species_blocked:
-		var x_lbl := Label.new()
-		x_lbl.text = "🚫"
-		x_lbl.position = Vector2(x, y)
-		x_lbl.size = Vector2(slot, slot)
-		x_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		x_lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-		x_lbl.add_theme_font_size_override("font_size", 24)
-		x_lbl.add_theme_color_override("font_color", Color(1.0, 0.4, 0.4, 0.85))
-		x_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		add_child(x_lbl)
+	# Species body-shape lock — gear-only; spell slots are universal.
+	var species_blocked: bool = false
+	if not slot_id.begins_with("spell"):
+		species_blocked = not SpeciesData.can_wear(String(state.get("species", "")), slot_id)
+	# ItemCell replaces the old Button + ColorRect/ReferenceRect tree.
+	# Drag-and-drop is handled by DragManager + ItemCell._gui_input;
+	# left-click unequips via on_left_click.
+	var cell := ItemCell.new()
+	cell.cell_size = slot
+	cell.role = "paperdoll"
+	cell.slot_id = slot_id
+	cell.blocked = species_blocked or is_placeholder
+	cell.position = Vector2(x, y)
+	cell.accepts_drop = Callable(self, "_paperdoll_accepts_drop").bind(slot_id)
+	cell.on_left_click = Callable(self, "_on_cell_left_click")
+	add_child(cell)
 	equipped_cells.append({
-		"slot": slot_id, "sprite": sprite, "btn": btn, "border": slot_border,
+		"slot": slot_id, "cell": cell,
 		"is_placeholder": is_placeholder, "species_blocked": species_blocked,
 	})
 
@@ -741,9 +701,22 @@ const _SLOT_FILTER_OPTIONS := [
 	{ "id": "helm",   "label": "Helm" },
 	{ "id": "shield", "label": "Shield" },
 	{ "id": "boots",  "label": "Boots" },
+	{ "id": "gloves", "label": "Gloves" },
+	{ "id": "cloak",  "label": "Cloak" },
 	{ "id": "ring",   "label": "Ring" },
 	{ "id": "amulet", "label": "Amulet" },
+	{ "id": "spell",  "label": "Spells" },
 ]
+# Sort orderings — applied to the filtered inventory before render.
+# "recency" preserves the original drop order (the inventory is
+# already drop-ordered).
+const _SORT_OPTIONS := [
+	{ "id": "recency", "label": "Recently dropped" },
+	{ "id": "rarity",  "label": "Rarity (high → low)" },
+	{ "id": "slot",    "label": "Slot grouping" },
+	{ "id": "name",    "label": "Name (A → Z)" },
+]
+var _sort_mode: String = "recency"
 # Rarity ordering — chips toggle by clicking through. Empty = no filter.
 const _RARITY_FILTER_OPTIONS := [
 	{ "id": "all",       "label": "All rarities", "min_rank": -1 },
@@ -776,6 +749,17 @@ func _build_filter_chips(parent: HBoxContainer) -> void:
 		_render_inventory()
 	)
 	parent.add_child(rarity_opt)
+	# Sort dropdown.
+	var sort_opt := OptionButton.new()
+	for i in _SORT_OPTIONS.size():
+		sort_opt.add_item(String(_SORT_OPTIONS[i].label))
+		sort_opt.set_item_metadata(i, String(_SORT_OPTIONS[i].id))
+	sort_opt.select(0)
+	sort_opt.item_selected.connect(func(idx):
+		_sort_mode = String(sort_opt.get_item_metadata(idx))
+		_render_inventory()
+	)
+	parent.add_child(sort_opt)
 	# Favorites toggle.
 	var fav_btn := CheckButton.new()
 	fav_btn.text = "★ Favorites only"
@@ -873,91 +857,17 @@ func _render_stats() -> void:
 	lbl_gold.text = "Gold %d" % int(state.gold)
 
 func _render_equipped() -> void:
-	for cell in equipped_cells:
-		var slot: String = cell.slot
-		var sprite: TextureRect = cell.sprite
-		var border: ReferenceRect = cell.border
-		var btn: Control = cell.btn  # DragDropCell or disabled control
+	for entry in equipped_cells:
+		var slot: String = String(entry.slot)
+		var cell: ItemCell = entry.cell
 		var inst: Variant = state.equipped.get(slot, null)
-		var tex: Texture2D = null
-		var item_name: String = ""
-		var rarity: String = ""
-		if inst != null and typeof(inst) == TYPE_DICTIONARY:
-			var base_id: String = String(inst.get("base_id", ""))
-			if items_db.has(base_id):
-				var item: Dictionary = items_db[base_id]
-				item_name = AffixSystem.format_item_name(String(item.name), inst.get("affixes", []), inst)
-				rarity = String(item.get("rarity", ""))
-				var tile_path: String = ITEM_TILE_DIR + String(item.get("tile", ""))
-				if ResourceLoader.exists(tile_path):
-					tex = load(tile_path)
-		# Empty slot? Show a faded greyscale icon hint so the player
-		# can read at a glance which slot is which. Pre-baked PNG —
-		# no shader cost. Skip when species-blocked (the 🚫 overlay
-		# already conveys "you can't wear this").
-		if tex == null:
-			var blocked: bool = cell.get("species_blocked", false)
-			if not blocked:
-				var icon_path: String = UITheme.empty_slot_icon_path(slot)
-				if icon_path != "":
-					sprite.texture = load(icon_path)
-				else:
-					sprite.texture = null
-				sprite.modulate = Color(1, 1, 1, 1)
-			else:
-				sprite.texture = null
+		cell.inst = inst
+		if inst != null and typeof(inst) == TYPE_DICTIONARY and items_db.has(String(inst.get("base_id", ""))):
+			cell.item = items_db[String(inst.get("base_id", ""))]
 		else:
-			sprite.texture = tex
-			# Tint the icon — flavor tag wins over rarity (vampiric=red,
-			# fire=orange) so equipped paperdoll slots match the bot rig.
-			var tint_flavor: Array = []
-			if inst != null and typeof(inst) == TYPE_DICTIONARY:
-				var bid: String = String(inst.get("base_id", ""))
-				if items_db.has(bid):
-					tint_flavor = UITheme.combined_flavor_tags(items_db[bid], inst)
-			var meta_r: String = ""
-			if inst != null and typeof(inst) == TYPE_DICTIONARY:
-				meta_r = String(inst.get("meta_rarity", ""))
-			sprite.modulate = UITheme.item_modulate(rarity, tint_flavor, meta_r)
-		var base_tooltip: String = SLOT_TOOLTIPS.get(slot, slot.capitalize())
-		btn.tooltip_text = base_tooltip if item_name.is_empty() else _build_item_tooltip(slot, inst)
-		# Wire DragDropCell drag-source state — empty cells reject
-		# drag-out; populated cells let the player drag the equipped
-		# item somewhere else (slot→slot swap or slot→inventory unequip).
-		if btn is DragDropCell:
-			var dd: DragDropCell = btn
-			dd.is_empty = (inst == null or typeof(inst) != TYPE_DICTIONARY)
-			if not dd.is_empty:
-				var bid_for_drag: String = String(inst.get("base_id", ""))
-				if items_db.has(bid_for_drag):
-					var it_for_drag: Dictionary = items_db[bid_for_drag]
-					dd.item_slot = String(it_for_drag.get("slot", ""))
-					dd.preview_path = ITEM_TILE_DIR + String(it_for_drag.get("tile", ""))
-				else:
-					dd.item_slot = ""
-					dd.preview_path = ""
-			else:
-				dd.item_slot = ""
-				dd.preview_path = ""
-		# Rarity-tint border when something's equipped (kept for empty
-		# state) plus an outline+halo on the item sprite itself.
-		if not cell.is_placeholder:
-			if rarity != "" and RARITY_COLORS.has(rarity):
-				border.border_color = RARITY_COLORS[rarity]
-			else:
-				border.border_color = Color(0.4, 0.35, 0.2, 0.8)
-		# Spell slots — override border with class color (red/green/blue
-		# for str/dex/int) so the player can scan "what spells am I
-		# running" at a glance. Empty spell cells stay neutral.
-		if slot.begins_with("spell") and inst != null and typeof(inst) == TYPE_DICTIONARY:
-			var bid: String = String(inst.get("base_id", ""))
-			if items_db.has(bid):
-				var pstat: String = UITheme.spell_primary_stat(items_db[bid])
-				border.border_color = UITheme.spell_class_color(pstat)
-		# Rarity decoration on equipped slots is just the border color set
-		# above — paperdoll slot art is small enough that a haloed cell
-		# would compete with the equipped sprite for attention.
-		sprite.material = null
+			cell.item = {}
+		cell.blocked = bool(entry.get("species_blocked", false))
+		cell.render()
 	# Rebuild the bot rig with the latest equipped set.
 	if paperdoll_holder != null:
 		if is_instance_valid(paperdoll_rig):
@@ -972,6 +882,9 @@ func _render_inventory() -> void:
 	for c in inventory_grid.get_children():
 		c.queue_free()
 	var inv: Array = state.inventory
+	# Build (index, inst, item) triples so the sort can rearrange display
+	# while preserving the original inv_index for click handlers.
+	var triples: Array = []
 	for i in inv.size():
 		var inst: Variant = inv[i]
 		if typeof(inst) != TYPE_DICTIONARY:
@@ -982,96 +895,119 @@ func _render_inventory() -> void:
 		var item: Dictionary = items_db[base_id]
 		if not _passes_filter(inst, item):
 			continue
-		inventory_grid.add_child(_make_inv_cell(i, inst, item))
+		triples.append({"i": i, "inst": inst, "item": item})
+	# Apply sort. "recency" leaves order alone (drop-order is the natural
+	# inventory order). Other modes use a stable comparator.
+	var rarity_rank: Dictionary = LootDrop.RARITY_RANK
+	match _sort_mode:
+		"rarity":
+			triples.sort_custom(func(a, b):
+				var ra: int = int(rarity_rank.get(String(a.item.get("rarity", "")), 0))
+				var rb: int = int(rarity_rank.get(String(b.item.get("rarity", "")), 0))
+				if ra != rb:
+					return ra > rb
+				return String(a.item.get("name", "")) < String(b.item.get("name", ""))
+			)
+		"slot":
+			triples.sort_custom(func(a, b):
+				var sa: String = String(a.item.get("slot", ""))
+				var sb: String = String(b.item.get("slot", ""))
+				if sa != sb:
+					return sa < sb
+				var ra: int = int(rarity_rank.get(String(a.item.get("rarity", "")), 0))
+				var rb: int = int(rarity_rank.get(String(b.item.get("rarity", "")), 0))
+				return ra > rb
+			)
+		"name":
+			triples.sort_custom(func(a, b):
+				return String(a.item.get("name", "")) < String(b.item.get("name", ""))
+			)
+	for t in triples:
+		inventory_grid.add_child(_make_inv_cell(int(t.i), t.inst, t.item))
 
 func _make_inv_cell(inv_index: int, inst: Dictionary, item: Dictionary) -> Control:
-	var rarity: String = String(item.get("rarity", "common"))
-	# Drag-source wrapper — clicking still equips via the button
-	# child; dragging onto a paperdoll cell triggers an explicit-slot
-	# swap. Combat pivot 2026-06-04.
-	var cell := DragDropCell.new()
-	cell.source_kind = "inventory"
-	cell.inv_index = inv_index
-	cell.item_slot = String(item.get("slot", ""))
-	cell.preview_path = ITEM_TILE_DIR + String(item.get("tile", ""))
-	cell.on_swap = Callable(self, "_on_drag_swap")
-	cell.custom_minimum_size = Vector2(INV_CELL_SIZE, INV_CELL_SIZE)
-	cell.size = Vector2(INV_CELL_SIZE, INV_CELL_SIZE)
-	var bg := ColorRect.new()
-	bg.color = Color(0, 0, 0, 0.45)
-	bg.size = Vector2(INV_CELL_SIZE, INV_CELL_SIZE)
-	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	cell.add_child(bg)
-	# Square border + inset halo (rarity-tinted ring around the edges).
-	var halo: float = {
-		"common": 0.0, "uncommon": 0.18, "rare": 0.30,
-		"epic": 0.42, "legendary": 0.55,
-	}.get(rarity, 0.0)
-	UITheme.add_item_cell_decor(cell, INV_CELL_SIZE, rarity, UITheme.combined_flavor_tags(item, inst), halo)
-	# Sprite on top of the decor.
-	var sprite := TextureRect.new()
-	sprite.size = Vector2(INV_CELL_SIZE, INV_CELL_SIZE)
-	sprite.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	sprite.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	sprite.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var tile_path: String = ITEM_TILE_DIR + String(item.get("tile", ""))
-	if ResourceLoader.exists(tile_path):
-		sprite.texture = load(tile_path)
-	sprite.modulate = UITheme.item_modulate(rarity, UITheme.combined_flavor_tags(item, inst), String(inst.get("meta_rarity", "")))
-	var op_recolor: ShaderMaterial = UITheme.recolor_material_for(inst)
-	if op_recolor != null:
-		sprite.material = op_recolor
-	cell.add_child(sprite)
-	# 🚫 overlay if the active species can't equip this slot.
 	var item_slot: String = String(item.get("slot", ""))
-	if item_slot != "" and not SpeciesData.can_wear(String(state.get("species", "")), item_slot):
-		var x_lbl := Label.new()
-		x_lbl.text = "🚫"
-		x_lbl.position = Vector2.ZERO
-		x_lbl.size = Vector2(INV_CELL_SIZE, INV_CELL_SIZE)
-		x_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		x_lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-		x_lbl.add_theme_font_size_override("font_size", 22)
-		x_lbl.add_theme_color_override("font_color", Color(1.0, 0.4, 0.4, 0.9))
-		x_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		cell.add_child(x_lbl)
-		# Dim the underlying sprite so the X is the dominant read.
-		sprite.modulate.a = 0.45
-	# Click + drag handling lives on the DragDropCell itself — putting
-	# a Button child here would eat mouse events before the cell could
-	# detect a drag-start. Tooltip + click → equip via gui_input.
-	cell.tooltip_text = _build_item_tooltip(String(item.get("slot", "")), inst)
-	cell.mouse_filter = Control.MOUSE_FILTER_STOP
-	cell.gui_input.connect(_on_inv_cell_input.bind(inv_index))
-	# Favorite star overlay — top-right of the cell. Always present;
-	# alpha = 0 when not favorited so the layout stays stable.
-	var star := Label.new()
-	star.text = "★"
-	star.add_theme_font_size_override("font_size", 18)
-	star.add_theme_color_override("font_color", Color(1.0, 0.85, 0.30, 1.0))
-	star.position = Vector2(INV_CELL_SIZE - 22, -4)
-	star.size = Vector2(22, 22)
-	star.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	star.modulate = Color(1, 1, 1, 1.0 if bool(inst.get("favorite", false)) else 0.0)
-	cell.add_child(star)
+	var blocked: bool = item_slot != "" and not SpeciesData.can_wear(String(state.get("species", "")), item_slot)
+	var cell := ItemCell.new()
+	cell.cell_size = INV_CELL_SIZE
+	cell.role = "inventory"
+	cell.inv_index = inv_index
+	cell.inst = inst
+	cell.item = item
+	cell.blocked = blocked
+	cell.on_left_click = Callable(self, "_on_cell_left_click")
+	cell.on_right_click = Callable(self, "_on_cell_right_click")
+	# Trigger render after the node enters the tree so child layout works.
+	cell.ready.connect(cell.render)
 	return cell
 
-# gui_input handler for inventory cells. Right-click toggles favorite;
-# left-click already routes through Button.pressed → _equip.
-func _on_inv_cell_input(event: InputEvent, inv_index: int) -> void:
-	if not (event is InputEventMouseButton):
+# Click handler installed on every ItemCell. Behavior depends on role:
+#   inventory  → auto-equip via _equip(inv_index)
+#   paperdoll  → unequip via _unequip(slot_id)
+#   shop/sell  → handled by shop screen, not outpost
+func _on_cell_left_click(cell: ItemCell) -> void:
+	if cell.role == "inventory":
+		_equip(cell.inv_index)
+	elif cell.role == "paperdoll":
+		_unequip(cell.slot_id)
+
+func _on_cell_right_click(cell: ItemCell) -> void:
+	# Right-click toggles favorite on inventory cells only. Paperdoll
+	# right-click is reserved for a future "compare with currently
+	# equipped" tooltip.
+	if cell.role == "inventory":
+		_toggle_favorite(cell.inv_index)
+
+# Hover-time check for whether a paperdoll slot can accept a drag
+# payload. Called from ItemCell._on_mouse_entered while a drag is
+# in flight. Returns true → cell glows green; false → glows red.
+func _paperdoll_accepts_drop(payload: Dictionary, slot_id: String) -> bool:
+	if payload == null or payload.is_empty():
+		return false
+	var src_role: String = String(payload.get("role", ""))
+	# A drag from paperdoll → paperdoll only valid between same-family
+	# slots (spell↔spell, ring↔ring, gear↔same gear).
+	if src_role == "paperdoll":
+		var src_slot: String = String(payload.get("slot_id", ""))
+		if src_slot == slot_id:
+			return false  # noop
+		if src_slot.begins_with("spell") and slot_id.begins_with("spell"):
+			return true
+		if src_slot.begins_with("ring") and slot_id.begins_with("ring"):
+			return true
+		# Allow weapon↔weapon or shield↔shield etc (degenerate but valid).
+		return src_slot == slot_id
+	# Inventory drag — check item slot family matches the target slot.
+	var item_slot: String = String(payload.get("item_slot", ""))
+	if item_slot == "":
+		return false
+	# Species block: can't wear in dst slot.
+	if not slot_id.begins_with("spell") and not SpeciesData.can_wear(String(state.get("species", "")), slot_id):
+		return false
+	if item_slot == "spell" and slot_id.begins_with("spell"):
+		return true
+	if item_slot == "ring" and slot_id.begins_with("ring"):
+		return true
+	return item_slot == slot_id
+
+# Centralised drop handler — fires on every drag release in the
+# outpost. Reads the DragManager payload + final hover target and
+# performs the swap. dropped_on is null when the drop missed every
+# valid target (drag returns to source).
+func _on_drag_ended(payload: Dictionary, dropped_on: Variant) -> void:
+	if dropped_on == null or not is_instance_valid(dropped_on):
 		return
-	var mb: InputEventMouseButton = event
-	if not mb.pressed:
+	if not (dropped_on is ItemCell):
 		return
-	# Left-click: auto-equip (legacy behavior preserved for one-handed
-	# play). Right-click: toggle favorite. Drag-and-drop is handled
-	# directly by DragDropCell._get_drag_data — no input plumbing here.
-	if mb.button_index == MOUSE_BUTTON_LEFT:
-		_equip(inv_index)
-	elif mb.button_index == MOUSE_BUTTON_RIGHT:
-		_toggle_favorite(inv_index)
+	var dst: ItemCell = dropped_on
+	var src_role: String = String(payload.get("role", ""))
+	if dst.role == "paperdoll":
+		if src_role == "inventory":
+			_drag_equip_from_inv(int(payload.get("inv_index", -1)), dst.slot_id)
+		elif src_role == "paperdoll":
+			_drag_swap_slots(String(payload.get("slot_id", "")), dst.slot_id)
+		SaveState.save_state(state)
+		_render()
 
 func _toggle_favorite(inv_index: int) -> void:
 	var inv: Array = state.inventory
@@ -1172,45 +1108,6 @@ func _unequip(slot: String) -> void:
 		return
 	state.inventory.append(current)
 	state.equipped[slot] = null
-	SaveState.save_state(state)
-	_render()
-
-# Click handler for paperdoll cells. Left-click → unequip (sends item
-# to inventory). Right-click can be used later for tooltips / context
-# menu; currently no-op. Combat pivot drag-drop UI 2026-06-04.
-func _on_paperdoll_cell_input(event: InputEvent, slot_id: String) -> void:
-	if not (event is InputEventMouseButton):
-		return
-	var mb: InputEventMouseButton = event
-	if not mb.pressed:
-		return
-	if mb.button_index == MOUSE_BUTTON_LEFT:
-		_unequip(slot_id)
-
-# Drag-drop handler — called from DragDropCell when an item is dropped
-# on a paperdoll slot. `payload` carries `src` (source DragDropCell
-# data) and `dst_slot` (destination slot id).
-#
-# Possible source kinds:
-#   "inventory" → equip the inventory item into dst_slot, displacing
-#                 whatever's there back to inventory.
-#   "slot"      → swap the equipped item from src.slot_id to dst_slot
-#                 (and vice versa if dst was occupied).
-#
-# All paths write back via SaveState.save_state and re-render.
-func _on_drag_swap(payload: Dictionary) -> void:
-	var src: Dictionary = payload.get("src", {})
-	var dst_slot: String = String(payload.get("dst_slot", ""))
-	if dst_slot == "":
-		return
-	# Block if species can't wear this slot's family.
-	if not SpeciesData.can_wear(String(state.get("species", "")), dst_slot):
-		return
-	var src_kind: String = String(src.get("source_kind", ""))
-	if src_kind == "inventory":
-		_drag_equip_from_inv(int(src.get("inv_index", -1)), dst_slot)
-	elif src_kind == "slot":
-		_drag_swap_slots(String(src.get("slot_id", "")), dst_slot)
 	SaveState.save_state(state)
 	_render()
 

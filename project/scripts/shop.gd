@@ -65,6 +65,36 @@ func _ready() -> void:
 	_build_layout()
 	# Tick the countdown label once a second while the screen is open.
 	set_process(true)
+	if DragManager and not DragManager.drag_ended.is_connected(_on_drag_ended):
+		DragManager.drag_ended.connect(_on_drag_ended)
+
+func _exit_tree() -> void:
+	if DragManager and DragManager.drag_ended.is_connected(_on_drag_ended):
+		DragManager.drag_ended.disconnect(_on_drag_ended)
+
+# Sell drop zone — a Control that accepts dragged inventory items and
+# sells them on drop. Wired up by _build_stock_pane in the lower-right
+# of the stock column.
+var _sell_zone: Control = null
+const SELL_ZONE_H := 96
+# Refresh-stock cost (gold). Diablo / PoE pattern: cheap enough to use
+# but expensive enough to feel like a decision. Scales with player level.
+const REFRESH_BASE_COST := 50
+func _refresh_stock_cost() -> int:
+	var lvl: int = int(state.get("level", 1))
+	return REFRESH_BASE_COST + lvl * 25
+
+# DragManager.drag_ended fires whenever a drag releases anywhere.
+# Inside the shop, the only valid drop target is the sell zone — drop
+# an inventory item there to sell it for gold.
+func _on_drag_ended(payload: Dictionary, dropped_on: Variant) -> void:
+	if dropped_on == null or not is_instance_valid(dropped_on):
+		return
+	if dropped_on != _sell_zone:
+		return
+	if String(payload.get("role", "")) != "inventory":
+		return
+	_sell_one(int(payload.get("inv_index", -1)))
 
 func _process(_delta: float) -> void:
 	if lbl_countdown != null and is_instance_valid(lbl_countdown):
@@ -156,9 +186,54 @@ func _build_inventory_pane(x: int, y: int, w: int, h: int) -> void:
 
 func _build_stock_pane(x: int, y: int, w: int, h: int) -> void:
 	_make_panel(x, y, w, h, "Today's Stock — click to buy")
+	# Refresh-stock button at the top-right of the stock pane.
+	var refresh_btn := Button.new()
+	var cost: int = _refresh_stock_cost()
+	refresh_btn.text = "Refresh stock (%dg)" % cost
+	refresh_btn.position = Vector2(x + w - 220, y + 6)
+	refresh_btn.size = Vector2(204, 24)
+	refresh_btn.add_theme_font_size_override("font_size", 11)
+	refresh_btn.tooltip_text = "Reroll today's stock immediately. Costs %dg." % cost
+	refresh_btn.pressed.connect(_on_refresh_pressed)
+	add_child(refresh_btn)
+	# Sell drop zone — bottom of the stock column.
+	var zone_y: int = y + h - SELL_ZONE_H - 8
+	_sell_zone = Control.new()
+	_sell_zone.position = Vector2(x + 16, zone_y)
+	_sell_zone.size = Vector2(w - 32, SELL_ZONE_H)
+	_sell_zone.mouse_filter = Control.MOUSE_FILTER_STOP
+	_sell_zone.tooltip_text = "Drop items here to sell"
+	add_child(_sell_zone)
+	var zone_bg := ColorRect.new()
+	zone_bg.color = Color(0.10, 0.06, 0.02, 0.6)
+	zone_bg.size = _sell_zone.size
+	zone_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_sell_zone.add_child(zone_bg)
+	var zone_border := ReferenceRect.new()
+	zone_border.size = _sell_zone.size
+	zone_border.border_color = COL_GOLD
+	zone_border.border_width = 2.0
+	zone_border.editor_only = false
+	zone_border.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_sell_zone.add_child(zone_border)
+	var zone_lbl := Label.new()
+	zone_lbl.text = "💰 SELL ZONE\nDrop items here for gold"
+	zone_lbl.size = _sell_zone.size
+	zone_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	zone_lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	zone_lbl.add_theme_font_size_override("font_size", 14)
+	zone_lbl.add_theme_color_override("font_color", COL_GOLD)
+	zone_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_sell_zone.add_child(zone_lbl)
+	# Highlight on drag hover — green if a valid inventory item is being
+	# dragged. Listen to the zone's mouse-enter while a drag is active.
+	_sell_zone.mouse_entered.connect(_on_sell_zone_enter)
+	_sell_zone.mouse_exited.connect(_on_sell_zone_exit)
+	# Stock scroll — sits ABOVE the sell zone.
+	var scroll_h: int = (zone_y - 8) - (y + 32)
 	var scroll := ScrollContainer.new()
 	scroll.position = Vector2(x + 16, y + 32)
-	scroll.size = Vector2(w - 32, h - 44)
+	scroll.size = Vector2(w - 32, scroll_h)
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	add_child(scroll)
 	stock_grid = GridContainer.new()
@@ -166,6 +241,36 @@ func _build_stock_pane(x: int, y: int, w: int, h: int) -> void:
 	stock_grid.add_theme_constant_override("h_separation", 8)
 	stock_grid.add_theme_constant_override("v_separation", 8)
 	scroll.add_child(stock_grid)
+
+func _on_sell_zone_enter() -> void:
+	if DragManager and DragManager.is_dragging():
+		var p: Dictionary = DragManager.get_payload()
+		var ok: bool = String(p.get("role", "")) == "inventory"
+		DragManager.set_hover_target(_sell_zone, ok)
+
+func _on_sell_zone_exit() -> void:
+	if DragManager:
+		DragManager.clear_hover_target(_sell_zone)
+
+# Refresh-stock button: rerolls today's stock immediately for a gold
+# fee. Scales with player level so endgame doesn't trivialize the cost.
+func _on_refresh_pressed() -> void:
+	var cost: int = _refresh_stock_cost()
+	if int(state.get("gold", 0)) < cost:
+		return
+	state["gold"] = int(state.get("gold", 0)) - cost
+	# Force-roll fresh stock + new modifier without resetting the
+	# countdown timer (player isn't paying for the timer reset).
+	var rng := RandomNumberGenerator.new()
+	rng.randomize()
+	if not shop_mods.is_empty():
+		state["shop"]["modifier_id"] = String(shop_mods[rng.randi() % shop_mods.size()].get("id", ""))
+	state["shop"]["stock"] = _roll_stock(rng, _modifier_def(String(state["shop"].get("modifier_id", ""))))
+	SaveState.save_state(state)
+	# Rebuild layout so the refresh button shows the new cost.
+	for c in get_children():
+		c.queue_free()
+	_build_layout()
 
 func _make_panel(x: int, y: int, w: int, h: int, header: String) -> void:
 	var bg := ColorRect.new()
@@ -342,35 +447,22 @@ func _render_stock() -> void:
 		stock_grid.add_child(_make_item_cell(i, inst, item, false))
 
 func _make_item_cell(idx: int, inst: Dictionary, item: Dictionary, is_inventory: bool) -> Control:
-	var rarity: String = String(item.get("rarity", "common"))
-	var cell := Control.new()
-	cell.custom_minimum_size = Vector2(INV_CELL_SIZE, INV_CELL_SIZE + 18)
-	var bg := ColorRect.new()
-	bg.color = Color(0, 0, 0, 0.45)
-	bg.size = Vector2(INV_CELL_SIZE, INV_CELL_SIZE)
-	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	cell.add_child(bg)
-	var halo: float = {
-		"common": 0.0, "uncommon": 0.18, "rare": 0.30,
-		"epic": 0.42, "legendary": 0.55,
-	}.get(rarity, 0.0)
-	UITheme.add_item_cell_decor(cell, INV_CELL_SIZE, rarity, UITheme.combined_flavor_tags(item, inst), halo)
-	# Sprite.
-	var sprite := TextureRect.new()
-	sprite.size = Vector2(INV_CELL_SIZE, INV_CELL_SIZE)
-	sprite.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	sprite.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	sprite.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var tile_path: String = ITEM_TILE_DIR + String(item.get("tile", ""))
-	if ResourceLoader.exists(tile_path):
-		sprite.texture = load(tile_path)
-	sprite.modulate = UITheme.item_modulate(rarity, UITheme.combined_flavor_tags(item, inst), String(inst.get("meta_rarity", "")))
-	var sh_recolor: ShaderMaterial = UITheme.recolor_material_for(inst)
-	if sh_recolor != null:
-		sprite.material = sh_recolor
-	cell.add_child(sprite)
-	# Price label below the sprite.
+	# Wrapper container so we can stack a price label below the cell.
+	var wrapper := Control.new()
+	wrapper.custom_minimum_size = Vector2(INV_CELL_SIZE, INV_CELL_SIZE + 18)
+	wrapper.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var cell := ItemCell.new()
+	cell.cell_size = INV_CELL_SIZE
+	cell.role = "inventory" if is_inventory else "shop"
+	cell.inv_index = idx if is_inventory else -1
+	cell.shop_index = idx if not is_inventory else -1
+	cell.inst = inst
+	cell.item = item
+	cell.on_left_click = Callable(self, "_on_cell_left_click")
+	cell.on_right_click = Callable(self, "_on_cell_right_click")
+	cell.ready.connect(cell.render)
+	wrapper.add_child(cell)
+	# Price label under the sprite.
 	var price: int = _sell_price(inst, item) if is_inventory else _buy_price(item)
 	var price_lbl := Label.new()
 	price_lbl.text = "%dg" % price
@@ -380,43 +472,21 @@ func _make_item_cell(idx: int, inst: Dictionary, item: Dictionary, is_inventory:
 	price_lbl.add_theme_color_override("font_color", COL_GOLD if is_inventory else COL_AMBER)
 	price_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	price_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	cell.add_child(price_lbl)
-	# Click handler.
-	var btn := Button.new()
-	btn.size = Vector2(INV_CELL_SIZE, INV_CELL_SIZE)
-	btn.flat = true
-	btn.tooltip_text = AffixSystem.format_item_tooltip(item, inst)
-	if is_inventory:
-		btn.tooltip_text += "\n\n[click] Sell for %dg\n[right-click] Toggle ★ favorite" % price
-		btn.pressed.connect(_sell_one.bind(idx))
-		btn.gui_input.connect(_on_inv_input.bind(idx))
-	else:
-		btn.tooltip_text += "\n\n[click] Buy for %dg" % price
-		btn.pressed.connect(_buy_one.bind(idx))
-	cell.add_child(btn)
-	# Favorite star (inventory only).
-	if is_inventory:
-		var star := Label.new()
-		star.text = "★"
-		star.add_theme_font_size_override("font_size", 18)
-		star.add_theme_color_override("font_color", Color(1.0, 0.85, 0.30, 1.0))
-		star.position = Vector2(INV_CELL_SIZE - 22, -4)
-		star.size = Vector2(22, 22)
-		star.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		star.modulate = Color(1, 1, 1, 1.0 if bool(inst.get("favorite", false)) else 0.0)
-		cell.add_child(star)
-	return cell
+	wrapper.add_child(price_lbl)
+	return wrapper
+
+# Click handlers — left = sell/buy, right = favorite (inventory only).
+func _on_cell_left_click(cell: ItemCell) -> void:
+	if cell.role == "inventory":
+		_sell_one(cell.inv_index)
+	elif cell.role == "shop":
+		_buy_one(cell.shop_index)
+
+func _on_cell_right_click(cell: ItemCell) -> void:
+	if cell.role == "inventory":
+		_toggle_favorite(cell.inv_index)
 
 # ---- Actions ----
-
-func _on_inv_input(event: InputEvent, inv_index: int) -> void:
-	if not (event is InputEventMouseButton):
-		return
-	var mb: InputEventMouseButton = event
-	if not mb.pressed:
-		return
-	if mb.button_index == MOUSE_BUTTON_RIGHT:
-		_toggle_favorite(inv_index)
 
 func _toggle_favorite(inv_index: int) -> void:
 	if inv_index < 0 or inv_index >= state.inventory.size():
