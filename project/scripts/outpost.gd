@@ -81,6 +81,7 @@ var lbl_def: Label
 var lbl_str: Label
 var lbl_dex: Label
 var lbl_int: Label
+var lbl_unspent: Label
 var lbl_crit: Label
 var lbl_haste: Label
 var lbl_regen: Label
@@ -497,9 +498,28 @@ func _build_stats_pane(x: int, y: int, w: int, h: int) -> void:
 	lbl_def = _add_stat(sx, sy, 18, COL_AMBER, "Armor —"); sy += 24
 	# Primary axis trio. Drawn in their class colors so the player sees
 	# Str/Dex/Int as the same red/green/blue scheme as the spell cells.
-	lbl_str = _add_stat(sx, sy, 16, UITheme.spell_class_color("str"), "Str —"); sy += 22
-	lbl_dex = _add_stat(sx, sy, 16, UITheme.spell_class_color("dex"), "Dex —"); sy += 22
-	lbl_int = _add_stat(sx, sy, 16, UITheme.spell_class_color("int"), "Int —"); sy += 22
+	# +/- buttons next to each row let the player allocate unspent
+	# stat points (3 per level granted on level-up).
+	lbl_str = _add_stat(sx, sy, 16, UITheme.spell_class_color("str"), "Str —")
+	_add_stat_alloc_buttons(sx + 130, sy, "str")
+	sy += 22
+	lbl_dex = _add_stat(sx, sy, 16, UITheme.spell_class_color("dex"), "Dex —")
+	_add_stat_alloc_buttons(sx + 130, sy, "dex")
+	sy += 22
+	lbl_int = _add_stat(sx, sy, 16, UITheme.spell_class_color("int"), "Int —")
+	_add_stat_alloc_buttons(sx + 130, sy, "int")
+	sy += 22
+	# Unspent counter + Reset button.
+	lbl_unspent = _add_stat(sx, sy, 13, COL_AMBER, "Unspent —")
+	var reset_btn := Button.new()
+	reset_btn.text = "Reset"
+	reset_btn.position = Vector2(sx + 140, sy - 2)
+	reset_btn.size = Vector2(60, 22)
+	reset_btn.add_theme_font_size_override("font_size", 11)
+	reset_btn.tooltip_text = "Refund all spent stat points"
+	reset_btn.pressed.connect(_on_stat_reset_pressed)
+	add_child(reset_btn)
+	sy += 24
 	lbl_crit = _add_stat(sx, sy, 16, COL_DIM, "Crit —"); sy += 22
 	lbl_haste = _add_stat(sx, sy, 16, COL_DIM, "Haste —"); sy += 22
 	lbl_regen = _add_stat(sx, sy, 16, COL_DIM, "Regen —"); sy += 22
@@ -651,6 +671,58 @@ func _on_end_run_pressed() -> void:
 	equipped_cells.clear()
 	_build_layout()
 	_render()
+
+# Stat-point allocation buttons — one row of [-] [+] beside each Str /
+# Dex / Int label. Click + to spend an unspent point on that stat;
+# - refunds a spent point. Bounded by the unspent counter and by the
+# alloc value (can't refund below 0). Item-overhaul v2 2026-06-04.
+func _add_stat_alloc_buttons(x: int, y: int, stat_key: String) -> void:
+	var minus_btn := Button.new()
+	minus_btn.text = "-"
+	minus_btn.position = Vector2(x, y - 2)
+	minus_btn.size = Vector2(22, 22)
+	minus_btn.add_theme_font_size_override("font_size", 12)
+	minus_btn.tooltip_text = "Refund 1 %s point" % stat_key.capitalize()
+	minus_btn.pressed.connect(_on_stat_minus_pressed.bind(stat_key))
+	add_child(minus_btn)
+	var plus_btn := Button.new()
+	plus_btn.text = "+"
+	plus_btn.position = Vector2(x + 26, y - 2)
+	plus_btn.size = Vector2(22, 22)
+	plus_btn.add_theme_font_size_override("font_size", 12)
+	plus_btn.tooltip_text = "Spend 1 unspent point on %s" % stat_key.capitalize()
+	plus_btn.pressed.connect(_on_stat_plus_pressed.bind(stat_key))
+	add_child(plus_btn)
+
+func _on_stat_plus_pressed(stat_key: String) -> void:
+	var unspent: int = int(state.get("stat_points_unspent", 0))
+	if unspent <= 0:
+		return
+	var key: String = "stat_alloc_" + stat_key
+	state[key] = int(state.get(key, 0)) + 1
+	state["stat_points_unspent"] = unspent - 1
+	SaveState.save_state(state)
+	_render_stats()
+
+func _on_stat_minus_pressed(stat_key: String) -> void:
+	var key: String = "stat_alloc_" + stat_key
+	var alloc: int = int(state.get(key, 0))
+	if alloc <= 0:
+		return
+	state[key] = alloc - 1
+	state["stat_points_unspent"] = int(state.get("stat_points_unspent", 0)) + 1
+	SaveState.save_state(state)
+	_render_stats()
+
+func _on_stat_reset_pressed() -> void:
+	# Refund all allocated points → unspent. Free respec.
+	var refund: int = int(state.get("stat_alloc_str", 0)) + int(state.get("stat_alloc_dex", 0)) + int(state.get("stat_alloc_int", 0))
+	state["stat_alloc_str"] = 0
+	state["stat_alloc_dex"] = 0
+	state["stat_alloc_int"] = 0
+	state["stat_points_unspent"] = int(state.get("stat_points_unspent", 0)) + refund
+	SaveState.save_state(state)
+	_render_stats()
 
 func _add_stat(x: int, y: int, size: int, color: Color, txt: String) -> Label:
 	var lbl := Label.new()
@@ -866,6 +938,10 @@ func _render_stats() -> void:
 	lbl_str.text = "Str %d" % str_v
 	lbl_dex.text = "Dex %d" % dex_v
 	lbl_int.text = "Int %d" % int_v
+	if lbl_unspent != null:
+		var unspent: int = int(state.get("stat_points_unspent", 0))
+		lbl_unspent.text = "Unspent: %d" % unspent
+		lbl_unspent.modulate = Color(1.0, 0.9, 0.4, 1.0) if unspent > 0 else Color(0.5, 0.5, 0.5, 1.0)
 	lbl_crit.text = "Crit %d%%" % int(round(crit_sum))
 	lbl_haste.text = "Haste %d%%" % int(round(haste_sum))
 	lbl_regen.text = "Regen %d/s" % int(round(regen_sum))

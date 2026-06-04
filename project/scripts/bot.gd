@@ -990,13 +990,17 @@ func gain_xp(amount: int) -> void:
 	while xp >= xp_to_next():
 		xp -= xp_to_next()
 		level += 1
-		max_hp += 8
-		atk += 1
-		if level % 3 == 0:
-			defense += 1
-		# Level-up grants the new HP slice (the +8 from this level), but does
-		# NOT fully heal — full-heal-on-level-up made HP feel infinite once
-		# enemies were dropping fast enough to chain level-ups in combat.
+		# Item-overhaul v2: level-up grants 3 stat points. atk / defense /
+		# max_hp are now derived in recompute_stats from the level + alloc
+		# scheme, so no inline bumps here. Stat-points + recompute call
+		# below handles all of it.
+		var unspent: int = int(upgrade_state.get("stat_points_unspent", 0)) + 3
+		upgrade_state["stat_points_unspent"] = unspent
+		recompute_stats()
+		# Level-up grants the new HP slice (the +8 from this level), but
+		# does NOT fully heal — full-heal-on-level-up made HP feel
+		# infinite once enemies were dropping fast enough to chain
+		# level-ups in combat.
 		hp = mini(max_hp, hp + 8)
 		_update_hp_bar()
 

@@ -2843,6 +2843,16 @@ func _end_run(victory: bool) -> void:
 	save.equipped = bot.equipped.duplicate(true) if is_instance_valid(bot) else save.get("equipped", {})
 	save.runs_completed = int(save.get("runs_completed", 0)) + 1
 	save.highest_floor = maxi(int(save.get("highest_floor", 0)), current_floor)
+	# Stat-point allocation: bot.upgrade_state IS the save dict during a
+	# run (set by reference in apply_gear), so any in-run mutations
+	# (level-up adds 3 unspent) are already reflected when we re-load
+	# save above. Pull them across explicitly so they survive even if
+	# something rebinds bot.upgrade_state.
+	if is_instance_valid(bot):
+		save.stat_points_unspent = int(bot.upgrade_state.get("stat_points_unspent", 0))
+		save.stat_alloc_str = int(bot.upgrade_state.get("stat_alloc_str", 0))
+		save.stat_alloc_dex = int(bot.upgrade_state.get("stat_alloc_dex", 0))
+		save.stat_alloc_int = int(bot.upgrade_state.get("stat_alloc_int", 0))
 	SaveState.save_state(save)
 	# Surface spell fire count to the grind log so headless smoke runs
 	# can verify the autocast layer is alive without an editor session.

@@ -185,6 +185,17 @@ static func _migrate(state: Dictionary) -> void:
 		state["run_branch"] = ""
 	if not state.has("run_floor_reached"):
 		state["run_floor_reached"] = 0
+	# Item-overhaul v2 (2026-06-04): stat-point allocation. Existing
+	# characters get retroactive points = 3 × (level - 1) the first time
+	# they load post-overhaul, fully unspent so the player can allocate.
+	if not state.has("stat_points_unspent"):
+		state["stat_points_unspent"] = 3 * max(0, int(state.get("level", 1)) - 1)
+	if not state.has("stat_alloc_str"):
+		state["stat_alloc_str"] = 0
+	if not state.has("stat_alloc_dex"):
+		state["stat_alloc_dex"] = 0
+	if not state.has("stat_alloc_int"):
+		state["stat_alloc_int"] = 0
 	# Starter spell grant for existing characters that were created
 	# pre-pivot — give them their species' starter on spell1 so the
 	# combat overhaul is immediately playable.
@@ -313,6 +324,14 @@ static func _default() -> Dictionary:
 		},
 		"runs_completed": 0,
 		"highest_floor": 0,
+		# Item-overhaul v2: stat-point allocation. Each level grants 3
+		# unspent points; player allocates via the outpost stats panel.
+		# Free respec from outpost (resets alloc, refills unspent to
+		# 3 × level).
+		"stat_points_unspent": 0,
+		"stat_alloc_str": 0,
+		"stat_alloc_dex": 0,
+		"stat_alloc_int": 0,
 		# "Run active" flag — set true on Deploy, false on Victory or
 		# explicit End-Run. Death keeps it true so the outpost button
 		# reads "Redeploy → Floor N" instead of "Deploy" until the
