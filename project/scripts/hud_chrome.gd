@@ -63,7 +63,7 @@ const COL_DIM := Color(0.7, 0.6, 0.4)
 const COL_HP := Color(0.55, 0.95, 0.5)
 const COL_HP_LOW := Color(1.0, 0.45, 0.45)
 const COL_GOLD := Color(1.0, 0.85, 0.3)
-const COL_PANEL := Color(0.0, 0.0, 0.0, 0.85)
+const COL_PANEL := Color(0.0, 0.0, 0.0, 1.0)  # pure-black, OLED — UI pass 2026-06-04
 const COL_PANEL_BORDER := Color(0.35, 0.3, 0.18, 0.65)
 
 # Stats panel labels
@@ -253,10 +253,14 @@ func _build_sidebar() -> void:
 	border.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(border)
 
-	# Minimap region (top of sidebar).
+	# Minimap region (top of sidebar). Per UI pass 2026-06-04: backplate
+	# is fully transparent so only map elements (floor / wall / bot dot
+	# / stairs marker) render. The sidebar's BG_PANEL behind it provides
+	# the dark backdrop on OLED panels — keeps the minimap from looking
+	# like it lives in a grey square.
 	var mm_origin := Vector2(x0 + (SIDEBAR_W - MINIMAP_SIZE) / 2, SIDEBAR_PAD)
 	var mm_bg := ColorRect.new()
-	mm_bg.color = Color(0, 0, 0, 1)
+	mm_bg.color = Color(0, 0, 0, 0)
 	mm_bg.position = mm_origin
 	mm_bg.size = Vector2(MINIMAP_SIZE, MINIMAP_SIZE)
 	mm_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE

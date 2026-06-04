@@ -13,7 +13,7 @@ signal character_confirmed(species_id: String)
 
 const COL_AMBER := Color(0.92, 0.78, 0.45)
 const COL_DIM := Color(0.6, 0.55, 0.4)
-const COL_PANEL := Color(0.0, 0.0, 0.0, 0.85)
+const COL_PANEL := Color(0.0, 0.0, 0.0, 1.0)  # pure-black, OLED — UI pass 2026-06-04
 const COL_PANEL_BORDER := Color(0.35, 0.3, 0.18, 0.65)
 const COL_BUFF := Color(0.55, 0.95, 0.55)
 const COL_NERF := Color(1.00, 0.50, 0.40)

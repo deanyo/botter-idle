@@ -28,7 +28,7 @@ const SHOP_STOCK_SIZE := 6
 const COL_AMBER := Color(0.92, 0.78, 0.45)
 const COL_DIM := Color(0.6, 0.55, 0.4)
 const COL_GOLD := Color(1.0, 0.85, 0.3)
-const COL_PANEL := Color(0.0, 0.0, 0.0, 0.85)
+const COL_PANEL := Color(0.0, 0.0, 0.0, 1.0)  # pure-black, OLED — UI pass 2026-06-04
 const COL_PANEL_BORDER := Color(0.35, 0.3, 0.18, 0.65)
 const RARITY_COLORS := {
 	"common":    Color(0.85, 0.85, 0.85),

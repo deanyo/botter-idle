@@ -16,9 +16,22 @@ const COL_HP_LOW := Color(1.0, 0.45, 0.45)
 # Panel / chrome. Pure black for OLED — saves backlight on Apple/AMOLED
 # panels and reads cleaner against rarity-colored borders. The faint
 # blue tint we used to use is gone (was 0.04/0.04/0.06).
-const COL_PANEL := Color(0.0, 0.0, 0.0, 0.85)
+# UI polish pass 2026-06-04 — bumped panel alpha 0.85 → 1.0 so the OS
+# desktop / video bg can't bleed through. BG_DEEP and BG_PANEL alias
+# COL_BG / COL_PANEL respectively for forward-compat of new code.
+const COL_PANEL := Color(0.0, 0.0, 0.0, 1.0)
 const COL_PANEL_BORDER := Color(0.35, 0.3, 0.18, 0.65)
 const COL_BG := Color(0.0, 0.0, 0.0, 1.0)
+const BG_DEEP := Color(0.0, 0.0, 0.0, 1.0)
+const BG_PANEL := Color(0.0, 0.0, 0.0, 1.0)
+const BG_OVERLAY := Color(0.0, 0.0, 0.0, 0.65)
+const BORDER_DIM := Color(0.18, 0.15, 0.10, 0.85)
+const BORDER_ACCENT := Color(0.35, 0.30, 0.18, 0.85)
+# Stat-comparison colors — character-creator already had these; lifted
+# here so any screen showing +/- deltas can pull from one place.
+const COL_BUFF := Color(0.55, 0.95, 0.5)
+const COL_NERF := Color(0.95, 0.55, 0.55)
+const COL_NEUTRAL := Color(0.7, 0.7, 0.7)
 
 # Rarity tints — used for item borders / tooltips / outline glow.
 const COL_RARITY := {

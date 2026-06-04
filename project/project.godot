@@ -19,6 +19,7 @@ config/icon="res://assets/tiles/player/bot.png"
 [autoload]
 
 DragManager="*res://scripts/drag_manager.gd"
+LoadingCurtain="*res://scripts/loading_curtain.gd"
 
 [display]
 

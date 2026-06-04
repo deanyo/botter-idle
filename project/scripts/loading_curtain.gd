@@ -1,0 +1,160 @@
+extends CanvasLayer
+
+# Themed loading curtain — drops over the entire viewport during scene
+# transitions so the player sees a deliberate "Loading…" frame instead
+# of the macOS spinner cursor + scene-swap flicker. UI polish pass
+# 2026-06-04.
+#
+# NOTE: no class_name — registered as autoload `LoadingCurtain` in
+# project.godot. Reference globally as `LoadingCurtain.show(...)`.
+#
+# Visual stack:
+#   - full-viewport pure-black ColorRect
+#   - faint amber radial gradient pulse (custom _draw)
+#   - centered arc spinner (custom _draw)
+#   - centered "Loading…" label below the spinner
+#
+# Behavior:
+#   - layer = 200 (above DragManager 100, above pause_menu 100)
+#   - Fade-in 200ms, fade-out 300ms via tween on self_modulate.a
+#   - During display: get_tree().paused = true so dungeon ticks freeze
+#   - During display: Input.set_default_cursor_shape(CURSOR_ARROW) so
+#     macOS spinner can't peek through
+
+signal shown
+signal hidden
+
+const FADE_IN_SEC: float = 0.20
+const FADE_OUT_SEC: float = 0.30
+
+var _root: Control = null
+var _bg: ColorRect = null
+var _spinner: Node2D = null
+var _label: Label = null
+var _tween: Tween = null
+var _spinner_t: float = 0.0
+var _pulse_t: float = 0.0
+var _was_paused: bool = false
+var _active: bool = false
+
+func _ready() -> void:
+	layer = 200
+	process_mode = Node.PROCESS_MODE_ALWAYS  # keep ticking while paused
+	_root = Control.new()
+	_root.anchor_right = 1.0
+	_root.anchor_bottom = 1.0
+	_root.mouse_filter = Control.MOUSE_FILTER_STOP  # eat clicks during loading
+	_root.modulate = Color(1, 1, 1, 0)  # start hidden
+	_root.visible = false
+	add_child(_root)
+	_bg = ColorRect.new()
+	_bg.color = Color(0, 0, 0, 1.0)
+	_bg.anchor_right = 1.0
+	_bg.anchor_bottom = 1.0
+	_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_root.add_child(_bg)
+	# Spinner — Node2D with custom _draw painting an arc + the radial
+	# pulse halo behind it. Centered each frame.
+	_spinner = Node2D.new()
+	_spinner.draw.connect(_draw_spinner)
+	_root.add_child(_spinner)
+	# Label below the spinner.
+	_label = Label.new()
+	_label.text = "Loading…"
+	_label.add_theme_font_size_override("font_size", 18)
+	_label.add_theme_color_override("font_color", Color(0.92, 0.78, 0.45))
+	_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_label.anchor_left = 0.5
+	_label.anchor_right = 0.5
+	_root.add_child(_label)
+
+func _process(delta: float) -> void:
+	if not _active:
+		return
+	_spinner_t += delta * 4.0  # arc rotation speed
+	_pulse_t += delta * 1.5    # halo pulse speed
+	# Center spinner each frame (handles window resize while curtain up).
+	var view: Vector2 = get_viewport().get_visible_rect().size
+	if is_instance_valid(_spinner):
+		_spinner.position = view * 0.5
+		_spinner.queue_redraw()
+	if is_instance_valid(_label):
+		_label.size = Vector2(280, 24)
+		_label.position = view * 0.5 + Vector2(-140, 56)
+
+func _draw_spinner() -> void:
+	# Radial halo pulse — soft amber glow under the spinner. Sine wave
+	# 0.40 → 0.70 alpha breathing.
+	var halo_alpha: float = 0.55 + sin(_pulse_t) * 0.15
+	var halo_color: Color = Color(0.92, 0.78, 0.45, halo_alpha * 0.35)
+	for i in range(6, 0, -1):
+		var r: float = 60.0 + float(i) * 8.0
+		var a: float = halo_color.a * pow(1.0 - float(i) / 7.0, 1.6)
+		_spinner.draw_circle(Vector2.ZERO, r, Color(halo_color.r, halo_color.g, halo_color.b, a))
+	# Arc spinner — sweeps a 0.6 rad arc that rotates around the center.
+	var arc_color: Color = Color(0.92, 0.78, 0.45, 0.95)
+	var arc_dim: Color = Color(0.92, 0.78, 0.45, 0.30)
+	# Background ring (full circle, dim).
+	_spinner.draw_arc(Vector2.ZERO, 32.0, 0.0, TAU, 64, arc_dim, 3.0, true)
+	# Foreground sweep.
+	var start: float = _spinner_t
+	var sweep: float = PI * 0.6
+	_spinner.draw_arc(Vector2.ZERO, 32.0, start, start + sweep, 24, arc_color, 3.5, true)
+	# Inner dot pulses.
+	var dot_alpha: float = 0.6 + sin(_pulse_t * 2.0) * 0.3
+	_spinner.draw_circle(Vector2.ZERO, 4.0, Color(1.0, 0.92, 0.55, dot_alpha))
+
+# Public API ──────────────────────────────────────────────────────────
+
+func show_curtain(label: String = "Loading…") -> void:
+	if _active:
+		# Already up — just update label.
+		if is_instance_valid(_label):
+			_label.text = label
+		return
+	_active = true
+	if is_instance_valid(_label):
+		_label.text = label
+	if is_instance_valid(_root):
+		_root.visible = true
+	# Pause game tick + force arrow cursor so macOS spinner doesn't
+	# peek through during heavy scene swap work.
+	_was_paused = get_tree().paused
+	get_tree().paused = true
+	Input.set_default_cursor_shape(Input.CURSOR_ARROW)
+	# Fade in.
+	if _tween != null and _tween.is_valid():
+		_tween.kill()
+	_tween = create_tween()
+	_tween.tween_property(_root, "modulate:a", 1.0, FADE_IN_SEC)
+	shown.emit()
+
+func hide_curtain() -> void:
+	if not _active:
+		return
+	_active = false
+	# Fade out → restore pause state → hide root.
+	if _tween != null and _tween.is_valid():
+		_tween.kill()
+	_tween = create_tween()
+	_tween.tween_property(_root, "modulate:a", 0.0, FADE_OUT_SEC)
+	_tween.tween_callback(func():
+		if is_instance_valid(_root):
+			_root.visible = false
+		get_tree().paused = _was_paused
+		hidden.emit()
+	)
+
+# Convenience wrapper — show curtain, await one frame, run callable,
+# await one frame for the new scene to settle, hide curtain. Used by
+# main._swap to keep transition bookkeeping in one place.
+func wrap(callable: Callable, label: String = "Loading…") -> void:
+	show_curtain(label)
+	await get_tree().process_frame
+	callable.call()
+	await get_tree().process_frame
+	hide_curtain()
+
+func is_active() -> bool:
+	return _active
