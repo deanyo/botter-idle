@@ -804,6 +804,114 @@ func _ensure_hud() -> void:
 	add_child(chrome)
 	# HUD inventory cells call back here to request an equip swap.
 	chrome.equip_request_target = self
+	# Drag-drop signals from the HUD — let the player rearrange gear /
+	# spells mid-run by dragging from inventory onto a paperdoll slot.
+	chrome.hud_drag_drop.connect(_on_hud_drag_drop)
+	chrome.hud_unequip_requested.connect(_on_hud_unequip_requested)
+
+# DragManager fired drag_ended; HUD bubbled the payload + dst_slot up.
+# Equip the dragged inventory item into dst_slot, displacing whatever
+# was there back to inventory. Mid-run swaps update bot.equipped
+# directly so the autocast tick sees the new spell on the next frame.
+func _on_hud_drag_drop(payload: Dictionary, dst_slot: String) -> void:
+	if not is_instance_valid(bot):
+		return
+	var src_role: String = String(payload.get("role", ""))
+	if src_role == "inventory":
+		_hud_drag_equip_from_inv(int(payload.get("inv_index", -1)), dst_slot)
+	elif src_role == "paperdoll":
+		_hud_drag_swap_slots(String(payload.get("slot_id", "")), dst_slot)
+	# Refresh the HUD with the new equipped state.
+	if chrome:
+		chrome.update_equipped(bot.equipped, items_db, bot.species_id)
+		_push_inventory_to_hud()
+	_last_equipped_hash = 0
+	bot.recompute_stats()
+	bot._refresh_gear_overlays()
+
+# Mid-run unequip — HUD sent the slot, we move the item back to the
+# active loot segment so it shows up in the bag. Same shape as the
+# right-click unequip path that already exists.
+func _on_hud_unequip_requested(slot_id: String) -> void:
+	if not is_instance_valid(bot):
+		return
+	var current: Variant = bot.equipped.get(slot_id, null)
+	if current == null or typeof(current) != TYPE_DICTIONARY:
+		return
+	bot.equipped[slot_id] = null
+	# Append to current floor segment so the bag picks it up.
+	if _current_floor_segment_index >= 0 and _current_floor_segment_index < _loot_segments.size():
+		_loot_segments[_current_floor_segment_index]["items"].append(current)
+		_hud_inv_cache.append(current)
+	if chrome:
+		chrome.update_equipped(bot.equipped, items_db, bot.species_id)
+		_push_inventory_to_hud()
+	_last_equipped_hash = 0
+	bot.recompute_stats()
+	bot._refresh_gear_overlays()
+
+func _hud_drag_equip_from_inv(inv_index: int, dst_slot: String) -> void:
+	if inv_index < 0 or inv_index >= _hud_inv_cache.size():
+		return
+	var inst: Variant = _hud_inv_cache[inv_index]
+	if typeof(inst) != TYPE_DICTIONARY:
+		return
+	var base_id: String = String(inst.get("base_id", ""))
+	if not items_db.has(base_id):
+		return
+	var item: Dictionary = items_db[base_id]
+	# 2H↔shield exclusion mirror.
+	if dst_slot == "weapon" and Bot.is_two_handed_base_type(String(item.get("base_type", ""))):
+		var current_shield: Variant = bot.equipped.get("shield", null)
+		if current_shield != null and typeof(current_shield) == TYPE_DICTIONARY:
+			_hud_inv_cache.append(current_shield)
+			_loot_segments[_current_floor_segment_index]["items"].append(current_shield)
+			bot.equipped["shield"] = null
+	elif dst_slot == "shield":
+		var cw: Variant = bot.equipped.get("weapon", null)
+		if cw != null and typeof(cw) == TYPE_DICTIONARY:
+			var w_id: String = String(cw.get("base_id", ""))
+			if w_id != "" and items_db.has(w_id):
+				if Bot.is_two_handed_base_type(String(items_db[w_id].get("base_type", ""))):
+					_hud_inv_cache.append(cw)
+					_loot_segments[_current_floor_segment_index]["items"].append(cw)
+					bot.equipped["weapon"] = null
+	var prev: Variant = bot.equipped.get(dst_slot, null)
+	# Remove the source from the inv cache + the segment that holds it.
+	_remove_from_inv_cache(inv_index)
+	if prev != null and typeof(prev) == TYPE_DICTIONARY:
+		_hud_inv_cache.append(prev)
+		_loot_segments[_current_floor_segment_index]["items"].append(prev)
+	bot.equipped[dst_slot] = inst
+
+func _hud_drag_swap_slots(src_slot: String, dst_slot: String) -> void:
+	if src_slot == "" or src_slot == dst_slot:
+		return
+	var a: Variant = bot.equipped.get(src_slot, null)
+	if a == null or typeof(a) != TYPE_DICTIONARY:
+		return
+	var b: Variant = bot.equipped.get(dst_slot, null)
+	bot.equipped[dst_slot] = a
+	bot.equipped[src_slot] = b if (b != null and typeof(b) == TYPE_DICTIONARY) else null
+
+# Remove the inv-cache index from both the flat cache and the segment
+# it belongs to. Segments store (segment_index, item_index)-shaped
+# items, but we operate on the flat cache index — find which segment
+# owns it by walking until the offset is consumed.
+func _remove_from_inv_cache(flat_index: int) -> void:
+	if flat_index < 0 or flat_index >= _hud_inv_cache.size():
+		return
+	_hud_inv_cache.remove_at(flat_index)
+	# Walk segments to find the corresponding offset.
+	var offset: int = 0
+	for seg in _loot_segments:
+		var items: Array = seg.get("items", [])
+		if flat_index < offset + items.size():
+			var local: int = flat_index - offset
+			if local >= 0 and local < items.size():
+				items.remove_at(local)
+			return
+		offset += items.size()
 
 var _hud_full_refresh_accum: float = 0.0
 var _last_equipped_hash: int = 0

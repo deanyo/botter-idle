@@ -17,6 +17,14 @@
 class_name HudChrome
 extends CanvasLayer
 
+# Signals fired when the player interacts with HUD inventory or
+# paperdoll cells. Dungeon listens and forwards to the bot, then
+# triggers a re-render. Keeps HUD a presentation layer — it doesn't
+# own equipped state directly.
+signal hud_equip_requested(inv_index: int)
+signal hud_unequip_requested(slot_id: String)
+signal hud_drag_drop(payload: Dictionary, dst_slot: String)
+
 const C := preload("res://scripts/constants.gd")
 
 const SIDEBAR_W := 356
@@ -99,6 +107,7 @@ var equip_request_target: Object = null
 # _make_inv_button so each freshly-built inventory cell can render
 # the 🚫 overlay on items the bot can't wear.
 var _active_species: String = ""
+var _items_db_cache: Dictionary = {}
 
 # Debug HUD
 var debug_lbl: Label
@@ -120,6 +129,65 @@ func _ready() -> void:
 	_build_bag()
 	_build_debug()
 	_build_buff_bar()
+	if DragManager and not DragManager.drag_ended.is_connected(_on_drag_ended):
+		DragManager.drag_ended.connect(_on_drag_ended)
+
+func _exit_tree() -> void:
+	if DragManager and DragManager.drag_ended.is_connected(_on_drag_ended):
+		DragManager.drag_ended.disconnect(_on_drag_ended)
+
+# Compatibility check for paperdoll drops in-game. Mirrors outpost.
+func _paperdoll_accepts_drop(payload: Dictionary, slot_id: String) -> bool:
+	if payload == null or payload.is_empty():
+		return false
+	var src_role: String = String(payload.get("role", ""))
+	if src_role == "paperdoll":
+		var src_slot: String = String(payload.get("slot_id", ""))
+		if src_slot == slot_id:
+			return false
+		if src_slot.begins_with("spell") and slot_id.begins_with("spell"):
+			return true
+		if src_slot.begins_with("ring") and slot_id.begins_with("ring"):
+			return true
+		return src_slot == slot_id
+	var item_slot: String = String(payload.get("item_slot", ""))
+	if item_slot == "":
+		return false
+	if not slot_id.begins_with("spell") and _active_species != "" and not SpeciesData.can_wear(_active_species, slot_id):
+		return false
+	if item_slot == "spell" and slot_id.begins_with("spell"):
+		return true
+	if item_slot == "ring" and slot_id.begins_with("ring"):
+		return true
+	return item_slot == slot_id
+
+# Click handler — left-click an equipped slot to unequip, sending the
+# item back to inventory. Mirrors the outpost behavior.
+func _on_paperdoll_left_click(cell: ItemCell) -> void:
+	if cell.role != "paperdoll":
+		return
+	# Hand off to the dungeon — it owns the bot equipped state and inv.
+	# HUD is a presentation layer; bubble via signal.
+	emit_signal("hud_unequip_requested", cell.slot_id)
+
+# Click handler for inventory cells in the run HUD — left-click equips.
+func _on_inv_left_click(cell: ItemCell) -> void:
+	if cell.role != "inventory":
+		return
+	emit_signal("hud_equip_requested", cell.inv_index)
+
+# DragManager fires this when a drag releases. We forward to dungeon
+# via signals because mid-run swaps need to update bot.equipped (not
+# just SaveState) so the runtime sees them immediately.
+func _on_drag_ended(payload: Dictionary, dropped_on: Variant) -> void:
+	if dropped_on == null or not is_instance_valid(dropped_on):
+		return
+	if not (dropped_on is ItemCell):
+		return
+	var dst: ItemCell = dropped_on
+	if dst.role != "paperdoll":
+		return
+	emit_signal("hud_drag_drop", payload, dst.slot_id)
 
 # ============================================================================
 # Construction
@@ -287,49 +355,33 @@ func _tooltip_for_slot(slot_id: String) -> String:
 
 func _make_paperdoll_slot(slot_id: String, x: int, y: int) -> void:
 	var slot := PAPERDOLL_SLOT_SIZE
-	# Extra ring slots (ring2/ring3/ring4) come from species conversions.
-	var is_real: bool = (slot_id in EQUIPPED_SLOTS) or slot_id.begins_with("ring")
+	var is_real: bool = (slot_id in EQUIPPED_SLOTS) or slot_id.begins_with("ring") or slot_id.begins_with("spell")
 	var is_placeholder: bool = not is_real
-	var slot_bg := ColorRect.new()
-	slot_bg.color = Color(0, 0, 0, 0.55) if not is_placeholder else Color(0, 0, 0, 0.30)
-	slot_bg.position = Vector2(x, y)
-	slot_bg.size = Vector2(slot, slot)
-	slot_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(slot_bg)
-	var slot_border := ReferenceRect.new()
-	slot_border.position = Vector2(x, y)
-	slot_border.size = Vector2(slot, slot)
-	slot_border.border_color = Color(0.4, 0.35, 0.2, 0.8) if not is_placeholder else Color(0.25, 0.22, 0.14, 0.55)
-	slot_border.border_width = 1.0
-	slot_border.editor_only = false
-	slot_border.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(slot_border)
-	var hover := Control.new()
-	hover.position = Vector2(x, y)
-	hover.size = Vector2(slot, slot)
-	hover.mouse_filter = Control.MOUSE_FILTER_PASS
-	hover.tooltip_text = _tooltip_for_slot(slot_id)
-	add_child(hover)
-	var sprite := TextureRect.new()
-	sprite.position = Vector2(x + 4, y + 4)
-	sprite.size = Vector2(slot - 8, slot - 8)
-	sprite.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	sprite.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	sprite.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(sprite)
-	# Cooldown overlay — hidden by default; toggled by update_cooldowns.
-	# Lives ABOVE the sprite z-order (added later → drawn later in Godot).
+	# ItemCell — replaces the old hand-rolled bg/border/sprite tree.
+	# DragManager + ItemCell.gui_input handle drag/drop; cooldown overlay
+	# is added as a child of the cell so it follows the cell on layout.
+	var cell := ItemCell.new()
+	cell.cell_size = slot
+	cell.role = "paperdoll"
+	cell.slot_id = slot_id
+	cell.blocked = is_placeholder
+	cell.position = Vector2(x, y)
+	cell.accepts_drop = Callable(self, "_paperdoll_accepts_drop").bind(slot_id)
+	cell.on_left_click = Callable(self, "_on_paperdoll_left_click")
+	add_child(cell)
+	# Cooldown overlay — sized + positioned to cover the cell. Toggled
+	# by update_cooldowns. Sits above the sprite by being added after
+	# the cell's sprite child (cell._ready already added the sprite).
 	var cd_dim := ColorRect.new()
 	cd_dim.color = Color(0, 0, 0, 0.55)
-	cd_dim.position = Vector2(x, y)
+	cd_dim.position = Vector2.ZERO
 	cd_dim.size = Vector2(slot, slot)
 	cd_dim.visible = false
 	cd_dim.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(cd_dim)
+	cell.add_child(cd_dim)
 	var cd_lbl := Label.new()
 	cd_lbl.text = ""
-	cd_lbl.position = Vector2(x, y + slot / 2 - 9)
+	cd_lbl.position = Vector2(0, slot / 2 - 9)
 	cd_lbl.size = Vector2(slot, 18)
 	cd_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	cd_lbl.add_theme_font_size_override("font_size", 14)
@@ -338,11 +390,10 @@ func _make_paperdoll_slot(slot_id: String, x: int, y: int) -> void:
 	cd_lbl.add_theme_constant_override("outline_size", 2)
 	cd_lbl.visible = false
 	cd_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(cd_lbl)
+	cell.add_child(cd_lbl)
 	equipped_cells.append({
-		"slot": slot_id, "sprite": sprite, "hover": hover,
+		"slot": slot_id, "cell": cell,
 		"cd_dim": cd_dim, "cd_lbl": cd_lbl,
-		"border": slot_border,
 		"is_placeholder": is_placeholder,
 	})
 
@@ -601,90 +652,22 @@ func push_log(msg: String, tag: String = "combat") -> void:
 
 func update_equipped(equipped: Dictionary, items_db: Dictionary, species: String = "") -> void:
 	# equipped: slot → instance dict; items_db: id → static def. The L-shape
-	# slot grid keeps using the item-card icon; the bot rig draws actual
-	# body/weapon/helm overlay sprites.
+	# slot grid uses ItemCell to render — same widget as outpost so equip
+	# state, drag-drop, and visuals stay in sync.
 	_active_species = species
-	for cell in equipped_cells:
-		var slot: String = cell.slot
-		var species_blocked: bool = species != "" and not SpeciesData.can_wear(species, slot)
+	_items_db_cache = items_db
+	for entry in equipped_cells:
+		var slot: String = String(entry.slot)
+		var cell: ItemCell = entry.cell
 		var inst: Variant = equipped.get(slot, null)
-		var sprite: TextureRect = cell.sprite
-		var hover: Control = cell.hover
-		var base_tooltip: String = SLOT_TOOLTIPS.get(slot, slot.capitalize())
-		# 🚫 overlay for species-blocked slots. Lazy-create on first
-		# transition into a blocked species; toggle visibility otherwise.
-		var x_lbl: Variant = cell.get("x_lbl", null)
-		if species_blocked:
-			if x_lbl == null or not is_instance_valid(x_lbl):
-				var new_lbl := Label.new()
-				new_lbl.text = "🚫"
-				new_lbl.position = sprite.position
-				new_lbl.size = sprite.size
-				new_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-				new_lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-				new_lbl.add_theme_font_size_override("font_size", 18)
-				new_lbl.add_theme_color_override("font_color", Color(1.0, 0.4, 0.4, 0.9))
-				new_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
-				add_child(new_lbl)
-				cell["x_lbl"] = new_lbl
-				x_lbl = new_lbl
-			else:
-				x_lbl.visible = true
-		elif x_lbl != null and is_instance_valid(x_lbl):
-			x_lbl.visible = false
-		var tex: Texture2D = null
-		var item_name: String = ""
-		var slot_rarity: String = ""
-		var slot_flavor: Array = []
-		if inst != null and typeof(inst) == TYPE_DICTIONARY:
-			var item_id: String = String(inst.get("base_id", inst.get("id", "")))
-			var item_def: Dictionary = items_db.get(item_id, {})
-			item_name = String(item_def.get("name", item_id))
-			slot_rarity = String(item_def.get("rarity", ""))
-			slot_flavor = UITheme.combined_flavor_tags(item_def, inst)
-			var tile_path: String = "res://assets/tiles/items/" + String(item_def.get("tile", ""))
-			if ResourceLoader.exists(tile_path):
-				tex = load(tile_path)
-		# Empty slot: show a faded greyscale icon hint so the player
-		# can tell which cell is which. Pre-baked PNG, no shader cost.
-		# Species-blocked slots already get the 🚫 overlay above; let
-		# that overlay take priority by leaving the icon visible
-		# beneath it (the 🚫 sits on top).
-		if tex == null:
-			var icon_path: String = UITheme.empty_slot_icon_path(slot)
-			if icon_path != "":
-				sprite.texture = load(icon_path)
-			else:
-				sprite.texture = null
-			sprite.modulate = Color(1, 1, 1, 1)
+		var species_blocked: bool = species != "" and not slot.begins_with("spell") and not SpeciesData.can_wear(species, slot)
+		cell.inst = inst
+		if inst != null and typeof(inst) == TYPE_DICTIONARY and items_db.has(String(inst.get("base_id", ""))):
+			cell.item = items_db[String(inst.get("base_id", ""))]
 		else:
-			sprite.texture = tex
-			# Tint the equipped slot icon — flavor tag wins, rarity falls
-			# back. Matches the bot rig overlay so HUD ↔ game stay in sync.
-			var meta: String = ""
-			if inst != null and typeof(inst) == TYPE_DICTIONARY:
-				meta = String(inst.get("meta_rarity", ""))
-			sprite.modulate = UITheme.item_modulate(slot_rarity, slot_flavor, meta)
-		var border: ReferenceRect = cell.get("border", null)
-		# Tooltip: empty slot shows "Wpn / Bdy / etc"; equipped slot shows
-		# the canonical multi-line item tooltip used everywhere else.
-		# Border color tracks rarity — gives the equipped paperdoll slot
-		# the same rarity tell as inventory cells.
-		if inst != null and typeof(inst) == TYPE_DICTIONARY:
-			var item_id2: String = String(inst.get("base_id", inst.get("id", "")))
-			var item_def2: Dictionary = items_db.get(item_id2, {})
-			hover.tooltip_text = AffixSystem.format_item_tooltip(item_def2, inst)
-			var rarity: String = String(item_def2.get("rarity", ""))
-			if border != null and rarity != "":
-				border.border_color = UITheme.rarity_color(rarity)
-			sprite.material = null
-		else:
-			hover.tooltip_text = base_tooltip
-			# Empty slot reverts to the default amber border. Placeholder
-			# slots (amulet/cloak/etc) keep their dimmer border.
-			if border != null:
-				border.border_color = Color(0.25, 0.22, 0.14, 0.55) if cell.get("is_placeholder", false) else Color(0.4, 0.35, 0.2, 0.8)
-			sprite.material = null
+			cell.item = {}
+		cell.blocked = species_blocked or bool(entry.get("is_placeholder", false))
+		cell.render()
 	# Rebuild the bot rig with the latest equipped set so the paperdoll shows
 	# what the bot is actually wearing.
 	if paperdoll_holder != null:
@@ -850,77 +833,49 @@ func _build_segment_into(idx: int, segments: Array, items_db: Dictionary, slot_c
 	_seg_grids[idx] = pack
 
 func _make_inv_button(seg_idx: int, item_idx: int, inst: Variant, items_db: Dictionary, slot_cooldowns: Dictionary) -> Control:
-	# The clickable Button is the OUTER node of the cell so its hover region
-	# always matches the cell's footprint. Decorations (bg, sprite, dim,
-	# countdown) are children with MOUSE_FILTER_IGNORE so the button keeps
-	# its tooltip and click hit-test.
-	var btn := Button.new()
-	btn.flat = true
-	btn.custom_minimum_size = Vector2(INV_CELL_SIZE, INV_CELL_SIZE)
+	# Inventory cells in the run HUD now use ItemCell — same drag/drop
+	# pipeline as outpost. Left-click still equips via the existing
+	# (seg_idx, item_idx) path for back-compat. Drag releases bubble
+	# through DragManager → HudChrome._on_drag_ended → dungeon's
+	# _on_hud_drag_drop (which mutates bot.equipped directly so the
+	# autocast tick sees the new spell on the next frame).
 	if typeof(inst) != TYPE_DICTIONARY:
-		return btn
+		var blank := Control.new()
+		blank.custom_minimum_size = Vector2(INV_CELL_SIZE, INV_CELL_SIZE)
+		return blank
 	var item_id: String = String(inst.get("base_id", inst.get("id", "")))
 	var item_def: Dictionary = items_db.get(item_id, {})
 	var slot: String = String(item_def.get("slot", ""))
-	var rarity: String = String(item_def.get("rarity", ""))
-	var flavor: Array = UITheme.combined_flavor_tags(item_def, inst)
-	var cd: float = float(slot_cooldowns.get(slot, 0.0))
-	var tooltip: String = AffixSystem.format_item_tooltip(item_def, inst)
-	if cd > 0.0:
-		tooltip = "[on cooldown: %ds]\n%s" % [int(ceil(cd)), tooltip]
-	btn.tooltip_text = tooltip
-	btn.pressed.connect(_on_inv_cell_pressed.bind(seg_idx, item_idx))
-	# Background.
-	var bg := ColorRect.new()
-	bg.color = Color(0, 0, 0, 0.45)
-	bg.size = Vector2(INV_CELL_SIZE, INV_CELL_SIZE)
-	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	btn.add_child(bg)
-	# Square border + inset halo.
-	if rarity != "":
-		var halo: float = {
-			"common": 0.0, "uncommon": 0.18, "rare": 0.30,
-			"epic": 0.42, "legendary": 0.55,
-		}.get(rarity, 0.0)
-		UITheme.add_item_cell_decor(btn, INV_CELL_SIZE, rarity, flavor, halo)
-	# Sprite on top.
-	var sprite := TextureRect.new()
-	sprite.size = Vector2(INV_CELL_SIZE, INV_CELL_SIZE)
-	sprite.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	sprite.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	sprite.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var tile_path: String = "res://assets/tiles/items/" + String(item_def.get("tile", ""))
-	if ResourceLoader.exists(tile_path):
-		sprite.texture = load(tile_path)
-	sprite.modulate = UITheme.item_modulate(rarity, flavor, String(inst.get("meta_rarity", "")))
-	# Per-instance recolor shader (hue/sat/inverted/shimmer/prismatic).
-	# Null when the instance has no tint roll — short-circuit means
-	# vanilla items pay zero shader cost.
-	var recolor_mat: ShaderMaterial = UITheme.recolor_material_for(inst)
-	if recolor_mat != null:
-		sprite.material = recolor_mat
-	btn.add_child(sprite)
-	# Species body-shape lock — overlay 🚫 on items the active bot
-	# can't wear. Cached _active_species set by update_equipped before
-	# inventory render is triggered.
-	if _active_species != "" and slot != "" and not SpeciesData.can_wear(_active_species, slot):
-		sprite.modulate.a = 0.45
-		var x_lbl := Label.new()
-		x_lbl.text = "🚫"
-		x_lbl.position = Vector2.ZERO
-		x_lbl.size = Vector2(INV_CELL_SIZE, INV_CELL_SIZE)
-		x_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		x_lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-		x_lbl.add_theme_font_size_override("font_size", 22)
-		x_lbl.add_theme_color_override("font_color", Color(1.0, 0.4, 0.4, 0.9))
-		x_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		btn.add_child(x_lbl)
-	return btn
+	var blocked: bool = _active_species != "" and slot != "" and not SpeciesData.can_wear(_active_species, slot)
+	var cell := ItemCell.new()
+	cell.cell_size = INV_CELL_SIZE
+	cell.role = "inventory"
+	# Drag-drop payload uses inv_index = the FLAT inventory index
+	# (seg_idx + item_idx isn't directly addressable by the dungeon's
+	# _hud_inv_cache). Compute the flat index from the segment offsets.
+	cell.inv_index = _flat_inv_index(seg_idx, item_idx)
+	cell.inst = inst
+	cell.item = item_def
+	cell.blocked = blocked
+	cell.set_meta("seg_idx", seg_idx)
+	cell.set_meta("item_idx", item_idx)
+	cell.on_left_click = Callable(self, "_on_hud_inv_left_click")
+	cell.ready.connect(cell.render)
+	return cell
 
-func _on_inv_cell_pressed(seg_idx: int, item_idx: int) -> void:
+# Compute flat inventory index from a (segment, item) tuple. Mirrors
+# the order dungeon assembles _hud_inv_cache in.
+func _flat_inv_index(seg_idx: int, item_idx: int) -> int:
+	var offset: int = 0
+	for i in seg_idx:
+		offset += int(_seg_grids[i].get("count", 0)) if i < _seg_grids.size() else 0
+	return offset + item_idx
+
+func _on_hud_inv_left_click(cell: ItemCell) -> void:
 	if equip_request_target == null:
 		return
+	var seg_idx: int = int(cell.get_meta("seg_idx", -1))
+	var item_idx: int = int(cell.get_meta("item_idx", -1))
 	if equip_request_target.has_method("try_equip_from_segment"):
 		equip_request_target.try_equip_from_segment(seg_idx, item_idx)
 
