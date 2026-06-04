@@ -119,6 +119,15 @@ static func create_character(species: String) -> int:
 	for ring_id in SpeciesData.ring_slot_ids(species):
 		if not equipped.has(ring_id):
 			equipped[ring_id] = null
+	# Starter spell — every species ships with one autocast spell
+	# pre-equipped to spell1 so combat is interesting from minute one.
+	# Item id is "starter_<species>_spell" and lives in items.json.
+	# spell2..spell5 stay empty until drops/shop fill them.
+	equipped["spell1"] = {
+		"base_id": "starter_" + species + "_spell",
+		"instance_id": "starter_spell_" + species,
+		"affixes": [],
+	}
 	ch["equipped"] = equipped
 	w.characters.append(ch)
 	w["active"] = w.characters.size() - 1
@@ -162,6 +171,30 @@ static func _migrate(state: Dictionary) -> void:
 		equipped["gloves"] = null
 	if not equipped.has("cloak"):
 		equipped["cloak"] = null
+	# Spell slots added 2026-06-04 (combat pivot to autocast). Five
+	# slots default empty — existing characters can pick up their
+	# first spell from a tome chest or shop. Forward-compat init.
+	for sk in ["spell1", "spell2", "spell3", "spell4", "spell5"]:
+		if not equipped.has(sk):
+			equipped[sk] = null
+	# Run-active fields added 2026-06-04 (combat pivot — death no longer
+	# permadeaths the run). Idempotent forward-compat init.
+	if not state.has("run_active"):
+		state["run_active"] = false
+	if not state.has("run_branch"):
+		state["run_branch"] = ""
+	if not state.has("run_floor_reached"):
+		state["run_floor_reached"] = 0
+	# Starter spell grant for existing characters that were created
+	# pre-pivot — give them their species' starter on spell1 so the
+	# combat overhaul is immediately playable.
+	if equipped.get("spell1", null) == null:
+		var sp_id: String = String(state.get("species", "spriggan"))
+		equipped["spell1"] = {
+			"base_id": "starter_" + sp_id + "_spell",
+			"instance_id": "starter_spell_" + sp_id,
+			"affixes": [],
+		}
 	# Species selector added 2026-06-03. Existing saves had no species
 	# field; default to "spriggan" since that's the sprite they were
 	# wearing. New characters can pick any species at creation.
@@ -262,9 +295,31 @@ static func _default() -> Dictionary:
 			# preserves unknown keys) but ring2 is no longer surfaced anywhere.
 			"ring": null,
 			"amulet": null,
+			# Five autocast spell slots. Every species ships with a starter
+			# spell pre-equipped to spell1; the remaining four start empty
+			# and fill via mob drops, shop entries, tome chests, and boss
+			# guarantees. The default spriggan-flavored starter sits in
+			# spell1 — create_character() / _migrate() overwrite it with
+			# the chosen species' starter when species changes from default.
+			"spell1": {
+				"base_id": "starter_spriggan_spell",
+				"instance_id": "starter_spell_spriggan",
+				"affixes": [],
+			},
+			"spell2": null,
+			"spell3": null,
+			"spell4": null,
+			"spell5": null,
 		},
 		"runs_completed": 0,
 		"highest_floor": 0,
+		# "Run active" flag — set true on Deploy, false on Victory or
+		# explicit End-Run. Death keeps it true so the outpost button
+		# reads "Redeploy → Floor N" instead of "Deploy" until the
+		# player actively cleans up. Combat pivot 2026-06-04.
+		"run_active": false,
+		"run_branch": "",
+		"run_floor_reached": 0,
 		# Tier 1 (the Dungeon) is unlocked from the start. Boss kills
 		# extend this list — see dungeon.gd boss_killed signal.
 		"unlocked_branches": ["dungeon"],

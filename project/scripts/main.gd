@@ -246,6 +246,14 @@ func _deploy_branch(branch_id: String) -> void:
 	_on_deploy()
 
 func _on_deploy() -> void:
+	# Mark the run active so the outpost UI knows whether to label the
+	# branch button "Deploy" or "Redeploy → Floor N." Cleared on victory
+	# (in _on_run_ended) or by an explicit End Run button on the outpost.
+	# Death keeps it true.
+	var save: Dictionary = SaveState.load_state()
+	save["run_active"] = true
+	save["run_branch"] = _selected_branch
+	SaveState.save_state(save)
 	var dungeon: Node = DUNGEON_SCENE.instantiate()
 	dungeon.branch_id = _selected_branch
 	_swap(dungeon)
@@ -336,6 +344,17 @@ func _on_run_ended(victory: bool, report: Dictionary) -> void:
 	# new entries, so calling it twice is fine.
 	if victory and _selected_branch != "":
 		_on_boss_killed(_selected_branch)
+	# Run-active flag bookkeeping. Victory closes the run; defeat keeps
+	# it active so the outpost label reads "Redeploy → Floor N" until
+	# the player explicitly ends the run from the outpost.
+	var save_state_dict: Dictionary = SaveState.load_state()
+	if victory:
+		save_state_dict["run_active"] = false
+		save_state_dict["run_branch"] = ""
+		save_state_dict["run_floor_reached"] = 0
+	else:
+		save_state_dict["run_floor_reached"] = int(report.get("floor", 0))
+	SaveState.save_state(save_state_dict)
 	if auto_grind:
 		auto_grind_runs += 1
 		var elapsed_ms: int = Time.get_ticks_msec() - auto_grind_start_time

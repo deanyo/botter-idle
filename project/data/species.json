@@ -1,6 +1,6 @@
 {
-  "_doc": "Botter species roster — DCSS-faithful subset. Each species applies a set of multipliers (hp_pct, atk_pct, def_pct, haste_pct) plus flat additions (crit_flat, regen_flat, aggro_flat, xp_pct, loot_pct) on top of the bot's base stats. Picked at character creation; locked per character. Save schema stores `species: <id>` on the bot dict. Read by Bot.recompute_stats via SpeciesData.",
-  "_format_version": 1,
+  "_doc": "Botter species roster \u2014 DCSS-faithful subset. Primary axes are str/dex/int (added 2026-06-04 with the autocast-spells pivot). str scales melee damage + max HP, dex scales crit + haste, int scales spell damage + spell area + DoT effectiveness. Each species adds str_flat/dex_flat/int_flat to the base 5/5/5 starting allocation. Existing pct multipliers (hp_pct, atk_pct, def_pct, haste_pct) stay as innate-species multipliers on top of the derived stats \u2014 back-compat with all existing balance work. Picked at character creation; locked per character.",
+  "_format_version": 2,
   "species": [
     {
       "id": "human",
@@ -16,13 +16,16 @@
       "aggro_flat": 0,
       "xp_pct": 5,
       "loot_pct": 0,
-      "innate_tags": []
+      "innate_tags": [],
+      "str_flat": 1,
+      "dex_flat": 1,
+      "int_flat": 1
     },
     {
       "id": "spriggan",
       "name": "Spriggan",
       "sprite": "spriggan_female.png",
-      "lore": "Forest-folk. Tiny and frail, but blindingly fast — both in step and in swing. The bot's original silhouette.",
+      "lore": "Forest-folk. Tiny and frail, but blindingly fast \u2014 both in step and in swing. The bot's original silhouette.",
       "hp_pct": -30,
       "atk_pct": -10,
       "def_pct": 10,
@@ -32,7 +35,10 @@
       "aggro_flat": 0,
       "xp_pct": 0,
       "loot_pct": 0,
-      "innate_tags": []
+      "innate_tags": [],
+      "str_flat": -2,
+      "dex_flat": 5,
+      "int_flat": 1
     },
     {
       "id": "minotaur",
@@ -48,13 +54,16 @@
       "aggro_flat": 1,
       "xp_pct": 0,
       "loot_pct": 0,
-      "innate_tags": []
+      "innate_tags": [],
+      "str_flat": 5,
+      "dex_flat": 0,
+      "int_flat": -2
     },
     {
       "id": "naga",
       "name": "Naga",
       "sprite": "naga_female.png",
-      "lore": "Coiled serpent-folk. Heavy frame, slow on the move, but recovers wounds with quiet patience. Cannot wear boots — no feet to put them on.",
+      "lore": "Coiled serpent-folk. Heavy frame, slow on the move, but recovers wounds with quiet patience. Cannot wear boots \u2014 no feet to put them on.",
       "hp_pct": 20,
       "atk_pct": 0,
       "def_pct": 10,
@@ -65,13 +74,18 @@
       "xp_pct": 0,
       "loot_pct": 0,
       "innate_tags": [],
-      "slot_conversions": { "boots": "ring" }
+      "slot_conversions": {
+        "boots": "ring"
+      },
+      "str_flat": 3,
+      "dex_flat": -2,
+      "int_flat": 3
     },
     {
       "id": "tengu",
       "name": "Tengu",
       "sprite": "tengu_wingless_brown_female.png",
-      "lore": "Crow-folk. Quick on the wing, sharp of eye. Aggressive and frail — strikes first, dies first.",
+      "lore": "Crow-folk. Quick on the wing, sharp of eye. Aggressive and frail \u2014 strikes first, dies first.",
       "hp_pct": -10,
       "atk_pct": 0,
       "def_pct": -10,
@@ -81,7 +95,10 @@
       "aggro_flat": 1,
       "xp_pct": 0,
       "loot_pct": 0,
-      "innate_tags": []
+      "innate_tags": [],
+      "str_flat": 0,
+      "dex_flat": 4,
+      "int_flat": 0
     },
     {
       "id": "troll",
@@ -97,13 +114,16 @@
       "aggro_flat": 0,
       "xp_pct": -10,
       "loot_pct": 0,
-      "innate_tags": []
+      "innate_tags": [],
+      "str_flat": 5,
+      "dex_flat": -2,
+      "int_flat": -3
     },
     {
       "id": "octopode",
       "name": "Octopode",
       "sprite": "octopode_1.png",
-      "lore": "Tentacled scavengers. No torso for armor, no feet for boots, no head for helms — but tentacles for trinkets. Fortune-favored finders.",
+      "lore": "Tentacled scavengers. No torso for armor, no feet for boots, no head for helms \u2014 but tentacles for trinkets. Fortune-favored finders.",
       "hp_pct": -5,
       "atk_pct": 0,
       "def_pct": -5,
@@ -114,7 +134,14 @@
       "xp_pct": 0,
       "loot_pct": 20,
       "innate_tags": [],
-      "slot_conversions": { "armor": "ring", "boots": "ring", "helm": "ring" }
+      "slot_conversions": {
+        "armor": "ring",
+        "boots": "ring",
+        "helm": "ring"
+      },
+      "str_flat": 1,
+      "dex_flat": 2,
+      "int_flat": 1
     },
     {
       "id": "demonspawn",
@@ -130,7 +157,12 @@
       "aggro_flat": 0,
       "xp_pct": 10,
       "loot_pct": 0,
-      "innate_tags": ["demon"]
+      "innate_tags": [
+        "demon"
+      ],
+      "str_flat": 2,
+      "dex_flat": 1,
+      "int_flat": 1
     },
     {
       "id": "vampire",
@@ -146,7 +178,12 @@
       "aggro_flat": 0,
       "xp_pct": 0,
       "loot_pct": 0,
-      "innate_tags": ["vampiric"]
+      "innate_tags": [
+        "vampiric"
+      ],
+      "str_flat": 1,
+      "dex_flat": 2,
+      "int_flat": 1
     },
     {
       "id": "mummy",
@@ -162,7 +199,10 @@
       "aggro_flat": 0,
       "xp_pct": 20,
       "loot_pct": 0,
-      "innate_tags": []
+      "innate_tags": [],
+      "str_flat": -2,
+      "dex_flat": -2,
+      "int_flat": 6
     },
     {
       "id": "hill_orc",
@@ -178,7 +218,10 @@
       "aggro_flat": 0,
       "xp_pct": 0,
       "loot_pct": 10,
-      "innate_tags": []
+      "innate_tags": [],
+      "str_flat": 4,
+      "dex_flat": 0,
+      "int_flat": 0
     },
     {
       "id": "deep_elf",
@@ -194,7 +237,10 @@
       "aggro_flat": 1,
       "xp_pct": 10,
       "loot_pct": 0,
-      "innate_tags": []
+      "innate_tags": [],
+      "str_flat": -2,
+      "dex_flat": 1,
+      "int_flat": 5
     },
     {
       "id": "gargoyle",
@@ -210,7 +256,10 @@
       "aggro_flat": 0,
       "xp_pct": 0,
       "loot_pct": 0,
-      "innate_tags": []
+      "innate_tags": [],
+      "str_flat": 3,
+      "dex_flat": -2,
+      "int_flat": 1
     },
     {
       "id": "halfling",
@@ -226,7 +275,10 @@
       "aggro_flat": -1,
       "xp_pct": 0,
       "loot_pct": 15,
-      "innate_tags": []
+      "innate_tags": [],
+      "str_flat": -2,
+      "dex_flat": 5,
+      "int_flat": 1
     },
     {
       "id": "kobold",
@@ -242,7 +294,10 @@
       "aggro_flat": 0,
       "xp_pct": 0,
       "loot_pct": 20,
-      "innate_tags": []
+      "innate_tags": [],
+      "str_flat": -2,
+      "dex_flat": 4,
+      "int_flat": 0
     }
   ]
 }

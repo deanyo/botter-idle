@@ -30,7 +30,9 @@ const TIER_LABELS := {
 const ITEMS_PATH := "res://data/items.json"
 const ITEM_TILE_DIR := "res://assets/tiles/items/"
 
-const SLOTS := ["weapon", "armor", "helm", "boots", "shield", "gloves", "cloak", "ring", "amulet"]
+const SLOTS := ["weapon", "armor", "helm", "boots", "shield", "gloves", "cloak", "ring", "amulet",
+	"spell1", "spell2", "spell3", "spell4", "spell5"]
+const SPELL_SLOTS := ["spell1", "spell2", "spell3", "spell4", "spell5"]
 const PAPERDOLL_RIGHT_COLUMN := ["helm", "amulet", "cloak", "gloves", "belt"]
 const PAPERDOLL_BOTTOM_ROW := ["weapon", "armor", "shield", "ring", "boots"]
 const SLOT_TOOLTIPS := {
@@ -38,6 +40,8 @@ const SLOT_TOOLTIPS := {
 	"shield": "Shield", "boots": "Boots",
 	"amulet": "Amulet", "cloak": "Cloak", "gloves": "Gloves",
 	"belt": "Belt", "ring": "Ring",
+	"spell1": "Spell I", "spell2": "Spell II", "spell3": "Spell III",
+	"spell4": "Spell IV", "spell5": "Spell V",
 }
 const PAPERDOLL_BASE_PX := 32
 
@@ -74,6 +78,9 @@ var lbl_xp: Label
 var lbl_hp: Label
 var lbl_atk: Label
 var lbl_def: Label
+var lbl_str: Label
+var lbl_dex: Label
+var lbl_int: Label
 var lbl_crit: Label
 var lbl_haste: Label
 var lbl_regen: Label
@@ -127,6 +134,28 @@ func _build_layout() -> void:
 	shop_btn.add_theme_font_size_override("font_size", 14)
 	shop_btn.pressed.connect(func(): shop_pressed.emit())
 	add_child(shop_btn)
+	# Run-in-progress banner — only when the player has a defeated-but-
+	# alive run. Shows the floor reached + the branch + an "End Run"
+	# button so the player can actively close it. Positioned just below
+	# the title, centered. Combat-pivot 2026-06-04.
+	if bool(state.get("run_active", false)):
+		var banner := Label.new()
+		var br: String = String(state.get("run_branch", ""))
+		var fl: int = int(state.get("run_floor_reached", 0))
+		banner.text = "Run in progress: %s — Floor %d (defeated, redeploy to continue)" % [br.capitalize(), fl]
+		banner.position = Vector2(0, 48)
+		banner.size = Vector2(view.x, 24)
+		banner.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		banner.add_theme_font_size_override("font_size", 13)
+		banner.add_theme_color_override("font_color", Color(0.95, 0.65, 0.35))
+		add_child(banner)
+		var end_btn := Button.new()
+		end_btn.text = "End Run"
+		end_btn.position = Vector2(16, 16)
+		end_btn.size = Vector2(110, 32)
+		end_btn.add_theme_font_size_override("font_size", 13)
+		end_btn.pressed.connect(_on_end_run_pressed)
+		add_child(end_btn)
 	# Branch picker at bottom — item-card-style strip. Each branch is
 	# a tall card with biome name, tier label, modifier list visible
 	# without hover, rarity tint by tier (T1 white, T2 blue, T3 gold,
@@ -401,6 +430,19 @@ func _build_paperdoll_pane(x: int, y: int, w: int, h: int) -> void:
 	var row_count: int = mini(resolved_bottom.size(), maxi(1, inner_w / (slot + gap)))
 	for i in row_count:
 		_make_paperdoll_slot(resolved_bottom[i], inner_x + i * (slot + gap), row_y)
+	# Spell row — 5 autocast cells under the gear row, with a small
+	# divider label so the player reads them as a separate concept.
+	var spell_label_y: int = row_y + slot + gap
+	var spell_lbl := Label.new()
+	spell_lbl.text = "Spells"
+	spell_lbl.position = Vector2(inner_x, spell_label_y)
+	spell_lbl.add_theme_font_size_override("font_size", 11)
+	spell_lbl.add_theme_color_override("font_color", COL_DIM)
+	add_child(spell_lbl)
+	var spell_row_y: int = spell_label_y + 16
+	var spell_count: int = mini(SPELL_SLOTS.size(), maxi(1, inner_w / (slot + gap)))
+	for i in spell_count:
+		_make_paperdoll_slot(SPELL_SLOTS[i], inner_x + i * (slot + gap), spell_row_y)
 
 func _make_paperdoll_slot(slot_id: String, x: int, y: int) -> void:
 	var slot := PAPERDOLL_SLOT_SIZE
@@ -481,6 +523,11 @@ func _build_stats_pane(x: int, y: int, w: int, h: int) -> void:
 	lbl_hp = _add_stat(sx, sy, 18, COL_AMBER, "HP —"); sy += 24
 	lbl_atk = _add_stat(sx, sy, 18, COL_AMBER, "ATK —"); sy += 24
 	lbl_def = _add_stat(sx, sy, 18, COL_AMBER, "DEF —"); sy += 24
+	# Primary axis trio. Drawn in their class colors so the player sees
+	# Str/Dex/Int as the same red/green/blue scheme as the spell cells.
+	lbl_str = _add_stat(sx, sy, 16, UITheme.spell_class_color("str"), "Str —"); sy += 22
+	lbl_dex = _add_stat(sx, sy, 16, UITheme.spell_class_color("dex"), "Dex —"); sy += 22
+	lbl_int = _add_stat(sx, sy, 16, UITheme.spell_class_color("int"), "Int —"); sy += 22
 	lbl_crit = _add_stat(sx, sy, 16, COL_DIM, "Crit —"); sy += 22
 	lbl_haste = _add_stat(sx, sy, 16, COL_DIM, "Haste —"); sy += 22
 	lbl_regen = _add_stat(sx, sy, 16, COL_DIM, "Regen —"); sy += 22
@@ -616,6 +663,23 @@ func _on_loot_filter_changed(idx: int) -> void:
 	state["loot_filter"] = _FILTER_IDS[idx]
 	SaveState.save_state(state)
 
+# Explicit "End Run" button — clears the run-active flag without
+# spending another deploy. The player keeps gold/xp/inventory/equipped
+# (which never roll back on death anyway) but the branch/floor state
+# is wiped so the next deploy starts fresh from floor 1 of whatever
+# branch they pick.
+func _on_end_run_pressed() -> void:
+	state["run_active"] = false
+	state["run_branch"] = ""
+	state["run_floor_reached"] = 0
+	SaveState.save_state(state)
+	# Rebuild the layout so the banner + button disappear.
+	for child in get_children():
+		child.queue_free()
+	equipped_cells.clear()
+	_build_layout()
+	_render()
+
 func _add_stat(x: int, y: int, size: int, color: Color, txt: String) -> Label:
 	var lbl := Label.new()
 	lbl.text = txt
@@ -744,6 +808,13 @@ func _render_stats() -> void:
 	var crit_sum: float = 0.0
 	var haste_sum: float = 0.0
 	var regen_sum: float = 0.0
+	# Primary stats — base 5/5/5 + species + level + gear affixes. Mirrors
+	# bot.gd::recompute_stats so the outpost preview matches the in-run value.
+	var sp_def: Dictionary = SpeciesData.get_def(String(state.get("species", "")))
+	var lvl_bonus: int = max(0, int(state.level) - 1)
+	var str_v: int = 5 + int(sp_def.get("str_flat", 0)) + lvl_bonus
+	var dex_v: int = 5 + int(sp_def.get("dex_flat", 0)) + lvl_bonus
+	var int_v: int = 5 + int(sp_def.get("int_flat", 0)) + lvl_bonus
 	for slot in SLOTS:
 		var inst: Variant = state.equipped.get(slot, null)
 		if inst == null or typeof(inst) != TYPE_DICTIONARY:
@@ -762,6 +833,16 @@ func _render_stats() -> void:
 		crit_sum += float(sums.get("crit_chance", 0))
 		haste_sum += float(sums.get("atk_speed_pct", 0))
 		regen_sum += float(sums.get("hp_regen", 0))
+		str_v += int(sums.get("str", 0))
+		dex_v += int(sums.get("dex", 0))
+		int_v += int(sums.get("int", 0))
+	# Mirror the derived contributions in bot.gd::recompute_stats.
+	var str_excess: int = str_v - 5
+	var dex_excess: int = dex_v - 5
+	max_hp = int(round(max_hp * (1.0 + float(str_excess) * 0.015)))
+	atk = int(round(atk * (1.0 + float(str_excess) * 0.020)))
+	crit_sum += float(dex_excess) * 0.5
+	haste_sum += float(dex_excess) * 1.0
 	# Match the bot's caps so the displayed value equals the in-game value.
 	crit_sum = clampf(crit_sum, 0.0, 75.0)
 	haste_sum = clampf(haste_sum, 0.0, 200.0)
@@ -771,6 +852,9 @@ func _render_stats() -> void:
 	lbl_hp.text = "HP  %d" % max_hp
 	lbl_atk.text = "ATK %d" % atk
 	lbl_def.text = "DEF %d" % defense
+	lbl_str.text = "Str %d" % str_v
+	lbl_dex.text = "Dex %d" % dex_v
+	lbl_int.text = "Int %d" % int_v
 	lbl_crit.text = "Crit %d%%" % int(round(crit_sum))
 	lbl_haste.text = "Haste %d%%" % int(round(haste_sum))
 	lbl_regen.text = "Regen %d/s" % int(round(regen_sum))
@@ -832,6 +916,14 @@ func _render_equipped() -> void:
 				border.border_color = RARITY_COLORS[rarity]
 			else:
 				border.border_color = Color(0.4, 0.35, 0.2, 0.8)
+		# Spell slots — override border with class color (red/green/blue
+		# for str/dex/int) so the player can scan "what spells am I
+		# running" at a glance. Empty spell cells stay neutral.
+		if slot.begins_with("spell") and inst != null and typeof(inst) == TYPE_DICTIONARY:
+			var bid: String = String(inst.get("base_id", ""))
+			if items_db.has(bid):
+				var pstat: String = UITheme.spell_primary_stat(items_db[bid])
+				border.border_color = UITheme.spell_class_color(pstat)
 		# Rarity decoration on equipped slots is just the border color set
 		# above — paperdoll slot art is small enough that a haloed cell
 		# would compete with the equipped sprite for attention.

@@ -9374,6 +9374,759 @@
         "haste": 25,
         "strength": 10
       }
+    },
+    {
+      "id": "spell_fireball",
+      "name": "Fireball Tome",
+      "slot": "spell",
+      "rarity": "common",
+      "tile": "spells/spell_fireball.png",
+      "atk": 0,
+      "def": 0,
+      "hp": 0,
+      "item_tier": 1,
+      "base_type": "spell_fireball",
+      "primary_stat": "int",
+      "spell_cooldown": 1.6,
+      "damage": 18,
+      "flavor_tags": [
+        "fire"
+      ],
+      "lore": "An autocast tome \u2014 pages crackle as the spell readies itself.",
+      "drop_weights": [
+        60,
+        30,
+        8,
+        2,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "spell_cdr": 30,
+        "spell_damage": 25,
+        "spell_proj": 15,
+        "spell_proj_speed": 10,
+        "spell_area": 15,
+        "spell_duration": 10,
+        "wisdom": 10,
+        "fire_dmg": 30
+      }
+    },
+    {
+      "id": "spell_axes",
+      "name": "Spinning Axes Tome",
+      "slot": "spell",
+      "rarity": "common",
+      "tile": "spells/spell_axes.png",
+      "atk": 0,
+      "def": 0,
+      "hp": 0,
+      "item_tier": 1,
+      "base_type": "spell_axes",
+      "primary_stat": "str",
+      "spell_cooldown": 5.0,
+      "damage": 14,
+      "flavor_tags": [],
+      "lore": "An autocast tome \u2014 pages crackle as the spell readies itself.",
+      "drop_weights": [
+        60,
+        30,
+        8,
+        2,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "spell_cdr": 30,
+        "spell_damage": 25,
+        "spell_proj": 15,
+        "spell_proj_speed": 10,
+        "spell_area": 15,
+        "spell_duration": 10,
+        "wisdom": 10
+      }
+    },
+    {
+      "id": "spell_holy_beam",
+      "name": "Holy Beam Tome",
+      "slot": "spell",
+      "rarity": "common",
+      "tile": "spells/spell_holy_beam.png",
+      "atk": 0,
+      "def": 0,
+      "hp": 0,
+      "item_tier": 1,
+      "base_type": "spell_holy_beam",
+      "primary_stat": "str",
+      "spell_cooldown": 3.2,
+      "damage": 26,
+      "flavor_tags": [
+        "holy"
+      ],
+      "lore": "An autocast tome \u2014 pages crackle as the spell readies itself.",
+      "drop_weights": [
+        60,
+        30,
+        8,
+        2,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "spell_cdr": 30,
+        "spell_damage": 25,
+        "spell_proj": 15,
+        "spell_proj_speed": 10,
+        "spell_area": 15,
+        "spell_duration": 10,
+        "wisdom": 10,
+        "holy_dmg": 30
+      }
+    },
+    {
+      "id": "spell_chain_lightning",
+      "name": "Chain Lightning Tome",
+      "slot": "spell",
+      "rarity": "common",
+      "tile": "spells/spell_chain_lightning.png",
+      "atk": 0,
+      "def": 0,
+      "hp": 0,
+      "item_tier": 1,
+      "base_type": "spell_chain_lightning",
+      "primary_stat": "dex",
+      "spell_cooldown": 2.4,
+      "damage": 16,
+      "flavor_tags": [
+        "thunderous"
+      ],
+      "lore": "An autocast tome \u2014 pages crackle as the spell readies itself.",
+      "drop_weights": [
+        60,
+        30,
+        8,
+        2,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "spell_cdr": 30,
+        "spell_damage": 25,
+        "spell_proj": 15,
+        "spell_proj_speed": 10,
+        "spell_area": 15,
+        "spell_duration": 10,
+        "wisdom": 10,
+        "lightning_dmg": 30
+      }
+    },
+    {
+      "id": "spell_frost_nova",
+      "name": "Frost Nova Tome",
+      "slot": "spell",
+      "rarity": "common",
+      "tile": "spells/spell_frost_nova.png",
+      "atk": 0,
+      "def": 0,
+      "hp": 0,
+      "item_tier": 1,
+      "base_type": "spell_frost_nova",
+      "primary_stat": "int",
+      "spell_cooldown": 4.0,
+      "damage": 16,
+      "flavor_tags": [
+        "cold"
+      ],
+      "lore": "An autocast tome \u2014 pages crackle as the spell readies itself.",
+      "drop_weights": [
+        60,
+        30,
+        8,
+        2,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "spell_cdr": 30,
+        "spell_damage": 25,
+        "spell_proj": 15,
+        "spell_proj_speed": 10,
+        "spell_area": 15,
+        "spell_duration": 10,
+        "wisdom": 10,
+        "cold_dmg": 30
+      }
+    },
+    {
+      "id": "starter_human_spell",
+      "name": "Apprentice Fireball",
+      "slot": "spell",
+      "rarity": "common",
+      "tile": "spells/spell_fireball.png",
+      "atk": 0,
+      "def": 0,
+      "hp": 0,
+      "item_tier": 1,
+      "base_type": "spell_fireball",
+      "primary_stat": "int",
+      "spell_cooldown": 1.6,
+      "damage": 18,
+      "flavor_tags": [
+        "fire"
+      ],
+      "lore": "Innate to your species \u2014 runs in the blood.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "spell_cdr": 30,
+        "spell_damage": 25,
+        "spell_proj": 15,
+        "spell_proj_speed": 10,
+        "spell_area": 15,
+        "spell_duration": 10,
+        "wisdom": 10,
+        "fire_dmg": 30
+      }
+    },
+    {
+      "id": "starter_spriggan_spell",
+      "name": "Forest Spinners",
+      "slot": "spell",
+      "rarity": "common",
+      "tile": "spells/spell_axes.png",
+      "atk": 0,
+      "def": 0,
+      "hp": 0,
+      "item_tier": 1,
+      "base_type": "spell_axes",
+      "primary_stat": "str",
+      "spell_cooldown": 5.0,
+      "damage": 14,
+      "flavor_tags": [
+        "earth"
+      ],
+      "lore": "Innate to your species \u2014 runs in the blood.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "spell_cdr": 30,
+        "spell_damage": 25,
+        "spell_proj": 15,
+        "spell_proj_speed": 10,
+        "spell_area": 15,
+        "spell_duration": 10,
+        "wisdom": 10
+      }
+    },
+    {
+      "id": "starter_minotaur_spell",
+      "name": "Whirling Axes",
+      "slot": "spell",
+      "rarity": "common",
+      "tile": "spells/spell_axes.png",
+      "atk": 0,
+      "def": 0,
+      "hp": 0,
+      "item_tier": 1,
+      "base_type": "spell_axes",
+      "primary_stat": "str",
+      "spell_cooldown": 5.0,
+      "damage": 14,
+      "flavor_tags": [
+        "brutal"
+      ],
+      "lore": "Innate to your species \u2014 runs in the blood.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "spell_cdr": 30,
+        "spell_damage": 25,
+        "spell_proj": 15,
+        "spell_proj_speed": 10,
+        "spell_area": 15,
+        "spell_duration": 10,
+        "wisdom": 10
+      }
+    },
+    {
+      "id": "starter_naga_spell",
+      "name": "Coiled Frost",
+      "slot": "spell",
+      "rarity": "common",
+      "tile": "spells/spell_frost_nova.png",
+      "atk": 0,
+      "def": 0,
+      "hp": 0,
+      "item_tier": 1,
+      "base_type": "spell_frost_nova",
+      "primary_stat": "int",
+      "spell_cooldown": 4.0,
+      "damage": 16,
+      "flavor_tags": [
+        "cold"
+      ],
+      "lore": "Innate to your species \u2014 runs in the blood.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "spell_cdr": 30,
+        "spell_damage": 25,
+        "spell_proj": 15,
+        "spell_proj_speed": 10,
+        "spell_area": 15,
+        "spell_duration": 10,
+        "wisdom": 10,
+        "cold_dmg": 30
+      }
+    },
+    {
+      "id": "starter_tengu_spell",
+      "name": "Storm-Caw",
+      "slot": "spell",
+      "rarity": "common",
+      "tile": "spells/spell_chain_lightning.png",
+      "atk": 0,
+      "def": 0,
+      "hp": 0,
+      "item_tier": 1,
+      "base_type": "spell_chain_lightning",
+      "primary_stat": "dex",
+      "spell_cooldown": 2.4,
+      "damage": 16,
+      "flavor_tags": [
+        "thunderous"
+      ],
+      "lore": "Innate to your species \u2014 runs in the blood.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "spell_cdr": 30,
+        "spell_damage": 25,
+        "spell_proj": 15,
+        "spell_proj_speed": 10,
+        "spell_area": 15,
+        "spell_duration": 10,
+        "wisdom": 10,
+        "lightning_dmg": 30
+      }
+    },
+    {
+      "id": "starter_troll_spell",
+      "name": "Heavy Cleavers",
+      "slot": "spell",
+      "rarity": "common",
+      "tile": "spells/spell_axes.png",
+      "atk": 0,
+      "def": 0,
+      "hp": 0,
+      "item_tier": 1,
+      "base_type": "spell_axes",
+      "primary_stat": "str",
+      "spell_cooldown": 5.0,
+      "damage": 14,
+      "flavor_tags": [
+        "earth"
+      ],
+      "lore": "Innate to your species \u2014 runs in the blood.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "spell_cdr": 30,
+        "spell_damage": 25,
+        "spell_proj": 15,
+        "spell_proj_speed": 10,
+        "spell_area": 15,
+        "spell_duration": 10,
+        "wisdom": 10
+      }
+    },
+    {
+      "id": "starter_octopode_spell",
+      "name": "Ink Burst",
+      "slot": "spell",
+      "rarity": "common",
+      "tile": "spells/spell_frost_nova.png",
+      "atk": 0,
+      "def": 0,
+      "hp": 0,
+      "item_tier": 1,
+      "base_type": "spell_frost_nova",
+      "primary_stat": "int",
+      "spell_cooldown": 4.0,
+      "damage": 16,
+      "flavor_tags": [
+        "dark"
+      ],
+      "lore": "Innate to your species \u2014 runs in the blood.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "spell_cdr": 30,
+        "spell_damage": 25,
+        "spell_proj": 15,
+        "spell_proj_speed": 10,
+        "spell_area": 15,
+        "spell_duration": 10,
+        "wisdom": 10,
+        "dark_dmg": 30
+      }
+    },
+    {
+      "id": "starter_demonspawn_spell",
+      "name": "Hellfire Orbs",
+      "slot": "spell",
+      "rarity": "common",
+      "tile": "spells/spell_axes.png",
+      "atk": 0,
+      "def": 0,
+      "hp": 0,
+      "item_tier": 1,
+      "base_type": "spell_axes",
+      "primary_stat": "str",
+      "spell_cooldown": 5.0,
+      "damage": 14,
+      "flavor_tags": [
+        "fire"
+      ],
+      "lore": "Innate to your species \u2014 runs in the blood.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "spell_cdr": 30,
+        "spell_damage": 25,
+        "spell_proj": 15,
+        "spell_proj_speed": 10,
+        "spell_area": 15,
+        "spell_duration": 10,
+        "wisdom": 10,
+        "fire_dmg": 30
+      }
+    },
+    {
+      "id": "starter_vampire_spell",
+      "name": "Blood Arc",
+      "slot": "spell",
+      "rarity": "common",
+      "tile": "spells/spell_chain_lightning.png",
+      "atk": 0,
+      "def": 0,
+      "hp": 0,
+      "item_tier": 1,
+      "base_type": "spell_chain_lightning",
+      "primary_stat": "dex",
+      "spell_cooldown": 2.4,
+      "damage": 16,
+      "flavor_tags": [
+        "vampiric"
+      ],
+      "lore": "Innate to your species \u2014 runs in the blood.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "spell_cdr": 30,
+        "spell_damage": 25,
+        "spell_proj": 15,
+        "spell_proj_speed": 10,
+        "spell_area": 15,
+        "spell_duration": 10,
+        "wisdom": 10,
+        "dark_dmg": 30
+      }
+    },
+    {
+      "id": "starter_mummy_spell",
+      "name": "Curse Cloud",
+      "slot": "spell",
+      "rarity": "common",
+      "tile": "spells/spell_frost_nova.png",
+      "atk": 0,
+      "def": 0,
+      "hp": 0,
+      "item_tier": 1,
+      "base_type": "spell_frost_nova",
+      "primary_stat": "int",
+      "spell_cooldown": 4.0,
+      "damage": 16,
+      "flavor_tags": [
+        "dark"
+      ],
+      "lore": "Innate to your species \u2014 runs in the blood.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "spell_cdr": 30,
+        "spell_damage": 25,
+        "spell_proj": 15,
+        "spell_proj_speed": 10,
+        "spell_area": 15,
+        "spell_duration": 10,
+        "wisdom": 10,
+        "dark_dmg": 30
+      }
+    },
+    {
+      "id": "starter_hill_orc_spell",
+      "name": "Battle Cry",
+      "slot": "spell",
+      "rarity": "common",
+      "tile": "spells/spell_holy_beam.png",
+      "atk": 0,
+      "def": 0,
+      "hp": 0,
+      "item_tier": 1,
+      "base_type": "spell_holy_beam",
+      "primary_stat": "str",
+      "spell_cooldown": 3.2,
+      "damage": 26,
+      "flavor_tags": [
+        "holy"
+      ],
+      "lore": "Innate to your species \u2014 runs in the blood.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "spell_cdr": 30,
+        "spell_damage": 25,
+        "spell_proj": 15,
+        "spell_proj_speed": 10,
+        "spell_area": 15,
+        "spell_duration": 10,
+        "wisdom": 10,
+        "holy_dmg": 30
+      }
+    },
+    {
+      "id": "starter_deep_elf_spell",
+      "name": "Elven Bolt",
+      "slot": "spell",
+      "rarity": "common",
+      "tile": "spells/spell_fireball.png",
+      "atk": 0,
+      "def": 0,
+      "hp": 0,
+      "item_tier": 1,
+      "base_type": "spell_fireball",
+      "primary_stat": "int",
+      "spell_cooldown": 1.6,
+      "damage": 18,
+      "flavor_tags": [
+        "arcane"
+      ],
+      "lore": "Innate to your species \u2014 runs in the blood.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "spell_cdr": 30,
+        "spell_damage": 25,
+        "spell_proj": 15,
+        "spell_proj_speed": 10,
+        "spell_area": 15,
+        "spell_duration": 10,
+        "wisdom": 10
+      }
+    },
+    {
+      "id": "starter_gargoyle_spell",
+      "name": "Stone Beam",
+      "slot": "spell",
+      "rarity": "common",
+      "tile": "spells/spell_holy_beam.png",
+      "atk": 0,
+      "def": 0,
+      "hp": 0,
+      "item_tier": 1,
+      "base_type": "spell_holy_beam",
+      "primary_stat": "str",
+      "spell_cooldown": 3.2,
+      "damage": 26,
+      "flavor_tags": [
+        "holy"
+      ],
+      "lore": "Innate to your species \u2014 runs in the blood.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "spell_cdr": 30,
+        "spell_damage": 25,
+        "spell_proj": 15,
+        "spell_proj_speed": 10,
+        "spell_area": 15,
+        "spell_duration": 10,
+        "wisdom": 10,
+        "holy_dmg": 30
+      }
+    },
+    {
+      "id": "starter_halfling_spell",
+      "name": "Sling Spark",
+      "slot": "spell",
+      "rarity": "common",
+      "tile": "spells/spell_chain_lightning.png",
+      "atk": 0,
+      "def": 0,
+      "hp": 0,
+      "item_tier": 1,
+      "base_type": "spell_chain_lightning",
+      "primary_stat": "dex",
+      "spell_cooldown": 2.4,
+      "damage": 16,
+      "flavor_tags": [
+        "thunderous"
+      ],
+      "lore": "Innate to your species \u2014 runs in the blood.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "spell_cdr": 30,
+        "spell_damage": 25,
+        "spell_proj": 15,
+        "spell_proj_speed": 10,
+        "spell_area": 15,
+        "spell_duration": 10,
+        "wisdom": 10,
+        "lightning_dmg": 30
+      }
+    },
+    {
+      "id": "starter_kobold_spell",
+      "name": "Throwing Daggers",
+      "slot": "spell",
+      "rarity": "common",
+      "tile": "spells/spell_axes.png",
+      "atk": 0,
+      "def": 0,
+      "hp": 0,
+      "item_tier": 1,
+      "base_type": "spell_axes",
+      "primary_stat": "str",
+      "spell_cooldown": 5.0,
+      "damage": 14,
+      "flavor_tags": [
+        "poison"
+      ],
+      "lore": "Innate to your species \u2014 runs in the blood.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "spell_cdr": 30,
+        "spell_damage": 25,
+        "spell_proj": 15,
+        "spell_proj_speed": 10,
+        "spell_area": 15,
+        "spell_duration": 10,
+        "wisdom": 10,
+        "poison_dmg": 30
+      }
     }
   ]
 }

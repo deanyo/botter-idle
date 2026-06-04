@@ -66,6 +66,10 @@ from typing import Optional, Tuple, Dict, List
 DCSS_SOURCE = Path("/Users/dyo/claude/botter/dcss-source/crawl-ref/source/rltiles")
 DCSS_FULL = Path("/Users/dyo/claude/botter/dcss/Dungeon Crawl Stone Soup Full")
 DCSS_SUPP = Path("/Users/dyo/claude/botter/dcss/Dungeon Crawl Stone Soup Supplemental")
+# Project-local sprite tree — surfaces our species portraits + spell
+# tomes + slot icons in the atlas viewer so the authoring portal can
+# browse them. Combat pivot 2026-06-04.
+PROJECT_ASSETS = Path("/Users/dyo/claude/botter/project/assets/tiles")
 OUTPUT = Path("/Users/dyo/claude/botter/project/data/tile_atlas.json")
 
 # Top-level dc-*.txt files (each defines a category).
@@ -623,6 +627,17 @@ def main():
             if rel_s not in fs_paths:
                 fs_paths[rel_s] = str(abs_path)
 
+    # Project-local sprites — species portraits, spell tomes, slot
+    # icons, biome icons. Prefixed with "project/" so the authoring
+    # portal can filter them and they don't collide with DCSS rltiles
+    # paths. Combat pivot 2026-06-04.
+    if PROJECT_ASSETS.exists():
+        for abs_path in PROJECT_ASSETS.rglob("*.png"):
+            rel = abs_path.relative_to(PROJECT_ASSETS)
+            rel_s = "project/" + str(rel).replace("\\", "/")
+            if rel_s not in fs_paths:
+                fs_paths[rel_s] = str(abs_path)
+
     print(f"Filesystem PNGs: {len(fs_paths)}", flush=True)
 
     # Build final atlas keyed by relative path.
@@ -684,6 +699,24 @@ def main():
 
 def path_to_category(rel_path: str) -> str:
     p = rel_path.lower()
+    # Project-local sprites — first-class categories so the authoring
+    # portal lists them ahead of raw DCSS rltiles. Combat pivot 2026-06-04.
+    if p.startswith("project/player/species"):     return "species"
+    if p.startswith("project/items/spells"):       return "spell"
+    if p.startswith("project/projectiles"):        return "projectile"
+    if p.startswith("project/biome_icons"):        return "biome_icon"
+    if p.startswith("project/slot_icons"):         return "slot_icon"
+    if p.startswith("project/player/"):            return "player_part"
+    if p.startswith("project/items/"):             return "item"
+    if p.startswith("project/enemies/"):           return "monster"
+    if p.startswith("project/floor"):              return "floor"
+    if p.startswith("project/walls"):              return "wall"
+    if p.startswith("project/overlays"):           return "overlay"
+    if p.startswith("project/features"):           return "feat"
+    if p.startswith("project/gateways"):           return "gateway"
+    if p.startswith("project/gui"):                return "gui"
+    if p.startswith("project/"):                   return "project_misc"
+    # DCSS raw — original mapping.
     if p.startswith("dungeon/floor"): return "floor"
     if p.startswith("dungeon/wall"):  return "wall"
     if p.startswith("dungeon/water"): return "water"

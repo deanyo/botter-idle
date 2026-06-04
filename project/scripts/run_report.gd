@@ -23,8 +23,18 @@ func _ready() -> void:
 	garage_btn.pressed.connect(func(): back_to_garage.emit())
 
 func show_report(victory: bool, report: Dictionary) -> void:
-	title.text = "VICTORY" if victory else "YOU DIED"
+	# Death is no longer permadeath — the run-active flag survives, gear/
+	# xp/gold are kept, and the player redeploys with a re-thought
+	# loadout. Phrase the title accordingly so the player understands
+	# "this is a tactical setback, not a wipe."
+	title.text = "VICTORY" if victory else "DEFEAT"
 	title.add_theme_color_override("font_color", Color(0.4, 0.95, 0.4) if victory else Color(0.95, 0.3, 0.3))
+	# Mirror the framing on the action buttons. Victory → fresh run.
+	# Defeat → redeploy (same character, same gear, same gold).
+	if deploy_btn != null:
+		deploy_btn.text = "Deploy" if victory else "Redeploy"
+	if garage_btn != null:
+		garage_btn.text = "Outpost"
 
 	var retreats: int = int(report.get("retreats", 0))
 	var retreat_line: String = ""

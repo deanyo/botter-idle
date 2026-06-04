@@ -69,12 +69,35 @@ static func meta_rarity_color(meta: String) -> Color:
 # is pre-baked at build time (35% alpha + luma-only RGB) so the UI
 # pays zero shader cost. Returns "" for unknown slots (caller should
 # leave the cell blank).
+# Spell class colors. Spells are tagged with primary_stat = str/dex/int
+# (red/green/blue) so the player reads "this is a strength spell" at a
+# glance. Drives spell cell border color, cooldown ring tint, drop halo,
+# and tooltip header line. Mirrors RPG convention (red warrior, green
+# ranger, blue mage). Phase 2-A — combat pivot.
+const SPELL_CLASS_COLORS := {
+	"str": Color(0.95, 0.30, 0.30),  # red — physical / brute / faith
+	"dex": Color(0.50, 0.95, 0.40),  # green — precision / nature
+	"int": Color(0.45, 0.85, 1.00),  # blue — arcane / elemental
+}
+
+static func spell_class_color(stat: String) -> Color:
+	return SPELL_CLASS_COLORS.get(stat, Color(0.85, 0.85, 0.85))
+
+# Resolve a spell item's primary_stat from its items.json def. Defaults
+# to "int" for items without the field — keeps legacy / ad-hoc spells
+# rendering as Int (blue) rather than uncolored.
+static func spell_primary_stat(item: Dictionary) -> String:
+	return String(item.get("primary_stat", "int"))
+
 const _SLOT_ICON_DIR := "res://assets/tiles/slot_icons/"
 static func empty_slot_icon_path(slot_id: String) -> String:
 	# Extra ring slots (ring2/ring3/ring4) reuse the ring icon.
 	var key: String = slot_id
 	if slot_id.begins_with("ring") and slot_id.length() > 4:
 		key = "ring"
+	# All spell cells (spell1..spell5) share the same empty placeholder.
+	if slot_id.begins_with("spell"):
+		key = "spell"
 	var path: String = _SLOT_ICON_DIR + key + "_empty.png"
 	if not ResourceLoader.exists(path):
 		return ""

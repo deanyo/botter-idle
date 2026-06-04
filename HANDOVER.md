@@ -4,11 +4,72 @@ Point-in-time snapshot of what's actually shipping. Updated as we go. The
 durable rules and process live in `CLAUDE.md`; the roadmap and open work
 items live in `TODO.md`.
 
-Last refresh: 2026-06-04 (pre-pivot checkpoint). Multi-character
-saves, species selector, slot-conversion compensation for octopode/
-naga, paperdoll slot icons, biome card icons.
+Last refresh: 2026-06-04 (combat pivot landed). Autocast spells +
+Str/Dex/Int + density bump + base-attack weapon procs + run-survives-
+death. Bot is now a VS-style autobattler with 5 autocast spell slots
+on top of the existing melee + gear loop.
 
-## Capsule — what shipped this session
+## Capsule — combat pivot (2026-06-04)
+
+Combat went from "dull autoattack" to "1 base attack + 5 autocast
+spell slots." Phase-by-phase:
+
+* **Phase 1 — Spell slot plumbing.** 5 new equipped slots (spell1..
+  spell5). Save schema migration for legacy chars. Empty slot icon.
+  `SpellSystem` static class ticking each slot's cooldown each frame.
+  Paperdoll cells in outpost + HUD chrome.
+
+* **Phase 2-A — Stat overhaul.** Added Str/Dex/Int primary stats.
+  Base 5/5/5 + species_flat + 1/level + gear affixes (might/finesse/
+  wisdom). Each point = +2% damage on its scaling spells, plus
+  derived contributions: Str→HP/atk, Dex→crit/haste, Int→spell
+  damage/area/duration. New affix kinds: spell_cdr, spell_proj,
+  spell_proj_speed, spell_area, spell_duration, spell_damage,
+  fire_dmg, cold_dmg, lightning_dmg, holy_dmg, poison_dmg, dark_dmg.
+
+* **Phase 2-B — Fireball end-to-end.** Homing projectile spell with
+  `Projectile` node, `SpellData` archetype config, fire dispatcher in
+  SpellSystem. Each species starts with a species-flavored starter
+  spell pre-equipped to spell1 (Human=Fireball, Naga=Frost Nova,
+  Vampire=Blood Arc, etc.). 20 spell items total in items.json (5
+  base + 15 species variants). Visuals: per-item flavor color via
+  `flavor_tags` — Vampire's Blood Arc reads RED, Demonspawn's
+  Hellfire reads ORANGE, Spriggan's Forest Spinners read GREEN.
+
+* **Phase 3 — All 5 archetypes.** Spinning Axes (`OrbitController`),
+  Frost Nova (`SpellAoe.spawn_ring`), Chain Lightning (`SpellAoe.
+  spawn_chain`), Holy Beam (`SpellAoe.spawn_cone`). Each scales off
+  its primary stat: Spinning Axes/Holy Beam = Str, Chain Lightning =
+  Dex, Fireball/Frost Nova = Int.
+
+* **Phase 4 — Density + weapon procs.** Mob density tripled
+  (90 + floor*30, cap 350). Wave spawns every 6-10s top up to ~75%
+  of target (gated to prevent endless spawns on invincible bots).
+  Burst events every 30-50s drop a 12-18 mob MAGIC pack. Base-attack
+  weapon procs: dagger=bleed, 1H sword=cleave 1, 2H sword=cleave 2,
+  1H axe=cleave 1 full, 2H axe=cleave 3 full, mace=stun chance,
+  polearm=behind hit, whip=line falloff.
+
+* **Phase 5 — Death survives the run.** "DEFEAT" instead of "YOU
+  DIED" on the run report. "Redeploy" / "Outpost" buttons. New save
+  fields `run_active`, `run_branch`, `run_floor_reached` track an
+  in-progress run across deaths. Outpost shows "Run in progress: X —
+  Floor N" banner + "End Run" button when active.
+
+* **Color-coded spell classification.** Red = Str, Green = Dex,
+  Blue = Int. Drives spell cell border color in paperdolls + Str/
+  Dex/Int labels on the stats panel. Phase 2-A.
+
+* **Atlas categorization.** `tools/build_atlas.py` now walks
+  `project/assets/tiles/` as a third source root and emits
+  first-class categories: species (15), spell (5), projectile (2),
+  biome_icon (24), slot_icon (19). Authoring portal can browse them.
+
+Smoke verification (legendary loadout, all 5 spells, single floor 6
+victory): 1344 kills, ~900 spell fires across 3 archetypes, 0
+errors, 65s elapsed.
+
+## Capsule — what shipped before the pivot
 
 Anything below is tracked in `TODO.md` for "what's next." See `git
 log` for the per-commit timeline.

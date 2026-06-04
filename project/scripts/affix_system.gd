@@ -179,6 +179,21 @@ static func _format_stat_line(stat: String, v: int) -> String:
 		"hp_regen": return "+%d HP/sec" % v
 		"crit_chance": return "+%d%% Crit" % v
 		"atk_speed_pct": return "+%d%% Haste" % v
+		"str": return "+%d Str" % v
+		"dex": return "+%d Dex" % v
+		"int": return "+%d Int" % v
+		"spell_cdr_pct": return "-%d%% Spell Cooldown" % v
+		"spell_proj_bonus": return "+%d Spell Projectile" % v if v == 1 else "+%d Spell Projectiles" % v
+		"spell_proj_speed_pct": return "+%d%% Projectile Speed" % v
+		"spell_area_pct": return "+%d%% Spell Area" % v
+		"spell_duration_pct": return "+%d%% Spell Duration" % v
+		"spell_damage_pct": return "+%d%% Spell Damage" % v
+		"fire_dmg_pct": return "+%d%% Fire Damage" % v
+		"cold_dmg_pct": return "+%d%% Cold Damage" % v
+		"thunderous_dmg_pct": return "+%d%% Lightning Damage" % v
+		"holy_dmg_pct": return "+%d%% Holy Damage" % v
+		"poison_dmg_pct": return "+%d%% Poison Damage" % v
+		"dark_dmg_pct": return "+%d%% Dark Damage" % v
 	return "+%d %s" % [v, stat]
 
 # Canonical hover tooltip for an item. Used by every UI surface that shows

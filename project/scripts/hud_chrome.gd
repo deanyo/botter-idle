@@ -28,7 +28,9 @@ const PAPERDOLL_SLOT_SIZE := 48
 const INV_CELL_SIZE := 48
 
 # Slots that exist in the data layer today.
-const EQUIPPED_SLOTS := ["weapon", "armor", "helm", "shield", "boots", "gloves", "cloak", "ring", "amulet"]
+const EQUIPPED_SLOTS := ["weapon", "armor", "helm", "shield", "boots", "gloves", "cloak", "ring", "amulet",
+	"spell1", "spell2", "spell3", "spell4", "spell5"]
+const SPELL_SLOTS := ["spell1", "spell2", "spell3", "spell4", "spell5"]
 
 # Layout — L-shape around a top-left sprite. Gloves/cloak now ACTIVE
 # slots (added 2026-06-03 per DCSS source-of-truth). Belt placeholder
@@ -40,6 +42,8 @@ const SLOT_TOOLTIPS := {
 	"shield": "Shield", "boots": "Boots",
 	"amulet": "Amulet", "cloak": "Cloak", "gloves": "Gloves",
 	"belt": "Belt", "ring": "Ring",
+	"spell1": "Spell I", "spell2": "Spell II", "spell3": "Spell III",
+	"spell4": "Spell IV", "spell5": "Spell V",
 }
 const PAPERDOLL_BASE_PX := 32  # source bot sprite is 32×32 native
 
@@ -263,6 +267,12 @@ func _build_paperdoll(sidebar_x0: int, top_y: int, bottom_y: int) -> void:
 	for i in row_count:
 		var rx: int = doll_left + i * (slot + gap)
 		_make_paperdoll_slot(resolved_bottom[i], rx, row_y)
+	# Spell row — 5 autocast cells under the gear row. They reuse the
+	# same cooldown overlay machinery already wired into _make_paperdoll_slot.
+	var spell_row_y: int = row_y + slot + gap
+	var spell_count: int = mini(SPELL_SLOTS.size(), maxi(1, inner_w / (slot + gap)))
+	for i in spell_count:
+		_make_paperdoll_slot(SPELL_SLOTS[i], doll_left + i * (slot + gap), spell_row_y)
 
 # Tooltip for any slot, including extra ring slots (ring2..ringN).
 # Mirrors outpost.gd::_tooltip_for_slot.

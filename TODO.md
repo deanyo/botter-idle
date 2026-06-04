@@ -5,6 +5,48 @@ the durable rules in `CLAUDE.md`. Update this file when committing.
 
 ---
 
+## Combat-pivot follow-ups (2026-06-04, HIGH priority — deferred from
+##  the autocast spells beat)
+
+The autocast spells pivot landed with 5 archetypes + species variants +
+density bump + base-attack weapon procs. These are the next-pass items
+explicitly identified during planning — pick whichever fits the next
+session's energy.
+
+- **Spell evolutions** (VS-style: 2 spells + 1 condition → upgraded
+  form). E.g. Fireball + Spinning Axes at level 5 → Comet Strike. Adds
+  a long-tail build goal once base spells are tuned.
+- **Spell merges / fusion** — combine two same-spell items into a
+  higher rarity / level. Half-implemented for gear via meta-rarity;
+  spells should follow the same pattern.
+- **Spell socketing / supports** — PoE-style: link a "support gem"
+  spell-item to another spell to add behavior (chain support, cold
+  support, AoE support). Adds a 2nd build axis on top of equip.
+- **Enemy spell variety** — elite/boss/rare-pack leaders cast their
+  own spells. Adds tactical defense interest: player has to balance
+  offensive + defensive spells. Strong experimental candidate.
+- **Spell drag-and-drop UI** — equip-from-inventory currently picks
+  "first empty spell slot." Player feedback: they want to choose
+  which slot. Build a drag-and-drop swap UI (drag inventory spell →
+  spell cell, drag cell → cell, etc).
+- **HUD spell cooldown overlay** — ring fill on each of the 5 HUD
+  spell cells showing remaining cooldown. Feeds the run-watcher's
+  understanding of "which spell is about to fire." Wired-up: the
+  cells already have an unused cooldown overlay; need to drive it
+  from `bot.spell_cooldowns`.
+- **Atlas / authoring portal** — races and spells need to appear in
+  the atlas viewer + a "spell editor" akin to the biome editor so
+  the user can author new spells without manual JSON editing. Also
+  add per-species sprites to the atlas categorization.
+- **Stat overhaul telegraphing** — Str/Dex/Int are now in the
+  outpost stats panel but weren't called out in the character-create
+  screen. Show the species' starting allocation when picking.
+- **Wave spawn animation** — current wave/burst mobs just appear at
+  walkable cells. Add a brief warp-in or warning indicator so the
+  player sees them coming.
+
+---
+
 ## Pre-pivot checkpoint (2026-06-04)
 
 User is starting an experimental pivot. Repo is in a known-good

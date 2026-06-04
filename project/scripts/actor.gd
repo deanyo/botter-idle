@@ -338,7 +338,7 @@ func combat_defense_tags() -> Array:
 # `near` itself and `self`. Used by the `thunderous` chain mechanic.
 # Returns null if nothing adjacent. Cheap O(siblings) — actor_layer has
 # the bot + ~5-15 enemies, so the linear scan is fine.
-func _find_adjacent_actor(near: Actor) -> Actor:
+func _find_adjacent_actor(near: Actor, skip: Dictionary = {}) -> Actor:
 	if not is_instance_valid(near):
 		return null
 	var parent: Node = get_parent()
@@ -348,6 +348,8 @@ func _find_adjacent_actor(near: Actor) -> Actor:
 		if child is Actor and child != near and child != self:
 			var c: Actor = child as Actor
 			if not c.is_alive:
+				continue
+			if skip.has(c.get_instance_id()):
 				continue
 			var dx: int = absi(c.cell.x - near.cell.x)
 			var dy: int = absi(c.cell.y - near.cell.y)
@@ -530,6 +532,13 @@ func attempt_attack(other: Actor, delta: float) -> int:
 		if chain != null:
 			var splash: int = maxi(1, int(round(float(raw) * 0.5)))
 			chain.take_damage(splash, self)
+	# Base-type weapon procs — combat pivot 2026-06-04. Each weapon
+	# base_type carries an inherent style (dagger=bleed, axe=cleave,
+	# mace=stun, etc.) on top of any flavor enchants. Reuses existing
+	# status hooks (bleeding/stunned/frozen) and _find_adjacent_actor
+	# for cleaves so the visual + logged feedback stay consistent.
+	if dealt > 0 and is_instance_valid(other):
+		_apply_base_type_proc(other, raw)
 	# [combat] emitted only during instrumented runs (GrindLog enabled = grind/
 	# benchmark mode). Per-attack volume is fine in batches but spams playtests.
 	if GrindLog._enabled:
@@ -559,6 +568,97 @@ func combat_weapon_id() -> String:
 # attempt_attack read this. Enemy returns []; mundane bot returns [].
 func combat_weapon_tags() -> Array:
 	return []
+
+# Override on Bot — returns the equipped weapon's base_type ("dagger",
+# "battle_axe", etc.) so per-base-type procs can fire in attempt_attack.
+# Default empty for enemies.
+func combat_weapon_base_type() -> String:
+	return ""
+
+# Per-base-type combat procs. Daggers bleed, axes cleave, maces stun,
+# polearms reach, etc. Each weapon style gets a signature feel layered
+# on top of the existing flavor-tag procs. Combat pivot 2026-06-04.
+#
+# Args: `target` is the primary defender; `raw` is the pre-mitigation
+# attack roll, used as the base for cleave splash math.
+func _apply_base_type_proc(target: Actor, raw: int) -> void:
+	var bt: String = combat_weapon_base_type()
+	if bt == "":
+		return
+	# Daggers + knives — short bleed DoT. Quick low-damage weapons get a
+	# chip-damage proc to compete with bigger weapons' raw output.
+	if bt == "dagger" or bt == "knife" or bt == "shiv":
+		if randf() < 0.40:
+			var bleed_per_tick: int = maxi(1, int(round(float(raw) * 0.08)))
+			target.add_poison(bleed_per_tick, 3, 0.6)  # reuse poison DoT shape
+		return
+	# 1H swords + sabres — modest cleave: 60% damage to one adjacent foe.
+	if bt in ["short_sword", "long_sword", "scimitar", "falchion", "rapier", "sabre", "broad_sword"]:
+		var adj_a: Actor = _find_adjacent_actor(target)
+		if adj_a != null:
+			adj_a.take_damage(maxi(1, int(round(float(raw) * 0.60))), self)
+		return
+	# 2H swords — full 360 cleave: full damage to up to 2 adjacent foes.
+	if bt in ["greatsword", "claymore", "double_sword", "triple_sword"]:
+		var seen: Dictionary = {target.get_instance_id(): true}
+		var hits: int = 0
+		for _i in 4:
+			var adj_b: Actor = _find_adjacent_actor(target, seen)
+			if adj_b == null:
+				break
+			adj_b.take_damage(raw, self)
+			seen[adj_b.get_instance_id()] = true
+			hits += 1
+			if hits >= 2:
+				break
+		return
+	# 1H axes — cleave: full damage to one adjacent. Hand axe / war axe.
+	if bt in ["hand_axe", "war_axe"]:
+		var adj_c: Actor = _find_adjacent_actor(target)
+		if adj_c != null:
+			adj_c.take_damage(raw, self)
+		return
+	# 2H axes — wide cleave: full damage to up to 3 adjacent.
+	if bt in ["battle_axe", "broad_axe", "executioner_axe"]:
+		var seen2: Dictionary = {target.get_instance_id(): true}
+		var hits2: int = 0
+		for _i in 6:
+			var adj_d: Actor = _find_adjacent_actor(target, seen2)
+			if adj_d == null:
+				break
+			adj_d.take_damage(raw, self)
+			seen2[adj_d.get_instance_id()] = true
+			hits2 += 1
+			if hits2 >= 3:
+				break
+		return
+	# Maces / clubs / flails — stun chance on hit.
+	if bt in ["club", "mace", "flail", "morningstar", "great_mace", "dire_flail", "giant_club", "eveningstar"]:
+		if randf() < 0.18:
+			target.add_status("stunned", 0.6)
+		return
+	# Polearms (1H+2H) — reach: bonus +20% damage on first hit (already
+	# applied via raw); hit a foe BEHIND the target as well.
+	if bt in ["spear", "trident", "halberd", "bardiche", "scythe", "glaive"]:
+		# Behind-target finder — closest cell beyond `target` from the
+		# attacker's perspective. Approximated by taking another adjacent
+		# actor.
+		var adj_e: Actor = _find_adjacent_actor(target)
+		if adj_e != null:
+			adj_e.take_damage(maxi(1, int(round(float(raw) * 0.50))), self)
+		return
+	# Whips — line-hit. Damage falloff to up to 2 enemies in a line.
+	if bt in ["whip", "demon_whip"]:
+		var seen3: Dictionary = {target.get_instance_id(): true}
+		var dmg: float = float(raw) * 0.6
+		for _i in 2:
+			var adj_f: Actor = _find_adjacent_actor(target, seen3)
+			if adj_f == null:
+				break
+			adj_f.take_damage(maxi(1, int(round(dmg))), self)
+			seen3[adj_f.get_instance_id()] = true
+			dmg *= 0.7
+
 
 func _play_death_then_emit() -> void:
 	if fx == null:

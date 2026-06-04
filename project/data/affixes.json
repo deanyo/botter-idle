@@ -1,5 +1,5 @@
 {
-  "_comment": "6 simple affixes, no prefix/suffix split. Every affix applies to any slot. Tiers index by rarity (common=0 ... legendary=4). All six are wired to combat in bot.gd / actor.gd.",
+  "_comment": "Affix definitions. The original 6 (strength/stamina/agility/regen/crit/haste) cover melee + survivability. Added 2026-06-04 with the autocast pivot: 3 primary-stat affixes (might/finesse/wisdom = +str/+dex/+int), 6 spell-modifier affixes (cdr/proj_count/proj_speed/area/duration/spell_dmg), and 6 element-damage affixes (fire/cold/lightning/holy/poison/dark). Per-affix `applies_to` filters which slot a given affix can roll on. Tiers index by rarity (common=0 ... legendary=4).",
 
   "affixes": [
     { "id": "strength", "name": "Strength", "applies_to": ["any"], "stat": "atk",            "tiers": [2, 4, 7, 12, 18] },
@@ -7,7 +7,25 @@
     { "id": "agility",  "name": "Agility",  "applies_to": ["any"], "stat": "def",            "tiers": [1, 2, 4, 7, 11] },
     { "id": "regen",    "name": "Regen",    "applies_to": ["any"], "stat": "hp_regen",       "tiers": [1, 2, 3, 3, 3] },
     { "id": "crit",     "name": "Crit",     "applies_to": ["any"], "stat": "crit_chance",    "tiers": [3, 6, 10, 15, 22] },
-    { "id": "haste",    "name": "Haste",    "applies_to": ["any"], "stat": "atk_speed_pct",  "tiers": [4, 8, 14, 22, 32] }
+    { "id": "haste",    "name": "Haste",    "applies_to": ["any"], "stat": "atk_speed_pct",  "tiers": [4, 8, 14, 22, 32] },
+
+    { "id": "might",    "name": "Might",    "applies_to": ["amulet","ring","helm","gloves","cloak","weapon","armor","boots","shield"], "stat": "str", "tiers": [1, 2, 3, 5, 8] },
+    { "id": "finesse",  "name": "Finesse",  "applies_to": ["amulet","ring","helm","gloves","cloak","weapon","armor","boots","shield"], "stat": "dex", "tiers": [1, 2, 3, 5, 8] },
+    { "id": "wisdom",   "name": "Wisdom",   "applies_to": ["amulet","ring","helm","gloves","cloak","weapon","armor","boots","shield"], "stat": "int", "tiers": [1, 2, 3, 5, 8] },
+
+    { "id": "spell_cdr",       "name": "Quickcast",   "applies_to": ["amulet","ring","helm","gloves","cloak","spell"], "stat": "spell_cdr_pct",        "tiers": [3, 6, 10, 14, 20] },
+    { "id": "spell_proj",      "name": "Multicast",   "applies_to": ["amulet","ring","spell"],                          "stat": "spell_proj_bonus",     "tiers": [0, 1, 1, 2, 3] },
+    { "id": "spell_proj_speed","name": "Velocity",    "applies_to": ["gloves","ring","amulet","spell"],                 "stat": "spell_proj_speed_pct", "tiers": [10, 20, 35, 55, 80] },
+    { "id": "spell_area",      "name": "Resonance",   "applies_to": ["amulet","ring","helm","cloak","spell"],           "stat": "spell_area_pct",       "tiers": [8, 16, 26, 38, 55] },
+    { "id": "spell_duration",  "name": "Lingering",   "applies_to": ["amulet","ring","cloak","spell"],                  "stat": "spell_duration_pct",   "tiers": [10, 20, 35, 55, 80] },
+    { "id": "spell_damage",    "name": "Channeling",  "applies_to": ["amulet","ring","helm","gloves","cloak","spell"],  "stat": "spell_damage_pct",     "tiers": [8, 16, 28, 45, 65] },
+
+    { "id": "fire_dmg",      "name": "of Embers",       "applies_to": ["amulet","ring","helm","gloves","cloak","spell"], "stat": "fire_dmg_pct",       "tiers": [10, 20, 35, 55, 80] },
+    { "id": "cold_dmg",      "name": "of Frost",        "applies_to": ["amulet","ring","helm","gloves","cloak","spell"], "stat": "cold_dmg_pct",       "tiers": [10, 20, 35, 55, 80] },
+    { "id": "lightning_dmg", "name": "of Storms",       "applies_to": ["amulet","ring","helm","gloves","cloak","spell"], "stat": "thunderous_dmg_pct", "tiers": [10, 20, 35, 55, 80] },
+    { "id": "holy_dmg",      "name": "of Devotion",     "applies_to": ["amulet","ring","helm","gloves","cloak","spell"], "stat": "holy_dmg_pct",       "tiers": [10, 20, 35, 55, 80] },
+    { "id": "poison_dmg",    "name": "of Venom",        "applies_to": ["amulet","ring","helm","gloves","cloak","spell"], "stat": "poison_dmg_pct",     "tiers": [10, 20, 35, 55, 80] },
+    { "id": "dark_dmg",      "name": "of Shadows",      "applies_to": ["amulet","ring","helm","gloves","cloak","spell"], "stat": "dark_dmg_pct",       "tiers": [10, 20, 35, 55, 80] }
   ],
 
   "rarity_affix_count": {

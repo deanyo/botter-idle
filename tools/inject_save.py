@@ -64,7 +64,8 @@ BIOMES_JSON = REPO_ROOT / "project" / "data" / "biomes.json"
 USER_DATA = Path.home() / "Library" / "Application Support" / "Godot" / "app_userdata" / "Botter"
 DEBUG_SAVE = USER_DATA / "botter_save_debug.json"
 
-VALID_SLOTS = {"weapon", "armor", "helm", "boots", "shield", "gloves", "cloak", "ring", "amulet"}
+VALID_SLOTS = {"weapon", "armor", "helm", "boots", "shield", "gloves", "cloak", "ring", "amulet",
+               "spell1", "spell2", "spell3", "spell4", "spell5"}
 VALID_RARITIES = ("common", "uncommon", "rare", "epic", "legendary")
 
 
@@ -120,40 +121,84 @@ def normalize_item(spec, items, affixes):
     return inst
 
 
+def _default_character():
+    return {
+        "species": "spriggan",
+        "gold": 0,
+        "level": 1,
+        "xp": 0,
+        "inventory": [],
+        "equipped": {
+            "weapon": None, "armor": None, "helm": None,
+            "boots": None, "shield": None,
+            "gloves": None, "cloak": None,
+            "ring": None, "amulet": None,
+            "spell1": None, "spell2": None, "spell3": None,
+            "spell4": None, "spell5": None,
+        },
+        "runs_completed": 0,
+        "highest_floor": 0,
+        "unlocked_branches": ["dungeon"],
+        "bosses_killed": {},
+        "max_revives": 3,
+        "loot_filter": "common",
+        "inventory_cap": 50,
+        "last_branch": "",
+        "branch_modifiers": {},
+        "bot_upgrades": {},
+        "shards": 0,
+        "last_seen_timestamp": 0,
+    }
+
+
 def load_existing():
+    """Returns the ACTIVE character dict from the save wrapper.
+    Save schema (post-2026-06-04) is {characters:[...], active:int}; legacy
+    pre-wrapper saves are auto-wrapped on load. Inject mutates the active
+    character; save_existing() writes the wrapper back."""
     if not DEBUG_SAVE.exists():
-        # Match the schema default emitted by save_state.gd::_default()
-        return {
-            "gold": 0,
-            "level": 1,
-            "xp": 0,
-            "inventory": [],
-            "equipped": {
-                "weapon": None, "armor": None, "helm": None,
-                "boots": None, "shield": None,
-                "gloves": None, "cloak": None,
-                "ring": None, "amulet": None,
-            },
-            "runs_completed": 0,
-            "highest_floor": 0,
-            "unlocked_branches": ["dungeon"],
-            "bosses_killed": {},
-            "max_revives": 3,
-            "loot_filter": "common",
-            "inventory_cap": 50,
-            "last_branch": "",
-            "branch_modifiers": {},
-            "bot_upgrades": {},
-            "shards": 0,
-            "last_seen_timestamp": 0,
-        }
-    return json.load(DEBUG_SAVE.open())
+        return _default_character()
+    raw = json.load(DEBUG_SAVE.open())
+    if isinstance(raw, dict) and "characters" in raw and isinstance(raw["characters"], list):
+        chars = raw["characters"]
+        active = int(raw.get("active", 0))
+        if 0 <= active < len(chars):
+            return chars[active]
+        return chars[0] if chars else _default_character()
+    # Legacy single-character save — operate on it directly. save_existing
+    # below will wrap it for Godot.
+    return raw
+
+
+def save_existing(state):
+    """Write `state` back as the active character inside the wrapper."""
+    USER_DATA.mkdir(parents=True, exist_ok=True)
+    if DEBUG_SAVE.exists():
+        try:
+            raw = json.load(DEBUG_SAVE.open())
+        except Exception:
+            raw = None
+    else:
+        raw = None
+    if isinstance(raw, dict) and "characters" in raw and isinstance(raw["characters"], list):
+        chars = raw["characters"]
+        active = int(raw.get("active", 0))
+        if 0 <= active < len(chars):
+            chars[active] = state
+        else:
+            chars[0] = state
+        wrapper = {"characters": chars, "active": active if 0 <= active < len(chars) else 0}
+    else:
+        wrapper = {"characters": [state], "active": 0}
+    with DEBUG_SAVE.open("w") as f:
+        json.dump(wrapper, f, indent=2)
+        f.write("\n")
 
 
 def apply_spec(state, spec, items, affixes, biomes):
     # Scalar fields — copy through if present.
     for k in ("level", "gold", "xp", "max_revives", "loot_filter",
-              "inventory_cap", "last_branch"):
+              "inventory_cap", "last_branch", "species"):
         if k in spec:
             state[k] = spec[k]
     # Branch fields.
@@ -168,7 +213,11 @@ def apply_spec(state, spec, items, affixes, biomes):
         state["bot_upgrades"] = dict(spec["bot_upgrades"])
     if "branch_modifiers" in spec:
         state["branch_modifiers"] = {k: list(v) for k, v in spec["branch_modifiers"].items()}
-    # Equipped.
+    # Equipped — apply caller's slots, then null any VALID_SLOTS the
+    # caller didn't mention so a follow-up inject doesn't carry over
+    # state from the previous spec. Without this, repeated injects
+    # accumulate gear from the last run, which made smoke tests lie
+    # about which spells were actually equipped.
     if "equipped" in spec:
         equipped = state.setdefault("equipped", {})
         for slot, item_spec in spec["equipped"].items():
@@ -176,7 +225,8 @@ def apply_spec(state, spec, items, affixes, biomes):
                 raise ValueError(f"unknown slot: {slot!r} (valid: {sorted(VALID_SLOTS)})")
             equipped[slot] = normalize_item(item_spec, items, affixes)
         for slot in VALID_SLOTS:
-            equipped.setdefault(slot, None)
+            if slot not in spec["equipped"]:
+                equipped[slot] = None
     # Inventory.
     if "inventory" in spec:
         state["inventory"] = [normalize_item(it, items, affixes) for it in spec["inventory"]]
@@ -209,10 +259,7 @@ def main():
         print(json.dumps(state, indent=2))
         return 0
 
-    USER_DATA.mkdir(parents=True, exist_ok=True)
-    with DEBUG_SAVE.open("w") as f:
-        json.dump(state, f, indent=2)
-        f.write("\n")
+    save_existing(state)
     # Compact summary so logs read clearly when chained from a skill.
     eq = state.get("equipped", {})
     eq_summary = ", ".join(

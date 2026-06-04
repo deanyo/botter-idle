@@ -18,6 +18,34 @@ var level: int = 1
 var xp: int = 0
 var gold: int = 0
 var equipped: Dictionary = {}
+# Per-slot cooldown bookkeeping for autocast spells. Keyed by slot id
+# (spell1..spell5); value = seconds until next fire. Initialized by
+# SpellSystem.init_run at floor build; ticked + reset by SpellSystem.
+var spell_cooldowns: Dictionary = {}
+# Gear-side spell augments folded out of equipped affixes during
+# recompute_stats. Read by SpellSystem when computing effective spell
+# stats (cooldown, projectile count, area, duration, damage). Phase 2
+# wires the affix → field rollup; until then defaults are no-op.
+var spell_cdr_pct: float = 0.0
+var spell_proj_bonus: int = 0
+var spell_proj_speed_pct: float = 0.0
+var spell_area_pct: float = 0.0
+var spell_duration_pct: float = 0.0
+var spell_damage_pct: float = 0.0
+# Per-element damage modifiers (multiplicative on element-tagged damage).
+# Element keys: fire, cold, thunderous, holy, poison, dark.
+var spell_element_pct: Dictionary = {
+	"fire": 0.0, "cold": 0.0, "thunderous": 0.0,
+	"holy": 0.0, "poison": 0.0, "dark": 0.0,
+}
+# Primary stats (DCSS-style). Base 5/5/5; species adds str_flat/dex_flat/
+# int_flat on top. Each stat point = +2% damage on its scaling spells +
+# small contributions to derived stats (str→hp, dex→crit/haste, int→spell
+# area + DoT duration). Authored straight on the bot rather than rolled
+# up so save schema stays simple.
+var str_stat: int = 5
+var dex_stat: int = 5
+var int_stat: int = 5
 var base_max_hp: int = 80
 var base_atk: int = 6
 var base_def: int = 2
@@ -232,6 +260,22 @@ func equip_from_inventory(inst: Dictionary) -> Array:
 		if picked_ring == "":
 			picked_ring = "ring"  # all full — displace ring1
 		slot = picked_ring
+	# Spell slot resolution (same pattern as rings). Spell items declare
+	# slot="spell" in items.json; the equipped dict has 5 numbered slots.
+	# Pick the first empty spell1..spell5; if all full, displace spell1.
+	# Without this, equipping a spell would write to a key called "spell"
+	# that no UI surface reads, which is the "equipped item disappears"
+	# bug we hit pre-fix.
+	if slot == "spell":
+		var spell_ids: Array = ["spell1", "spell2", "spell3", "spell4", "spell5"]
+		var picked_spell: String = ""
+		for s in spell_ids:
+			if equipped.get(s, null) == null:
+				picked_spell = s
+				break
+		if picked_spell == "":
+			picked_spell = "spell1"
+		slot = picked_spell
 	var displaced: Array = []
 	# 2H weapon ↔ shield exclusion. Equipping a 2H weapon clears the
 	# shield slot back to inventory; equipping a shield clears a 2H
@@ -262,6 +306,17 @@ func equip_from_inventory(inst: Dictionary) -> Array:
 	return displaced
 
 func recompute_stats() -> void:
+	# --- Primary stats (str/dex/int) ---------------------------------
+	# Base allocation 5/5/5 + species_flat. Each level adds +1 to each
+	# (small linear scaling). Gear affix `+N str` etc. piles on top
+	# during the affix loop below. The derived contributions (str→hp/atk,
+	# dex→crit/haste, int→spell_dmg/area) flow into the existing rollup
+	# rather than replacing it — keeps balance work to date intact.
+	var sp_for_stats: Dictionary = SpeciesData.get_def(species_id)
+	var lvl_bonus: int = max(0, level - 1)
+	str_stat = 5 + int(sp_for_stats.get("str_flat", 0)) + lvl_bonus
+	dex_stat = 5 + int(sp_for_stats.get("dex_flat", 0)) + lvl_bonus
+	int_stat = 5 + int(sp_for_stats.get("int_flat", 0)) + lvl_bonus
 	# Permanent gold-sink upgrades stack on top of base level-scaled stats
 	# (and stay on top of gear). Cached snapshot so we don't reload save
 	# every recompute. Apply BEFORE gear so % multipliers (none yet, but
@@ -294,6 +349,17 @@ func recompute_stats() -> void:
 	var crit_sum: float = float(sp.get("crit_flat", 0))
 	var haste_sum: float = float(sp.get("haste_pct", 0))
 	var gear_regen: float = float(sp.get("regen_flat", 0))
+	# Reset spell-modifier accumulators each recompute (they're stateless
+	# rollups of the worn gear, like crit_sum). Phase 2-A wires the affix
+	# loop to fill these; SpellSystem reads them on cast.
+	spell_cdr_pct = 0.0
+	spell_proj_bonus = 0
+	spell_proj_speed_pct = 0.0
+	spell_area_pct = 0.0
+	spell_duration_pct = 0.0
+	spell_damage_pct = 0.0
+	for elem in spell_element_pct.keys():
+		spell_element_pct[elem] = 0.0
 	for slot in equipped.keys():
 		var inst: Variant = equipped[slot]
 		if inst == null or typeof(inst) != TYPE_DICTIONARY:
@@ -356,11 +422,46 @@ func recompute_stats() -> void:
 		crit_sum += float(sums.get("crit_chance", 0))
 		haste_sum += float(sums.get("atk_speed_pct", 0))
 		gear_regen += float(sums.get("hp_regen", 0))
+		# Primary-stat affixes (str/dex/int). Roll on amulets/rings/helms
+		# generally — see base_type_affixes.json.
+		str_stat += int(sums.get("str", 0))
+		dex_stat += int(sums.get("dex", 0))
+		int_stat += int(sums.get("int", 0))
+		# Spell-modifier affixes — contribute to the global spell rollup
+		# read by SpellSystem.process_tick.
+		spell_cdr_pct += float(sums.get("spell_cdr_pct", 0))
+		spell_proj_bonus += int(sums.get("spell_proj_bonus", 0))
+		spell_proj_speed_pct += float(sums.get("spell_proj_speed_pct", 0))
+		spell_area_pct += float(sums.get("spell_area_pct", 0))
+		spell_duration_pct += float(sums.get("spell_duration_pct", 0))
+		spell_damage_pct += float(sums.get("spell_damage_pct", 0))
+		# Per-element damage modifiers.
+		for elem_key in spell_element_pct.keys():
+			spell_element_pct[elem_key] += float(sums.get(elem_key + "_dmg_pct", 0))
 
 	atk += bonus_atk_flat
 	defense += bonus_def_flat
 	pct_hp += bonus_max_hp_pct
 	pct_atk += bonus_atk_pct
+
+	# Primary-stat derived contributions. Each point above the 5/5/5
+	# baseline contributes a small percentage to the appropriate derived
+	# stat — number-ceiling friendly (a +20-stat character ends up with
+	# ~+30% on its scaled axis, not 2x). Negative is fine — a low-Str
+	# Spriggan loses a small chunk of HP/atk on top of the species %s.
+	var str_excess: int = str_stat - 5
+	var dex_excess: int = dex_stat - 5
+	var int_excess: int = int_stat - 5
+	pct_hp += float(str_excess) * 1.5  # 1 Str = +1.5% HP
+	pct_atk += float(str_excess) * 2.0  # 1 Str = +2% melee atk
+	crit_sum += float(dex_excess) * 0.5  # 1 Dex = +0.5% crit chance
+	haste_sum += float(dex_excess) * 1.0  # 1 Dex = +1% haste
+	# Int's contribution to spells flows via SpellSystem, not derived
+	# from atk/hp. Int also adds a small AoE/duration bonus baked into
+	# the rollup so a high-Int character feels broader on every cast.
+	spell_damage_pct += float(int_excess) * 1.0  # 1 Int = +1% spell damage
+	spell_area_pct += float(int_excess) * 0.5    # 1 Int = +0.5% spell area
+	spell_duration_pct += float(int_excess) * 0.5
 
 	max_hp = int(round(max_hp * (1.0 + pct_hp / 100.0)))
 	atk = int(round(atk * (1.0 + pct_atk / 100.0)))
@@ -625,6 +726,19 @@ func combat_weapon_id() -> String:
 	if wpn == null or typeof(wpn) != TYPE_DICTIONARY:
 		return ""
 	return String(wpn.get("base_id", ""))
+
+# Returns the equipped weapon's base_type ("dagger", "battle_axe", etc.)
+# or "" when bare-handed. Used by actor.gd to apply per-base-type
+# combat procs (cleave, bleed, pierce, etc.) on the base autoattack.
+# Combat pivot 2026-06-04.
+func combat_weapon_base_type() -> String:
+	var wpn: Variant = equipped.get("weapon", null)
+	if wpn == null or typeof(wpn) != TYPE_DICTIONARY:
+		return ""
+	var base_id: String = String(wpn.get("base_id", ""))
+	if base_id == "" or not _items_db_cache.has(base_id):
+		return ""
+	return String(_items_db_cache[base_id].get("base_type", ""))
 
 func combat_weapon_tags() -> Array:
 	var wpn: Variant = equipped.get("weapon", null)
