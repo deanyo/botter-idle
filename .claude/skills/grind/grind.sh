@@ -39,6 +39,17 @@ if [[ -f "$DEBUG_MARKER" ]]; then
     mv "$DEBUG_MARKER" "$DEBUG_MARKER.parked"
 fi
 
+# Optional debug-save purge. The debug save accumulates legacy items
+# across sessions — when item schema changes (v2 stats, quality
+# tier, etc) leftover items can show as blank until rolled fresh. Run
+# with BOTTER_PURGE_SAVE=1 to wipe before grinding. Default keeps
+# the save so inject_save.py-written specs survive.
+DEBUG_SAVE="$USER_DIR/botter_save_debug.json"
+if [[ "${BOTTER_PURGE_SAVE:-0}" == "1" ]] && [[ -f "$DEBUG_SAVE" ]]; then
+    rm -f "$DEBUG_SAVE"
+    echo "Purged debug save."
+fi
+
 # Write the marker.
 echo "${SPEED},${RUNS}" > "$GRIND_MARKER"
 

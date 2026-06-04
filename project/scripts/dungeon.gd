@@ -1567,6 +1567,16 @@ func _create_item_instance(base_id: String) -> Dictionary:
 		var artefact: String = ArtefactPool.pick_for_slot(slot, rng)
 		if artefact != "":
 			inst["tile_override"] = "artefacts/" + artefact
+	# Quality tier — every drop rolls one (Rusted/Worn/.../Masterwork
+	# for gear, Mouldering/.../Sublime for spells). Multiplier scales
+	# baseline stats at full strength + affixes at half strength so
+	# affix rolls still feel like the rolled axis. Tail extremes
+	# (Rusted/Masterwork) are the lottery moments. Item-overhaul
+	# follow-up 2026-06-04.
+	var quality_slot: String = String(base.get("slot", ""))
+	var quality_tier: Dictionary = Quality.roll(quality_slot, rng)
+	if not quality_tier.is_empty():
+		inst["quality"] = String(quality_tier.name)
 	return inst
 
 func _gen_instance_id() -> String:

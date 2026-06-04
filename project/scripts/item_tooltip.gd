@@ -156,15 +156,30 @@ func render_for(item_def: Dictionary, instance: Variant, db: Dictionary) -> void
 	_glow_pulse_t = 0.0
 	_shimmer_t = 0.0
 	queue_redraw()
-	# Title — meta-rarity prefix folded in if present (Ancient/Primal).
+	# Title — meta-rarity prefix + quality tier prefix folded in.
 	var disp_name: String = String(item.get("name", item.get("id", "?")))
+	var quality_tier: String = ""
+	var quality_mult: float = 1.0
 	if typeof(inst) == TYPE_DICTIONARY:
+		quality_tier = String(inst.get("quality", ""))
+		if quality_tier != "" and quality_tier != "Standard":
+			disp_name = quality_tier + " " + disp_name
+		quality_mult = Quality.multiplier_for(inst)
 		var meta: String = String(inst.get("meta_rarity", ""))
 		if meta == "ancient":
 			disp_name = "Ancient " + disp_name
 		elif meta == "primal":
 			disp_name = "Primal " + disp_name
-	var title := _make_label(disp_name, 16, rarity_col, true)
+	# Title color: rarity if quality is mid-range; warmer for high
+	# quality; dimmer for low. Layers a subtle quality cue on top of
+	# the existing rarity color so a "Pristine Common Iron Dagger"
+	# reads as "common-but-nice" not "magic blue."
+	var title_color: Color = rarity_col
+	if quality_tier != "" and quality_tier != "Standard":
+		var q_col: Color = Quality.color_for(quality_tier)
+		var blend: float = clampf(abs(quality_mult - 1.0) / 0.20, 0.0, 1.0)
+		title_color = rarity_col.lerp(q_col, 0.35 * blend)
+	var title := _make_label(disp_name, 16, title_color, true)
 	_vbox.add_child(title)
 	# Border thickness escalates with rarity so the panel reads as
 	# "weight" before the player starts parsing text.
@@ -174,13 +189,28 @@ func render_for(item_def: Dictionary, instance: Variant, db: Dictionary) -> void
 	}.get(rarity, 1.5)
 	if _is_meta_rarity:
 		_border.border_width = max(_border.border_width, 3.0)
-	# Pulse the title color on legendary / meta-rarity. Tween between
-	# rarity_col and glow_color over ~1.4s so the name "shines."
-	if _is_legendary or _is_meta_rarity:
+	# Pulse the title color on legendary / meta-rarity / high-quality.
+	# Tween between rarity_col and glow_color over ~1.4s so the name
+	# "shines." Quality pulse fires on Pristine (1.10x) + above.
+	var should_pulse: bool = _is_legendary or _is_meta_rarity or Quality.has_pulse(inst)
+	if should_pulse:
 		var t := title.create_tween().set_loops()
 		t.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 		t.tween_property(title, "modulate", Color(1.15, 1.10, 0.95), 0.7)
 		t.tween_property(title, "modulate", Color(1.0, 1.0, 1.0), 0.7)
+	# Shimmer effect on the title for Exceptional+ quality (1.16x+):
+	# rapid color cycle between gold and warm white.
+	if Quality.has_shimmer(inst):
+		var shimmer := title.create_tween().set_loops()
+		shimmer.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		var shimmer_a: Color = Quality.color_for(quality_tier)
+		shimmer.tween_property(title, "self_modulate", Color(1.25, 1.20, 0.85), 0.45)
+		shimmer.tween_property(title, "self_modulate", Color(1.0, 1.0, 1.0), 0.45)
+	# Drift particles on Mastercrafted/Masterwork. Spawn motes that
+	# float upward + fade out, looping. Heaviest layer of eye candy —
+	# only the top ~0.05% of drops should fire this.
+	if Quality.has_particles(inst):
+		_start_drift_particles(quality_tier)
 	# Subtitle: rarity · slot · weapon class (if weapon)
 	var slot: String = String(item.get("slot", ""))
 	var subtitle_parts: Array = [rarity.capitalize()]
@@ -191,6 +221,33 @@ func render_for(item_def: Dictionary, instance: Variant, db: Dictionary) -> void
 		if wc != "":
 			subtitle_parts.append(wc)
 	_vbox.add_child(_make_label(" · ".join(subtitle_parts), 11, COLOR_SUBTITLE, false))
+	# Quality line — only render when quality is set + non-Standard.
+	# Standard is the no-op baseline; showing "Standard (1.00×)" would
+	# add noise to the median drop.
+	if quality_tier != "" and quality_tier != "Standard":
+		var q_col: Color = Quality.color_for(quality_tier)
+		var pct: int = int(round((quality_mult - 1.0) * 100.0))
+		var sign: String = "+" if pct >= 0 else ""
+		var q_text: String = "%s · %s%d%%" % [quality_tier, sign, pct]
+		var q_lbl := _make_label(q_text, 11, q_col, false)
+		_vbox.add_child(q_lbl)
+		# Quality lines pulse subtly on high-tier drops.
+		if Quality.has_pulse(inst):
+			var qt := q_lbl.create_tween().set_loops()
+			qt.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+			qt.tween_property(q_lbl, "modulate", Color(1.20, 1.15, 1.0), 0.85)
+			qt.tween_property(q_lbl, "modulate", Color(1.0, 1.0, 1.0), 0.85)
+		# Alt-extended quality detail — show the percentile (top X%
+		# odds) so the player can read "this was a lucky drop."
+		if Input.is_key_pressed(KEY_ALT):
+			var pctile: int = Quality.percentile_for(quality_tier, slot)
+			var rank_label: String = ""
+			if quality_mult >= 1.0:
+				rank_label = "top %d%%" % pctile
+			else:
+				rank_label = "bottom %d%%" % (100 - pctile + 1)
+			var alt_q := _make_label("  %.2f× baseline · %.2f× affixes · %s" % [quality_mult, Quality.affix_multiplier_for(inst), rank_label], 9, Color(0.55, 0.55, 0.5), false)
+			_vbox.add_child(alt_q)
 	_vbox.add_child(_make_separator())
 	# Damage block (weapons + spells).
 	if slot == "weapon" or slot == "spell":
@@ -438,3 +495,54 @@ func _make_separator() -> Control:
 	sep.custom_minimum_size = Vector2(TOOLTIP_W - PADDING * 2, 1)
 	sep.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	return sep
+
+# Drift-particles eye candy for Mastercrafted+ quality items. Spawns
+# 12 motes that float upward from the bottom edge with random horizontal
+# drift, fading out as they rise, then respawn at the bottom. Lifetime
+# is the tooltip's lifetime — particles ride along until tooltip frees.
+# Color = quality color so a Sublime Fireball tome rains gold + the
+# gold blends with fire orange for a screenshot-worthy stack.
+const DRIFT_MOTE_COUNT := 12
+const DRIFT_MOTE_LIFETIME := 2.5
+var _drift_motes: Array = []
+var _drift_color: Color = Color(1.0, 0.92, 0.45)
+
+func _start_drift_particles(quality_tier: String) -> void:
+	_drift_color = Quality.color_for(quality_tier)
+	# Hold off until tooltip has a real size — wait one frame.
+	await get_tree().process_frame
+	if not is_instance_valid(self):
+		return
+	for i in DRIFT_MOTE_COUNT:
+		var mote := ColorRect.new()
+		mote.color = Color(_drift_color.r, _drift_color.g, _drift_color.b, 0.0)
+		mote.size = Vector2(3, 3)
+		mote.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		mote.z_index = 5
+		add_child(mote)
+		_drift_motes.append(mote)
+		_animate_mote(mote, i)
+
+func _animate_mote(mote: ColorRect, seed_idx: int) -> void:
+	if not is_instance_valid(mote):
+		return
+	# Random start position along the bottom edge, slight horizontal
+	# drift over the lifetime, fade alpha 0→0.85→0.
+	var w: float = max(20.0, size.x)
+	var h: float = max(20.0, size.y)
+	# Stagger initial delays so motes don't all fire on frame 0.
+	var delay: float = float(seed_idx) * (DRIFT_MOTE_LIFETIME / float(DRIFT_MOTE_COUNT))
+	var start_x: float = float(seed_idx * 137 % 100) / 100.0 * (w - 6.0) + 3.0
+	var drift_x: float = (float((seed_idx * 17) % 11) - 5.0) * 6.0  # -30..+30 px
+	var t := mote.create_tween().set_loops()
+	t.tween_interval(delay)
+	# Each loop: reset to bottom-center-ish then float up while fading.
+	t.tween_callback(func():
+		if is_instance_valid(mote):
+			mote.position = Vector2(start_x, h - 4.0)
+			mote.color.a = 0.0
+	)
+	t.tween_property(mote, "color:a", 0.85, 0.3)
+	t.parallel().tween_property(mote, "position:x", start_x + drift_x, DRIFT_MOTE_LIFETIME)
+	t.parallel().tween_property(mote, "position:y", -4.0, DRIFT_MOTE_LIFETIME)
+	t.tween_property(mote, "color:a", 0.0, 0.4)

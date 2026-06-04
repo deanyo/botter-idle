@@ -160,11 +160,18 @@ static func format_item_name(base_name: String, affixes: Array, inst: Variant = 
 	_ensure_loaded()
 	var prefix: String = ""
 	if typeof(inst) == TYPE_DICTIONARY:
+		# Quality tier prefix — "Pristine Iron Dagger" / "Rusted Tower
+		# Shield" / "Mouldering Fireball Tome". Always rendered if
+		# present, regardless of meta-rarity. Skips "Standard" since
+		# that's the no-op baseline. Item-overhaul follow-up 2026-06-04.
+		var quality: String = String(inst.get("quality", ""))
+		if quality != "" and quality != "Standard":
+			prefix = quality + " "
 		var meta: String = String(inst.get("meta_rarity", ""))
 		if meta == "ancient":
-			prefix = "Ancient "
+			prefix = "Ancient " + prefix
 		elif meta == "primal":
-			prefix = "Primal "
+			prefix = "Primal " + prefix
 	var name_with_prefix: String = prefix + base_name
 	if affixes.is_empty():
 		return name_with_prefix

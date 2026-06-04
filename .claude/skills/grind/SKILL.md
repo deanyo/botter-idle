@@ -27,6 +27,30 @@ bash /Users/dyo/claude/botter/.claude/skills/grind/grind.sh 10 8
 `Engine.time_scale` multiplier (default 16). At 16x, a 5-run grind typically
 finishes in 30-90 seconds.
 
+### Verifying compile-only changes
+
+If you only need to confirm GDScript compiles cleanly (e.g. after a
+small refactor), use the class-cache rebuild instead — it's a 5-second
+parse-check that fails loudly if any script has a syntax error:
+
+```bash
+bash /Users/dyo/claude/botter/tools/refresh_class_cache.sh
+```
+
+A successful run prints `OK — cache regenerated with N classes.` Use
+this for quick smoke; reserve the full grind for behavioral changes.
+
+### Purging the debug save
+
+The debug save persists across grind invocations so `inject_save.py`
+loadouts can be tested run-after-run. When item schemas change (v2
+stats, quality tiers, etc.), leftover instances may render as blank
+until rolled fresh. Wipe before grinding with:
+
+```bash
+BOTTER_PURGE_SAVE=1 bash /Users/dyo/claude/botter/.claude/skills/grind/grind.sh 1
+```
+
 ## How it works
 
 1. Park any active `DEBUG_FLOOR.txt` marker so it doesn't fight the launch.

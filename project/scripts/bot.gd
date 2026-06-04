@@ -424,13 +424,19 @@ func recompute_stats() -> void:
 			continue
 		var item: Dictionary = _items_db_cache[base_id]
 		# Meta-rarity multiplier scales BASE stats (damage range / armor /
-		# evasion). Affixes unaffected — they have their own tiers.
+		# evasion). Affixes get a separate multiplier that's half-strength.
 		var meta: String = String(inst.get("meta_rarity", ""))
 		var meta_mult: float = 1.0
 		if meta == "ancient":
 			meta_mult = 1.20
 		elif meta == "primal":
 			meta_mult = 1.50
+		# Quality multiplier — stacks on top of meta_mult. Full strength
+		# on baseline stats; half strength on affix values (see the
+		# affix loop below). 0.80x Rusted → 1.20x Masterwork.
+		var qmult: float = Quality.multiplier_for(inst)
+		var qmult_affix: float = Quality.affix_multiplier_for(inst)
+		var combined_base: float = meta_mult * qmult
 		# Slot-shape branching:
 		#   weapon → set damage range + speed + damage_type
 		#   body slots → add to armor / evasion
@@ -438,14 +444,14 @@ func recompute_stats() -> void:
 		#                 affixes for spell-modifier rollup
 		#   jewelry → no baseline, just affixes
 		if slot == "weapon":
-			damage_min = int(round(float(item.get("damage_min", 1)) * meta_mult))
-			damage_max = int(round(float(item.get("damage_max", 2)) * meta_mult))
+			damage_min = int(round(float(item.get("damage_min", 1)) * combined_base))
+			damage_max = int(round(float(item.get("damage_max", 2)) * combined_base))
 			weapon_speed = float(item.get("speed", 1.0))
 			weapon_damage_type = String(item.get("damage_type", "physical"))
 			weapon_class = String(item.get("weapon_class", "1H"))
 		else:
-			armor += int(round(float(item.get("armor", 0)) * meta_mult))
-			evasion += float(item.get("evasion", 0)) * meta_mult
+			armor += int(round(float(item.get("armor", 0)) * combined_base))
+			evasion += float(item.get("evasion", 0)) * combined_base
 
 		# Combine implicit + rolled affixes — both go through the same
 		# rollup. Implicit affixes are stamped on uniques at item-roll
@@ -459,37 +465,39 @@ func recompute_stats() -> void:
 		for a in inst.get("affixes", []):
 			combined_affixes.append(a)
 		var sums: Dictionary = AffixSystem.sum_affix_stats(combined_affixes)
-		# Primary stats from affixes.
-		str_stat += int(sums.get("str", 0))
-		dex_stat += int(sums.get("dex", 0))
-		int_stat += int(sums.get("int", 0))
+		# Primary stats from affixes. Quality affix-mult applies at HALF
+		# strength (qmult_affix = 1.0 + (qmult - 1.0) * 0.5) so a 1.20x
+		# Masterwork only adds +10% to affix values, keeping affixes
+		# feeling rolled rather than dominated by the quality tier.
+		str_stat += int(round(float(sums.get("str", 0)) * qmult_affix))
+		dex_stat += int(round(float(sums.get("dex", 0)) * qmult_affix))
+		int_stat += int(round(float(sums.get("int", 0)) * qmult_affix))
 		# Defensive affixes.
-		hp_flat += int(sums.get("hp", 0))
-		armor += int(sums.get("armor", 0))
-		evasion += float(sums.get("evasion", 0))
-		gear_regen += float(sums.get("hp_regen", 0))
+		hp_flat += int(round(float(sums.get("hp", 0)) * qmult_affix))
+		armor += int(round(float(sums.get("armor", 0)) * qmult_affix))
+		evasion += float(sums.get("evasion", 0)) * qmult_affix
+		gear_regen += float(sums.get("hp_regen", 0)) * qmult_affix
 		# Resistances (cap applied after the loop).
 		for elem in ["fire", "cold", "lightning", "holy", "poison", "dark"]:
-			resistances[elem] += float(sums.get(elem + "_res", 0))
+			resistances[elem] += float(sums.get(elem + "_res", 0)) * qmult_affix
 		# Crit / Haste / Lifesteal (universal).
-		crit_sum += float(sums.get("crit_chance", 0))
-		haste_sum += float(sums.get("haste_pct", 0))
-		lifesteal_pct += float(sums.get("lifesteal_pct", 0))
+		crit_sum += float(sums.get("crit_chance", 0)) * qmult_affix
+		haste_sum += float(sums.get("haste_pct", 0)) * qmult_affix
+		lifesteal_pct += float(sums.get("lifesteal_pct", 0)) * qmult_affix
 		# Spell-modifier affixes.
-		spell_cdr_pct += float(sums.get("spell_cdr_pct", 0))
-		spell_proj_bonus += int(sums.get("spell_proj_bonus", 0))
-		spell_proj_speed_pct += float(sums.get("spell_proj_speed_pct", 0))
-		spell_area_pct += float(sums.get("spell_area_pct", 0))
-		spell_duration_pct += float(sums.get("spell_duration_pct", 0))
-		spell_damage_pct += float(sums.get("spell_damage_pct", 0))
-		# Range affixes contribute extra_damage to autoattacks. The
-		# value_min / value_max bounds are summed under "<stat>_min" /
-		# "<stat>_max" keys by sum_affix_stats. Each elemental "of
-		# <element>" affix lands as <element>_extra → extra_damage[<element>].
+		spell_cdr_pct += float(sums.get("spell_cdr_pct", 0)) * qmult_affix
+		spell_proj_bonus += int(round(float(sums.get("spell_proj_bonus", 0)) * qmult_affix))
+		spell_proj_speed_pct += float(sums.get("spell_proj_speed_pct", 0)) * qmult_affix
+		spell_area_pct += float(sums.get("spell_area_pct", 0)) * qmult_affix
+		spell_duration_pct += float(sums.get("spell_duration_pct", 0)) * qmult_affix
+		spell_damage_pct += float(sums.get("spell_damage_pct", 0)) * qmult_affix
+		# Range affixes contribute extra_damage to autoattacks. Apply the
+		# half-strength quality multiplier to the bounds so a Pristine
+		# weapon's extra-fire damage gets a small bump.
 		for elem in ["physical", "fire", "cold", "lightning", "holy", "poison", "dark"]:
 			var key: String = elem + "_extra"
-			var lo: int = int(sums.get(key + "_min", 0))
-			var hi: int = int(sums.get(key + "_max", 0))
+			var lo: int = int(round(float(sums.get(key + "_min", 0)) * qmult_affix))
+			var hi: int = int(round(float(sums.get(key + "_max", 0)) * qmult_affix))
 			if lo > 0 or hi > 0:
 				var prev: Dictionary = extra_damage.get(elem, {"min": 0, "max": 0})
 				extra_damage[elem] = {"min": int(prev.min) + lo, "max": int(prev.max) + hi}

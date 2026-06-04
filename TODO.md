@@ -5,6 +5,46 @@ the durable rules in `CLAUDE.md`. Update this file when committing.
 
 ---
 
+## Enchant combos (HIGH priority — 2026-06-04)
+
+Today an item rolls AT MOST one enchant from `enchant_pool` at drop
+time. Idea: rarely (~1-2% of enchant rolls), the item rolls TWO
+enchants that **combine into a named compound** with a unique effect
+and a distinct color.
+
+Examples to seed the system:
+- `poison + fire` → **Combustion** (poison DoT triggers a
+  delayed fire flash on expiry)
+- `cold + lightning` → **Brittle Storm** (frozen targets take +50%
+  lightning damage)
+- `holy + fire` → **Pyre** (burns harder on undead/demon enemies)
+- `dark + cold` → **Hollow Frost** (freeze duration +50% on enemies
+  below 50% HP)
+- `vampiric + holy` → **Sanctified Drain** (lifesteal heals 2× when
+  target is holy-hated)
+
+Implementation shape:
+- New `enchant_combos.json` data file mapping `[a, b]` (sorted) →
+  `{ name, color, effect_id }`. Effect ids resolve to handler
+  functions in actor.gd (similar to how flavor tags fire procs today).
+- `dungeon._create_item_instance` enchant roll path: when rolling an
+  enchant, ~5% of rolls get a SECOND independent enchant pick. If the
+  pair has a combo entry, write `inst.enchant = combo.name` and
+  `inst.enchant_combo = true`. The combat path looks up combo effects
+  from inst.enchant_combo + the constituent flavors.
+- Some uniques carry a combo INNATELY via `implicit_enchant_combo:
+  "Combustion"` field — adds the combined behavior + color glow
+  without rolling.
+- Tooltip shows the combo name in a special unique-style line with
+  the combo's blended color (gradient between the two component
+  flavor colors).
+
+Worth pairing with a "compound flavor" expansion of the tooltip glow
+shader so the panel halo shifts between the two component element
+colors.
+
+---
+
 ## Combat-pivot follow-ups (2026-06-04, HIGH priority — deferred from
 ##  the autocast spells beat)
 
