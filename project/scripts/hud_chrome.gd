@@ -785,6 +785,20 @@ func update_inventory_segments(segments: Array, items_db: Dictionary, slot_coold
 				var node: Node = grid_s.get_child(removed_idx)
 				if node != null and is_instance_valid(node):
 					node.queue_free()
+				# Renumber subsequent siblings — their `item_idx` meta
+				# pointed at indices that just shifted left by one when
+				# the data array compacted. Without this, drag/click
+				# on a remaining cell looks up _loot_segments[seg].items
+				# at a stale index → equips the WRONG item (presents
+				# as the dragged-spell-equipped-as-cloak bug).
+				for child_idx in range(removed_idx, grid_s.get_child_count()):
+					var sibling: Node = grid_s.get_child(child_idx)
+					if sibling == node:
+						continue  # the queued-free node is still in the tree this frame
+					if sibling.has_method("set_meta"):
+						var old_item_idx: int = int(sibling.get_meta("item_idx", -1))
+						if old_item_idx > removed_idx:
+							sibling.set_meta("item_idx", old_item_idx - 1)
 				cached["count"] = new_count
 				cached["ids"] = new_ids
 				continue
