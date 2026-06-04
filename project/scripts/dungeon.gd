@@ -2394,6 +2394,12 @@ func try_equip_from_segment(seg_idx: int, item_idx: int) -> bool:
 		return false
 	if not is_instance_valid(bot):
 		return false
+	# Species can't wear this slot. Block early with a player-visible
+	# log so the click feels intentional rather than silently ignored.
+	if not SpeciesData.can_wear(bot.species_id, slot):
+		var sp_def: Dictionary = SpeciesData.get_def(bot.species_id)
+		_log("%s cannot wear %s." % [String(sp_def.get("name", "Bot")), slot.capitalize()], "combat")
+		return false
 	# 2H ↔ shield exclusion can return up to TWO displaced items.
 	var displaced_arr: Array = bot.equip_from_inventory(inst)
 	# Remove the picked item from its segment.

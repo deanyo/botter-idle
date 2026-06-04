@@ -11,22 +11,127 @@ static var debug_mode: bool = false
 static func _path() -> String:
 	return DEBUG_PATH if debug_mode else LIVE_PATH
 
-static func load_state() -> Dictionary:
+# Top-level save shape (multi-character):
+#   {
+#     "characters": [<char_dict>, ...],
+#     "active":     <int>,
+#   }
+# Older single-character saves (pre-2026-06-04) get auto-wrapped into
+# characters[0]. Callers never see the wrapper directly — load_state()
+# always returns the ACTIVE character's dict; save_state() updates that
+# slot. Multi-bot management uses list_characters / create_character /
+# set_active / delete_character.
+
+static func _load_wrapper() -> Dictionary:
 	var path: String = _path()
 	if not FileAccess.file_exists(path):
-		return _default()
+		return {"characters": [_default()], "active": 0}
 	var f := FileAccess.open(path, FileAccess.READ)
 	if f == null:
-		return _default()
+		return {"characters": [_default()], "active": 0}
 	var parsed: Variant = JSON.parse_string(f.get_as_text())
 	if typeof(parsed) != TYPE_DICTIONARY:
-		return _default()
-	var state: Dictionary = parsed
-	for k in _default().keys():
-		if not state.has(k):
-			state[k] = _default()[k]
-	_migrate(state)
-	return state
+		return {"characters": [_default()], "active": 0}
+	var raw: Dictionary = parsed
+	# Detect legacy single-character shape — top-level had `species`,
+	# `equipped`, `inventory` etc. Wrap into characters[0].
+	if not raw.has("characters") or typeof(raw.get("characters", [])) != TYPE_ARRAY:
+		var legacy: Dictionary = raw
+		# Fill missing defaults + run migrations.
+		for k in _default().keys():
+			if not legacy.has(k):
+				legacy[k] = _default()[k]
+		_migrate(legacy)
+		return {"characters": [legacy], "active": 0}
+	# Multi-character shape — fill defaults + migrate per character.
+	var chars: Array = raw.get("characters", [])
+	for ch in chars:
+		if typeof(ch) != TYPE_DICTIONARY:
+			continue
+		for k in _default().keys():
+			if not ch.has(k):
+				ch[k] = _default()[k]
+		_migrate(ch)
+	if chars.is_empty():
+		chars.append(_default())
+	var active: int = clampi(int(raw.get("active", 0)), 0, chars.size() - 1)
+	return {"characters": chars, "active": active}
+
+static func _save_wrapper(wrapper: Dictionary) -> void:
+	var f := FileAccess.open(_path(), FileAccess.WRITE)
+	if f == null:
+		return
+	f.store_string(JSON.stringify(wrapper, "  "))
+
+static func load_state() -> Dictionary:
+	# Returns the active character's dict so existing callers don't need
+	# to know about the wrapper. New character-management calls use the
+	# top-level helpers below.
+	var w: Dictionary = _load_wrapper()
+	var chars: Array = w["characters"]
+	var active: int = int(w["active"])
+	return chars[active]
+
+# Per-character utility helpers ------------------------------------------
+
+# Return a copy of the wrapper for read-only inspection (e.g. main menu
+# wants to list all bots without committing a save).
+static func load_wrapper_readonly() -> Dictionary:
+	return _load_wrapper()
+
+# List all characters as a summary array. Each entry: {idx, species,
+# level, runs_completed, gold, last_seen_timestamp}. Used by the
+# main-menu bot picker.
+static func list_characters() -> Array:
+	var w: Dictionary = _load_wrapper()
+	var out: Array = []
+	for i in w.characters.size():
+		var ch: Dictionary = w.characters[i]
+		out.append({
+			"idx":               i,
+			"is_active":         i == int(w.active),
+			"species":           String(ch.get("species", "spriggan")),
+			"level":             int(ch.get("level", 1)),
+			"runs_completed":    int(ch.get("runs_completed", 0)),
+			"gold":              int(ch.get("gold", 0)),
+			"last_seen_timestamp": int(ch.get("last_seen_timestamp", 0)),
+		})
+	return out
+
+# Create a new character with the given species. Becomes active. Returns
+# the new index. Each character is a fresh _default() with `species`
+# replaced.
+static func create_character(species: String) -> int:
+	var w: Dictionary = _load_wrapper()
+	var ch: Dictionary = _default()
+	ch["species"] = species
+	w.characters.append(ch)
+	w["active"] = w.characters.size() - 1
+	_save_wrapper(w)
+	return int(w["active"])
+
+# Switch the active character. Out-of-range = no-op.
+static func set_active(idx: int) -> void:
+	var w: Dictionary = _load_wrapper()
+	if idx < 0 or idx >= w.characters.size():
+		return
+	w["active"] = idx
+	_save_wrapper(w)
+
+# Delete a character. Cannot delete the last one. Active shifts to a
+# valid neighbor.
+static func delete_character(idx: int) -> void:
+	var w: Dictionary = _load_wrapper()
+	if w.characters.size() <= 1:
+		return
+	if idx < 0 or idx >= w.characters.size():
+		return
+	w.characters.remove_at(idx)
+	if int(w.active) >= w.characters.size():
+		w["active"] = w.characters.size() - 1
+	elif int(w.active) > idx:
+		w["active"] = int(w.active) - 1
+	_save_wrapper(w)
 
 # In-place migrations applied on load. Idempotent — running twice is a no-op.
 static func _migrate(state: Dictionary) -> void:
@@ -67,15 +172,19 @@ static func _migrate(state: Dictionary) -> void:
 	state["equipped"] = equipped
 
 static func save_state(state: Dictionary) -> void:
-	# Stamp the save with the current wall time so launch can compute
-	# offline_seconds = now - last_seen_timestamp on the next boot. Done
-	# here (not at run-end) so even mid-session saves accurately reflect
-	# "when the game was last alive".
+	# Stamp the active character with wall time + persist to disk.
+	# Existing callers pass a single-character dict (from load_state);
+	# we slot it back into the wrapper at the active index.
 	state["last_seen_timestamp"] = int(Time.get_unix_time_from_system())
-	var f := FileAccess.open(_path(), FileAccess.WRITE)
-	if f == null:
-		return
-	f.store_string(JSON.stringify(state, "  "))
+	var w: Dictionary = _load_wrapper()
+	var active: int = int(w.get("active", 0))
+	if active < 0 or active >= w.characters.size():
+		# Wrapper somehow desynced — recover by writing a single-char
+		# wrapper. Avoids losing the player's data on a corrupt file.
+		w = {"characters": [state], "active": 0}
+	else:
+		w.characters[active] = state
+	_save_wrapper(w)
 
 static func _default() -> Dictionary:
 	# Starter gear: gives a level-1 fresh bot a fighting chance and ensures

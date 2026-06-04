@@ -91,6 +91,10 @@ var _inv_columns: int = 6
 # Equip-request callback set by dungeon.gd: takes (segment_index, item_index)
 # and returns whether the equip succeeded.
 var equip_request_target: Object = null
+# Cached active species — set in update_equipped, read in
+# _make_inv_button so each freshly-built inventory cell can render
+# the 🚫 overlay on items the bot can't wear.
+var _active_species: String = ""
 
 # Debug HUD
 var debug_lbl: Label
@@ -558,12 +562,35 @@ func update_equipped(equipped: Dictionary, items_db: Dictionary, species: String
 	# equipped: slot → instance dict; items_db: id → static def. The L-shape
 	# slot grid keeps using the item-card icon; the bot rig draws actual
 	# body/weapon/helm overlay sprites.
+	_active_species = species
 	for cell in equipped_cells:
 		var slot: String = cell.slot
+		var species_blocked: bool = species != "" and not SpeciesData.can_wear(species, slot)
 		var inst: Variant = equipped.get(slot, null)
 		var sprite: TextureRect = cell.sprite
 		var hover: Control = cell.hover
 		var base_tooltip: String = SLOT_TOOLTIPS.get(slot, slot.capitalize())
+		# 🚫 overlay for species-blocked slots. Lazy-create on first
+		# transition into a blocked species; toggle visibility otherwise.
+		var x_lbl: Variant = cell.get("x_lbl", null)
+		if species_blocked:
+			if x_lbl == null or not is_instance_valid(x_lbl):
+				var new_lbl := Label.new()
+				new_lbl.text = "🚫"
+				new_lbl.position = sprite.position
+				new_lbl.size = sprite.size
+				new_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+				new_lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+				new_lbl.add_theme_font_size_override("font_size", 18)
+				new_lbl.add_theme_color_override("font_color", Color(1.0, 0.4, 0.4, 0.9))
+				new_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+				add_child(new_lbl)
+				cell["x_lbl"] = new_lbl
+				x_lbl = new_lbl
+			else:
+				x_lbl.visible = true
+		elif x_lbl != null and is_instance_valid(x_lbl):
+			x_lbl.visible = false
 		var tex: Texture2D = null
 		var item_name: String = ""
 		var slot_rarity: String = ""
@@ -820,6 +847,21 @@ func _make_inv_button(seg_idx: int, item_idx: int, inst: Variant, items_db: Dict
 	if recolor_mat != null:
 		sprite.material = recolor_mat
 	btn.add_child(sprite)
+	# Species body-shape lock — overlay 🚫 on items the active bot
+	# can't wear. Cached _active_species set by update_equipped before
+	# inventory render is triggered.
+	if _active_species != "" and slot != "" and not SpeciesData.can_wear(_active_species, slot):
+		sprite.modulate.a = 0.45
+		var x_lbl := Label.new()
+		x_lbl.text = "🚫"
+		x_lbl.position = Vector2.ZERO
+		x_lbl.size = Vector2(INV_CELL_SIZE, INV_CELL_SIZE)
+		x_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		x_lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		x_lbl.add_theme_font_size_override("font_size", 22)
+		x_lbl.add_theme_color_override("font_color", Color(1.0, 0.4, 0.4, 0.9))
+		x_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		btn.add_child(x_lbl)
 	return btn
 
 func _on_inv_cell_pressed(seg_idx: int, item_idx: int) -> void:

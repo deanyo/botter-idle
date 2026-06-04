@@ -106,6 +106,115 @@ func _build_vignette(x: int, y: int, w: int, h: int) -> void:
 		int(derived.crit), int(derived.haste), int(derived.regen),
 	]
 	var combat_lbl := _label(combat_line, x + pad, strip_y, 13, COL_AMBER); combat_lbl.size = Vector2(frame_w, 20)
+	strip_y += 32
+	# Multi-character picker. Lists all bots; click any non-active one
+	# to switch to it. Scrollable so 10+ bots stay usable.
+	var bots: Array = SaveState.list_characters()
+	if bots.size() >= 1:
+		var hdr := _label("Bots (%d)" % bots.size(), x + pad, strip_y, 13, COL_DIM)
+		hdr.size = Vector2(frame_w, 18)
+		strip_y += 22
+		_build_bot_picker(x + pad, strip_y, frame_w, 110, bots)
+
+# Horizontal scrollable bot picker. Each bot is a card showing its
+# species sprite + level + species name. Active bot is highlighted;
+# others are clickable to switch (re-instantiates the menu so the
+# vignette updates). A small ✕ in the corner deletes a non-active bot.
+func _build_bot_picker(x: int, y: int, w: int, h: int, bots: Array) -> void:
+	var scroll := ScrollContainer.new()
+	scroll.position = Vector2(x, y)
+	scroll.size = Vector2(w, h)
+	scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	add_child(scroll)
+	var hbox := HBoxContainer.new()
+	hbox.add_theme_constant_override("separation", 8)
+	scroll.add_child(hbox)
+	for b in bots:
+		hbox.add_child(_make_bot_card(b))
+
+const _BOT_CARD_W := 96
+const _BOT_CARD_H := 100
+
+func _make_bot_card(bot: Dictionary) -> Control:
+	var sp_id: String = String(bot.get("species", "spriggan"))
+	var sp_def: Dictionary = SpeciesData.get_def(sp_id)
+	var sp_name: String = String(sp_def.get("name", sp_id.capitalize()))
+	var card := Button.new()
+	card.flat = true
+	card.custom_minimum_size = Vector2(_BOT_CARD_W, _BOT_CARD_H)
+	card.tooltip_text = "%s · Lv %d · %d runs" % [sp_name, int(bot.level), int(bot.runs_completed)]
+	if not bool(bot.is_active):
+		card.pressed.connect(_on_switch_bot.bind(int(bot.idx)))
+	# Highlight active.
+	var bg := ColorRect.new()
+	bg.color = Color(0.92, 0.78, 0.45, 0.20) if bool(bot.is_active) else Color(0, 0, 0, 0.45)
+	bg.size = Vector2(_BOT_CARD_W, _BOT_CARD_H)
+	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	card.add_child(bg)
+	# Sprite.
+	var sprite_path: String = SpeciesData.sprite_path_for(sp_id)
+	if ResourceLoader.exists(sprite_path):
+		var spr := TextureRect.new()
+		spr.texture = load(sprite_path)
+		spr.position = Vector2(_BOT_CARD_W / 2 - 24, 8)
+		spr.size = Vector2(48, 48)
+		spr.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		spr.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		spr.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		spr.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		card.add_child(spr)
+	# Name + level beneath.
+	var name_lbl := Label.new()
+	name_lbl.text = sp_name
+	name_lbl.position = Vector2(0, 58)
+	name_lbl.size = Vector2(_BOT_CARD_W, 16)
+	name_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	name_lbl.add_theme_font_size_override("font_size", 11)
+	name_lbl.add_theme_color_override("font_color", COL_AMBER if bool(bot.is_active) else COL_DIM)
+	name_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	card.add_child(name_lbl)
+	var lv_lbl := Label.new()
+	lv_lbl.text = "Lv %d" % int(bot.level)
+	lv_lbl.position = Vector2(0, 76)
+	lv_lbl.size = Vector2(_BOT_CARD_W, 16)
+	lv_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	lv_lbl.add_theme_font_size_override("font_size", 10)
+	lv_lbl.add_theme_color_override("font_color", COL_DIM)
+	lv_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	card.add_child(lv_lbl)
+	# Delete button on non-active cards.
+	if not bool(bot.is_active):
+		var del := Button.new()
+		del.text = "✕"
+		del.position = Vector2(_BOT_CARD_W - 20, 0)
+		del.size = Vector2(20, 20)
+		del.flat = true
+		del.add_theme_font_size_override("font_size", 12)
+		del.add_theme_color_override("font_color", Color(1, 0.5, 0.5))
+		del.tooltip_text = "Delete this bot."
+		del.pressed.connect(_on_delete_bot.bind(int(bot.idx)))
+		card.add_child(del)
+	return card
+
+func _on_switch_bot(idx: int) -> void:
+	SaveState.set_active(idx)
+	# Easiest refresh — request a re-show of the main menu so the
+	# vignette + picker pick up the new active bot. main.gd routes
+	# play_pressed → outpost; we need a way to ask main.gd to
+	# rebuild this scene. Cheapest approach: force a reload by
+	# reloading the same scene.
+	get_tree().reload_current_scene()
+
+func _on_delete_bot(idx: int) -> void:
+	var dlg := ConfirmationDialog.new()
+	dlg.title = "Delete bot"
+	dlg.dialog_text = "Permanently delete this character? This cannot be undone."
+	add_child(dlg)
+	dlg.confirmed.connect(func():
+		SaveState.delete_character(idx)
+		get_tree().reload_current_scene()
+	)
+	dlg.popup_centered(Vector2i(360, 160))
 
 func _build_buttons(x: int, y: int, w: int, h: int) -> void:
 	var pad := 64

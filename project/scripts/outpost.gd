@@ -347,6 +347,10 @@ func _build_paperdoll_pane(x: int, y: int, w: int, h: int) -> void:
 func _make_paperdoll_slot(slot_id: String, x: int, y: int) -> void:
 	var slot := PAPERDOLL_SLOT_SIZE
 	var is_placeholder: bool = not (slot_id in SLOTS)
+	# Species body-shape lock — slot is greyed out + crossed for
+	# species that can't wear it. Layout stays stable so other species'
+	# saves render the same row positions.
+	var species_blocked: bool = not SpeciesData.can_wear(String(state.get("species", "")), slot_id)
 	var slot_bg := ColorRect.new()
 	slot_bg.color = Color(0, 0, 0, 0.55) if not is_placeholder else Color(0, 0, 0, 0.30)
 	slot_bg.position = Vector2(x, y)
@@ -356,6 +360,8 @@ func _make_paperdoll_slot(slot_id: String, x: int, y: int) -> void:
 	slot_border.position = Vector2(x, y)
 	slot_border.size = Vector2(slot, slot)
 	slot_border.border_color = Color(0.4, 0.35, 0.2, 0.8) if not is_placeholder else Color(0.25, 0.22, 0.14, 0.55)
+	if species_blocked:
+		slot_border.border_color = Color(0.45, 0.20, 0.20, 0.7)
 	slot_border.border_width = 1.0
 	slot_border.editor_only = false
 	add_child(slot_border)
@@ -364,7 +370,9 @@ func _make_paperdoll_slot(slot_id: String, x: int, y: int) -> void:
 	btn.size = Vector2(slot, slot)
 	btn.flat = true
 	btn.tooltip_text = SLOT_TOOLTIPS.get(slot_id, slot_id.capitalize())
-	if not is_placeholder:
+	if species_blocked:
+		btn.tooltip_text += " — your species cannot wear this."
+	if not is_placeholder and not species_blocked:
 		btn.pressed.connect(_unequip.bind(slot_id))
 	else:
 		btn.disabled = true
@@ -377,9 +385,21 @@ func _make_paperdoll_slot(slot_id: String, x: int, y: int) -> void:
 	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	sprite.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(sprite)
+	# 🚫 overlay for species-blocked slots.
+	if species_blocked:
+		var x_lbl := Label.new()
+		x_lbl.text = "🚫"
+		x_lbl.position = Vector2(x, y)
+		x_lbl.size = Vector2(slot, slot)
+		x_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		x_lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		x_lbl.add_theme_font_size_override("font_size", 24)
+		x_lbl.add_theme_color_override("font_color", Color(1.0, 0.4, 0.4, 0.85))
+		x_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		add_child(x_lbl)
 	equipped_cells.append({
 		"slot": slot_id, "sprite": sprite, "btn": btn, "border": slot_border,
-		"is_placeholder": is_placeholder,
+		"is_placeholder": is_placeholder, "species_blocked": species_blocked,
 	})
 
 func _build_stats_pane(x: int, y: int, w: int, h: int) -> void:
@@ -795,6 +815,21 @@ func _make_inv_cell(inv_index: int, inst: Dictionary, item: Dictionary) -> Contr
 	if op_recolor != null:
 		sprite.material = op_recolor
 	cell.add_child(sprite)
+	# 🚫 overlay if the active species can't equip this slot.
+	var item_slot: String = String(item.get("slot", ""))
+	if item_slot != "" and not SpeciesData.can_wear(String(state.get("species", "")), item_slot):
+		var x_lbl := Label.new()
+		x_lbl.text = "🚫"
+		x_lbl.position = Vector2.ZERO
+		x_lbl.size = Vector2(INV_CELL_SIZE, INV_CELL_SIZE)
+		x_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		x_lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		x_lbl.add_theme_font_size_override("font_size", 22)
+		x_lbl.add_theme_color_override("font_color", Color(1.0, 0.4, 0.4, 0.9))
+		x_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		cell.add_child(x_lbl)
+		# Dim the underlying sprite so the X is the dominant read.
+		sprite.modulate.a = 0.45
 	var btn := Button.new()
 	btn.size = Vector2(INV_CELL_SIZE, INV_CELL_SIZE)
 	btn.flat = true
@@ -859,6 +894,11 @@ func _equip(inv_index: int) -> void:
 		return
 	var item: Dictionary = items_db[base_id]
 	var slot: String = _resolve_equip_slot(String(item.get("slot", "")))
+	# Block if the active character's species can't wear this slot.
+	# Outpost has no toast; the click silently fails. Player sees the
+	# 🚫 icon on the cell that matches.
+	if not SpeciesData.can_wear(String(state.get("species", "")), slot):
+		return
 	# 2H ↔ shield exclusion (mirrors Bot.equip_from_inventory). A 2H
 	# weapon clears the shield slot back to inventory; a shield
 	# clears a 2H weapon back to inventory. Per-base_type list lives

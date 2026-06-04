@@ -210,6 +210,12 @@ func equip_from_inventory(inst: Dictionary) -> Array:
 	var slot: String = String(item.get("slot", ""))
 	if slot == "":
 		return []
+	# Species body-shape restriction. Octopodes can't wear body
+	# armor / boots / helms; nagas can't wear boots. Returning [] = no
+	# items displaced + no equip happened. Caller treats it as "blocked"
+	# (the inventory item stays in inventory, no swap occurs).
+	if not SpeciesData.can_wear(species_id, slot):
+		return []
 	# items.json declares slot=="ring"; the equipped dict uses one `ring`
 	# slot (collapsed from ring1/ring2 — see save_state._migrate).
 	if slot == "ring":

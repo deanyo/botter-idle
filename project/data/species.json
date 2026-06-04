@@ -54,7 +54,7 @@
       "id": "naga",
       "name": "Naga",
       "sprite": "naga_female.png",
-      "lore": "Coiled serpent-folk. Heavy frame, slow on the move, but recovers wounds with quiet patience.",
+      "lore": "Coiled serpent-folk. Heavy frame, slow on the move, but recovers wounds with quiet patience. Cannot wear boots — no feet to put them on.",
       "hp_pct": 20,
       "atk_pct": 0,
       "def_pct": 10,
@@ -64,7 +64,8 @@
       "aggro_flat": -1,
       "xp_pct": 0,
       "loot_pct": 0,
-      "innate_tags": []
+      "innate_tags": [],
+      "disallowed_slots": ["boots"]
     },
     {
       "id": "tengu",
@@ -102,7 +103,7 @@
       "id": "octopode",
       "name": "Octopode",
       "sprite": "octopode_1.png",
-      "lore": "Tentacled scavengers. No armor restrictions, eight limbs to clutch trinkets. Fortune-favored finders.",
+      "lore": "Tentacled scavengers. No torso for armor, no feet for boots, no head for helms — but tentacles for trinkets. Fortune-favored finders.",
       "hp_pct": -5,
       "atk_pct": 0,
       "def_pct": -5,
@@ -112,7 +113,8 @@
       "aggro_flat": 0,
       "xp_pct": 0,
       "loot_pct": 20,
-      "innate_tags": []
+      "innate_tags": [],
+      "disallowed_slots": ["armor", "boots", "helm"]
     },
     {
       "id": "demonspawn",

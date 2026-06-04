@@ -71,3 +71,16 @@ static func sprite_path_for(id: String) -> String:
 	if sprite == "":
 		return ""
 	return "res://assets/tiles/player/species/" + sprite
+
+# Slots this species cannot equip (DCSS body-shape restrictions).
+# Octopode has no torso/feet/head; naga has no feet. Empty = can wear
+# anything. Read by Bot.recompute_stats (skips contributions from
+# disallowed slots' equipped items, just in case stale data lingers)
+# AND by the equip flow (blocks new equips into disallowed slots).
+static func disallowed_slots(id: String) -> Array:
+	var d: Dictionary = get_def(id)
+	return d.get("disallowed_slots", [])
+
+# Convenience: true if this species can wear gear in `slot`.
+static func can_wear(id: String, slot: String) -> bool:
+	return not (slot in disallowed_slots(id))

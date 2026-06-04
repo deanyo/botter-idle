@@ -267,8 +267,9 @@ func _render_stat_table(sp: Dictionary) -> void:
 func _on_confirm() -> void:
 	if selected_id == "":
 		return
-	# Persist the species pick into the save.
-	var state: Dictionary = SaveState.load_state()
-	state["species"] = selected_id
-	SaveState.save_state(state)
+	# Each character is a SEPARATE save slot — picking a species now
+	# creates a fresh level-1 character with default gear, leaves
+	# the previous bot intact. Multi-character save schema lives in
+	# SaveState.create_character.
+	SaveState.create_character(selected_id)
 	character_confirmed.emit(selected_id)
