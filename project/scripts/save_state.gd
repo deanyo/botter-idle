@@ -100,11 +100,26 @@ static func list_characters() -> Array:
 
 # Create a new character with the given species. Becomes active. Returns
 # the new index. Each character is a fresh _default() with `species`
-# replaced.
+# replaced + starter gear filtered by the species' disallowed_slots
+# (an Octopode shouldn't start with body armor it can't equip) +
+# extra ring slot keys initialized for species that convert
+# (Octopode → 3 extra rings, Naga → 1 extra ring).
 static func create_character(species: String) -> int:
 	var w: Dictionary = _load_wrapper()
 	var ch: Dictionary = _default()
 	ch["species"] = species
+	var equipped: Dictionary = ch.get("equipped", {})
+	# Strip starter gear in disallowed slots.
+	var disallowed: Array = SpeciesData.disallowed_slots(species)
+	for slot in disallowed:
+		equipped[slot] = null
+	# Init extra ring slot keys (ring2 / ring3 / ring4) for species
+	# that get them via slot_conversions. The slot ids match what
+	# Bot.equip_from_inventory expects.
+	for ring_id in SpeciesData.ring_slot_ids(species):
+		if not equipped.has(ring_id):
+			equipped[ring_id] = null
+	ch["equipped"] = equipped
 	w.characters.append(ch)
 	w["active"] = w.characters.size() - 1
 	_save_wrapper(w)
@@ -152,6 +167,27 @@ static func _migrate(state: Dictionary) -> void:
 	# wearing. New characters can pick any species at creation.
 	if not state.has("species") or String(state["species"]) == "":
 		state["species"] = "spriggan"
+	# Body-shape correction (2026-06-04): if a character has gear
+	# equipped in slots their species can't wear (e.g. an octopode
+	# created before disallowed_slots existed got a starter chest),
+	# unequip it back into inventory rather than silently keeping the
+	# stat boost. Idempotent — running on a clean save no-ops.
+	var sp_disallowed: Array = SpeciesData.disallowed_slots(String(state["species"]))
+	if not sp_disallowed.is_empty():
+		var inv: Array = state.get("inventory", [])
+		for slot in sp_disallowed:
+			var current: Variant = equipped.get(slot, null)
+			if current != null and typeof(current) == TYPE_DICTIONARY:
+				inv.append(current)
+				equipped[slot] = null
+		state["inventory"] = inv
+		state["equipped"] = equipped
+	# Extra ring slot init for species with slot_conversions
+	# (octopode 3 rings, naga 1 ring). Idempotent.
+	for ring_id in SpeciesData.ring_slot_ids(String(state["species"])):
+		if not equipped.has(ring_id):
+			equipped[ring_id] = null
+	state["equipped"] = equipped
 	if not equipped.has("ring") or equipped.get("ring", null) == null:
 		var promote: Variant = equipped.get("ring1", null)
 		if promote == null:

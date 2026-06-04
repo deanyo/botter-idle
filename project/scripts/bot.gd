@@ -216,10 +216,22 @@ func equip_from_inventory(inst: Dictionary) -> Array:
 	# (the inventory item stays in inventory, no swap occurs).
 	if not SpeciesData.can_wear(species_id, slot):
 		return []
-	# items.json declares slot=="ring"; the equipped dict uses one `ring`
-	# slot (collapsed from ring1/ring2 — see save_state._migrate).
+	# Ring slot resolution: items.json declares slot=="ring"; the
+	# equipped dict has one `ring` slot for most species, but species
+	# with slot_conversions (octopode/naga) get extra ring slots
+	# (ring2/ring3/ring4). Pick the FIRST EMPTY ring slot so the
+	# player gets multi-ring stacking organically. Only when all are
+	# full do we displace ring (the original slot).
 	if slot == "ring":
-		slot = "ring"
+		var ring_ids: Array = SpeciesData.ring_slot_ids(species_id)
+		var picked_ring: String = ""
+		for r in ring_ids:
+			if equipped.get(r, null) == null:
+				picked_ring = r
+				break
+		if picked_ring == "":
+			picked_ring = "ring"  # all full — displace ring1
+		slot = picked_ring
 	var displaced: Array = []
 	# 2H weapon ↔ shield exclusion. Equipping a 2H weapon clears the
 	# shield slot back to inventory; equipping a shield clears a 2H
@@ -644,7 +656,11 @@ func combat_weapon_tags() -> Array:
 # defensive flavor tags (thorns, reflective, harm, rage). Helms also
 # count for completeness. Multiple sources stack — a thorns shield +
 # thorns armor will return damage twice per hit, by design.
-const _DEF_SLOTS := ["armor", "shield", "helm", "amulet", "ring", "boots", "gloves", "cloak"]
+# Slots whose equipped items contribute defender-side flavor tags +
+# regen/vitality bonuses. Includes the extra ring slots
+# (ring2/ring3/ring4) so octopode's ring stacking flows through —
+# absent keys on a non-octopode bot just skip cleanly.
+const _DEF_SLOTS := ["armor", "shield", "helm", "amulet", "ring", "ring2", "ring3", "ring4", "boots", "gloves", "cloak"]
 
 func combat_defense_tags() -> Array:
 	var out: Array = []

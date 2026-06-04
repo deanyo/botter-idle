@@ -72,15 +72,59 @@ static func sprite_path_for(id: String) -> String:
 		return ""
 	return "res://assets/tiles/player/species/" + sprite
 
-# Slots this species cannot equip (DCSS body-shape restrictions).
-# Octopode has no torso/feet/head; naga has no feet. Empty = can wear
-# anything. Read by Bot.recompute_stats (skips contributions from
-# disallowed slots' equipped items, just in case stale data lingers)
-# AND by the equip flow (blocks new equips into disallowed slots).
-static func disallowed_slots(id: String) -> Array:
+# Slot conversions per species (DCSS body-shape pattern). Octopode
+# loses armor/boots/helm — those slots are CONVERTED to extra ring
+# slots so the build identity is "ring stacking" instead of "you
+# just lost armor." Naga loses boots → 1 extra ring (their barding-
+# replacement). Empty = no conversions, all slots usable normally.
+#
+# Schema in species.json:
+#   slot_conversions: { "armor": "ring", "boots": "ring", "helm": "ring" }
+# Reads as: original `armor` slot is replaced with an extra `ring`
+# slot. Equip flow routes ring-slot items into ring/ring2/ring3/ring4
+# depending on species; non-ring items in converted slots can never
+# be equipped.
+static func slot_conversions(id: String) -> Dictionary:
 	var d: Dictionary = get_def(id)
-	return d.get("disallowed_slots", [])
+	return d.get("slot_conversions", {})
 
-# Convenience: true if this species can wear gear in `slot`.
+# The set of slots a species CANNOT equip its native item in. Derived
+# from slot_conversions keys for back-compat with code that asks
+# "can species X wear slot Y." A converted slot is "disallowed" in
+# the sense that the original-shape item won't fit; the converted-
+# target item (a ring, usually) is what goes there instead.
+static func disallowed_slots(id: String) -> Array:
+	var conv: Dictionary = slot_conversions(id)
+	# Legacy fallback for any species still using the old field.
+	if conv.is_empty():
+		var d: Dictionary = get_def(id)
+		return d.get("disallowed_slots", [])
+	return conv.keys()
+
+# Convenience: true if this species can wear gear in `slot`. Reads
+# the disallowed list; converted slots show up as disallowed.
 static func can_wear(id: String, slot: String) -> bool:
 	return not (slot in disallowed_slots(id))
+
+# How many extra ring slots this species gets via slot_conversions.
+# Octopode has 3 (armor + boots + helm all → ring); naga has 1.
+# Default species: 0. Read by save schema (creates ring2..ringN keys
+# on character creation), bot equip flow (resolves "ring" → first
+# empty), and paperdoll layout (renders extra ring cells instead of
+# the original slots).
+static func extra_ring_slots(id: String) -> int:
+	var conv: Dictionary = slot_conversions(id)
+	var n: int = 0
+	for src in conv:
+		if String(conv[src]) == "ring":
+			n += 1
+	return n
+
+# Returns ["ring", "ring2", "ring3", ...] for the active species —
+# all ring slot ids the bot has access to. Always includes the base
+# "ring" slot.
+static func ring_slot_ids(id: String) -> Array:
+	var out: Array = ["ring"]
+	for i in range(1, extra_ring_slots(id) + 1):
+		out.append("ring" + str(i + 1))
+	return out

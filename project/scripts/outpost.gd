@@ -331,22 +331,45 @@ func _build_paperdoll_pane(x: int, y: int, w: int, h: int) -> void:
 	paperdoll_holder.position = Vector2(inner_x + sprite_w / 2.0, inner_y + sprite_h / 2.0)
 	paperdoll_holder.scale = Vector2(rig_scale, rig_scale)
 	add_child(paperdoll_holder)
+	# Build species-resolved slot lists. Converted slots
+	# (octopode armor/boots/helm → ring) become extra ring cells; the
+	# original slot positions are filled with ring2/ring3/ring4 in the
+	# order they appear in the column/row.
+	var species: String = String(state.get("species", ""))
+	var conv: Dictionary = SpeciesData.slot_conversions(species)
+	var ring_pool: Array = SpeciesData.ring_slot_ids(species).slice(1)  # ring2..N
+	var ring_pool_idx: int = 0
+	var resolved_right: Array = []
+	for sid in PAPERDOLL_RIGHT_COLUMN:
+		if conv.has(sid) and ring_pool_idx < ring_pool.size():
+			resolved_right.append(ring_pool[ring_pool_idx])
+			ring_pool_idx += 1
+		else:
+			resolved_right.append(sid)
+	var resolved_bottom: Array = []
+	for sid in PAPERDOLL_BOTTOM_ROW:
+		if conv.has(sid) and ring_pool_idx < ring_pool.size():
+			resolved_bottom.append(ring_pool[ring_pool_idx])
+			ring_pool_idx += 1
+		else:
+			resolved_bottom.append(sid)
 	# Right column.
 	var right_x: int = inner_x + sprite_w + gap
-	var col_count: int = mini(PAPERDOLL_RIGHT_COLUMN.size(), maxi(1, sprite_h / (slot + gap)))
+	var col_count: int = mini(resolved_right.size(), maxi(1, sprite_h / (slot + gap)))
 	for i in col_count:
-		var slot_id: String = PAPERDOLL_RIGHT_COLUMN[i]
-		_make_paperdoll_slot(slot_id, right_x, inner_y + i * (slot + gap))
+		_make_paperdoll_slot(resolved_right[i], right_x, inner_y + i * (slot + gap))
 	# Bottom row.
 	var row_y: int = inner_y + sprite_h + gap
-	var row_count: int = mini(PAPERDOLL_BOTTOM_ROW.size(), maxi(1, inner_w / (slot + gap)))
+	var row_count: int = mini(resolved_bottom.size(), maxi(1, inner_w / (slot + gap)))
 	for i in row_count:
-		var slot_id: String = PAPERDOLL_BOTTOM_ROW[i]
-		_make_paperdoll_slot(slot_id, inner_x + i * (slot + gap), row_y)
+		_make_paperdoll_slot(resolved_bottom[i], inner_x + i * (slot + gap), row_y)
 
 func _make_paperdoll_slot(slot_id: String, x: int, y: int) -> void:
 	var slot := PAPERDOLL_SLOT_SIZE
-	var is_placeholder: bool = not (slot_id in SLOTS)
+	# Extra ring slots (ring2/ring3/ring4) come from species
+	# conversions; treat them as real, not placeholders.
+	var is_real_slot: bool = (slot_id in SLOTS) or slot_id.begins_with("ring")
+	var is_placeholder: bool = not is_real_slot
 	# Species body-shape lock — slot is greyed out + crossed for
 	# species that can't wear it. Layout stays stable so other species'
 	# saves render the same row positions.
@@ -369,7 +392,7 @@ func _make_paperdoll_slot(slot_id: String, x: int, y: int) -> void:
 	btn.position = Vector2(x, y)
 	btn.size = Vector2(slot, slot)
 	btn.flat = true
-	btn.tooltip_text = SLOT_TOOLTIPS.get(slot_id, slot_id.capitalize())
+	btn.tooltip_text = _tooltip_for_slot(slot_id)
 	if species_blocked:
 		btn.tooltip_text += " — your species cannot wear this."
 	if not is_placeholder and not species_blocked:
@@ -924,11 +947,32 @@ func _equip(inv_index: int) -> void:
 	SaveState.save_state(state)
 	_render()
 
-# items.json declares slot=="ring"; we collapsed to a single ring slot
-# (amulet covers the other trinket spot). Older saves with ring1/ring2
-# are migrated in save_state._migrate.
+# Tooltip for any slot id, including the species-specific extra
+# ring slots (ring2/ring3/ring4). Defaults to SLOT_TOOLTIPS for the
+# canonical slot list.
+func _tooltip_for_slot(slot_id: String) -> String:
+	if slot_id == "ring":
+		return "Ring"
+	if slot_id.begins_with("ring") and slot_id.length() > 4:
+		# ring2 → "Ring II", ring3 → "Ring III", etc. Roman-style for
+		# the octopode's tentacle-ring stacking flavor.
+		var n: int = int(slot_id.substr(4))
+		var roman := ["", "I", "II", "III", "IV", "V"]
+		return "Ring %s" % (roman[n] if n < roman.size() else str(n))
+	return SLOT_TOOLTIPS.get(slot_id, slot_id.capitalize())
+
+# Resolve the equipped-dict slot id for an item. Most slots are
+# 1:1 (helm → helm). Rings need species-aware routing — octopode/
+# naga have extra ring slots from slot_conversions. Pick the first
+# empty ring; if all are full, displace `ring`.
 func _resolve_equip_slot(item_slot: String) -> String:
-	return item_slot
+	if item_slot != "ring":
+		return item_slot
+	var species: String = String(state.get("species", ""))
+	for r in SpeciesData.ring_slot_ids(species):
+		if state.equipped.get(r, null) == null:
+			return r
+	return "ring"
 
 func _unequip(slot: String) -> void:
 	var current: Variant = state.equipped.get(slot, null)

@@ -230,25 +230,56 @@ func _build_paperdoll(sidebar_x0: int, top_y: int, bottom_y: int) -> void:
 	paperdoll_holder.position = paperdoll_rig_anchor
 	paperdoll_holder.scale = Vector2(paperdoll_rig_scale, paperdoll_rig_scale)
 	add_child(paperdoll_holder)
+	# Species-resolved slot lists (mirrors outpost.gd). Converted slots
+	# replaced with extra ring slots in column/row order.
+	var species: String = String(SaveState.load_state().get("species", ""))
+	var conv: Dictionary = SpeciesData.slot_conversions(species)
+	var ring_pool: Array = SpeciesData.ring_slot_ids(species).slice(1)
+	var ring_pool_idx: int = 0
+	var resolved_right: Array = []
+	for sid in PAPERDOLL_RIGHT_COLUMN:
+		if conv.has(sid) and ring_pool_idx < ring_pool.size():
+			resolved_right.append(ring_pool[ring_pool_idx])
+			ring_pool_idx += 1
+		else:
+			resolved_right.append(sid)
+	var resolved_bottom: Array = []
+	for sid in PAPERDOLL_BOTTOM_ROW:
+		if conv.has(sid) and ring_pool_idx < ring_pool.size():
+			resolved_bottom.append(ring_pool[ring_pool_idx])
+			ring_pool_idx += 1
+		else:
+			resolved_bottom.append(sid)
 	# Right column slots.
 	var right_x: int = doll_left + sprite_w + gap
 	var col_h_budget: int = sprite_h
-	var col_count: int = mini(PAPERDOLL_RIGHT_COLUMN.size(), maxi(1, col_h_budget / (slot + gap)))
+	var col_count: int = mini(resolved_right.size(), maxi(1, col_h_budget / (slot + gap)))
 	for i in col_count:
-		var slot_id: String = PAPERDOLL_RIGHT_COLUMN[i]
 		var sy_i: int = doll_top + i * (slot + gap)
-		_make_paperdoll_slot(slot_id, right_x, sy_i)
+		_make_paperdoll_slot(resolved_right[i], right_x, sy_i)
 	# Bottom row slots.
 	var row_y: int = doll_top + sprite_h + gap
-	var row_count: int = mini(PAPERDOLL_BOTTOM_ROW.size(), maxi(1, inner_w / (slot + gap)))
+	var row_count: int = mini(resolved_bottom.size(), maxi(1, inner_w / (slot + gap)))
 	for i in row_count:
-		var slot_id: String = PAPERDOLL_BOTTOM_ROW[i]
 		var rx: int = doll_left + i * (slot + gap)
-		_make_paperdoll_slot(slot_id, rx, row_y)
+		_make_paperdoll_slot(resolved_bottom[i], rx, row_y)
+
+# Tooltip for any slot, including extra ring slots (ring2..ringN).
+# Mirrors outpost.gd::_tooltip_for_slot.
+func _tooltip_for_slot(slot_id: String) -> String:
+	if slot_id == "ring":
+		return "Ring"
+	if slot_id.begins_with("ring") and slot_id.length() > 4:
+		var n: int = int(slot_id.substr(4))
+		var roman := ["", "I", "II", "III", "IV", "V"]
+		return "Ring %s" % (roman[n] if n < roman.size() else str(n))
+	return SLOT_TOOLTIPS.get(slot_id, slot_id.capitalize())
 
 func _make_paperdoll_slot(slot_id: String, x: int, y: int) -> void:
 	var slot := PAPERDOLL_SLOT_SIZE
-	var is_placeholder: bool = not (slot_id in EQUIPPED_SLOTS)
+	# Extra ring slots (ring2/ring3/ring4) come from species conversions.
+	var is_real: bool = (slot_id in EQUIPPED_SLOTS) or slot_id.begins_with("ring")
+	var is_placeholder: bool = not is_real
 	var slot_bg := ColorRect.new()
 	slot_bg.color = Color(0, 0, 0, 0.55) if not is_placeholder else Color(0, 0, 0, 0.30)
 	slot_bg.position = Vector2(x, y)
@@ -267,7 +298,7 @@ func _make_paperdoll_slot(slot_id: String, x: int, y: int) -> void:
 	hover.position = Vector2(x, y)
 	hover.size = Vector2(slot, slot)
 	hover.mouse_filter = Control.MOUSE_FILTER_PASS
-	hover.tooltip_text = SLOT_TOOLTIPS.get(slot_id, slot_id.capitalize())
+	hover.tooltip_text = _tooltip_for_slot(slot_id)
 	add_child(hover)
 	var sprite := TextureRect.new()
 	sprite.position = Vector2(x + 4, y + 4)

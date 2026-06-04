@@ -65,7 +65,7 @@
       "xp_pct": 0,
       "loot_pct": 0,
       "innate_tags": [],
-      "disallowed_slots": ["boots"]
+      "slot_conversions": { "boots": "ring" }
     },
     {
       "id": "tengu",
@@ -114,7 +114,7 @@
       "xp_pct": 0,
       "loot_pct": 20,
       "innate_tags": [],
-      "disallowed_slots": ["armor", "boots", "helm"]
+      "slot_conversions": { "armor": "ring", "boots": "ring", "helm": "ring" }
     },
     {
       "id": "demonspawn",
