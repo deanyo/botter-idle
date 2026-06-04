@@ -18,21 +18,43 @@ extends RefCounted
 
 enum Shape { WIDE, TALL }
 
-# Cross-platform modifier-key checks. macOS reports shift/alt as
-# KEY_SHIFT_LEFT/RIGHT and KEY_ALT_LEFT/RIGHT separately; the
-# unified KEY_SHIFT/KEY_ALT keycodes don't match physical presses
-# on Mac. Use these helpers everywhere instead of
-# Input.is_key_pressed(KEY_SHIFT) directly.
+# Cross-platform modifier-key state. On macOS the physical-key /
+# unified-key polls (Input.is_key_pressed) don't reliably reflect
+# modifier-only presses. We snapshot modifier state via the
+# `_input` callback in `ModifierTracker` (autoload-shaped helper
+# below) which receives every InputEventKey + InputEventMouseButton
+# with full .shift_pressed / .alt_pressed / .meta_pressed fields
+# populated by the OS layer.
+#
+# Helpers always return the latest known state. Callers don't need
+# to know about the tracker — just call shift_held() / alt_held().
+#
+# On Mac, alt_held also returns true when Cmd (⌘ / KEY_META) is
+# pressed because mac users naturally reach for Cmd as the "modifier
+# for power-user features." Option key (⌥ → KEY_ALT) still works.
+
+static var _shift_held_state: bool = false
+static var _alt_held_state: bool = false
+
+# Called from a tracker node's _input handler — see
+# `ModifierTrackerHelper.gd` autoload pattern. We set the static
+# flags so any code in any scene can poll without subscribing.
+static func _set_modifier_state(shift: bool, alt: bool) -> void:
+	_shift_held_state = shift
+	_alt_held_state = alt
+
 static func shift_held() -> bool:
-	return (
-		Input.is_physical_key_pressed(KEY_SHIFT)
-		or Input.is_key_pressed(KEY_SHIFT)
-	)
+	# Belt-and-braces: poll the Input singleton too so single-press
+	# scenarios where _input hasn't fired yet still work.
+	return _shift_held_state or Input.is_key_pressed(KEY_SHIFT) or Input.is_physical_key_pressed(KEY_SHIFT)
 
 static func alt_held() -> bool:
 	return (
-		Input.is_physical_key_pressed(KEY_ALT)
-		or Input.is_key_pressed(KEY_ALT)
+		_alt_held_state
+		or Input.is_key_pressed(KEY_ALT) or Input.is_physical_key_pressed(KEY_ALT)
+		# Mac convenience: Cmd ⌘ also counts as "alt" for the
+		# alt-extended tooltip. Option ⌥ users still work via KEY_ALT.
+		or Input.is_key_pressed(KEY_META) or Input.is_physical_key_pressed(KEY_META)
 	)
 
 const ASPECT_THRESHOLD: float = 1.20

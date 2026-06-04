@@ -73,6 +73,23 @@ func _ready() -> void:
 	_label.anchor_right = 0.5
 	_root.add_child(_label)
 
+# Modifier-key tracker — the loading curtain is an autoload that
+# always exists and ticks via PROCESS_MODE_ALWAYS, so it's the right
+# place to capture modifier state for the rest of the UI. Mac
+# Input.is_key_pressed reports modifier state inconsistently;
+# InputEventKey carries .shift_pressed / .alt_pressed / .meta_pressed
+# from the OS layer reliably. We snapshot those into UILayout's
+# static flags so any tooltip / cell can call UILayout.shift_held()
+# without subscribing to anything.
+func _input(event: InputEvent) -> void:
+	if event is InputEventKey or event is InputEventMouseButton or event is InputEventMouseMotion:
+		var shift: bool = event.shift_pressed if "shift_pressed" in event else false
+		var alt: bool = event.alt_pressed if "alt_pressed" in event else false
+		var meta: bool = event.meta_pressed if "meta_pressed" in event else false
+		# Treat Cmd (⌘) as alt-equivalent on Mac so power-user
+		# tooltips fire on a key Mac users naturally reach for.
+		UILayout._set_modifier_state(shift, alt or meta)
+
 func _process(delta: float) -> void:
 	if not _active:
 		return
