@@ -64,6 +64,22 @@ const META_COLORS := {
 static func meta_rarity_color(meta: String) -> Color:
 	return META_COLORS.get(meta, Color(0, 0, 0, 0))
 
+# Greyscale-faded slot icon for an EMPTY paperdoll cell. Returns a
+# path under project/assets/tiles/slot_icons/. The greyscale variant
+# is pre-baked at build time (35% alpha + luma-only RGB) so the UI
+# pays zero shader cost. Returns "" for unknown slots (caller should
+# leave the cell blank).
+const _SLOT_ICON_DIR := "res://assets/tiles/slot_icons/"
+static func empty_slot_icon_path(slot_id: String) -> String:
+	# Extra ring slots (ring2/ring3/ring4) reuse the ring icon.
+	var key: String = slot_id
+	if slot_id.begins_with("ring") and slot_id.length() > 4:
+		key = "ring"
+	var path: String = _SLOT_ICON_DIR + key + "_empty.png"
+	if not ResourceLoader.exists(path):
+		return ""
+	return path
+
 # Per-instance recoloring shader (item_recolor.gdshader). Returns a
 # ShaderMaterial when inst has a `tint` dict, else null. Caller assigns
 # to sprite.material. Cheap fragment shader so applying to many cells

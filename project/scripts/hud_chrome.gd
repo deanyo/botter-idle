@@ -635,13 +635,26 @@ func update_equipped(equipped: Dictionary, items_db: Dictionary, species: String
 			var tile_path: String = "res://assets/tiles/items/" + String(item_def.get("tile", ""))
 			if ResourceLoader.exists(tile_path):
 				tex = load(tile_path)
-		sprite.texture = tex
-		# Tint the equipped slot icon — flavor tag wins, rarity falls
-		# back. Matches the bot rig overlay so HUD ↔ game stay in sync.
-		var meta: String = ""
-		if inst != null and typeof(inst) == TYPE_DICTIONARY:
-			meta = String(inst.get("meta_rarity", ""))
-		sprite.modulate = UITheme.item_modulate(slot_rarity, slot_flavor, meta)
+		# Empty slot: show a faded greyscale icon hint so the player
+		# can tell which cell is which. Pre-baked PNG, no shader cost.
+		# Species-blocked slots already get the 🚫 overlay above; let
+		# that overlay take priority by leaving the icon visible
+		# beneath it (the 🚫 sits on top).
+		if tex == null:
+			var icon_path: String = UITheme.empty_slot_icon_path(slot)
+			if icon_path != "":
+				sprite.texture = load(icon_path)
+			else:
+				sprite.texture = null
+			sprite.modulate = Color(1, 1, 1, 1)
+		else:
+			sprite.texture = tex
+			# Tint the equipped slot icon — flavor tag wins, rarity falls
+			# back. Matches the bot rig overlay so HUD ↔ game stay in sync.
+			var meta: String = ""
+			if inst != null and typeof(inst) == TYPE_DICTIONARY:
+				meta = String(inst.get("meta_rarity", ""))
+			sprite.modulate = UITheme.item_modulate(slot_rarity, slot_flavor, meta)
 		var border: ReferenceRect = cell.get("border", null)
 		# Tooltip: empty slot shows "Wpn / Bdy / etc"; equipped slot shows
 		# the canonical multi-line item tooltip used everywhere else.

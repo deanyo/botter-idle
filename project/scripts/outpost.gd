@@ -757,18 +757,34 @@ func _render_equipped() -> void:
 				var tile_path: String = ITEM_TILE_DIR + String(item.get("tile", ""))
 				if ResourceLoader.exists(tile_path):
 					tex = load(tile_path)
-		sprite.texture = tex
-		# Tint the icon — flavor tag wins over rarity (vampiric=red,
-		# fire=orange) so equipped paperdoll slots match the bot rig.
-		var tint_flavor: Array = []
-		if inst != null and typeof(inst) == TYPE_DICTIONARY:
-			var bid: String = String(inst.get("base_id", ""))
-			if items_db.has(bid):
-				tint_flavor = UITheme.combined_flavor_tags(items_db[bid], inst)
-		var meta_r: String = ""
-		if inst != null and typeof(inst) == TYPE_DICTIONARY:
-			meta_r = String(inst.get("meta_rarity", ""))
-		sprite.modulate = UITheme.item_modulate(rarity, tint_flavor, meta_r)
+		# Empty slot? Show a faded greyscale icon hint so the player
+		# can read at a glance which slot is which. Pre-baked PNG —
+		# no shader cost. Skip when species-blocked (the 🚫 overlay
+		# already conveys "you can't wear this").
+		if tex == null:
+			var blocked: bool = cell.get("species_blocked", false)
+			if not blocked:
+				var icon_path: String = UITheme.empty_slot_icon_path(slot)
+				if icon_path != "":
+					sprite.texture = load(icon_path)
+				else:
+					sprite.texture = null
+				sprite.modulate = Color(1, 1, 1, 1)
+			else:
+				sprite.texture = null
+		else:
+			sprite.texture = tex
+			# Tint the icon — flavor tag wins over rarity (vampiric=red,
+			# fire=orange) so equipped paperdoll slots match the bot rig.
+			var tint_flavor: Array = []
+			if inst != null and typeof(inst) == TYPE_DICTIONARY:
+				var bid: String = String(inst.get("base_id", ""))
+				if items_db.has(bid):
+					tint_flavor = UITheme.combined_flavor_tags(items_db[bid], inst)
+			var meta_r: String = ""
+			if inst != null and typeof(inst) == TYPE_DICTIONARY:
+				meta_r = String(inst.get("meta_rarity", ""))
+			sprite.modulate = UITheme.item_modulate(rarity, tint_flavor, meta_r)
 		var base_tooltip: String = SLOT_TOOLTIPS.get(slot, slot.capitalize())
 		btn.tooltip_text = base_tooltip if item_name.is_empty() else _build_item_tooltip(slot, inst)
 		# Rarity-tint border when something's equipped (kept for empty
