@@ -192,7 +192,19 @@ func _show_compare_tooltips(cell: ItemCell) -> void:
 		slot_ids = SpeciesData.ring_slot_ids(String(state.get("species", "")))
 	else:
 		slot_ids = [item_slot]
-	var x_offset: float = ItemTooltip.TOOLTIP_W + 8.0
+	# Decide compare placement: right of main tooltip if there's room,
+	# otherwise left of it. Main tooltip lives at _tooltip.position.
+	# Edge-clamping prevents the compare panel from rendering off-screen
+	# (the bug where shift-compare did nothing visible — tooltips were
+	# appearing past the right edge of the viewport).
+	var view: Vector2 = get_viewport().get_visible_rect().size
+	var t_right_edge: float = _tooltip.position.x + ItemTooltip.TOOLTIP_W
+	var place_right: bool = t_right_edge + 8.0 + ItemTooltip.TOOLTIP_W <= view.x - 4.0
+	var x_offset: float
+	if place_right:
+		x_offset = ItemTooltip.TOOLTIP_W + 8.0
+	else:
+		x_offset = -(ItemTooltip.TOOLTIP_W + 8.0)
 	var y_offset: float = 0.0
 	for sid in slot_ids:
 		var equipped_inst: Variant = state.equipped.get(sid, null)
@@ -204,9 +216,14 @@ func _show_compare_tooltips(cell: ItemCell) -> void:
 		var cmp := ItemTooltip.new()
 		add_child(cmp)
 		cmp.render_for(items_db[equipped_id], equipped_inst, items_db)
-		cmp.position = _tooltip.position + Vector2(x_offset, y_offset)
+		var pos: Vector2 = _tooltip.position + Vector2(x_offset, y_offset)
+		# Clamp to viewport edges so even an awkwardly-placed main
+		# tooltip can't push the compare panel off-screen.
+		pos.x = clampf(pos.x, 4.0, max(4.0, view.x - ItemTooltip.TOOLTIP_W - 4.0))
+		pos.y = clampf(pos.y, 4.0, max(4.0, view.y - 220.0))
+		cmp.position = pos
 		_compare_tooltips.append(cmp)
-		y_offset += 200.0  # rough; actual height resolves async
+		y_offset += 220.0  # rough; actual height resolves async
 
 func _destroy_compare_tooltips() -> void:
 	for t in _compare_tooltips:

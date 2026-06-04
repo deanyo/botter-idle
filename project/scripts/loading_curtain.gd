@@ -108,14 +108,6 @@ func _input(event: InputEvent) -> void:
 				alt = ek.pressed if not alt else alt
 			if kc_keycode == KEY_META or kc_physical == KEY_META:
 				meta = ek.pressed if not meta else meta
-			# Debug: log modifier-only events so we can see what Godot
-			# actually reports on Mac. Cheap log; printed once per
-			# transition. Remove once verified.
-			if kc_keycode in [KEY_SHIFT, KEY_ALT, KEY_META] or kc_physical in [KEY_SHIFT, KEY_ALT, KEY_META]:
-				print("[mod] kc=%d phys=%d pressed=%s shift=%s alt=%s meta=%s echo=%s" % [
-					kc_keycode, kc_physical, str(ek.pressed),
-					str(shift), str(alt), str(meta), str(ek.echo),
-				])
 		# Treat Cmd (⌘) as alt-equivalent on Mac so power-user
 		# tooltips fire on a key Mac users naturally reach for.
 		UILayout._set_modifier_state(shift, alt or meta)
