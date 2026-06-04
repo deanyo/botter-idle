@@ -34,6 +34,10 @@ var accepts_drop: Callable = Callable()
 var on_left_click: Callable = Callable()
 var on_right_click: Callable = Callable()
 var on_drop_received: Callable = Callable()
+# Tooltip owner — called as (cell: ItemCell, show: bool). HudChrome /
+# Outpost set this to their tooltip manager. WoW-style tooltip,
+# item-overhaul v2.
+var tooltip_owner: Callable = Callable()
 var blocked: bool = false
 
 # Internal child references — built in _ready, refreshed by render().
@@ -152,12 +156,11 @@ func render() -> void:
 	if blocked:
 		_sprite.modulate.a = 0.45
 	# Tooltip.
-	if has_item:
-		tooltip_text = AffixSystem.format_item_tooltip(item, inst)
-	elif role == "paperdoll" and slot_id != "":
-		tooltip_text = _slot_label(slot_id)
-	else:
-		tooltip_text = ""
+	# Item-overhaul v2: native tooltip_text replaced by the custom
+	# ItemTooltip widget — managed by HudChrome / Outpost. Empty
+	# tooltip_text suppresses the engine's default popup so we don't
+	# get two tooltips at once.
+	tooltip_text = ""
 
 func _slot_label(sid: String) -> String:
 	if sid.begins_with("ring") and sid.length() > 4:
@@ -220,8 +223,15 @@ func _on_mouse_entered() -> void:
 		_hover_glow.color = Color(0.4, 0.95, 0.4, 0.25) if ok else Color(0.95, 0.3, 0.3, 0.25)
 	else:
 		_hover_glow.color = Color(0.85, 0.85, 0.85, 0.10)
+	# WoW-style tooltip — owner spawns it. Skip while dragging (the
+	# preview is already cursor-following; a tooltip on top would clutter).
+	var has_item: bool = (inst != null and typeof(inst) == TYPE_DICTIONARY and not item.is_empty())
+	if has_item and tooltip_owner.is_valid() and not (DragManager and DragManager.is_dragging()):
+		tooltip_owner.call(self, true)
 
 func _on_mouse_exited() -> void:
 	if DragManager:
 		DragManager.clear_hover_target(self)
 	_hover_glow.color = Color(0, 0, 0, 0)
+	if tooltip_owner.is_valid():
+		tooltip_owner.call(self, false)

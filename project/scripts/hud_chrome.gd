@@ -136,6 +136,34 @@ func _exit_tree() -> void:
 	if DragManager and DragManager.drag_ended.is_connected(_on_drag_ended):
 		DragManager.drag_ended.disconnect(_on_drag_ended)
 
+# WoW-style tooltip — main panel only (no shift-compare in-run; that's
+# an outpost-level ritual). Item-overhaul v2 2026-06-04.
+var _hud_tooltip: ItemTooltip = null
+var _hud_hover_cell: ItemCell = null
+
+func _on_cell_tooltip(cell: ItemCell, show: bool) -> void:
+	if not show:
+		_hud_hover_cell = null
+		if _hud_tooltip != null and is_instance_valid(_hud_tooltip):
+			_hud_tooltip.queue_free()
+			_hud_tooltip = null
+		return
+	_hud_hover_cell = cell
+	if _hud_tooltip != null and is_instance_valid(_hud_tooltip):
+		_hud_tooltip.queue_free()
+	_hud_tooltip = ItemTooltip.new()
+	add_child(_hud_tooltip)
+	_hud_tooltip.render_for(cell.item, cell.inst, _items_db_cache)
+	_hud_tooltip.position = _hud_clamp_tooltip(get_viewport().get_mouse_position() + Vector2(16, 16))
+
+func _hud_clamp_tooltip(anchor: Vector2) -> Vector2:
+	var view: Vector2 = get_viewport().get_visible_rect().size
+	var sz_w: float = float(ItemTooltip.TOOLTIP_W)
+	var sz_h: float = 240.0
+	var px: float = clampf(anchor.x, 4.0, max(4.0, view.x - sz_w - 4.0))
+	var py: float = clampf(anchor.y, 4.0, max(4.0, view.y - sz_h - 4.0))
+	return Vector2(px, py)
+
 # Compatibility check for paperdoll drops in-game. Mirrors outpost.
 func _paperdoll_accepts_drop(payload: Dictionary, slot_id: String) -> bool:
 	if payload == null or payload.is_empty():
@@ -368,6 +396,7 @@ func _make_paperdoll_slot(slot_id: String, x: int, y: int) -> void:
 	cell.position = Vector2(x, y)
 	cell.accepts_drop = Callable(self, "_paperdoll_accepts_drop").bind(slot_id)
 	cell.on_left_click = Callable(self, "_on_paperdoll_left_click")
+	cell.tooltip_owner = Callable(self, "_on_cell_tooltip")
 	add_child(cell)
 	# Cooldown overlay — sized + positioned to cover the cell. Toggled
 	# by update_cooldowns. Sits above the sprite by being added after
@@ -935,6 +964,7 @@ func _make_inv_button(seg_idx: int, item_idx: int, inst: Variant, items_db: Dict
 	cell.set_meta("seg_idx", seg_idx)
 	cell.set_meta("item_idx", item_idx)
 	cell.on_left_click = Callable(self, "_on_hud_inv_left_click")
+	cell.tooltip_owner = Callable(self, "_on_cell_tooltip")
 	# Resolve flat inv_index lazily — DragManager.begin_drag reads
 	# cell.inv_index, so we set it just before the drag stages. Hook
 	# via a one-frame "before drag" callback by subscribing to the

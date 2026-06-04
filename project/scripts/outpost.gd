@@ -100,10 +100,110 @@ func _ready() -> void:
 	# at the outpost level keeps the per-cell wiring trivial.
 	if DragManager and not DragManager.drag_ended.is_connected(_on_drag_ended):
 		DragManager.drag_ended.connect(_on_drag_ended)
+	set_process(true)
 
 func _exit_tree() -> void:
 	if DragManager and DragManager.drag_ended.is_connected(_on_drag_ended):
 		DragManager.drag_ended.disconnect(_on_drag_ended)
+
+# WoW-style tooltip manager — owns one ItemTooltip widget plus an
+# optional comparison tooltip rendered when Shift is held. Shown by
+# ItemCell hover hooks via tooltip_owner. Item-overhaul v2 2026-06-04.
+var _tooltip: ItemTooltip = null
+var _compare_tooltips: Array = []   # sibling tooltips when Shift held
+var _hover_cell: ItemCell = null
+var _shift_was_held: bool = false
+
+func _on_cell_tooltip(cell: ItemCell, show: bool) -> void:
+	if not show:
+		_hover_cell = null
+		_destroy_tooltips()
+		return
+	_hover_cell = cell
+	_show_main_tooltip(cell)
+	if Input.is_key_pressed(KEY_SHIFT):
+		_show_compare_tooltips(cell)
+		_shift_was_held = true
+
+func _process(_delta: float) -> void:
+	if _hover_cell == null or not is_instance_valid(_hover_cell):
+		return
+	# Shift-state polling so the compare panel appears/disappears live.
+	var shift_now: bool = Input.is_key_pressed(KEY_SHIFT)
+	if shift_now and not _shift_was_held:
+		_show_compare_tooltips(_hover_cell)
+	elif not shift_now and _shift_was_held:
+		_destroy_compare_tooltips()
+	_shift_was_held = shift_now
+	# Keep tooltip glued near cursor so it doesn't hover off the cell.
+	if _tooltip != null and is_instance_valid(_tooltip):
+		_tooltip.position = _clamp_tooltip_position(_compute_anchor(_hover_cell), _tooltip.size)
+
+func _show_main_tooltip(cell: ItemCell) -> void:
+	if _tooltip != null and is_instance_valid(_tooltip):
+		_tooltip.queue_free()
+	_tooltip = ItemTooltip.new()
+	add_child(_tooltip)
+	_tooltip.render_for(cell.item, cell.inst, items_db)
+	_tooltip.position = _clamp_tooltip_position(_compute_anchor(cell), Vector2(ItemTooltip.TOOLTIP_W, 200))
+
+func _show_compare_tooltips(cell: ItemCell) -> void:
+	_destroy_compare_tooltips()
+	# Only compare gear (not spells per design). Inventory cell
+	# compare-vs-equipped same slot. Paperdoll cell compare-vs-NEXT
+	# equipped same-slot would be redundant; skip.
+	if cell.role != "inventory":
+		return
+	var item_slot: String = String(cell.item.get("slot", ""))
+	if item_slot == "" or item_slot == "spell":
+		return
+	# For ring slot, tile ALL equipped rings vertically (WoW pattern).
+	var slot_ids: Array = []
+	if item_slot == "ring":
+		slot_ids = SpeciesData.ring_slot_ids(String(state.get("species", "")))
+	else:
+		slot_ids = [item_slot]
+	var x_offset: float = ItemTooltip.TOOLTIP_W + 8.0
+	var y_offset: float = 0.0
+	for sid in slot_ids:
+		var equipped_inst: Variant = state.equipped.get(sid, null)
+		if equipped_inst == null or typeof(equipped_inst) != TYPE_DICTIONARY:
+			continue
+		var equipped_id: String = String(equipped_inst.get("base_id", ""))
+		if not items_db.has(equipped_id):
+			continue
+		var cmp := ItemTooltip.new()
+		add_child(cmp)
+		cmp.render_for(items_db[equipped_id], equipped_inst, items_db)
+		cmp.position = _tooltip.position + Vector2(x_offset, y_offset)
+		_compare_tooltips.append(cmp)
+		y_offset += 200.0  # rough; actual height resolves async
+
+func _destroy_compare_tooltips() -> void:
+	for t in _compare_tooltips:
+		if t != null and is_instance_valid(t):
+			t.queue_free()
+	_compare_tooltips.clear()
+
+func _destroy_tooltips() -> void:
+	if _tooltip != null and is_instance_valid(_tooltip):
+		_tooltip.queue_free()
+		_tooltip = null
+	_destroy_compare_tooltips()
+	_shift_was_held = false
+
+func _compute_anchor(cell: ItemCell) -> Vector2:
+	if not is_instance_valid(cell):
+		return get_viewport().get_mouse_position()
+	# Place the tooltip's top-left near the cursor with a small offset,
+	# anchored to mouse so it follows during hovers.
+	return get_viewport().get_mouse_position() + Vector2(16, 16)
+
+func _clamp_tooltip_position(anchor: Vector2, sz: Vector2) -> Vector2:
+	var view: Vector2 = get_viewport().get_visible_rect().size
+	var px: float = clampf(anchor.x, 4.0, max(4.0, view.x - sz.x - 4.0))
+	var py: float = clampf(anchor.y, 4.0, max(4.0, view.y - sz.y - 4.0))
+	return Vector2(px, py)
 
 # Per-Outpost-visit modifier roll. Every unlocked branch gets a fresh
 # 1-2 modifier set; the player picks based on what tonight's offer
@@ -472,6 +572,7 @@ func _make_paperdoll_slot(slot_id: String, x: int, y: int) -> void:
 	cell.position = Vector2(x, y)
 	cell.accepts_drop = Callable(self, "_paperdoll_accepts_drop").bind(slot_id)
 	cell.on_left_click = Callable(self, "_on_cell_left_click")
+	cell.tooltip_owner = Callable(self, "_on_cell_tooltip")
 	add_child(cell)
 	equipped_cells.append({
 		"slot": slot_id, "cell": cell,
@@ -1028,6 +1129,7 @@ func _make_inv_cell(inv_index: int, inst: Dictionary, item: Dictionary) -> Contr
 	cell.blocked = blocked
 	cell.on_left_click = Callable(self, "_on_cell_left_click")
 	cell.on_right_click = Callable(self, "_on_cell_right_click")
+	cell.tooltip_owner = Callable(self, "_on_cell_tooltip")
 	# Trigger render after the node enters the tree so child layout works.
 	cell.ready.connect(cell.render)
 	return cell

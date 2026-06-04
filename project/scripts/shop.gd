@@ -72,6 +72,27 @@ func _exit_tree() -> void:
 	if DragManager and DragManager.drag_ended.is_connected(_on_drag_ended):
 		DragManager.drag_ended.disconnect(_on_drag_ended)
 
+# WoW-style tooltip in shop. Same shape as HUD — main panel only.
+var _shop_tooltip: ItemTooltip = null
+
+func _on_cell_tooltip(cell: ItemCell, show: bool) -> void:
+	if not show:
+		if _shop_tooltip != null and is_instance_valid(_shop_tooltip):
+			_shop_tooltip.queue_free()
+			_shop_tooltip = null
+		return
+	if _shop_tooltip != null and is_instance_valid(_shop_tooltip):
+		_shop_tooltip.queue_free()
+	_shop_tooltip = ItemTooltip.new()
+	add_child(_shop_tooltip)
+	_shop_tooltip.render_for(cell.item, cell.inst, items_db)
+	var view: Vector2 = get_viewport().get_visible_rect().size
+	var anchor: Vector2 = get_viewport().get_mouse_position() + Vector2(16, 16)
+	var sz_w: float = float(ItemTooltip.TOOLTIP_W)
+	anchor.x = clampf(anchor.x, 4.0, max(4.0, view.x - sz_w - 4.0))
+	anchor.y = clampf(anchor.y, 4.0, max(4.0, view.y - 240.0 - 4.0))
+	_shop_tooltip.position = anchor
+
 # Sell drop zone — a Control that accepts dragged inventory items and
 # sells them on drop. Wired up by _build_stock_pane in the lower-right
 # of the stock column.
@@ -460,6 +481,7 @@ func _make_item_cell(idx: int, inst: Dictionary, item: Dictionary, is_inventory:
 	cell.item = item
 	cell.on_left_click = Callable(self, "_on_cell_left_click")
 	cell.on_right_click = Callable(self, "_on_cell_right_click")
+	cell.tooltip_owner = Callable(self, "_on_cell_tooltip")
 	cell.ready.connect(cell.render)
 	wrapper.add_child(cell)
 	# Price label under the sprite.

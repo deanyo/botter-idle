@@ -137,6 +137,19 @@ const _ICON_TINT_STRENGTH := {
 # orange-because-it's-epic. Listed in priority order — first match in
 # an item's flavor_tags wins. Picked to be visually distinct against
 # DCSS art's typical metal/wood greys.
+const DAMAGE_TYPE_COLORS := {
+	"physical":  Color(0.92, 0.92, 0.85),   # bone-white
+	"fire":      Color(1.00, 0.55, 0.18),
+	"cold":      Color(0.45, 0.85, 1.00),
+	"lightning": Color(0.65, 0.80, 1.00),
+	"holy":      Color(1.00, 0.92, 0.55),
+	"poison":    Color(0.50, 0.95, 0.40),
+	"dark":      Color(0.55, 0.30, 0.85),
+}
+
+static func damage_type_color(damage_type: String) -> Color:
+	return DAMAGE_TYPE_COLORS.get(damage_type, Color(0.92, 0.92, 0.85))
+
 const FLAVOR_COLORS := {
 	"vampiric":    Color(0.85, 0.15, 0.15),   # blood red
 	"fire":        Color(1.00, 0.55, 0.18),   # ember orange
