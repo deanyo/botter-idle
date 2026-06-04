@@ -468,17 +468,27 @@ func _make_paperdoll_slot(slot_id: String, x: int, y: int) -> void:
 	slot_border.border_width = 1.0
 	slot_border.editor_only = false
 	add_child(slot_border)
-	var btn := Button.new()
+	# DragDropCell replaces the old Button — it handles both click
+	# (unequip) and drag (drop a different item onto this slot to
+	# swap). gui_input fires for clicks, _drop_data for drops.
+	# Combat pivot 2026-06-04.
+	var btn := DragDropCell.new()
+	btn.source_kind = "slot"
+	btn.slot_id = slot_id
+	# Resolve item_slot from the equipped instance so drag-from-slot
+	# routing works (a spell1 cell holding a spell knows its item_slot
+	# is "spell"). Set later in _render_equipped once the inst is known.
+	btn.item_slot = ""
+	btn.is_empty = true
+	btn.on_swap = Callable(self, "_on_drag_swap")
 	btn.position = Vector2(x, y)
 	btn.size = Vector2(slot, slot)
-	btn.flat = true
 	btn.tooltip_text = _tooltip_for_slot(slot_id)
 	if species_blocked:
 		btn.tooltip_text += " — your species cannot wear this."
-	if not is_placeholder and not species_blocked:
-		btn.pressed.connect(_unequip.bind(slot_id))
+		btn.mouse_filter = Control.MOUSE_FILTER_IGNORE  # disabled
 	else:
-		btn.disabled = true
+		btn.gui_input.connect(_on_paperdoll_cell_input.bind(slot_id))
 	add_child(btn)
 	var sprite := TextureRect.new()
 	sprite.position = Vector2(x + 6, y + 6)
@@ -865,7 +875,7 @@ func _render_equipped() -> void:
 		var slot: String = cell.slot
 		var sprite: TextureRect = cell.sprite
 		var border: ReferenceRect = cell.border
-		var btn: Button = cell.btn
+		var btn: Control = cell.btn  # DragDropCell or disabled control
 		var inst: Variant = state.equipped.get(slot, null)
 		var tex: Texture2D = null
 		var item_name: String = ""
@@ -909,6 +919,24 @@ func _render_equipped() -> void:
 			sprite.modulate = UITheme.item_modulate(rarity, tint_flavor, meta_r)
 		var base_tooltip: String = SLOT_TOOLTIPS.get(slot, slot.capitalize())
 		btn.tooltip_text = base_tooltip if item_name.is_empty() else _build_item_tooltip(slot, inst)
+		# Wire DragDropCell drag-source state — empty cells reject
+		# drag-out; populated cells let the player drag the equipped
+		# item somewhere else (slot→slot swap or slot→inventory unequip).
+		if btn is DragDropCell:
+			var dd: DragDropCell = btn
+			dd.is_empty = (inst == null or typeof(inst) != TYPE_DICTIONARY)
+			if not dd.is_empty:
+				var bid_for_drag: String = String(inst.get("base_id", ""))
+				if items_db.has(bid_for_drag):
+					var it_for_drag: Dictionary = items_db[bid_for_drag]
+					dd.item_slot = String(it_for_drag.get("slot", ""))
+					dd.preview_path = ITEM_TILE_DIR + String(it_for_drag.get("tile", ""))
+				else:
+					dd.item_slot = ""
+					dd.preview_path = ""
+			else:
+				dd.item_slot = ""
+				dd.preview_path = ""
 		# Rarity-tint border when something's equipped (kept for empty
 		# state) plus an outline+halo on the item sprite itself.
 		if not cell.is_placeholder:
@@ -956,8 +984,17 @@ func _render_inventory() -> void:
 
 func _make_inv_cell(inv_index: int, inst: Dictionary, item: Dictionary) -> Control:
 	var rarity: String = String(item.get("rarity", "common"))
-	var cell := Control.new()
+	# Drag-source wrapper — clicking still equips via the button
+	# child; dragging onto a paperdoll cell triggers an explicit-slot
+	# swap. Combat pivot 2026-06-04.
+	var cell := DragDropCell.new()
+	cell.source_kind = "inventory"
+	cell.inv_index = inv_index
+	cell.item_slot = String(item.get("slot", ""))
+	cell.preview_path = ITEM_TILE_DIR + String(item.get("tile", ""))
+	cell.on_swap = Callable(self, "_on_drag_swap")
 	cell.custom_minimum_size = Vector2(INV_CELL_SIZE, INV_CELL_SIZE)
+	cell.size = Vector2(INV_CELL_SIZE, INV_CELL_SIZE)
 	var bg := ColorRect.new()
 	bg.color = Color(0, 0, 0, 0.45)
 	bg.size = Vector2(INV_CELL_SIZE, INV_CELL_SIZE)
@@ -1109,16 +1146,22 @@ func _tooltip_for_slot(slot_id: String) -> String:
 
 # Resolve the equipped-dict slot id for an item. Most slots are
 # 1:1 (helm → helm). Rings need species-aware routing — octopode/
-# naga have extra ring slots from slot_conversions. Pick the first
-# empty ring; if all are full, displace `ring`.
+# naga have extra ring slots from slot_conversions. Spells route into
+# spell1..spell5 the same way (first empty wins; all-full displaces
+# spell1). Mirrors bot.gd::equip_from_inventory.
 func _resolve_equip_slot(item_slot: String) -> String:
-	if item_slot != "ring":
-		return item_slot
-	var species: String = String(state.get("species", ""))
-	for r in SpeciesData.ring_slot_ids(species):
-		if state.equipped.get(r, null) == null:
-			return r
-	return "ring"
+	if item_slot == "ring":
+		var species: String = String(state.get("species", ""))
+		for r in SpeciesData.ring_slot_ids(species):
+			if state.equipped.get(r, null) == null:
+				return r
+		return "ring"
+	if item_slot == "spell":
+		for s in SPELL_SLOTS:
+			if state.equipped.get(s, null) == null:
+				return s
+		return "spell1"  # all full — displace spell1
+	return item_slot
 
 func _unequip(slot: String) -> void:
 	var current: Variant = state.equipped.get(slot, null)
@@ -1128,6 +1171,89 @@ func _unequip(slot: String) -> void:
 	state.equipped[slot] = null
 	SaveState.save_state(state)
 	_render()
+
+# Click handler for paperdoll cells. Left-click → unequip (sends item
+# to inventory). Right-click can be used later for tooltips / context
+# menu; currently no-op. Combat pivot drag-drop UI 2026-06-04.
+func _on_paperdoll_cell_input(event: InputEvent, slot_id: String) -> void:
+	if not (event is InputEventMouseButton):
+		return
+	var mb: InputEventMouseButton = event
+	if not mb.pressed:
+		return
+	if mb.button_index == MOUSE_BUTTON_LEFT:
+		_unequip(slot_id)
+
+# Drag-drop handler — called from DragDropCell when an item is dropped
+# on a paperdoll slot. `payload` carries `src` (source DragDropCell
+# data) and `dst_slot` (destination slot id).
+#
+# Possible source kinds:
+#   "inventory" → equip the inventory item into dst_slot, displacing
+#                 whatever's there back to inventory.
+#   "slot"      → swap the equipped item from src.slot_id to dst_slot
+#                 (and vice versa if dst was occupied).
+#
+# All paths write back via SaveState.save_state and re-render.
+func _on_drag_swap(payload: Dictionary) -> void:
+	var src: Dictionary = payload.get("src", {})
+	var dst_slot: String = String(payload.get("dst_slot", ""))
+	if dst_slot == "":
+		return
+	# Block if species can't wear this slot's family.
+	if not SpeciesData.can_wear(String(state.get("species", "")), dst_slot):
+		return
+	var src_kind: String = String(src.get("source_kind", ""))
+	if src_kind == "inventory":
+		_drag_equip_from_inv(int(src.get("inv_index", -1)), dst_slot)
+	elif src_kind == "slot":
+		_drag_swap_slots(String(src.get("slot_id", "")), dst_slot)
+	SaveState.save_state(state)
+	_render()
+
+# Inventory → paperdoll. Equip exactly into the target slot (no auto-
+# routing) and displace whatever was there back to inventory.
+func _drag_equip_from_inv(inv_index: int, dst_slot: String) -> void:
+	var inv: Array = state.inventory
+	if inv_index < 0 or inv_index >= inv.size():
+		return
+	var inst: Dictionary = inv[inv_index]
+	var base_id: String = String(inst.get("base_id", ""))
+	if not items_db.has(base_id):
+		return
+	var item: Dictionary = items_db[base_id]
+	# 2H↔shield exclusion still applies even with explicit-slot drops.
+	if dst_slot == "weapon" and Bot.is_two_handed_base_type(String(item.get("base_type", ""))):
+		var current_shield: Variant = state.equipped.get("shield", null)
+		if current_shield != null and typeof(current_shield) == TYPE_DICTIONARY:
+			inv.append(current_shield)
+			state.equipped["shield"] = null
+	elif dst_slot == "shield":
+		var current_weapon: Variant = state.equipped.get("weapon", null)
+		if current_weapon != null and typeof(current_weapon) == TYPE_DICTIONARY:
+			var w_id: String = String(current_weapon.get("base_id", ""))
+			if w_id != "" and items_db.has(w_id):
+				if Bot.is_two_handed_base_type(String(items_db[w_id].get("base_type", ""))):
+					inv.append(current_weapon)
+					state.equipped["weapon"] = null
+	var prev: Variant = state.equipped.get(dst_slot, null)
+	inv.remove_at(inv_index)
+	if prev != null and typeof(prev) == TYPE_DICTIONARY:
+		inv.append(prev)
+	state.equipped[dst_slot] = inst
+
+# Paperdoll → paperdoll. Swap the two slot contents. If src == dst it
+# no-ops. If dst is empty, just moves src; if src is empty (shouldn't
+# happen because empty cells refuse drag-out), no-ops.
+func _drag_swap_slots(src_slot: String, dst_slot: String) -> void:
+	if src_slot == "" or src_slot == dst_slot:
+		return
+	var a: Variant = state.equipped.get(src_slot, null)
+	if a == null or typeof(a) != TYPE_DICTIONARY:
+		return
+	var b: Variant = state.equipped.get(dst_slot, null)
+	state.equipped[dst_slot] = a
+	state.equipped[src_slot] = b if (b != null and typeof(b) == TYPE_DICTIONARY) else null
 
 func _load_items() -> Dictionary:
 	var f := FileAccess.open(ITEMS_PATH, FileAccess.READ)
