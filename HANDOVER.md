@@ -4,8 +4,50 @@ Point-in-time snapshot of what's actually shipping. Updated as we go. The
 durable rules and process live in `CLAUDE.md`; the roadmap and open work
 items live in `TODO.md`.
 
-Last refresh: 2026-06-03 (UI overhaul — OLED chrome, item-card
-branch picker, inventory filters/favorites, shop screen).
+Last refresh: 2026-06-04 (pre-pivot checkpoint). Multi-character
+saves, species selector, slot-conversion compensation for octopode/
+naga, paperdoll slot icons, biome card icons.
+
+## Capsule — what shipped this session
+
+Anything below is tracked in `TODO.md` for "what's next." See `git
+log` for the per-commit timeline.
+
+* **Item diversity** — gloves + cloak slots, 9 DCSS slot
+  mismatches fixed, 17 starter items authored, 58 new weapons (axes/
+  maces/polearms/2H/staves/exotics, 27 new base_types). Meta-rarity
+  Ancient (1%) / Primal (0.1%) above legendary. Per-instance sprite
+  recolor (hue/sat/inverted/shimmer/prismatic) with stat lean by hue
+  family. Item secondary stats (crit/atk_speed/regen direct on
+  items.json). 309 items total, all pass slot audit.
+* **2H weapon mutual exclusion** — equipping a 2H weapon clears the
+  shield slot back to inventory and vice versa. Tooltip shows "2H"
+  badge on the rarity chunk.
+* **Species selector + character creation** — 15 species roster
+  (DCSS-faithful), each with stat mods + optional innate flavor tags
+  (vampire→vampiric, demonspawn→demon). Sprite swaps everywhere
+  paperdolls render. Reachable from main menu.
+* **Multi-character saves** — `botter_save.json` wraps
+  `{characters:[…], active:int}`. Existing single-char saves
+  auto-migrate. New API: list_characters / create_character /
+  set_active / delete_character. Main menu shows a horizontal
+  scrollable Bots picker with switch/delete.
+* **Slot conversion compensation** — DCSS-style restricted-slot
+  payoff. Octopode loses armor/boots/helm → gains 3 extra ring slots
+  (4 total). Naga loses boots → 1 extra. Equip flow routes ring
+  items into the first empty ring slot. Paperdoll renders converted
+  slots as ring cells labeled Ring II/III/IV. Bug fix: starter
+  tattered_hide stripped on character creation for species that
+  can't wear it.
+* **Empty paperdoll slot icons** — greyscale silhouettes
+  (long-sword/chain-mail/helmet/kite-shield/boots/glove/cloak/ring/
+  amulet) baked under `project/assets/tiles/slot_icons/`. Fade to
+  35% alpha, hidden when item equipped or species-blocked.
+* **Biome icons on Outpost branch cards** — DCSS `enter_<branch>.png`
+  where available, thematic substitutes (lava cell, ice tile,
+  mangrove) for the rest. 96×96 watermark behind text labels.
+
+## Item diversity pass — 2026-06-03
 
 ## Item diversity pass — 2026-06-03
 

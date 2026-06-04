@@ -5,6 +5,28 @@ the durable rules in `CLAUDE.md`. Update this file when committing.
 
 ---
 
+## Pre-pivot checkpoint (2026-06-04)
+
+User is starting an experimental pivot. Repo is in a known-good
+state at this commit:
+- 309 items spanning 11 slots, all aligned to DCSS source-of-truth.
+- 15 species + character creation + multi-character saves.
+- All combat mechanics wired (vampiric/fire/cold/holy/poison/
+  thunderous/dark/dragon_bane/brutal/precision/rage/thorns/
+  reflective/harm/vitality/psychic/slaying/fortified/willpower/
+  swiftness/regen/stealth/lordly/footwork/warding/elemental/wisdom/
+  arcane/fire_res/cold_res/poison_res/vision/rampaging/flying/
+  fortune/faith/acrobat/death/earth/guardian/demon/crystal/dual/
+  sound/ponderous).
+- Authoring portal live at https://dnyo.co.uk/botter-idle/ (atlas
+  viewer + biome editor + item editor + affix editor).
+- Smoke tests passing (1-run grind clean, 309/309 slot audit).
+
+Open items below are roughly organized by lever: balance / item /
+visual / system. Pick whichever dovetails with the pivot direction.
+
+---
+
 ## Playtest issues (2026-06-02 — high priority, partially shipped)
 
 User reported four issues from a real playtest. Status as of this beat:
