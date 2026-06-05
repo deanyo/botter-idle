@@ -35,5 +35,10 @@ const MINIBOSS_FLOORS := [3]
 # to [1.0, 1.4, 2.0, 2.7, 4.5] (T3→T4 now +35%, T4→T5 now +67%). Goal:
 # T4 winnable with affixes, T5 still requires gear.
 # See docs/balance-findings-2026-06-02.md for the full rationale.
-const TIER_SCALE := [1.0, 1.4, 2.0, 2.7, 4.5]
+# 2026-06-05 retune: per-tier balance grind showed T3-T5 bosses dying
+# in <1s losing <1% HP from a tier-appropriate bot. T3 jumped 2.0 → 2.5
+# (+25%), T4 2.7 → 3.6 (+33%), T5 4.5 → 6.5 (+44%) so high-tier enemies
+# actually threaten well-equipped builds. T1+T2 unchanged — those still
+# hit the 5-8min run-length target.
+const TIER_SCALE := [1.0, 1.4, 2.5, 3.6, 6.5]
 

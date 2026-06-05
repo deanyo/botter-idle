@@ -1715,10 +1715,14 @@ func _spawn_branch_boss(id: String, at_cell: Vector2i) -> void:
 	e.is_boss = true
 	var floor_mult: float = pow(1.10, current_floor - 1)
 	var tier_mult: float = _branch_tier_mult()
-	# Boss stats: similar to miniboss but bumped — 3.0× HP, 1.7× ATK, 1.5× DEF.
-	e.max_hp = int(round(float(def.hp) * floor_mult * tier_mult * 3.0))
-	e.atk = int(round(float(def.atk) * floor_mult * tier_mult * 1.7))
-	e.defense = int(round(float(def.def) * floor_mult * tier_mult * 1.5))
+	# Boss stats: 5.0× HP, 2.2× ATK, 1.8× DEF. Pre-2026-06-05 was
+	# 3.0/1.7/1.5 — per-tier grind showed bosses dying in <1s with
+	# tier-appropriate kit. The fight needs to FEEL like a fight; raw
+	# HP gives the bot something to chew on while atk+def make boss
+	# hits actually threaten.
+	e.max_hp = int(round(float(def.hp) * floor_mult * tier_mult * 5.0))
+	e.atk = int(round(float(def.atk) * floor_mult * tier_mult * 2.2))
+	e.defense = int(round(float(def.def) * floor_mult * tier_mult * 1.8))
 	e.hp = e.max_hp
 	# Stash the boss's max HP for the [boss-died] log line so we can
 	# report how close the bot got. 2026-06-05.
@@ -4223,7 +4227,16 @@ func _spawn_packs(pool: Array) -> void:
 	# from 40+floor*20 (~60-160 mobs) to 90+floor*30 (~120-330 mobs) so
 	# the autocast layer always has targets and the late-floor screen
 	# reads VS-like. Capped at 350 to keep the actor-tick budget sane.
-	var target_total: int = int(round((90.0 + float(current_floor) * 30.0) * count_mult))
+	#
+	# 2026-06-05 retune: tier-scale density DOWN at high tiers. Per-tier
+	# grind showed T3+ runs averaging 13-17min ingame (way over 5-8min
+	# target) because the bot's late-game gear one-shot the 270-mob T5
+	# floors. Cut by 0.85^(tier-1): T1 ×1.00, T2 ×0.85, T3 ×0.72, T4 ×0.61,
+	# T5 ×0.52. Combined with the boosted TIER_SCALE per-mob HP/ATK,
+	# high-tier floors stay challenging but finish faster.
+	var src_t: int = int(current_biome.get("tier", 1))
+	var density_decay: float = pow(0.85, float(maxi(src_t - 1, 0)))
+	var target_total: int = int(round((90.0 + float(current_floor) * 30.0) * count_mult * density_decay))
 	target_total = mini(target_total, 350)
 	if target_total <= 0:
 		return
