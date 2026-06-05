@@ -2269,6 +2269,11 @@
         "of_poison_resist": 10,
         "of_dark_resist": 8,
         "of_regen": 15
+      },
+      "default_tint": {
+        "hue": 280,
+        "sat": 1.0,
+        "mode": "normal"
       }
     },
     {
@@ -2579,6 +2584,11 @@
         "of_poison_resist": 10,
         "of_dark_resist": 8,
         "of_regen": 15
+      },
+      "default_tint": {
+        "hue": 110,
+        "sat": 1.0,
+        "mode": "normal"
       }
     },
     {
@@ -2853,6 +2863,11 @@
         "of_poison_resist": 10,
         "of_dark_resist": 8,
         "of_regen": 15
+      },
+      "default_tint": {
+        "hue": 0,
+        "sat": 1.2,
+        "mode": "normal"
       }
     },
     {
@@ -2892,6 +2907,11 @@
         "of_poison_resist": 10,
         "of_dark_resist": 8,
         "of_regen": 15
+      },
+      "default_tint": {
+        "hue": 120,
+        "sat": 1.1,
+        "mode": "normal"
       }
     },
     {
@@ -2931,6 +2951,11 @@
         "of_poison_resist": 10,
         "of_dark_resist": 8,
         "of_regen": 15
+      },
+      "default_tint": {
+        "hue": 200,
+        "sat": 1.1,
+        "mode": "normal"
       }
     },
     {
@@ -3050,6 +3075,11 @@
         "of_poison_resist": 10,
         "of_dark_resist": 8,
         "of_regen": 15
+      },
+      "default_tint": {
+        "hue": 0,
+        "sat": 1.0,
+        "mode": "shimmer"
       }
     },
     {
@@ -3089,6 +3119,11 @@
         "of_poison_resist": 10,
         "of_dark_resist": 8,
         "of_regen": 15
+      },
+      "default_tint": {
+        "hue": 85,
+        "sat": 0.95,
+        "mode": "normal"
       }
     },
     {
@@ -3332,6 +3367,11 @@
         "of_poison_resist": 10,
         "of_dark_resist": 8,
         "of_regen": 15
+      },
+      "default_tint": {
+        "hue": 320,
+        "sat": 1.2,
+        "mode": "normal"
       }
     },
     {
@@ -3372,6 +3412,11 @@
         "of_poison_resist": 10,
         "of_dark_resist": 8,
         "of_regen": 15
+      },
+      "default_tint": {
+        "hue": 45,
+        "sat": 1.15,
+        "mode": "normal"
       }
     },
     {
@@ -3488,6 +3533,12 @@
         "of_poison_resist": 10,
         "of_dark_resist": 8,
         "of_regen": 15
+      },
+      "default_tint": {
+        "hue": 200,
+        "sat": 0.5,
+        "mode": "colorize",
+        "colorize_strength": 0.35
       }
     },
     {
@@ -3893,6 +3944,11 @@
         "of_poison_resist": 10,
         "of_dark_resist": 8,
         "of_regen": 15
+      },
+      "default_tint": {
+        "hue": 270,
+        "sat": 1.1,
+        "mode": "normal"
       }
     },
     {
@@ -3933,6 +3989,12 @@
         "of_poison_resist": 10,
         "of_dark_resist": 8,
         "of_regen": 15
+      },
+      "default_tint": {
+        "hue": 200,
+        "sat": 1.0,
+        "mode": "colorize",
+        "colorize_strength": 0.45
       }
     },
     {
@@ -4530,6 +4592,12 @@
         "of_resonance": 12,
         "of_channeling": 12,
         "of_crit": 12
+      },
+      "default_tint": {
+        "hue": 220,
+        "sat": 0.6,
+        "mode": "colorize",
+        "colorize_strength": 0.35
       }
     },
     {
@@ -4570,6 +4638,12 @@
         "of_resonance": 12,
         "of_channeling": 12,
         "of_crit": 12
+      },
+      "default_tint": {
+        "hue": 200,
+        "sat": 0.7,
+        "mode": "colorize",
+        "colorize_strength": 0.4
       }
     },
     {
@@ -4693,6 +4767,11 @@
         "of_resonance": 12,
         "of_channeling": 12,
         "of_crit": 12
+      },
+      "default_tint": {
+        "hue": 50,
+        "sat": 1.1,
+        "mode": "normal"
       }
     },
     {
@@ -4734,6 +4813,12 @@
         "of_resonance": 12,
         "of_channeling": 12,
         "of_crit": 12
+      },
+      "default_tint": {
+        "hue": 280,
+        "sat": 1.1,
+        "mode": "colorize",
+        "colorize_strength": 0.35
       }
     },
     {
@@ -4775,6 +4860,11 @@
         "of_resonance": 12,
         "of_channeling": 12,
         "of_crit": 12
+      },
+      "default_tint": {
+        "hue": 180,
+        "sat": 1.1,
+        "mode": "normal"
       }
     },
     {
@@ -5064,6 +5154,11 @@
         "of_resonance": 12,
         "of_channeling": 12,
         "of_crit": 12
+      },
+      "default_tint": {
+        "hue": 0,
+        "sat": 1.1,
+        "mode": "normal"
       }
     },
     {
@@ -5187,6 +5282,11 @@
         "of_resonance": 12,
         "of_channeling": 12,
         "of_crit": 12
+      },
+      "default_tint": {
+        "hue": 45,
+        "sat": 1.2,
+        "mode": "normal"
       }
     },
     {
@@ -5228,6 +5328,11 @@
         "of_resonance": 12,
         "of_channeling": 12,
         "of_crit": 12
+      },
+      "default_tint": {
+        "hue": 30,
+        "sat": 1.2,
+        "mode": "normal"
       }
     },
     {
@@ -5305,6 +5410,12 @@
         "of_holy_resist": 8,
         "of_poison_resist": 10,
         "of_dark_resist": 8
+      },
+      "default_tint": {
+        "hue": 220,
+        "sat": 0.5,
+        "mode": "colorize",
+        "colorize_strength": 0.4
       }
     },
     {
@@ -5343,6 +5454,11 @@
         "of_holy_resist": 8,
         "of_poison_resist": 10,
         "of_dark_resist": 8
+      },
+      "default_tint": {
+        "hue": 90,
+        "sat": 1.1,
+        "mode": "normal"
       }
     },
     {
@@ -5379,6 +5495,11 @@
         "of_holy_resist": 8,
         "of_poison_resist": 10,
         "of_dark_resist": 8
+      },
+      "default_tint": {
+        "hue": 180,
+        "sat": 1.1,
+        "mode": "normal"
       }
     },
     {
@@ -5415,6 +5536,11 @@
         "of_holy_resist": 8,
         "of_poison_resist": 10,
         "of_dark_resist": 8
+      },
+      "default_tint": {
+        "hue": 30,
+        "sat": 1.0,
+        "mode": "colorize"
       }
     },
     {
@@ -5454,6 +5580,11 @@
         "of_holy_resist": 8,
         "of_poison_resist": 10,
         "of_dark_resist": 8
+      },
+      "default_tint": {
+        "hue": 290,
+        "sat": 1.1,
+        "mode": "normal"
       }
     },
     {
@@ -5493,6 +5624,11 @@
         "of_holy_resist": 8,
         "of_poison_resist": 10,
         "of_dark_resist": 8
+      },
+      "default_tint": {
+        "hue": 110,
+        "sat": 1.2,
+        "mode": "normal"
       }
     },
     {
@@ -5531,6 +5667,11 @@
         "of_holy_resist": 8,
         "of_poison_resist": 10,
         "of_dark_resist": 8
+      },
+      "default_tint": {
+        "hue": 0,
+        "sat": 1.1,
+        "mode": "normal"
       }
     },
     {
@@ -5567,6 +5708,11 @@
         "of_holy_resist": 8,
         "of_poison_resist": 10,
         "of_dark_resist": 8
+      },
+      "default_tint": {
+        "hue": 30,
+        "sat": 1.1,
+        "mode": "normal"
       }
     },
     {
@@ -5645,6 +5791,11 @@
         "of_holy_resist": 8,
         "of_poison_resist": 10,
         "of_dark_resist": 8
+      },
+      "default_tint": {
+        "hue": 30,
+        "sat": 1.1,
+        "mode": "normal"
       }
     },
     {
@@ -5684,6 +5835,11 @@
         "of_holy_resist": 8,
         "of_poison_resist": 10,
         "of_dark_resist": 8
+      },
+      "default_tint": {
+        "hue": 130,
+        "sat": 1.1,
+        "mode": "normal"
       }
     },
     {
@@ -5722,6 +5878,11 @@
         "of_holy_resist": 8,
         "of_poison_resist": 10,
         "of_dark_resist": 8
+      },
+      "default_tint": {
+        "hue": 200,
+        "sat": 1.1,
+        "mode": "normal"
       }
     },
     {
@@ -5761,6 +5922,11 @@
         "of_holy_resist": 8,
         "of_poison_resist": 10,
         "of_dark_resist": 8
+      },
+      "default_tint": {
+        "hue": 260,
+        "sat": 1.2,
+        "mode": "normal"
       }
     },
     {
@@ -5882,6 +6048,11 @@
         "of_holy_resist": 8,
         "of_poison_resist": 10,
         "of_dark_resist": 8
+      },
+      "default_tint": {
+        "hue": 0,
+        "sat": 1.2,
+        "mode": "normal"
       }
     },
     {
@@ -5965,6 +6136,11 @@
         "of_holy_resist": 8,
         "of_poison_resist": 10,
         "of_dark_resist": 8
+      },
+      "default_tint": {
+        "hue": 60,
+        "sat": 1.2,
+        "mode": "normal"
       }
     },
     {
@@ -6214,6 +6390,11 @@
         "of_holy_resist": 8,
         "of_poison_resist": 10,
         "of_dark_resist": 8
+      },
+      "default_tint": {
+        "hue": 270,
+        "sat": 1.1,
+        "mode": "normal"
       }
     },
     {
@@ -6253,6 +6434,12 @@
         "of_holy_resist": 8,
         "of_poison_resist": 10,
         "of_dark_resist": 8
+      },
+      "default_tint": {
+        "hue": 200,
+        "sat": 1.0,
+        "mode": "colorize",
+        "colorize_strength": 0.45
       }
     },
     {
@@ -6585,6 +6772,12 @@
         "of_the_cat": 26,
         "of_haste": 26,
         "of_regen": 10
+      },
+      "default_tint": {
+        "hue": 200,
+        "sat": 0.8,
+        "mode": "colorize",
+        "colorize_strength": 0.45
       }
     },
     {
@@ -6621,6 +6814,11 @@
         "of_the_cat": 26,
         "of_haste": 26,
         "of_regen": 10
+      },
+      "default_tint": {
+        "hue": 220,
+        "sat": 1.1,
+        "mode": "normal"
       }
     },
     {
@@ -6657,6 +6855,11 @@
         "of_the_cat": 26,
         "of_haste": 26,
         "of_regen": 10
+      },
+      "default_tint": {
+        "hue": 10,
+        "sat": 1.1,
+        "mode": "normal"
       }
     },
     {
@@ -6729,6 +6932,11 @@
         "of_the_cat": 26,
         "of_haste": 26,
         "of_regen": 10
+      },
+      "default_tint": {
+        "hue": 30,
+        "sat": 1.0,
+        "mode": "colorize"
       }
     },
     {
@@ -6803,6 +7011,11 @@
         "of_the_cat": 26,
         "of_haste": 26,
         "of_regen": 10
+      },
+      "default_tint": {
+        "hue": 220,
+        "sat": 1.2,
+        "mode": "normal"
       }
     },
     {
@@ -6966,6 +7179,11 @@
         "of_the_cat": 26,
         "of_haste": 26,
         "of_regen": 10
+      },
+      "default_tint": {
+        "hue": 50,
+        "sat": 1.1,
+        "mode": "normal"
       }
     },
     {
@@ -7047,6 +7265,11 @@
         "of_the_cat": 26,
         "of_haste": 26,
         "of_regen": 10
+      },
+      "default_tint": {
+        "hue": 0,
+        "sat": 1.0,
+        "mode": "colorize"
       }
     },
     {

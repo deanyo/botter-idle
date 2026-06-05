@@ -84,7 +84,12 @@ func _build_chrome() -> void:
 	recolor_lbl.add_theme_color_override("font_color", UITheme.COL_DIM)
 	bar.add_child(recolor_lbl)
 	var recolor_opt := OptionButton.new()
-	var modes := ["none", "hue60", "hue180", "hue300", "shimmer", "inverted", "prismatic"]
+	var modes := [
+		"none",
+		"hue60", "hue180", "hue300",
+		"colorize60", "colorize180", "colorize300",
+		"shimmer", "inverted", "prismatic"
+	]
 	for i in modes.size():
 		recolor_opt.add_item(modes[i], i)
 	recolor_opt.item_selected.connect(func(idx: int):
@@ -274,13 +279,18 @@ func _build_item_cell(item: Dictionary) -> Control:
 func _tint_for_preview(mode: String) -> Dictionary:
 	# Map the preview-mode dropdown to the same `tint` dict shape that
 	# dungeon._create_item_instance writes at drop time.
+	# `colorize*` previews mode 4 — useful for white/silver sprites
+	# that ignore plain hue rotation (no chroma to rotate).
 	match mode:
-		"hue60":     return {"hue": 60.0,  "sat": 1.0, "mode": "normal"}
-		"hue180":    return {"hue": 180.0, "sat": 1.0, "mode": "normal"}
-		"hue300":    return {"hue": 300.0, "sat": 1.0, "mode": "normal"}
-		"shimmer":   return {"hue": 0.0,   "sat": 1.0, "mode": "shimmer"}
-		"inverted":  return {"hue": 0.0,   "sat": 1.0, "mode": "inverted"}
-		"prismatic": return {"hue": 0.0,   "sat": 1.0, "mode": "prismatic"}
+		"hue60":       return {"hue":  60.0, "sat": 1.0, "mode": "normal"}
+		"hue180":      return {"hue": 180.0, "sat": 1.0, "mode": "normal"}
+		"hue300":      return {"hue": 300.0, "sat": 1.0, "mode": "normal"}
+		"colorize60":  return {"hue":  60.0, "sat": 1.0, "mode": "colorize"}
+		"colorize180": return {"hue": 180.0, "sat": 1.0, "mode": "colorize"}
+		"colorize300": return {"hue": 300.0, "sat": 1.0, "mode": "colorize"}
+		"shimmer":     return {"hue":   0.0, "sat": 1.0, "mode": "shimmer"}
+		"inverted":    return {"hue":   0.0, "sat": 1.0, "mode": "inverted"}
+		"prismatic":   return {"hue":   0.0, "sat": 1.0, "mode": "prismatic"}
 	return {}
 
 func _toggle_flag(item_id: String) -> void:

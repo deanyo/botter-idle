@@ -1013,7 +1013,8 @@ function recolorSection(it) {
   const sat = (t.sat == null) ? 1.0 : t.sat;
   const modes = [
     ['none',      'None — random per drop'],
-    ['normal',    'Solid hue (color shift)'],
+    ['normal',    'Solid hue (works on colorful sprites)'],
+    ['colorize',  'Colorize (paints white/grey sprites)'],
     ['shimmer',   'Shimmer — animated highlight sweep'],
     ['inverted',  'Inverted — colors swapped'],
     ['prismatic', 'Prismatic — hue cycles in real time'],
@@ -1059,6 +1060,18 @@ function recolorPreviewStyle(t) {
   if (!t || !t.mode || t.mode === 'none') return '';
   const hue = t.hue || 0;
   const sat = (t.sat == null) ? 1 : t.sat;
+  // Colorize mode is hard to approximate with CSS filters alone
+  // (hue-rotate is a no-op on white). Use a sepia → hue-rotate
+  // chain instead — sepia first paints the sprite warm-orange,
+  // then hue-rotate sweeps to the requested target. Crude vs the
+  // GLSL shader but close enough for editor preview.
+  if (t.mode === 'colorize') {
+    // sepia = 1 produces RGB ≈ (~0.7, ~0.5, ~0.3); hue-rotate then
+    // sweeps that anchor color around the wheel. Add saturation
+    // multiplier so the colorize strength reads roughly right.
+    const offset = ((hue - 30 + 360) % 360);  // sepia base sits ~30°
+    return `filter: sepia(1) saturate(${(sat * 1.6).toFixed(2)}) hue-rotate(${offset}deg) brightness(1.0)`;
+  }
   const filters = [`hue-rotate(${hue}deg)`, `saturate(${sat})`];
   if (t.mode === 'inverted') filters.push('invert(1)');
   if (t.mode === 'shimmer') filters.push('brightness(1.15)');

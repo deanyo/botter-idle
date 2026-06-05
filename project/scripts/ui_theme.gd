@@ -128,7 +128,13 @@ static func empty_slot_icon_path(slot_id: String) -> String:
 # to sprite.material. Cheap fragment shader so applying to many cells
 # is fine.
 const _ITEM_RECOLOR_SHADER := preload("res://assets/item_recolor.gdshader")
-const _MODE_INDEX := { "normal": 0, "shimmer": 1, "inverted": 2, "prismatic": 3 }
+const _MODE_INDEX := {
+	"normal":    0,
+	"shimmer":   1,
+	"inverted":  2,
+	"prismatic": 3,
+	"colorize":  4,  # 2026-06-05 — forces hue onto white/grey art
+}
 
 static func recolor_material_for(inst: Variant) -> ShaderMaterial:
 	if typeof(inst) != TYPE_DICTIONARY:
@@ -141,6 +147,10 @@ static func recolor_material_for(inst: Variant) -> ShaderMaterial:
 	mat.set_shader_parameter("hue", float(tint.get("hue", 0.0)))
 	mat.set_shader_parameter("saturation", float(tint.get("sat", 1.0)))
 	mat.set_shader_parameter("mode", int(_MODE_INDEX.get(String(tint.get("mode", "normal")), 0)))
+	# Per-instance colorize strength (only read by mode 4). Default
+	# 0.7 — heavy enough to read on white plate, light enough that
+	# luma variation still survives.
+	mat.set_shader_parameter("colorize_strength", float(tint.get("colorize_strength", 0.7)))
 	return mat
 
 # Subtle rarity wash applied to item icons (paperdoll slots, inventory
