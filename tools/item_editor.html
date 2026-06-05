@@ -351,15 +351,31 @@ const TILE_BASE_SUP  = "../dcss/Dungeon Crawl Stone Soup Supplemental/";
 // paperdoll overlays are pre-aligned to the bot's grip / body /
 // head positions. See paperdoll_renderer.gd::_resolve_overlay.
 const SLOTS = [
-  { id:'weapon', label:'1H Swords',
-    manifest:'items_manifest.json',
-    export_key:'items_1h_swords', export_file:'items_1h_swords.json',
-    picker_roots:['item/weapon/'],
+  { id:'weapon', label:'Weapons',
+    // Two manifests merge into one tab — 1H swords (items_manifest.json)
+    // and the rest (items_weapons_extended_manifest.json). The single
+    // tab + sectioned filter chips replaces the old "1H Swords" /
+    // "Weapons (extended)" split. 2026-06-05.
+    manifests:['items_manifest.json','items_weapons_extended_manifest.json'],
+    export_key:'items_weapons', export_file:'items_weapons.json',
+    picker_roots:['item/weapon/','item/weapon/artefact/'],
     overlay_roots:['player/hand_right/','player/hand1/'],
     picker_extras:[
-      { key:'sword', label:'Swords',
+      { key:'swords',     label:'Swords',
         keywords:['dagger','knife','short_sword','falchion','long_sword','scimitar','rapier','katana','sabre','quickblade','ancient_sword','demon_blade','elven','orcish','cutlass'] },
-      { key:'artefact', label:'Artefacts', path_includes:'/artefact/' }
+      { key:'axes',       label:'Axes',
+        keywords:['axe','battle_axe','war_axe','hand_axe','broad_axe','executioner_axe'] },
+      { key:'maces',      label:'Maces / Flails',
+        keywords:['mace','morningstar','eveningstar','flail','hammer','club','ankus'] },
+      { key:'polearms',   label:'Polearms',
+        keywords:['spear','halberd','bardiche','scythe','trident'] },
+      { key:'2h_swords',  label:'2H Swords',
+        keywords:['greatsword','claymore','double_sword','triple_sword'] },
+      { key:'staves',     label:'Staves',
+        keywords:['quarterstaff','lajatang','staff'] },
+      { key:'exotics',    label:'Exotics',
+        keywords:['bullwhip','demon_whip','whip'] },
+      { key:'artefact',   label:'Artefacts', path_includes:'/artefact/' }
     ] },
   { id:'helm', label:'Helms',
     manifest:'items_helms_manifest.json',
@@ -436,20 +452,6 @@ const SLOTS = [
     overlay_roots:['player/cloak/'],
     picker_extras:[
       { key:'cloak', label:'Cloaks', keywords:['cloak','cape','scarf'] },
-      { key:'artefact', label:'Artefacts', path_includes:'/artefact/' }
-    ] },
-  { id:'weapons_ext', label:'Weapons (extended)',
-    manifest:'items_weapons_extended_manifest.json',
-    export_key:'items_weapons_extended', export_file:'items_weapons_extended.json',
-    picker_roots:['item/weapon/','item/weapon/artefact/'],
-    overlay_roots:['player/hand_right/','player/hand1/'],
-    picker_extras:[
-      { key:'axes',   label:'Axes',     keywords:['axe','battle_axe','war_axe','hand_axe','broad_axe','executioner_axe'] },
-      { key:'maces',  label:'Maces',    keywords:['mace','morningstar','eveningstar','flail','hammer','club','ankus'] },
-      { key:'polearms', label:'Polearms', keywords:['spear','halberd','bardiche','scythe','trident'] },
-      { key:'2h_swords', label:'2H Swords', keywords:['greatsword','claymore','double_sword','triple_sword'] },
-      { key:'staves', label:'Staves',   keywords:['quarterstaff','lajatang','staff'] },
-      { key:'exotics', label:'Exotics',  keywords:['bullwhip','demon_whip','cutlass'] },
       { key:'artefact', label:'Artefacts', path_includes:'/artefact/' }
     ] },
 ];
@@ -573,7 +575,12 @@ async function loadSlot(slot) {
   activeSlot = slot;
   selectedId = null;
   activeType = '__all__';
-  document.getElementById('topbar-title').textContent = 'Item Editor — ' + slot.label;
+  // The old #topbar-title was removed when the shared portal nav
+  // landed — guard the lookup so a missing element doesn't blow up
+  // switchSlot. The page's title chip on the nav is set via the
+  // data-title attribute and doesn't need per-slot updates.
+  const titleEl = document.getElementById('topbar-title');
+  if (titleEl) titleEl.textContent = 'Item Editor — ' + slot.label;
   // Refresh active highlight on tabs
   document.querySelectorAll('.slot-tab').forEach(t =>
     t.classList.toggle('active', t.dataset.slot === slot.id));
@@ -584,15 +591,35 @@ async function loadSlot(slot) {
     items = cached.items;
     dirty = cached.dirty;
   } else {
+    // A slot can declare either a single manifest (legacy) or a list
+    // of manifests that get merged. Used by the unified Weapons tab
+    // which pulls from both items_manifest.json (1H swords) and
+    // items_weapons_extended_manifest.json. 2026-06-05.
+    const manifestPaths = slot.manifests || (slot.manifest ? [slot.manifest] : []);
+    if (manifestPaths.length === 0) {
+      setStatus('Slot ' + slot.id + ' has no manifest configured', true);
+      return;
+    }
     try {
-      manifest = await fetch(slot.manifest).then(r=>{
-        if (!r.ok) throw new Error('HTTP '+r.status+' for '+slot.manifest);
-        return r.json();
-      });
+      const manifests = await Promise.all(manifestPaths.map(p =>
+        fetch(p).then(r => {
+          if (!r.ok) throw new Error('HTTP ' + r.status + ' for ' + p);
+          return r.json();
+        })));
+      // Merge: first manifest wins on top-level metadata (base_types,
+      // flavor_tags); items[] from every manifest concatenate.
+      manifest = JSON.parse(JSON.stringify(manifests[0]));
+      manifest.items = manifests.flatMap(m => m.items || []);
+      // Merge base_types + flavor_tags so the dropdowns include
+      // entries from the secondary manifest (axes, polearms, etc.).
+      for (let i = 1; i < manifests.length; i++) {
+        Object.assign(manifest.base_types || {}, manifests[i].base_types || {});
+        Object.assign(manifest.flavor_tags || {}, manifests[i].flavor_tags || {});
+      }
       items = JSON.parse(JSON.stringify(manifest.items));
       dirty = new Set();
     } catch(e) {
-      setStatus('Failed to load '+slot.manifest+': '+e.message, true);
+      setStatus('Failed to load manifests for ' + slot.id + ': ' + e.message, true);
       return;
     }
   }
