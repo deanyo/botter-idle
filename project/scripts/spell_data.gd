@@ -70,6 +70,71 @@ const ARCHETYPES := {
 		"element": "cold",
 		"projectile_speed": 0.0,
 	},
+	# 2026-06-04 expansion — 5 new archetypes covering the unfilled
+	# corners of the spell design space.
+	#
+	# magic_dart: cheap fast projectile, very short CD. The "filler"
+	# spell that fires constantly. Low single-hit damage but high DPS
+	# from cast frequency.
+	"spell_magic_dart": {
+		"primary_stat": "int",
+		"cooldown": 0.7,
+		"damage": 9,
+		"range_cells": 9,
+		"projectile": "res://assets/tiles/projectiles/magic_dart.png",
+		"trail_flavor": "arcane",
+		"element": "",
+		"projectile_speed": 420.0,
+	},
+	# iron_shot: slow heavy piercing projectile. One target hit,
+	# continues through and damages everyone in the line.
+	"spell_iron_shot": {
+		"primary_stat": "str",
+		"cooldown": 3.5,
+		"damage": 32,
+		"range_cells": 9,
+		"projectile": "res://assets/tiles/projectiles/iron_shot.png",
+		"trail_flavor": "earth",
+		"element": "",
+		"projectile_speed": 220.0,
+	},
+	# sandblast: tight short cone, physical. Like holy_beam at half
+	# the range with higher damage; closer-quarters caster.
+	"spell_sandblast": {
+		"primary_stat": "str",
+		"cooldown": 2.6,
+		"damage": 30,
+		"range_cells": 3,
+		"projectile": "",
+		"trail_flavor": "earth",
+		"element": "",
+		"projectile_speed": 0.0,
+	},
+	# drain: homing dark projectile that heals the bot for a %
+	# of damage dealt on hit (built-in lifesteal even without
+	# items_db lifesteal_pct rolls).
+	"spell_drain": {
+		"primary_stat": "int",
+		"cooldown": 2.4,
+		"damage": 22,
+		"range_cells": 8,
+		"projectile": "res://assets/tiles/projectiles/drain.png",
+		"trail_flavor": "dark",
+		"element": "dark",
+		"projectile_speed": 280.0,
+	},
+	# shatter: radial physical AoE with stun. Slower than Frost Nova
+	# but bigger raw damage and brief CC.
+	"spell_shatter": {
+		"primary_stat": "str",
+		"cooldown": 5.0,
+		"damage": 28,
+		"range_cells": 4,
+		"projectile": "",
+		"trail_flavor": "earth",
+		"element": "",
+		"projectile_speed": 0.0,
+	},
 }
 
 static func archetype_def(base_type: String) -> Dictionary:

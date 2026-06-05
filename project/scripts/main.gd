@@ -132,7 +132,12 @@ func _ready() -> void:
 		# the loot in their inventory + a "While You Were Away" banner.
 		# Skipped in grind/debug-jump because those use the debug save and
 		# the timestamp diff would be misleading.
+		# Side effect: ItemsDb caches items + enemies + monster_mods
+		# during this call, which warms the dungeon load path so the
+		# first deploy doesn't pay a 30-60ms parse hit. Perf pass
+		# 2026-06-04.
 		_pending_offline_summary = _apply_offline_progress()
+		ItemsDb.preload_all()
 		# Instantiate the universal pause menu only for live play. Auto-
 		# grind would freeze on its first Esc; screenshot mode would
 		# capture the dimmed pause overlay over the dungeon.
@@ -174,16 +179,10 @@ func _apply_offline_progress() -> Dictionary:
 	return summary
 
 func _load_items_db() -> Dictionary:
-	var f := FileAccess.open("res://data/items.json", FileAccess.READ)
-	if f == null:
-		return {}
-	var parsed: Variant = JSON.parse_string(f.get_as_text())
-	if typeof(parsed) != TYPE_DICTIONARY:
-		return {}
-	var by_id: Dictionary = {}
-	for it in parsed.get("items", []):
-		by_id[it.id] = it
-	return by_id
+	# Routes through ItemsDb's session cache so the parse only happens
+	# once even though both main + dungeon need the dict. Perf pass
+	# 2026-06-04.
+	return ItemsDb.items()
 
 func _show_main_menu() -> void:
 	var menu: Node = MAIN_MENU_SCENE.instantiate()
@@ -199,6 +198,8 @@ func _show_main_menu() -> void:
 		menu.fx_tuner_pressed.connect(_show_fx_tuner)
 	if menu.has_signal("create_character_pressed"):
 		menu.create_character_pressed.connect(_show_character_create)
+	if menu.has_signal("paperdoll_audit_pressed"):
+		menu.paperdoll_audit_pressed.connect(_show_paperdoll_audit)
 
 func _show_video_options() -> void:
 	var opts: Node = VIDEO_OPTIONS_SCENE.instantiate()
@@ -210,6 +211,13 @@ func _show_fx_tuner() -> void:
 	_swap(tuner)
 	tuner.back_pressed.connect(_show_main_menu)
 
+func _show_paperdoll_audit() -> void:
+	# Authoring screen — no .tscn; the script paints itself in _ready.
+	var script := load("res://scripts/paperdoll_audit.gd")
+	var screen: Control = script.new()
+	_swap(screen)
+	screen.back_pressed.connect(_show_main_menu)
+
 func _show_character_create() -> void:
 	var screen: Node = CHARACTER_CREATE_SCENE.instantiate()
 	_swap(screen)
@@ -220,6 +228,10 @@ func _show_character_create() -> void:
 		screen.character_confirmed.connect(func(_id): _show_main_menu())
 
 var _selected_branch: String = ""
+# Snapshot of unlocked_branches at run start so the run report can
+# announce "new branches unlocked" diff against this baseline. Beat 10
+# (run report unlock prominence) — 2026-06-04.
+var _unlocked_at_run_start: Array = []
 
 func _show_outpost() -> void:
 	_swap(OUTPOST_SCENE.instantiate())
@@ -254,9 +266,29 @@ func _on_deploy() -> void:
 	save["run_active"] = true
 	save["run_branch"] = _selected_branch
 	SaveState.save_state(save)
+	# Snapshot unlocked branches so the run report can list any that
+	# unlocked DURING this run. Beat 10 — 2026-06-04.
+	_unlocked_at_run_start = (save.get("unlocked_branches", ["dungeon"]) as Array).duplicate()
+	# Dungeon instantiate() is the heaviest scene load in the game.
+	# Paint the curtain BEFORE the heavy work so the player sees an
+	# instant transition; keep it up until floor_started fires (real
+	# end of the load), with a safety timeout in LoadingCurtain.
+	# Perf pass 2026-06-04 — replaces the fixed-duration show_for_swap.
+	var use_curtain: bool = not auto_grind and not OS.has_feature("dedicated_server")
+	if use_curtain and LoadingCurtain:
+		LoadingCurtain.show_curtain("Entering dungeon…")
+		# Two frames so the curtain actually paints before the heavy
+		# work blocks the main thread. One frame would still show a
+		# blank curtain on slow loads.
+		await get_tree().process_frame
+		await get_tree().process_frame
 	var dungeon: Node = DUNGEON_SCENE.instantiate()
 	dungeon.branch_id = _selected_branch
-	_swap(dungeon)
+	# Wire the curtain to the dungeon BEFORE _swap so the connection
+	# is in place when floor_started fires.
+	if use_curtain and LoadingCurtain:
+		LoadingCurtain.hold_until_signal(dungeon, "floor_started", "Entering dungeon…")
+	_swap(dungeon, true)  # skip the swap-fired curtain — we have our own
 	dungeon.run_ended.connect(_on_run_ended)
 	dungeon.boss_killed.connect(_on_boss_killed)
 	if auto_grind:
@@ -378,13 +410,23 @@ func _on_run_ended(victory: bool, report: Dictionary) -> void:
 			return
 		_on_deploy()
 		return
+	# Compute any branches newly unlocked during this run so the run
+	# report can announce them with a banner. Beat 10 — 2026-06-04.
+	var save_now: Dictionary = SaveState.load_state()
+	var unlocked_now: Array = save_now.get("unlocked_branches", []) as Array
+	var newly_unlocked: Array = []
+	for b in unlocked_now:
+		if not _unlocked_at_run_start.has(b):
+			newly_unlocked.append(b)
+	if not newly_unlocked.is_empty():
+		report["newly_unlocked"] = newly_unlocked
 	var rpt: Node = REPORT_SCENE.instantiate()
 	_swap(rpt)
 	rpt.show_report(victory, report)
 	rpt.deploy_again.connect(_on_deploy)
 	rpt.back_to_garage.connect(_show_outpost)
 
-func _swap(scene: Node) -> void:
+func _swap(scene: Node, skip_curtain: bool = false) -> void:
 	# UI polish 2026-06-04 — fire the loading curtain over every scene
 	# transition. Synchronous swap (no await) so signal callers can
 	# connect on the new scene immediately afterward. The curtain
@@ -392,9 +434,13 @@ func _swap(scene: Node) -> void:
 	# scene loads (dungeon), this provides a brief deliberate
 	# "Loading…" frame instead of the macOS spinner.
 	#
+	# `skip_curtain` is set by callers that have already wired their
+	# own curtain timing (e.g. _on_deploy uses hold_until_signal so
+	# the curtain stays up until the floor is actually built).
+	#
 	# Auto-bypassed in auto_grind so headless runs don't pay the
 	# cosmetic delay.
-	var use_curtain: bool = not auto_grind and not OS.has_feature("dedicated_server")
+	var use_curtain: bool = not auto_grind and not OS.has_feature("dedicated_server") and not skip_curtain
 	if use_curtain and LoadingCurtain:
 		LoadingCurtain.show_for_swap()
 	if current_screen:

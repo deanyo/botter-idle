@@ -402,6 +402,11 @@ func attempt_attack(other: Actor, delta: float) -> int:
 	if attack_cooldown > 0.0:
 		return 0
 	attack_cooldown = attack_interval
+	# `blinded`: 30% chance to fan-out the swing entirely. Sandblast's
+	# Blinding Grit affix applies it. Eats the cooldown either way so
+	# the blind ticks down on missed swings too. Spell expansion 2026-06-04.
+	if has_status("blinded") and randf() < 0.30:
+		return 0
 	if fx:
 		var toward: Vector2 = (other.position - position) if is_instance_valid(other) else Vector2.RIGHT
 		# Face the target before swinging so the held weapon appears on the
@@ -581,19 +586,20 @@ func attempt_attack(other: Actor, delta: float) -> int:
 	# `sound`: 10% chance to stun the target for 1s on a successful hit.
 	if dealt > 0 and "sound" in tags and is_instance_valid(other) and other.is_alive and randf() < 0.10:
 		other.add_status("stunned", 1.0)
-	# `dual`: 15% chance to fire a second swing immediately. Guarded
-	# against recursion via _dual_attacking flag — the second swing
-	# CAN'T trigger another double or the player gets infinite swings
-	# off a lucky chain. Skips the cooldown, doesn't refresh other tag
-	# state to keep it simple.
+	# `dual`: every successful hit fires an immediate off-hand swing at
+	# 50% damage. DCSS gyre-and-gimble pattern — the off-hand IS the
+	# weapon's second blade, which is why dual items also lock the
+	# shield slot (Bot.is_two_handed). Guarded against recursion via
+	# _dual_attacking so the off-hand swing can't itself trigger
+	# another. Skips animation tween + crit roll — feels like one
+	# fluid two-strike sequence instead of two distinct swings.
+	# 2026-06-05 — was a 15% chance proc; now deterministic at half damage
+	# so the shield trade-off actually pays off.
 	if dealt > 0 and "dual" in tags and is_instance_valid(other) and other.is_alive and not _dual_attacking:
-		if randf() < 0.15:
-			_dual_attacking = true
-			# Reuse the same atk roll for the second hit; no animation
-			# tween (would feel laggy if fired every time).
-			var raw2: int = atk
-			other.take_damage(raw2, self)
-			_dual_attacking = false
+		_dual_attacking = true
+		var raw2: int = int(round(float(atk) * 0.50))
+		other.take_damage(maxi(1, raw2), self)
+		_dual_attacking = false
 	# Rage: each KILL by this attacker adds a stack (cap +30%, refresh
 	# 6s window). Defender-worn so only the wearer accumulates stacks.
 	if killed and "rage" in def_tags:

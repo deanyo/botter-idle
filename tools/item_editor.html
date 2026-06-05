@@ -3,69 +3,44 @@
 <head>
 <meta charset="UTF-8">
 <title>Botter — Item Editor</title>
+<link rel="stylesheet" href="portal.css">
 <style id="slot-tab-style">
+  /* Slot tabs across the top — reuse portal palette. */
   #slot-tabs {
     display: flex; gap: 2px; align-items: center; margin-right: 8px;
   }
   .slot-tab {
-    padding: 4px 10px; font-size: 12px; cursor: pointer; border: 1px solid #3a3a45;
-    background: #1a1a1f; color: #888; border-radius: 3px; font-weight: 600;
+    padding: 4px 10px; font-size: 12px; cursor: pointer;
+    border: 1px solid var(--border-strong);
+    background: var(--bg); color: var(--muted); border-radius: 3px; font-weight: 600;
   }
-  .slot-tab:hover { border-color: #6cb0ff; color: #ccc; }
-  .slot-tab.active { background: #2e2e38; border-color: #6cb0ff; color: #6cb0ff; }
-  .slot-tab .slot-count { font-size: 10px; color: #555; margin-left: 4px; }
-  .slot-tab.active .slot-count { color: #6cb0ff; }
+  .slot-tab:hover { border-color: var(--accent-dim); color: var(--text); }
+  .slot-tab.active {
+    background: var(--panel-2); border-color: var(--accent-dim); color: var(--accent);
+  }
+  .slot-tab .slot-count { font-size: 10px; color: var(--muted); margin-left: 4px; }
+  .slot-tab.active .slot-count { color: var(--accent); }
 </style>
 <style>
+  /* Item-editor specific layout. Shared palette + form controls in
+     portal.css. Tier color tags + rarity tags below remain local. */
   :root {
-    --bg: #1a1a1f;
-    --panel: #25252e;
-    --panel-2: #2e2e38;
-    --border: #3a3a45;
-    --text: #e4e4e8;
-    --muted: #888;
-    --accent: #6cb0ff;
-    --warn: #ffaa55;
-    --good: #66cc88;
-    --tile-bg: #0c0c10;
-    --picker-bg: #1f1f26;
-
     --tier1: #aaaaaa;
     --tier2: #6699ff;
     --tier3: #88dd66;
     --tier4: #ffaa44;
     --tier5: #ff6655;
-    --rarity-common:    #cccccc;
-    --rarity-uncommon:  #6699ff;
-    --rarity-rare:      #ffdd44;
-    --rarity-epic:      #ff8833;
-    --rarity-legendary: #ff5544;
   }
-  * { box-sizing: border-box; }
   body {
-    margin: 0; background: var(--bg); color: var(--text);
-    font: 13px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     display: flex; flex-direction: column; height: 100vh; overflow: hidden;
   }
   #topbar {
     background: var(--panel); border-bottom: 1px solid var(--border);
     padding: 8px 14px; display: flex; align-items: center; gap: 12px; flex-shrink: 0;
   }
-  #topbar h1 { font-size: 14px; margin: 0; color: var(--accent); font-weight: 600; }
   #topbar .spacer { flex: 1; }
-  button, select {
-    background: var(--bg); color: var(--text); border: 1px solid var(--border);
-    padding: 4px 8px; border-radius: 3px; font: inherit; cursor: pointer;
-  }
-  button:hover { border-color: var(--accent); }
-  button.primary { background: var(--accent); color: #000; border-color: var(--accent); font-weight: 600; }
-  button.active { background: var(--panel-2); border-color: var(--accent); color: var(--accent); }
-  input[type="text"], input[type="number"], textarea {
-    background: var(--bg); color: var(--text); border: 1px solid var(--border);
-    padding: 4px 6px; border-radius: 3px; font: inherit;
-  }
-  textarea { resize: vertical; width: 100%; min-height: 60px; }
-  label { color: var(--muted); font-size: 11px; }
+  /* Editor uses .active for selected toggles. */
+  button.active { background: var(--panel-2); border-color: var(--accent-dim); color: var(--accent); }
 
   /* ---- Layout ---- */
   #body { display: flex; flex: 1; overflow: hidden; }
@@ -256,12 +231,13 @@
 <body>
 
 <div id="topbar">
+  <a href="index.html" class="home-link">← portal</a>
   <h1 id="topbar-title">Item Editor</h1>
   <div id="slot-tabs"></div>
   <div id="status"></div>
   <div class="spacer"></div>
   <button onclick="addItem()">+ New item</button>
-  <button class="primary" onclick="exportJSON()">⬇ Export items.json slice</button>
+  <button class="primary" onclick="exportJSON()" title="Download a JSON file with every item in this slot. Drop it into project/data/ to ship.">⬇ Export this slot</button>
 </div>
 
 <div id="body">
@@ -278,8 +254,8 @@
     <div id="edit-panel" class="hidden">
       <div id="edit-head">
         <h2 id="edit-title">Edit Item</h2>
-        <button onclick="exportSingleItem()" title="Download this item's JSON — paste into a GitHub issue to share">⬇ Export item</button>
-        <button onclick="copySingleItemToClipboard()" title="Copy this item's JSON to clipboard">⧉ Copy</button>
+        <button onclick="exportSingleItem()" title="Download this item as JSON. Share via GitHub issue / Discord to submit it.">⬇ Save item</button>
+        <button onclick="copySingleItemToClipboard()" title="Copy this item's JSON so you can paste it into a chat / issue">⧉ Copy</button>
         <button onclick="deleteItem()" style="color:#ff8888;font-size:11px;">Delete</button>
         <button onclick="closeEdit()">✕</button>
       </div>
@@ -777,7 +753,7 @@ function renderEditBody(it) {
       <div id="edit-sprite-wrap"><img id="edit-sprite-img" src="${tileUrl(it.tile)}" onerror="if(!this.dataset.f){this.dataset.f='1';this.src='${tileUrlDcssFull(it.tile)}'}else if(!this.dataset.s){this.dataset.s='1';this.src='${tileUrlDcssSupp(it.tile)}'}else{this.src='';this.style.display='none'}"></div>
       <div class="right">
         <div class="field-group">
-          <label>Tile path</label>
+          <label>Sprite filename</label>
           <input type="text" style="width:100%;font-size:11px" value="${it.tile}" id="tile-path-input"
             onchange="setField('${it.id}','tile',this.value);document.getElementById('edit-sprite-img').src=tileUrl(this.value)">
         </div>
@@ -786,60 +762,65 @@ function renderEditBody(it) {
     </div>
 
     <div class="field-group">
-      <label>Name</label>
+      <label>Display name</label>
       <input type="text" value="${it.name}" onchange="setField('${it.id}','name',this.value);document.getElementById('edit-title').textContent=this.value;renderGrid()">
     </div>
 
     <div class="field-group">
-      <label>ID (readonly)</label>
+      <label>Internal ID</label>
       <input type="text" value="${it.id}" style="color:var(--muted);font-size:11px" readonly>
+      <div style="font-size:10px;color:var(--muted);margin-top:4px">Locked once created — used to reference this item in saves.</div>
     </div>
 
     <div class="field-group">
-      <label>Base type</label>
+      <label>Item family</label>
       <select onchange="setField('${it.id}','base_type',this.value)">${baseTypeOpts}</select>
+      <div style="font-size:10px;color:var(--muted);margin-top:4px">Sets the weapon shape (e.g. all "long_sword" items share the same hand-pose on the bot).</div>
     </div>
 
     <div class="field-group">
-      <label>Item tier (where it lives in the progression)</label>
+      <label>Power level</label>
       <div class="tier-btn-row">${tierBtns}</div>
+      <div style="font-size:10px;color:var(--muted);margin-top:4px">T1 = early floors → T5 = endgame. Drives base stat scaling.</div>
     </div>
 
     <div class="field-group">
-      <label>Rarity (affix count: common=0, uncommon=1, rare=2, epic=3, legendary=4)</label>
+      <label>Rarity</label>
       <select onchange="setField('${it.id}','rarity',this.value)">${rarityOpts}</select>
-      &nbsp;<label><input type="checkbox"${it.unique?' checked':''} onchange="setField('${it.id}','unique',this.checked)"> Unique (one per run)</label>
+      &nbsp;<label><input type="checkbox"${it.unique?' checked':''} onchange="setField('${it.id}','unique',this.checked)"> Named unique (only one drops per run)</label>
+      <div style="font-size:10px;color:var(--muted);margin-top:4px">Common = no random bonuses, Uncommon = 1, Rare = 2, Epic = 3, Legendary = 4.</div>
     </div>
 
     <div class="field-group">
-      <label>Stats (item-overhaul v2 — schema depends on slot)</label>
+      <label>Base stats</label>
       ${(it.slot === 'weapon' || it.slot === 'spell') ? `
         <div class="field-row">
-          <span style="font-size:11px;color:var(--muted)">Dmg min</span>
+          <span style="font-size:11px;color:var(--muted)">Min damage</span>
           <input type="number" value="${it.damage_min||0}" min="0" max="999" onchange="setField('${it.id}','damage_min',+this.value)">
-          <span style="font-size:11px;color:var(--muted)">Dmg max</span>
+          <span style="font-size:11px;color:var(--muted)">Max damage</span>
           <input type="number" value="${it.damage_max||0}" min="0" max="999" onchange="setField('${it.id}','damage_max',+this.value)">
-          <span style="font-size:11px;color:var(--muted)">Type</span>
+          <span style="font-size:11px;color:var(--muted)">Damage type</span>
           <select onchange="setField('${it.id}','damage_type',this.value)">
             ${["physical","fire","cold","lightning","holy","poison","dark"].map(t => `<option value="${t}" ${t === (it.damage_type || 'physical') ? 'selected' : ''}>${t}</option>`).join("")}
           </select>
         </div>
         ${it.slot === 'weapon' ? `
           <div class="field-row">
-            <span style="font-size:11px;color:var(--muted)">Speed (s)</span>
+            <span style="font-size:11px;color:var(--muted)">Swing time (s)</span>
             <input type="number" value="${it.speed||1.0}" min="0.1" max="3.0" step="0.05" onchange="setField('${it.id}','speed',+this.value)">
-            <span style="font-size:11px;color:var(--muted)">Class</span>
+            <span style="font-size:11px;color:var(--muted)">Hands</span>
             <select onchange="setField('${it.id}','weapon_class',this.value)">
-              ${["1H","2H"].map(t => `<option value="${t}" ${t === (it.weapon_class || '1H') ? 'selected' : ''}>${t}</option>`).join("")}
+              ${[["1H","One-handed"],["2H","Two-handed (no shield)"],["dual","Dual-wield (no shield)"]].map(([v,lbl]) => `<option value="${v}" ${v === (it.weapon_class || '1H') ? 'selected' : ''}>${lbl}</option>`).join("")}
             </select>
           </div>
+          <div style="font-size:10px;color:var(--muted);margin-top:4px">Lower swing time = faster attacks. Two-handed and dual-wield clear the shield slot when equipped.</div>
         ` : `
           <div class="field-row">
             <span style="font-size:11px;color:var(--muted)">Cooldown (s)</span>
             <input type="number" value="${it.spell_cooldown||3.0}" min="0.5" max="20" step="0.1" onchange="setField('${it.id}','spell_cooldown',+this.value)">
-            <span style="font-size:11px;color:var(--muted)">Primary stat</span>
+            <span style="font-size:11px;color:var(--muted)">Scales with</span>
             <select onchange="setField('${it.id}','primary_stat',this.value)">
-              ${["str","dex","int"].map(t => `<option value="${t}" ${t === (it.primary_stat || 'int') ? 'selected' : ''}>${t}</option>`).join("")}
+              ${[["str","Strength"],["dex","Dexterity"],["int","Intelligence"]].map(([v,lbl]) => `<option value="${v}" ${v === (it.primary_stat || 'int') ? 'selected' : ''}>${lbl}</option>`).join("")}
             </select>
           </div>
         `}
@@ -850,76 +831,173 @@ function renderEditBody(it) {
           <span style="font-size:11px;color:var(--muted)">Evasion %</span>
           <input type="number" value="${it.evasion||0}" min="0" max="50" onchange="setField('${it.id}','evasion',+this.value)">
         </div>
+        <div style="font-size:10px;color:var(--muted);margin-top:4px">Armor flat-reduces incoming damage. Evasion is the % chance to dodge entirely.</div>
       ` : `
-        <div style="font-size:11px;color:var(--muted)">Jewelry — no baseline stats. Affix pool below drives all rolled bonuses.</div>
+        <div style="font-size:11px;color:var(--muted)">Jewelry has no base stats — all bonuses come from the rolled bonuses below.</div>
       `)}
     </div>
 
     <div class="field-group">
-      <label>Implicit affixes (item-defining — always present, never roll; uniques only)</label>
+      <label>Built-in bonuses (always present on every drop)</label>
       <div class="tag-grid">${implicitChips}</div>
       <div style="font-size:10px;color:var(--muted);margin-top:4px">
-        Click an affix to toggle. These get stamped on every drop and add to the rolled affixes.
+        Click to toggle. Use for named uniques whose identity IS the bonus (e.g. Vampire's Tooth always has lifesteal).
       </div>
     </div>
 
     <div class="field-group">
-      <label>Flavor tags (combat procs — vampiric=lifesteal, fire=DoT, holy=+vs undead, etc)</label>
+      <label>Combat tags (always-on procs)</label>
       <div class="tag-grid">${tagGrid}</div>
       <div style="font-size:10px;color:var(--muted);margin-top:4px">
-        Always-on for this item. Drives in-game procs (actor.gd::attempt_attack reads them) AND the tooltip glow color (vampiric→red glow, fire→orange, etc). Uniques like Vampire's Tooth carry "vampiric" here.
+        These fire in combat — vampiric = lifesteal on hit, fire = burn DoT, holy = bonus vs undead, etc. They also color the in-game tooltip glow.
       </div>
     </div>
 
     <div class="field-group">
-      <label>Enchant roll — per-drop chance to add ONE random flavor tag on top</label>
+      <label>Random enchant chance: <span style="color:var(--accent)">${Math.round((it.enchant_chance||0)*100)}%</span></label>
       <div style="display:flex;align-items:center;gap:8px">
         <input type="range" min="0" max="100" step="1"
           value="${Math.round((it.enchant_chance||0)*100)}"
-          oninput="setField('${it.id}','enchant_chance',this.value/100);this.nextElementSibling.textContent=this.value+'%'"
+          oninput="setField('${it.id}','enchant_chance',this.value/100);this.previousElementSibling.querySelector('span').textContent=this.value+'%';this.nextElementSibling.textContent=this.value+'%'"
           style="flex:1">
         <span style="min-width:48px;text-align:right;font-variant-numeric:tabular-nums">${Math.round((it.enchant_chance||0)*100)}%</span>
       </div>
       <div style="font-size:10px;color:var(--muted);margin-top:4px">
-        At drop time, dungeon._create_item_instance rolls this chance and (on hit) picks one flavor from the pool below to STACK with the static tags above. 0% = no enchant rolls. 100% = always rolls one (use for uniques where the flavor IS the item).
+        Chance per drop to add ONE bonus combat tag on top of the always-on tags above. 0% = no random enchant. 100% = always rolls one (use for uniques where the random flavor is part of the design).
       </div>
       <div style="margin-top:6px">
-        <label style="font-size:11px;color:var(--muted);text-transform:none;letter-spacing:0">Enchant pool — which flavors can roll. Leave all unchecked to allow any flavor.</label>
+        <label style="font-size:11px;color:var(--muted);text-transform:none;letter-spacing:0">Possible random tags <span style="opacity:0.7">(leave all off to allow any)</span></label>
         <div class="tag-grid" style="margin-top:4px">${enchantPoolGrid}</div>
       </div>
     </div>
 
     <div class="field-group">
-      <label>Affix pool override (per-item — higher weight = more likely. Leave all 0 to use base-type defaults from base_type_affixes.json)</label>
+      <label>Bonus weights (which random bonuses prefer to roll on this item)</label>
       ${affixPoolRows}
       <div style="font-size:10px;color:var(--muted);margin-top:4px">
-        Affix priority: this override (when any value &gt; 0) → base_type defaults → global pool fallback.
+        Higher weight = more likely. Leave all at 0 to use the default pool for this item family.
       </div>
     </div>
 
     <div class="field-group">
-      <label>Drop weights per dungeon tier (higher = more likely to appear)</label>
+      <label>Where it drops</label>
       ${dwRows}
       <div style="font-size:10px;color:var(--muted);margin-top:4px">
-        Bar on card shows relative weight (not %). 0 = never drops in that tier.
+        T1 = early floors → T5 = endgame. Higher = more likely to appear in that tier. Set 0 to lock out a tier.
       </div>
     </div>
 
     <div class="field-group">
-      <label>Lore</label>
+      <label>Look (permanent recolor)</label>
+      ${recolorSection(it)}
+      <div style="font-size:10px;color:var(--muted);margin-top:4px">
+        Optional. Locks a recolor onto every drop of this item — e.g. all Soulhungers always render inverted. Without one, drops randomly roll a recolor based on the global drop-tuning rates.
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label>Lore (flavor text shown in the tooltip)</label>
       <textarea onchange="setField('${it.id}','lore',this.value)">${it.lore||''}</textarea>
     </div>
 
     ${it.unique ? `<div class="field-group">
-      <label>Future mechanic (documentation only, not wired)</label>
-      <textarea onchange="setField('${it.id}','future_mechanic',this.value)">${it.future_mechanic||''}</textarea>
+      <label>Design notes (not shown in-game)</label>
+      <textarea onchange="setField('${it.id}','future_mechanic',this.value)" placeholder="Mechanic ideas, balance notes, art references…">${it.future_mechanic||''}</textarea>
     </div>` : ''}
 
     <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border)">
-      <button class="primary" onclick="applyEdit()">Apply</button>
-      <span style="font-size:11px;color:var(--muted);margin-left:8px">Changes mark item as dirty (●) until exported.</span>
+      <button class="primary" onclick="applyEdit()">Save changes</button>
+      <span style="font-size:11px;color:var(--muted);margin-left:8px">Changes are kept locally until you hit Export at the top.</span>
     </div>
   `;
+}
+
+// Recolor controls — reads/writes it.default_tint. Used by the runtime
+// to render a permanent hue/sat shift on every drop. Mirrors the live
+// game shader (item_recolor.gdshader) — same modes + ranges.
+function recolorSection(it) {
+  const t = it.default_tint || {};
+  const mode = t.mode || 'none';
+  const hue = (t.hue == null) ? 0 : Math.round(t.hue);
+  const sat = (t.sat == null) ? 1.0 : t.sat;
+  const modes = [
+    ['none',      'None — random per drop'],
+    ['normal',    'Solid hue (color shift)'],
+    ['shimmer',   'Shimmer — animated highlight sweep'],
+    ['inverted',  'Inverted — colors swapped'],
+    ['prismatic', 'Prismatic — hue cycles in real time'],
+  ];
+  const opts = modes.map(([v,lbl]) => `<option value="${v}" ${v===mode?'selected':''}>${lbl}</option>`).join('');
+  let html = `
+    <div class="field-row">
+      <span style="font-size:11px;color:var(--muted)">Effect</span>
+      <select onchange="setRecolorMode('${it.id}',this.value)">${opts}</select>
+    </div>`;
+  if (mode !== 'none') {
+    html += `
+      <div class="field-row">
+        <span style="font-size:11px;color:var(--muted)">Hue</span>
+        <input type="range" min="0" max="360" step="5" value="${hue}"
+          oninput="setRecolorField('${it.id}','hue',+this.value);this.nextElementSibling.textContent=this.value+'°'">
+        <span style="min-width:42px;text-align:right;font-variant-numeric:tabular-nums">${hue}°</span>
+      </div>
+      <div class="field-row">
+        <span style="font-size:11px;color:var(--muted)">Saturation</span>
+        <input type="range" min="0" max="2" step="0.05" value="${sat}"
+          oninput="setRecolorField('${it.id}','sat',+this.value);this.nextElementSibling.textContent=this.value">
+        <span style="min-width:42px;text-align:right;font-variant-numeric:tabular-nums">${sat}</span>
+      </div>
+      <div style="margin-top:6px">
+        <div style="display:inline-block;width:96px;height:96px;background:#000;border:1px solid var(--border-strong);border-radius:3px;position:relative">
+          <img id="recolor-preview-${it.id}" src="${tileUrl(it.tile)}"
+               style="width:96px;height:96px;image-rendering:pixelated;${recolorPreviewStyle(t)}"
+               onerror="if(!this.dataset.f){this.dataset.f='1';this.src='${tileUrlDcssFull(it.tile)}'}else if(!this.dataset.s){this.dataset.s='1';this.src='${tileUrlDcssSupp(it.tile)}'}">
+        </div>
+        <div style="font-size:10px;color:var(--muted);margin-top:4px;display:inline-block;vertical-align:top;margin-left:8px;max-width:240px">
+          Preview is a CSS-filter approximation — the in-game shader may render slightly differently, especially on darker palettes.
+        </div>
+      </div>`;
+  }
+  return html;
+}
+
+// CSS-filter approximation of the live game shader for the editor
+// preview. Not pixel-perfect (CSS filter chains aren't HSV), but close
+// enough to pick a hue + saturation that lands in the right ballpark.
+function recolorPreviewStyle(t) {
+  if (!t || !t.mode || t.mode === 'none') return '';
+  const hue = t.hue || 0;
+  const sat = (t.sat == null) ? 1 : t.sat;
+  const filters = [`hue-rotate(${hue}deg)`, `saturate(${sat})`];
+  if (t.mode === 'inverted') filters.push('invert(1)');
+  if (t.mode === 'shimmer') filters.push('brightness(1.15)');
+  return 'filter:' + filters.join(' ');
+}
+
+function setRecolorMode(id, mode) {
+  const it = items.find(x => x.id === id);
+  if (!it) return;
+  if (mode === 'none') {
+    delete it.default_tint;
+  } else {
+    if (!it.default_tint) it.default_tint = {hue: 0, sat: 1.0};
+    it.default_tint.mode = mode;
+  }
+  dirty.add(id);
+  renderEditBody(it);
+}
+
+function setRecolorField(id, key, val) {
+  const it = items.find(x => x.id === id);
+  if (!it || !it.default_tint) return;
+  it.default_tint[key] = val;
+  dirty.add(id);
+  // Live-update the preview filter without a full panel rebuild so
+  // the slider drag stays smooth.
+  const img = document.getElementById('recolor-preview-' + id);
+  if (img) {
+    img.style.cssText = 'width:96px;height:96px;image-rendering:pixelated;' + recolorPreviewStyle(it.default_tint);
+  }
 }
 
 function applyEdit() {
@@ -1159,6 +1237,7 @@ function exportJSON() {
       ...(it.enchant_chance ? {enchant_chance: it.enchant_chance} : {}),
       ...(it.enchant_pool && it.enchant_pool.length ? {enchant_pool: it.enchant_pool} : {}),
       ...(it.affix_pool && Object.keys(it.affix_pool).length ? {affix_pool: it.affix_pool} : {}),
+      ...(it.default_tint && it.default_tint.mode ? {default_tint: it.default_tint} : {}),
       ...(it.crit_chance ? {crit_chance: it.crit_chance} : {}),
       ...(it.atk_speed_pct ? {atk_speed_pct: it.atk_speed_pct} : {}),
       ...(it.hp_regen ? {hp_regen: it.hp_regen} : {}),
@@ -1172,7 +1251,7 @@ function exportJSON() {
   a.download = slot.export_file;
   a.click();
   dirty.clear();
-  setStatus('Exported '+slot.export_file+' — drop into project/data/ or merge into items.json.');
+  setStatus('Saved '+slot.export_file+' — share to submit, or drop into the game files.');
   setTimeout(() => setStatus(''), 4000);
   renderSidebar();
   renderGrid();
@@ -1200,6 +1279,7 @@ function singleItemPayload(it) {
     ...(it.enchant_chance ? {enchant_chance: it.enchant_chance} : {}),
     ...(it.enchant_pool && it.enchant_pool.length ? {enchant_pool: it.enchant_pool} : {}),
     ...(it.affix_pool && Object.keys(it.affix_pool).length ? {affix_pool: it.affix_pool} : {}),
+    ...(it.default_tint && it.default_tint.mode ? {default_tint: it.default_tint} : {}),
     ...(it.crit_chance ? {crit_chance: it.crit_chance} : {}),
     ...(it.atk_speed_pct ? {atk_speed_pct: it.atk_speed_pct} : {}),
     ...(it.hp_regen ? {hp_regen: it.hp_regen} : {}),

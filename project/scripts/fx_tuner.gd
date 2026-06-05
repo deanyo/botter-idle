@@ -55,6 +55,7 @@ var _items_cache: Dictionary = {}
 func _ready() -> void:
 	_settings = VS.load_settings()
 	_build_ui()
+	UITheme.style_all_buttons(self)
 	set_process(true)
 
 func _process(delta: float) -> void:

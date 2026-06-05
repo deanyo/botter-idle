@@ -220,6 +220,11 @@ const AFFIX_STAT_COLORS := {
 	"spell_frost_root":          Color(1.00, 0.83, 0.47),
 	"spell_chain_extra_jumps":   Color(1.00, 0.83, 0.47),
 	"spell_holy_radiance":       Color(1.00, 0.83, 0.47),
+	"spell_dart_split":          Color(1.00, 0.83, 0.47),
+	"spell_iron_dust":           Color(1.00, 0.83, 0.47),
+	"spell_sandblast_blind":     Color(1.00, 0.83, 0.47),
+	"spell_drain_buff":          Color(1.00, 0.83, 0.47),
+	"spell_shatter_aftershock":  Color(1.00, 0.83, 0.47),
 }
 
 static func affix_stat_color(stat: String) -> Color:
@@ -413,6 +418,78 @@ static func add_item_cell_decor(parent: Control, size_px: int, rarity: String, f
 	pulse.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	pulse.tween_property(border, "border_color", fc, 1.2)
 	pulse.tween_property(border, "border_color", col, 1.2)
+
+# Apply a default focus + hover stylebox set to a Button. Default Godot
+# focus is a thin white outline that reads as "broken UI" in the dark
+# amber palette; hover is a flat gray fill. We ship a consistent
+# amber-accent treatment so every Button on every screen feels part of
+# the same chrome. UI polish 2026-06-04.
+#
+# Pure-additive — caller can still override individual styleboxes if a
+# specific button (e.g. Deploy) wants a stronger treatment.
+static func style_button(btn: Button) -> void:
+	if btn == null:
+		return
+	# Normal — transparent fill, dim border so the button "sits in" the
+	# panel rather than being a callout. Padding kept default so existing
+	# layouts don't shift.
+	var sb_normal := StyleBoxFlat.new()
+	sb_normal.bg_color = Color(0.0, 0.0, 0.0, 0.0)
+	sb_normal.border_color = BORDER_DIM
+	sb_normal.border_width_left = 1
+	sb_normal.border_width_top = 1
+	sb_normal.border_width_right = 1
+	sb_normal.border_width_bottom = 1
+	sb_normal.corner_radius_top_left = 3
+	sb_normal.corner_radius_top_right = 3
+	sb_normal.corner_radius_bottom_left = 3
+	sb_normal.corner_radius_bottom_right = 3
+	# Hover — faint amber wash so the cursor visibly lands on something.
+	var sb_hover := sb_normal.duplicate() as StyleBoxFlat
+	sb_hover.bg_color = Color(COL_AMBER.r, COL_AMBER.g, COL_AMBER.b, 0.10)
+	sb_hover.border_color = COL_AMBER
+	# Pressed — slightly darker bg + brighter border for tactile feedback.
+	var sb_pressed := sb_normal.duplicate() as StyleBoxFlat
+	sb_pressed.bg_color = Color(COL_AMBER.r, COL_AMBER.g, COL_AMBER.b, 0.18)
+	sb_pressed.border_color = COL_GOLD
+	# Focus — keyboard-nav ring. 2px gold outline so tab-target is obvious
+	# without screen-reader noise.
+	var sb_focus := StyleBoxFlat.new()
+	sb_focus.bg_color = Color(0.0, 0.0, 0.0, 0.0)
+	sb_focus.border_color = COL_GOLD
+	sb_focus.border_width_left = 2
+	sb_focus.border_width_top = 2
+	sb_focus.border_width_right = 2
+	sb_focus.border_width_bottom = 2
+	sb_focus.corner_radius_top_left = 3
+	sb_focus.corner_radius_top_right = 3
+	sb_focus.corner_radius_bottom_left = 3
+	sb_focus.corner_radius_bottom_right = 3
+	# Disabled — flat dim bg so the visual carries the disabled cue
+	# regardless of font color (some screens override font_disabled_color).
+	var sb_disabled := sb_normal.duplicate() as StyleBoxFlat
+	sb_disabled.bg_color = Color(0.0, 0.0, 0.0, 0.30)
+	sb_disabled.border_color = Color(BORDER_DIM.r, BORDER_DIM.g, BORDER_DIM.b, 0.45)
+	btn.add_theme_stylebox_override("normal", sb_normal)
+	btn.add_theme_stylebox_override("hover", sb_hover)
+	btn.add_theme_stylebox_override("pressed", sb_pressed)
+	btn.add_theme_stylebox_override("focus", sb_focus)
+	btn.add_theme_stylebox_override("disabled", sb_disabled)
+	btn.add_theme_color_override("font_color", COL_AMBER)
+	btn.add_theme_color_override("font_hover_color", Color(1.0, 0.92, 0.55))
+	btn.add_theme_color_override("font_pressed_color", COL_GOLD)
+	btn.add_theme_color_override("font_disabled_color", COL_DIM)
+
+# Apply style_button() to every Button descendant of `root`. Call from
+# screen scripts AFTER all dynamically-built buttons have been added.
+# Cheap: walks the tree once, checks each node's class.
+static func style_all_buttons(root: Node) -> void:
+	if root == null:
+		return
+	if root is Button:
+		style_button(root as Button)
+	for child in root.get_children():
+		style_all_buttons(child)
 
 static func add_rarity_cell_decor(parent: Control, size_px: int, rarity: String, halo_strength: float = 0.35) -> void:
 	var col: Color = rarity_color(rarity)

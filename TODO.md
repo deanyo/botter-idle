@@ -13,14 +13,21 @@ swap, `UILayout` helper class, HUD sidebar width scales with
 viewport (320..480 clamp instead of fixed 356), outpost rebuilds
 on debounced resize, minimap backplate transparent.
 
-Phase D polish work deferred — these are the next-pass items:
+Landed in this beat (UI polish + duplication fix, 2026-06-04):
+- Outpost + HUD spell-row shrink-to-fit + wrap when pane too narrow.
+- HUD log feed → translucent overlay over the play area with top→
+  bottom alpha gradient. Bag panel reclaims full inventory width.
+- Loading curtain paints BEFORE heavy dungeon instantiate (was:
+  ~1s lag before transition).
+- Default Button focus + hover styleboxes via UITheme.style_button
+  / style_all_buttons across main menu, outpost, run report,
+  pause menu, video options, fx tuner, character create, shop.
+- Drag duplication bug fixed (deep-duplicate vs prev-equipped
+  identity check) + click duplication guard (instance_id verify
+  before try_equip_from_segment fires).
 
-- **Outpost spell row clipping** — when the paperdoll pane is
-  narrow on small viewports, the 5 spell cells overflow the right
-  edge. Constrain to pane bounds and wrap to a second row when too
-  narrow.
-- **HUD log feed fade gradient** — old messages should soften with
-  a top + bottom alpha gradient instead of just clipping.
+Phase D polish work still deferred:
+
 - **Run report defeat header** — center, larger font, full-width
   rarity-color-tinted underline.
 - **Character create grid alignment** — species cards align to a
@@ -28,9 +35,6 @@ Phase D polish work deferred — these are the next-pass items:
   border.
 - **Main menu bot picker tile theme** — match the new pure-black
   + amber accent palette.
-- **Pause menu theme alignment** — same treatment as the rest.
-- **Focus + hover styleboxes** — every Button gets a default focus
-  ring + hover background shift. Currently default Godot styles.
 - **Min font size 11px audit** — sweep every script for font sizes
   below 11 and bump.
 - **Min touch target 44×44px audit** — same sweep for Button +
@@ -110,18 +114,17 @@ session's energy.
   "first empty spell slot." Player feedback: they want to choose
   which slot. Build a drag-and-drop swap UI (drag inventory spell →
   spell cell, drag cell → cell, etc).
-- **HUD spell cooldown overlay** — ring fill on each of the 5 HUD
-  spell cells showing remaining cooldown. Feeds the run-watcher's
-  understanding of "which spell is about to fire." Wired-up: the
-  cells already have an unused cooldown overlay; need to drive it
-  from `bot.spell_cooldowns`.
+- ✅ **HUD spell cooldown overlay** (shipped 2026-06-04) — radial
+  ring sweep on each of the 5 HUD spell cells, driven by
+  `bot.spell_cooldowns` + `SpellSystem.cooldown_fraction`.
+  `chrome.update_spell_cooldowns(bot, items_db)` runs each frame.
 - **Atlas / authoring portal** — races and spells need to appear in
   the atlas viewer + a "spell editor" akin to the biome editor so
   the user can author new spells without manual JSON editing. Also
   add per-species sprites to the atlas categorization.
-- **Stat overhaul telegraphing** — Str/Dex/Int are now in the
-  outpost stats panel but weren't called out in the character-create
-  screen. Show the species' starting allocation when picking.
+- ✅ **Stat overhaul telegraphing** (shipped 2026-06-04) — species
+  preview pane now leads with the species' STR / DEX / INT in the
+  spell-class colors plus the starter spell + its class color.
 - **Wave spawn animation** — current wave/burst mobs just appear at
   walkable cells. Add a brief warp-in or warning indicator so the
   player sees them coming.
@@ -289,37 +292,30 @@ patches were directionally right but insufficient.
   to ~25-40%. Pending human playtest confirmation. Full data in
   `docs/balance-findings-2026-06-02.md` "T2/T3 cliff fill-in" section.
 
-## Critical bugs from playtest (2026-06-02 — HIGH PRIORITY)
+## Critical bugs from playtest (2026-06-02 — fixed 2026-06-04)
 
-⚠️ Reported by user — affects every run, breaks the visual contract.
+All three reported issues fixed in the same beat.
 
-- ⬜ **Mobs/chests stack on a single tile near top of floor.** On lots
-  of floors the spawn distributor lumps everything into one cluster
-  rather than spreading across rooms. Look at
-  `dungeon.gd::_spawn_enemies` + `_place_interactables` — likely the
-  spawn-cell selection is biased to a single bbox row when the
-  generator's room list is empty/sparse, or the floor's accessibility
-  graph from spawn is collapsing. Possibly related to dungeon-layout
-  variants that produce 1 huge region instead of room rectangles.
-
-- ⬜ **Bot descends stairs with no stair visible on the floor.** Tile
-  exists in `grid` (T_DOWN_STAIRS) but `map_renderer` is failing to
-  paint it, OR the stair texture is being occluded by a tile drawn
-  on top of it. Check `map_renderer.gd` z-ordering of features vs
-  floor decals. May share a root cause with #3 below.
-
-- ⬜ **Floor tiles draw ON TOP of monster sprites.** Z-order regression
-  in the renderer. Floor tile cells are at z=0 by convention; actor
-  layer at z>0. Either an ambient_decor sprite or a feature overlay
-  is leaking into the actor z-band. Check `map_renderer.gd::_paint_*`
-  and `ambient_decor.gd` for any sprite that doesn't pin z to a
-  background-only band.
-
-These three may share a single underlying bug. Triage by reproducing
-in `/screenshot dungeon` (the JSON sidecar will show enemy cells +
-floor cell counts; if multiple enemies share a cell the JSON will
-expose it directly). Pin the next session to fixing them before any
-new mechanics ship.
+- ✅ **Mobs/chests stack on a single tile near top of floor.** Root
+  cause: `_random_walkable_cell_far_from_bot` and `_walkable_cell_near`
+  had no occupancy tracking, so multiple chests/altars/fountains/
+  packmates rolled the same cells. The fallback path also sampled
+  the top-25%-farthest sorted, deterministically piling into one
+  corner when the strict path failed. Fix: new `_spawn_used_cells`
+  Dictionary populated incrementally + a weighted-pair random-pick
+  fallback. Seeded with bot/stairs cells so neither hosts an
+  interactable.
+- ✅ **Bot descends stairs with no stair visible on the floor.**
+  Root cause: `MapRenderer._stamp_decor_marks` allowed vault decor
+  on `T_STAIRS_DOWN` cells, overwriting the stair sprite in the
+  overlay layer. Fix: stamp on plain `T_FLOOR` only.
+- ✅ **Floor tiles draw ON TOP of monster sprites.** Root cause:
+  heat-haze (`z=50`) and water-shimmer (`z=49`) layers in
+  `MapRenderer._attach_heat_haze` / `_attach_water_shimmer` were
+  ABOVE the actor_layer (`z=10`), so monsters standing on lava/
+  water cells were painted over by the shader sprite. Fix: drop
+  haze to z=3, shimmer to z=2 (between tile-overlay z=1 and
+  actor_layer z=10).
 
 ## Up next (planned 2026-05-21)
 
@@ -450,12 +446,10 @@ Beat status:
   branches dimmed, modifier strip per branch)
 - ✅ **Beat 9 — Offline progress** (last_seen_timestamp on save,
   OfflineProgress.apply on launch, "While You Were Away" AcceptDialog)
-- ⬜ **Beat 10 — Run report unlock prominence** — boss kill writes save
-  + emits boss_killed signal, but the run report doesn't yet visually
-  highlight first-clear unlocks above the loot list. The unlock IS
-  surfaced via `[unlock]` print + the next Outpost visit shows new
-  branches available; just no "BRANCH UNLOCKED" banner in the report.
-  ~30m if/when desired.
+- ✅ **Beat 10 — Run report unlock prominence** (shipped 2026-06-04).
+  Slow-pulsing gold "BRANCHES UNLOCKED: X, Y" banner under the run-
+  report title when the run unlocked new branches. Plus title polish
+  (32→56px, centered, victory/defeat-colored underline).
 
 Bonus beats shipped beyond the doc:
 - **Smooth shader-driven fog of war** (replaces the cell-aligned Bresenham
@@ -477,8 +471,13 @@ Bonus beats shipped beyond the doc:
 
 Remaining gameplay-loop-shaped work:
 
-- ⬜ **Run report unlock prominence** (Beat 10) — show "TIER N CLEARED —
-  Tier (N+1) unlocked!" above the loot list when applicable.
+- ✅ **Run report unlock prominence** (Beat 10, shipped 2026-06-04).
+  When a run unlocks new branches, the run report shows a
+  slow-pulsing gold "BRANCHES UNLOCKED: X, Y" banner under the
+  title. `main._on_deploy` snapshots unlocked_branches at run start;
+  `_on_run_ended` diffs and injects `newly_unlocked` into the report.
+  Plus title polish: bigger centered font + victory/defeat-colored
+  underline strip.
 - ✅ **Item plan** (`docs/items-plan.md`) — DONE 2026-05-20. 234 items
   shipped across all 7 slots (47 swords / 32 helms / 47 armor / 27 shields
   / 20 boots / 35 rings / 26 amulets), `flavor_tags` + `drop_weights` +
@@ -501,11 +500,13 @@ Remaining gameplay-loop-shaped work:
   lifesteal, fire DoT, precision crit-multiplier) and wire it
   end-to-end in `actor.gd`. Validates the tag → mechanic pipeline
   before all 30 tags accumulate. ~45m.
-- ⬜ **Bespoke per-branch bosses** — currently boss = strongest pool
-  member. Doc's Hydra/Lich/Vault Warden/etc would need 24+ new enemies
-  in `enemies.json` (HP/ATK/sprite/etc). Add a `boss_id` field on the
-  biome to override the pool-pick; ship the 7 endgame sword uniques
-  first (per the items plan — they exist in items.json now).
+- ✅ **Bespoke per-branch bosses** (shipped 2026-06-04). 24 hand-
+  authored boss enemies in enemies.json, one per biome, sprites
+  synced from DCSS monster/unique/. New `boss_id` field on each biome
+  routes the boss-floor spawn to the bespoke entry; pool-pick path
+  retained as fallback. Bespoke bosses keep their authored display
+  name verbatim ("Boris the Lich"); pool-pick fallback still wraps
+  as "Greater X."
 
 ## Perf — done for now
 

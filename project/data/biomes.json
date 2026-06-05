@@ -100,7 +100,8 @@
       "sigil_set": [],
       "liquid_type": "water",
       "tier": 1,
-      "cr_recommended": 20
+      "cr_recommended": 20,
+      "boss_id": "boss_sigmund"
     },
     "dungeon_dark": {
       "display_name": "the Dark Dungeon",
@@ -194,7 +195,8 @@
       },
       "sigil_set": [],
       "tier": 1,
-      "cr_recommended": 20
+      "cr_recommended": 20,
+      "boss_id": "boss_eustachio"
     },
     "mines": {
       "display_name": "the Orcish Mines",
@@ -289,7 +291,8 @@
       },
       "sigil_set": [],
       "tier": 1,
-      "cr_recommended": 20
+      "cr_recommended": 20,
+      "boss_id": "boss_blork"
     },
     "lair": {
       "display_name": "the Lair",
@@ -400,7 +403,8 @@
       ],
       "sigil_set": [],
       "tier": 2,
-      "cr_recommended": 120
+      "cr_recommended": 120,
+      "boss_id": "boss_kirke"
     },
     "forest": {
       "display_name": "the Forest",
@@ -501,7 +505,8 @@
       "floor_secondary": [],
       "sigil_set": [],
       "tier": 2,
-      "cr_recommended": 120
+      "cr_recommended": 120,
+      "boss_id": "boss_erolcha"
     },
     "swamp": {
       "display_name": "the Swamp",
@@ -620,7 +625,8 @@
       "floor_secondary": [],
       "sigil_set": [],
       "tier": 3,
-      "cr_recommended": 280
+      "cr_recommended": 280,
+      "boss_id": "boss_lernaean"
     },
     "snake": {
       "display_name": "the Snake Pit",
@@ -703,7 +709,8 @@
       "wall_alternates": [],
       "sigil_set": [],
       "tier": 3,
-      "cr_recommended": 280
+      "cr_recommended": 280,
+      "boss_id": "boss_aizul"
     },
     "shoals": {
       "display_name": "the Shoals",
@@ -807,7 +814,8 @@
       "floor_secondary": [],
       "sigil_set": [],
       "tier": 3,
-      "cr_recommended": 280
+      "cr_recommended": 280,
+      "boss_id": "boss_ilsuiw"
     },
     "orc": {
       "display_name": "the Orc Hold",
@@ -908,7 +916,8 @@
       },
       "sigil_set": [],
       "tier": 2,
-      "cr_recommended": 120
+      "cr_recommended": 120,
+      "boss_id": "boss_grum"
     },
     "vaults": {
       "display_name": "the Vaults",
@@ -997,7 +1006,8 @@
         2
       ],
       "tier": 4,
-      "cr_recommended": 600
+      "cr_recommended": 600,
+      "boss_id": "boss_frederick"
     },
     "crypt": {
       "display_name": "the Crypt",
@@ -1115,7 +1125,8 @@
         "patches": []
       },
       "tier": 4,
-      "cr_recommended": 600
+      "cr_recommended": 600,
+      "boss_id": "boss_boris"
     },
     "tomb": {
       "display_name": "the Tomb",
@@ -1210,7 +1221,8 @@
         "patches": []
       },
       "tier": 4,
-      "cr_recommended": 600
+      "cr_recommended": 600,
+      "boss_id": "boss_menkaure"
     },
     "forge": {
       "display_name": "the Forge",
@@ -1321,7 +1333,8 @@
       },
       "sigil_set": [],
       "tier": 5,
-      "cr_recommended": 1100
+      "cr_recommended": 1100,
+      "boss_id": "boss_azrael"
     },
     "glacier": {
       "display_name": "the Glacier",
@@ -1412,7 +1425,8 @@
       },
       "sigil_set": [],
       "tier": 5,
-      "cr_recommended": 1100
+      "cr_recommended": 1100,
+      "boss_id": "boss_antaeus"
     },
     "slime": {
       "display_name": "the Slime Pits",
@@ -1518,7 +1532,8 @@
       "floor_secondary": [],
       "sigil_set": [],
       "tier": 5,
-      "cr_recommended": 1100
+      "cr_recommended": 1100,
+      "boss_id": "boss_dissolution"
     },
     "hive": {
       "display_name": "the Hive",
@@ -1611,7 +1626,8 @@
       ],
       "sigil_set": [],
       "tier": 3,
-      "cr_recommended": 280
+      "cr_recommended": 280,
+      "boss_id": "boss_gastronok"
     },
     "labyrinth": {
       "display_name": "the Labyrinth",
@@ -1708,7 +1724,8 @@
         "patches": []
       },
       "tier": 5,
-      "cr_recommended": 1100
+      "cr_recommended": 1100,
+      "boss_id": "boss_killer_klown"
     },
     "abyss": {
       "display_name": "the Abyss",
@@ -1808,7 +1825,8 @@
       },
       "sigil_set": [],
       "tier": 5,
-      "cr_recommended": 1100
+      "cr_recommended": 1100,
+      "boss_id": "boss_mnoleg"
     },
     "pandemonium": {
       "display_name": "Pandemonium",
@@ -1914,7 +1932,8 @@
         "patches": []
       },
       "tier": 5,
-      "cr_recommended": 1100
+      "cr_recommended": 1100,
+      "boss_id": "boss_cerebov"
     },
     "zot": {
       "display_name": "the Realm of Zot",
@@ -2002,7 +2021,8 @@
         3
       ],
       "tier": 5,
-      "cr_recommended": 1100
+      "cr_recommended": 1100,
+      "boss_id": "boss_tiamat"
     },
     "elf": {
       "display_name": "the Elven Halls",
@@ -2093,7 +2113,8 @@
         "patches": []
       },
       "tier": 4,
-      "cr_recommended": 600
+      "cr_recommended": 600,
+      "boss_id": "boss_enchantress"
     },
     "spider": {
       "display_name": "the Spider Nest",
@@ -2180,7 +2201,8 @@
       "floor_secondary": [],
       "sigil_set": [],
       "tier": 3,
-      "cr_recommended": 280
+      "cr_recommended": 280,
+      "boss_id": "boss_jorgrun"
     },
     "temple": {
       "display_name": "the Ecumenical Temple",
@@ -2258,7 +2280,8 @@
       },
       "liquid_type": "water",
       "tier": 2,
-      "cr_recommended": 120
+      "cr_recommended": 120,
+      "boss_id": "boss_psyche"
     },
     "depths": {
       "display_name": "the Depths",
@@ -2373,7 +2396,8 @@
         "patches": []
       },
       "tier": 4,
-      "cr_recommended": 600
+      "cr_recommended": 600,
+      "boss_id": "boss_polyphemus"
     }
   },
   "run_plans": [

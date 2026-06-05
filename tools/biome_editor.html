@@ -3,26 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <title>Botter — Biome Editor</title>
+<link rel="stylesheet" href="portal.css">
 <style>
-  :root {
-    --bg: #1a1a1f;
-    --panel: #25252e;
-    --panel-2: #2e2e38;
-    --border: #3a3a45;
-    --text: #e4e4e8;
-    --muted: #888;
-    --accent: #6cb0ff;
-    --warn: #ffaa55;
-    --good: #66cc88;
-    --tile-bg: #0c0c10;
-    --picker-bg: #1f1f26;
-  }
-  * { box-sizing: border-box; }
+  /* Biome-editor specific layout. Shared palette + form controls +
+     button styles live in portal.css. */
   body {
-    margin: 0;
-    background: var(--bg);
-    color: var(--text);
-    font: 13px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     display: flex;
     height: 100vh;
   }
@@ -36,26 +21,8 @@
     align-items: center;
     flex-shrink: 0;
   }
-  h1 { font-size: 14px; margin: 0; color: var(--accent); font-weight: 600; }
-  h2 { font-size: 13px; margin: 16px 0 6px; color: var(--accent); }
-  h3 {
-    font-size: 11px; margin: 8px 0 4px; color: var(--muted);
-    text-transform: uppercase; letter-spacing: 0.06em;
-  }
-  button, select {
-    background: var(--bg); color: var(--text); border: 1px solid var(--border);
-    padding: 4px 8px; border-radius: 3px; font: inherit; cursor: pointer;
-  }
-  button:hover { border-color: var(--accent); }
-  button.primary { background: var(--accent); color: #000; border-color: var(--accent); font-weight: 600; }
-  button.danger { color: #ff8888; }
-  input[type="text"], input[type="number"] {
-    background: var(--bg); color: var(--text); border: 1px solid var(--border);
-    padding: 3px 6px; border-radius: 3px; font: inherit;
-  }
+  /* Editor uses some custom widths on text inputs. */
   input[type="text"] { width: 180px; }
-  input[type="number"] { width: 60px; }
-  label { color: var(--muted); font-size: 11px; }
 
   #sidebar {
     width: 220px; flex-shrink: 0;
@@ -191,7 +158,10 @@
 <body>
 
 <aside id="sidebar">
-  <header><h1>Biomes</h1></header>
+  <header style="display:flex; align-items:center; gap:10px;">
+    <a href="index.html" class="home-link">← portal</a>
+    <h1>Biomes</h1>
+  </header>
   <div id="biome-list"></div>
   <div id="sidebar-actions">
     <button onclick="duplicateBiome()">Duplicate selected</button>

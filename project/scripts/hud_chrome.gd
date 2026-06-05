@@ -21,9 +21,13 @@ extends CanvasLayer
 # paperdoll cells. Dungeon listens and forwards to the bot, then
 # triggers a re-render. Keeps HUD a presentation layer — it doesn't
 # own equipped state directly.
-signal hud_equip_requested(inv_index: int)
 signal hud_unequip_requested(slot_id: String)
 signal hud_drag_drop(payload: Dictionary, dst_slot: String)
+# Fires when the player clicks the "Dump floor" button under the
+# top-left debug log. Dungeon listens, builds a comprehensive
+# JSON-serializable floor report, saves it to user://floor_dump_<ts>.json,
+# and copies it to the clipboard. 2026-06-05.
+signal debug_dump_requested
 
 const C := preload("res://scripts/constants.gd")
 
@@ -118,6 +122,9 @@ var _items_db_cache: Dictionary = {}
 
 # Debug HUD
 var debug_lbl: Label
+var debug_dump_btn: Button = null
+var debug_dump_status: Label = null
+var _debug_status_timer: SceneTreeTimer = null
 
 # WoW-style buff/debuff bar — top-of-screen row of 36×36 icons with
 # timer text under each. Reads from bot._statuses; cells reused across
@@ -134,6 +141,8 @@ func _ready() -> void:
 	layer = 50
 	_build_sidebar()
 	_build_bag()
+	if VideoSettings.hud_log_overlay():
+		_build_log_overlay()
 	_build_debug()
 	_build_buff_bar()
 	if DragManager and not DragManager.drag_ended.is_connected(_on_drag_ended):
@@ -219,12 +228,6 @@ func _on_paperdoll_left_click(cell: ItemCell) -> void:
 	# Hand off to the dungeon — it owns the bot equipped state and inv.
 	# HUD is a presentation layer; bubble via signal.
 	emit_signal("hud_unequip_requested", cell.slot_id)
-
-# Click handler for inventory cells in the run HUD — left-click equips.
-func _on_inv_left_click(cell: ItemCell) -> void:
-	if cell.role != "inventory":
-		return
-	emit_signal("hud_equip_requested", cell.inv_index)
 
 # DragManager fires this when a drag releases. We forward to dungeon
 # via signals because mid-run swaps need to update bot.equipped (not
@@ -322,7 +325,11 @@ func _build_sidebar() -> void:
 	lbl_gold = _add_label("Gold: 0", sx + 140, sy, 14, COL_GOLD); sy += 22
 
 	# Paperdoll (fills the rest of the sidebar down to the bottom).
-	_build_paperdoll(x0, sy + 6, int(view.y) - SIDEBAR_PAD)
+	# Paperdoll bottom must clear the bag panel (which lives at
+	# view.y - BAG_H .. view.y). Previously we passed view.y - SIDEBAR_PAD
+	# which made the spell row render UNDER the bag — invisible to the
+	# player. UI polish 2026-06-04.
+	_build_paperdoll(x0, sy + 6, int(view.y) - BAG_H - SIDEBAR_PAD)
 
 func _build_paperdoll(sidebar_x0: int, top_y: int, bottom_y: int) -> void:
 	# L-shape: bot sprite top-left, slots run down the right column and across
@@ -336,9 +343,12 @@ func _build_paperdoll(sidebar_x0: int, top_y: int, bottom_y: int) -> void:
 	var doll_top: int = top_y + header_h
 	var doll_left: int = sidebar_x0 + SIDEBAR_PAD
 	var available_h: int = bottom_y - doll_top
-	# Bottom row eats slot+gap; sprite gets the rest minus a margin.
-	var sprite_block_h: int = available_h - slot - gap
-	sprite_block_h = clampi(sprite_block_h, 100, 260)
+	# Bottom row + spell row each eat slot+gap. Sprite gets whatever's
+	# left, clamped to a sane band so the sprite doesn't disappear on
+	# narrow viewports. UI polish 2026-06-04 — previously the spell
+	# row's height wasn't reserved here, so it overflowed under the bag.
+	var sprite_block_h: int = available_h - (slot + gap) * 2
+	sprite_block_h = clampi(sprite_block_h, 80, 260)
 	# Right column width = slot. Sprite width fills remaining inner_w.
 	var sprite_w: int = inner_w - slot - gap
 	var sprite_h: int = sprite_block_h
@@ -395,10 +405,18 @@ func _build_paperdoll(sidebar_x0: int, top_y: int, bottom_y: int) -> void:
 		_make_paperdoll_slot(resolved_bottom[i], rx, row_y)
 	# Spell row — 5 autocast cells under the gear row. They reuse the
 	# same cooldown overlay machinery already wired into _make_paperdoll_slot.
+	# UI polish 2026-06-04: shrink spell cells to fit all 5 across the
+	# pane width, wrapping to a second row only if even minimum size
+	# (32px) doesn't fit. Mirrors outpost.gd behavior.
 	var spell_row_y: int = row_y + slot + gap
-	var spell_count: int = mini(SPELL_SLOTS.size(), maxi(1, inner_w / (slot + gap)))
-	for i in spell_count:
-		_make_paperdoll_slot(SPELL_SLOTS[i], doll_left + i * (slot + gap), spell_row_y)
+	var spell_slot: int = clampi(int((inner_w - gap * 4) / 5), 32, slot)
+	var per_row: int = mini(SPELL_SLOTS.size(), maxi(1, (inner_w + gap) / (spell_slot + gap)))
+	for i in SPELL_SLOTS.size():
+		var col: int = i % per_row
+		var rowi: int = i / per_row
+		var sx_spell: int = doll_left + col * (spell_slot + gap)
+		var sy_spell: int = spell_row_y + rowi * (spell_slot + gap)
+		_make_paperdoll_slot(SPELL_SLOTS[i], sx_spell, sy_spell, spell_slot)
 
 # Tooltip for any slot, including extra ring slots (ring2..ringN).
 # Mirrors outpost.gd::_tooltip_for_slot.
@@ -411,8 +429,10 @@ func _tooltip_for_slot(slot_id: String) -> String:
 		return "Ring %s" % (roman[n] if n < roman.size() else str(n))
 	return SLOT_TOOLTIPS.get(slot_id, slot_id.capitalize())
 
-func _make_paperdoll_slot(slot_id: String, x: int, y: int) -> void:
-	var slot := PAPERDOLL_SLOT_SIZE
+func _make_paperdoll_slot(slot_id: String, x: int, y: int, override_size: int = 0) -> void:
+	# Spell row passes a smaller override_size when the pane is narrow
+	# so all 5 spells fit. Defaults to PAPERDOLL_SLOT_SIZE for gear.
+	var slot := override_size if override_size > 0 else PAPERDOLL_SLOT_SIZE
 	var is_real: bool = (slot_id in EQUIPPED_SLOTS) or slot_id.begins_with("ring") or slot_id.begins_with("spell")
 	var is_placeholder: bool = not is_real
 	# ItemCell — replaces the old hand-rolled bg/border/sprite tree.
@@ -450,9 +470,21 @@ func _make_paperdoll_slot(slot_id: String, x: int, y: int) -> void:
 	cd_lbl.visible = false
 	cd_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	cell.add_child(cd_lbl)
+	# Spell cells get an extra radial-sweep cooldown ring drawn via a
+	# custom Node2D._draw. Rings sweep counter-clockwise from full at
+	# fire time → empty at ready. Combat-pivot 2026-06-04.
+	var cd_ring: Node2D = null
+	if slot_id.begins_with("spell"):
+		cd_ring = Node2D.new()
+		cd_ring.position = Vector2(slot * 0.5, slot * 0.5)
+		cd_ring.set_meta("cell_size", slot)
+		cd_ring.set_meta("frac", 0.0)
+		cd_ring.draw.connect(_draw_spell_cooldown_ring.bind(cd_ring))
+		cell.add_child(cd_ring)
 	equipped_cells.append({
 		"slot": slot_id, "cell": cell,
 		"cd_dim": cd_dim, "cd_lbl": cd_lbl,
+		"cd_ring": cd_ring,
 		"is_placeholder": is_placeholder,
 	})
 
@@ -472,36 +504,23 @@ func _build_bag() -> void:
 	border.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(border)
 
-	# Loot log (left half of bottom strip).
-	var log_x: int = SIDEBAR_PAD
-	var log_y: int = int(view.y) - BAG_H + SIDEBAR_PAD
-	var log_w: int = int(canvas_w * 0.42) - SIDEBAR_PAD * 2
-	_add_label("Loot", log_x, log_y, 13, COL_DIM)
-	var log_inner_top: int = log_y + 18
-	var log_inner_bottom: int = int(view.y) - SIDEBAR_PAD
-	var log_h: int = log_inner_bottom - log_inner_top
-	var line_h: int = max(18, int(log_h / float(LOG_LINE_COUNT)))
-	for i in LOG_LINE_COUNT:
-		var lbl := Label.new()
-		lbl.text = ""
-		lbl.position = Vector2(log_x, log_inner_top + i * line_h)
-		lbl.add_theme_font_size_override("font_size", 15)
-		lbl.add_theme_color_override("font_color", COL_AMBER)
-		lbl.add_theme_color_override("font_outline_color", Color(0, 0, 0))
-		lbl.add_theme_constant_override("outline_size", 2)
-		lbl.size = Vector2(log_w, line_h)
-		lbl.clip_text = true
-		add_child(lbl)
-		log_lines.append(lbl)
-
-	# Inventory list (right half of bottom strip).
-	var invx: int = log_x + log_w + 16
+	# Inventory list now spans the full bottom strip — the loot log
+	# moved to a translucent overlay over the play area, toggled in
+	# Video options as `hud_log_overlay`. UI polish 2026-06-04.
+	var invx: int = SIDEBAR_PAD
 	var invy: int = int(view.y) - BAG_H + SIDEBAR_PAD
 	_add_label("Inventory", invx, invy, 13, COL_DIM)
 	invy += 18
 	inventory_scroll = ScrollContainer.new()
 	inventory_scroll.position = Vector2(invx, invy)
-	inventory_scroll.size = Vector2(canvas_w - invx - SIDEBAR_PAD, BAG_H - SIDEBAR_PAD * 2 - 18)
+	# Round the scroll height down to a whole-row multiple so the last
+	# visible row is never half-cut. Each row = INV_CELL_SIZE + grid
+	# v_separation (4px). UI polish 2026-06-04.
+	var raw_scroll_h: int = BAG_H - SIDEBAR_PAD * 2 - 18
+	var row_h: int = INV_CELL_SIZE + 4
+	var visible_rows: int = maxi(1, raw_scroll_h / row_h)
+	var scroll_h: int = visible_rows * row_h
+	inventory_scroll.size = Vector2(canvas_w - invx - SIDEBAR_PAD, scroll_h)
 	inventory_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	add_child(inventory_scroll)
 	inventory_box = VBoxContainer.new()
@@ -512,6 +531,44 @@ func _build_bag() -> void:
 	# rebuild_segments doesn't need to recompute every refresh.
 	_inv_columns = max(1, int((canvas_w - invx - SIDEBAR_PAD - 16) / (INV_CELL_SIZE + 6)))
 
+func _build_log_overlay() -> void:
+	# Translucent loot/combat log overlay, anchored bottom-left of the
+	# play area (just above the inventory bag). LOG_LINE_COUNT lines
+	# stacked, oldest at top, newest at bottom. UI polish 2026-06-04.
+	# Toggled via Video Options (`hud_log_overlay`).
+	var view := get_viewport().get_visible_rect().size
+	var line_h: int = 18
+	var pad: int = SIDEBAR_PAD
+	var ow: int = mini(int(view.x * 0.32), 460)  # overlay width — narrow enough to leave play area uncluttered
+	var oh: int = line_h * LOG_LINE_COUNT + pad
+	var ox: int = pad
+	var oy: int = int(view.y) - BAG_H - oh - pad
+	# Faint dark backdrop so amber text reads against bright biome floors.
+	var backdrop := ColorRect.new()
+	backdrop.color = Color(0, 0, 0, 0.30)
+	backdrop.position = Vector2(ox - 4, oy - 4)
+	backdrop.size = Vector2(ow + 8, oh + 8)
+	backdrop.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(backdrop)
+	# Top→bottom fade: oldest message (index 0) softens to ~0.35 alpha,
+	# newest (index LOG_LINE_COUNT-1) is fully opaque. Drives the eye
+	# toward fresh combat/loot text. UI polish 2026-06-04.
+	for i in LOG_LINE_COUNT:
+		var lbl := Label.new()
+		lbl.text = ""
+		lbl.position = Vector2(ox, oy + i * line_h)
+		lbl.size = Vector2(ow, line_h)
+		lbl.add_theme_font_size_override("font_size", 14)
+		lbl.add_theme_color_override("font_color", COL_AMBER)
+		lbl.add_theme_color_override("font_outline_color", Color(0, 0, 0))
+		lbl.add_theme_constant_override("outline_size", 2)
+		lbl.clip_text = true
+		lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		var fade_t: float = float(i + 1) / float(LOG_LINE_COUNT)
+		lbl.modulate = Color(1, 1, 1, lerp(0.35, 1.0, fade_t))
+		add_child(lbl)
+		log_lines.append(lbl)
+
 func _build_debug() -> void:
 	debug_lbl = Label.new()
 	debug_lbl.position = Vector2(6, 4)
@@ -521,6 +578,47 @@ func _build_debug() -> void:
 	debug_lbl.add_theme_constant_override("outline_size", 2)
 	debug_lbl.add_theme_font_override("font", _monospace_font())
 	add_child(debug_lbl)
+	# "Dump floor" button under the debug text — emits
+	# debug_dump_requested so the dungeon can write a comprehensive
+	# floor report for triage. 2026-06-05.
+	debug_dump_btn = Button.new()
+	debug_dump_btn.text = "📋 Dump floor"
+	debug_dump_btn.add_theme_font_size_override("font_size", 11)
+	debug_dump_btn.position = Vector2(6, 0)  # repositioned each frame in update_debug
+	debug_dump_btn.size = Vector2(110, 22)
+	debug_dump_btn.tooltip_text = "Save + copy a JSON dump of this floor to clipboard.\nUseful for sharing weird floors with Claude."
+	debug_dump_btn.pressed.connect(func(): debug_dump_requested.emit())
+	add_child(debug_dump_btn)
+	UITheme.style_button(debug_dump_btn)
+	# Status label flashes the save path / clipboard byte count for ~3s
+	# after a dump fires, then fades out.
+	debug_dump_status = Label.new()
+	debug_dump_status.position = Vector2(6, 0)  # repositioned each frame
+	debug_dump_status.add_theme_font_size_override("font_size", 10)
+	debug_dump_status.add_theme_color_override("font_color", Color(0.55, 0.95, 0.55, 0.95))
+	debug_dump_status.add_theme_color_override("font_outline_color", Color(0, 0, 0))
+	debug_dump_status.add_theme_constant_override("outline_size", 2)
+	debug_dump_status.add_theme_font_override("font", _monospace_font())
+	debug_dump_status.visible = false
+	add_child(debug_dump_status)
+
+# Public: dungeon calls this with the save path / chars-copied summary
+# so the HUD can flash a confirmation under the dump button. Auto-hides
+# after 3.5s.
+func flash_debug_dump_status(msg: String) -> void:
+	if debug_dump_status == null or not is_instance_valid(debug_dump_status):
+		return
+	debug_dump_status.text = msg
+	debug_dump_status.visible = true
+	# Reposition under the button before showing.
+	if debug_dump_btn != null and is_instance_valid(debug_dump_btn):
+		debug_dump_status.position = Vector2(6, debug_dump_btn.position.y + debug_dump_btn.size.y + 2)
+	# Cancel any in-flight hide timer.
+	_debug_status_timer = get_tree().create_timer(3.5)
+	_debug_status_timer.timeout.connect(func():
+		if debug_dump_status != null and is_instance_valid(debug_dump_status):
+			debug_dump_status.visible = false
+	)
 
 func _build_buff_bar() -> void:
 	# Pool of BUFF_BAR_MAX cells, all hidden until populated by
@@ -709,6 +807,11 @@ func push_log(msg: String, tag: String = "combat") -> void:
 	log_buffer.append(msg)
 	while log_buffer.size() > LOG_LINE_COUNT:
 		log_buffer.pop_front()
+	# Skip the visual update when the overlay is disabled — log_lines is
+	# empty in that case. The buffer itself still tracks recent messages
+	# in case we want a "recent loot" tooltip later.
+	if log_lines.is_empty():
+		return
 	for i in LOG_LINE_COUNT:
 		if i < log_buffer.size():
 			log_lines[i].text = log_buffer[i]
@@ -993,6 +1096,7 @@ func _make_inv_button(seg_idx: int, item_idx: int, inst: Variant, items_db: Dict
 	cell.blocked = blocked
 	cell.set_meta("seg_idx", seg_idx)
 	cell.set_meta("item_idx", item_idx)
+	cell.set_meta("instance_id", String(inst.get("instance_id", "")))
 	cell.on_left_click = Callable(self, "_on_hud_inv_left_click")
 	cell.tooltip_owner = Callable(self, "_on_cell_tooltip")
 	# Resolve flat inv_index lazily — DragManager.begin_drag reads
@@ -1022,6 +1126,16 @@ func _on_hud_inv_left_click(cell: ItemCell) -> void:
 		return
 	var seg_idx: int = int(cell.get_meta("seg_idx", -1))
 	var item_idx: int = int(cell.get_meta("item_idx", -1))
+	# Verify the (seg_idx, item_idx) still points at the SAME item
+	# instance_id the cell was built with. A queue_freed-but-not-yet-
+	# deleted cell can fire a second click after equip; without this
+	# guard we'd equip whatever slid into that index — feels like
+	# item duplication. UI polish 2026-06-04.
+	var iid: String = String(cell.get_meta("instance_id", ""))
+	if iid != "" and equip_request_target.has_method("instance_at_segment_idx"):
+		var live_iid: String = String(equip_request_target.call("instance_at_segment_idx", seg_idx, item_idx))
+		if live_iid != iid:
+			return
 	if equip_request_target.has_method("try_equip_from_segment"):
 		equip_request_target.try_equip_from_segment(seg_idx, item_idx)
 
@@ -1040,6 +1154,60 @@ func update_cooldowns(slot_cooldowns: Dictionary) -> void:
 			cd_lbl.visible = on_cd
 			if on_cd:
 				cd_lbl.text = "%ds" % int(ceil(cd))
+
+# Spell cooldown ring overlay — drives the per-spell radial sweep from
+# bot.spell_cooldowns + the spell item's base cooldown via SpellSystem.
+# Combat-pivot 2026-06-04. Called every dungeon._process tick.
+func update_spell_cooldowns(bot_ref: Node, items_db: Dictionary) -> void:
+	if bot_ref == null:
+		return
+	for cell in equipped_cells:
+		var slot: String = cell.slot
+		if not slot.begins_with("spell"):
+			continue
+		var ring: Node2D = cell.get("cd_ring", null)
+		if ring == null or not is_instance_valid(ring):
+			continue
+		var frac: float = SpellSystem.cooldown_fraction(bot_ref, slot, items_db)
+		var prev_frac: float = float(ring.get_meta("frac", 0.0))
+		# Skip redraw when nothing changed at the rendered precision.
+		if absf(frac - prev_frac) < 0.005:
+			continue
+		ring.set_meta("frac", frac)
+		ring.queue_redraw()
+
+func _draw_spell_cooldown_ring(node: Node2D) -> void:
+	# Sweeps counter-clockwise from full-circle (just fired) to empty
+	# (ready). Drawn as a slightly transparent dim arc to read against
+	# the spell sprite without hiding it.
+	var frac: float = float(node.get_meta("frac", 0.0))
+	if frac <= 0.001:
+		return
+	var size: int = int(node.get_meta("cell_size", 56))
+	var r: float = float(size) * 0.50
+	# Fill — wedge from -90° (top) sweeping clockwise by `frac × 360`.
+	# draw_circle_arc-style polyline approach: build a triangle fan
+	# via draw_polygon. Simpler: draw_circle for full, draw_arc for
+	# the cut. We ship the dim wedge as a series of triangles via
+	# `draw_polygon` which is one draw call.
+	var start: float = -PI * 0.5
+	var end: float = start + TAU * frac
+	var seg: int = maxi(8, int(24.0 * frac))
+	var pts := PackedVector2Array()
+	pts.append(Vector2.ZERO)
+	for i in seg + 1:
+		var t: float = float(i) / float(seg)
+		var ang: float = lerpf(start, end, t)
+		pts.append(Vector2(cos(ang), sin(ang)) * r)
+	var col := Color(0, 0, 0, 0.55)
+	var cols := PackedColorArray()
+	for i in pts.size():
+		cols.append(col)
+	node.draw_polygon(pts, cols)
+	# Outline arc — soft amber sweep mirroring the wedge edge so the
+	# cooldown is visible even at a glance.
+	var arc_col := Color(0.92, 0.78, 0.45, 0.85)
+	node.draw_arc(Vector2.ZERO, r - 1.5, start, end, seg, arc_col, 2.0, true)
 
 # Minimap: pass the current grid + bot cell + stairs cell. Renders downscaled.
 var _minimap_image: Image
@@ -1117,3 +1285,11 @@ func update_debug(lines: Array) -> void:
 	if t != _last_debug_text:
 		debug_lbl.text = t
 		_last_debug_text = t
+	# Park the Dump-floor button + status label below the debug text.
+	# Cheap layout — only updates when the line count changes since
+	# debug_lbl.size auto-resizes to its content.
+	if debug_dump_btn != null and is_instance_valid(debug_dump_btn) and debug_lbl != null:
+		var by: float = debug_lbl.position.y + debug_lbl.size.y + 4.0
+		debug_dump_btn.position = Vector2(6, by)
+		if debug_dump_status != null and is_instance_valid(debug_dump_status) and debug_dump_status.visible:
+			debug_dump_status.position = Vector2(6, by + debug_dump_btn.size.y + 2.0)

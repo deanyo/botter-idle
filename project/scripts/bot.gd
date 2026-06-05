@@ -241,6 +241,21 @@ const TWO_HANDED_BASE_TYPES := [
 static func is_two_handed_base_type(base_type: String) -> bool:
 	return base_type in TWO_HANDED_BASE_TYPES
 
+# Item-level "occupies both hands" check — true for canonical 2H base
+# types AND for items flagged `weapon_class: "dual"` (e.g. Gyre — a
+# DCSS dual-wield blade where the off-hand IS the second weapon).
+# Mechanically identical from the shield-exclusion standpoint: equipping
+# either kind clears the shield slot. 2026-06-05 — gyre balance pass.
+static func is_two_handed(item: Dictionary) -> bool:
+	if item == null or item.is_empty():
+		return false
+	if is_two_handed_base_type(String(item.get("base_type", ""))):
+		return true
+	var wc: String = String(item.get("weapon_class", ""))
+	if wc == "dual" or wc == "2H":
+		return true
+	return bool(item.get("two_handed", false))
+
 # Swap an inventory item into its slot. Returns an array of DISPLACED
 # instances (0..2) so the caller can re-insert them into inventory.
 # Most equips displace 0 or 1 items. The 2H↔shield exclusion can
@@ -296,10 +311,13 @@ func equip_from_inventory(inst: Dictionary) -> Array:
 			picked_spell = "spell1"
 		slot = picked_spell
 	var displaced: Array = []
-	# 2H weapon ↔ shield exclusion. Equipping a 2H weapon clears the
-	# shield slot back to inventory; equipping a shield clears a 2H
-	# weapon back to inventory. PoE/Diablo pattern — kindest UX.
-	if slot == "weapon" and is_two_handed_base_type(String(item.get("base_type", ""))):
+	# 2H/dual weapon ↔ shield exclusion. Equipping a 2H or dual-wield
+	# weapon clears the shield slot back to inventory; equipping a
+	# shield clears a 2H/dual weapon back to inventory. PoE/Diablo
+	# pattern. Routes through is_two_handed(item) so dual-wield items
+	# (e.g. Gyre) get the same treatment as canonical 2H — they occupy
+	# the off-hand in lieu of a second blade. 2026-06-05.
+	if slot == "weapon" and is_two_handed(item):
 		var current_shield: Variant = equipped.get("shield", null)
 		if current_shield != null and typeof(current_shield) == TYPE_DICTIONARY:
 			displaced.append(current_shield)
@@ -309,7 +327,7 @@ func equip_from_inventory(inst: Dictionary) -> Array:
 		if current_weapon != null and typeof(current_weapon) == TYPE_DICTIONARY:
 			var w_id: String = String(current_weapon.get("base_id", ""))
 			if w_id != "" and _items_db_cache.has(w_id):
-				if is_two_handed_base_type(String(_items_db_cache[w_id].get("base_type", ""))):
+				if is_two_handed(_items_db_cache[w_id]):
 					displaced.append(current_weapon)
 					equipped["weapon"] = null
 	# Direct displace of the slot we're filling.

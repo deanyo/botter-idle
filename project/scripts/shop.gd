@@ -187,6 +187,7 @@ func _build_layout() -> void:
 	_build_inventory_pane(PANEL_PAD, col_y, col_w, col_h)
 	_build_stock_pane(int(view.x / 2) + 8, col_y, col_w, col_h)
 	_render()
+	UITheme.style_all_buttons(self)
 
 func _build_inventory_pane(x: int, y: int, w: int, h: int) -> void:
 	_make_panel(x, y, w, h, "Your Inventory — click to sell")

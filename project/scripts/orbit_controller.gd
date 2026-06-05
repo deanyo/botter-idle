@@ -11,9 +11,12 @@ extends Node2D
 # orbit centers on the bot — even if the bot moves between rooms during
 # the spell's duration.
 
-const HIT_RADIUS_PX := 16.0
+const HIT_RADIUS_PX := 18.0
 const HIT_INVULN_SEC := 0.3
-const ANGULAR_VELOCITY := 4.5  # rad/sec at base speed
+const ANGULAR_VELOCITY := 5.5  # rad/sec at base speed
+# Each axe spins about its own center as it orbits — feels like a real
+# whirling weapon instead of a frozen sprite tracking a circle.
+const SPIN_VELOCITY := 14.0
 
 var bot_ref: Node = null
 var radius_px: float = 48.0
@@ -47,12 +50,27 @@ static func spawn_axes(parent: Node, bot: Node, count: int, radius: float, durat
 		var spr := Sprite2D.new()
 		spr.texture = tex
 		spr.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-		spr.scale = Vector2(0.7, 0.7)
+		# Bigger sprite + a soft glow trailing the orbit so each axe
+		# reads as a real spinning weapon instead of a tiny moving icon.
+		# Combat-pivot follow-up 2026-06-04.
+		spr.scale = Vector2(1.15, 1.15)
 		spr.modulate = resolved_tint
 		ctrl.add_child(spr)
+		# Trailing glow Sprite2D — same texture at lower alpha + bigger
+		# scale, sitting one frame behind the lead sprite. Cheap to add
+		# and gives every axe a visible motion arc.
+		var glow := Sprite2D.new()
+		glow.texture = tex
+		glow.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		glow.scale = Vector2(1.45, 1.45)
+		glow.modulate = Color(resolved_tint.r, resolved_tint.g, resolved_tint.b, 0.30)
+		glow.z_index = -1  # behind the lead axe sprite
+		ctrl.add_child(glow)
 		ctrl.axes.append({
 			"sprite": spr,
+			"glow": glow,
 			"base_angle": float(i) * (TAU / float(count)),
+			"prev_angle": float(i) * (TAU / float(count)),
 			"hits": {},  # enemy_id → expires_at
 		})
 	return ctrl
@@ -76,7 +94,17 @@ func _process(delta: float) -> void:
 		var spr: Sprite2D = axe.sprite
 		var pos: Vector2 = Vector2.from_angle(ang) * radius_px
 		spr.position = pos
-		spr.rotation = ang + PI * 0.5  # tangent to orbit so axe head faces forward
+		# Spin each axe about its own center so the visual reads as a
+		# whirling weapon, not a sprite tracked along a circle. The
+		# blade catches light at every angle. Combat-pivot 2026-06-04.
+		spr.rotation = elapsed * SPIN_VELOCITY + axe.base_angle
+		# Glow sits a fraction of a radian behind the lead sprite,
+		# tracing the orbit arc. Same spin so it reads as a single object.
+		var glow: Sprite2D = axe.get("glow", null)
+		if glow != null and is_instance_valid(glow):
+			var trail_ang: float = ang - 0.18
+			glow.position = Vector2.from_angle(trail_ang) * radius_px
+			glow.rotation = spr.rotation
 		# Hit check — every enemy within HIT_RADIUS_PX of the axe world pos.
 		var world_pos: Vector2 = position + pos
 		var hits: Dictionary = axe.hits

@@ -16,6 +16,9 @@ const ITEMS_PATH := "res://data/items.json"
 const MONSTER_MODS_PATH := "res://data/monster_mods.json"
 const ENEMY_TILE_DIR := "res://assets/tiles/enemies/"
 
+# Per-session JSON data caches now live on ItemsDb (shared with
+# main.gd's offline-progress loader). Perf pass 2026-06-04.
+
 var enemy_data: Dictionary = {}
 var items_db: Dictionary = {}
 # Pack-tier modifiers (PoE-style). Loaded once at run start; rolled
@@ -40,6 +43,13 @@ var bot_interacting: bool = false
 var interact_target: Interactable = null
 var interact_timer: float = 0.0
 var vault_spawn_overrides: Dictionary = {}
+# Per-floor occupancy set used by spawn helpers to prevent multiple
+# enemies / chests / altars / fountains from rolling onto the same cell.
+# Reset on _async_build_floor; populated incrementally as
+# _random_walkable_cell_far_from_bot and _walkable_cell_near return.
+# Critical-bug fix 2026-06-04 — playtest reported mobs+chests stacking
+# in a single north cluster on lots of floors.
+var _spawn_used_cells: Dictionary = {}
 var vault_decor_sprites: Array[Node2D] = []
 var run_plan: Array = []
 # Branch the player picked in the Outpost. Empty = legacy random-roll.
@@ -129,38 +139,66 @@ var run_turn: int = 0
 @onready var camera: Camera2D = $Camera
 
 func _ready() -> void:
-	# BOTTER_SEED=<int> seeds the world-rng stream (vault picks, loot rolls,
-	# affix rolls, generator). Same seed = same floor sequence + same loot.
-	# Combat rng (per-attack crit on Actor.attack) is the global stream
-	# (randf/randi without an rng), seeded separately so it stays its own
-	# axis of variance — duels can converge or diverge on combat skill.
+	# Perf pass 2026-06-04 — _ready does the bare minimum (set up
+	# seed + layer order) and defers the heavy work to the next
+	# process frame so the loading curtain has a chance to paint.
+	# Previously _ready blocked for ~150ms (JSON parses + run setup +
+	# floor build first phase) after add_child landed, freezing the
+	# curtain mid-fade and giving the player a "loads, then load
+	# screen" feel.
+	#
+	# The deferred path goes:
+	#   _ready  → seed + layer + flicker driver
+	#   (await) → _start_run_deferred → _ensure_data_loaded
+	#                                  → _start_run (fog/env/bot/etc)
+	#                                  → _build_floor (already async)
 	var seed_env: String = OS.get_environment("BOTTER_SEED")
 	if seed_env != "" and seed_env.is_valid_int():
 		var s: int = int(seed_env)
 		rng.seed = s
-		# Also seed the global rng for the few class-level callers
-		# (altar.gd / portal.gd setup-time picks, dcss_layouts.gd carve
-		# step direction). These are "world" decisions, not combat.
 		seed(s)
 		print("[seed] world_rng=%d" % s)
 	else:
 		rng.randomize()
-	enemy_data = _load_json(ENEMIES_PATH)
-	items_db = _load_items(ITEMS_PATH)
-	monster_mods = _load_monster_mods()
 	# Layer ordering: floor base + wall/edge overlays draw at z=0/1 inside
 	# MapLayer. Pin ActorLayer to z=10 so every actor + interactable +
 	# ambient decor sits above ALL map tiles. Without this, the
 	# overlay_layer (z=1) renders ON TOP of stairs/altars/chests/enemies
 	# in dense biomes like hive — user-reported bug 2026-06-03.
-	# Enemies + interactables don't need per-instance z_index after this;
-	# the layer's z_index sets the floor for all of them.
 	if actor_layer != null:
 		actor_layer.z_index = 10
-	# FlickerDriver animates every PointLight2D with a "flicker" meta dict.
-	# Single shared driver keeps cost predictable.
 	add_child(FlickerDriver.new())
+	# Skip the deferred dance for headless modes — auto_grind and
+	# debug_jump want the run to start ASAP without a frame yield.
+	var defer: bool = not _is_headless_run()
+	if defer:
+		call_deferred("_start_run_deferred")
+	else:
+		_start_run_deferred()
+
+func _is_headless_run() -> bool:
+	# Auto-grind (BOTTER_AUTO_GRIND or marker file) and debug-jump
+	# both want sync start so harness scripts don't pay the curtain
+	# delay. main.gd marks the dungeon parent as auto_grind via
+	# its own state; we detect by env vars + marker files which are
+	# the same signals main.gd uses.
+	if OS.has_environment("BOTTER_AUTO_GRIND"):
+		return true
+	if FileAccess.file_exists("user://AUTO_GRIND.txt"):
+		return true
+	if FileAccess.file_exists("user://DEBUG_FLOOR.txt"):
+		return true
+	return false
+
+func _start_run_deferred() -> void:
+	var t0: int = Time.get_ticks_usec()
+	enemy_data = ItemsDb.enemies()
+	items_db = ItemsDb.items()
+	monster_mods = ItemsDb.monster_mods()
 	_start_run()
+	var dt_ms: float = (Time.get_ticks_usec() - t0) / 1000.0
+	if dt_ms > 30.0:
+		print("[perf] dungeon ready→run start: %.1fms" % dt_ms)
 
 func _start_run() -> void:
 	current_floor = 1
@@ -284,6 +322,7 @@ func _async_build_floor() -> void:
 	_reset_stuck_timer()
 	_last_bot_cell = Vector2i(-99, -99)
 	vault_spawn_overrides.clear()
+	_spawn_used_cells.clear()
 	bot_interacting = false
 	interact_target = null
 	interact_timer = 0.0
@@ -402,6 +441,14 @@ func _async_build_floor() -> void:
 	bot.place_at(data.spawn)
 	_mark_room_visited_at(bot.cell)
 	_center_camera_on_bot()
+	# Seed the per-floor occupancy set with cells that must NOT host an
+	# interactable / enemy: bot spawn, stairs down, and any vault-defined
+	# spawn-overridden cells (those host their own entities). Spawn
+	# helpers exclude already-used cells. Critical-bug fix 2026-06-04.
+	_spawn_used_cells[bot.cell] = true
+	_spawn_used_cells[stairs_cell] = true
+	for ov_cell in vault_spawn_overrides.keys():
+		_spawn_used_cells[ov_cell] = true
 	# Phase 3: ambient decor scatter (5-15ms).
 	await get_tree().process_frame
 	if my_gen != _build_generation: return
@@ -797,6 +844,322 @@ func _collect_render_manifest(img: Image, png_path: String, ts: int) -> Dictiona
 		"warning": "DCSS pixel-art at 32px tiles, downscaled to a 1024px square. Trust this JSON for facts (biome, HUD, stats, entity positions, tile palettes). The PNG is reliable for shape, layout structure, and broad color silhouettes only.",
 	}
 
+# Build a comprehensive JSON-serializable floor report for triage.
+# Wired to a "Dump floor" button on the in-game debug HUD so the player
+# can hit one button when they hit a weird floor (single open square,
+# no rooms, missing stairs, etc.) and paste the result into a bug
+# report. 2026-06-05.
+#
+# Includes everything I'd want to diagnose a generation issue:
+#   - biome config (id, layout, layouts pool, vault themes, modulate)
+#   - generator outputs (room rectangles, floor/wall/door/stair/lava/
+#     water/ice cell counts, region count, largest region, bbox, dist
+#     to stairs, placed vaults, decor + sigil marks)
+#   - rng seed, run plan, branch label
+#   - every enemy with cell + hp
+#   - every interactable with cell + kind + extras (chest bias,
+#     altar god, portal kind, loot rarity)
+#   - bot location + stats + equipped slot summary
+#   - HUD strings as visible to the player
+#   - active modifiers, loaded textures
+#   - first 24 rows of the grid as ASCII so a human can paste it
+func _build_floor_report() -> Dictionary:
+	var w: int = grid[0].size() if grid.size() > 0 else 0
+	var h: int = grid.size()
+	# Cell counts.
+	var floor_count: int = 0
+	var wall_count: int = 0
+	var door_count: int = 0
+	var stair_count: int = 0
+	var lava_count: int = 0
+	var water_count: int = 0
+	var ice_count: int = 0
+	for y in h:
+		for x in w:
+			var v: int = grid[y][x]
+			if v == C.T_FLOOR: floor_count += 1
+			elif v == C.T_WALL: wall_count += 1
+			elif v == C.T_DOOR: door_count += 1
+			elif v == C.T_STAIRS_DOWN: stair_count += 1
+			elif v == C.T_LAVA: lava_count += 1
+			elif v == C.T_WATER: water_count += 1
+			elif v == C.T_ICE: ice_count += 1
+	# Region/bbox analysis — the same metrics the generator's bad-floor
+	# detector uses. Helps me spot "floor came out as one tiny square"
+	# without needing the PNG.
+	var region_data: Dictionary = _analyze_floor_regions(w, h)
+	# Rooms.
+	var room_list: Array = []
+	for r in rooms:
+		room_list.append({
+			"x": int(r.position.x), "y": int(r.position.y),
+			"w": int(r.size.x), "h": int(r.size.y),
+		})
+	# Enemies.
+	var enemy_list: Array = []
+	for e in enemies:
+		if not is_instance_valid(e): continue
+		enemy_list.append({
+			"id": String(e.enemy_id) if "enemy_id" in e else "",
+			"name": String(e.display_name) if "display_name" in e else "",
+			"cell": [int(e.cell.x), int(e.cell.y)],
+			"hp": int(e.hp) if "hp" in e else 0,
+			"max_hp": int(e.max_hp) if "max_hp" in e else 0,
+			"is_boss": bool(e.is_boss) if "is_boss" in e else false,
+			"is_miniboss": bool(e.is_miniboss) if "is_miniboss" in e else false,
+		})
+	# Interactables.
+	var inter_list: Array = []
+	for i in interactables:
+		if not is_instance_valid(i): continue
+		var kind: String = "unknown"
+		var extra: Dictionary = {}
+		if i is Chest:
+			kind = "chest"
+			extra["bias"] = i.rarity_bias
+			extra["drops"] = i.drop_count
+		elif i is Fountain:
+			kind = "fountain"
+		elif i is Altar:
+			kind = "altar"
+			extra["god"] = i.god
+		elif i is Portal:
+			kind = "portal"
+			extra["portal_kind"] = i.kind
+		elif i is LootDrop:
+			kind = "loot"
+			if "item" in i:
+				extra["item_id"] = i.item.get("id", "")
+				extra["rarity"] = i.item.get("rarity", "")
+		else:
+			kind = String(i.get_class())
+		inter_list.append({
+			"kind": kind,
+			"cell": [int(i.cell.x), int(i.cell.y)],
+			"consumed": bool(i.consumed) if "consumed" in i else false,
+			"extra": extra,
+		})
+	# Loaded biome textures (resource paths) — helps me check "did the
+	# right floor pool load" without opening Godot.
+	var floor_primary: Array = BiomeData.load_floor_primary(current_biome)
+	var floor_primary_paths: Array = []
+	for tex in floor_primary:
+		if tex and tex.resource_path:
+			floor_primary_paths.append(String(tex.resource_path))
+	var wall_primary: Array = BiomeData.load_wall_primary(current_biome)
+	var wall_primary_paths: Array = []
+	for tex in wall_primary:
+		if tex and tex.resource_path:
+			wall_primary_paths.append(String(tex.resource_path))
+	# Bot summary.
+	var bot_summary: Dictionary = {}
+	if is_instance_valid(bot):
+		var equipped_summary: Dictionary = {}
+		for slot in bot.equipped.keys():
+			var inst: Variant = bot.equipped[slot]
+			if typeof(inst) == TYPE_DICTIONARY:
+				equipped_summary[String(slot)] = String(inst.get("base_id", ""))
+		bot_summary = {
+			"cell": [int(bot.cell.x), int(bot.cell.y)],
+			"hp": int(bot.hp), "max_hp": int(bot.max_hp),
+			"atk": int(bot.atk), "def": int(bot.defense),
+			"level": int(bot.level), "xp": int(bot.xp), "gold": int(bot.gold),
+			"species": String(bot.species_id) if "species_id" in bot else "",
+			"equipped": equipped_summary,
+		}
+	# HUD strings as visible to the player right now.
+	var hud_strings: Dictionary = {}
+	if chrome != null and is_instance_valid(chrome):
+		hud_strings = {
+			"name": chrome.lbl_name.text if is_instance_valid(chrome.lbl_name) else "",
+			"place": chrome.lbl_place.text if is_instance_valid(chrome.lbl_place) else "",
+			"hp": chrome.lbl_hp.text if is_instance_valid(chrome.lbl_hp) else "",
+		}
+	# ASCII map — first chars of each tile across the whole floor so I
+	# can eyeball it without re-rendering. `.` floor `#` wall `+` door
+	# `>` stairs `~` water `=` lava `*` ice `B` bot `e` enemy `?` else.
+	var ascii_rows: Array = []
+	var bot_cell_xy: Vector2i = bot.cell if is_instance_valid(bot) else Vector2i(-1, -1)
+	var enemy_cell_set: Dictionary = {}
+	for e in enemies:
+		if is_instance_valid(e):
+			enemy_cell_set[e.cell] = true
+	for y in h:
+		var row: PackedStringArray = []
+		for x in w:
+			var c := Vector2i(x, y)
+			if c == bot_cell_xy:
+				row.append("B")
+				continue
+			if enemy_cell_set.has(c):
+				row.append("e")
+				continue
+			match grid[y][x]:
+				C.T_FLOOR: row.append(".")
+				C.T_WALL: row.append("#")
+				C.T_DOOR: row.append("+")
+				C.T_STAIRS_DOWN: row.append(">")
+				C.T_WATER: row.append("~")
+				C.T_LAVA: row.append("=")
+				C.T_ICE: row.append("*")
+				_: row.append("?")
+		ascii_rows.append("".join(row))
+	# Final payload.
+	return {
+		"timestamp_unix": int(Time.get_unix_time_from_system()),
+		"timestamp_msec": Time.get_ticks_msec(),
+		"version": "floor_report_v1",
+		"rng_seed": int(rng.seed),
+		"run_plan": run_plan,
+		"active_modifiers": active_modifiers,
+		"resolved_biome": {
+			"id": String(current_biome.get("id", "?")),
+			"display_name": String(current_biome.get("display_name", "")),
+			"tier": int(current_biome.get("tier", 0)),
+			"layout": String(current_biome.get("layout", "")),
+			"layouts_pool": current_biome.get("layouts", []),
+			"vault_themes": current_biome.get("vault_themes", []),
+			"map_size": current_biome.get("map_size", []),
+			"modulate": current_biome.get("modulate", []),
+			"darkness": float(current_biome.get("darkness", 0.0)),
+			"liquid_type": String(current_biome.get("liquid_type", "")),
+			"enemy_pool": current_biome.get("enemy_pool", []),
+			"boss_id": String(current_biome.get("boss_id", "")),
+		},
+		"floor": {
+			"number": current_floor,
+			"branch_label": BiomeData.branch_depth_label(run_plan, current_floor),
+			"width": w, "height": h,
+			"floor_cells": floor_count,
+			"wall_cells": wall_count,
+			"door_cells": door_count,
+			"stair_cells": stair_count,
+			"terrain_cells": {"lava": lava_count, "water": water_count, "ice": ice_count},
+			"region_count": region_data.get("region_count", 0),
+			"largest_region": region_data.get("largest_region", 0),
+			"bbox": region_data.get("bbox", []),
+			"orphan_cells": region_data.get("orphan_cells", 0),
+			"is_bad_floor": region_data.get("is_bad_floor", false),
+			"bad_reasons": region_data.get("bad_reasons", []),
+			"rooms": room_list,
+			"spawn_cell": [int(bot.cell.x), int(bot.cell.y)] if is_instance_valid(bot) else [],
+			"stairs_cell": [int(stairs_cell.x), int(stairs_cell.y)],
+			"placed_vaults_this_floor": floor_placed_vaults,
+			"placed_vaults_this_run": run_vaults_stamped,
+		},
+		"render_textures": {
+			"floor_primary": floor_primary_paths,
+			"wall_primary": wall_primary_paths,
+		},
+		"entities": {
+			"enemies": enemy_list,
+			"enemy_count": enemy_list.size(),
+			"interactables": inter_list,
+			"interactable_count": inter_list.size(),
+			"vault_decor_sprite_count": vault_decor_sprites.size(),
+			"ambient_decor_node_count": ambient_decor_nodes.size(),
+			"sigils_stamped": _serialize_marks(current_renderer.sigil_marks if current_renderer and "sigil_marks" in current_renderer else []),
+			"decor_marks": _serialize_marks(current_renderer.decor_marks if current_renderer and "decor_marks" in current_renderer else []),
+		},
+		"bot": bot_summary,
+		"hud": hud_strings,
+		"ascii_map": ascii_rows,
+	}
+
+# Flood-fill the floor cells to count regions + find the bounding box
+# of the largest one. Mirrors the bad-floor detector heuristics. Used
+# by _build_floor_report so the dump tells me at a glance whether
+# generation collapsed into a single tiny square.
+func _analyze_floor_regions(w: int, h: int) -> Dictionary:
+	if w == 0 or h == 0:
+		return {}
+	var visited: Array = []
+	visited.resize(h)
+	for y in h:
+		var row: Array = []
+		row.resize(w)
+		for x in w:
+			row[x] = false
+		visited[y] = row
+	var regions: Array = []
+	var minx: int = w
+	var miny: int = h
+	var maxx: int = -1
+	var maxy: int = -1
+	var total_floor: int = 0
+	for y in h:
+		for x in w:
+			if grid[y][x] != C.T_FLOOR and grid[y][x] != C.T_STAIRS_DOWN and grid[y][x] != C.T_DOOR:
+				continue
+			total_floor += 1
+			if visited[y][x]:
+				continue
+			# BFS.
+			var size: int = 0
+			var stack: Array = [Vector2i(x, y)]
+			visited[y][x] = true
+			while not stack.is_empty():
+				var c: Vector2i = stack.pop_back()
+				size += 1
+				if c.x < minx: minx = c.x
+				if c.y < miny: miny = c.y
+				if c.x > maxx: maxx = c.x
+				if c.y > maxy: maxy = c.y
+				for d in [Vector2i(1,0), Vector2i(-1,0), Vector2i(0,1), Vector2i(0,-1)]:
+					var n: Vector2i = c + d
+					if n.x < 0 or n.y < 0 or n.x >= w or n.y >= h:
+						continue
+					if visited[n.y][n.x]:
+						continue
+					var t: int = grid[n.y][n.x]
+					if t == C.T_FLOOR or t == C.T_STAIRS_DOWN or t == C.T_DOOR:
+						visited[n.y][n.x] = true
+						stack.append(n)
+			regions.append(size)
+	regions.sort()
+	regions.reverse()
+	var largest: int = regions[0] if not regions.is_empty() else 0
+	var orphans: int = total_floor - largest
+	var bad: bool = false
+	var reasons: Array = []
+	if total_floor < 250:
+		bad = true; reasons.append("floor_count<250")
+	if largest < 400:
+		bad = true; reasons.append("largest_region<400")
+	if maxx >= 0 and (maxx - minx) * (maxy - miny) < 400:
+		bad = true; reasons.append("bbox<400")
+	if orphans > 60:
+		bad = true; reasons.append("orphan_cells>60")
+	return {
+		"region_count": regions.size(),
+		"region_sizes_top5": regions.slice(0, mini(5, regions.size())),
+		"largest_region": largest,
+		"orphan_cells": orphans,
+		"bbox": [minx, miny, maxx, maxy] if maxx >= 0 else [],
+		"is_bad_floor": bad,
+		"bad_reasons": reasons,
+	}
+
+# Wired to chrome.debug_dump_requested — builds the full floor report,
+# saves to user://floor_dump_<unix>.json, copies the JSON to the
+# clipboard, prints to console, and updates the HUD with a confirmation.
+# 2026-06-05.
+func _on_debug_dump_requested() -> void:
+	var report: Dictionary = _build_floor_report()
+	var ts: int = int(Time.get_unix_time_from_system())
+	var path := "user://floor_dump_%d.json" % ts
+	var text: String = JSON.stringify(report, "  ")
+	var f := FileAccess.open(path, FileAccess.WRITE)
+	if f != null:
+		f.store_string(text)
+		f.close()
+	DisplayServer.clipboard_set(text)
+	var fs_path: String = ProjectSettings.globalize_path(path)
+	print("[floor-dump] saved=%s clipboard=%d chars" % [fs_path, text.length()])
+	GrindLog.log_line("[floor-dump] saved=%s" % fs_path)
+	if chrome != null and is_instance_valid(chrome):
+		chrome.flash_debug_dump_status("Copied %d chars · %s" % [text.length(), fs_path])
+
 func _ensure_hud() -> void:
 	if chrome != null:
 		return
@@ -808,6 +1171,8 @@ func _ensure_hud() -> void:
 	# spells mid-run by dragging from inventory onto a paperdoll slot.
 	chrome.hud_drag_drop.connect(_on_hud_drag_drop)
 	chrome.hud_unequip_requested.connect(_on_hud_unequip_requested)
+	if chrome.has_signal("debug_dump_requested"):
+		chrome.debug_dump_requested.connect(_on_debug_dump_requested)
 
 # DragManager fired drag_ended; HUD bubbled the payload + dst_slot up.
 # Routes both inventory→paperdoll and paperdoll→paperdoll through the
@@ -820,7 +1185,17 @@ func _on_hud_drag_drop(payload: Dictionary, dst_slot: String) -> void:
 		return
 	var src_role: String = String(payload.get("role", ""))
 	if src_role == "inventory":
-		_hud_drag_equip_from_inv(int(payload.get("inv_index", -1)), dst_slot)
+		# Resolve by instance_id (authoritative) — falls back to
+		# flat_inv_index only when the payload doesn't carry an id.
+		# Stale flat_inv_index from drag-start time was the
+		# "drag a targe, equipped a tattered hide" cross-wire bug;
+		# instance_id is set on the source instance dict and survives
+		# any segment shrink/reorder. 2026-06-05 corruption fix.
+		var iid: String = String(payload.get("instance_id", ""))
+		if iid != "":
+			_hud_drag_equip_by_instance_id(iid, dst_slot)
+		else:
+			_hud_drag_equip_from_inv(int(payload.get("inv_index", -1)), dst_slot)
 	elif src_role == "paperdoll":
 		_hud_drag_swap_slots(String(payload.get("slot_id", "")), dst_slot)
 	if chrome:
@@ -852,6 +1227,60 @@ func _on_hud_unequip_requested(slot_id: String) -> void:
 # slot routing + 2H exclusion + recompute_stats), and place displaced
 # items back at the SOURCE segment so the inventory order stays
 # stable. Mirrors try_equip_from_segment exactly.
+# Authoritative drag-equip resolver — finds the source item by its
+# instance_id rather than by a stale flat_inv_index. Walks every
+# segment's items array, equips the first match. instance_id is unique
+# (minted at drop time, preserved across save/load), so this is the
+# safest route. 2026-06-05.
+func _hud_drag_equip_by_instance_id(instance_id: String, dst_slot: String) -> void:
+	for seg_i in _loot_segments.size():
+		var items: Array = _loot_segments[seg_i].get("items", [])
+		for item_i in items.size():
+			var inst: Variant = items[item_i]
+			if typeof(inst) != TYPE_DICTIONARY:
+				continue
+			if String(inst.get("instance_id", "")) == instance_id:
+				_hud_drag_equip_at(seg_i, item_i, dst_slot)
+				return
+
+# Shared body — used by both _hud_drag_equip_by_instance_id and
+# _hud_drag_equip_from_inv. Equips items[seg_idx][item_idx] into
+# dst_slot with all the same guards (cooldown, species block, 2H/shield
+# exclusion, no-op detection). 2026-06-05.
+func _hud_drag_equip_at(src_seg_idx: int, src_local_idx: int, dst_slot: String) -> void:
+	if src_seg_idx < 0 or src_seg_idx >= _loot_segments.size():
+		return
+	var src_items: Array = _loot_segments[src_seg_idx].get("items", [])
+	if src_local_idx < 0 or src_local_idx >= src_items.size():
+		return
+	var inst: Variant = src_items[src_local_idx]
+	if typeof(inst) != TYPE_DICTIONARY:
+		return
+	var cd: float = float(_slot_cooldowns.get(dst_slot, 0.0))
+	if cd > 0.0:
+		_log("Equip on cooldown: %s (%.0fs left)" % [dst_slot.capitalize(), cd], "combat")
+		return
+	var item: Dictionary = items_db.get(String(inst.get("base_id", "")), {})
+	if item.is_empty():
+		return
+	var prev_inst_id: String = ""
+	var prev_inst: Variant = bot.equipped.get(dst_slot, null)
+	if typeof(prev_inst) == TYPE_DICTIONARY:
+		prev_inst_id = String(prev_inst.get("instance_id", ""))
+	var displaced_arr: Array = _equip_to_explicit_slot(inst, dst_slot)
+	var now_inst: Variant = bot.equipped.get(dst_slot, null)
+	var now_inst_id: String = ""
+	if typeof(now_inst) == TYPE_DICTIONARY:
+		now_inst_id = String(now_inst.get("instance_id", ""))
+	if displaced_arr.is_empty() and now_inst_id == prev_inst_id:
+		return
+	src_items.remove_at(src_local_idx)
+	for d in displaced_arr:
+		if typeof(d) == TYPE_DICTIONARY:
+			src_items.append(d)
+	_slot_cooldowns[dst_slot] = EQUIP_COOLDOWN_SECONDS
+	_rebuild_inv_cache()
+
 func _hud_drag_equip_from_inv(flat_inv_index: int, dst_slot: String) -> void:
 	if flat_inv_index < 0 or flat_inv_index >= _hud_inv_cache.size():
 		return
@@ -885,9 +1314,27 @@ func _hud_drag_equip_from_inv(flat_inv_index: int, dst_slot: String) -> void:
 	var item: Dictionary = items_db.get(String(inst.get("base_id", "")), {})
 	if item.is_empty():
 		return
+	# Snapshot whatever was in the slot BEFORE the equip attempt so we
+	# can detect a true no-op (block hit upstream — species, cooldown,
+	# etc.) by comparing the slot's instance_id afterwards. Comparing
+	# `bot.equipped[dst_slot] != inst` was incorrect because
+	# `_equip_to_explicit_slot` deep-duplicates the inst into the slot,
+	# so the check ALWAYS fired on a successful equip into an empty
+	# slot — leaving the inventory copy in place AND a duplicate on the
+	# bot. Source of the duplication bug. UI polish 2026-06-04.
+	var prev_inst_id: String = ""
+	var prev_inst: Variant = bot.equipped.get(dst_slot, null)
+	if typeof(prev_inst) == TYPE_DICTIONARY:
+		prev_inst_id = String(prev_inst.get("instance_id", ""))
 	var displaced_arr: Array = _equip_to_explicit_slot(inst, dst_slot)
-	if displaced_arr.is_empty() and bot.equipped.get(dst_slot, null) != inst:
-		# Block was hit upstream (species-blocked, etc) — no-op.
+	var now_inst: Variant = bot.equipped.get(dst_slot, null)
+	var now_inst_id: String = ""
+	if typeof(now_inst) == TYPE_DICTIONARY:
+		now_inst_id = String(now_inst.get("instance_id", ""))
+	# A successful equip always changes the instance_id in the slot.
+	# If displaced is empty AND the slot looks unchanged, the equip
+	# was rejected by an upstream block — leave the inventory alone.
+	if displaced_arr.is_empty() and now_inst_id == prev_inst_id:
 		return
 	src_items.remove_at(src_local_idx)
 	for d in displaced_arr:
@@ -906,12 +1353,30 @@ func _equip_to_explicit_slot(inst: Dictionary, dst_slot: String) -> Array:
 	var item: Dictionary = items_db.get(String(inst.get("base_id", "")), {})
 	if item.is_empty():
 		return []
+	# Slot-family hard guard. The hover-time check in
+	# hud_chrome._paperdoll_accepts_drop should already reject
+	# mismatched drops, but a stale payload / corrupted inventory cell
+	# could route an amulet onto the weapon slot. Reject defensively
+	# so we never equip an item into a slot it doesn't belong in.
+	# 2026-06-05 corruption fix.
+	var item_slot: String = String(item.get("slot", ""))
+	if item_slot == "":
+		return []
+	var dst_family: String = dst_slot
+	if dst_slot.begins_with("ring"):
+		dst_family = "ring"
+	elif dst_slot.begins_with("spell"):
+		dst_family = "spell"
+	if item_slot != dst_family:
+		return []
 	# Species body-shape block.
 	if not dst_slot.begins_with("spell") and not SpeciesData.can_wear(bot.species_id, dst_slot):
 		return []
 	var displaced: Array = []
-	# 2H↔shield exclusion (gear slots only).
-	if dst_slot == "weapon" and Bot.is_two_handed_base_type(String(item.get("base_type", ""))):
+	# 2H/dual ↔ shield exclusion (gear slots only). Routes through
+	# is_two_handed(item) so dual-wield uniques (Gyre) trigger the
+	# same shield-exclusion as 2H weapons. 2026-06-05.
+	if dst_slot == "weapon" and Bot.is_two_handed(item):
 		var s: Variant = bot.equipped.get("shield", null)
 		if s != null and typeof(s) == TYPE_DICTIONARY:
 			displaced.append(s)
@@ -921,7 +1386,7 @@ func _equip_to_explicit_slot(inst: Dictionary, dst_slot: String) -> Array:
 		if w != null and typeof(w) == TYPE_DICTIONARY:
 			var w_id: String = String(w.get("base_id", ""))
 			if w_id != "" and items_db.has(w_id):
-				if Bot.is_two_handed_base_type(String(items_db[w_id].get("base_type", ""))):
+				if Bot.is_two_handed(items_db[w_id]):
 					displaced.append(w)
 					bot.equipped["weapon"] = null
 	# Direct displace into dst_slot.
@@ -984,6 +1449,9 @@ func _update_biome_hud() -> void:
 	chrome.update_stats(bot, place_str, run_turn)
 	if is_instance_valid(bot):
 		chrome.update_buffs(bot.active_statuses())
+		# Spell cooldown ring overlay — drives the per-spell radial sweep
+		# from bot.spell_cooldowns. Combat-pivot follow-up 2026-06-04.
+		chrome.update_spell_cooldowns(bot, items_db)
 	_hud_full_refresh_accum += get_process_delta_time()
 	var equipped_hash: int = (bot.equipped.hash() if is_instance_valid(bot) else 0)
 	var eq_changed: bool = equipped_hash != _last_equipped_hash
@@ -1042,17 +1510,24 @@ func _spawn_enemies() -> void:
 		pool.append("rat")
 
 	if is_boss_floor:
-		# Branch boss = the strongest enemy in the branch's pool, scaled to
-		# boss tier. Lets every branch have a thematic boss without
-		# bespoke per-branch enemy data; bespoke bosses can replace this
-		# later by setting a `boss_id` field on the biome. We ignore
-		# min_floor for the boss pick because boss floors should always
-		# have one regardless of "this enemy normally only spawns on D:8".
-		var boss_pool: Array = []
-		for id in biome_pool:
-			if enemy_data.has(id) and not enemy_data[id].boss:
-				boss_pool.append(id)
-		var boss_id: String = _pick_branch_boss_id(boss_pool if not boss_pool.is_empty() else pool)
+		# Bespoke per-branch boss path (2026-06-04). If the biome
+		# declares a `boss_id`, use it directly — overrides the old
+		# "strongest pool member" pick and gives every branch a unique
+		# named finale. Falls back to the pool pick if the declared
+		# boss is missing from enemy_data (data-drift safety).
+		var explicit_boss: String = String(current_biome.get("boss_id", ""))
+		var boss_id: String = ""
+		if explicit_boss != "" and enemy_data.has(explicit_boss):
+			boss_id = explicit_boss
+		else:
+			# Legacy pool path — strongest non-boss in the branch's roster
+			# scaled to boss tier. Kept as the safety net for branches
+			# without a boss_id wired (or future modded biomes).
+			var boss_pool: Array = []
+			for id in biome_pool:
+				if enemy_data.has(id) and not enemy_data[id].boss:
+					boss_pool.append(id)
+			boss_id = _pick_branch_boss_id(boss_pool if not boss_pool.is_empty() else pool)
 		_spawn_branch_boss(boss_id, _pick_boss_room())
 	elif _is_miniboss_floor(current_floor):
 		var elite_id: String = _pick_miniboss_id(pool)
@@ -1204,7 +1679,13 @@ func _spawn_branch_boss(id: String, at_cell: Vector2i) -> void:
 	var e := Enemy.new()
 	actor_layer.add_child(e)
 	e.enemy_id = id + "_boss"
-	e.display_name = "Greater " + str(def.name)  # placeholder; bespoke names later
+	# Bespoke bosses (id starts with `boss_`) keep their authored name;
+	# the legacy pool-pick path still wraps as "Greater X" so the player
+	# reads "this is a boss-tier version of a normal mob." 2026-06-04.
+	if id.begins_with("boss_") and bool(def.get("boss", false)):
+		e.display_name = str(def.name)
+	else:
+		e.display_name = "Greater " + str(def.name)
 	e.xp_reward = int(def.xp) * 8
 	e.is_boss = true
 	var floor_mult: float = pow(1.10, current_floor - 1)
@@ -1496,6 +1977,20 @@ func _create_item_instance(base_id: String) -> Dictionary:
 		inst["meta_rarity"] = "primal"
 	elif meta_roll < ancient_t:
 		inst["meta_rarity"] = "ancient"
+	# Item-authored default_tint short-circuits the random recolor
+	# roll. Items with `default_tint: {hue, sat, mode}` in items.json
+	# always drop with that recolor — set via item_editor.html's Look
+	# section. 2026-06-05.
+	var def_tint: Variant = base_item.get("default_tint", null)
+	if typeof(def_tint) == TYPE_DICTIONARY and String(def_tint.get("mode", "")) != "":
+		var d: Dictionary = (def_tint as Dictionary).duplicate(true)
+		# Stat lean falls out of hue same as rolled tints, so build
+		# editor doesn't have to set it.
+		if not d.has("lean"):
+			d["lean"] = _hue_to_stat_lean(float(d.get("hue", 0.0)))
+		if not d.has("lean_pct"):
+			d["lean_pct"] = 8.0
+		inst["tint"] = d
 	# Per-instance recolor roll (~30% of drops get a hue shift; tiny
 	# fractions get shimmer/inverted/prismatic). Each hue carries a
 	# small stat lean — red leans strength, blue leans regen, etc.
@@ -1508,6 +2003,10 @@ func _create_item_instance(base_id: String) -> Dictionary:
 	var inverted_t: float = prismatic_t + DropTuning.tint_inverted_chance()
 	var shimmer_t: float = inverted_t + DropTuning.tint_shimmer_chance()
 	var any_t: float = DropTuning.tint_any_chance()  # absolute, not cumulative
+	# If the item already carries a default_tint (set just above), the
+	# random roll is suppressed — the author wanted a specific look.
+	if inst.has("tint"):
+		tint_roll = 999.0
 	if tint_roll < prismatic_t:
 		inst["tint"] = {
 			"hue": rng.randf_range(0.0, 360.0),
@@ -2580,6 +3079,41 @@ func _maybe_auto_salvage() -> void:
 # Player-initiated equip from the HUD inventory. Per-slot cooldown stops
 # the player from juggling identical items every tick to game positioning.
 # Returns true if the equip happened.
+# Identity probe used by the HUD to verify a click hasn't drifted to
+# a different item between rebuilds. Returns the instance_id at
+# (seg_idx, item_idx), or "" if out-of-range. UI polish 2026-06-04.
+func instance_at_segment_idx(seg_idx: int, item_idx: int) -> String:
+	if seg_idx < 0 or seg_idx >= _loot_segments.size():
+		return ""
+	var items: Array = _loot_segments[seg_idx].get("items", [])
+	if item_idx < 0 or item_idx >= items.size():
+		return ""
+	var inst: Variant = items[item_idx]
+	if typeof(inst) != TYPE_DICTIONARY:
+		return ""
+	return String(inst.get("instance_id", ""))
+
+# Mirrors bot.equip_from_inventory's slot resolver so try_equip_from_segment
+# can pre-snapshot the destination slot's instance_id before delegating.
+# Without this we couldn't tell "successfully equipped into empty slot"
+# from "blocked, did nothing." 2026-06-05.
+func _resolve_equip_slot_for(inst: Dictionary, item_slot: String) -> String:
+	if not is_instance_valid(bot):
+		return item_slot
+	if item_slot == "ring":
+		var ring_ids: Array = SpeciesData.ring_slot_ids(bot.species_id)
+		for r in ring_ids:
+			if bot.equipped.get(r, null) == null:
+				return r
+		return "ring"
+	if item_slot == "spell":
+		var spell_ids: Array = ["spell1", "spell2", "spell3", "spell4", "spell5"]
+		for s in spell_ids:
+			if bot.equipped.get(s, null) == null:
+				return s
+		return "spell1"
+	return item_slot
+
 func try_equip_from_segment(seg_idx: int, item_idx: int) -> bool:
 	if seg_idx < 0 or seg_idx >= _loot_segments.size():
 		return false
@@ -2609,8 +3143,32 @@ func try_equip_from_segment(seg_idx: int, item_idx: int) -> bool:
 		var sp_def: Dictionary = SpeciesData.get_def(bot.species_id)
 		_log("%s cannot wear %s." % [String(sp_def.get("name", "Bot")), slot.capitalize()], "combat")
 		return false
+	# Snapshot the destination slot's instance_id so we can detect a
+	# true no-op (species block, slot resolver missed, etc.). Without
+	# this guard the caller would unconditionally remove the picked
+	# item from inventory whether the equip succeeded or not.
+	# 2026-06-05 corruption fix.
+	#
+	# bot.equip_from_inventory returns [] for BOTH:
+	#   * blocked (species, missing data) — nothing equipped
+	#   * succeeded into an empty slot — nothing displaced
+	# We can't tell those apart from the return value alone, so check
+	# whether the slot's instance_id changed.
+	var resolved_slot: String = _resolve_equip_slot_for(inst, slot)
+	var prev_id: String = ""
+	var prev_inst: Variant = bot.equipped.get(resolved_slot, null)
+	if typeof(prev_inst) == TYPE_DICTIONARY:
+		prev_id = String(prev_inst.get("instance_id", ""))
 	# 2H ↔ shield exclusion can return up to TWO displaced items.
 	var displaced_arr: Array = bot.equip_from_inventory(inst)
+	var now_inst: Variant = bot.equipped.get(resolved_slot, null)
+	var now_id: String = ""
+	if typeof(now_inst) == TYPE_DICTIONARY:
+		now_id = String(now_inst.get("instance_id", ""))
+	# True no-op: nothing displaced AND the destination slot didn't
+	# change instance_id. Don't touch inventory.
+	if displaced_arr.is_empty() and now_id == prev_id:
+		return false
 	# Remove the picked item from its segment.
 	items.remove_at(item_idx)
 	# Stash all displaced items back at the same segment so the player
@@ -2929,13 +3487,9 @@ func _chebyshev(a: Vector2i, b: Vector2i) -> int:
 	return maxi(abs(a.x - b.x), abs(a.y - b.y))
 
 func _random_walkable_cell_far_from_bot() -> Vector2i:
-	# Try the strict ≥6 chebyshev pick first. If the rolling loop fails
-	# (tight floors / caves layouts with bot in the middle), DO NOT fall
-	# through to a deterministic top-left scan — that's the bug that
-	# stacks every enemy + interactable on the north tile when the
-	# strict path rejects too many candidates. Instead, collect all
-	# valid floor cells and weight-pick by chebyshev so we still get
-	# spread without a hard floor on distance.
+	# Strict ≥6 chebyshev pick first, skipping cells already used by
+	# another interactable/enemy this floor. Critical-bug fix 2026-06-04
+	# — playtest reported mobs+chests stacking in a single cluster.
 	for _i in 200:
 		var x: int
 		var y: int
@@ -2951,25 +3505,33 @@ func _random_walkable_cell_far_from_bot() -> Vector2i:
 		if grid[y][x] != C.T_FLOOR:
 			continue
 		var cell := Vector2i(x, y)
+		if _spawn_used_cells.has(cell):
+			continue
 		if _chebyshev(cell, bot.cell) > 6:
+			_spawn_used_cells[cell] = true
 			return cell
-	# Fallback: collect every walkable cell, prefer the farthest from
-	# the bot but pick randomly within the top decile so spawn waves
-	# don't deterministically pile on a single cell.
+	# Fallback: collect every walkable cell that isn't already used,
+	# then sample from a random subset weighted by distance from the
+	# bot. Sampling FROM A SHUFFLED SUBSET (not the top-25%) so we
+	# don't deterministically clump in one corner when the strict path
+	# rejected too many candidates.
 	var candidates: Array[Vector2i] = []
 	for y in grid.size():
 		for x in grid[0].size():
 			if grid[y][x] == C.T_FLOOR:
 				var c := Vector2i(x, y)
-				if c != bot.cell:
+				if c != bot.cell and not _spawn_used_cells.has(c):
 					candidates.append(c)
 	if candidates.is_empty():
 		return bot.cell
-	# Sort by chebyshev DESC; sample from the farthest 25% so caller
-	# still gets a "far from bot" cell but not the same one every call.
-	candidates.sort_custom(func(a, b): return _chebyshev(a, bot.cell) > _chebyshev(b, bot.cell))
-	var pool_size: int = maxi(1, int(candidates.size() / 4))
-	return candidates[rng.randi_range(0, pool_size - 1)]
+	# Random pick — biased lightly toward farther-from-bot via
+	# weighted-pair sampling. Two random candidates, take the farther.
+	# Spreads more uniformly than the top-quartile sort.
+	var a: Vector2i = candidates[rng.randi_range(0, candidates.size() - 1)]
+	var b: Vector2i = candidates[rng.randi_range(0, candidates.size() - 1)]
+	var pick: Vector2i = a if _chebyshev(a, bot.cell) >= _chebyshev(b, bot.cell) else b
+	_spawn_used_cells[pick] = true
+	return pick
 
 func _pick_boss_room() -> Vector2i:
 	if not rooms.is_empty():
@@ -3384,6 +3946,7 @@ func _load_monster_mods() -> Array:
 	var raw: Dictionary = _load_json(MONSTER_MODS_PATH)
 	return raw.get("mods", [])
 
+
 # PoE-style pack tier system. Roll a tier per non-boss/non-miniboss/
 # non-champion spawn; magic = +20% HP / +10% ATK / 1 mod, rare =
 # +60% HP / +30% ATK / 2 mods. Roll rate scales with branch tier so
@@ -3490,6 +4053,7 @@ func _tick_wave_spawns(delta: float) -> void:
 		var pick: String = String(pool[rng.randi_range(0, pool.size() - 1)])
 		var cell: Vector2i = _random_walkable_cell_far_from_bot()
 		_spawn_specific(pick, cell, Enemy.PACK_NORMAL)
+		_warp_in_last_spawn()
 
 # Burst event — every 30-50s, spawn a 12-18 mob MAGIC pack from one
 # direction relative to the bot. No telegraph yet (Phase 4 polish);
@@ -3522,10 +4086,30 @@ func _tick_burst_events(delta: float) -> void:
 	n = mini(n, _DENSITY_HARD_CAP - alive)
 	# Leader rolls MAGIC tier so the burst has a visible elite.
 	_spawn_specific(pack_id, center, Enemy.PACK_MAGIC)
+	_warp_in_last_spawn()
 	for i in range(n - 1):
 		var member_cell: Vector2i = _walkable_cell_near(center, _PACK_RADIUS)
 		_spawn_specific(pack_id, member_cell, Enemy.PACK_NORMAL)
+		_warp_in_last_spawn()
 	GrindLog.log_line("[burst] f=%d id=%s n=%d" % [current_floor, pack_id, n])
+
+# Brief warp-in tween on the most recently spawned enemy. Scale 0.4 → 1
+# + alpha 0 → 1 over 250ms so wave / burst arrivals don't look like
+# they were always there. Initial-floor `_spawn_packs` skips this — the
+# floor builds before the player sees anything anyway.
+func _warp_in_last_spawn() -> void:
+	if enemies.is_empty():
+		return
+	var e: Enemy = enemies[enemies.size() - 1]
+	if not is_instance_valid(e) or e.rig == null:
+		return
+	var rig: Node2D = e.rig
+	var target_scale: Vector2 = rig.scale
+	rig.scale = target_scale * 0.4
+	rig.modulate.a = 0.0
+	var tw := rig.create_tween().set_parallel(true)
+	tw.tween_property(rig, "scale", target_scale, 0.25).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tw.tween_property(rig, "modulate:a", 1.0, 0.20).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 
 # Helper to rebuild the per-floor enemy pool — same logic as
 # _spawn_enemies pool construction. Extracted so wave/burst can pull
@@ -3596,11 +4180,12 @@ func _spawn_packs(pool: Array) -> void:
 			_spawn_specific(pack_id, member_cell, Enemy.PACK_NORMAL)
 			spawned += 1
 
-# Find a walkable cell within `radius` of `center`. Returns center if
-# no nearby cell is open (caller falls back to a global random pick).
+# Find a walkable cell within `radius` of `center` not already used by
+# another spawn. Returns `center` if no nearby cell is free — the
+# caller (_spawn_packs) detects this and falls back to a global random
+# pick. Critical-bug fix 2026-06-04: previously didn't track occupancy,
+# so 12 packmates could pile onto the same 3 cells around a leader.
 func _walkable_cell_near(center: Vector2i, radius: int) -> Vector2i:
-	# Try `tries` random offsets within the radius — bounded loop so a
-	# tightly-packed cluster doesn't burn time.
 	for _i in 16:
 		var dx: int = rng.randi_range(-radius, radius)
 		var dy: int = rng.randi_range(-radius, radius)
@@ -3609,6 +4194,10 @@ func _walkable_cell_near(center: Vector2i, radius: int) -> Vector2i:
 		var c: Vector2i = center + Vector2i(dx, dy)
 		if c.y < 0 or c.y >= grid.size() or c.x < 0 or c.x >= grid[0].size():
 			continue
-		if grid[c.y][c.x] == C.T_FLOOR and c != bot.cell:
-			return c
+		if grid[c.y][c.x] != C.T_FLOOR:
+			continue
+		if c == bot.cell or _spawn_used_cells.has(c):
+			continue
+		_spawn_used_cells[c] = true
+		return c
 	return center

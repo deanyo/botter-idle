@@ -242,6 +242,36 @@
       "name": "Radiance",     "stat": "spell_holy_radiance",
       "applies_to": ["spell"],
       "tiers": [[1,1],[1,1],[1,1],[1,1],[1,1]]
+    },
+    {
+      "id": "splintering_volley", "family": "archetype", "kind": "flag",
+      "name": "Splintering Volley", "stat": "spell_dart_split",
+      "applies_to": ["spell"],
+      "tiers": [[1,1],[1,1],[1,1],[1,1],[1,1]]
+    },
+    {
+      "id": "earthbreaker",  "family": "archetype", "kind": "flag",
+      "name": "Earthbreaker", "stat": "spell_iron_dust",
+      "applies_to": ["spell"],
+      "tiers": [[1,1],[1,1],[1,1],[1,1],[1,1]]
+    },
+    {
+      "id": "blinding_grit", "family": "archetype", "kind": "flag",
+      "name": "Blinding Grit", "stat": "spell_sandblast_blind",
+      "applies_to": ["spell"],
+      "tiers": [[1,1],[1,1],[1,1],[1,1],[1,1]]
+    },
+    {
+      "id": "ravenous",      "family": "archetype", "kind": "flag",
+      "name": "Ravenous",    "stat": "spell_drain_buff",
+      "applies_to": ["spell"],
+      "tiers": [[1,1],[1,1],[1,1],[1,1],[1,1]]
+    },
+    {
+      "id": "aftershock",    "family": "archetype", "kind": "flag",
+      "name": "Aftershock",  "stat": "spell_shatter_aftershock",
+      "applies_to": ["spell"],
+      "tiers": [[1,1],[1,1],[1,1],[1,1],[1,1]]
     }
   ]
 }

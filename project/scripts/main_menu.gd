@@ -7,6 +7,7 @@ extends Control
 signal play_pressed
 signal video_options_pressed
 signal fx_tuner_pressed
+signal paperdoll_audit_pressed
 signal create_character_pressed
 
 # Colors mirror UITheme — see hud_chrome.gd note for why these are inline.
@@ -39,6 +40,9 @@ func _build_layout() -> void:
 	_build_buttons(split_x, 0, int(view.x) - split_x, int(view.y))
 	if not offline_summary.is_empty():
 		_show_offline_banner(offline_summary)
+	# Theme any buttons we missed (bot picker cards, delete buttons,
+	# anything spawned outside _make_button). UI polish 2026-06-04.
+	UITheme.style_all_buttons(self)
 
 func _show_offline_banner(s: Dictionary) -> void:
 	var dlg := AcceptDialog.new()
@@ -237,6 +241,7 @@ func _build_buttons(x: int, y: int, w: int, h: int) -> void:
 	_make_button("Create Character", col_x, by, col_w, 44, 16, false, _on_create_character); by += 44 + gap
 	_make_button("Video Options", col_x, by, col_w, 44, 16, false, _on_options); by += 44 + gap
 	_make_button("FX Tuner", col_x, by, col_w, 44, 16, false, _on_fx_tuner); by += 44 + gap
+	_make_button("Paperdoll Audit", col_x, by, col_w, 44, 16, false, _on_paperdoll_audit); by += 44 + gap
 	_make_button("Reset Save", col_x, by, col_w, 44, 16, false, _on_reset); by += 44 + gap
 	_make_button("Quit", col_x, by, col_w, 44, 16, false, _on_quit)
 
@@ -250,6 +255,7 @@ func _make_button(txt: String, x: int, y: int, w: int, h: int, font_size: int, d
 	if not disabled and cb.is_valid():
 		b.pressed.connect(cb)
 	add_child(b)
+	UITheme.style_button(b)
 	return b
 
 func _label(t: String, x: int, y: int, size: int, color: Color) -> Label:
@@ -269,6 +275,9 @@ func _on_options() -> void:
 
 func _on_fx_tuner() -> void:
 	fx_tuner_pressed.emit()
+
+func _on_paperdoll_audit() -> void:
+	paperdoll_audit_pressed.emit()
 
 func _on_create_character() -> void:
 	create_character_pressed.emit()

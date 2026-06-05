@@ -66,6 +66,7 @@ func _ready() -> void:
 	var species: Array = SpeciesData.all()
 	if not species.is_empty():
 		_select(String(species[0].id))
+	UITheme.style_all_buttons(self)
 
 func _build_list_pane(x: int, y: int, w: int, h: int) -> void:
 	_panel(x, y, w, h, "Species")
@@ -216,6 +217,43 @@ func _render_stat_table(sp: Dictionary) -> void:
 		return
 	for c in preview_stats.get_children():
 		c.queue_free()
+	# Combat-pivot follow-up 2026-06-04 — surface the species' Str/Dex/
+	# Int starting allocation at the top of the preview so the player
+	# knows what to expect (the autocast-spell scaling is driven by
+	# these). Species adds {str|dex|int}_flat on top of base 5/5/5.
+	var str_total: int = 5 + int(sp.get("str_flat", 0))
+	var dex_total: int = 5 + int(sp.get("dex_flat", 0))
+	var int_total: int = 5 + int(sp.get("int_flat", 0))
+	var primary_row := HBoxContainer.new()
+	primary_row.add_theme_constant_override("separation", 14)
+	for spec in [["STR", str_total, UITheme.SPELL_CLASS_COLORS.get("str", COL_AMBER)],
+				 ["DEX", dex_total, UITheme.SPELL_CLASS_COLORS.get("dex", COL_AMBER)],
+				 ["INT", int_total, UITheme.SPELL_CLASS_COLORS.get("int", COL_AMBER)]]:
+		var k_lbl := Label.new()
+		k_lbl.text = spec[0] + " " + str(spec[1])
+		k_lbl.add_theme_font_size_override("font_size", 18)
+		k_lbl.add_theme_color_override("font_color", spec[2])
+		k_lbl.add_theme_color_override("font_outline_color", Color(0, 0, 0))
+		k_lbl.add_theme_constant_override("outline_size", 2)
+		primary_row.add_child(k_lbl)
+	preview_stats.add_child(primary_row)
+	# Starter spell + class color hint. Item id pattern matches
+	# save_state.create_character — "starter_<species>_spell".
+	var starter_id: String = "starter_" + String(sp.get("id", "")) + "_spell"
+	var spell_db: Dictionary = ItemsDb.items()
+	if spell_db.has(starter_id):
+		var sp_def: Dictionary = spell_db[starter_id]
+		var spell_name: String = String(sp_def.get("name", starter_id))
+		var pstat: String = String(sp_def.get("primary_stat", "int"))
+		var spell_lbl := Label.new()
+		spell_lbl.text = "Starter spell: " + spell_name + "  (" + pstat.to_upper() + ")"
+		spell_lbl.add_theme_font_size_override("font_size", 13)
+		spell_lbl.add_theme_color_override("font_color", UITheme.SPELL_CLASS_COLORS.get(pstat, COL_AMBER))
+		preview_stats.add_child(spell_lbl)
+	# Spacer between primary stats and the modifier rows.
+	var spacer := Control.new()
+	spacer.custom_minimum_size = Vector2(0, 6)
+	preview_stats.add_child(spacer)
 	var rows: Array = [
 		{"label": "Max HP",    "key": "hp_pct",     "fmt": "%+d%%", "buff_when_pos": true},
 		{"label": "Attack",    "key": "atk_pct",    "fmt": "%+d%%", "buff_when_pos": true},

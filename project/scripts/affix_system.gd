@@ -236,10 +236,15 @@ static func format_item_tooltip(item_def: Dictionary, inst: Variant) -> String:
 	var disp_name: String = format_item_name(String(item_def.get("name", "")), affixes, inst)
 	var rarity: String = String(item_def.get("rarity", "")).capitalize()
 	var lines: Array = []
-	# Append 2H badge to the rarity slot when applicable.
+	# Append 2H or Dual badge to the rarity slot when applicable so the
+	# tooltip telegraphs the shield-exclusion. Dual-wield uniques (Gyre)
+	# read "Dual" instead of "2H" — same mechanic, more accurate flavor.
+	# 2026-06-05.
 	var rarity_chunk: String = rarity
-	if Bot.is_two_handed_base_type(String(item_def.get("base_type", ""))):
-		rarity_chunk = (rarity + " · 2H") if rarity != "" else "2H"
+	if Bot.is_two_handed(item_def):
+		var wc: String = String(item_def.get("weapon_class", ""))
+		var badge: String = "Dual" if wc == "dual" else "2H"
+		rarity_chunk = (rarity + " · " + badge) if rarity != "" else badge
 	lines.append("%s [%s]" % [disp_name, rarity_chunk] if rarity_chunk != "" else disp_name)
 	# Meta-rarity line — Ancient (1%) or Primal (0.1%) per drop. Stat
 	# multiplier is +20% / +50% baked into bot.recompute_stats so the

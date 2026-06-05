@@ -336,7 +336,10 @@ func _stamp_decor_marks(vault_results: Dictionary) -> void:
 			if grid[cell.y][cell.x] != C.T_WALL:
 				continue
 		else:
-			if grid[cell.y][cell.x] != C.T_FLOOR and grid[cell.y][cell.x] != C.T_STAIRS_DOWN:
+			# Decor goes on plain floor only — never on stairs (would
+			# overwrite the stair overlay → invisible stairs bug,
+			# 2026-06-04 playtest report) or doors.
+			if grid[cell.y][cell.x] != C.T_FLOOR:
 				continue
 		var tex_name: String = String(entry.get("texture", ""))
 		if tex_name == "":
@@ -579,7 +582,12 @@ func _attach_heat_haze(lava_cells: Array[Vector2i]) -> void:
 	if _heat_haze_layer != null and _heat_haze_layer.is_inside_tree():
 		_heat_haze_layer.queue_free()
 	_heat_haze_layer = Node2D.new()
-	_heat_haze_layer.z_index = 50  # above tiles, below FX/UI
+	# Z must be above the tile overlays (z=1) but BELOW actor_layer
+	# (z=10) so monsters standing on lava cells aren't visually painted
+	# over by the haze. Critical-bug fix 2026-06-04 — playtest reported
+	# floor tiles drawing on top of monster sprites; heat haze + water
+	# shimmer were the culprits sitting at z=50/49.
+	_heat_haze_layer.z_index = 3
 	add_child(_heat_haze_layer)
 	# Lazy-init the 1×1 white tex once; shared across every haze sprite.
 	if _heat_haze_tex == null:
@@ -607,7 +615,9 @@ func _attach_water_shimmer(water_cells: Array[Vector2i]) -> void:
 	if _water_shimmer_layer != null and _water_shimmer_layer.is_inside_tree():
 		_water_shimmer_layer.queue_free()
 	_water_shimmer_layer = Node2D.new()
-	_water_shimmer_layer.z_index = 49  # just below heat haze
+	# See heat-haze comment — also needs to sit between tile overlays
+	# (z=1) and actor_layer (z=10) so mobs in water aren't painted over.
+	_water_shimmer_layer.z_index = 2
 	add_child(_water_shimmer_layer)
 	if _heat_haze_tex == null:
 		var img := Image.create(1, 1, false, Image.FORMAT_RGBA8)

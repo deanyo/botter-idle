@@ -158,10 +158,13 @@ func _make_button(text: String, on_pressed: Callable, fg: Color = COL_AMBER) -> 
 	var btn := Button.new()
 	btn.text = text
 	btn.custom_minimum_size = Vector2(280, 44)
-	btn.add_theme_color_override("font_color", fg)
-	btn.add_theme_color_override("font_hover_color", COL_AMBER)
 	btn.add_theme_font_size_override("font_size", 18)
 	btn.pressed.connect(on_pressed)
+	UITheme.style_button(btn)
+	# Per-button color override after style_button so destructive
+	# actions (Quit Game) can still telegraph dim/red.
+	btn.add_theme_color_override("font_color", fg)
+	btn.add_theme_color_override("font_hover_color", COL_AMBER)
 	return btn
 
 func _open_video_settings() -> void:

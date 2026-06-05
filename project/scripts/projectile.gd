@@ -26,6 +26,20 @@ var dungeon_ref: Node = null
 var lifetime: float = 0.0
 var dead: bool = false
 
+# 2026-06-04 spell expansion — pierce + lifesteal + buff hooks. Iron
+# Shot sets piercing=true so the projectile keeps flying after impact;
+# Vampiric Drain sets lifesteal_pct + lifesteal_target so each hit
+# heals the caster.
+var piercing: bool = false
+var pierce_falloff: float = 1.0  # damage multiplier per pierce; 0.75 = 25% drop per hit
+var pierce_count: int = 0  # how many enemies already hit, used to dim damage
+var pierce_hit_set: Dictionary = {}  # instance_id → true; same-target double-hit guard
+var pierce_apply_status: String = ""  # status id to apply on each pierce hit (e.g. "slowed")
+var pierce_apply_duration: float = 0.0
+var lifesteal_pct: float = 0.0
+var lifesteal_target: Node = null  # bot-side healer; usually the bot
+var lifesteal_buff_bot: bool = false  # Ravenous affix — apply hasted on hit
+
 @onready var sprite: Sprite2D = $Sprite
 
 static func spawn_fireball(parent: Node, world_pos: Vector2, target_enemy: Node, dmg: int, speed: float, sprite_path: String, element_key: String, dungeon: Node, tint: Color = Color(0, 0, 0, 0)) -> Projectile:
@@ -78,7 +92,20 @@ func _process(delta: float) -> void:
 	position += heading * speed_px * delta
 	if is_instance_valid(sprite):
 		sprite.rotation = heading.angle()
-	# Hit check — distance to live target.
+	# Hit check. Piercing projectiles scan ALL live enemies near the
+	# current position so a slow iron shot moving through a pack hits
+	# every body in its path. Non-piercing projectiles just check the
+	# original target.
+	if piercing and dungeon_ref != null and is_instance_valid(dungeon_ref) and "enemies" in dungeon_ref:
+		for e in dungeon_ref.enemies:
+			if not is_instance_valid(e) or not e.is_alive:
+				continue
+			if pierce_hit_set.has(e.get_instance_id()):
+				continue
+			if position.distance_squared_to(e.position) < HIT_RADIUS_PX * HIT_RADIUS_PX:
+				pierce_hit_set[e.get_instance_id()] = true
+				_pierce_hit(e)
+		return
 	if is_instance_valid(target) and target.is_alive:
 		if position.distance_squared_to(target.position) < HIT_RADIUS_PX * HIT_RADIUS_PX:
 			_impact_on(target)
@@ -88,8 +115,20 @@ func _impact_on(enemy: Node) -> void:
 	if dead:
 		return
 	dead = true
+	var dealt: int = 0
 	if is_instance_valid(enemy) and enemy.has_method("take_damage"):
 		enemy.take_damage(damage)
+		dealt = damage
+	# Lifesteal — heal the bot (lifesteal_target) by a % of dealt damage
+	# regardless of the bot's gear lifesteal_pct. Drain spell wires this.
+	if lifesteal_pct > 0.0 and is_instance_valid(lifesteal_target) and dealt > 0:
+		var heal: int = int(round(float(dealt) * lifesteal_pct / 100.0))
+		if heal > 0 and "hp" in lifesteal_target and "max_hp" in lifesteal_target:
+			lifesteal_target.hp = mini(lifesteal_target.max_hp, lifesteal_target.hp + heal)
+			if lifesteal_target.has_method("_update_hp_bar"):
+				lifesteal_target._update_hp_bar()
+		if lifesteal_buff_bot and lifesteal_target.has_method("add_status"):
+			lifesteal_target.add_status("hasted", 4.0)
 	# Element-flavored impact burst (existing FX module).
 	if dungeon_ref != null and is_instance_valid(dungeon_ref):
 		var parent: Node = dungeon_ref.actor_layer if "actor_layer" in dungeon_ref else null
@@ -99,6 +138,23 @@ func _impact_on(enemy: Node) -> void:
 				"cold":  Effects.ice_shatter(parent, position)
 				_:       Effects.magic_shimmer(parent, position)
 	queue_free()
+
+# Piercing impact — same damage path as _impact_on but does NOT free
+# the projectile. Damage decays with pierce_count so the 5th body hit
+# takes 0.75⁴ × damage. Used by Iron Shot.
+func _pierce_hit(enemy: Node) -> void:
+	if not is_instance_valid(enemy) or not enemy.has_method("take_damage"):
+		return
+	var dmg_now: float = float(damage) * pow(pierce_falloff, float(pierce_count))
+	enemy.take_damage(maxi(1, int(round(dmg_now))))
+	pierce_count += 1
+	if pierce_apply_status != "" and pierce_apply_duration > 0.0 and enemy.has_method("add_status"):
+		enemy.add_status(pierce_apply_status, pierce_apply_duration)
+	# Element burst on each body so the hit reads visually.
+	if dungeon_ref != null and is_instance_valid(dungeon_ref):
+		var parent: Node = dungeon_ref.actor_layer if "actor_layer" in dungeon_ref else null
+		if parent != null:
+			Effects.magic_shimmer(parent, enemy.position)
 
 func _die() -> void:
 	dead = true

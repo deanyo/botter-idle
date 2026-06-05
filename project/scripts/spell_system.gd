@@ -72,10 +72,43 @@ static func process_tick(bot: Node, dungeon: Node, delta: float, items_db: Dicti
 		var t: float = float(cds.get(slot, 0.0)) - delta
 		if t <= 0.0:
 			var item: Dictionary = items_db[base_id]
-			_dispatch_fire(bot, dungeon, item)
+			# Merge per-instance archetype affix flags into the item view
+			# so dispatch can read e.g. spell_dart_split / spell_drain_buff
+			# off the same dict regardless of whether the flag came from
+			# implicit_affixes or a rolled affix. 2026-06-04 spell expansion.
+			var view: Dictionary = item.duplicate()
+			_fold_inst_affixes_into(view, inst)
+			_dispatch_fire(bot, dungeon, view)
 			t = SpellData.compute_cooldown(bot, item)
 		cds[slot] = t
 	bot.spell_cooldowns = cds
+
+# Fold an instance's archetype-flag affixes into a view dict so the
+# fire functions can read flags via item.get("spell_<flag>", false).
+# Implicit affixes from item.implicit_affixes resolve via the affix
+# def's `stat` field; rolled affixes from inst.affixes also write to
+# that stat. Either way the boolean ends up under view[stat] = true.
+static func _fold_inst_affixes_into(view: Dictionary, inst: Dictionary) -> void:
+	# Implicit affix ids declared on the items_db def itself.
+	for aid in view.get("implicit_affixes", []):
+		var def: Dictionary = AffixSystem.get_affix_def(String(aid))
+		if def.is_empty():
+			continue
+		var stat: String = String(def.get("stat", ""))
+		if stat != "":
+			view[stat] = true
+	# Rolled affixes on the instance — same stat → true mapping.
+	if inst != null and typeof(inst) == TYPE_DICTIONARY:
+		for entry in inst.get("affixes", []):
+			if typeof(entry) != TYPE_DICTIONARY:
+				continue
+			var aid2: String = String(entry.get("id", ""))
+			var def2: Dictionary = AffixSystem.get_affix_def(aid2)
+			if def2.is_empty():
+				continue
+			var stat2: String = String(def2.get("stat", ""))
+			if stat2 != "":
+				view[stat2] = true
 
 # Resolve effective cooldown for a spell item. Read by init_run for
 # the initial stagger; the live tick uses SpellData.compute_cooldown
@@ -113,6 +146,16 @@ static func _dispatch_fire(bot: Node, dungeon: Node, item: Dictionary) -> void:
 			fired = _fire_holy_beam(bot, dungeon, item)
 		"spell_axes":
 			fired = _fire_axes(bot, dungeon, item)
+		"spell_magic_dart":
+			fired = _fire_magic_dart(bot, dungeon, item)
+		"spell_iron_shot":
+			fired = _fire_iron_shot(bot, dungeon, item)
+		"spell_sandblast":
+			fired = _fire_sandblast(bot, dungeon, item)
+		"spell_drain":
+			fired = _fire_drain(bot, dungeon, item)
+		"spell_shatter":
+			fired = _fire_shatter(bot, dungeon, item)
 	if fired:
 		_fire_count += 1
 		_fire_by_arch[base_type] = int(_fire_by_arch.get(base_type, 0)) + 1
@@ -297,6 +340,212 @@ static func _fire_axes(bot: Node, dungeon: Node, item: Dictionary) -> bool:
 	var duration: float = 2.5 * (1.0 + float(bot.spell_duration_pct) / 100.0)
 	var radius_px: float = 48.0 * (1.0 + float(bot.spell_area_pct) / 100.0)
 	OrbitController.spawn_axes(dungeon.actor_layer, bot, n, radius_px, duration, damage, _visual_color_for_item(item, "brutal"))
+	return true
+
+# --- 2026-06-04 expansion archetypes -------------------------------
+
+# Magic Dart — single fast homing projectile at very short CD. Cheap,
+# constant damage feed. Reuses Projectile.spawn_fireball with the
+# magic_dart sprite + arcane tint. Splintering Volley (archetype affix
+# `spell_dart_split`) spawns two slower side-darts at hit.
+static func _fire_magic_dart(bot: Node, dungeon: Node, item: Dictionary) -> bool:
+	var arch: Dictionary = SpellData.archetype_def("spell_magic_dart")
+	if arch.is_empty() or not is_instance_valid(bot) or dungeon == null:
+		return false
+	var range_cells: int = int(arch.get("range_cells", 9))
+	var candidates: Array = _enemies_in_range(bot, dungeon, range_cells)
+	if candidates.is_empty():
+		return false
+	candidates.sort_custom(func(a, b): return a.d < b.d)
+	var damage: int = SpellData.compute_damage(bot, item)
+	var sprite_path: String = String(arch.get("projectile", ""))
+	var element: String = String(arch.get("element", ""))
+	var base_speed: float = float(arch.get("projectile_speed", 420.0))
+	var speed: float = base_speed * (1.0 + float(bot.spell_proj_speed_pct) / 100.0)
+	var tint: Color = _visual_color_for_item(item, "arcane")
+	var origin: Vector2 = bot.position + Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5)
+	var proj_count: int = SpellData.compute_proj_count(bot, item)
+	# Splintering Volley affix — adds 2 extra side-darts at half damage
+	# fanned ±25° from the main shot. Splinterfang unique carries this
+	# implicitly. Spell expansion 2026-06-04.
+	var split: bool = bool(item.get("spell_dart_split", false))
+	for i in proj_count:
+		var target: Node = candidates[i % candidates.size()].e
+		Projectile.spawn_fireball(dungeon.actor_layer, origin, target, damage, speed, sprite_path, element, dungeon, tint)
+		if split and is_instance_valid(target):
+			# Side darts target enemies at ±1 in the candidate list when
+			# they exist; otherwise fall back to the same target so the
+			# sprites at least visualise the splinter.
+			var alt_a: Node = candidates[(i + 1) % candidates.size()].e
+			var alt_b: Node = candidates[(i + candidates.size() - 1) % candidates.size()].e
+			Projectile.spawn_fireball(dungeon.actor_layer, origin, alt_a, int(damage * 0.5), speed, sprite_path, element, dungeon, tint)
+			Projectile.spawn_fireball(dungeon.actor_layer, origin, alt_b, int(damage * 0.5), speed, sprite_path, element, dungeon, tint)
+	return true
+
+# Iron Shot — slow heavy projectile that hits every enemy along its
+# travel line until lifetime expires. Pierces. Damage drops 25% per
+# enemy beyond the first so a wall of mobs absorbs increasingly less.
+# Implementation: spawn an iron_shot projectile aimed at the nearest
+# enemy, but mark it as "piercing" so on impact it does NOT free —
+# instead it tags the enemy as already-hit and keeps flying. Only the
+# Projectile class needs that tag; here we pass through a special
+# damage path via the dungeon-side actor_layer hit loop.
+static func _fire_iron_shot(bot: Node, dungeon: Node, item: Dictionary) -> bool:
+	var arch: Dictionary = SpellData.archetype_def("spell_iron_shot")
+	if arch.is_empty() or not is_instance_valid(bot) or dungeon == null:
+		return false
+	var range_cells: int = int(arch.get("range_cells", 9))
+	var candidates: Array = _enemies_in_range(bot, dungeon, range_cells)
+	if candidates.is_empty():
+		return false
+	candidates.sort_custom(func(a, b): return a.d < b.d)
+	var damage: int = SpellData.compute_damage(bot, item)
+	var sprite_path: String = String(arch.get("projectile", ""))
+	var element: String = String(arch.get("element", ""))
+	var base_speed: float = float(arch.get("projectile_speed", 220.0))
+	var speed: float = base_speed * (1.0 + float(bot.spell_proj_speed_pct) / 100.0)
+	var tint: Color = _visual_color_for_item(item, "earth")
+	var origin: Vector2 = bot.position + Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5)
+	var target: Node = candidates[0].e
+	var p: Projectile = Projectile.spawn_fireball(dungeon.actor_layer, origin, target, damage, speed, sprite_path, element, dungeon, tint)
+	if p != null:
+		p.piercing = true
+		p.pierce_falloff = 0.75
+		# Earthbreaker affix — pierce hits also slow the target for 1.5s.
+		# Carried implicitly on the Ironcrash unique. Spell expansion 2026-06-04.
+		if bool(item.get("spell_iron_dust", false)):
+			p.pierce_apply_status = "slowed"
+			p.pierce_apply_duration = 1.5
+	return true
+
+# Sandblast — short cone in bot facing. Same shape as holy_beam but
+# tighter (range 3, half-angle 45°). Earth/physical so no element_pct
+# scaling but raw damage is higher per cast.
+static func _fire_sandblast(bot: Node, dungeon: Node, item: Dictionary) -> bool:
+	var arch: Dictionary = SpellData.archetype_def("spell_sandblast")
+	if arch.is_empty() or not is_instance_valid(bot) or dungeon == null:
+		return false
+	var range_cells: int = int(arch.get("range_cells", 3))
+	var origin: Vector2 = bot.position + Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5)
+	var facing: Vector2 = Vector2.RIGHT
+	if "_facing_x" in bot:
+		facing = Vector2(float(bot._facing_x), 0.0)
+		if facing.length_squared() < 0.01:
+			facing = Vector2.RIGHT
+	var nearest: Node = null
+	var nearest_d: float = INF
+	for e in dungeon.enemies:
+		if not is_instance_valid(e) or not e.is_alive:
+			continue
+		var d: float = origin.distance_to(e.position)
+		if d < nearest_d:
+			nearest_d = d
+			nearest = e
+	if nearest != null:
+		var dir: Vector2 = nearest.position - origin
+		if dir.length_squared() > 0.01:
+			facing = dir.normalized()
+	var cone_half_angle: float = deg_to_rad(45.0) * (1.0 + float(bot.spell_area_pct) / 100.0)
+	var max_dist: float = float(range_cells) * float(C.TILE_SIZE)
+	var damage: int = SpellData.compute_damage(bot, item)
+	# Blinding Grit affix flag — apply blinded debuff (miss chance) on hit.
+	var blind: bool = bool(item.get("spell_sandblast_blind", false))
+	var hits: int = 0
+	for e in dungeon.enemies:
+		if not is_instance_valid(e) or not e.is_alive:
+			continue
+		var to_e: Vector2 = e.position - origin
+		var dist: float = to_e.length()
+		if dist > max_dist or dist < 4.0:
+			continue
+		var ang: float = abs(to_e.angle_to(facing))
+		if ang <= cone_half_angle:
+			e.take_damage(damage)
+			if blind and e.has_method("add_status"):
+				e.add_status("blinded", 2.0)
+			hits += 1
+	if hits == 0:
+		return false
+	SpellAoe.spawn_cone(dungeon.actor_layer, origin, facing, max_dist, cone_half_angle, _visual_color_for_item(item, "earth"))
+	return true
+
+# Vampiric Drain — homing dark projectile that heals the bot for 35%
+# of damage dealt on hit. Stacks with item lifesteal_pct on top.
+# Ravenous affix (`spell_drain_buff`) additionally adds a 4-second
+# +haste-on-hit buff so chained drains snowball.
+static func _fire_drain(bot: Node, dungeon: Node, item: Dictionary) -> bool:
+	var arch: Dictionary = SpellData.archetype_def("spell_drain")
+	if arch.is_empty() or not is_instance_valid(bot) or dungeon == null:
+		return false
+	var range_cells: int = int(arch.get("range_cells", 8))
+	var candidates: Array = _enemies_in_range(bot, dungeon, range_cells)
+	if candidates.is_empty():
+		return false
+	candidates.sort_custom(func(a, b): return a.d < b.d)
+	var damage: int = SpellData.compute_damage(bot, item)
+	var sprite_path: String = String(arch.get("projectile", ""))
+	var element: String = String(arch.get("element", ""))
+	var base_speed: float = float(arch.get("projectile_speed", 280.0))
+	var speed: float = base_speed * (1.0 + float(bot.spell_proj_speed_pct) / 100.0)
+	var tint: Color = _visual_color_for_item(item, "dark")
+	var origin: Vector2 = bot.position + Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5)
+	var proj_count: int = SpellData.compute_proj_count(bot, item)
+	var ravenous: bool = bool(item.get("spell_drain_buff", false))
+	for i in proj_count:
+		var target: Node = candidates[i % candidates.size()].e
+		var p: Projectile = Projectile.spawn_fireball(dungeon.actor_layer, origin, target, damage, speed, sprite_path, element, dungeon, tint)
+		if p != null:
+			p.lifesteal_pct = 35.0
+			p.lifesteal_target = bot
+			if ravenous:
+				p.lifesteal_buff_bot = true
+	return true
+
+# Shatter — radial physical AoE pulse. Bigger raw damage than Frost
+# Nova but no slow — instead a brief stun on hit. Aftershock affix
+# (`spell_shatter_aftershock`) fires a second smaller pulse 0.4s later.
+static func _fire_shatter(bot: Node, dungeon: Node, item: Dictionary) -> bool:
+	var arch: Dictionary = SpellData.archetype_def("spell_shatter")
+	if arch.is_empty() or not is_instance_valid(bot) or dungeon == null:
+		return false
+	var range_cells: int = int(arch.get("range_cells", 4))
+	var area_mult: float = 1.0 + float(bot.spell_area_pct) / 100.0
+	var radius_cells: int = max(1, int(round(float(range_cells) * area_mult)))
+	var enemies: Array = _enemies_in_range(bot, dungeon, radius_cells)
+	if enemies.is_empty():
+		return false
+	var damage: int = SpellData.compute_damage(bot, item)
+	for entry in enemies:
+		var e: Node = entry.e
+		if is_instance_valid(e) and e.has_method("take_damage"):
+			e.take_damage(damage)
+			if e.has_method("add_status"):
+				e.add_status("stunned", 0.6)
+	var origin: Vector2 = bot.position + Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5)
+	SpellAoe.spawn_ring(dungeon.actor_layer, origin, float(radius_cells) * float(C.TILE_SIZE), _visual_color_for_item(item, "earth"))
+	# Aftershock — second smaller pulse via SceneTree timer. Timer is
+	# auto-freed; the lambda captures the current radius/damage which
+	# is fine because they're values, not refs. Half damage, 70% radius.
+	if bool(item.get("spell_shatter_aftershock", false)):
+		var t := Timer.new()
+		t.one_shot = true
+		t.wait_time = 0.4
+		dungeon.add_child(t)
+		t.timeout.connect(func():
+			if not is_instance_valid(bot) or not is_instance_valid(dungeon):
+				t.queue_free()
+				return
+			var late_origin: Vector2 = bot.position + Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5)
+			var radius2_cells: int = max(1, int(round(float(radius_cells) * 0.7)))
+			var enemies2: Array = _enemies_in_range(bot, dungeon, radius2_cells)
+			for entry2 in enemies2:
+				var e2: Node = entry2.e
+				if is_instance_valid(e2) and e2.has_method("take_damage"):
+					e2.take_damage(int(damage * 0.5))
+			SpellAoe.spawn_ring(dungeon.actor_layer, late_origin, float(radius2_cells) * float(C.TILE_SIZE), _visual_color_for_item(item, "earth"))
+			t.queue_free()
+		)
+		t.start()
 	return true
 
 # Resolve the visual color for a spell instance — read flavor_tags

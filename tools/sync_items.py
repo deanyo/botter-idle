@@ -85,6 +85,40 @@ PAPERDOLL_BY_BASE_TYPE = {
     "katana":      ("hand1", "katana_slant.png"),
     "demon_blade": ("hand1", "demonblade.png"),  # DCSS canonical (per tilepick-p.cc)
 
+    # --- Heavy weapons → player/hand1/ (added 2026-06-05 to fix the
+    # 56 flagged items rendering as inventory art on the paperdoll).
+    # DCSS hand1/ carries vertically-aligned hand-held variants for all
+    # of these. Multiple items of one base_type share one sprite — DCSS
+    # behavior; visual variety on the doll comes from rarity tint +
+    # flavor glow + per-instance recolor.
+    "battle_axe":       ("hand1", "battleaxe.png"),
+    "broad_axe":        ("hand1", "broad_axe.png"),
+    "war_axe":          ("hand1", "war_axe_new.png"),
+    "hand_axe":         ("hand1", "hand_axe_new.png"),
+    "executioner_axe":  ("hand1", "axe_executioner_new.png"),
+    "greatsword":       ("hand1", "great_sword_slant_old.png"),
+    "claymore":         ("hand1", "great_sword.png"),
+    "double_sword":     ("hand1", "double_sword_new.png"),
+    "triple_sword":     ("hand1", "triple_sword_new.png"),
+    "cutlass":          ("hand1", "falchion_new.png"),  # closest curve
+    "halberd":          ("hand1", "halberd_new.png"),
+    "bardiche":         ("hand1", "halberd_new.png"),  # similar shape
+    "spear":            ("hand1", "spear_1.png"),
+    "mace":             ("hand1", "mace_new.png"),
+    "morningstar":      ("hand1", "morningstar_new.png"),
+    "eveningstar":      ("hand1", "eveningstar_new.png"),
+    "hammer":           ("hand1", "hammer_new.png"),
+    "flail":            ("hand1", "flail_stick.png"),
+    "dire_flail":       ("hand1", "flail_great.png"),
+    "scythe":           ("hand1", "scythe_new.png"),
+    "club":             ("hand1", "club.png"),
+    "giant_club":       ("hand1", "giant_club_plain.png"),
+    "ankus":            ("hand1", "club_2.png"),  # ornate club
+    "quarterstaff":     ("hand1", "quarterstaff_1.png"),
+    "bullwhip":         ("hand1", "whip_new.png"),
+    "demon_whip":       ("hand1", "black_whip_new.png"),
+    "lajatang":         ("hand1", "great_sword_slant_2.png"),  # exotic; no DCSS hand variant
+
     # --- Shields → player/hand2/ ---
     "buckler":      ("hand2", "buckler_round.png"),
     "round_shield": ("hand2", "buckler_round.png"),  # same fallback
@@ -131,6 +165,17 @@ PAPERDOLL_BY_BASE_TYPE = {
     "iron_boots":    ("boots", "long_white.png"),
     "greaves":       ("boots", "long_white.png"),
     "treads":        ("boots", "seven_league_boots.png"),
+
+    # --- Cloaks → player/cloak/ (added 2026-06-05). DCSS ships
+    # solid-color cloak overlays; we map our 8 cloak items across the
+    # available palette. Visual variety from per-instance flavor glow.
+    "cloak":          ("cloak", "brown.png"),  # generic fallback
+
+    # --- Gloves → player/gloves/ (added 2026-06-05). 21 DCSS variants;
+    # base_type=gloves covers all our entries — variety per item shipped
+    # via the per-id remap that ran 2026-06-05; the manifest fallback
+    # uses a generic brown leather glove.
+    "gloves":         ("gloves", "glove_brown.png"),
 }
 
 ALL_MANIFESTS = [
@@ -170,6 +215,61 @@ UNIQUE_PAPERDOLL_OVERRIDES = {
     "sword_of_power":      "hand1/artefact/sword_of_power.png",
     "sword_of_zonguldrok": "hand1/artefact/zonguldrok.png",
     "majin_bo":            "hand1/artefact/majin.png",
+
+    # --- Variant overrides authored 2026-06-05 to break up the
+    # "every battle_axe looks identical" feel after the paperdoll-art
+    # remap. DCSS hand1/ ships multiple variants per base_type; pick a
+    # different one for each named item where it makes sense.
+    # Same paperdoll-tile is shared across all items of a base_type by
+    # default (PAPERDOLL_BY_BASE_TYPE above) — these IDs override.
+    "runed_battle_axe":    "hand1/battleaxe_2.png",
+    "warlord_battle_axe":  "hand1/battleaxe_2.png",
+    "runed_bardiche":      "hand1/halberd_old.png",
+    "steel_halberd":       "hand1/halberd_old.png",
+    "runed_claymore":      "hand1/great_sword_slant_new.png",
+    "blessed_claymore":    "hand1/great_sword_slant_2.png",
+    "steel_greatsword":    "hand1/great_sword.png",
+    "naval_cutlass":       "hand1/falchion_2.png",
+    "spiked_flail":        "hand1/flail_spike.png",
+    "runed_eveningstar":   "hand1/eveningstar_2.png",
+    "runed_morningstar":   "hand1/morningstar_2_new.png",
+    "steel_morningstar":   "hand1/morningstar_old.png",
+    "doomed_executioner":  "hand1/axe_executioner_2.png",
+    "steel_hand_axe":      "hand1/hand_axe_2.png",
+    "dwarven_war_axe":     "hand1/war_axe_old.png",
+    "steel_war_axe":       "hand1/war_axe_old.png",
+    "dwarven_mace":        "hand1/mace_2_new.png",
+    "steel_mace":          "hand1/mace_3.png",
+    "steel_warhammer":     "hand1/hammer_2_new.png",
+    "orcish_spear":        "hand1/spear_2_new.png",
+    "steel_spear":         "hand1/spear_3.png",
+    "trident":             "hand1/spear_5.png",
+    "metal_staff":         "hand1/quarterstaff_2_new.png",
+    "reapers_scythe":      "hand1/scythe_2.png",
+    "spiked_club":         "hand1/club_3.png",
+    "braided_whip":        "hand1/whip_2.png",
+
+    # Per-id cloak palette (8 items, 12 cloak colors available).
+    "leather_cloak":       "cloak/brown.png",
+    "warlord_cloak":       "cloak/red.png",
+    "wool_cloak":          "cloak/gray.png",
+    "hooded_cloak":        "cloak/black.png",
+    "woven_cloak":         "cloak/green.png",
+    "travelers_cloak":     "cloak/brown.png",
+    "silken_cloak":        "cloak/blue.png",
+    "rangers_cloak":       "cloak/green.png",
+
+    # Per-id gloves palette (10 items, 21 glove variants available).
+    "leather_gloves":      "gloves/glove_brown.png",
+    "studded_gloves":      "gloves/glove_black.png",
+    "riveted_gloves":      "gloves/glove_gray.png",
+    "ring_inlaid_gloves":  "gloves/glove_white.png",
+    "plate_gauntlets":     "gloves/gauntlet_blue.png",
+    "warlord_gauntlets":   "gloves/glove_red.png",
+    "elven_gauntlets":     "gloves/glove_gold.png",
+    "dwarven_gloves":      "gloves/glove_orange.png",
+    "fencer_gauntlets":    "gloves/glove_purple.png",
+    "storm_gauntlets":     "gloves/glove_blue.png",
 }
 
 # Rarities that get the DCSS "magical" variant sprite (filename2.png).

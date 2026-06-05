@@ -585,8 +585,10 @@ func _build_paperdoll_pane(x: int, y: int, w: int, h: int) -> void:
 	var row_count: int = mini(resolved_bottom.size(), maxi(1, inner_w / (slot + gap)))
 	for i in row_count:
 		_make_paperdoll_slot(resolved_bottom[i], inner_x + i * (slot + gap), row_y)
-	# Spell row — 5 autocast cells under the gear row, with a small
-	# divider label so the player reads them as a separate concept.
+	# Spell row — 5 autocast cells under the gear row. Wraps to a
+	# second row if the pane is too narrow to fit all 5 across.
+	# UI polish 2026-06-04: previously spell cells overflowed silently
+	# when inner_w < 5*(slot+gap). Now we shrink + wrap.
 	var spell_label_y: int = row_y + slot + gap
 	var spell_lbl := Label.new()
 	spell_lbl.text = "Spells"
@@ -595,12 +597,23 @@ func _build_paperdoll_pane(x: int, y: int, w: int, h: int) -> void:
 	spell_lbl.add_theme_color_override("font_color", COL_DIM)
 	add_child(spell_lbl)
 	var spell_row_y: int = spell_label_y + 16
-	var spell_count: int = mini(SPELL_SLOTS.size(), maxi(1, inner_w / (slot + gap)))
-	for i in spell_count:
-		_make_paperdoll_slot(SPELL_SLOTS[i], inner_x + i * (slot + gap), spell_row_y)
+	# Pick the largest cell size that lets all 5 fit in one row at
+	# inner_w. Clamp 32..PAPERDOLL_SLOT_SIZE so it never goes too tiny.
+	# If even the minimum doesn't fit 5 across, wrap to two rows.
+	var spell_slot: int = clampi(int((inner_w - gap * 4) / 5), 32, PAPERDOLL_SLOT_SIZE)
+	var per_row: int = mini(SPELL_SLOTS.size(), maxi(1, (inner_w + gap) / (spell_slot + gap)))
+	for i in SPELL_SLOTS.size():
+		var col: int = i % per_row
+		var rowi: int = i / per_row
+		var sx_spell: int = inner_x + col * (spell_slot + gap)
+		var sy_spell: int = spell_row_y + rowi * (spell_slot + gap)
+		_make_paperdoll_slot(SPELL_SLOTS[i], sx_spell, sy_spell, spell_slot)
 
-func _make_paperdoll_slot(slot_id: String, x: int, y: int) -> void:
-	var slot := PAPERDOLL_SLOT_SIZE
+func _make_paperdoll_slot(slot_id: String, x: int, y: int, override_size: int = 0) -> void:
+	# Spell row passes a smaller override_size when the pane is narrow
+	# so the 5 spell cells fit without overflowing. Defaults to the
+	# canonical PAPERDOLL_SLOT_SIZE (56) for gear cells.
+	var slot := override_size if override_size > 0 else PAPERDOLL_SLOT_SIZE
 	var is_real_slot: bool = (slot_id in SLOTS) or slot_id.begins_with("ring") or slot_id.begins_with("spell")
 	var is_placeholder: bool = not is_real_slot
 	# Species body-shape lock — gear-only; spell slots are universal.
@@ -1013,6 +1026,9 @@ func _render() -> void:
 	_render_stats()
 	_render_equipped()
 	_render_inventory()
+	# Theme any buttons spawned during render (filter chips, sort
+	# buttons, deploy button). UI polish 2026-06-04.
+	UITheme.style_all_buttons(self)
 
 func _render_stats() -> void:
 	# Mirror Bot.recompute_stats v2 for the equipped set so the Outpost
@@ -1323,7 +1339,7 @@ func _equip(inv_index: int) -> void:
 	# weapon clears the shield slot back to inventory; a shield
 	# clears a 2H weapon back to inventory. Per-base_type list lives
 	# on Bot so paperdoll/UI/tooltip share one source of truth.
-	if slot == "weapon" and Bot.is_two_handed_base_type(String(item.get("base_type", ""))):
+	if slot == "weapon" and Bot.is_two_handed(item):
 		var current_shield: Variant = state.equipped.get("shield", null)
 		if current_shield != null and typeof(current_shield) == TYPE_DICTIONARY:
 			inv.append(current_shield)
@@ -1333,7 +1349,7 @@ func _equip(inv_index: int) -> void:
 		if current_weapon != null and typeof(current_weapon) == TYPE_DICTIONARY:
 			var w_id: String = String(current_weapon.get("base_id", ""))
 			if w_id != "" and items_db.has(w_id):
-				if Bot.is_two_handed_base_type(String(items_db[w_id].get("base_type", ""))):
+				if Bot.is_two_handed(items_db[w_id]):
 					inv.append(current_weapon)
 					state.equipped["weapon"] = null
 	var current: Variant = state.equipped.get(slot, null)
@@ -1397,8 +1413,9 @@ func _drag_equip_from_inv(inv_index: int, dst_slot: String) -> void:
 	if not items_db.has(base_id):
 		return
 	var item: Dictionary = items_db[base_id]
-	# 2H↔shield exclusion still applies even with explicit-slot drops.
-	if dst_slot == "weapon" and Bot.is_two_handed_base_type(String(item.get("base_type", ""))):
+	# 2H/dual ↔ shield exclusion still applies even with explicit-slot
+	# drops. is_two_handed() folds in dual-wield uniques.
+	if dst_slot == "weapon" and Bot.is_two_handed(item):
 		var current_shield: Variant = state.equipped.get("shield", null)
 		if current_shield != null and typeof(current_shield) == TYPE_DICTIONARY:
 			inv.append(current_shield)
@@ -1408,7 +1425,7 @@ func _drag_equip_from_inv(inv_index: int, dst_slot: String) -> void:
 		if current_weapon != null and typeof(current_weapon) == TYPE_DICTIONARY:
 			var w_id: String = String(current_weapon.get("base_id", ""))
 			if w_id != "" and items_db.has(w_id):
-				if Bot.is_two_handed_base_type(String(items_db[w_id].get("base_type", ""))):
+				if Bot.is_two_handed(items_db[w_id]):
 					inv.append(current_weapon)
 					state.equipped["weapon"] = null
 	var prev: Variant = state.equipped.get(dst_slot, null)

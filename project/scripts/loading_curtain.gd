@@ -162,13 +162,22 @@ func _draw_spinner() -> void:
 # Replaces the manual show → await → hide pattern (which deadlocked
 # main._swap when the tree paused). Item-overhaul UI pass 2026-06-04.
 const SWAP_HOLD_SEC: float = 0.30
+# Maximum time to keep the curtain up while waiting on a "ready"
+# signal (hold_until_signal). Safety net so a slow loader can't strand
+# the curtain forever on a busted run. Perf pass 2026-06-04.
+const SIGNAL_TIMEOUT_SEC: float = 5.0
 func show_for_swap(label: String = "Loading…") -> void:
+	# When a caller has already painted the curtain via show_curtain()
+	# directly (e.g. main._on_deploy preloading the dungeon) the curtain
+	# is already visible — just queue a hide timer and skip the
+	# show_curtain call so we don't reset the alpha tween.
+	var was_active: bool = _active
 	show_curtain(label)
 	# Hide after the hold via a one-shot timer. Timer is process_mode
 	# ALWAYS so it ticks even if some caller paused the tree.
 	var t := Timer.new()
 	t.one_shot = true
-	t.wait_time = FADE_IN_SEC + SWAP_HOLD_SEC
+	t.wait_time = (0.0 if was_active else FADE_IN_SEC) + SWAP_HOLD_SEC
 	t.process_mode = Node.PROCESS_MODE_ALWAYS
 	add_child(t)
 	t.timeout.connect(func():
@@ -176,6 +185,53 @@ func show_for_swap(label: String = "Loading…") -> void:
 		t.queue_free()
 	)
 	t.start()
+
+# Show the curtain and keep it up until `signal_obj.<signal_name>`
+# fires (or SIGNAL_TIMEOUT_SEC elapses, whichever first). Tighter UX
+# than show_for_swap when the wait is determined by a real "ready"
+# event — e.g. dungeon.floor_started fires once the floor is fully
+# built, so the curtain hides exactly when there's something to see.
+# Perf pass 2026-06-04.
+func hold_until_signal(signal_obj: Object, signal_name: String, label: String = "Loading…") -> void:
+	show_curtain(label)
+	if signal_obj == null or not signal_obj.has_signal(signal_name):
+		# Fallback to a fixed hold so the curtain still hides cleanly.
+		var t0 := Timer.new()
+		t0.one_shot = true
+		t0.wait_time = FADE_IN_SEC + SWAP_HOLD_SEC
+		t0.process_mode = Node.PROCESS_MODE_ALWAYS
+		add_child(t0)
+		t0.timeout.connect(func():
+			hide_curtain()
+			t0.queue_free()
+		)
+		t0.start()
+		return
+	# One-element array so the bool mutation actually persists across
+	# the two lambdas. GDScript captures locals by value, so a plain
+	# `var hidden_yet: bool = false` would let both the signal AND
+	# the safety timer fire hide_curtain().
+	var hidden_flag: Array = [false]
+	var hide_once = func():
+		if hidden_flag[0]:
+			return
+		hidden_flag[0] = true
+		hide_curtain()
+	# Connect ONESHOT so we don't keep an active reference past the
+	# first fire.
+	signal_obj.connect(signal_name, hide_once, CONNECT_ONE_SHOT)
+	# Safety-net timer — caps the curtain duration even if the signal
+	# never fires.
+	var safety := Timer.new()
+	safety.one_shot = true
+	safety.wait_time = SIGNAL_TIMEOUT_SEC
+	safety.process_mode = Node.PROCESS_MODE_ALWAYS
+	add_child(safety)
+	safety.timeout.connect(func():
+		hide_once.call()
+		safety.queue_free()
+	)
+	safety.start()
 
 func show_curtain(label: String = "Loading…") -> void:
 	if _active:

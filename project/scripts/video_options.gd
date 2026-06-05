@@ -12,6 +12,8 @@ const VS := preload("res://scripts/video_settings.gd")
 # Dynamically-added graphics-effect toggles (built in _ready). Stored
 # here so _on_changed can read their state.
 var _gfx_checks: Dictionary = {}  # effect_name → CheckBox
+# HUD-layout toggles built dynamically alongside the gfx checks.
+var _hud_log_overlay_cb: CheckBox = null
 
 # Friendly labels for each effect ID.
 const _GFX_LABELS := {
@@ -39,6 +41,7 @@ func _ready() -> void:
 	res_opt.item_selected.connect(_on_changed)
 	vsync_opt.item_selected.connect(_on_changed)
 	back_btn.pressed.connect(func(): back_pressed.emit())
+	UITheme.style_all_buttons(self)
 	ready_done = true
 
 func _populate_graphics() -> void:
@@ -59,6 +62,24 @@ func _populate_graphics() -> void:
 	hint.add_theme_font_size_override("font_size", 13)
 	hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	form.add_child(hint)
+	# Preset row — 3 buttons that batch-set every gfx toggle to a known
+	# Low/Medium/High mix. Sits at the top of the graphics block so the
+	# user can pick a baseline without flipping 9 individual checkboxes.
+	# 2026-06-04.
+	var preset_row := HBoxContainer.new()
+	preset_row.add_theme_constant_override("separation", 8)
+	for pair in [["Low", "low", VS.GFX_PRESET_LOW],
+				 ["Medium", "medium", VS.GFX_PRESET_MEDIUM],
+				 ["High", "high", VS.GFX_PRESET_HIGH]]:
+		var btn := Button.new()
+		btn.text = String(pair[0])
+		btn.add_theme_font_size_override("font_size", 13)
+		var name_id: String = String(pair[1])
+		var preset: Dictionary = pair[2]
+		btn.pressed.connect(func(): _apply_preset(name_id, preset))
+		preset_row.add_child(btn)
+		UITheme.style_button(btn)
+	form.add_child(preset_row)
 	var gfx: Dictionary = settings.get("gfx", {})
 	for eff in VS.GFX_EFFECTS:
 		var row := HBoxContainer.new()
@@ -73,6 +94,26 @@ func _populate_graphics() -> void:
 		_gfx_checks[eff] = cb
 		row.add_child(cb)
 		form.add_child(row)
+	# HUD layout section. Currently a single toggle for the loot/combat
+	# log overlay (off → bag fills bottom strip, log hidden). Sits under
+	# graphics so the user finds it next to the other "screen layout"
+	# toggles. UI polish 2026-06-04.
+	var hud_header := Label.new()
+	hud_header.text = "HUD"
+	hud_header.add_theme_color_override("font_color", Color(0.92, 0.78, 0.45, 1))
+	hud_header.add_theme_font_size_override("font_size", 18)
+	form.add_child(hud_header)
+	var hud_row := HBoxContainer.new()
+	hud_row.add_theme_constant_override("separation", 12)
+	var hud_lbl := Label.new()
+	hud_lbl.text = "Loot/combat log overlay"
+	hud_lbl.custom_minimum_size = Vector2(220, 0)
+	hud_row.add_child(hud_lbl)
+	_hud_log_overlay_cb = CheckBox.new()
+	_hud_log_overlay_cb.button_pressed = bool(settings.get("hud_log_overlay", true))
+	_hud_log_overlay_cb.toggled.connect(func(_v): _on_changed())
+	hud_row.add_child(_hud_log_overlay_cb)
+	form.add_child(hud_row)
 
 func _populate_modes() -> void:
 	mode_opt.clear()
@@ -107,6 +148,25 @@ func _populate_vsync() -> void:
 	vsync_opt.set_item_metadata(1, false)
 	vsync_opt.select(0 if bool(settings.get("vsync", true)) else 1)
 
+# Apply a Low/Medium/High preset — flips each gfx checkbox to match
+# the preset's truth-table, then triggers a normal save. Keeps gfx_quality
+# tagged with the preset name (Low/Medium/High) until the user touches a
+# checkbox, after which _on_changed re-tags it as "custom". 2026-06-04.
+func _apply_preset(name_id: String, preset: Dictionary) -> void:
+	for eff in _gfx_checks.keys():
+		var cb: CheckBox = _gfx_checks[eff]
+		if preset.has(eff):
+			cb.button_pressed = bool(preset[eff])
+	var gfx: Dictionary = settings.get("gfx", {})
+	for eff in preset.keys():
+		gfx[eff] = bool(preset[eff])
+	settings["gfx"] = gfx
+	settings["gfx_quality"] = name_id
+	if _hud_log_overlay_cb != null:
+		settings["hud_log_overlay"] = _hud_log_overlay_cb.button_pressed
+	VS.save_settings(settings)
+	VS.apply(settings)
+
 func _on_changed(_idx: int = 0) -> void:
 	if not ready_done:
 		return
@@ -119,6 +179,8 @@ func _on_changed(_idx: int = 0) -> void:
 		var cb: CheckBox = _gfx_checks[eff]
 		gfx[eff] = cb.button_pressed
 	settings["gfx"] = gfx
+	if _hud_log_overlay_cb != null:
+		settings["hud_log_overlay"] = _hud_log_overlay_cb.button_pressed
 	# Mark quality preset as "custom" once user touches anything (so
 	# next preset selection cleanly overrides).
 	settings["gfx_quality"] = "custom"

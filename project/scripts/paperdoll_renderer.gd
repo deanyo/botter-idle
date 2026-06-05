@@ -59,7 +59,10 @@ const SLOT_OFFSETS := {
 # layer), gloves go ABOVE armor (forward of body) but below the
 # weapon. Helm above gloves so it tops the figure.
 const SLOT_Z := {
-	"cloak":  0,
+	# Cloak draws BEHIND the base sprite. base is added at z=0 first;
+	# without z=-1 cloak the back-layer cloak floats in front of the
+	# bot. 2026-06-05 paperdoll z fix.
+	"cloak":  -1,
 	"boots":  1,
 	"armor":  2,
 	"gloves": 3,
@@ -74,7 +77,7 @@ const SLOT_Z := {
 # swaps the base sprite to the species-specific sprite (e.g. "minotaur"
 # → minotaur_male.png). Falls back to BASE_TEX_PATH (spriggan_female)
 # when species is empty or unknown — keeps existing call sites working.
-static func build_rig(items_db: Dictionary, equipped: Dictionary, species: String = "") -> Dictionary:
+static func build_rig(items_db: Dictionary, equipped: Dictionary, species: String = "", static_only: bool = false) -> Dictionary:
 	var rig := Node2D.new()
 	var base := Sprite2D.new()
 	base.centered = true
@@ -111,9 +114,31 @@ static func build_rig(items_db: Dictionary, equipped: Dictionary, species: Strin
 		# legendary weapon should look gold and pulse everywhere it
 		# appears, not just on the live bot.
 		_apply_rarity_modulate(sprite, equipped.get(slot_id, null), items_db)
-		_apply_rarity_glow(sprite, equipped.get(slot_id, null), items_db, slot_id)
-		_apply_hand_enchant(rig, equipped.get(slot_id, null), items_db, slot_id)
+		_apply_rarity_glow(sprite, equipped.get(slot_id, null), items_db, slot_id, static_only)
+		_apply_hand_enchant(rig, equipped.get(slot_id, null), items_db, slot_id, static_only)
+		# Per-instance hue/sat recolor — `inst.tint` is rolled at drop
+		# time (~30% chance) and drives item_recolor.gdshader. Was wired
+		# on inventory cells (item_cell.gd) but missed the paperdoll
+		# path until 2026-06-05, so a hue-shifted axe looked normal on
+		# the bot but tinted in inventory.
+		_apply_recolor(sprite, equipped.get(slot_id, null))
 	return {"rig": rig, "base": base, "slots": slots}
+
+# Apply the per-instance recolor shader to a paperdoll overlay sprite.
+# Handles the rarity-glow shader chain too: if the sprite already has a
+# glow material, we DON'T overwrite — the glow is a higher-priority
+# visual. Only stacks recolor on un-shadered sprites.
+# 2026-06-05.
+static func _apply_recolor(sprite: Sprite2D, inst: Variant) -> void:
+	if sprite == null or not is_instance_valid(sprite):
+		return
+	if sprite.material != null:
+		# Glow shader already attached — leave it. The glow shader
+		# emphasizes silhouette, recolor would conflict.
+		return
+	var mat: ShaderMaterial = UITheme.recolor_material_for(inst)
+	if mat != null:
+		sprite.material = mat
 
 const _ITEM_GLOW_SHADER := preload("res://assets/item_glow.gdshader")
 
@@ -132,7 +157,7 @@ static func _apply_rarity_modulate(sprite: Sprite2D, inst: Variant, items_db: Di
 # Sprite-localised glow on the weapon slot only — mirrors bot.gd. Uses
 # the alpha-edge shader so the glow follows the silhouette instead of
 # drawing a fat radial blob behind it.
-static func _apply_rarity_glow(sprite: Sprite2D, inst: Variant, items_db: Dictionary, slot_id: String) -> void:
+static func _apply_rarity_glow(sprite: Sprite2D, inst: Variant, items_db: Dictionary, slot_id: String, static_only: bool = false) -> void:
 	if slot_id != "weapon":
 		return
 	if inst == null or typeof(inst) != TYPE_DICTIONARY:
@@ -160,6 +185,11 @@ static func _apply_rarity_glow(sprite: Sprite2D, inst: Variant, items_db: Dictio
 	var thickness: float = slider_thickness * (1.20 if rarity == "legendary" or has_flavor else 1.0)
 	mat.set_shader_parameter("thickness", thickness)
 	sprite.material = mat
+	# Skip the looping pulse tween in static-only mode (paperdoll audit
+	# screen). 250+ cells × infinite-loop tweens was the click-latency
+	# culprit. Authoring 2026-06-04.
+	if static_only:
+		return
 	var pulse_amt: float = VideoSettings.tunable("glow_pulse_amount", 0.30)
 	var pulse := sprite.create_tween().set_loops()
 	pulse.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
@@ -183,7 +213,7 @@ const HAND_OFFSET_Y := 1.0
 # fixed hand offset, and mirrors automatically when the rig flips
 # facing. Mirrors bot.gd::_apply_hand_enchant_ambience so HUD /
 # Outpost / FX Tuner paperdolls match the live bot. Weapon slot only.
-static func _apply_hand_enchant(rig: Node2D, inst: Variant, items_db: Dictionary, slot_id: String) -> void:
+static func _apply_hand_enchant(rig: Node2D, inst: Variant, items_db: Dictionary, slot_id: String, static_only: bool = false) -> void:
 	if slot_id != "weapon":
 		return
 	if inst == null or typeof(inst) != TYPE_DICTIONARY:
@@ -210,6 +240,10 @@ static func _apply_hand_enchant(rig: Node2D, inst: Variant, items_db: Dictionary
 	var base_alpha: float = VideoSettings.tunable("hand_enchant_alpha", 0.30)
 	glow.modulate = Color(fc.r, fc.g, fc.b, base_alpha)
 	rig.add_child(glow)
+	# Skip the looping pulse tween in static-only mode (paperdoll audit
+	# screen). 2026-06-04.
+	if static_only:
+		return
 	var dim := Color(fc.r, fc.g, fc.b, base_alpha * 0.45)
 	var bright := Color(fc.r, fc.g, fc.b, base_alpha)
 	var pulse := glow.create_tween().set_loops()

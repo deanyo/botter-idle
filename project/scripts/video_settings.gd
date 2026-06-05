@@ -59,6 +59,11 @@ static func defaults() -> Dictionary:
 		"vsync": true,
 		"gfx_quality": "high",  # high | medium | low | custom
 		"gfx": gfx,
+		# HUD layout — combat/loot log can either render as a translucent
+		# overlay over the bottom-left of the play area (so the bag panel
+		# can use its full width for inventory) or be hidden entirely.
+		# UI polish 2026-06-04.
+		"hud_log_overlay": true,
 		# Continuous tunables for visuals that have a "how strong" knob,
 		# not just on/off. Live-applied where possible; some require the
 		# next gear refresh / floor build to pick up.
@@ -109,6 +114,11 @@ static func is_effect_enabled(effect: String) -> bool:
 	var d: Dictionary = load_settings()
 	var gfx: Dictionary = d.get("gfx", {})
 	return bool(gfx.get(effect, true))
+
+static func hud_log_overlay() -> bool:
+	# Static convenience for HUD code: should the in-run combat/loot log
+	# render as a translucent overlay (true) or be hidden (false)?
+	return bool(load_settings().get("hud_log_overlay", true))
 
 static func load_settings() -> Dictionary:
 	var d: Dictionary = defaults()

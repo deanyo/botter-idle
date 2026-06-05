@@ -46,6 +46,11 @@ const STATUSES := {
 		"label": "Stunned", "desc": "Skips next attack." },
 	"stealthy": { "icon": "ward.png",   "tint": Color(0.4, 0.4, 0.8, 0.7), "pulse": false, "z": 0,
 		"label": "Stealthy", "desc": "Next attack lands a +25% bonus." },
+	# 2026-06-04 spell expansion. Blinded = miss chance increase from
+	# Sandblast's Blinding Grit affix. Read by Actor.attempt_attack
+	# alongside dodge math; 30% miss while up.
+	"blinded":  { "icon": "ward.png",   "tint": Color(0.85, 0.75, 0.30, 0.85), "pulse": true, "z": 9,
+		"label": "Blinded", "desc": "30% chance to miss attacks." },
 }
 
 # Enemy-id substrings that classify each holy/bane category. The

@@ -4,10 +4,219 @@ Point-in-time snapshot of what's actually shipping. Updated as we go. The
 durable rules and process live in `CLAUDE.md`; the roadmap and open work
 items live in `TODO.md`.
 
-Last refresh: 2026-06-04 (combat pivot landed). Autocast spells +
-Str/Dex/Int + density bump + base-attack weapon procs + run-survives-
-death. Bot is now a VS-style autobattler with 5 autocast spell slots
-on top of the existing melee + gear loop.
+Last refresh: 2026-06-04 (perf + spell visuals + portal theme beat).
+Autocast spells + Str/Dex/Int + density bump + base-attack weapon
+procs + run-survives-death. Bot is now a VS-style autobattler with 5
+autocast spell slots on top of the existing melee + gear loop.
+
+## Capsule — bespoke per-branch bosses (2026-06-04)
+
+24 hand-authored boss enemies — one bespoke fight per biome. Replaces
+the prior "strongest pool member, prefixed Greater" finale that made
+every branch climax feel similar.
+
+* New `boss_id` field on each biome in `data/biomes.json`. When set,
+  `dungeon._spawn_enemies` uses it directly on the boss floor instead
+  of running the legacy pool-pick. Pool-pick path retained as a
+  fallback for biomes without a `boss_id` (or future mods).
+* 24 new boss entries in `data/enemies.json` (tier 1 → 5), one per
+  biome:
+  - **T1** Sigmund (dungeon), Eustachio (dungeon_dark), Blork the Orc (mines)
+  - **T2** Kirke (lair), Erolcha (forest), Grum (orc), Psyche the Witch (temple)
+  - **T3** Aizul (snake), Ilsuiw the Tideborn (shoals), the Lernaean Hydra (swamp), Jorgrun the Spider (spider), Gastronok (hive)
+  - **T4** Frederick (vaults), Boris the Lich (crypt), Menkaure the Pharaoh (tomb), the Enchantress (elf), Polyphemus (depths)
+  - **T5** Azrael the Inferno (forge), Antaeus the Cold (glacier), Dissolution (slime), Killer Klown (labyrinth), Mnoleg (abyss), Cerebov (pandemonium), Tiamat the Many (zot)
+* 24 sprites synced from DCSS `monster/unique/` into
+  `project/assets/tiles/enemies/boss_*.png`.
+* `_spawn_branch_boss` now keeps the authored name verbatim for
+  bespoke bosses (id prefix `boss_`). The legacy pool-pick path still
+  wraps as "Greater X" so the player reads "this is a boss-tier
+  version of a normal mob."
+
+## Capsule — critical playtest bug triage (2026-06-04)
+
+Three reported bugs from the 2026-06-02 playtest, all root-caused
+and fixed in one pass:
+
+* **Mobs/chests stack on a single tile.** Spawn pickers had no
+  occupancy tracking, so chests/altars/fountains/portals/packmates
+  rolled the same cells. New `_spawn_used_cells` set on dungeon.gd
+  populated incrementally; `_random_walkable_cell_far_from_bot` +
+  `_walkable_cell_near` now skip used cells and mark picks. Fallback
+  also rewritten: was top-25%-farthest sorted (deterministic clumping
+  in one corner), now random pair with farther-of-two pick.
+* **Invisible stairs.** `MapRenderer._stamp_decor_marks` allowed
+  vault decor on `T_STAIRS_DOWN` cells, overwriting the stair
+  sprite in the overlay layer. Now decor stamps onto plain `T_FLOOR`
+  only.
+* **Floor tiles drawing on top of monsters.** Heat-haze layer
+  (z=50) + water-shimmer layer (z=49) were ABOVE actor_layer (z=10),
+  painting over any monster on a lava/water cell. Dropped to z=3 and
+  z=2 — between tile-overlay z=1 and actor_layer z=10.
+
+## Capsule — spell archetype expansion (2026-06-04)
+
+5 new autocast spell archetypes + 5 unique-tier named items + 6 new
+archetype affixes. The spell roster goes from 5 archetypes → 10.
+
+* **`spell_magic_dart`** — int, very short CD (0.7s), low damage (8-11),
+  range 9. The "filler" spell that pops constantly. **Splintering
+  Volley** affix splits each dart into 3 weaker side-darts on cast.
+  Unique: **Splinterfang** (epic).
+* **`spell_iron_shot`** — str, CD 3.5s, heavy 28-38 dmg, slow projectile
+  (220 px/s) that pierces every body in its path with 25%-per-hit
+  damage falloff. **Earthbreaker** affix slows pierced enemies for
+  1.5s. Unique: **Ironcrash** (epic).
+* **`spell_sandblast`** — str, CD 2.6s, short 3-cell cone (45° half-
+  angle) at 26-34 dmg. **Blinding Grit** affix applies a 30% miss-
+  chance debuff to all hit enemies for 2s. Unique: **Veil of Grit**
+  (epic).
+* **`spell_drain`** — int, CD 2.4s, dark-element homing projectile
+  18-26 dmg that heals the bot for 35% of damage dealt regardless
+  of gear lifesteal. **Ravenous** affix additionally adds a 4s
+  hasted buff on each hit so chains snowball. Unique: **Soulhunger**
+  (legendary).
+* **`spell_shatter`** — str, CD 5s, radial physical AoE 24-34 dmg
+  with brief 0.6s stun on hit. **Aftershock** affix fires a second
+  smaller pulse 0.4s after the first at half damage / 70% radius.
+  Unique: **Earthsong** (legendary).
+
+Wiring:
+* `SpellSystem._dispatch_fire` extended with 5 new branches.
+* `SpellSystem._fold_inst_affixes_into` merges per-instance archetype
+  flag affixes (implicit + rolled) into the dispatch-side item view
+  so fire functions read flags off `item.get("spell_<flag>", false)`
+  uniformly. Fixes the prior gap where existing archetype affixes
+  (Bleeding Edge, Comet Trail, etc.) were declared but never read.
+* `Projectile` extended: `piercing` + `pierce_falloff` + `pierce_apply_status`
+  for Iron Shot; `lifesteal_pct` + `lifesteal_target` + `lifesteal_buff_bot`
+  for Drain.
+* `Actor.attempt_attack` reads new `blinded` status (30% miss chance)
+  for Sandblast's Blinding Grit affix.
+* `StatusOverlay.STATUS_DEFS` adds `blinded` entry.
+* 5 new entries in `data/affixes.json`: splintering_volley,
+  earthbreaker, blinding_grit, ravenous, aftershock.
+* 10 new `data/items.json` entries (5 commons + 5 named uniques).
+* Sprites synced from DCSS source (`gui/spells/conjuration/`,
+  `gui/spells/earth/`, `gui/spells/necromancy/`) into
+  `project/assets/tiles/items/spells/` + `projectiles/`.
+* **Sprite variety pass.** Previously all 25 spell items reused the
+  same 5 spell-tab icons (one per archetype). Now each spell item's
+  tile is picked from a flavor + rarity matrix:
+  - **Commons** = scrolls (`item/scroll/i-*.png`) — 35 unique scroll
+    sprites available; flavor → scroll mapping (fire→immolation,
+    cold→fog, holy→holy_word, dark→torment, poison→poison, etc.).
+  - **Uncommon/rare** = colored books (`item/book/<color>.png`) —
+    fire→red, cold→light_blue, holy→gold, poison→dark_green,
+    dark→dark_blue, arcane→purple, earth→copper, etc.
+  - **Epic/legendary** = distinctive specials (`book_of_the_dead`,
+    `manual1`, `manual2`, `metal_*`, `parchment`) so uniques stand
+    out at-a-glance in inventory.
+  All 35 spell items now have unique-or-themed visuals; ~14 distinct
+  sprites in active use vs 5 before.
+
+## Capsule — perf + spell visuals + portal theme (2026-06-04)
+
+Late-Phase-D + perf-pass + spell visual refinements:
+
+* **Dungeon load latency.** First-time deploy ~50-100ms faster, repeat
+  deploys ~30-60ms faster. New `ItemsDb` class caches items.json /
+  enemies.json / monster_mods.json once per Godot session; `main._ready`
+  warms the cache during offline-progress so the first deploy is hot.
+  `dungeon._ready` defers heavy work via `call_deferred` so the loading
+  curtain has a chance to paint before blocking. New
+  `LoadingCurtain.hold_until_signal(obj, signal_name)` keeps the curtain
+  up exactly as long as `floor_started` takes to fire — no
+  fixed-duration over/undershoot.
+* **Spell cooldown ring overlay.** Each of the 5 HUD spell cells now
+  shows a radial sweep ring driven by `bot.spell_cooldowns` +
+  `SpellSystem.cooldown_fraction`. Ring goes full → empty as cooldown
+  ticks down. Driven from `dungeon._update_biome_hud` each frame; only
+  redraws when fraction changes by ≥0.005.
+* **Spinning Axes look like real spinning axes.** Bigger sprite scale
+  (0.7 → 1.15), per-axe self-spin (rotates about its own center at
+  14 rad/s), trailing glow sprite ~0.18 rad behind each axe so the
+  motion arc is visible. User feedback: "axes don't look great" → axes
+  now read as whirling weapons instead of icons tracking a circle.
+* **AoE spell sprite-driven impact.** Frost Nova scatters 12
+  ice_shatter sprites along the expanding ring perimeter. Chain
+  Lightning drops a magic_shimmer sprite at every chain node. Holy
+  Beam scatters 6 gold_sparkle sprites along the cone. All ride the
+  same lifetime tween as the abstract shape, so the visual feels
+  unified.
+* **Run report unlock banner.** Beat 10 from the gameplay-loop overhaul
+  — when a run unlocks new branches, the run report shows a slow-
+  pulsing gold "BRANCHES UNLOCKED: X, Y" banner under the title.
+  `main._on_deploy` snapshots `unlocked_branches` at run start and
+  diffs at end; `run_report._install_unlock_banner` lazily creates the
+  Label. Plus title polish: bigger font (32→56), centered, with a
+  victory/defeat-colored underline strip.
+* **Character-create stat telegraphing.** Species preview pane now
+  leads with a STR / DEX / INT row in the spell-class colors, plus a
+  starter-spell line showing which spell the species ships with and
+  its primary stat color. Players see the build identity at pick time.
+* **Portal-wide theme unification.** All 5 editors (atlas viewer,
+  biome editor, item editor, affix editor, drop tuning) + index page
+  now share a single `tools/portal.css` with the warm amber / OLED
+  palette + button/tooltip widgets. Atlas viewer also got races /
+  portals / gods quick-filter chips, slide-in detail panel with copy
+  buttons, multi-root tile path resolver, keyboard shortcuts.
+
+
+
+## Capsule — UI polish + duplication fix (2026-06-04)
+
+Layout, theme, and one nasty equip bug:
+
+* **Loading curtain on scene swaps.** `LoadingCurtain` autoload paints
+  an amber-pulse + arc-spinner over the full viewport during every
+  scene transition. Synchronous swap is preceded by a two-frame await
+  for the heavy `DUNGEON_SCENE.instantiate()` path so the curtain
+  visibly paints BEFORE the freeze (was: 1s freeze, then curtain
+  flash). `show_for_swap` is no-op-aware when the curtain is already
+  up so callers can paint it manually for heavy loads.
+* **OLED-pure-black palette.** Every panel BG is alpha=1.0 (was
+  0.85). UITheme owns BG_DEEP / BG_PANEL / BG_OVERLAY / BORDER_DIM /
+  BORDER_ACCENT. Minimap mm_bg is fully transparent — backplate
+  blends with sidebar.
+* **Responsive HUD + outpost.** `UILayout` helper class (sidebar
+  width clamped 320..480 of viewport, paperdoll pane 280..520).
+  Outpost subscribes to `subscribe_resize` (250ms debounced) and
+  rebuilds on every viewport size change. Spell row + paperdoll
+  bottom row reserved space prevents overflow under the bag panel.
+* **Combat-log overlay toggle.** Loot/combat log now renders as a
+  translucent bottom-left overlay over the play area (top→bottom
+  alpha gradient — old messages fade, newest reads cleanly). Bag
+  panel uses the full bottom strip for inventory. Toggle in Video
+  Options → "Loot/combat log overlay."
+* **Inventory row clipping fix.** Scroll height rounds down to a
+  whole-row multiple so the last visible row is never half-cut.
+* **Default button focus + hover styleboxes.** `UITheme.style_button`
+  + `style_all_buttons(root)` apply a consistent amber-accent normal /
+  hover-wash / pressed / 2px-gold focus / dim-disabled style across
+  every screen (main menu, outpost, run report, pause, video
+  options, fx tuner, char create, shop). Replaces default Godot
+  flat-grey hover.
+* **Mac modifier-key tracking.** `UILayout.shift_held()` /
+  `alt_held()` poll a static flag fed by InputEventKey.shift_pressed
+  + keycode-on-keydown — works around Mac `Input.is_key_pressed`
+  unreliability for pure-modifier presses. Cmd ⌘ counts as
+  alt-equivalent for the alt-extended tooltip.
+* **Drag duplication root cause.** `dungeon._hud_drag_equip_from_inv`
+  no-op detection was `bot.equipped[dst_slot] != inst` but
+  `_equip_to_explicit_slot` deep-duplicates the inst into the slot
+  — so the comparison was ALWAYS true on a successful equip into an
+  empty slot, leaving the original in inventory. Visible as "I
+  dropped a flail and it's still in my bag." Now snapshots
+  prev_instance_id and treats the equip as a no-op only when
+  displaced is empty AND the slot's instance_id is unchanged.
+* **Click duplication.** HUD inv cells now carry an `instance_id`
+  meta. `_on_hud_inv_left_click` calls `instance_at_segment_idx` on
+  the dungeon to verify the (seg_idx, item_idx) still resolves to
+  the same item before equipping. Stale-cell rapid-clicks no-op
+  cleanly instead of equipping whatever slid into that slot.
+
+
 
 ## Capsule — combat pivot (2026-06-04)
 
