@@ -349,14 +349,17 @@ func _on_boss_killed(branch_id: String) -> void:
 		if not unlocked.has(sib):
 			unlocked.append(sib)
 			added.append(sib)
-	# Next-tier unlock requires EVERY tier-N branch to have at least one
-	# boss kill recorded. Stricter than the doc's "any 2" but matches the
-	# user's "you should have to beat them all" call. Encourages back-
-	# tracking through earlier branches with their freshly-rolled mods.
+	# Next-tier unlock requires every tier-N branch to be cleared TWICE.
+	# 2026-06-05: was 1 kill per branch. The user wants the dungeon to
+	# feel meaningful — fully gearing up after a single run is too fast.
+	# Two clears means players naturally re-roll loot through each branch
+	# and the next tier unlocks when their build can survive a known
+	# environment, not on a lucky one-shot.
+	const KILLS_PER_BRANCH_TO_UNLOCK_NEXT_TIER: int = 2
 	if tier < 5:
 		var all_cleared: bool = true
 		for sib in _TIER_BRANCHES.get(tier, []):
-			if int(bosses_killed.get(sib, 0)) <= 0:
+			if int(bosses_killed.get(sib, 0)) < KILLS_PER_BRANCH_TO_UNLOCK_NEXT_TIER:
 				all_cleared = false
 				break
 		if all_cleared:

@@ -258,7 +258,10 @@ func _start_run() -> void:
 	run_vaults_stamped = []
 	run_biomes_visited = []
 	run_dropped_uniques.clear()
-	revives_remaining = int(save.get("max_revives", 3))
+	# Revives removed 2026-06-05 — death = run over. Save may still
+	# carry max_revives=3 from older versions; force to 0 here so old
+	# saves don't get the legacy 3-retreat behaviour.
+	revives_remaining = 0
 	retreats_this_run = 0
 	# Cache loot filter rank for the run — LootDrop.should_skip reads it
 	# in the AI hot path so we don't want a disk hit there.
@@ -1892,7 +1895,10 @@ func _on_enemy_died(actor: Actor) -> void:
 		Effects.blood_splat(actor_layer, kill_pos)
 	bot.gain_xp(e.xp_reward)
 	var gold_mult: float = RunModifiers.sum_effect(active_modifiers, "gold_mult", 1.0)
-	var gold_drop: int = int(round(float(rng.randi_range(1, 5) + current_floor) * gold_mult))
+	# Per-mob gold halved 2026-06-05 — old (1-5 + floor) ≈ 4-11g/mob with
+	# 100+ mobs/floor flooded gold faster than the shop should allow.
+	# Bosses + rare-tier packs still drop their own bigger pools below.
+	var gold_drop: int = int(round(float(rng.randi_range(1, 3) + current_floor / 2) * gold_mult))
 	bot.gold += gold_drop
 	kills[e.enemy_id] = kills.get(e.enemy_id, 0) + 1
 	loot_log.append("%s slain (+%d gold, +%d xp)" % [e.display_name, gold_drop, e.xp_reward])

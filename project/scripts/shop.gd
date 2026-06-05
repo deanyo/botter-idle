@@ -375,15 +375,20 @@ func _roll_stock(rng: RandomNumberGenerator, mod_def: Dictionary) -> Array:
 	var ids_pool: Array = items_db.keys()
 	if ids_pool.is_empty():
 		return stock
-	# Bias rarity by player level: level 5 ≈ uncommon mostly, level 15 rare, level 25 epic.
+	# Bias rarity by player level: level 5 ≈ uncommon mostly, level 15
+	# rare, level 25 epic. Shop should NOT be the source of legendaries
+	# — those should mostly come from boss / rare-pack drops. 2026-06-05
+	# tightened: legendary base 2% → 0.5%, level scaling 1.5%/lvl → 0.6%/lvl,
+	# capped at level 30 effective so endgame doesn't trivialise.
 	var lvl: int = int(state.get("level", 1))
+	var eff_lvl: int = mini(lvl, 30)
 	for i in SHOP_STOCK_SIZE:
-		var r_floor: float = rng.randf() - float(lvl) * 0.015 - float(quality_bonus) * 0.10
+		var r_floor: float = rng.randf() - float(eff_lvl) * 0.006 - float(quality_bonus) * 0.10
 		var rarity: String
-		if r_floor < 0.02: rarity = "legendary"
-		elif r_floor < 0.10: rarity = "epic"
-		elif r_floor < 0.30: rarity = "rare"
-		elif r_floor < 0.65: rarity = "uncommon"
+		if r_floor < 0.005: rarity = "legendary"
+		elif r_floor < 0.05: rarity = "epic"
+		elif r_floor < 0.20: rarity = "rare"
+		elif r_floor < 0.55: rarity = "uncommon"
 		else: rarity = "common"
 		var pool: Array = []
 		for id in ids_pool:
@@ -447,10 +452,13 @@ func _sell_price(inst: Dictionary, item: Dictionary) -> int:
 	return int(round(float(base) * mult))
 
 func _buy_price(item: Dictionary) -> int:
-	# Buy price: ~5× sell base so the gold sink is meaningful.
+	# Buy price: scales steeply with rarity so legendaries are a real
+	# gold sink, not a casual purchase. SALVAGE_VALUES = 2/6/18/60/200,
+	# multiplied by 15 → 30/90/270/900/3000g. 2026-06-05: was 10×, the
+	# user reported gold flowed too easily into top-tier shop items.
 	# Modifier buy_mult multiplies (less-than-1 = discount).
 	var rarity: String = String(item.get("rarity", "common"))
-	var base: int = int(SALVAGE_VALUES.get(rarity, 1)) * 10
+	var base: int = int(SALVAGE_VALUES.get(rarity, 1)) * 15
 	var mult: float = 1.0
 	var mod_def: Dictionary = _modifier_def(String(state["shop"].get("modifier_id", "")))
 	if _modifier_applies(mod_def, item):

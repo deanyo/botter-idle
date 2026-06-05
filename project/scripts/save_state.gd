@@ -345,10 +345,10 @@ static func _default() -> Dictionary:
 		# Per-branch boss-kill counts. Drives the "clear every tier-N
 		# boss to unlock tier-(N+1)" progression rule. {branch_id: count}.
 		"bosses_killed": {},
-		# Death retreat: max revives per run. On HP=0 the bot respawns at
-		# floor 1 of the current branch instead of run-end, until revives
-		# run out. Scaling later via bot upgrade ranks / gear affixes.
-		"max_revives": 3,
+		# Death = run over. Was 3-revive retreats; user removed in the
+		# 2026-06-05 balance pass to make per-run gear decisions matter.
+		# Field kept for save-compat with old saves that still read it.
+		"max_revives": 0,
 		# Gear bloat controls. loot_filter: bot walks past loot below this
 		# rarity (default common = everything goes in the bag). inventory_cap:
 		# hard ceiling triggering auto-salvage when exceeded.
