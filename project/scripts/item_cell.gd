@@ -112,8 +112,9 @@ func _ready() -> void:
 	# Bottom-right flavor / meta-rarity badge — DCSS i-*.png pictogram
 	# tinted by the item's primary flavor. Multi-flavor items fade-cycle
 	# through their list so a Vampiric Fire weapon advertises both.
-	# 2026-06-05.
-	var badge_size: int = max(12, int(cell_size * 0.34))
+	# 2026-06-05 — bumped 0.34 → 0.50 (~32px on a 64px cell) so the
+	# pictogram silhouettes read at a glance instead of being a tiny dot.
+	var badge_size: int = max(18, int(cell_size * 0.50))
 	_badge = TextureRect.new()
 	_badge.size = Vector2(badge_size, badge_size)
 	_badge.position = Vector2(cell_size - badge_size - 1, cell_size - badge_size - 1)

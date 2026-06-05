@@ -689,7 +689,7 @@ const _SPRITE_LADDERS := {
 		             "res://assets/tiles/spells/effects/crystal_spear3.png",
 		             "res://assets/tiles/spells/effects/crystal_spear5.png",
 		             "res://assets/tiles/spells/effects/crystal_spear7.png"],
-		"":         ["res://assets/tiles/projectiles/iron_shot.png",
+		"":         ["res://assets/tiles/spells/effects/iron_shot0.png",
 		             "res://assets/tiles/spells/effects/iron_shot3.png",
 		             "res://assets/tiles/spells/effects/iron_shot5.png",
 		             "res://assets/tiles/spells/effects/iron_shot7.png"],

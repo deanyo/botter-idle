@@ -4228,14 +4228,14 @@ func _spawn_packs(pool: Array) -> void:
 	# the autocast layer always has targets and the late-floor screen
 	# reads VS-like. Capped at 350 to keep the actor-tick budget sane.
 	#
-	# 2026-06-05 retune: tier-scale density DOWN at high tiers. Per-tier
-	# grind showed T3+ runs averaging 13-17min ingame (way over 5-8min
-	# target) because the bot's late-game gear one-shot the 270-mob T5
-	# floors. Cut by 0.85^(tier-1): T1 ×1.00, T2 ×0.85, T3 ×0.72, T4 ×0.61,
-	# T5 ×0.52. Combined with the boosted TIER_SCALE per-mob HP/ATK,
-	# high-tier floors stay challenging but finish faster.
+	# 2026-06-05 retune (v2): sharper density decay 0.85 → 0.78 because
+	# T4 runs at v3 averaged 23.5min ingame (the bot's high HP pool meant
+	# it survived 270-mob floors all the way to the boss). New curve:
+	# T1 ×1.00, T2 ×0.78, T3 ×0.61, T4 ×0.47, T5 ×0.37. Combined with
+	# the boosted TIER_SCALE per-mob HP/ATK, high-tier floors stay
+	# challenging but finish in the 5-8min ingame target window.
 	var src_t: int = int(current_biome.get("tier", 1))
-	var density_decay: float = pow(0.85, float(maxi(src_t - 1, 0)))
+	var density_decay: float = pow(0.78, float(maxi(src_t - 1, 0)))
 	var target_total: int = int(round((90.0 + float(current_floor) * 30.0) * count_mult * density_decay))
 	target_total = mini(target_total, 350)
 	if target_total <= 0:
