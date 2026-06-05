@@ -184,20 +184,10 @@ func _make_variant() -> Dictionary:
 	if _all_bases.is_empty() or _FLAVORS.is_empty():
 		return {}
 	var parent: Dictionary = _all_bases[_rng.randi_range(0, _all_bases.size() - 1)]
-	var flavor: Array = _FLAVORS[_rng.randi_range(0, _FLAVORS.size() - 1)]
-	# Skip flavors that would fight an existing default_tint on the
-	# parent (e.g. parent already "Crimson" in design — applying
-	# another tint reads muddy). We fall back to inverted/prismatic/
-	# colorize since those override the underlying color.
-	var parent_has_tint: bool = typeof(parent.get("default_tint", null)) == TYPE_DICTIONARY
+	var flavor: Array = _pick_flavor_for(parent)
+	if flavor.is_empty():
+		return {}
 	var mode: String = String(flavor[6])
-	if parent_has_tint and mode == "normal":
-		# Re-roll once to a non-normal flavor; if that fails, give up.
-		var alt: Array = _FLAVORS[_rng.randi_range(0, _FLAVORS.size() - 1)]
-		if String(alt[6]) == "normal":
-			return {}
-		flavor = alt
-		mode = String(flavor[6])
 	var suffix: String = String(flavor[0])
 	var prefix: String = String(flavor[1])
 	# Build id — strip parent's existing flavor suffix if any (to avoid
@@ -221,6 +211,9 @@ func _make_variant() -> Dictionary:
 			"target_rgb": [float(rgb[0]), float(rgb[1]), float(rgb[2])],
 		}
 	elif mode == "prismatic":
+		# `prismatic_speed` shader uniform is set via global default
+		# (60°/sec) — no per-instance override yet. We still set a
+		# starting hue here so non-animated frames are at least varied.
 		tint = {"hue": _rng.randf_range(0.0, 360.0), "sat": 1.0, "mode": "prismatic"}
 	elif mode == "inverted":
 		tint = {"hue": _rng.randf_range(float(flavor[2]), float(flavor[3])), "sat": _rng.randf_range(float(flavor[4]), float(flavor[5])), "mode": "inverted"}
@@ -271,6 +264,65 @@ func _make_variant() -> Dictionary:
 	def["_parent_name"] = parent_name
 	def["_flavor_suffix"] = suffix
 	return def
+
+# Pick a flavor that pairs well with the given parent. Lessons from
+# the user's keeper batch (2026-06-05, ~10% keep rate baseline):
+#
+# - Parents with an authored default_tint clash with `normal` flavors —
+#   the layered hue rotations read as muddy. Force these onto modes
+#   that override (inverted / prismatic / colorize / shimmer).
+# - Colorize flavors with light targets (pale, bone) on already-light
+#   parents read as "no change". Skip those pairs.
+# - Colorize flavors with dark targets (obsidian, umbral) on already-
+#   dark parents likewise wash out. Skip.
+# - Conflicting damage_type tags (a "fire" flavor on a parent already
+#   tagged "cold", etc) read as theme confusion. Reject.
+#
+# We try up to 8 picks; if none qualify, return empty so the generator
+# moves on.
+func _pick_flavor_for(parent: Dictionary) -> Array:
+	var parent_has_tint: bool = typeof(parent.get("default_tint", null)) == TYPE_DICTIONARY
+	var parent_tags: Array = parent.get("flavor_tags", [])
+	var parent_id: String = String(parent.get("id", ""))
+	# Light/dark inference from id substrings — DCSS tile names mostly
+	# encode this. Cheaper than sampling pixels.
+	var id_lower: String = parent_id.to_lower()
+	var parent_is_light: bool = id_lower.contains("white") or id_lower.contains("silver") or id_lower.contains("ivory") or id_lower.contains("pale")
+	var parent_is_dark: bool = id_lower.contains("black") or id_lower.contains("shadow") or id_lower.contains("obsidian") or id_lower.contains("dark")
+	# Damage-type tag conflicts — flavor adds X, parent already has
+	# anti-X tag.
+	var tag_conflicts: Dictionary = {
+		"fire": ["cold"], "cold": ["fire"],
+		"holy": ["dark", "shadow", "vampiric"],
+		"dark": ["holy"], "shadow": ["holy"],
+	}
+	for attempt in 8:
+		var f: Array = _FLAVORS[_rng.randi_range(0, _FLAVORS.size() - 1)]
+		var mode: String = String(f[6])
+		var added_tag: String = String(f[7])
+		# Tinted parents reject `normal` flavors (muddy).
+		if parent_has_tint and mode == "normal":
+			continue
+		# Colorize light/light or dark/dark wash-out.
+		if mode == "colorize" and typeof(f[8]) == TYPE_ARRAY:
+			var rgb: Array = f[8]
+			var luma: float = 0.30 * float(rgb[0]) + 0.59 * float(rgb[1]) + 0.11 * float(rgb[2])
+			if parent_is_light and luma > 0.7:
+				continue
+			if parent_is_dark and luma < 0.3:
+				continue
+		# Tag conflicts.
+		if added_tag != "" and tag_conflicts.has(added_tag):
+			var bad: Array = tag_conflicts[added_tag]
+			var conflict_found: bool = false
+			for t in parent_tags:
+				if String(t) in bad:
+					conflict_found = true
+					break
+			if conflict_found:
+				continue
+		return f
+	return []
 
 # Wrap hue ranges that cross 0/360 (e.g. crimson 350→15 means red).
 func _wrapped_hue(h_min: float, h_max: float) -> float:
@@ -379,7 +431,14 @@ func _build_preview_pair(item_def: Dictionary, slot_id: String, _is_new: bool) -
 	inv_sub.size = Vector2i(_ITEM_PREVIEW_PX, _ITEM_PREVIEW_PX)
 	inv_sub.disable_3d = true
 	inv_sub.transparent_bg = true
-	inv_sub.render_target_update_mode = SubViewport.UPDATE_ONCE
+	# Animated tint modes (prismatic, shimmer) need UPDATE_ALWAYS so
+	# the inventory + paperdoll cells stay in lockstep — UPDATE_ONCE
+	# captured each at slightly different TIME values, so a prismatic
+	# inventory icon would render orange while the paperdoll rendered
+	# green at the same instant. Static modes still get UPDATE_ONCE
+	# for perf — 100 cells × 2 viewports running 60fps was visibly
+	# wasteful for non-animated previews. 2026-06-05 user catch.
+	inv_sub.render_target_update_mode = _viewport_mode_for(item_def)
 	inv_holder.add_child(inv_sub)
 	var inv_root := Node2D.new()
 	inv_sub.add_child(inv_root)
@@ -410,7 +469,7 @@ func _build_preview_pair(item_def: Dictionary, slot_id: String, _is_new: bool) -
 		pd_sub.size = Vector2i(_ITEM_PREVIEW_PX, _ITEM_PREVIEW_PX)
 		pd_sub.disable_3d = true
 		pd_sub.transparent_bg = true
-		pd_sub.render_target_update_mode = SubViewport.UPDATE_ONCE
+		pd_sub.render_target_update_mode = _viewport_mode_for(item_def)
 		pd_holder.add_child(pd_sub)
 		# build_rig wants both a base item DB and an equipped dict.
 		# Ours: temporarily inject the new def into the db so the rig
@@ -439,6 +498,19 @@ func _build_preview_pair(item_def: Dictionary, slot_id: String, _is_new: bool) -
 			rig.position = Vector2(_ITEM_PREVIEW_PX * 0.5, _ITEM_PREVIEW_PX * 0.6)
 			pd_sub.add_child(rig)
 	return col
+
+# Pick UPDATE_ALWAYS for animated tint modes so inventory + paperdoll
+# stay synced (prismatic hue cycles via shader TIME — UPDATE_ONCE
+# would freeze each cell at a different cycle phase). Static modes
+# (normal / inverted / colorize / no tint) get UPDATE_ONCE so the
+# 100 × 2 viewport grid doesn't burn GPU on idle frames.
+func _viewport_mode_for(item_def: Dictionary) -> int:
+	var t: Variant = item_def.get("default_tint", null)
+	if typeof(t) == TYPE_DICTIONARY:
+		var mode: String = String((t as Dictionary).get("mode", ""))
+		if mode == "prismatic" or mode == "shimmer":
+			return SubViewport.UPDATE_ALWAYS
+	return SubViewport.UPDATE_ONCE
 
 func _stylebox_for(rarity: String, selected: bool) -> StyleBoxFlat:
 	var sb := StyleBoxFlat.new()
