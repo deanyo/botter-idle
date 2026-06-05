@@ -320,6 +320,105 @@ static func flavor_color_for(flavor_tags: Array) -> Color:
 			return FLAVOR_COLORS.get(tag, Color(0, 0, 0, 0))
 	return Color(0, 0, 0, 0)
 
+# --- Overlay-icon badges --------------------------------------------------
+# Inventory cells get a tiny corner badge based on the item's flavor /
+# meta-rarity / spell-status. Same DCSS i-*.png pictogram used for many
+# different meanings — TINT carries the difference (skull green = poison,
+# skull red = vampiric, skull purple = death, etc). Lets us reuse 26
+# pictogram icons across hundreds of item meanings. 2026-06-05.
+const _BADGE_BASE := "res://assets/tiles/items/spells/scrolls/"
+
+# Priority-ordered map: flavor tag → (icon stem, optional color override).
+# When override is "" the badge tint falls back to FLAVOR_COLORS[tag] so
+# the same i-torment.png reads green for poison, red for vampiric, etc.
+const _FLAVOR_BADGE := {
+	# meta-rarity overrides — handled separately, see badge_for_item.
+	# Wired-mechanic flavors first.
+	"vampiric":   "i-torment",            # skull → red
+	"fire":       "i-immolation",         # flame → orange
+	"cold":       "i-fog",                # mist → cyan
+	"holy":       "i-holy_word",          # cross → gold
+	"poison":     "i-poison",             # flask → green
+	"thunderous": "i-noise",              # wave → electric blue
+	"lightning":  "i-noise",
+	"dark":       "i-torment",            # skull → purple (different tint than vampiric)
+	"brutal":     "i-immolation",         # flame → red
+	"arcane":     "i-magic_mapping",      # eye → purple
+	# Defensive flavors get distinct icons.
+	"fortified":  "i-enchant_armour",
+	"warding":    "i-remove_curse",
+	"regen":      "i-recharging",
+	"stealth":    "i-amnesia",
+	"swiftness":  "i-blinking",
+	"footwork":   "i-blinking",
+	"flying":     "i-blinking",
+	# Other-utility flavors.
+	"vision":     "i-identify",
+	"wisdom":     "i-magic_mapping",
+	"fortune":    "i-acquirement",
+	"faith":      "i-holy_word",
+	"acrobat":    "i-blinking",
+	"death":      "i-torment",
+	"earth":      "i-noise",
+	"demon":      "i-unholy_creation",
+	"crystal":    "i-fog",
+	"dragon_bane":"i-fear",
+	"slaying":    "i-vulnerability",
+	"psychic":    "i-fear",
+	"sound":      "i-noise",
+	"lordly":     "i-holy_word",
+	"willpower":  "i-magic_mapping",
+	"elemental":  "i-immolation",
+	"rampaging":  "i-fear",
+	"ponderous":  "i-curse_armour",
+	"dual":       "i-brand-weapon",
+	"fire_res":   "i-immolation",
+	"cold_res":   "i-fog",
+	"poison_res": "i-poison",
+}
+
+# Meta-rarity badges (Primal / Ancient) take priority over flavor badges
+# since they're visually distinctive item-overhaul promotions.
+const _META_BADGE := {
+	"primal":  ["i-curse_weapon", Color(1.00, 0.30, 0.30)],   # cursed-red glyph
+	"ancient": ["i-acquirement", Color(1.00, 0.85, 0.30)],    # treasure gold
+}
+
+# Returns an Array of badge dicts {"icon": String, "tint": Color}.
+# Order is highest-priority first (meta_rarity wins over flavor; within
+# flavors, _FLAVOR_PRIORITY rules). Cap at 3 — past that the badge cycle
+# moves too fast to read. Empty array when no badge applies.
+# 2026-06-05 — multi-badge: cells fade between them on a loop so a
+# Vampiric Fire weapon shows BOTH a red skull + an orange flame.
+static func badges_for_item(item: Dictionary, inst: Variant) -> Array:
+	if typeof(item) != TYPE_DICTIONARY or item.is_empty():
+		return []
+	var out: Array = []
+	# Meta-rarity always leads.
+	if typeof(inst) == TYPE_DICTIONARY:
+		var meta: String = String(inst.get("meta_rarity", ""))
+		if _META_BADGE.has(meta):
+			var entry: Array = _META_BADGE[meta]
+			out.append({
+				"icon": _BADGE_BASE + String(entry[0]) + ".png",
+				"tint": entry[1],
+			})
+	var tags: Array = combined_flavor_tags(item, inst)
+	for tag in _FLAVOR_PRIORITY:
+		if tag in tags and _FLAVOR_BADGE.has(tag):
+			out.append({
+				"icon": _BADGE_BASE + String(_FLAVOR_BADGE[tag]) + ".png",
+				"tint": FLAVOR_COLORS.get(tag, Color(0.95, 0.95, 0.95, 1.0)),
+			})
+		if out.size() >= 3:
+			break
+	return out
+
+# Back-compat single-badge helper.
+static func badge_for_item(item: Dictionary, inst: Variant) -> Dictionary:
+	var arr: Array = badges_for_item(item, inst)
+	return arr[0] if not arr.is_empty() else {}
+
 # Resolve the *effective* color for an item: meta-rarity > flavor tag
 # > rarity. Lerp at the rarity strength so a common vampiric ring
 # still tints (faintly) and a legendary vampiric ring is deep blood

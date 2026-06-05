@@ -47,6 +47,13 @@ var _sprite: TextureRect = null
 var _star: Label = null
 var _block_label: Label = null
 var _hover_glow: ColorRect = null  # appears when a compatible drag hovers
+var _badge: TextureRect = null     # bottom-right flavor/meta-rarity icon
+# Multi-flavor items cycle through their badges so a Vampiric Fire
+# weapon shows both red-skull and orange-flame on a slow fade loop.
+# Stored on the cell so the cycle survives between render() calls.
+var _badge_list: Array = []
+var _badge_idx: int = 0
+var _badge_timer: SceneTreeTimer = null
 
 # Visual sizing — caller sets `cell.cell_size` before adding to scene.
 var cell_size: int = INV_CELL_SIZE
@@ -102,6 +109,20 @@ func _ready() -> void:
 	_block_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_block_label.modulate = Color(1, 1, 1, 0)
 	add_child(_block_label)
+	# Bottom-right flavor / meta-rarity badge — DCSS i-*.png pictogram
+	# tinted by the item's primary flavor. Multi-flavor items fade-cycle
+	# through their list so a Vampiric Fire weapon advertises both.
+	# 2026-06-05.
+	var badge_size: int = max(12, int(cell_size * 0.34))
+	_badge = TextureRect.new()
+	_badge.size = Vector2(badge_size, badge_size)
+	_badge.position = Vector2(cell_size - badge_size - 1, cell_size - badge_size - 1)
+	_badge.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_badge.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	_badge.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	_badge.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_badge.modulate = Color(1, 1, 1, 0)
+	add_child(_badge)
 	mouse_entered.connect(_on_mouse_entered)
 	mouse_exited.connect(_on_mouse_exited)
 
@@ -161,6 +182,12 @@ func render() -> void:
 	# tooltip_text suppresses the engine's default popup so we don't
 	# get two tooltips at once.
 	tooltip_text = ""
+	# Flavor badge — refresh list, start/stop the cycle.
+	if has_item:
+		_badge_list = UITheme.badges_for_item(item, inst)
+	else:
+		_badge_list = []
+	_refresh_badge()
 
 func _slot_label(sid: String) -> String:
 	if sid.begins_with("ring") and sid.length() > 4:
@@ -239,3 +266,49 @@ func _on_mouse_exited() -> void:
 	_hover_glow.color = Color(0, 0, 0, 0)
 	if tooltip_owner.is_valid():
 		tooltip_owner.call(self, false)
+
+# --- Flavor badge cycle ----------------------------------------------------
+
+# Apply the current badge index to _badge. Hides the badge when the
+# list is empty. Restarts the cycle timer when there's >1 badge.
+func _refresh_badge() -> void:
+	if _badge == null:
+		return
+	if _badge_list.is_empty():
+		_badge.modulate.a = 0.0
+		_badge.texture = null
+		return
+	if _badge_idx >= _badge_list.size():
+		_badge_idx = 0
+	var b: Dictionary = _badge_list[_badge_idx]
+	var path: String = String(b.get("icon", ""))
+	if path != "" and ResourceLoader.exists(path):
+		_badge.texture = load(path)
+	else:
+		_badge.texture = null
+	var c: Color = b.get("tint", Color(1, 1, 1, 1))
+	# Fade in. Tween targets a 0.95 alpha so the badge sits comfortably
+	# against bright item sprites without screaming for attention.
+	_badge.modulate = Color(c.r, c.g, c.b, 0.0)
+	if is_inside_tree():
+		var tw := create_tween()
+		tw.tween_property(_badge, "modulate:a", 0.95, 0.25)
+	# Schedule the next cycle when we have more than one badge.
+	if _badge_list.size() > 1 and is_inside_tree():
+		# 1.4s display + 0.25s fade-in (already running) + 0.25s fade-out.
+		_badge_timer = get_tree().create_timer(1.4)
+		_badge_timer.timeout.connect(_advance_badge_cycle, CONNECT_ONE_SHOT)
+
+func _advance_badge_cycle() -> void:
+	# Cell may have been destroyed mid-cycle (inventory rebuild) — guard.
+	if not is_inside_tree() or _badge == null:
+		return
+	if _badge_list.is_empty() or _badge_list.size() == 1:
+		return
+	# Fade out current, then advance + fade-in next via _refresh_badge.
+	var tw := create_tween()
+	tw.tween_property(_badge, "modulate:a", 0.0, 0.25)
+	tw.tween_callback(func():
+		_badge_idx = (_badge_idx + 1) % _badge_list.size()
+		_refresh_badge()
+	)
