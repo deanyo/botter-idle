@@ -130,6 +130,7 @@ func _ready() -> void:
 		# tier with under-cleared branches so the run mirrors a real
 		# player progression. 2026-06-05.
 		_selected_branch = _pick_grind_branch()
+		GrindLog.log_line("[run] deploy branch=%s" % _selected_branch)
 		_on_deploy()
 	elif DebugJump.active:
 		# Skip the garage; jump straight into the dungeon.
@@ -421,18 +422,28 @@ func _pick_grind_branch() -> String:
 		if unlocked_sibs.is_empty():
 			continue
 		# Pick the under-cleared sibling with the fewest kills so the
-		# bot tends to balance kills across the tier. If everyone in
-		# the tier already has KILLS+ kills, move to the next tier.
-		var best: String = ""
-		var best_kills: int = 9999
+		# bot tends to balance kills across the tier. Ties broken by
+		# round-robin so a 0/0/0 tier-1 doesn't always land on the
+		# first entry — without this all tier-1 deploys went to
+		# `dungeon` and `mines` was never visited. 2026-06-05.
+		var candidates: Array = []
+		var min_k: int = 9999
 		for s in unlocked_sibs:
 			var k: int = int(bosses_killed.get(s, 0))
 			if k >= KILLS_PER_BRANCH_TO_UNLOCK_NEXT_TIER:
 				continue
-			if k < best_kills:
-				best_kills = k
-				best = s
-		if best != "":
+			if k < min_k:
+				min_k = k
+				candidates = [s]
+			elif k == min_k:
+				candidates.append(s)
+		if not candidates.is_empty():
+			# Round-robin among ties using auto_grind_runs as the cursor
+			# so consecutive grind runs cycle through siblings. Outside
+			# auto-grind (e.g. manual deploy fallback) just pick the
+			# first.
+			var idx: int = auto_grind_runs % candidates.size()
+			var best: String = String(candidates[idx])
 			return best
 	# Every unlocked branch is fully cleared — pick the highest-tier
 	# unlocked branch as the "endgame loop" target.
@@ -495,6 +506,7 @@ func _on_run_ended(victory: bool, report: Dictionary) -> void:
 		# branch the next run targets. Without this every run after the
 		# first would re-use _selected_branch from the boot pick.
 		_selected_branch = _pick_grind_branch()
+		GrindLog.log_line("[run] deploy branch=%s" % _selected_branch)
 		_on_deploy()
 		return
 	# Compute any branches newly unlocked during this run so the run
