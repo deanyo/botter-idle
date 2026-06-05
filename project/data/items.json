@@ -14998,10 +14998,10 @@
     {
       "affix_pool": {
         "of_channeling": 8,
-        "of_crit": 25,
+        "of_crit": 40,
         "of_devotion": 6,
         "of_embers": 8,
-        "of_finesse": 15,
+        "of_finesse": 33,
         "of_frost": 8,
         "of_haste": 20,
         "of_lifesteal": 15,
@@ -15010,8 +15010,9 @@
         "of_shadows": 6,
         "of_sharpness": 30,
         "of_storms": 8,
-        "of_venom": 6,
-        "of_wisdom": 10
+        "of_venom": 28,
+        "of_wisdom": 10,
+        "of_dex_mastery": 14
       },
       "base_type": "halberd",
       "damage_max": 68,
@@ -15023,10 +15024,10 @@
         "sat": 0.8
       },
       "drop_weights": [
-        10,
-        40,
-        30,
-        5,
+        25,
+        60,
+        12,
+        0,
         0
       ],
       "enchant_chance": 0.05,
@@ -15037,7 +15038,7 @@
       "id": "halberd_jadeforged",
       "implicit_affixes": [],
       "item_tier": 2,
-      "lore": "A jade-forged reflavor of the standard halberd.",
+      "lore": "Carved from one piece of imperial jade. Fault-lines make patterns.",
       "name": "Jade-forged Halberd",
       "rarity": "rare",
       "slot": "weapon",
@@ -15051,16 +15052,18 @@
         "of_channeling": 12,
         "of_crit": 12,
         "of_dex_mastery": 8,
-        "of_finesse": 14,
+        "of_finesse": 28,
         "of_int_mastery": 8,
         "of_might": 14,
-        "of_quickcast": 12,
+        "of_quickcast": 24,
         "of_resonance": 12,
         "of_str_mastery": 8,
         "of_the_bear": 22,
         "of_the_cat": 14,
         "of_vitality": 18,
-        "of_wisdom": 18
+        "of_wisdom": 18,
+        "of_shadows": 26,
+        "of_dark_resist": 18
       },
       "armor": 10,
       "base_type": "hood",
@@ -15070,11 +15073,11 @@
         "sat": 0.66
       },
       "drop_weights": [
-        0,
+        3,
+        25,
+        60,
         12,
-        55,
-        28,
-        8
+        0
       ],
       "enchant_chance": 0.1,
       "evasion": 7,
@@ -15086,7 +15089,7 @@
       "id": "green_mask_shadowed",
       "implicit_affixes": [],
       "item_tier": 3,
-      "lore": "A shadowed reflavor of the standard green mask.",
+      "lore": "Hard to see in dim light, even when held directly before you.",
       "name": "Shadowed Green Mask",
       "rarity": "rare",
       "slot": "helm",
@@ -15099,17 +15102,19 @@
         "of_crit": 25,
         "of_devotion": 6,
         "of_embers": 8,
-        "of_finesse": 15,
+        "of_finesse": 33,
         "of_frost": 8,
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_might": 25,
-        "of_quickcast": 8,
+        "of_quickcast": 22,
         "of_shadows": 6,
         "of_sharpness": 30,
         "of_storms": 8,
         "of_venom": 6,
-        "of_wisdom": 10
+        "of_wisdom": 10,
+        "of_int_mastery": 18,
+        "of_resonance": 14
       },
       "base_type": "quarterstaff",
       "damage_max": 43,
@@ -15121,10 +15126,10 @@
         "sat": 1.048
       },
       "drop_weights": [
-        10,
-        40,
-        30,
-        5,
+        25,
+        60,
+        12,
+        0,
         0
       ],
       "enchant_chance": 0.05,
@@ -15132,7 +15137,7 @@
       "id": "metal_staff_nightblue",
       "implicit_affixes": [],
       "item_tier": 2,
-      "lore": "A nightblue reflavor of the standard metal staff.",
+      "lore": "Indigo so dark it reads as black until light hits the right angle.",
       "name": "Nightblue Metal Staff",
       "rarity": "uncommon",
       "slot": "weapon",
@@ -15150,14 +15155,15 @@
         "of_finesse": 15,
         "of_frost": 8,
         "of_haste": 20,
-        "of_lifesteal": 15,
-        "of_might": 25,
+        "of_lifesteal": 33,
+        "of_might": 37,
         "of_quickcast": 8,
-        "of_shadows": 6,
+        "of_shadows": 38,
         "of_sharpness": 30,
         "of_storms": 8,
         "of_venom": 6,
-        "of_wisdom": 10
+        "of_wisdom": 10,
+        "of_dark_resist": 22
       },
       "base_type": "broad_axe",
       "damage_max": 80,
@@ -15169,10 +15175,10 @@
         "sat": 0.966
       },
       "drop_weights": [
-        10,
-        40,
-        30,
-        5,
+        25,
+        60,
+        12,
+        0,
         0
       ],
       "enchant_chance": 0.05,
@@ -15183,7 +15189,7 @@
       "id": "broad_axe_voidwrought",
       "implicit_affixes": [],
       "item_tier": 2,
-      "lore": "A voidwrought reflavor of the standard broad axe.",
+      "lore": "Smithed somewhere between worlds. The shadow it casts is wrong.",
       "name": "Voidwrought Broad Axe",
       "rarity": "rare",
       "slot": "weapon",
@@ -15196,12 +15202,14 @@
       "affix_pool": {
         "of_finesse": 22,
         "of_haste": 26,
-        "of_might": 12,
-        "of_regen": 10,
+        "of_might": 30,
+        "of_regen": 22,
         "of_the_bear": 16,
         "of_the_cat": 26,
         "of_vitality": 14,
-        "of_wisdom": 10
+        "of_wisdom": 10,
+        "of_devotion": 30,
+        "of_holy_resist": 22
       },
       "armor": 3,
       "base_type": "sandals",
@@ -15211,8 +15219,8 @@
         "sat": 0.991
       },
       "drop_weights": [
-        80,
-        15,
+        60,
+        12,
         0,
         0,
         0
@@ -15226,9 +15234,9 @@
       "id": "worn_sandals_sunsteel",
       "implicit_affixes": [],
       "item_tier": 1,
-      "lore": "A sunsteel reflavor of the standard worn sandals.",
+      "lore": "The metal is warm even at midnight. Undead dare not touch it.",
       "name": "Sunsteel Worn Sandals",
-      "rarity": "uncommon",
+      "rarity": "rare",
       "slot": "boots",
       "tile": "low_boots.png",
       "unique": false
@@ -15236,9 +15244,9 @@
     {
       "affix_pool": {
         "of_channeling": 16,
-        "of_crit": 14,
-        "of_dex_mastery": 12,
-        "of_finesse": 16,
+        "of_crit": 29,
+        "of_dex_mastery": 26,
+        "of_finesse": 34,
         "of_haste": 14,
         "of_int_mastery": 14,
         "of_lifesteal": 10,
@@ -15251,7 +15259,8 @@
         "of_str_mastery": 12,
         "of_velocity": 10,
         "of_vitality": 14,
-        "of_wisdom": 18
+        "of_wisdom": 18,
+        "of_venom": 22
       },
       "base_type": "amulet_harm",
       "default_tint": {
@@ -15260,13 +15269,13 @@
         "sat": 0.939
       },
       "drop_weights": [
-        0,
-        18,
+        3,
+        25,
         60,
-        22,
-        4
+        12,
+        0
       ],
-      "enchant_chance": 0.1,
+      "enchant_chance": 0.18,
       "flavor_tags": [
         "harm",
         "poison"
@@ -15274,7 +15283,7 @@
       "id": "stone_2_red_jadeforged",
       "implicit_affixes": [],
       "item_tier": 3,
-      "lore": "A jade-forged reflavor of the standard bleeding stone.",
+      "lore": "Carved from one piece of imperial jade. Fault-lines make patterns.",
       "name": "Jade-forged Bleeding Stone",
       "rarity": "epic",
       "slot": "amulet",
@@ -15298,8 +15307,11 @@
         "of_resonance": 14,
         "of_str_mastery": 12,
         "of_velocity": 10,
-        "of_vitality": 14,
-        "of_wisdom": 18
+        "of_vitality": 32,
+        "of_wisdom": 18,
+        "of_shadows": 22,
+        "of_the_bear": 22,
+        "of_dark_resist": 18
       },
       "base_type": "amulet_guardian",
       "default_tint": {
@@ -15315,11 +15327,11 @@
       "drop_weights": [
         0,
         0,
-        0,
-        4,
-        22
+        3,
+        25,
+        60
       ],
-      "enchant_chance": 0.0,
+      "enchant_chance": 0.3,
       "flavor_tags": [
         "guardian",
         "willpower",
@@ -15329,7 +15341,7 @@
       "id": "cekugob_amulet_obsidian",
       "implicit_affixes": [],
       "item_tier": 5,
-      "lore": "A obsidian reflavor of the standard cekugob's amulet.",
+      "lore": "Volcanic glass, edge-flaked razor-sharp by patient hands.",
       "name": "Obsidian Cekugob's Amulet",
       "rarity": "legendary",
       "slot": "amulet",
@@ -15341,18 +15353,19 @@
         "of_channeling": 8,
         "of_crit": 25,
         "of_devotion": 6,
-        "of_embers": 8,
+        "of_embers": 43,
         "of_finesse": 15,
         "of_frost": 8,
-        "of_haste": 20,
-        "of_lifesteal": 15,
-        "of_might": 25,
+        "of_haste": 32,
+        "of_lifesteal": 27,
+        "of_might": 43,
         "of_quickcast": 8,
         "of_shadows": 6,
         "of_sharpness": 30,
         "of_storms": 8,
         "of_venom": 6,
-        "of_wisdom": 10
+        "of_wisdom": 10,
+        "of_fire_resist": 18
       },
       "base_type": "falchion",
       "damage_max": 82,
@@ -15365,12 +15378,12 @@
       },
       "drop_weights": [
         0,
-        0,
-        8,
-        58,
-        35
+        3,
+        25,
+        60,
+        12
       ],
-      "enchant_chance": 0.15,
+      "enchant_chance": 0.18,
       "flavor_tags": [
         "arcane",
         "fire"
@@ -15378,7 +15391,7 @@
       "id": "runed_falchion_crimson",
       "implicit_affixes": [],
       "item_tier": 4,
-      "lore": "A crimson reflavor of the standard runed falchion.",
+      "lore": "Forged in dragonfire, the metal still glows when blood spills near it.",
       "name": "Crimson Runed Falchion",
       "rarity": "epic",
       "slot": "weapon",
@@ -15402,8 +15415,11 @@
         "of_shadows": 6,
         "of_sharpness": 30,
         "of_storms": 8,
-        "of_venom": 6,
-        "of_wisdom": 10
+        "of_venom": 34,
+        "of_wisdom": 10,
+        "of_poison_resist": 22,
+        "of_regen": 14,
+        "of_vitality": 15
       },
       "base_type": "rapier",
       "damage_max": 43,
@@ -15415,11 +15431,11 @@
         "sat": 0.696
       },
       "drop_weights": [
-        0,
-        10,
-        55,
-        28,
-        6
+        3,
+        25,
+        60,
+        12,
+        0
       ],
       "enchant_chance": 0.1,
       "flavor_tags": [
@@ -15430,7 +15446,7 @@
       "id": "silver_rapier_mossy",
       "implicit_affixes": [],
       "item_tier": 3,
-      "lore": "A mossy reflavor of the standard silver rapier.",
+      "lore": "Damp green spores drift from every notch \u2014 they twitch toward warm flesh.",
       "name": "Mossy Silver Rapier",
       "rarity": "rare",
       "slot": "weapon",
@@ -15454,8 +15470,11 @@
         "of_shadows": 6,
         "of_sharpness": 30,
         "of_storms": 8,
-        "of_venom": 6,
-        "of_wisdom": 10
+        "of_venom": 34,
+        "of_wisdom": 10,
+        "of_poison_resist": 22,
+        "of_regen": 14,
+        "of_vitality": 15
       },
       "base_type": "spear",
       "damage_max": 53,
@@ -15467,11 +15486,11 @@
         "sat": 0.636
       },
       "drop_weights": [
-        0,
-        15,
-        40,
-        30,
-        5
+        3,
+        25,
+        60,
+        12,
+        0
       ],
       "enchant_chance": 0.1,
       "flavor_tags": [
@@ -15480,7 +15499,7 @@
       "id": "steel_spear_mossy",
       "implicit_affixes": [],
       "item_tier": 3,
-      "lore": "A mossy reflavor of the standard steel spear.",
+      "lore": "Damp green spores drift from every notch \u2014 they twitch toward warm flesh.",
       "name": "Mossy Steel Spear",
       "rarity": "rare",
       "slot": "weapon",
@@ -15499,17 +15518,17 @@
         "of_finesse": 16,
         "of_fire_resist": 8,
         "of_frost": 10,
-        "of_haste": 16,
+        "of_haste": 28,
         "of_lifesteal": 10,
-        "of_lightning_resist": 8,
+        "of_lightning_resist": 26,
         "of_lingering": 12,
-        "of_might": 16,
+        "of_might": 30,
         "of_multicast": 8,
         "of_quickcast": 14,
         "of_regen": 10,
         "of_resonance": 12,
         "of_shadows": 8,
-        "of_storms": 10,
+        "of_storms": 32,
         "of_velocity": 10,
         "of_venom": 8,
         "of_vitality": 14,
@@ -15523,12 +15542,12 @@
       },
       "drop_weights": [
         0,
-        0,
-        8,
-        55,
-        38
+        3,
+        25,
+        60,
+        12
       ],
-      "enchant_chance": 0.15,
+      "enchant_chance": 0.18,
       "flavor_tags": [
         "flying",
         "swiftness"
@@ -15536,7 +15555,7 @@
       "id": "ring_of_flight_coppersworn",
       "implicit_affixes": [],
       "item_tier": 4,
-      "lore": "A coppersworn reflavor of the standard ring of flight.",
+      "lore": "Verdigris-greened copper that crackles when storms approach.",
       "name": "Coppersworn Ring of Flight",
       "rarity": "epic",
       "slot": "ring",
@@ -15558,8 +15577,11 @@
         "of_shadows": 6,
         "of_sharpness": 30,
         "of_storms": 8,
-        "of_venom": 6,
-        "of_wisdom": 10
+        "of_venom": 34,
+        "of_wisdom": 10,
+        "of_poison_resist": 22,
+        "of_regen": 14,
+        "of_vitality": 15
       },
       "base_type": "knife",
       "damage_max": 8,
@@ -15571,8 +15593,8 @@
         "sat": 0.863
       },
       "drop_weights": [
-        80,
-        10,
+        60,
+        12,
         0,
         0,
         0
@@ -15584,7 +15606,7 @@
       "id": "bone_knife_mossy",
       "implicit_affixes": [],
       "item_tier": 1,
-      "lore": "A mossy reflavor of the standard bone knife.",
+      "lore": "Damp green spores drift from every notch \u2014 they twitch toward warm flesh.",
       "name": "Mossy Bone Knife",
       "rarity": "common",
       "slot": "weapon",
@@ -15610,14 +15632,15 @@
         "of_might": 16,
         "of_multicast": 8,
         "of_quickcast": 14,
-        "of_regen": 10,
+        "of_regen": 24,
         "of_resonance": 12,
         "of_shadows": 8,
         "of_storms": 10,
         "of_velocity": 10,
-        "of_venom": 8,
-        "of_vitality": 14,
-        "of_wisdom": 16
+        "of_venom": 36,
+        "of_vitality": 29,
+        "of_wisdom": 16,
+        "of_poison_resist": 22
       },
       "base_type": "ring_evasion",
       "default_tint": {
@@ -15626,9 +15649,9 @@
         "sat": 0.667
       },
       "drop_weights": [
-        75,
-        18,
-        2,
+        60,
+        12,
+        0,
         0,
         0
       ],
@@ -15640,7 +15663,7 @@
       "id": "copper_ring_mossy",
       "implicit_affixes": [],
       "item_tier": 1,
-      "lore": "A mossy reflavor of the standard copper ring.",
+      "lore": "Damp green spores drift from every notch \u2014 they twitch toward warm flesh.",
       "name": "Mossy Copper Ring",
       "rarity": "common",
       "slot": "ring",
@@ -15657,13 +15680,15 @@
         "of_frost": 8,
         "of_haste": 20,
         "of_lifesteal": 15,
-        "of_might": 25,
+        "of_might": 39,
         "of_quickcast": 8,
         "of_shadows": 6,
-        "of_sharpness": 30,
+        "of_sharpness": 44,
         "of_storms": 8,
         "of_venom": 6,
-        "of_wisdom": 10
+        "of_wisdom": 10,
+        "of_the_bear": 30,
+        "of_vitality": 22
       },
       "base_type": "falchion",
       "damage_max": 131,
@@ -15682,18 +15707,18 @@
       "drop_weights": [
         0,
         0,
-        0,
-        5,
-        25
+        3,
+        25,
+        60
       ],
-      "enchant_chance": 0.0,
+      "enchant_chance": 0.3,
       "flavor_tags": [
         "fire"
       ],
       "id": "firestarter_ironclad",
       "implicit_affixes": [],
       "item_tier": 5,
-      "lore": "A ironclad reflavor of the standard firestarter.",
+      "lore": "Plain forged iron, but heavier than the metal alone explains.",
       "name": "Ironclad Firestarter",
       "rarity": "legendary",
       "slot": "weapon",
@@ -15705,7 +15730,7 @@
     {
       "affix_pool": {
         "of_cold_resist": 14,
-        "of_dark_resist": 8,
+        "of_dark_resist": 30,
         "of_finesse": 12,
         "of_fire_resist": 14,
         "of_haste": 10,
@@ -15719,7 +15744,10 @@
         "of_the_bear": 12,
         "of_the_cat": 22,
         "of_vitality": 18,
-        "of_wisdom": 14
+        "of_wisdom": 14,
+        "of_shadows": 30,
+        "of_int_mastery": 14,
+        "of_channeling": 14
       },
       "armor": 1,
       "base_type": "cloak",
@@ -15734,9 +15762,9 @@
         ]
       },
       "drop_weights": [
-        50,
-        30,
-        5,
+        60,
+        12,
+        0,
         0,
         0
       ],
@@ -15748,7 +15776,7 @@
       "id": "leather_cloak_umbral",
       "implicit_affixes": [],
       "item_tier": 1,
-      "lore": "A umbral reflavor of the standard leather cloak.",
+      "lore": "The dark that settles on it cannot be polished off.",
       "name": "Umbral Leather Cloak",
       "overlay": "cloak_leather",
       "rarity": "uncommon",
@@ -15758,7 +15786,7 @@
     },
     {
       "affix_pool": {
-        "of_channeling": 8,
+        "of_channeling": 22,
         "of_crit": 25,
         "of_devotion": 6,
         "of_embers": 8,
@@ -15768,11 +15796,13 @@
         "of_lifesteal": 15,
         "of_might": 25,
         "of_quickcast": 8,
-        "of_shadows": 6,
+        "of_shadows": 36,
         "of_sharpness": 30,
         "of_storms": 8,
         "of_venom": 6,
-        "of_wisdom": 10
+        "of_wisdom": 10,
+        "of_dark_resist": 22,
+        "of_int_mastery": 14
       },
       "base_type": "demon_blade",
       "damage_max": 250,
@@ -15791,11 +15821,11 @@
       "drop_weights": [
         0,
         0,
-        0,
-        8,
+        3,
+        25,
         60
       ],
-      "enchant_chance": 0.15,
+      "enchant_chance": 0.3,
       "flavor_tags": [
         "fire",
         "demon",
@@ -15804,7 +15834,7 @@
       "id": "demon_blade_umbral",
       "implicit_affixes": [],
       "item_tier": 5,
-      "lore": "A umbral reflavor of the standard demon blade.",
+      "lore": "The dark that settles on it cannot be polished off.",
       "name": "Umbral Demon Blade",
       "rarity": "legendary",
       "slot": "weapon",
@@ -15817,7 +15847,7 @@
       "affix_pool": {
         "of_cold_resist": 14,
         "of_dark_resist": 8,
-        "of_finesse": 8,
+        "of_finesse": 26,
         "of_fire_resist": 14,
         "of_holy_resist": 8,
         "of_lightning_resist": 14,
@@ -15825,7 +15855,10 @@
         "of_poison_resist": 10,
         "of_the_bear": 30,
         "of_vitality": 22,
-        "of_wisdom": 10
+        "of_wisdom": 10,
+        "of_int_mastery": 18,
+        "of_quickcast": 14,
+        "of_resonance": 14
       },
       "armor": 36,
       "base_type": "round_shield",
@@ -15837,11 +15870,11 @@
       "drop_weights": [
         0,
         0,
-        0,
-        4,
-        22
+        3,
+        25,
+        60
       ],
-      "enchant_chance": 0.0,
+      "enchant_chance": 0.3,
       "evasion": 12,
       "flavor_tags": [
         "reflective",
@@ -15850,7 +15883,7 @@
       "id": "bullseye_inverse",
       "implicit_affixes": [],
       "item_tier": 5,
-      "lore": "A inverse reflavor of the standard bullseye.",
+      "lore": "Looking at it too long inverts what you saw before.",
       "name": "Inverse Bullseye",
       "rarity": "legendary",
       "slot": "shield",
@@ -15870,7 +15903,11 @@
         "of_regen": 15,
         "of_the_bear": 30,
         "of_vitality": 30,
-        "of_wisdom": 12
+        "of_wisdom": 12,
+        "of_devotion": 22,
+        "of_haste": 18,
+        "of_lifesteal": 12,
+        "of_quickcast": 15
       },
       "armor": 48,
       "base_type": "robe",
@@ -15882,11 +15919,11 @@
       "drop_weights": [
         0,
         0,
-        0,
-        5,
-        25
+        3,
+        25,
+        60
       ],
-      "enchant_chance": 0.0,
+      "enchant_chance": 0.3,
       "evasion": 12,
       "flavor_tags": [
         "regen",
@@ -15896,7 +15933,7 @@
       "id": "robe_of_folly_rosegold",
       "implicit_affixes": [],
       "item_tier": 5,
-      "lore": "A rose-gold reflavor of the standard robe of folly.",
+      "lore": "An alloy out of fashion in this century. The shine is unmistakable.",
       "name": "Rose-gold Robe of Folly",
       "rarity": "legendary",
       "slot": "armor",
@@ -15906,10 +15943,10 @@
     {
       "affix_pool": {
         "of_channeling": 8,
-        "of_crit": 25,
+        "of_crit": 40,
         "of_devotion": 6,
         "of_embers": 8,
-        "of_finesse": 15,
+        "of_finesse": 33,
         "of_frost": 8,
         "of_haste": 20,
         "of_lifesteal": 15,
@@ -15918,8 +15955,9 @@
         "of_shadows": 6,
         "of_sharpness": 30,
         "of_storms": 8,
-        "of_venom": 6,
-        "of_wisdom": 10
+        "of_venom": 28,
+        "of_wisdom": 10,
+        "of_dex_mastery": 14
       },
       "base_type": "long_sword",
       "damage_max": 53,
@@ -15931,20 +15969,20 @@
         "sat": 0.858
       },
       "drop_weights": [
-        0,
-        15,
+        3,
+        25,
         60,
-        22,
-        3
+        12,
+        0
       ],
-      "enchant_chance": 0.1,
+      "enchant_chance": 0.18,
       "flavor_tags": [
         "poison"
       ],
       "id": "iron_longsword_jadeforged",
       "implicit_affixes": [],
       "item_tier": 3,
-      "lore": "A jade-forged reflavor of the standard iron long sword.",
+      "lore": "Carved from one piece of imperial jade. Fault-lines make patterns.",
       "name": "Jade-forged Iron Long Sword",
       "rarity": "epic",
       "slot": "weapon",
@@ -15958,18 +15996,19 @@
         "of_channeling": 8,
         "of_crit": 25,
         "of_devotion": 6,
-        "of_embers": 8,
+        "of_embers": 43,
         "of_finesse": 15,
         "of_frost": 8,
-        "of_haste": 20,
-        "of_lifesteal": 15,
-        "of_might": 25,
+        "of_haste": 32,
+        "of_lifesteal": 27,
+        "of_might": 43,
         "of_quickcast": 8,
         "of_shadows": 6,
         "of_sharpness": 30,
         "of_storms": 8,
         "of_venom": 6,
-        "of_wisdom": 10
+        "of_wisdom": 10,
+        "of_fire_resist": 18
       },
       "base_type": "falchion",
       "damage_max": 53,
@@ -15981,11 +16020,11 @@
         "sat": 1.171
       },
       "drop_weights": [
-        0,
-        15,
-        60,
+        3,
         25,
-        5
+        60,
+        12,
+        0
       ],
       "enchant_chance": 0.1,
       "flavor_tags": [
@@ -15994,7 +16033,7 @@
       "id": "steel_falchion_crimson",
       "implicit_affixes": [],
       "item_tier": 3,
-      "lore": "A crimson reflavor of the standard steel falchion.",
+      "lore": "Forged in dragonfire, the metal still glows when blood spills near it.",
       "name": "Crimson Steel Falchion",
       "rarity": "rare",
       "slot": "weapon",
@@ -16007,12 +16046,15 @@
       "affix_pool": {
         "of_finesse": 22,
         "of_haste": 26,
-        "of_might": 12,
+        "of_might": 24,
         "of_regen": 10,
         "of_the_bear": 16,
         "of_the_cat": 26,
         "of_vitality": 14,
-        "of_wisdom": 10
+        "of_wisdom": 10,
+        "of_shadows": 32,
+        "of_dark_resist": 22,
+        "of_lifesteal": 18
       },
       "armor": 3,
       "base_type": "leather_boots",
@@ -16022,9 +16064,9 @@
         "sat": 0.976
       },
       "drop_weights": [
-        70,
-        22,
-        4,
+        60,
+        12,
+        0,
         0,
         0
       ],
@@ -16036,7 +16078,7 @@
       "id": "leather_boots_voidwrought",
       "implicit_affixes": [],
       "item_tier": 1,
-      "lore": "A voidwrought reflavor of the standard leather boots.",
+      "lore": "Smithed somewhere between worlds. The shadow it casts is wrong.",
       "name": "Voidwrought Leather Boots",
       "rarity": "uncommon",
       "slot": "boots",
@@ -16049,9 +16091,9 @@
         "of_dark_resist": 8,
         "of_finesse": 12,
         "of_fire_resist": 14,
-        "of_haste": 10,
+        "of_haste": 28,
         "of_holy_resist": 8,
-        "of_lightning_resist": 14,
+        "of_lightning_resist": 34,
         "of_lingering": 14,
         "of_might": 10,
         "of_poison_resist": 10,
@@ -16060,7 +16102,9 @@
         "of_the_bear": 12,
         "of_the_cat": 22,
         "of_vitality": 18,
-        "of_wisdom": 14
+        "of_wisdom": 14,
+        "of_storms": 32,
+        "of_velocity": 14
       },
       "armor": 1,
       "base_type": "cloak",
@@ -16070,9 +16114,9 @@
         "sat": 1.079
       },
       "drop_weights": [
-        45,
-        32,
-        8,
+        60,
+        12,
+        0,
         0,
         0
       ],
@@ -16084,17 +16128,17 @@
       "id": "travelers_cloak_stormtouched",
       "implicit_affixes": [],
       "item_tier": 1,
-      "lore": "A stormtouched reflavor of the standard traveler's cloak.",
+      "lore": "Static raises the hairs on your arm. A faint hum, always present.",
       "name": "Stormtouched Traveler's Cloak",
       "overlay": "cloak_travelers",
-      "rarity": "uncommon",
+      "rarity": "rare",
       "slot": "cloak",
       "tile": "cloak_2.png",
       "unique": false
     },
     {
       "affix_pool": {
-        "of_channeling": 10,
+        "of_channeling": 24,
         "of_crit": 18,
         "of_devotion": 8,
         "of_embers": 10,
@@ -16103,14 +16147,16 @@
         "of_haste": 18,
         "of_lifesteal": 10,
         "of_might": 16,
-        "of_shadows": 8,
+        "of_shadows": 38,
         "of_sharpness": 14,
         "of_storms": 10,
         "of_the_bear": 14,
         "of_the_cat": 16,
         "of_velocity": 12,
         "of_venom": 8,
-        "of_wisdom": 10
+        "of_wisdom": 10,
+        "of_dark_resist": 22,
+        "of_int_mastery": 14
       },
       "armor": 3,
       "base_type": "gloves",
@@ -16125,10 +16171,10 @@
         ]
       },
       "drop_weights": [
-        5,
-        40,
-        30,
-        10,
+        25,
+        60,
+        12,
+        0,
         0
       ],
       "enchant_chance": 0.05,
@@ -16140,7 +16186,7 @@
       "id": "plate_gauntlets_umbral",
       "implicit_affixes": [],
       "item_tier": 2,
-      "lore": "A umbral reflavor of the standard plate gauntlets.",
+      "lore": "The dark that settles on it cannot be polished off.",
       "name": "Umbral Plate Gauntlets",
       "rarity": "rare",
       "slot": "gloves",
@@ -16153,17 +16199,18 @@
         "of_crit": 25,
         "of_devotion": 6,
         "of_embers": 8,
-        "of_finesse": 15,
-        "of_frost": 8,
+        "of_finesse": 30,
+        "of_frost": 38,
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_might": 25,
-        "of_quickcast": 8,
+        "of_quickcast": 22,
         "of_shadows": 6,
         "of_sharpness": 30,
         "of_storms": 8,
         "of_venom": 6,
-        "of_wisdom": 10
+        "of_wisdom": 10,
+        "of_cold_resist": 22
       },
       "base_type": "claymore",
       "damage_max": 100,
@@ -16175,11 +16222,11 @@
         "sat": 1.07
       },
       "drop_weights": [
-        0,
-        15,
-        40,
-        30,
-        5
+        3,
+        25,
+        60,
+        12,
+        0
       ],
       "enchant_chance": 0.1,
       "flavor_tags": [
@@ -16189,7 +16236,7 @@
       "id": "claymore_azure",
       "implicit_affixes": [],
       "item_tier": 3,
-      "lore": "A azure reflavor of the standard claymore.",
+      "lore": "Cold to the touch. The air around it always tastes of winter.",
       "name": "Azure Claymore",
       "rarity": "rare",
       "slot": "weapon",
@@ -16204,8 +16251,8 @@
         "of_crit": 25,
         "of_devotion": 6,
         "of_embers": 8,
-        "of_finesse": 15,
-        "of_frost": 8,
+        "of_finesse": 30,
+        "of_frost": 30,
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_might": 25,
@@ -16214,7 +16261,9 @@
         "of_sharpness": 30,
         "of_storms": 8,
         "of_venom": 6,
-        "of_wisdom": 10
+        "of_wisdom": 10,
+        "of_dark_resist": 18,
+        "of_dex_mastery": 12
       },
       "base_type": "rapier",
       "damage_max": 107,
@@ -16228,11 +16277,11 @@
       "drop_weights": [
         0,
         0,
-        0,
-        5,
-        25
+        3,
+        25,
+        60
       ],
-      "enchant_chance": 0.0,
+      "enchant_chance": 0.3,
       "flavor_tags": [
         "vampiric",
         "dark",
@@ -16243,7 +16292,7 @@
         "of_lifesteal"
       ],
       "item_tier": 5,
-      "lore": "A spectral reflavor of the standard vampire's tooth.",
+      "lore": "It is somehow always slightly cooler than its surroundings.",
       "name": "Spectral Vampire's Tooth",
       "rarity": "legendary",
       "slot": "weapon",
@@ -16256,7 +16305,7 @@
       "affix_pool": {
         "of_cold_resist": 12,
         "of_dark_resist": 8,
-        "of_finesse": 12,
+        "of_finesse": 30,
         "of_fire_resist": 12,
         "of_holy_resist": 8,
         "of_lightning_resist": 12,
@@ -16265,7 +16314,10 @@
         "of_regen": 15,
         "of_the_bear": 30,
         "of_vitality": 30,
-        "of_wisdom": 12
+        "of_wisdom": 12,
+        "of_int_mastery": 18,
+        "of_quickcast": 14,
+        "of_resonance": 14
       },
       "armor": 30,
       "base_type": "dragon_scales",
@@ -16276,12 +16328,12 @@
       },
       "drop_weights": [
         0,
-        0,
-        10,
-        55,
-        35
+        3,
+        25,
+        60,
+        12
       ],
-      "enchant_chance": 0.15,
+      "enchant_chance": 0.3,
       "evasion": 7,
       "flavor_tags": [
         "poison_res"
@@ -16289,7 +16341,7 @@
       "id": "green_dragon_inverse",
       "implicit_affixes": [],
       "item_tier": 4,
-      "lore": "A inverse reflavor of the standard green dragon scales.",
+      "lore": "Looking at it too long inverts what you saw before.",
       "name": "Inverse Green Dragon Scales",
       "rarity": "legendary",
       "slot": "armor",
@@ -16300,14 +16352,14 @@
       "affix_pool": {
         "of_channeling": 8,
         "of_crit": 25,
-        "of_devotion": 6,
+        "of_devotion": 28,
         "of_embers": 8,
         "of_finesse": 15,
         "of_frost": 8,
-        "of_haste": 20,
-        "of_lifesteal": 15,
+        "of_haste": 38,
+        "of_lifesteal": 27,
         "of_might": 25,
-        "of_quickcast": 8,
+        "of_quickcast": 23,
         "of_shadows": 6,
         "of_sharpness": 30,
         "of_storms": 8,
@@ -16324,10 +16376,10 @@
         "sat": 0.762
       },
       "drop_weights": [
-        10,
-        40,
-        30,
-        5,
+        25,
+        60,
+        12,
+        0,
         0
       ],
       "enchant_chance": 0.05,
@@ -16338,7 +16390,7 @@
       "id": "warhammer_rosegold",
       "implicit_affixes": [],
       "item_tier": 2,
-      "lore": "A rose-gold reflavor of the standard warhammer.",
+      "lore": "An alloy out of fashion in this century. The shine is unmistakable.",
       "name": "Rose-gold Warhammer",
       "rarity": "rare",
       "slot": "weapon",
@@ -16353,19 +16405,20 @@
         "of_crit": 14,
         "of_dex_mastery": 12,
         "of_finesse": 16,
-        "of_haste": 14,
+        "of_haste": 32,
         "of_int_mastery": 14,
-        "of_lifesteal": 10,
+        "of_lifesteal": 22,
         "of_lingering": 12,
         "of_might": 16,
         "of_multicast": 8,
-        "of_quickcast": 14,
+        "of_quickcast": 29,
         "of_regen": 10,
         "of_resonance": 14,
         "of_str_mastery": 12,
         "of_velocity": 10,
         "of_vitality": 14,
-        "of_wisdom": 18
+        "of_wisdom": 18,
+        "of_devotion": 22
       },
       "base_type": "amulet_harm",
       "default_tint": {
@@ -16376,11 +16429,11 @@
       "drop_weights": [
         0,
         0,
-        0,
         3,
-        18
+        25,
+        60
       ],
-      "enchant_chance": 0.0,
+      "enchant_chance": 0.3,
       "flavor_tags": [
         "harm",
         "rage",
@@ -16389,7 +16442,7 @@
       "id": "amulet_finger_rosegold",
       "implicit_affixes": [],
       "item_tier": 5,
-      "lore": "A rose-gold reflavor of the standard the finger.",
+      "lore": "An alloy out of fashion in this century. The shine is unmistakable.",
       "name": "Rose-gold The Finger",
       "rarity": "legendary",
       "slot": "amulet",
@@ -16399,7 +16452,7 @@
     {
       "affix_pool": {
         "of_cold_resist": 14,
-        "of_dark_resist": 8,
+        "of_dark_resist": 30,
         "of_finesse": 12,
         "of_fire_resist": 14,
         "of_haste": 10,
@@ -16413,7 +16466,10 @@
         "of_the_bear": 12,
         "of_the_cat": 22,
         "of_vitality": 18,
-        "of_wisdom": 14
+        "of_wisdom": 14,
+        "of_shadows": 30,
+        "of_int_mastery": 14,
+        "of_channeling": 14
       },
       "armor": 1,
       "base_type": "cloak",
@@ -16428,9 +16484,9 @@
         ]
       },
       "drop_weights": [
-        45,
-        32,
-        8,
+        60,
+        12,
+        0,
         0,
         0
       ],
@@ -16442,7 +16498,7 @@
       "id": "travelers_cloak_umbral",
       "implicit_affixes": [],
       "item_tier": 1,
-      "lore": "A umbral reflavor of the standard traveler's cloak.",
+      "lore": "The dark that settles on it cannot be polished off.",
       "name": "Umbral Traveler's Cloak",
       "overlay": "cloak_travelers",
       "rarity": "uncommon",
@@ -16454,15 +16510,16 @@
       "affix_pool": {
         "of_cold_resist": 14,
         "of_dark_resist": 8,
-        "of_finesse": 8,
+        "of_finesse": 22,
         "of_fire_resist": 14,
-        "of_holy_resist": 8,
+        "of_holy_resist": 26,
         "of_lightning_resist": 14,
         "of_might": 16,
         "of_poison_resist": 10,
         "of_the_bear": 30,
         "of_vitality": 22,
-        "of_wisdom": 10
+        "of_wisdom": 22,
+        "of_devotion": 14
       },
       "armor": 10,
       "base_type": "buckler",
@@ -16477,10 +16534,10 @@
         ]
       },
       "drop_weights": [
-        8,
-        55,
-        30,
-        7,
+        25,
+        60,
+        12,
+        0,
         0
       ],
       "enchant_chance": 0.1,
@@ -16492,7 +16549,7 @@
       "id": "elven_buckler_2_pale",
       "implicit_affixes": [],
       "item_tier": 2,
-      "lore": "A pale reflavor of the standard elven targe.",
+      "lore": "Bleached past white into a color the eye cannot name.",
       "name": "Pale Elven Targe",
       "rarity": "rare",
       "slot": "shield",
@@ -16505,17 +16562,18 @@
         "of_crit": 25,
         "of_devotion": 6,
         "of_embers": 8,
-        "of_finesse": 15,
+        "of_finesse": 29,
         "of_frost": 8,
         "of_haste": 20,
-        "of_lifesteal": 15,
+        "of_lifesteal": 29,
         "of_might": 25,
         "of_quickcast": 8,
-        "of_shadows": 6,
+        "of_shadows": 32,
         "of_sharpness": 30,
         "of_storms": 8,
         "of_venom": 6,
-        "of_wisdom": 10
+        "of_wisdom": 10,
+        "of_dark_resist": 14
       },
       "base_type": "falchion",
       "damage_max": 34,
@@ -16527,22 +16585,22 @@
         "sat": 0.69
       },
       "drop_weights": [
-        15,
-        65,
-        20,
-        3,
+        25,
+        60,
+        12,
+        0,
         0
       ],
-      "enchant_chance": 0.05,
+      "enchant_chance": 0.18,
       "flavor_tags": [
         "shadow"
       ],
       "id": "iron_falchion_twisted",
       "implicit_affixes": [],
       "item_tier": 2,
-      "lore": "A twisted reflavor of the standard iron falchion.",
+      "lore": "It is not the same shape twice. Bending occurs when you look away.",
       "name": "Twisted Iron Falchion",
-      "rarity": "rare",
+      "rarity": "epic",
       "slot": "weapon",
       "speed": 0.65,
       "tile": "falchion_2_new.png",
@@ -16562,7 +16620,20 @@
         "of_regen": 15,
         "of_the_bear": 30,
         "of_vitality": 30,
-        "of_wisdom": 12
+        "of_wisdom": 12,
+        "of_embers": 14,
+        "of_frost": 14,
+        "of_storms": 14,
+        "of_devotion": 14,
+        "of_venom": 14,
+        "of_shadows": 14,
+        "of_sharpness": 14,
+        "of_resonance": 18,
+        "of_multicast": 12,
+        "of_channeling": 18,
+        "of_str_mastery": 10,
+        "of_dex_mastery": 10,
+        "of_int_mastery": 10
       },
       "armor": 48,
       "base_type": "robe",
@@ -16574,11 +16645,11 @@
       "drop_weights": [
         0,
         0,
-        0,
-        5,
-        25
+        3,
+        25,
+        60
       ],
-      "enchant_chance": 0.0,
+      "enchant_chance": 0.3,
       "evasion": 12,
       "flavor_tags": [
         "regen",
@@ -16587,7 +16658,7 @@
       "id": "robe_of_folly_prismatic",
       "implicit_affixes": [],
       "item_tier": 5,
-      "lore": "A prismatic reflavor of the standard robe of folly.",
+      "lore": "Every glance reveals a new color, each one a real one \u2014 somewhere.",
       "name": "Prismatic Robe of Folly",
       "rarity": "legendary",
       "slot": "armor",
@@ -16597,7 +16668,7 @@
     {
       "affix_pool": {
         "of_cold_resist": 14,
-        "of_dark_resist": 8,
+        "of_dark_resist": 30,
         "of_finesse": 8,
         "of_fire_resist": 14,
         "of_holy_resist": 8,
@@ -16606,7 +16677,10 @@
         "of_poison_resist": 10,
         "of_the_bear": 30,
         "of_vitality": 22,
-        "of_wisdom": 10
+        "of_wisdom": 10,
+        "of_shadows": 30,
+        "of_int_mastery": 14,
+        "of_channeling": 14
       },
       "armor": 14,
       "base_type": "buckler",
@@ -16621,13 +16695,13 @@
         ]
       },
       "drop_weights": [
-        0,
+        3,
+        25,
+        60,
         12,
-        55,
-        28,
-        5
+        0
       ],
-      "enchant_chance": 0.1,
+      "enchant_chance": 0.18,
       "evasion": 5,
       "flavor_tags": [
         "fortified",
@@ -16637,7 +16711,7 @@
       "id": "dwarven_buckler_2_umbral",
       "implicit_affixes": [],
       "item_tier": 3,
-      "lore": "A umbral reflavor of the standard dwarven roundel.",
+      "lore": "The dark that settles on it cannot be polished off.",
       "name": "Umbral Dwarven Roundel",
       "rarity": "epic",
       "slot": "shield",
@@ -16649,7 +16723,7 @@
         "of_channeling": 12,
         "of_crit": 12,
         "of_dex_mastery": 8,
-        "of_finesse": 14,
+        "of_finesse": 28,
         "of_int_mastery": 8,
         "of_might": 14,
         "of_quickcast": 12,
@@ -16658,7 +16732,10 @@
         "of_the_bear": 22,
         "of_the_cat": 14,
         "of_vitality": 18,
-        "of_wisdom": 18
+        "of_wisdom": 18,
+        "of_shadows": 26,
+        "of_lifesteal": 14,
+        "of_dark_resist": 14
       },
       "armor": 21,
       "base_type": "crown",
@@ -16670,11 +16747,11 @@
       "drop_weights": [
         0,
         0,
-        0,
-        12,
-        70
+        3,
+        25,
+        60
       ],
-      "enchant_chance": 0.15,
+      "enchant_chance": 0.3,
       "evasion": 16,
       "flavor_tags": [
         "lordly",
@@ -16684,7 +16761,7 @@
       "id": "halo_of_ascension_twisted",
       "implicit_affixes": [],
       "item_tier": 5,
-      "lore": "A twisted reflavor of the standard halo of ascension.",
+      "lore": "It is not the same shape twice. Bending occurs when you look away.",
       "name": "Twisted Halo of Ascension",
       "rarity": "legendary",
       "slot": "helm",
@@ -16694,10 +16771,10 @@
     {
       "affix_pool": {
         "of_channeling": 8,
-        "of_crit": 25,
+        "of_crit": 40,
         "of_devotion": 6,
         "of_embers": 8,
-        "of_finesse": 15,
+        "of_finesse": 33,
         "of_frost": 8,
         "of_haste": 20,
         "of_lifesteal": 15,
@@ -16706,8 +16783,9 @@
         "of_shadows": 6,
         "of_sharpness": 30,
         "of_storms": 8,
-        "of_venom": 6,
-        "of_wisdom": 10
+        "of_venom": 28,
+        "of_wisdom": 10,
+        "of_dex_mastery": 14
       },
       "base_type": "greatsword",
       "damage_max": 62,
@@ -16719,10 +16797,10 @@
         "sat": 1.011
       },
       "drop_weights": [
-        10,
-        40,
-        30,
-        5,
+        25,
+        60,
+        12,
+        0,
         0
       ],
       "enchant_chance": 0.05,
@@ -16732,7 +16810,7 @@
       "id": "greatsword_jadeforged",
       "implicit_affixes": [],
       "item_tier": 2,
-      "lore": "A jade-forged reflavor of the standard greatsword.",
+      "lore": "Carved from one piece of imperial jade. Fault-lines make patterns.",
       "name": "Jade-forged Greatsword",
       "rarity": "rare",
       "slot": "weapon",
@@ -16749,9 +16827,9 @@
         "of_finesse": 16,
         "of_haste": 14,
         "of_int_mastery": 14,
-        "of_lifesteal": 10,
+        "of_lifesteal": 28,
         "of_lingering": 12,
-        "of_might": 16,
+        "of_might": 28,
         "of_multicast": 8,
         "of_quickcast": 14,
         "of_regen": 10,
@@ -16759,7 +16837,9 @@
         "of_str_mastery": 12,
         "of_velocity": 10,
         "of_vitality": 14,
-        "of_wisdom": 18
+        "of_wisdom": 18,
+        "of_shadows": 32,
+        "of_dark_resist": 22
       },
       "base_type": "amulet_vitality",
       "default_tint": {
@@ -16770,11 +16850,11 @@
       "drop_weights": [
         0,
         0,
-        0,
-        18,
-        70
+        3,
+        25,
+        60
       ],
-      "enchant_chance": 0.15,
+      "enchant_chance": 0.3,
       "flavor_tags": [
         "vitality",
         "regen",
@@ -16783,7 +16863,7 @@
       "id": "crystal_white_voidwrought",
       "implicit_affixes": [],
       "item_tier": 5,
-      "lore": "A voidwrought reflavor of the standard pearl of vitality.",
+      "lore": "Smithed somewhere between worlds. The shadow it casts is wrong.",
       "name": "Voidwrought Pearl of Vitality",
       "rarity": "legendary",
       "slot": "amulet",
@@ -16798,11 +16878,12 @@
         "of_fire_resist": 14,
         "of_holy_resist": 8,
         "of_lightning_resist": 14,
-        "of_might": 16,
+        "of_might": 30,
         "of_poison_resist": 10,
-        "of_the_bear": 30,
-        "of_vitality": 22,
-        "of_wisdom": 10
+        "of_the_bear": 60,
+        "of_vitality": 44,
+        "of_wisdom": 10,
+        "of_sharpness": 14
       },
       "armor": 20,
       "base_type": "tower_shield",
@@ -16818,10 +16899,10 @@
       },
       "drop_weights": [
         0,
-        0,
-        12,
+        3,
+        25,
         60,
-        28
+        12
       ],
       "enchant_chance": 0.1,
       "evasion": 7,
@@ -16831,7 +16912,7 @@
       "id": "tower_shield_ironclad",
       "implicit_affixes": [],
       "item_tier": 4,
-      "lore": "A ironclad reflavor of the standard tower shield.",
+      "lore": "Plain forged iron, but heavier than the metal alone explains.",
       "name": "Ironclad Tower Shield",
       "rarity": "rare",
       "slot": "shield",
@@ -16845,7 +16926,7 @@
         "of_crit": 16,
         "of_devotion": 8,
         "of_embers": 10,
-        "of_finesse": 16,
+        "of_finesse": 34,
         "of_fire_resist": 8,
         "of_frost": 10,
         "of_haste": 16,
@@ -16854,15 +16935,16 @@
         "of_lingering": 12,
         "of_might": 16,
         "of_multicast": 8,
-        "of_quickcast": 14,
+        "of_quickcast": 28,
         "of_regen": 10,
-        "of_resonance": 12,
+        "of_resonance": 26,
         "of_shadows": 8,
         "of_storms": 10,
         "of_velocity": 10,
         "of_venom": 8,
         "of_vitality": 14,
-        "of_wisdom": 16
+        "of_wisdom": 16,
+        "of_int_mastery": 18
       },
       "base_type": "ring_magic",
       "default_tint": {
@@ -16873,11 +16955,11 @@
       "drop_weights": [
         0,
         0,
-        0,
-        5,
-        25
+        3,
+        25,
+        60
       ],
-      "enchant_chance": 0.0,
+      "enchant_chance": 0.3,
       "flavor_tags": [
         "wisdom",
         "fortune"
@@ -16885,7 +16967,7 @@
       "id": "octoring_inverse",
       "implicit_affixes": [],
       "item_tier": 5,
-      "lore": "A inverse reflavor of the standard the octoring.",
+      "lore": "Looking at it too long inverts what you saw before.",
       "name": "Inverse The Octoring",
       "rarity": "legendary",
       "slot": "ring",
@@ -16897,11 +16979,11 @@
         "of_channeling": 12,
         "of_crit": 12,
         "of_dex_mastery": 8,
-        "of_finesse": 14,
-        "of_int_mastery": 8,
+        "of_finesse": 32,
+        "of_int_mastery": 26,
         "of_might": 14,
-        "of_quickcast": 12,
-        "of_resonance": 12,
+        "of_quickcast": 26,
+        "of_resonance": 26,
         "of_str_mastery": 8,
         "of_the_bear": 22,
         "of_the_cat": 14,
@@ -16917,12 +16999,12 @@
       },
       "drop_weights": [
         0,
-        0,
-        6,
-        52,
-        38
+        3,
+        25,
+        60,
+        12
       ],
-      "enchant_chance": 0.15,
+      "enchant_chance": 0.3,
       "evasion": 11,
       "flavor_tags": [
         "wisdom",
@@ -16931,7 +17013,7 @@
       "id": "ego_etched_great_helm_inverse",
       "implicit_affixes": [],
       "item_tier": 4,
-      "lore": "A inverse reflavor of the standard mage-bound helm.",
+      "lore": "Looking at it too long inverts what you saw before.",
       "name": "Inverse Mage-Bound Helm",
       "rarity": "legendary",
       "slot": "helm",
@@ -16946,15 +17028,16 @@
         "of_embers": 8,
         "of_finesse": 15,
         "of_frost": 8,
-        "of_haste": 20,
+        "of_haste": 32,
         "of_lifesteal": 15,
-        "of_might": 25,
+        "of_might": 39,
         "of_quickcast": 8,
         "of_shadows": 6,
         "of_sharpness": 30,
-        "of_storms": 8,
+        "of_storms": 30,
         "of_venom": 6,
-        "of_wisdom": 10
+        "of_wisdom": 10,
+        "of_lightning_resist": 18
       },
       "base_type": "katana",
       "damage_max": 52,
@@ -16967,12 +17050,12 @@
       },
       "drop_weights": [
         0,
-        0,
-        8,
-        58,
-        35
+        3,
+        25,
+        60,
+        12
       ],
-      "enchant_chance": 0.15,
+      "enchant_chance": 0.18,
       "flavor_tags": [
         "precision",
         "swiftness"
@@ -16980,7 +17063,7 @@
       "id": "iron_katana_coppersworn",
       "implicit_affixes": [],
       "item_tier": 4,
-      "lore": "A coppersworn reflavor of the standard katana.",
+      "lore": "Verdigris-greened copper that crackles when storms approach.",
       "name": "Coppersworn Katana",
       "rarity": "epic",
       "slot": "weapon",
@@ -16991,14 +17074,16 @@
     },
     {
       "affix_pool": {
-        "of_finesse": 22,
+        "of_finesse": 36,
         "of_haste": 26,
         "of_might": 12,
         "of_regen": 10,
         "of_the_bear": 16,
         "of_the_cat": 26,
         "of_vitality": 14,
-        "of_wisdom": 10
+        "of_wisdom": 22,
+        "of_holy_resist": 18,
+        "of_devotion": 14
       },
       "armor": 5,
       "base_type": "greaves",
@@ -17013,10 +17098,10 @@
         ]
       },
       "drop_weights": [
-        12,
+        25,
         60,
-        28,
-        5,
+        12,
+        0,
         0
       ],
       "enchant_chance": 0.05,
@@ -17027,7 +17112,7 @@
       "id": "soldier_greaves_pale",
       "implicit_affixes": [],
       "item_tier": 2,
-      "lore": "A pale reflavor of the standard soldier's greaves.",
+      "lore": "Bleached past white into a color the eye cannot name.",
       "name": "Pale Soldier's Greaves",
       "overlay": "boots_soldier_greaves",
       "rarity": "uncommon",
@@ -17038,16 +17123,17 @@
     {
       "affix_pool": {
         "of_cold_resist": 14,
-        "of_dark_resist": 8,
+        "of_dark_resist": 26,
         "of_finesse": 8,
         "of_fire_resist": 14,
         "of_holy_resist": 8,
         "of_lightning_resist": 14,
         "of_might": 16,
         "of_poison_resist": 10,
-        "of_the_bear": 30,
-        "of_vitality": 22,
-        "of_wisdom": 10
+        "of_the_bear": 52,
+        "of_vitality": 40,
+        "of_wisdom": 10,
+        "of_shadows": 22
       },
       "armor": 31,
       "base_type": "round_shield",
@@ -17064,11 +17150,11 @@
       "drop_weights": [
         0,
         0,
-        0,
-        18,
-        70
+        3,
+        25,
+        60
       ],
-      "enchant_chance": 0.15,
+      "enchant_chance": 0.3,
       "evasion": 10,
       "flavor_tags": [
         "warding",
@@ -17078,7 +17164,7 @@
       "id": "phantom_aegis_obsidian",
       "implicit_affixes": [],
       "item_tier": 5,
-      "lore": "A obsidian reflavor of the standard phantom aegis.",
+      "lore": "Volcanic glass, edge-flaked razor-sharp by patient hands.",
       "name": "Obsidian Phantom Aegis",
       "overlay": "shield_phantom_aegis",
       "rarity": "legendary",
@@ -17098,11 +17184,14 @@
         "of_lifesteal": 15,
         "of_might": 25,
         "of_quickcast": 8,
-        "of_shadows": 6,
+        "of_shadows": 28,
         "of_sharpness": 30,
         "of_storms": 8,
         "of_venom": 6,
-        "of_wisdom": 10
+        "of_wisdom": 10,
+        "of_the_bear": 22,
+        "of_dark_resist": 18,
+        "of_vitality": 18
       },
       "base_type": "rapier",
       "damage_max": 107,
@@ -17121,11 +17210,11 @@
       "drop_weights": [
         0,
         0,
-        0,
-        5,
-        25
+        3,
+        25,
+        60
       ],
-      "enchant_chance": 0.0,
+      "enchant_chance": 0.3,
       "flavor_tags": [
         "vampiric",
         "dark",
@@ -17136,7 +17225,7 @@
         "of_lifesteal"
       ],
       "item_tier": 5,
-      "lore": "A obsidian reflavor of the standard vampire's tooth.",
+      "lore": "Volcanic glass, edge-flaked razor-sharp by patient hands.",
       "name": "Obsidian Vampire's Tooth",
       "rarity": "legendary",
       "slot": "weapon",
@@ -17148,20 +17237,21 @@
     {
       "affix_pool": {
         "of_channeling": 8,
-        "of_crit": 25,
+        "of_crit": 40,
         "of_devotion": 6,
         "of_embers": 8,
         "of_finesse": 15,
-        "of_frost": 8,
+        "of_frost": 43,
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_might": 25,
-        "of_quickcast": 8,
+        "of_quickcast": 26,
         "of_shadows": 6,
         "of_sharpness": 30,
         "of_storms": 8,
         "of_venom": 6,
-        "of_wisdom": 10
+        "of_wisdom": 10,
+        "of_cold_resist": 22
       },
       "base_type": "dagger",
       "damage_max": 12,
@@ -17173,10 +17263,10 @@
         "sat": 0.791
       },
       "drop_weights": [
-        10,
-        65,
-        20,
-        3,
+        25,
+        60,
+        12,
+        0,
         0
       ],
       "enchant_chance": 0.05,
@@ -17187,7 +17277,7 @@
       "id": "elven_dagger_frostbound",
       "implicit_affixes": [],
       "item_tier": 2,
-      "lore": "A frostbound reflavor of the standard elven dagger.",
+      "lore": "A rime of ice will not melt, no matter how warm the room.",
       "name": "Frostbound Elven Dagger",
       "rarity": "rare",
       "slot": "weapon",
@@ -17200,15 +17290,17 @@
       "affix_pool": {
         "of_cold_resist": 14,
         "of_dark_resist": 8,
-        "of_finesse": 8,
+        "of_finesse": 22,
         "of_fire_resist": 14,
         "of_holy_resist": 8,
         "of_lightning_resist": 14,
-        "of_might": 16,
+        "of_might": 30,
         "of_poison_resist": 10,
         "of_the_bear": 30,
         "of_vitality": 22,
-        "of_wisdom": 10
+        "of_wisdom": 10,
+        "of_shadows": 22,
+        "of_lifesteal": 12
       },
       "armor": 22,
       "base_type": "kite_shield",
@@ -17224,12 +17316,12 @@
       },
       "drop_weights": [
         0,
-        0,
-        10,
-        58,
-        32
+        3,
+        25,
+        60,
+        12
       ],
-      "enchant_chance": 0.15,
+      "enchant_chance": 0.18,
       "evasion": 7,
       "flavor_tags": [
         "fortified",
@@ -17238,7 +17330,7 @@
       "id": "donald_shield_bone",
       "implicit_affixes": [],
       "item_tier": 4,
-      "lore": "A bone reflavor of the standard donald's shield.",
+      "lore": "Shaped from the long bones of something old. It still aches in the cold.",
       "name": "Bone Donald's Shield",
       "rarity": "epic",
       "slot": "shield",
@@ -17247,21 +17339,22 @@
     },
     {
       "affix_pool": {
-        "of_channeling": 8,
+        "of_channeling": 18,
         "of_crit": 25,
         "of_devotion": 6,
-        "of_embers": 8,
+        "of_embers": 38,
         "of_finesse": 15,
         "of_frost": 8,
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_might": 25,
-        "of_quickcast": 8,
+        "of_quickcast": 22,
         "of_shadows": 6,
         "of_sharpness": 30,
         "of_storms": 8,
         "of_venom": 6,
-        "of_wisdom": 10
+        "of_wisdom": 10,
+        "of_fire_resist": 22
       },
       "base_type": "falchion",
       "damage_max": 53,
@@ -17273,11 +17366,11 @@
         "sat": 0.957
       },
       "drop_weights": [
-        0,
-        15,
-        60,
+        3,
         25,
-        5
+        60,
+        12,
+        0
       ],
       "enchant_chance": 0.1,
       "flavor_tags": [
@@ -17286,7 +17379,7 @@
       "id": "steel_falchion_embered",
       "implicit_affixes": [],
       "item_tier": 3,
-      "lore": "A embered reflavor of the standard steel falchion.",
+      "lore": "Carries its own slow heat. Embers drift from it when struck.",
       "name": "Embered Steel Falchion",
       "rarity": "rare",
       "slot": "weapon",
@@ -17297,21 +17390,22 @@
     },
     {
       "affix_pool": {
-        "of_channeling": 8,
+        "of_channeling": 23,
         "of_crit": 25,
-        "of_devotion": 6,
+        "of_devotion": 34,
         "of_embers": 8,
         "of_finesse": 15,
         "of_frost": 8,
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_might": 25,
-        "of_quickcast": 8,
+        "of_quickcast": 20,
         "of_shadows": 6,
         "of_sharpness": 30,
         "of_storms": 8,
         "of_venom": 6,
-        "of_wisdom": 10
+        "of_wisdom": 10,
+        "of_holy_resist": 18
       },
       "base_type": "bullwhip",
       "damage_max": 22,
@@ -17323,10 +17417,10 @@
         "sat": 0.913
       },
       "drop_weights": [
-        10,
-        40,
-        30,
-        5,
+        25,
+        60,
+        12,
+        0,
         0
       ],
       "enchant_chance": 0.05,
@@ -17337,7 +17431,7 @@
       "id": "bullwhip_gilded",
       "implicit_affixes": [],
       "item_tier": 2,
-      "lore": "A gilded reflavor of the standard bullwhip.",
+      "lore": "Cathedral-gold leaf, beaten thin and prayed over for a hundred years.",
       "name": "Gilded Bullwhip",
       "rarity": "rare",
       "slot": "weapon",
@@ -17359,12 +17453,14 @@
         "of_might": 16,
         "of_multicast": 8,
         "of_quickcast": 14,
-        "of_regen": 10,
+        "of_regen": 24,
         "of_resonance": 14,
         "of_str_mastery": 12,
         "of_velocity": 10,
-        "of_vitality": 14,
-        "of_wisdom": 18
+        "of_vitality": 29,
+        "of_wisdom": 18,
+        "of_venom": 28,
+        "of_poison_resist": 22
       },
       "base_type": "amulet_reflection",
       "default_tint": {
@@ -17375,11 +17471,11 @@
       "drop_weights": [
         0,
         0,
-        0,
-        14,
-        70
+        3,
+        25,
+        60
       ],
-      "enchant_chance": 0.15,
+      "enchant_chance": 0.18,
       "flavor_tags": [
         "reflective",
         "fortified",
@@ -17388,7 +17484,7 @@
       "id": "penta_green_mossy",
       "implicit_affixes": [],
       "item_tier": 5,
-      "lore": "A mossy reflavor of the standard sigil of the last line.",
+      "lore": "Damp green spores drift from every notch \u2014 they twitch toward warm flesh.",
       "name": "Mossy Sigil of the Last Line",
       "rarity": "epic",
       "slot": "amulet",
@@ -17400,16 +17496,18 @@
         "of_channeling": 12,
         "of_crit": 12,
         "of_dex_mastery": 8,
-        "of_finesse": 14,
+        "of_finesse": 28,
         "of_int_mastery": 8,
-        "of_might": 14,
+        "of_might": 28,
         "of_quickcast": 12,
         "of_resonance": 12,
         "of_str_mastery": 8,
         "of_the_bear": 22,
         "of_the_cat": 14,
         "of_vitality": 18,
-        "of_wisdom": 18
+        "of_wisdom": 18,
+        "of_shadows": 22,
+        "of_lifesteal": 12
       },
       "armor": 24,
       "base_type": "crown",
@@ -17426,11 +17524,11 @@
       "drop_weights": [
         0,
         0,
-        0,
-        5,
-        22
+        3,
+        25,
+        60
       ],
-      "enchant_chance": 0.0,
+      "enchant_chance": 0.3,
       "evasion": 18,
       "flavor_tags": [
         "lordly",
@@ -17439,7 +17537,7 @@
       "id": "crown_of_dyrovepreva_bone",
       "implicit_affixes": [],
       "item_tier": 5,
-      "lore": "A bone reflavor of the standard crown of dyrovepreva.",
+      "lore": "Shaped from the long bones of something old. It still aches in the cold.",
       "name": "Bone Crown of Dyrovepreva",
       "rarity": "legendary",
       "slot": "helm",
@@ -17448,7 +17546,7 @@
     },
     {
       "affix_pool": {
-        "of_cold_resist": 14,
+        "of_cold_resist": 36,
         "of_dark_resist": 8,
         "of_finesse": 8,
         "of_fire_resist": 14,
@@ -17458,7 +17556,10 @@
         "of_poison_resist": 10,
         "of_the_bear": 30,
         "of_vitality": 22,
-        "of_wisdom": 10
+        "of_wisdom": 10,
+        "of_frost": 35,
+        "of_quickcast": 18,
+        "of_crit": 15
       },
       "armor": 14,
       "base_type": "buckler",
@@ -17468,13 +17569,13 @@
         "sat": 0.921
       },
       "drop_weights": [
-        0,
+        3,
+        25,
+        60,
         12,
-        55,
-        28,
-        5
+        0
       ],
-      "enchant_chance": 0.1,
+      "enchant_chance": 0.18,
       "evasion": 5,
       "flavor_tags": [
         "fortified",
@@ -17484,7 +17585,7 @@
       "id": "dwarven_buckler_2_frostbound",
       "implicit_affixes": [],
       "item_tier": 3,
-      "lore": "A frostbound reflavor of the standard dwarven roundel.",
+      "lore": "A rime of ice will not melt, no matter how warm the room.",
       "name": "Frostbound Dwarven Roundel",
       "rarity": "epic",
       "slot": "shield",
@@ -17494,17 +17595,19 @@
     {
       "affix_pool": {
         "of_cold_resist": 12,
-        "of_dark_resist": 8,
+        "of_dark_resist": 30,
         "of_finesse": 12,
         "of_fire_resist": 12,
         "of_holy_resist": 8,
         "of_lightning_resist": 12,
-        "of_might": 15,
+        "of_might": 27,
         "of_poison_resist": 10,
         "of_regen": 15,
         "of_the_bear": 30,
         "of_vitality": 30,
-        "of_wisdom": 12
+        "of_wisdom": 12,
+        "of_shadows": 32,
+        "of_lifesteal": 18
       },
       "armor": 8,
       "base_type": "leather",
@@ -17514,9 +17617,9 @@
         "sat": 1.139
       },
       "drop_weights": [
-        70,
-        20,
-        2,
+        60,
+        12,
+        0,
         0,
         0
       ],
@@ -17528,7 +17631,7 @@
       "id": "leather_jerkin_voidwrought",
       "implicit_affixes": [],
       "item_tier": 1,
-      "lore": "A voidwrought reflavor of the standard leather jerkin.",
+      "lore": "Smithed somewhere between worlds. The shadow it casts is wrong.",
       "name": "Voidwrought Leather Jerkin",
       "rarity": "uncommon",
       "slot": "armor",
@@ -17546,13 +17649,14 @@
         "of_lightning_resist": 14,
         "of_lingering": 14,
         "of_might": 10,
-        "of_poison_resist": 10,
-        "of_regen": 8,
+        "of_poison_resist": 32,
+        "of_regen": 22,
         "of_resonance": 12,
         "of_the_bear": 12,
         "of_the_cat": 22,
-        "of_vitality": 18,
-        "of_wisdom": 14
+        "of_vitality": 33,
+        "of_wisdom": 14,
+        "of_venom": 28
       },
       "armor": 1,
       "base_type": "cloak",
@@ -17562,9 +17666,9 @@
         "sat": 0.793
       },
       "drop_weights": [
-        45,
-        32,
-        8,
+        60,
+        12,
+        0,
         0,
         0
       ],
@@ -17576,7 +17680,7 @@
       "id": "travelers_cloak_mossy",
       "implicit_affixes": [],
       "item_tier": 1,
-      "lore": "A mossy reflavor of the standard traveler's cloak.",
+      "lore": "Damp green spores drift from every notch \u2014 they twitch toward warm flesh.",
       "name": "Mossy Traveler's Cloak",
       "overlay": "cloak_travelers",
       "rarity": "common",
@@ -17588,15 +17692,17 @@
       "affix_pool": {
         "of_cold_resist": 14,
         "of_dark_resist": 8,
-        "of_finesse": 8,
+        "of_finesse": 22,
         "of_fire_resist": 14,
         "of_holy_resist": 8,
         "of_lightning_resist": 14,
-        "of_might": 16,
+        "of_might": 30,
         "of_poison_resist": 10,
         "of_the_bear": 30,
         "of_vitality": 22,
-        "of_wisdom": 10
+        "of_wisdom": 10,
+        "of_shadows": 22,
+        "of_lifesteal": 12
       },
       "armor": 14,
       "base_type": "round_shield",
@@ -17611,11 +17717,11 @@
         ]
       },
       "drop_weights": [
-        0,
-        18,
+        3,
+        25,
         60,
-        20,
-        5
+        12,
+        0
       ],
       "enchant_chance": 0.1,
       "evasion": 5,
@@ -17626,7 +17732,7 @@
       "id": "elven_shield_bone",
       "implicit_affixes": [],
       "item_tier": 3,
-      "lore": "A bone reflavor of the standard elven shield.",
+      "lore": "Shaped from the long bones of something old. It still aches in the cold.",
       "name": "Bone Elven Shield",
       "rarity": "rare",
       "slot": "shield",
@@ -17636,11 +17742,11 @@
     {
       "affix_pool": {
         "of_channeling": 10,
-        "of_crit": 18,
+        "of_crit": 33,
         "of_devotion": 8,
         "of_embers": 10,
         "of_finesse": 18,
-        "of_frost": 10,
+        "of_frost": 45,
         "of_haste": 18,
         "of_lifesteal": 10,
         "of_might": 16,
@@ -17651,7 +17757,9 @@
         "of_the_cat": 16,
         "of_velocity": 12,
         "of_venom": 8,
-        "of_wisdom": 10
+        "of_wisdom": 10,
+        "of_cold_resist": 22,
+        "of_quickcast": 18
       },
       "armor": 5,
       "base_type": "gloves",
@@ -17661,13 +17769,13 @@
         "sat": 0.805
       },
       "drop_weights": [
-        0,
-        15,
-        40,
-        30,
-        5
+        3,
+        25,
+        60,
+        12,
+        0
       ],
-      "enchant_chance": 0.1,
+      "enchant_chance": 0.18,
       "evasion": 7,
       "flavor_tags": [
         "fortified",
@@ -17676,7 +17784,7 @@
       "id": "dwarven_gloves_frostbound",
       "implicit_affixes": [],
       "item_tier": 3,
-      "lore": "A frostbound reflavor of the standard dwarven gloves.",
+      "lore": "A rime of ice will not melt, no matter how warm the room.",
       "name": "Frostbound Dwarven Gloves",
       "rarity": "epic",
       "slot": "gloves",
@@ -17696,7 +17804,11 @@
         "of_regen": 15,
         "of_the_bear": 30,
         "of_vitality": 30,
-        "of_wisdom": 12
+        "of_wisdom": 12,
+        "of_devotion": 22,
+        "of_haste": 18,
+        "of_lifesteal": 12,
+        "of_quickcast": 15
       },
       "armor": 19,
       "base_type": "banded_mail",
@@ -17706,13 +17818,13 @@
         "sat": 0.843
       },
       "drop_weights": [
-        0,
-        15,
-        58,
+        3,
         25,
-        5
+        60,
+        12,
+        0
       ],
-      "enchant_chance": 0.1,
+      "enchant_chance": 0.18,
       "evasion": 5,
       "flavor_tags": [
         "fortified",
@@ -17721,7 +17833,7 @@
       "id": "banded_mail_rosegold",
       "implicit_affixes": [],
       "item_tier": 3,
-      "lore": "A rose-gold reflavor of the standard banded mail.",
+      "lore": "An alloy out of fashion in this century. The shine is unmistakable.",
       "name": "Rose-gold Banded Mail",
       "rarity": "epic",
       "slot": "armor",
@@ -17734,14 +17846,17 @@
         "of_dark_resist": 8,
         "of_finesse": 12,
         "of_fire_resist": 12,
-        "of_holy_resist": 8,
+        "of_holy_resist": 26,
         "of_lightning_resist": 12,
         "of_might": 15,
         "of_poison_resist": 10,
         "of_regen": 15,
         "of_the_bear": 30,
         "of_vitality": 30,
-        "of_wisdom": 12
+        "of_wisdom": 12,
+        "of_devotion": 28,
+        "of_channeling": 15,
+        "of_quickcast": 12
       },
       "armor": 19,
       "base_type": "plate",
@@ -17751,13 +17866,13 @@
         "sat": 0.931
       },
       "drop_weights": [
-        0,
-        18,
+        3,
+        25,
         60,
-        22,
-        4
+        12,
+        0
       ],
-      "enchant_chance": 0.1,
+      "enchant_chance": 0.18,
       "evasion": 5,
       "flavor_tags": [
         "fortified",
@@ -17766,7 +17881,7 @@
       "id": "orcish_platemail_gilded",
       "implicit_affixes": [],
       "item_tier": 3,
-      "lore": "A gilded reflavor of the standard orcish platemail.",
+      "lore": "Cathedral-gold leaf, beaten thin and prayed over for a hundred years.",
       "name": "Gilded Orcish Platemail",
       "rarity": "epic",
       "slot": "armor",
@@ -17786,12 +17901,14 @@
         "of_might": 16,
         "of_multicast": 8,
         "of_quickcast": 14,
-        "of_regen": 10,
+        "of_regen": 28,
         "of_resonance": 14,
         "of_str_mastery": 12,
         "of_velocity": 10,
-        "of_vitality": 14,
-        "of_wisdom": 18
+        "of_vitality": 36,
+        "of_wisdom": 18,
+        "of_the_bear": 15,
+        "of_poison_resist": 18
       },
       "base_type": "amulet_air",
       "default_tint": {
@@ -17802,11 +17919,11 @@
       "drop_weights": [
         0,
         0,
-        0,
-        5,
-        25
+        3,
+        25,
+        60
       ],
-      "enchant_chance": 0.0,
+      "enchant_chance": 0.3,
       "flavor_tags": [
         "acrobat",
         "willpower",
@@ -17815,7 +17932,7 @@
       "id": "amulet_of_air_verdant",
       "implicit_affixes": [],
       "item_tier": 5,
-      "lore": "A verdant reflavor of the standard amulet of air.",
+      "lore": "Vines crawl over the haft, seeking soil that is not there.",
       "name": "Verdant Amulet of Air",
       "rarity": "legendary",
       "slot": "amulet",
@@ -17828,7 +17945,7 @@
         "of_crit": 18,
         "of_devotion": 8,
         "of_embers": 10,
-        "of_finesse": 18,
+        "of_finesse": 36,
         "of_frost": 10,
         "of_haste": 18,
         "of_lifesteal": 10,
@@ -17840,7 +17957,10 @@
         "of_the_cat": 16,
         "of_velocity": 12,
         "of_venom": 8,
-        "of_wisdom": 10
+        "of_wisdom": 10,
+        "of_int_mastery": 18,
+        "of_quickcast": 14,
+        "of_resonance": 14
       },
       "armor": 5,
       "base_type": "gloves",
@@ -17850,11 +17970,11 @@
         "sat": 1.003
       },
       "drop_weights": [
-        0,
-        15,
-        40,
-        30,
-        5
+        3,
+        25,
+        60,
+        12,
+        0
       ],
       "enchant_chance": 0.1,
       "evasion": 7,
@@ -17864,7 +17984,7 @@
       "id": "dwarven_gloves_nightblue",
       "implicit_affixes": [],
       "item_tier": 3,
-      "lore": "A nightblue reflavor of the standard dwarven gloves.",
+      "lore": "Indigo so dark it reads as black until light hits the right angle.",
       "name": "Nightblue Dwarven Gloves",
       "rarity": "rare",
       "slot": "gloves",
@@ -17873,14 +17993,17 @@
     },
     {
       "affix_pool": {
-        "of_finesse": 22,
+        "of_finesse": 40,
         "of_haste": 26,
         "of_might": 12,
         "of_regen": 10,
         "of_the_bear": 16,
         "of_the_cat": 26,
         "of_vitality": 14,
-        "of_wisdom": 10
+        "of_wisdom": 10,
+        "of_int_mastery": 18,
+        "of_quickcast": 14,
+        "of_resonance": 14
       },
       "armor": 5,
       "base_type": "leather_boots",
@@ -17890,10 +18013,10 @@
         "sat": 1.083
       },
       "drop_weights": [
-        8,
-        55,
-        32,
-        5,
+        25,
+        60,
+        12,
+        0,
         0
       ],
       "enchant_chance": 0.1,
@@ -17905,7 +18028,7 @@
       "id": "ranger_boots_nightblue",
       "implicit_affixes": [],
       "item_tier": 2,
-      "lore": "A nightblue reflavor of the standard ranger boots.",
+      "lore": "Indigo so dark it reads as black until light hits the right angle.",
       "name": "Nightblue Ranger Boots",
       "overlay": "boots_ranger",
       "rarity": "rare",
@@ -17915,23 +18038,28 @@
     },
     {
       "affix_pool": {
-        "of_channeling": 10,
+        "of_channeling": 28,
         "of_crit": 18,
-        "of_devotion": 8,
-        "of_embers": 10,
+        "of_devotion": 22,
+        "of_embers": 24,
         "of_finesse": 18,
-        "of_frost": 10,
+        "of_frost": 24,
         "of_haste": 18,
         "of_lifesteal": 10,
         "of_might": 16,
-        "of_shadows": 8,
-        "of_sharpness": 14,
-        "of_storms": 10,
+        "of_shadows": 22,
+        "of_sharpness": 28,
+        "of_storms": 24,
         "of_the_bear": 14,
         "of_the_cat": 16,
         "of_velocity": 12,
-        "of_venom": 8,
-        "of_wisdom": 10
+        "of_venom": 22,
+        "of_wisdom": 10,
+        "of_resonance": 18,
+        "of_multicast": 12,
+        "of_str_mastery": 10,
+        "of_dex_mastery": 10,
+        "of_int_mastery": 10
       },
       "armor": 2,
       "base_type": "gloves",
@@ -17941,21 +18069,21 @@
         "sat": 1.0
       },
       "drop_weights": [
-        40,
-        35,
-        8,
+        60,
+        12,
+        0,
         0,
         0
       ],
-      "enchant_chance": 0.05,
+      "enchant_chance": 0.3,
       "evasion": 3,
       "flavor_tags": [],
       "id": "studded_gloves_prismatic",
       "implicit_affixes": [],
       "item_tier": 1,
-      "lore": "A prismatic reflavor of the standard studded gloves.",
+      "lore": "Every glance reveals a new color, each one a real one \u2014 somewhere.",
       "name": "Prismatic Studded Gloves",
-      "rarity": "rare",
+      "rarity": "legendary",
       "slot": "gloves",
       "tile": "glove_2_old.png",
       "unique": false
@@ -17969,10 +18097,10 @@
         "of_holy_resist": 8,
         "of_lightning_resist": 12,
         "of_might": 15,
-        "of_poison_resist": 10,
-        "of_regen": 15,
-        "of_the_bear": 30,
-        "of_vitality": 30,
+        "of_poison_resist": 28,
+        "of_regen": 33,
+        "of_the_bear": 45,
+        "of_vitality": 52,
         "of_wisdom": 12
       },
       "armor": 48,
@@ -17985,11 +18113,11 @@
       "drop_weights": [
         0,
         0,
-        0,
-        4,
-        20
+        3,
+        25,
+        60
       ],
-      "enchant_chance": 0.0,
+      "enchant_chance": 0.3,
       "evasion": 12,
       "flavor_tags": [
         "thorns",
@@ -17998,7 +18126,7 @@
       "id": "robe_of_misfortune_verdant",
       "implicit_affixes": [],
       "item_tier": 5,
-      "lore": "A verdant reflavor of the standard robe of misfortune.",
+      "lore": "Vines crawl over the haft, seeking soil that is not there.",
       "name": "Verdant Robe of Misfortune",
       "rarity": "legendary",
       "slot": "armor",
@@ -18010,18 +18138,19 @@
         "of_channeling": 8,
         "of_crit": 25,
         "of_devotion": 6,
-        "of_embers": 8,
+        "of_embers": 43,
         "of_finesse": 15,
         "of_frost": 8,
-        "of_haste": 20,
-        "of_lifesteal": 15,
-        "of_might": 25,
+        "of_haste": 32,
+        "of_lifesteal": 27,
+        "of_might": 43,
         "of_quickcast": 8,
         "of_shadows": 6,
         "of_sharpness": 30,
         "of_storms": 8,
         "of_venom": 6,
-        "of_wisdom": 10
+        "of_wisdom": 10,
+        "of_fire_resist": 18
       },
       "base_type": "long_sword",
       "damage_max": 131,
@@ -18035,11 +18164,11 @@
       "drop_weights": [
         0,
         0,
-        0,
         3,
-        18
+        25,
+        60
       ],
-      "enchant_chance": 0.0,
+      "enchant_chance": 0.3,
       "flavor_tags": [
         "arcane",
         "brutal",
@@ -18048,7 +18177,7 @@
       "id": "sword_of_power_crimson",
       "implicit_affixes": [],
       "item_tier": 5,
-      "lore": "A crimson reflavor of the standard sword of power.",
+      "lore": "Forged in dragonfire, the metal still glows when blood spills near it.",
       "name": "Crimson Sword of Power",
       "rarity": "legendary",
       "slot": "weapon",
@@ -18060,20 +18189,20 @@
     {
       "affix_pool": {
         "of_channeling": 14,
-        "of_cold_resist": 8,
-        "of_crit": 16,
+        "of_cold_resist": 30,
+        "of_crit": 31,
         "of_devotion": 8,
         "of_embers": 10,
         "of_finesse": 16,
         "of_fire_resist": 8,
-        "of_frost": 10,
+        "of_frost": 45,
         "of_haste": 16,
         "of_lifesteal": 10,
         "of_lightning_resist": 8,
         "of_lingering": 12,
         "of_might": 16,
         "of_multicast": 8,
-        "of_quickcast": 14,
+        "of_quickcast": 32,
         "of_regen": 10,
         "of_resonance": 12,
         "of_shadows": 8,
@@ -18091,12 +18220,12 @@
       },
       "drop_weights": [
         0,
-        0,
-        8,
-        55,
-        38
+        3,
+        25,
+        60,
+        12
       ],
-      "enchant_chance": 0.15,
+      "enchant_chance": 0.3,
       "flavor_tags": [
         "slaying",
         "fire_res",
@@ -18105,7 +18234,7 @@
       "id": "ruby_ring_frostbound",
       "implicit_affixes": [],
       "item_tier": 4,
-      "lore": "A frostbound reflavor of the standard ruby ring.",
+      "lore": "A rime of ice will not melt, no matter how warm the room.",
       "name": "Frostbound Ruby Ring",
       "rarity": "legendary",
       "slot": "ring",
@@ -18124,7 +18253,20 @@
         "of_poison_resist": 10,
         "of_the_bear": 30,
         "of_vitality": 22,
-        "of_wisdom": 10
+        "of_wisdom": 10,
+        "of_embers": 14,
+        "of_frost": 14,
+        "of_storms": 14,
+        "of_devotion": 14,
+        "of_venom": 14,
+        "of_shadows": 14,
+        "of_sharpness": 14,
+        "of_resonance": 18,
+        "of_multicast": 12,
+        "of_channeling": 18,
+        "of_str_mastery": 10,
+        "of_dex_mastery": 10,
+        "of_int_mastery": 10
       },
       "armor": 36,
       "base_type": "buckler",
@@ -18136,11 +18278,11 @@
       "drop_weights": [
         0,
         0,
-        0,
-        4,
-        22
+        3,
+        25,
+        60
       ],
-      "enchant_chance": 0.0,
+      "enchant_chance": 0.3,
       "evasion": 12,
       "flavor_tags": [
         "lordly",
@@ -18149,7 +18291,7 @@
       "id": "gong_shield_prismatic",
       "implicit_affixes": [],
       "item_tier": 5,
-      "lore": "A prismatic reflavor of the standard the gong.",
+      "lore": "Every glance reveals a new color, each one a real one \u2014 somewhere.",
       "name": "Prismatic The Gong",
       "rarity": "legendary",
       "slot": "shield",
@@ -18163,14 +18305,15 @@
         "of_dex_mastery": 8,
         "of_finesse": 14,
         "of_int_mastery": 8,
-        "of_might": 14,
+        "of_might": 28,
         "of_quickcast": 12,
         "of_resonance": 12,
         "of_str_mastery": 8,
-        "of_the_bear": 22,
+        "of_the_bear": 52,
         "of_the_cat": 14,
-        "of_vitality": 18,
-        "of_wisdom": 18
+        "of_vitality": 40,
+        "of_wisdom": 18,
+        "of_sharpness": 14
       },
       "armor": 7,
       "base_type": "helmet",
@@ -18185,11 +18328,11 @@
         ]
       },
       "drop_weights": [
-        5,
-        50,
-        35,
-        8,
-        2
+        25,
+        60,
+        12,
+        0,
+        0
       ],
       "enchant_chance": 0.1,
       "evasion": 5,
@@ -18199,7 +18342,7 @@
       "id": "etched_helm_ironclad",
       "implicit_affixes": [],
       "item_tier": 2,
-      "lore": "A ironclad reflavor of the standard etched helm.",
+      "lore": "Plain forged iron, but heavier than the metal alone explains.",
       "name": "Ironclad Etched Helm",
       "rarity": "rare",
       "slot": "helm",
@@ -18213,7 +18356,7 @@
         "of_crit": 16,
         "of_devotion": 8,
         "of_embers": 10,
-        "of_finesse": 16,
+        "of_finesse": 30,
         "of_fire_resist": 8,
         "of_frost": 10,
         "of_haste": 16,
@@ -18222,15 +18365,16 @@
         "of_lingering": 12,
         "of_might": 16,
         "of_multicast": 8,
-        "of_quickcast": 14,
+        "of_quickcast": 26,
         "of_regen": 10,
         "of_resonance": 12,
-        "of_shadows": 8,
+        "of_shadows": 34,
         "of_storms": 10,
         "of_velocity": 10,
         "of_venom": 8,
         "of_vitality": 14,
-        "of_wisdom": 16
+        "of_wisdom": 16,
+        "of_dark_resist": 18
       },
       "base_type": "ring_regen",
       "default_tint": {
@@ -18239,11 +18383,11 @@
         "sat": 0.645
       },
       "drop_weights": [
-        0,
-        18,
+        3,
+        25,
         60,
-        22,
-        4
+        12,
+        0
       ],
       "enchant_chance": 0.1,
       "flavor_tags": [
@@ -18253,7 +18397,7 @@
       "id": "moonstone_ring_shadowed",
       "implicit_affixes": [],
       "item_tier": 3,
-      "lore": "A shadowed reflavor of the standard moonstone ring.",
+      "lore": "Hard to see in dim light, even when held directly before you.",
       "name": "Shadowed Moonstone Ring",
       "rarity": "rare",
       "slot": "ring",
@@ -18272,7 +18416,20 @@
         "of_poison_resist": 10,
         "of_the_bear": 30,
         "of_vitality": 22,
-        "of_wisdom": 10
+        "of_wisdom": 10,
+        "of_embers": 14,
+        "of_frost": 14,
+        "of_storms": 14,
+        "of_devotion": 14,
+        "of_venom": 14,
+        "of_shadows": 14,
+        "of_sharpness": 14,
+        "of_resonance": 18,
+        "of_multicast": 12,
+        "of_channeling": 18,
+        "of_str_mastery": 10,
+        "of_dex_mastery": 10,
+        "of_int_mastery": 10
       },
       "armor": 14,
       "base_type": "kite_shield",
@@ -18282,13 +18439,13 @@
         "sat": 1.0
       },
       "drop_weights": [
-        0,
+        3,
+        25,
+        60,
         12,
-        55,
-        28,
-        8
+        0
       ],
-      "enchant_chance": 0.1,
+      "enchant_chance": 0.3,
       "evasion": 5,
       "flavor_tags": [
         "fortified"
@@ -18296,7 +18453,7 @@
       "id": "large_kite_prismatic",
       "implicit_affixes": [],
       "item_tier": 3,
-      "lore": "A prismatic reflavor of the standard large kite.",
+      "lore": "Every glance reveals a new color, each one a real one \u2014 somewhere.",
       "name": "Prismatic Large Kite",
       "rarity": "legendary",
       "slot": "shield",
@@ -18305,21 +18462,22 @@
     },
     {
       "affix_pool": {
-        "of_channeling": 8,
+        "of_channeling": 18,
         "of_crit": 25,
         "of_devotion": 6,
-        "of_embers": 8,
+        "of_embers": 38,
         "of_finesse": 15,
         "of_frost": 8,
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_might": 25,
-        "of_quickcast": 8,
+        "of_quickcast": 22,
         "of_shadows": 6,
         "of_sharpness": 30,
         "of_storms": 8,
         "of_venom": 6,
-        "of_wisdom": 10
+        "of_wisdom": 10,
+        "of_fire_resist": 22
       },
       "base_type": "demon_blade",
       "damage_max": 250,
@@ -18333,11 +18491,11 @@
       "drop_weights": [
         0,
         0,
-        0,
-        8,
+        3,
+        25,
         60
       ],
-      "enchant_chance": 0.15,
+      "enchant_chance": 0.3,
       "flavor_tags": [
         "fire",
         "demon"
@@ -18345,7 +18503,7 @@
       "id": "demon_blade_embered",
       "implicit_affixes": [],
       "item_tier": 5,
-      "lore": "A embered reflavor of the standard demon blade.",
+      "lore": "Carries its own slow heat. Embers drift from it when struck.",
       "name": "Embered Demon Blade",
       "rarity": "legendary",
       "slot": "weapon",
@@ -18369,8 +18527,11 @@
         "of_shadows": 6,
         "of_sharpness": 30,
         "of_storms": 8,
-        "of_venom": 6,
-        "of_wisdom": 10
+        "of_venom": 34,
+        "of_wisdom": 10,
+        "of_poison_resist": 22,
+        "of_regen": 14,
+        "of_vitality": 15
       },
       "base_type": "long_sword",
       "damage_max": 74,
@@ -18383,10 +18544,10 @@
       },
       "drop_weights": [
         0,
-        0,
-        12,
-        58,
-        30
+        3,
+        25,
+        60,
+        12
       ],
       "enchant_chance": 0.1,
       "flavor_tags": [
@@ -18395,7 +18556,7 @@
       "id": "steel_longsword_mossy",
       "implicit_affixes": [],
       "item_tier": 4,
-      "lore": "A mossy reflavor of the standard steel long sword.",
+      "lore": "Damp green spores drift from every notch \u2014 they twitch toward warm flesh.",
       "name": "Mossy Steel Long Sword",
       "rarity": "rare",
       "slot": "weapon",
@@ -18403,6 +18564,2150 @@
       "tile": "long_sword_2.png",
       "unique": false,
       "weapon_class": "1H"
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 8,
+        "of_crit": 25,
+        "of_devotion": 6,
+        "of_embers": 43,
+        "of_finesse": 15,
+        "of_frost": 8,
+        "of_haste": 32,
+        "of_lifesteal": 27,
+        "of_might": 43,
+        "of_quickcast": 8,
+        "of_shadows": 6,
+        "of_sharpness": 30,
+        "of_storms": 8,
+        "of_venom": 6,
+        "of_wisdom": 10,
+        "of_fire_resist": 18
+      },
+      "base_type": "long_sword",
+      "damage_max": 115,
+      "damage_min": 63,
+      "damage_type": "dark",
+      "default_tint": {
+        "hue": 11.6,
+        "mode": "normal",
+        "sat": 1.228
+      },
+      "drop_weights": [
+        0,
+        0,
+        3,
+        25,
+        60
+      ],
+      "enchant_chance": 0.18,
+      "flavor_tags": [
+        "dark",
+        "death",
+        "fire"
+      ],
+      "id": "ancient_sword_crimson",
+      "implicit_affixes": [],
+      "item_tier": 5,
+      "lore": "Forged in dragonfire, the metal still glows when blood spills near it.",
+      "name": "Crimson Ancient Sword",
+      "rarity": "epic",
+      "slot": "weapon",
+      "speed": 0.7,
+      "tile": "ancient_sword.png",
+      "unique": false,
+      "weapon_class": "1H"
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 16,
+        "of_crit": 14,
+        "of_dex_mastery": 12,
+        "of_finesse": 30,
+        "of_haste": 14,
+        "of_int_mastery": 14,
+        "of_lifesteal": 10,
+        "of_lingering": 12,
+        "of_might": 16,
+        "of_multicast": 8,
+        "of_quickcast": 26,
+        "of_regen": 10,
+        "of_resonance": 14,
+        "of_str_mastery": 12,
+        "of_velocity": 10,
+        "of_vitality": 14,
+        "of_wisdom": 18,
+        "of_shadows": 26,
+        "of_dark_resist": 18
+      },
+      "base_type": "amulet_guardian",
+      "default_tint": {
+        "hue": 288.4,
+        "mode": "normal",
+        "sat": 0.612
+      },
+      "drop_weights": [
+        0,
+        0,
+        3,
+        25,
+        60
+      ],
+      "enchant_chance": 0.3,
+      "flavor_tags": [
+        "guardian",
+        "willpower",
+        "fortune",
+        "dark"
+      ],
+      "id": "cekugob_amulet_shadowed",
+      "implicit_affixes": [],
+      "item_tier": 5,
+      "lore": "Hard to see in dim light, even when held directly before you.",
+      "name": "Shadowed Cekugob's Amulet",
+      "rarity": "legendary",
+      "slot": "amulet",
+      "tile": "urand_cekugob_new.png",
+      "unique": true
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 16,
+        "of_crit": 14,
+        "of_dex_mastery": 12,
+        "of_finesse": 16,
+        "of_haste": 14,
+        "of_int_mastery": 14,
+        "of_lifesteal": 28,
+        "of_lingering": 12,
+        "of_might": 28,
+        "of_multicast": 8,
+        "of_quickcast": 14,
+        "of_regen": 10,
+        "of_resonance": 14,
+        "of_str_mastery": 12,
+        "of_velocity": 10,
+        "of_vitality": 14,
+        "of_wisdom": 18,
+        "of_shadows": 32,
+        "of_dark_resist": 22
+      },
+      "base_type": "amulet_harm",
+      "default_tint": {
+        "hue": 302.3,
+        "mode": "normal",
+        "sat": 1.084
+      },
+      "drop_weights": [
+        3,
+        25,
+        60,
+        12,
+        0
+      ],
+      "enchant_chance": 0.18,
+      "flavor_tags": [
+        "harm",
+        "dark"
+      ],
+      "id": "stone_2_red_voidwrought",
+      "implicit_affixes": [],
+      "item_tier": 3,
+      "lore": "Smithed somewhere between worlds. The shadow it casts is wrong.",
+      "name": "Voidwrought Bleeding Stone",
+      "rarity": "epic",
+      "slot": "amulet",
+      "tile": "stone_2_red.png",
+      "unique": false
+    },
+    {
+      "affix_pool": {
+        "of_cold_resist": 14,
+        "of_dark_resist": 8,
+        "of_finesse": 12,
+        "of_fire_resist": 14,
+        "of_haste": 10,
+        "of_holy_resist": 8,
+        "of_lightning_resist": 14,
+        "of_lingering": 14,
+        "of_might": 24,
+        "of_poison_resist": 10,
+        "of_regen": 8,
+        "of_resonance": 12,
+        "of_the_bear": 42,
+        "of_the_cat": 22,
+        "of_vitality": 40,
+        "of_wisdom": 14,
+        "of_sharpness": 14
+      },
+      "armor": 1,
+      "base_type": "cloak",
+      "default_tint": {
+        "hue": 0.0,
+        "mode": "colorize",
+        "sat": 1.0,
+        "target_rgb": [
+          0.55,
+          0.58,
+          0.62
+        ]
+      },
+      "drop_weights": [
+        60,
+        12,
+        0,
+        0,
+        0
+      ],
+      "enchant_chance": 0.05,
+      "evasion": 6,
+      "flavor_tags": [
+        "lightning"
+      ],
+      "id": "travelers_cloak_stormtouched_ironclad",
+      "implicit_affixes": [],
+      "item_tier": 1,
+      "lore": "Plain forged iron, but heavier than the metal alone explains.",
+      "name": "Ironclad Stormtouched Traveler's Cloak",
+      "overlay": "cloak_travelers",
+      "rarity": "uncommon",
+      "slot": "cloak",
+      "tile": "cloak_2.png",
+      "unique": false
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 12,
+        "of_crit": 12,
+        "of_dex_mastery": 8,
+        "of_finesse": 28,
+        "of_int_mastery": 8,
+        "of_might": 28,
+        "of_quickcast": 12,
+        "of_resonance": 12,
+        "of_str_mastery": 8,
+        "of_the_bear": 22,
+        "of_the_cat": 14,
+        "of_vitality": 18,
+        "of_wisdom": 18,
+        "of_shadows": 22,
+        "of_lifesteal": 12
+      },
+      "armor": 24,
+      "base_type": "wizard_hat",
+      "default_tint": {
+        "hue": 0.0,
+        "mode": "colorize",
+        "sat": 1.0,
+        "target_rgb": [
+          0.95,
+          0.92,
+          0.78
+        ]
+      },
+      "drop_weights": [
+        0,
+        0,
+        3,
+        25,
+        60
+      ],
+      "enchant_chance": 0.3,
+      "evasion": 18,
+      "flavor_tags": [
+        "wisdom",
+        "regen"
+      ],
+      "id": "hat_of_pondering_bone",
+      "implicit_affixes": [],
+      "item_tier": 5,
+      "lore": "Shaped from the long bones of something old. It still aches in the cold.",
+      "name": "Bone Hat of Pondering",
+      "rarity": "legendary",
+      "slot": "helm",
+      "tile": "urand_pondering_new.png",
+      "unique": true
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 32,
+        "of_cold_resist": 8,
+        "of_crit": 16,
+        "of_devotion": 22,
+        "of_embers": 24,
+        "of_finesse": 16,
+        "of_fire_resist": 8,
+        "of_frost": 24,
+        "of_haste": 16,
+        "of_lifesteal": 10,
+        "of_lightning_resist": 8,
+        "of_lingering": 12,
+        "of_might": 16,
+        "of_multicast": 20,
+        "of_quickcast": 14,
+        "of_regen": 10,
+        "of_resonance": 30,
+        "of_shadows": 22,
+        "of_storms": 24,
+        "of_velocity": 10,
+        "of_venom": 22,
+        "of_vitality": 14,
+        "of_wisdom": 16,
+        "of_sharpness": 14,
+        "of_str_mastery": 10,
+        "of_dex_mastery": 10,
+        "of_int_mastery": 10
+      },
+      "base_type": "ring_strength",
+      "default_tint": {
+        "hue": 244.5,
+        "mode": "prismatic",
+        "sat": 1.0
+      },
+      "drop_weights": [
+        60,
+        12,
+        0,
+        0,
+        0
+      ],
+      "enchant_chance": 0.3,
+      "flavor_tags": [],
+      "id": "bronze_ring_prismatic",
+      "implicit_affixes": [],
+      "item_tier": 1,
+      "lore": "Every glance reveals a new color, each one a real one \u2014 somewhere.",
+      "name": "Prismatic Bronze Ring",
+      "rarity": "legendary",
+      "slot": "ring",
+      "tile": "bronze.png",
+      "unique": false
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 14,
+        "of_cold_resist": 8,
+        "of_crit": 16,
+        "of_devotion": 22,
+        "of_embers": 10,
+        "of_finesse": 30,
+        "of_fire_resist": 8,
+        "of_frost": 10,
+        "of_haste": 16,
+        "of_lifesteal": 10,
+        "of_lightning_resist": 8,
+        "of_lingering": 12,
+        "of_might": 16,
+        "of_multicast": 8,
+        "of_quickcast": 14,
+        "of_regen": 10,
+        "of_resonance": 12,
+        "of_shadows": 8,
+        "of_storms": 10,
+        "of_velocity": 10,
+        "of_venom": 8,
+        "of_vitality": 14,
+        "of_wisdom": 28,
+        "of_holy_resist": 18
+      },
+      "base_type": "ring_dexterity",
+      "default_tint": {
+        "hue": 0.0,
+        "mode": "colorize",
+        "sat": 1.0,
+        "target_rgb": [
+          0.92,
+          0.92,
+          0.96
+        ]
+      },
+      "drop_weights": [
+        0,
+        3,
+        25,
+        60,
+        12
+      ],
+      "enchant_chance": 0.18,
+      "flavor_tags": [
+        "footwork",
+        "swiftness"
+      ],
+      "id": "twisted_ring_pale",
+      "implicit_affixes": [],
+      "item_tier": 4,
+      "lore": "Bleached past white into a color the eye cannot name.",
+      "name": "Pale Twisted Ring",
+      "rarity": "epic",
+      "slot": "ring",
+      "tile": "ring_twisted.png",
+      "unique": false
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 30,
+        "of_crit": 14,
+        "of_dex_mastery": 12,
+        "of_finesse": 16,
+        "of_haste": 14,
+        "of_int_mastery": 28,
+        "of_lifesteal": 10,
+        "of_lingering": 12,
+        "of_might": 16,
+        "of_multicast": 8,
+        "of_quickcast": 14,
+        "of_regen": 10,
+        "of_resonance": 14,
+        "of_str_mastery": 12,
+        "of_velocity": 10,
+        "of_vitality": 14,
+        "of_wisdom": 18,
+        "of_shadows": 30,
+        "of_dark_resist": 22
+      },
+      "base_type": "amulet_faith",
+      "default_tint": {
+        "hue": 0.0,
+        "mode": "colorize",
+        "sat": 1.0,
+        "target_rgb": [
+          0.25,
+          0.2,
+          0.3
+        ]
+      },
+      "drop_weights": [
+        25,
+        60,
+        12,
+        0,
+        0
+      ],
+      "enchant_chance": 0.18,
+      "flavor_tags": [
+        "faith",
+        "wisdom",
+        "shadow"
+      ],
+      "id": "celtic_red_umbral",
+      "implicit_affixes": [],
+      "item_tier": 2,
+      "lore": "The dark that settles on it cannot be polished off.",
+      "name": "Umbral Knot of the Faithful",
+      "rarity": "epic",
+      "slot": "amulet",
+      "tile": "celtic_red.png",
+      "unique": false
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 8,
+        "of_crit": 25,
+        "of_devotion": 6,
+        "of_embers": 8,
+        "of_finesse": 30,
+        "of_frost": 38,
+        "of_haste": 20,
+        "of_lifesteal": 15,
+        "of_might": 25,
+        "of_quickcast": 22,
+        "of_shadows": 6,
+        "of_sharpness": 30,
+        "of_storms": 8,
+        "of_venom": 6,
+        "of_wisdom": 10,
+        "of_cold_resist": 22
+      },
+      "base_type": "broad_axe",
+      "damage_max": 194,
+      "damage_min": 112,
+      "damage_type": "physical",
+      "default_tint": {
+        "hue": 211.9,
+        "mode": "normal",
+        "sat": 1.093
+      },
+      "drop_weights": [
+        0,
+        3,
+        25,
+        60,
+        12
+      ],
+      "enchant_chance": 0.18,
+      "flavor_tags": [
+        "slaying",
+        "arcane",
+        "cold"
+      ],
+      "id": "runed_broad_axe_azure",
+      "implicit_affixes": [],
+      "item_tier": 4,
+      "lore": "Cold to the touch. The air around it always tastes of winter.",
+      "name": "Azure Runed Broad Axe",
+      "rarity": "epic",
+      "slot": "weapon",
+      "speed": 1.15,
+      "tile": "broad_axe_5.png",
+      "unique": false,
+      "weapon_class": "2H"
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 26,
+        "of_crit": 25,
+        "of_devotion": 20,
+        "of_embers": 22,
+        "of_finesse": 15,
+        "of_frost": 22,
+        "of_haste": 20,
+        "of_lifesteal": 15,
+        "of_might": 25,
+        "of_quickcast": 8,
+        "of_shadows": 20,
+        "of_sharpness": 44,
+        "of_storms": 22,
+        "of_venom": 20,
+        "of_wisdom": 10,
+        "of_resonance": 18,
+        "of_multicast": 12,
+        "of_str_mastery": 10,
+        "of_dex_mastery": 10,
+        "of_int_mastery": 10
+      },
+      "base_type": "rapier",
+      "damage_max": 43,
+      "damage_min": 19,
+      "damage_type": "holy",
+      "default_tint": {
+        "hue": 147.7,
+        "mode": "prismatic",
+        "sat": 1.0
+      },
+      "drop_weights": [
+        3,
+        25,
+        60,
+        12,
+        0
+      ],
+      "enchant_chance": 0.3,
+      "flavor_tags": [
+        "precision",
+        "holy",
+        "poison"
+      ],
+      "id": "silver_rapier_mossy_prismatic",
+      "implicit_affixes": [],
+      "item_tier": 3,
+      "lore": "Every glance reveals a new color, each one a real one \u2014 somewhere.",
+      "name": "Prismatic Mossy Silver Rapier",
+      "rarity": "legendary",
+      "slot": "weapon",
+      "speed": 0.55,
+      "tile": "rapier_2.png",
+      "unique": false,
+      "weapon_class": "1H"
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 16,
+        "of_crit": 29,
+        "of_dex_mastery": 12,
+        "of_finesse": 16,
+        "of_haste": 14,
+        "of_int_mastery": 14,
+        "of_lifesteal": 10,
+        "of_lingering": 12,
+        "of_might": 16,
+        "of_multicast": 8,
+        "of_quickcast": 32,
+        "of_regen": 10,
+        "of_resonance": 14,
+        "of_str_mastery": 12,
+        "of_velocity": 10,
+        "of_vitality": 14,
+        "of_wisdom": 18,
+        "of_frost": 35,
+        "of_cold_resist": 22
+      },
+      "base_type": "amulet_harm",
+      "default_tint": {
+        "hue": 195.5,
+        "mode": "shimmer",
+        "sat": 0.993
+      },
+      "drop_weights": [
+        3,
+        25,
+        60,
+        12,
+        0
+      ],
+      "enchant_chance": 0.3,
+      "flavor_tags": [
+        "harm",
+        "dark",
+        "cold"
+      ],
+      "id": "stone_2_red_voidwrought_frostbound",
+      "implicit_affixes": [],
+      "item_tier": 3,
+      "lore": "A rime of ice will not melt, no matter how warm the room.",
+      "name": "Frostbound Voidwrought Bleeding Stone",
+      "rarity": "legendary",
+      "slot": "amulet",
+      "tile": "stone_2_red.png",
+      "unique": false
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 16,
+        "of_crit": 14,
+        "of_dex_mastery": 12,
+        "of_finesse": 16,
+        "of_haste": 14,
+        "of_int_mastery": 14,
+        "of_lifesteal": 10,
+        "of_lingering": 12,
+        "of_might": 34,
+        "of_multicast": 8,
+        "of_quickcast": 14,
+        "of_regen": 22,
+        "of_resonance": 14,
+        "of_str_mastery": 12,
+        "of_velocity": 10,
+        "of_vitality": 14,
+        "of_wisdom": 18,
+        "of_devotion": 30,
+        "of_holy_resist": 22
+      },
+      "base_type": "amulet_harm",
+      "default_tint": {
+        "hue": 43.9,
+        "mode": "shimmer",
+        "sat": 0.845
+      },
+      "drop_weights": [
+        0,
+        3,
+        25,
+        60,
+        12
+      ],
+      "enchant_chance": 0.3,
+      "flavor_tags": [
+        "harm",
+        "rage",
+        "holy"
+      ],
+      "id": "crystal_red_sunsteel",
+      "implicit_affixes": [],
+      "item_tier": 4,
+      "lore": "The metal is warm even at midnight. Undead dare not touch it.",
+      "name": "Sunsteel Bloodstone Pendant",
+      "rarity": "legendary",
+      "slot": "amulet",
+      "tile": "crystal_red.png",
+      "unique": false
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 28,
+        "of_cold_resist": 8,
+        "of_crit": 16,
+        "of_devotion": 8,
+        "of_embers": 10,
+        "of_finesse": 16,
+        "of_fire_resist": 8,
+        "of_frost": 10,
+        "of_haste": 16,
+        "of_lifesteal": 10,
+        "of_lightning_resist": 8,
+        "of_lingering": 12,
+        "of_might": 16,
+        "of_multicast": 8,
+        "of_quickcast": 14,
+        "of_regen": 10,
+        "of_resonance": 12,
+        "of_shadows": 38,
+        "of_storms": 10,
+        "of_velocity": 10,
+        "of_venom": 8,
+        "of_vitality": 14,
+        "of_wisdom": 16,
+        "of_dark_resist": 22,
+        "of_int_mastery": 14
+      },
+      "base_type": "ring_dexterity",
+      "default_tint": {
+        "hue": 0.0,
+        "mode": "colorize",
+        "sat": 1.0,
+        "target_rgb": [
+          0.25,
+          0.2,
+          0.3
+        ]
+      },
+      "drop_weights": [
+        25,
+        60,
+        12,
+        0,
+        0
+      ],
+      "enchant_chance": 0.18,
+      "flavor_tags": [
+        "footwork",
+        "shadow"
+      ],
+      "id": "agate_ring_umbral",
+      "implicit_affixes": [],
+      "item_tier": 2,
+      "lore": "The dark that settles on it cannot be polished off.",
+      "name": "Umbral Agate Ring",
+      "rarity": "epic",
+      "slot": "ring",
+      "tile": "agate.png",
+      "unique": false
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 16,
+        "of_crit": 14,
+        "of_dex_mastery": 24,
+        "of_finesse": 31,
+        "of_haste": 14,
+        "of_int_mastery": 14,
+        "of_lifesteal": 10,
+        "of_lingering": 12,
+        "of_might": 16,
+        "of_multicast": 8,
+        "of_quickcast": 14,
+        "of_regen": 10,
+        "of_resonance": 14,
+        "of_str_mastery": 12,
+        "of_velocity": 10,
+        "of_vitality": 14,
+        "of_wisdom": 18,
+        "of_frost": 22,
+        "of_dark_resist": 18
+      },
+      "base_type": "amulet_harm",
+      "default_tint": {
+        "hue": 198.2,
+        "mode": "shimmer",
+        "sat": 0.689
+      },
+      "drop_weights": [
+        3,
+        25,
+        60,
+        12,
+        0
+      ],
+      "enchant_chance": 0.3,
+      "flavor_tags": [
+        "harm",
+        "dark"
+      ],
+      "id": "stone_2_red_voidwrought_spectral",
+      "implicit_affixes": [],
+      "item_tier": 3,
+      "lore": "It is somehow always slightly cooler than its surroundings.",
+      "name": "Spectral Voidwrought Bleeding Stone",
+      "rarity": "legendary",
+      "slot": "amulet",
+      "tile": "stone_2_red.png",
+      "unique": false
+    },
+    {
+      "affix_pool": {
+        "of_cold_resist": 14,
+        "of_dark_resist": 8,
+        "of_finesse": 8,
+        "of_fire_resist": 14,
+        "of_holy_resist": 8,
+        "of_lightning_resist": 14,
+        "of_might": 16,
+        "of_poison_resist": 10,
+        "of_the_bear": 30,
+        "of_vitality": 22,
+        "of_wisdom": 10,
+        "of_embers": 14,
+        "of_frost": 14,
+        "of_storms": 14,
+        "of_devotion": 14,
+        "of_venom": 14,
+        "of_shadows": 14,
+        "of_sharpness": 14,
+        "of_resonance": 18,
+        "of_multicast": 12,
+        "of_channeling": 18,
+        "of_str_mastery": 10,
+        "of_dex_mastery": 10,
+        "of_int_mastery": 10
+      },
+      "armor": 14,
+      "base_type": "buckler",
+      "default_tint": {
+        "hue": 155.4,
+        "mode": "prismatic",
+        "sat": 1.0
+      },
+      "drop_weights": [
+        3,
+        25,
+        60,
+        12,
+        0
+      ],
+      "enchant_chance": 0.3,
+      "evasion": 5,
+      "flavor_tags": [
+        "fortified",
+        "thorns",
+        "cold"
+      ],
+      "id": "dwarven_buckler_2_frostbound_prismatic",
+      "implicit_affixes": [],
+      "item_tier": 3,
+      "lore": "Every glance reveals a new color, each one a real one \u2014 somewhere.",
+      "name": "Prismatic Frostbound Dwarven Roundel",
+      "rarity": "legendary",
+      "slot": "shield",
+      "tile": "dwarven_buckler_2.png",
+      "unique": false
+    },
+    {
+      "affix_pool": {
+        "of_finesse": 22,
+        "of_haste": 26,
+        "of_might": 12,
+        "of_regen": 10,
+        "of_the_bear": 16,
+        "of_the_cat": 26,
+        "of_vitality": 14,
+        "of_wisdom": 10,
+        "of_embers": 14,
+        "of_frost": 14,
+        "of_storms": 14,
+        "of_devotion": 14,
+        "of_venom": 14,
+        "of_shadows": 14,
+        "of_sharpness": 14,
+        "of_resonance": 18,
+        "of_multicast": 12,
+        "of_channeling": 18,
+        "of_str_mastery": 10,
+        "of_dex_mastery": 10,
+        "of_int_mastery": 10
+      },
+      "armor": 3,
+      "base_type": "sandals",
+      "default_tint": {
+        "hue": 105.4,
+        "mode": "prismatic",
+        "sat": 1.0
+      },
+      "drop_weights": [
+        60,
+        12,
+        0,
+        0,
+        0
+      ],
+      "enchant_chance": 0.3,
+      "evasion": 4,
+      "flavor_tags": [
+        "swiftness",
+        "holy"
+      ],
+      "id": "worn_sandals_sunsteel_prismatic",
+      "implicit_affixes": [],
+      "item_tier": 1,
+      "lore": "Every glance reveals a new color, each one a real one \u2014 somewhere.",
+      "name": "Prismatic Sunsteel Worn Sandals",
+      "rarity": "legendary",
+      "slot": "boots",
+      "tile": "low_boots.png",
+      "unique": false
+    },
+    {
+      "affix_pool": {
+        "of_cold_resist": 12,
+        "of_dark_resist": 8,
+        "of_finesse": 12,
+        "of_fire_resist": 12,
+        "of_holy_resist": 8,
+        "of_lightning_resist": 12,
+        "of_might": 29,
+        "of_poison_resist": 10,
+        "of_regen": 15,
+        "of_the_bear": 60,
+        "of_vitality": 52,
+        "of_wisdom": 12,
+        "of_sharpness": 14
+      },
+      "armor": 12,
+      "base_type": "robe",
+      "default_tint": {
+        "hue": 0.0,
+        "mode": "colorize",
+        "sat": 1.0,
+        "target_rgb": [
+          0.55,
+          0.58,
+          0.62
+        ]
+      },
+      "drop_weights": [
+        25,
+        60,
+        12,
+        0,
+        0
+      ],
+      "enchant_chance": 0.05,
+      "evasion": 3,
+      "flavor_tags": [
+        "stealth",
+        "swiftness"
+      ],
+      "id": "scout_robe_ironclad",
+      "implicit_affixes": [],
+      "item_tier": 2,
+      "lore": "Plain forged iron, but heavier than the metal alone explains.",
+      "name": "Ironclad Scout's Robe",
+      "rarity": "uncommon",
+      "slot": "armor",
+      "tile": "robe_1_new.png",
+      "unique": false
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 8,
+        "of_crit": 40,
+        "of_devotion": 6,
+        "of_embers": 8,
+        "of_finesse": 15,
+        "of_frost": 43,
+        "of_haste": 20,
+        "of_lifesteal": 15,
+        "of_might": 25,
+        "of_quickcast": 26,
+        "of_shadows": 6,
+        "of_sharpness": 30,
+        "of_storms": 8,
+        "of_venom": 6,
+        "of_wisdom": 10,
+        "of_cold_resist": 22
+      },
+      "base_type": "scimitar",
+      "damage_max": 75,
+      "damage_min": 37,
+      "damage_type": "physical",
+      "default_tint": {
+        "hue": 211.4,
+        "mode": "shimmer",
+        "sat": 0.979
+      },
+      "drop_weights": [
+        0,
+        3,
+        25,
+        60,
+        12
+      ],
+      "enchant_chance": 0.3,
+      "flavor_tags": [
+        "arcane",
+        "cold"
+      ],
+      "id": "runed_scimitar_frostbound",
+      "implicit_affixes": [],
+      "item_tier": 4,
+      "lore": "A rime of ice will not melt, no matter how warm the room.",
+      "name": "Frostbound Runed Scimitar",
+      "rarity": "legendary",
+      "slot": "weapon",
+      "speed": 0.6,
+      "tile": "scimitar_2.png",
+      "unique": false,
+      "weapon_class": "1H"
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 14,
+        "of_cold_resist": 8,
+        "of_crit": 16,
+        "of_devotion": 8,
+        "of_embers": 10,
+        "of_finesse": 16,
+        "of_fire_resist": 8,
+        "of_frost": 10,
+        "of_haste": 16,
+        "of_lifesteal": 10,
+        "of_lightning_resist": 8,
+        "of_lingering": 12,
+        "of_might": 30,
+        "of_multicast": 8,
+        "of_quickcast": 14,
+        "of_regen": 10,
+        "of_resonance": 12,
+        "of_shadows": 8,
+        "of_storms": 10,
+        "of_velocity": 10,
+        "of_venom": 8,
+        "of_vitality": 36,
+        "of_wisdom": 16,
+        "of_the_bear": 30,
+        "of_sharpness": 14
+      },
+      "base_type": "ring_magic",
+      "default_tint": {
+        "hue": 0.0,
+        "mode": "colorize",
+        "sat": 1.0,
+        "target_rgb": [
+          0.55,
+          0.58,
+          0.62
+        ]
+      },
+      "drop_weights": [
+        0,
+        0,
+        3,
+        25,
+        60
+      ],
+      "enchant_chance": 0.3,
+      "flavor_tags": [
+        "wisdom",
+        "willpower"
+      ],
+      "id": "mage_ring_ironclad",
+      "implicit_affixes": [],
+      "item_tier": 5,
+      "lore": "Plain forged iron, but heavier than the metal alone explains.",
+      "name": "Ironclad Ring of the Mage",
+      "rarity": "legendary",
+      "slot": "ring",
+      "tile": "urand_mage.png",
+      "unique": true
+    },
+    {
+      "affix_pool": {
+        "of_cold_resist": 14,
+        "of_dark_resist": 22,
+        "of_finesse": 26,
+        "of_fire_resist": 14,
+        "of_haste": 10,
+        "of_holy_resist": 8,
+        "of_lightning_resist": 14,
+        "of_lingering": 14,
+        "of_might": 10,
+        "of_poison_resist": 10,
+        "of_regen": 8,
+        "of_resonance": 12,
+        "of_the_bear": 12,
+        "of_the_cat": 22,
+        "of_vitality": 18,
+        "of_wisdom": 14,
+        "of_shadows": 26,
+        "of_lifesteal": 14
+      },
+      "armor": 1,
+      "base_type": "cloak",
+      "default_tint": {
+        "hue": 131.6,
+        "mode": "inverted",
+        "sat": 0.658
+      },
+      "drop_weights": [
+        60,
+        12,
+        0,
+        0,
+        0
+      ],
+      "enchant_chance": 0.18,
+      "evasion": 6,
+      "flavor_tags": [
+        "shadow"
+      ],
+      "id": "travelers_cloak_twisted",
+      "implicit_affixes": [],
+      "item_tier": 1,
+      "lore": "It is not the same shape twice. Bending occurs when you look away.",
+      "name": "Twisted Traveler's Cloak",
+      "overlay": "cloak_travelers",
+      "rarity": "epic",
+      "slot": "cloak",
+      "tile": "cloak_2.png",
+      "unique": false
+    },
+    {
+      "affix_pool": {
+        "of_cold_resist": 14,
+        "of_dark_resist": 8,
+        "of_finesse": 8,
+        "of_fire_resist": 14,
+        "of_holy_resist": 30,
+        "of_lightning_resist": 14,
+        "of_might": 34,
+        "of_poison_resist": 10,
+        "of_the_bear": 30,
+        "of_vitality": 22,
+        "of_wisdom": 10,
+        "of_devotion": 30,
+        "of_regen": 12
+      },
+      "armor": 36,
+      "base_type": "round_shield",
+      "default_tint": {
+        "hue": 39.2,
+        "mode": "shimmer",
+        "sat": 0.973
+      },
+      "drop_weights": [
+        0,
+        0,
+        3,
+        25,
+        60
+      ],
+      "enchant_chance": 0.3,
+      "evasion": 12,
+      "flavor_tags": [
+        "reflective",
+        "warding",
+        "holy"
+      ],
+      "id": "bullseye_sunsteel",
+      "implicit_affixes": [],
+      "item_tier": 5,
+      "lore": "The metal is warm even at midnight. Undead dare not touch it.",
+      "name": "Sunsteel Bullseye",
+      "rarity": "legendary",
+      "slot": "shield",
+      "tile": "urand_bullseye.png",
+      "unique": true
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 12,
+        "of_crit": 12,
+        "of_dex_mastery": 8,
+        "of_finesse": 28,
+        "of_int_mastery": 8,
+        "of_might": 28,
+        "of_quickcast": 12,
+        "of_resonance": 12,
+        "of_str_mastery": 8,
+        "of_the_bear": 22,
+        "of_the_cat": 14,
+        "of_vitality": 18,
+        "of_wisdom": 18,
+        "of_shadows": 22,
+        "of_lifesteal": 12
+      },
+      "armor": 10,
+      "base_type": "wizard_hat",
+      "default_tint": {
+        "hue": 0.0,
+        "mode": "colorize",
+        "sat": 1.0,
+        "target_rgb": [
+          0.95,
+          0.92,
+          0.78
+        ]
+      },
+      "drop_weights": [
+        3,
+        25,
+        60,
+        12,
+        0
+      ],
+      "enchant_chance": 0.1,
+      "evasion": 7,
+      "flavor_tags": [
+        "wisdom",
+        "regen"
+      ],
+      "id": "wizard_hat_bone",
+      "implicit_affixes": [],
+      "item_tier": 3,
+      "lore": "Shaped from the long bones of something old. It still aches in the cold.",
+      "name": "Bone Wizard's Hat",
+      "rarity": "rare",
+      "slot": "helm",
+      "tile": "wizard_hat_1.png",
+      "unique": false
+    },
+    {
+      "affix_pool": {
+        "of_cold_resist": 14,
+        "of_dark_resist": 8,
+        "of_finesse": 8,
+        "of_fire_resist": 14,
+        "of_holy_resist": 8,
+        "of_lightning_resist": 14,
+        "of_might": 30,
+        "of_poison_resist": 10,
+        "of_the_bear": 60,
+        "of_vitality": 44,
+        "of_wisdom": 10,
+        "of_sharpness": 14
+      },
+      "armor": 14,
+      "base_type": "buckler",
+      "default_tint": {
+        "hue": 0.0,
+        "mode": "colorize",
+        "sat": 1.0,
+        "target_rgb": [
+          0.55,
+          0.58,
+          0.62
+        ]
+      },
+      "drop_weights": [
+        3,
+        25,
+        60,
+        12,
+        0
+      ],
+      "enchant_chance": 0.1,
+      "evasion": 5,
+      "flavor_tags": [
+        "fortified",
+        "thorns"
+      ],
+      "id": "dwarven_buckler_2_ironclad",
+      "implicit_affixes": [],
+      "item_tier": 3,
+      "lore": "Plain forged iron, but heavier than the metal alone explains.",
+      "name": "Ironclad Dwarven Roundel",
+      "rarity": "rare",
+      "slot": "shield",
+      "tile": "dwarven_buckler_2.png",
+      "unique": false
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 12,
+        "of_crit": 12,
+        "of_dex_mastery": 8,
+        "of_finesse": 14,
+        "of_int_mastery": 8,
+        "of_might": 14,
+        "of_quickcast": 12,
+        "of_resonance": 12,
+        "of_str_mastery": 8,
+        "of_the_bear": 44,
+        "of_the_cat": 14,
+        "of_vitality": 36,
+        "of_wisdom": 18,
+        "of_shadows": 22,
+        "of_dark_resist": 18
+      },
+      "armor": 24,
+      "base_type": "crown",
+      "default_tint": {
+        "hue": 0.0,
+        "mode": "colorize",
+        "sat": 1.0,
+        "target_rgb": [
+          0.15,
+          0.13,
+          0.18
+        ]
+      },
+      "drop_weights": [
+        0,
+        0,
+        3,
+        25,
+        60
+      ],
+      "enchant_chance": 0.3,
+      "evasion": 18,
+      "flavor_tags": [
+        "lordly",
+        "psychic",
+        "dark"
+      ],
+      "id": "crown_of_dyrovepreva_obsidian",
+      "implicit_affixes": [],
+      "item_tier": 5,
+      "lore": "Volcanic glass, edge-flaked razor-sharp by patient hands.",
+      "name": "Obsidian Crown of Dyrovepreva",
+      "rarity": "legendary",
+      "slot": "helm",
+      "tile": "urand_dyrovepreva_new.png",
+      "unique": true
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 28,
+        "of_cold_resist": 8,
+        "of_crit": 16,
+        "of_devotion": 8,
+        "of_embers": 10,
+        "of_finesse": 16,
+        "of_fire_resist": 8,
+        "of_frost": 10,
+        "of_haste": 16,
+        "of_lifesteal": 10,
+        "of_lightning_resist": 8,
+        "of_lingering": 12,
+        "of_might": 16,
+        "of_multicast": 8,
+        "of_quickcast": 14,
+        "of_regen": 10,
+        "of_resonance": 12,
+        "of_shadows": 38,
+        "of_storms": 10,
+        "of_velocity": 10,
+        "of_venom": 8,
+        "of_vitality": 14,
+        "of_wisdom": 16,
+        "of_dark_resist": 22,
+        "of_int_mastery": 14
+      },
+      "base_type": "ring_magic",
+      "default_tint": {
+        "hue": 0.0,
+        "mode": "colorize",
+        "sat": 1.0,
+        "target_rgb": [
+          0.25,
+          0.2,
+          0.3
+        ]
+      },
+      "drop_weights": [
+        0,
+        0,
+        3,
+        25,
+        60
+      ],
+      "enchant_chance": 0.3,
+      "flavor_tags": [
+        "wisdom",
+        "willpower",
+        "shadow"
+      ],
+      "id": "mage_ring_umbral",
+      "implicit_affixes": [],
+      "item_tier": 5,
+      "lore": "The dark that settles on it cannot be polished off.",
+      "name": "Umbral Ring of the Mage",
+      "rarity": "legendary",
+      "slot": "ring",
+      "tile": "urand_mage.png",
+      "unique": true
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 8,
+        "of_crit": 25,
+        "of_devotion": 28,
+        "of_embers": 8,
+        "of_finesse": 15,
+        "of_frost": 8,
+        "of_haste": 38,
+        "of_lifesteal": 27,
+        "of_might": 25,
+        "of_quickcast": 23,
+        "of_shadows": 6,
+        "of_sharpness": 30,
+        "of_storms": 8,
+        "of_venom": 6,
+        "of_wisdom": 10
+      },
+      "base_type": "scimitar",
+      "damage_max": 48,
+      "damage_min": 24,
+      "damage_type": "physical",
+      "default_tint": {
+        "hue": 338.4,
+        "mode": "shimmer",
+        "sat": 0.731
+      },
+      "drop_weights": [
+        3,
+        25,
+        60,
+        12,
+        0
+      ],
+      "enchant_chance": 0.18,
+      "flavor_tags": [
+        "holy"
+      ],
+      "id": "scimitar_rosegold",
+      "implicit_affixes": [],
+      "item_tier": 3,
+      "lore": "An alloy out of fashion in this century. The shine is unmistakable.",
+      "name": "Rose-gold Scimitar",
+      "rarity": "epic",
+      "slot": "weapon",
+      "speed": 0.6,
+      "tile": "scimitar_1_new.png",
+      "unique": false,
+      "weapon_class": "1H"
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 12,
+        "of_crit": 12,
+        "of_dex_mastery": 8,
+        "of_finesse": 28,
+        "of_int_mastery": 8,
+        "of_might": 14,
+        "of_quickcast": 12,
+        "of_resonance": 12,
+        "of_str_mastery": 8,
+        "of_the_bear": 22,
+        "of_the_cat": 14,
+        "of_vitality": 18,
+        "of_wisdom": 18,
+        "of_shadows": 26,
+        "of_lifesteal": 14,
+        "of_dark_resist": 14
+      },
+      "armor": 10,
+      "base_type": "hood",
+      "default_tint": {
+        "hue": 109.3,
+        "mode": "inverted",
+        "sat": 0.673
+      },
+      "drop_weights": [
+        3,
+        25,
+        60,
+        12,
+        0
+      ],
+      "enchant_chance": 0.18,
+      "evasion": 7,
+      "flavor_tags": [
+        "stealth",
+        "psychic",
+        "shadow"
+      ],
+      "id": "green_mask_twisted",
+      "implicit_affixes": [],
+      "item_tier": 3,
+      "lore": "It is not the same shape twice. Bending occurs when you look away.",
+      "name": "Twisted Green Mask",
+      "rarity": "epic",
+      "slot": "helm",
+      "tile": "green_mask.png",
+      "unique": false
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 8,
+        "of_crit": 25,
+        "of_devotion": 6,
+        "of_embers": 8,
+        "of_finesse": 15,
+        "of_frost": 8,
+        "of_haste": 20,
+        "of_lifesteal": 45,
+        "of_might": 40,
+        "of_quickcast": 8,
+        "of_shadows": 24,
+        "of_sharpness": 30,
+        "of_storms": 8,
+        "of_venom": 6,
+        "of_wisdom": 10,
+        "of_dark_resist": 15
+      },
+      "base_type": "knife",
+      "damage_max": 8,
+      "damage_min": 4,
+      "damage_type": "physical",
+      "default_tint": {
+        "hue": 350.2,
+        "mode": "normal",
+        "sat": 0.909
+      },
+      "drop_weights": [
+        60,
+        12,
+        0,
+        0,
+        0
+      ],
+      "enchant_chance": 0.05,
+      "flavor_tags": [
+        "vampiric"
+      ],
+      "id": "bone_knife_bloodstained",
+      "implicit_affixes": [],
+      "item_tier": 1,
+      "lore": "Old blood, deep in the grain. It never dries.",
+      "name": "Bloodstained Bone Knife",
+      "rarity": "uncommon",
+      "slot": "weapon",
+      "speed": 0.5,
+      "tile": "knife.png",
+      "unique": false,
+      "weapon_class": "1H"
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 8,
+        "of_crit": 40,
+        "of_devotion": 6,
+        "of_embers": 8,
+        "of_finesse": 15,
+        "of_frost": 43,
+        "of_haste": 20,
+        "of_lifesteal": 15,
+        "of_might": 25,
+        "of_quickcast": 26,
+        "of_shadows": 6,
+        "of_sharpness": 30,
+        "of_storms": 8,
+        "of_venom": 6,
+        "of_wisdom": 10,
+        "of_cold_resist": 22
+      },
+      "base_type": "long_sword",
+      "damage_max": 82,
+      "damage_min": 45,
+      "damage_type": "physical",
+      "default_tint": {
+        "hue": 194.9,
+        "mode": "shimmer",
+        "sat": 0.81
+      },
+      "drop_weights": [
+        0,
+        3,
+        25,
+        60,
+        12
+      ],
+      "enchant_chance": 0.3,
+      "flavor_tags": [
+        "swiftness",
+        "arcane",
+        "cold"
+      ],
+      "id": "elven_broadsword_frostbound",
+      "implicit_affixes": [],
+      "item_tier": 4,
+      "lore": "A rime of ice will not melt, no matter how warm the room.",
+      "name": "Frostbound Elven Broadsword",
+      "rarity": "legendary",
+      "slot": "weapon",
+      "speed": 0.7,
+      "tile": "elven_broadsword.png",
+      "unique": false,
+      "weapon_class": "1H"
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 14,
+        "of_cold_resist": 8,
+        "of_crit": 16,
+        "of_devotion": 8,
+        "of_embers": 10,
+        "of_finesse": 34,
+        "of_fire_resist": 8,
+        "of_frost": 10,
+        "of_haste": 16,
+        "of_lifesteal": 10,
+        "of_lightning_resist": 8,
+        "of_lingering": 12,
+        "of_might": 16,
+        "of_multicast": 8,
+        "of_quickcast": 28,
+        "of_regen": 10,
+        "of_resonance": 26,
+        "of_shadows": 8,
+        "of_storms": 10,
+        "of_velocity": 10,
+        "of_venom": 8,
+        "of_vitality": 14,
+        "of_wisdom": 16,
+        "of_int_mastery": 18
+      },
+      "base_type": "ring_slaying",
+      "default_tint": {
+        "hue": 149.0,
+        "mode": "inverted",
+        "sat": 0.701
+      },
+      "drop_weights": [
+        25,
+        60,
+        12,
+        0,
+        0
+      ],
+      "enchant_chance": 0.18,
+      "flavor_tags": [
+        "slaying"
+      ],
+      "id": "steel_ring_inverse",
+      "implicit_affixes": [],
+      "item_tier": 2,
+      "lore": "Looking at it too long inverts what you saw before.",
+      "name": "Inverse Steel Ring",
+      "rarity": "epic",
+      "slot": "ring",
+      "tile": "steel.png",
+      "unique": false
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 14,
+        "of_cold_resist": 8,
+        "of_crit": 16,
+        "of_devotion": 8,
+        "of_embers": 45,
+        "of_finesse": 16,
+        "of_fire_resist": 26,
+        "of_frost": 10,
+        "of_haste": 28,
+        "of_lifesteal": 22,
+        "of_lightning_resist": 8,
+        "of_lingering": 12,
+        "of_might": 34,
+        "of_multicast": 8,
+        "of_quickcast": 14,
+        "of_regen": 10,
+        "of_resonance": 12,
+        "of_shadows": 8,
+        "of_storms": 10,
+        "of_velocity": 10,
+        "of_venom": 8,
+        "of_vitality": 14,
+        "of_wisdom": 16
+      },
+      "base_type": "ring_stealth",
+      "default_tint": {
+        "hue": 355.8,
+        "mode": "normal",
+        "sat": 1.042
+      },
+      "drop_weights": [
+        0,
+        3,
+        25,
+        60,
+        12
+      ],
+      "enchant_chance": 0.18,
+      "flavor_tags": [
+        "stealth",
+        "vision",
+        "fire"
+      ],
+      "id": "ivory_ring_crimson",
+      "implicit_affixes": [],
+      "item_tier": 4,
+      "lore": "Forged in dragonfire, the metal still glows when blood spills near it.",
+      "name": "Crimson Ivory Ring",
+      "rarity": "epic",
+      "slot": "ring",
+      "tile": "ring_ivory.png",
+      "unique": false
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 8,
+        "of_crit": 25,
+        "of_devotion": 6,
+        "of_embers": 8,
+        "of_finesse": 29,
+        "of_frost": 8,
+        "of_haste": 20,
+        "of_lifesteal": 27,
+        "of_might": 39,
+        "of_quickcast": 8,
+        "of_shadows": 28,
+        "of_sharpness": 30,
+        "of_storms": 8,
+        "of_venom": 6,
+        "of_wisdom": 10
+      },
+      "base_type": "long_sword",
+      "damage_max": 131,
+      "damage_min": 71,
+      "damage_type": "physical",
+      "default_tint": {
+        "hue": 0.0,
+        "mode": "colorize",
+        "sat": 1.0,
+        "target_rgb": [
+          0.95,
+          0.92,
+          0.78
+        ]
+      },
+      "drop_weights": [
+        0,
+        0,
+        3,
+        25,
+        60
+      ],
+      "enchant_chance": 0.3,
+      "flavor_tags": [
+        "arcane",
+        "brutal"
+      ],
+      "id": "sword_of_power_bone",
+      "implicit_affixes": [],
+      "item_tier": 5,
+      "lore": "Shaped from the long bones of something old. It still aches in the cold.",
+      "name": "Bone Sword of Power",
+      "rarity": "legendary",
+      "slot": "weapon",
+      "speed": 0.7,
+      "tile": "spwpn_sword_of_power_new.png",
+      "unique": true,
+      "weapon_class": "1H"
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 26,
+        "of_crit": 14,
+        "of_dex_mastery": 12,
+        "of_finesse": 16,
+        "of_haste": 14,
+        "of_int_mastery": 14,
+        "of_lifesteal": 10,
+        "of_lingering": 12,
+        "of_might": 16,
+        "of_multicast": 8,
+        "of_quickcast": 28,
+        "of_regen": 10,
+        "of_resonance": 14,
+        "of_str_mastery": 12,
+        "of_velocity": 10,
+        "of_vitality": 14,
+        "of_wisdom": 18,
+        "of_embers": 30,
+        "of_fire_resist": 22
+      },
+      "base_type": "amulet_acrobat",
+      "default_tint": {
+        "hue": 15.2,
+        "mode": "shimmer",
+        "sat": 1.162
+      },
+      "drop_weights": [
+        0,
+        3,
+        25,
+        60,
+        12
+      ],
+      "enchant_chance": 0.18,
+      "flavor_tags": [
+        "acrobat",
+        "footwork",
+        "fire"
+      ],
+      "id": "stone_2_green_embered",
+      "implicit_affixes": [],
+      "item_tier": 4,
+      "lore": "Carries its own slow heat. Embers drift from it when struck.",
+      "name": "Embered Verdant Cabochon",
+      "rarity": "epic",
+      "slot": "amulet",
+      "tile": "stone_2_green.png",
+      "unique": false
+    },
+    {
+      "affix_pool": {
+        "of_cold_resist": 12,
+        "of_dark_resist": 8,
+        "of_finesse": 12,
+        "of_fire_resist": 12,
+        "of_holy_resist": 8,
+        "of_lightning_resist": 12,
+        "of_might": 29,
+        "of_poison_resist": 10,
+        "of_regen": 15,
+        "of_the_bear": 60,
+        "of_vitality": 52,
+        "of_wisdom": 12,
+        "of_sharpness": 14
+      },
+      "armor": 48,
+      "base_type": "robe",
+      "default_tint": {
+        "hue": 0.0,
+        "mode": "colorize",
+        "sat": 1.0,
+        "target_rgb": [
+          0.55,
+          0.58,
+          0.62
+        ]
+      },
+      "drop_weights": [
+        0,
+        0,
+        3,
+        25,
+        60
+      ],
+      "enchant_chance": 0.3,
+      "evasion": 12,
+      "flavor_tags": [
+        "stealth",
+        "willpower",
+        "regen"
+      ],
+      "id": "robe_of_clouds_ironclad",
+      "implicit_affixes": [],
+      "item_tier": 5,
+      "lore": "Plain forged iron, but heavier than the metal alone explains.",
+      "name": "Ironclad Robe of Clouds",
+      "rarity": "legendary",
+      "slot": "armor",
+      "tile": "urand_clouds.png",
+      "unique": true
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 14,
+        "of_cold_resist": 8,
+        "of_crit": 16,
+        "of_devotion": 8,
+        "of_embers": 10,
+        "of_finesse": 16,
+        "of_fire_resist": 8,
+        "of_frost": 10,
+        "of_haste": 16,
+        "of_lifesteal": 10,
+        "of_lightning_resist": 8,
+        "of_lingering": 12,
+        "of_might": 16,
+        "of_multicast": 8,
+        "of_quickcast": 14,
+        "of_regen": 10,
+        "of_resonance": 12,
+        "of_shadows": 30,
+        "of_storms": 10,
+        "of_velocity": 10,
+        "of_venom": 8,
+        "of_vitality": 32,
+        "of_wisdom": 16,
+        "of_the_bear": 22,
+        "of_dark_resist": 18
+      },
+      "base_type": "ring_dexterity",
+      "default_tint": {
+        "hue": 0.0,
+        "mode": "colorize",
+        "sat": 1.0,
+        "target_rgb": [
+          0.15,
+          0.13,
+          0.18
+        ]
+      },
+      "drop_weights": [
+        25,
+        60,
+        12,
+        0,
+        0
+      ],
+      "enchant_chance": 0.18,
+      "flavor_tags": [
+        "footwork",
+        "dark"
+      ],
+      "id": "agate_ring_obsidian",
+      "implicit_affixes": [],
+      "item_tier": 2,
+      "lore": "Volcanic glass, edge-flaked razor-sharp by patient hands.",
+      "name": "Obsidian Agate Ring",
+      "rarity": "epic",
+      "slot": "ring",
+      "tile": "agate.png",
+      "unique": false
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 32,
+        "of_cold_resist": 8,
+        "of_crit": 16,
+        "of_devotion": 22,
+        "of_embers": 24,
+        "of_finesse": 16,
+        "of_fire_resist": 8,
+        "of_frost": 24,
+        "of_haste": 16,
+        "of_lifesteal": 10,
+        "of_lightning_resist": 8,
+        "of_lingering": 12,
+        "of_might": 16,
+        "of_multicast": 20,
+        "of_quickcast": 14,
+        "of_regen": 10,
+        "of_resonance": 30,
+        "of_shadows": 22,
+        "of_storms": 24,
+        "of_velocity": 10,
+        "of_venom": 22,
+        "of_vitality": 14,
+        "of_wisdom": 16,
+        "of_sharpness": 14,
+        "of_str_mastery": 10,
+        "of_dex_mastery": 10,
+        "of_int_mastery": 10
+      },
+      "base_type": "ring_protection",
+      "default_tint": {
+        "hue": 25.7,
+        "mode": "prismatic",
+        "sat": 1.0
+      },
+      "drop_weights": [
+        60,
+        12,
+        0,
+        0,
+        0
+      ],
+      "enchant_chance": 0.3,
+      "flavor_tags": [
+        "fortified"
+      ],
+      "id": "brass_ring_prismatic",
+      "implicit_affixes": [],
+      "item_tier": 1,
+      "lore": "Every glance reveals a new color, each one a real one \u2014 somewhere.",
+      "name": "Prismatic Brass Ring",
+      "rarity": "legendary",
+      "slot": "ring",
+      "tile": "brass.png",
+      "unique": false
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 16,
+        "of_crit": 14,
+        "of_dex_mastery": 12,
+        "of_finesse": 16,
+        "of_haste": 14,
+        "of_int_mastery": 14,
+        "of_lifesteal": 10,
+        "of_lingering": 12,
+        "of_might": 30,
+        "of_multicast": 8,
+        "of_quickcast": 14,
+        "of_regen": 10,
+        "of_resonance": 14,
+        "of_str_mastery": 12,
+        "of_velocity": 10,
+        "of_vitality": 36,
+        "of_wisdom": 18,
+        "of_the_bear": 30,
+        "of_sharpness": 14
+      },
+      "base_type": "amulet_rage",
+      "default_tint": {
+        "hue": 0.0,
+        "mode": "colorize",
+        "sat": 1.0,
+        "target_rgb": [
+          0.55,
+          0.58,
+          0.62
+        ]
+      },
+      "drop_weights": [
+        3,
+        25,
+        60,
+        12,
+        0
+      ],
+      "enchant_chance": 0.1,
+      "flavor_tags": [
+        "rage",
+        "harm"
+      ],
+      "id": "penta_orange_ironclad",
+      "implicit_affixes": [],
+      "item_tier": 3,
+      "lore": "Plain forged iron, but heavier than the metal alone explains.",
+      "name": "Ironclad Pentacle of Wrath",
+      "rarity": "rare",
+      "slot": "amulet",
+      "tile": "penta_orange.png",
+      "unique": false
+    },
+    {
+      "affix_pool": {
+        "of_cold_resist": 12,
+        "of_dark_resist": 8,
+        "of_finesse": 30,
+        "of_fire_resist": 12,
+        "of_holy_resist": 8,
+        "of_lightning_resist": 12,
+        "of_might": 15,
+        "of_poison_resist": 10,
+        "of_regen": 15,
+        "of_the_bear": 30,
+        "of_vitality": 30,
+        "of_wisdom": 12,
+        "of_venom": 22,
+        "of_dex_mastery": 14,
+        "of_crit": 15
+      },
+      "armor": 8,
+      "base_type": "leather",
+      "default_tint": {
+        "hue": 148.1,
+        "mode": "shimmer",
+        "sat": 0.979
+      },
+      "drop_weights": [
+        60,
+        12,
+        0,
+        0,
+        0
+      ],
+      "enchant_chance": 0.05,
+      "evasion": 2,
+      "flavor_tags": [
+        "poison"
+      ],
+      "id": "tattered_hide_jadeforged",
+      "implicit_affixes": [],
+      "item_tier": 1,
+      "lore": "Carved from one piece of imperial jade. Fault-lines make patterns.",
+      "name": "Jade-forged Tattered Hide",
+      "rarity": "rare",
+      "slot": "armor",
+      "tile": "animal_skin_1_new.png",
+      "unique": false
+    },
+    {
+      "affix_pool": {
+        "of_cold_resist": 14,
+        "of_dark_resist": 26,
+        "of_finesse": 26,
+        "of_fire_resist": 14,
+        "of_haste": 10,
+        "of_holy_resist": 8,
+        "of_lightning_resist": 14,
+        "of_lingering": 14,
+        "of_might": 10,
+        "of_poison_resist": 10,
+        "of_regen": 8,
+        "of_resonance": 12,
+        "of_the_bear": 12,
+        "of_the_cat": 22,
+        "of_vitality": 18,
+        "of_wisdom": 14,
+        "of_shadows": 26,
+        "of_quickcast": 12
+      },
+      "armor": 1,
+      "base_type": "cloak",
+      "default_tint": {
+        "hue": 272.6,
+        "mode": "normal",
+        "sat": 0.66
+      },
+      "drop_weights": [
+        60,
+        12,
+        0,
+        0,
+        0
+      ],
+      "enchant_chance": 0.05,
+      "evasion": 6,
+      "flavor_tags": [
+        "dark"
+      ],
+      "id": "leather_cloak_shadowed",
+      "implicit_affixes": [],
+      "item_tier": 1,
+      "lore": "Hard to see in dim light, even when held directly before you.",
+      "name": "Shadowed Leather Cloak",
+      "overlay": "cloak_leather",
+      "rarity": "common",
+      "slot": "cloak",
+      "tile": "cloak_1_leather.png",
+      "unique": false
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 16,
+        "of_crit": 29,
+        "of_dex_mastery": 26,
+        "of_finesse": 34,
+        "of_haste": 14,
+        "of_int_mastery": 14,
+        "of_lifesteal": 10,
+        "of_lingering": 12,
+        "of_might": 16,
+        "of_multicast": 8,
+        "of_quickcast": 14,
+        "of_regen": 10,
+        "of_resonance": 14,
+        "of_str_mastery": 12,
+        "of_velocity": 10,
+        "of_vitality": 14,
+        "of_wisdom": 18,
+        "of_venom": 22
+      },
+      "base_type": "amulet_faith",
+      "default_tint": {
+        "hue": 154.4,
+        "mode": "shimmer",
+        "sat": 1.083
+      },
+      "drop_weights": [
+        0,
+        3,
+        25,
+        60,
+        12
+      ],
+      "enchant_chance": 0.3,
+      "flavor_tags": [
+        "faith",
+        "regen",
+        "fortune",
+        "poison"
+      ],
+      "id": "face_amulet_gold_jadeforged",
+      "implicit_affixes": [],
+      "item_tier": 4,
+      "lore": "Carved from one piece of imperial jade. Fault-lines make patterns.",
+      "name": "Jade-forged Saintly Visage",
+      "rarity": "legendary",
+      "slot": "amulet",
+      "tile": "face_1_gold.png",
+      "unique": false
     },
     {
       "affix_pool": {
@@ -18419,139 +20724,249 @@
         "of_shadows": 6,
         "of_sharpness": 30,
         "of_storms": 8,
-        "of_venom": 6,
-        "of_wisdom": 10
+        "of_venom": 34,
+        "of_wisdom": 10,
+        "of_poison_resist": 22,
+        "of_regen": 14,
+        "of_vitality": 15
       },
-      "base_type": "long_sword",
-      "damage_max": 115,
-      "damage_min": 63,
-      "damage_type": "dark",
+      "base_type": "bardiche",
+      "damage_max": 187,
+      "damage_min": 104,
+      "damage_type": "physical",
       "default_tint": {
-        "hue": 11.6,
+        "hue": 97.4,
         "mode": "normal",
-        "sat": 1.228
+        "sat": 0.739
       },
       "drop_weights": [
         0,
-        0,
-        0,
-        14,
-        70
+        3,
+        25,
+        60,
+        12
       ],
-      "enchant_chance": 0.15,
+      "enchant_chance": 0.18,
       "flavor_tags": [
-        "dark",
-        "death",
-        "fire"
+        "ponderous",
+        "brutal",
+        "arcane",
+        "poison"
       ],
-      "id": "ancient_sword_crimson",
+      "id": "runed_bardiche_mossy",
       "implicit_affixes": [],
-      "item_tier": 5,
-      "lore": "A crimson reflavor of the standard ancient sword.",
-      "name": "Crimson Ancient Sword",
+      "item_tier": 4,
+      "lore": "Damp green spores drift from every notch \u2014 they twitch toward warm flesh.",
+      "name": "Mossy Runed Bardiche",
       "rarity": "epic",
       "slot": "weapon",
-      "speed": 0.7,
-      "tile": "ancient_sword.png",
+      "speed": 1.05,
+      "tile": "bardiche_4.png",
       "unique": false,
-      "weapon_class": "1H"
+      "weapon_class": "2H"
     },
     {
       "affix_pool": {
-        "of_channeling": 16,
-        "of_crit": 14,
-        "of_dex_mastery": 12,
-        "of_finesse": 16,
-        "of_haste": 14,
-        "of_int_mastery": 14,
-        "of_lifesteal": 10,
-        "of_lingering": 12,
-        "of_might": 16,
-        "of_multicast": 8,
-        "of_quickcast": 14,
+        "of_finesse": 22,
+        "of_haste": 26,
+        "of_might": 26,
         "of_regen": 10,
-        "of_resonance": 14,
-        "of_str_mastery": 12,
-        "of_velocity": 10,
-        "of_vitality": 14,
-        "of_wisdom": 18
+        "of_the_bear": 46,
+        "of_the_cat": 26,
+        "of_vitality": 36,
+        "of_wisdom": 10,
+        "of_sharpness": 14
       },
-      "base_type": "amulet_guardian",
+      "armor": 11,
+      "base_type": "treads",
       "default_tint": {
-        "hue": 288.4,
-        "mode": "normal",
-        "sat": 0.612
+        "hue": 0.0,
+        "mode": "colorize",
+        "sat": 1.0,
+        "target_rgb": [
+          0.55,
+          0.58,
+          0.62
+        ]
       },
       "drop_weights": [
         0,
-        0,
-        0,
-        4,
-        22
-      ],
-      "enchant_chance": 0.0,
-      "flavor_tags": [
-        "guardian",
-        "willpower",
-        "fortune",
-        "dark"
-      ],
-      "id": "cekugob_amulet_shadowed",
-      "implicit_affixes": [],
-      "item_tier": 5,
-      "lore": "A shadowed reflavor of the standard cekugob's amulet.",
-      "name": "Shadowed Cekugob's Amulet",
-      "rarity": "legendary",
-      "slot": "amulet",
-      "tile": "urand_cekugob_new.png",
-      "unique": true
-    },
-    {
-      "affix_pool": {
-        "of_channeling": 16,
-        "of_crit": 14,
-        "of_dex_mastery": 12,
-        "of_finesse": 16,
-        "of_haste": 14,
-        "of_int_mastery": 14,
-        "of_lifesteal": 10,
-        "of_lingering": 12,
-        "of_might": 16,
-        "of_multicast": 8,
-        "of_quickcast": 14,
-        "of_regen": 10,
-        "of_resonance": 14,
-        "of_str_mastery": 12,
-        "of_velocity": 10,
-        "of_vitality": 14,
-        "of_wisdom": 18
-      },
-      "base_type": "amulet_harm",
-      "default_tint": {
-        "hue": 302.3,
-        "mode": "normal",
-        "sat": 1.084
-      },
-      "drop_weights": [
-        0,
-        18,
+        3,
+        25,
         60,
-        22,
-        4
+        12
+      ],
+      "enchant_chance": 0.18,
+      "evasion": 15,
+      "flavor_tags": [
+        "earth",
+        "thunderous"
+      ],
+      "id": "earthshaker_treads_ironclad",
+      "implicit_affixes": [],
+      "item_tier": 4,
+      "lore": "Plain forged iron, but heavier than the metal alone explains.",
+      "name": "Ironclad Earthshaker Treads",
+      "overlay": "boots_earthshaker",
+      "rarity": "epic",
+      "slot": "boots",
+      "tile": "boots_iron_2.png",
+      "unique": false
+    },
+    {
+      "affix_pool": {
+        "of_cold_resist": 12,
+        "of_dark_resist": 8,
+        "of_finesse": 12,
+        "of_fire_resist": 34,
+        "of_holy_resist": 8,
+        "of_lightning_resist": 12,
+        "of_might": 15,
+        "of_poison_resist": 10,
+        "of_regen": 15,
+        "of_the_bear": 30,
+        "of_vitality": 30,
+        "of_wisdom": 12,
+        "of_embers": 30,
+        "of_quickcast": 14,
+        "of_channeling": 10
+      },
+      "armor": 8,
+      "base_type": "leather",
+      "default_tint": {
+        "hue": 27.9,
+        "mode": "shimmer",
+        "sat": 1.166
+      },
+      "drop_weights": [
+        60,
+        12,
+        0,
+        0,
+        0
+      ],
+      "enchant_chance": 0.05,
+      "evasion": 2,
+      "flavor_tags": [
+        "fire"
+      ],
+      "id": "orcish_leather_embered",
+      "implicit_affixes": [],
+      "item_tier": 1,
+      "lore": "Carries its own slow heat. Embers drift from it when struck.",
+      "name": "Embered Orcish Leather",
+      "rarity": "rare",
+      "slot": "armor",
+      "tile": "orcish_leather_armor.png",
+      "unique": false
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 8,
+        "of_crit": 25,
+        "of_devotion": 6,
+        "of_embers": 43,
+        "of_finesse": 15,
+        "of_frost": 8,
+        "of_haste": 32,
+        "of_lifesteal": 27,
+        "of_might": 43,
+        "of_quickcast": 8,
+        "of_shadows": 6,
+        "of_sharpness": 30,
+        "of_storms": 8,
+        "of_venom": 6,
+        "of_wisdom": 10,
+        "of_fire_resist": 18
+      },
+      "base_type": "giant_club",
+      "damage_max": 134,
+      "damage_min": 77,
+      "damage_type": "physical",
+      "default_tint": {
+        "hue": 351.3,
+        "mode": "normal",
+        "sat": 1.066
+      },
+      "drop_weights": [
+        3,
+        25,
+        60,
+        12,
+        0
       ],
       "enchant_chance": 0.1,
       "flavor_tags": [
-        "harm",
-        "dark"
+        "ponderous",
+        "brutal",
+        "fire"
       ],
-      "id": "stone_2_red_voidwrought",
+      "id": "giant_club_crimson",
       "implicit_affixes": [],
       "item_tier": 3,
-      "lore": "A voidwrought reflavor of the standard bleeding stone.",
-      "name": "Voidwrought Bleeding Stone",
-      "rarity": "epic",
-      "slot": "amulet",
-      "tile": "stone_2_red.png",
+      "lore": "Forged in dragonfire, the metal still glows when blood spills near it.",
+      "name": "Crimson Giant Club",
+      "rarity": "rare",
+      "slot": "weapon",
+      "speed": 1.2,
+      "tile": "giant_club_new.png",
+      "unique": false,
+      "weapon_class": "2H"
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 14,
+        "of_cold_resist": 8,
+        "of_crit": 31,
+        "of_devotion": 8,
+        "of_embers": 10,
+        "of_finesse": 34,
+        "of_fire_resist": 8,
+        "of_frost": 10,
+        "of_haste": 16,
+        "of_lifesteal": 10,
+        "of_lightning_resist": 8,
+        "of_lingering": 12,
+        "of_might": 16,
+        "of_multicast": 8,
+        "of_quickcast": 14,
+        "of_regen": 10,
+        "of_resonance": 12,
+        "of_shadows": 8,
+        "of_storms": 10,
+        "of_velocity": 10,
+        "of_venom": 30,
+        "of_vitality": 14,
+        "of_wisdom": 16,
+        "of_dex_mastery": 14
+      },
+      "base_type": "ring_dexterity",
+      "default_tint": {
+        "hue": 147.4,
+        "mode": "shimmer",
+        "sat": 0.884
+      },
+      "drop_weights": [
+        0,
+        3,
+        25,
+        60,
+        12
+      ],
+      "enchant_chance": 0.3,
+      "flavor_tags": [
+        "footwork",
+        "wisdom",
+        "poison"
+      ],
+      "id": "emerald_ring_jadeforged",
+      "implicit_affixes": [],
+      "item_tier": 4,
+      "lore": "Carved from one piece of imperial jade. Fault-lines make patterns.",
+      "name": "Jade-forged Emerald Ring",
+      "rarity": "legendary",
+      "slot": "ring",
+      "tile": "emerald.png",
       "unique": false
     }
   ]

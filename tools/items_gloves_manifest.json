@@ -16,7 +16,7 @@
       "name": "Gauntlets of War",
       "slot": "gloves",
       "rarity": "legendary",
-      "tile": "item/armor/artefact/urand_war.png",
+      "tile": "urand_war.png",
       "base_type": "gloves",
       "armor": 12,
       "evasion": 18,
@@ -34,7 +34,7 @@
         25
       ],
       "unique": true,
-      "enchant_chance": 0.05,
+      "enchant_chance": 0.0,
       "implicit_affixes": [],
       "affix_pool": {
         "of_might": 16,
@@ -61,7 +61,7 @@
       "name": "Fencer's Gauntlets",
       "slot": "gloves",
       "rarity": "legendary",
-      "tile": "item/armor/artefact/urand_fencer_new.png",
+      "tile": "urand_fencer_new.png",
       "base_type": "gloves",
       "armor": 12,
       "evasion": 18,
@@ -79,7 +79,7 @@
         25
       ],
       "unique": true,
-      "enchant_chance": 0.05,
+      "enchant_chance": 0.0,
       "implicit_affixes": [],
       "affix_pool": {
         "of_might": 16,
@@ -106,13 +106,13 @@
       "name": "Leather Gloves",
       "slot": "gloves",
       "rarity": "common",
-      "tile": "item/armor/hands/glove_1_old.png",
+      "tile": "glove_1_old.png",
       "base_type": "gloves",
       "armor": 2,
       "evasion": 3,
       "item_tier": 1,
       "flavor_tags": [],
-      "lore": "",
+      "lore": "Stiff leather, palm-worn smooth.",
       "drop_weights": [
         50,
         30,
@@ -148,13 +148,13 @@
       "name": "Studded Gloves",
       "slot": "gloves",
       "rarity": "common",
-      "tile": "item/armor/hands/glove_2_old.png",
+      "tile": "glove_2_old.png",
       "base_type": "gloves",
       "armor": 2,
       "evasion": 3,
       "item_tier": 1,
       "flavor_tags": [],
-      "lore": "",
+      "lore": "Brass studs at the knuckle. Loud where it lands.",
       "drop_weights": [
         40,
         35,
@@ -190,13 +190,13 @@
       "name": "Riveted Gloves",
       "slot": "gloves",
       "rarity": "uncommon",
-      "tile": "item/armor/hands/glove_2_new.png",
+      "tile": "glove_2_new.png",
       "base_type": "gloves",
       "armor": 3,
       "evasion": 5,
       "item_tier": 2,
       "flavor_tags": [],
-      "lore": "",
+      "lore": "Iron rivets staked through cured hide.",
       "drop_weights": [
         10,
         40,
@@ -232,7 +232,7 @@
       "name": "Plate Gauntlets",
       "slot": "gloves",
       "rarity": "uncommon",
-      "tile": "item/armor/hands/glove_4_gauntlets.png",
+      "tile": "glove_4_gauntlets.png",
       "base_type": "gloves",
       "armor": 3,
       "evasion": 5,
@@ -240,7 +240,7 @@
       "flavor_tags": [
         "fortified"
       ],
-      "lore": "",
+      "lore": "Articulated steel \u2014 every knuckle covers itself.",
       "drop_weights": [
         5,
         40,
@@ -276,7 +276,7 @@
       "name": "Dwarven Gloves",
       "slot": "gloves",
       "rarity": "rare",
-      "tile": "item/armor/hands/glove_1_new.png",
+      "tile": "glove_1_new.png",
       "base_type": "gloves",
       "armor": 5,
       "evasion": 7,
@@ -284,7 +284,7 @@
       "flavor_tags": [
         "fortified"
       ],
-      "lore": "",
+      "lore": "Lighter than they should be. Stronger too.",
       "drop_weights": [
         0,
         15,
@@ -320,7 +320,7 @@
       "name": "Elven Gauntlets",
       "slot": "gloves",
       "rarity": "rare",
-      "tile": "item/armor/hands/glove_3_old.png",
+      "tile": "glove_3_old.png",
       "base_type": "gloves",
       "armor": 5,
       "evasion": 7,
@@ -329,7 +329,7 @@
         "agility",
         "footwork"
       ],
-      "lore": "",
+      "lore": "Plates fitted to every knuckle.",
       "drop_weights": [
         0,
         10,
@@ -365,7 +365,7 @@
       "name": "Ring-Inlaid Gloves",
       "slot": "gloves",
       "rarity": "epic",
-      "tile": "item/armor/hands/glove_3_new.png",
+      "tile": "glove_3_new.png",
       "base_type": "gloves",
       "armor": 7,
       "evasion": 11,
@@ -373,7 +373,7 @@
       "flavor_tags": [
         "arcane"
       ],
-      "lore": "",
+      "lore": "Each ring inlaid by hand, said to deflect spite.",
       "drop_weights": [
         0,
         0,
@@ -409,7 +409,7 @@
       "name": "Warlord's Gauntlets",
       "slot": "gloves",
       "rarity": "epic",
-      "tile": "item/armor/hands/glove_4_new.png",
+      "tile": "glove_4_new.png",
       "base_type": "gloves",
       "armor": 7,
       "evasion": 11,
@@ -418,7 +418,7 @@
         "lordly",
         "slaying"
       ],
-      "lore": "",
+      "lore": "Fingerprints of an old champion still on the grip.",
       "drop_weights": [
         0,
         0,
@@ -454,7 +454,7 @@
       "name": "Storm Gauntlets",
       "slot": "gloves",
       "rarity": "legendary",
-      "tile": "item/armor/hands/glove_5.png",
+      "tile": "glove_5.png",
       "base_type": "gloves",
       "armor": 12,
       "evasion": 18,
@@ -463,7 +463,7 @@
         "thunderous",
         "swiftness"
       ],
-      "lore": "",
+      "lore": "The leather hisses faintly, as though it remembers.",
       "drop_weights": [
         0,
         0,
@@ -496,7 +496,7 @@
     },
     {
       "affix_pool": {
-        "of_channeling": 10,
+        "of_channeling": 24,
         "of_crit": 18,
         "of_devotion": 8,
         "of_embers": 10,
@@ -505,14 +505,16 @@
         "of_haste": 18,
         "of_lifesteal": 10,
         "of_might": 16,
-        "of_shadows": 8,
+        "of_shadows": 38,
         "of_sharpness": 14,
         "of_storms": 10,
         "of_the_bear": 14,
         "of_the_cat": 16,
         "of_velocity": 12,
         "of_venom": 8,
-        "of_wisdom": 10
+        "of_wisdom": 10,
+        "of_dark_resist": 22,
+        "of_int_mastery": 14
       },
       "armor": 3,
       "base_type": "gloves",
@@ -527,10 +529,10 @@
         ]
       },
       "drop_weights": [
-        5,
-        40,
-        30,
-        10,
+        25,
+        60,
+        12,
+        0,
         0
       ],
       "enchant_chance": 0.05,
@@ -542,7 +544,7 @@
       "id": "plate_gauntlets_umbral",
       "implicit_affixes": [],
       "item_tier": 2,
-      "lore": "A umbral reflavor of the standard plate gauntlets.",
+      "lore": "The dark that settles on it cannot be polished off.",
       "name": "Umbral Plate Gauntlets",
       "rarity": "rare",
       "slot": "gloves",
@@ -552,11 +554,11 @@
     {
       "affix_pool": {
         "of_channeling": 10,
-        "of_crit": 18,
+        "of_crit": 33,
         "of_devotion": 8,
         "of_embers": 10,
         "of_finesse": 18,
-        "of_frost": 10,
+        "of_frost": 45,
         "of_haste": 18,
         "of_lifesteal": 10,
         "of_might": 16,
@@ -567,7 +569,9 @@
         "of_the_cat": 16,
         "of_velocity": 12,
         "of_venom": 8,
-        "of_wisdom": 10
+        "of_wisdom": 10,
+        "of_cold_resist": 22,
+        "of_quickcast": 18
       },
       "armor": 5,
       "base_type": "gloves",
@@ -577,13 +581,13 @@
         "sat": 0.805
       },
       "drop_weights": [
-        0,
-        15,
-        40,
-        30,
-        5
+        3,
+        25,
+        60,
+        12,
+        0
       ],
-      "enchant_chance": 0.1,
+      "enchant_chance": 0.18,
       "evasion": 7,
       "flavor_tags": [
         "fortified",
@@ -592,7 +596,7 @@
       "id": "dwarven_gloves_frostbound",
       "implicit_affixes": [],
       "item_tier": 3,
-      "lore": "A frostbound reflavor of the standard dwarven gloves.",
+      "lore": "A rime of ice will not melt, no matter how warm the room.",
       "name": "Frostbound Dwarven Gloves",
       "rarity": "epic",
       "slot": "gloves",
@@ -605,7 +609,7 @@
         "of_crit": 18,
         "of_devotion": 8,
         "of_embers": 10,
-        "of_finesse": 18,
+        "of_finesse": 36,
         "of_frost": 10,
         "of_haste": 18,
         "of_lifesteal": 10,
@@ -617,7 +621,10 @@
         "of_the_cat": 16,
         "of_velocity": 12,
         "of_venom": 8,
-        "of_wisdom": 10
+        "of_wisdom": 10,
+        "of_int_mastery": 18,
+        "of_quickcast": 14,
+        "of_resonance": 14
       },
       "armor": 5,
       "base_type": "gloves",
@@ -627,11 +634,11 @@
         "sat": 1.003
       },
       "drop_weights": [
-        0,
-        15,
-        40,
-        30,
-        5
+        3,
+        25,
+        60,
+        12,
+        0
       ],
       "enchant_chance": 0.1,
       "evasion": 7,
@@ -641,7 +648,7 @@
       "id": "dwarven_gloves_nightblue",
       "implicit_affixes": [],
       "item_tier": 3,
-      "lore": "A nightblue reflavor of the standard dwarven gloves.",
+      "lore": "Indigo so dark it reads as black until light hits the right angle.",
       "name": "Nightblue Dwarven Gloves",
       "rarity": "rare",
       "slot": "gloves",
@@ -650,23 +657,28 @@
     },
     {
       "affix_pool": {
-        "of_channeling": 10,
+        "of_channeling": 28,
         "of_crit": 18,
-        "of_devotion": 8,
-        "of_embers": 10,
+        "of_devotion": 22,
+        "of_embers": 24,
         "of_finesse": 18,
-        "of_frost": 10,
+        "of_frost": 24,
         "of_haste": 18,
         "of_lifesteal": 10,
         "of_might": 16,
-        "of_shadows": 8,
-        "of_sharpness": 14,
-        "of_storms": 10,
+        "of_shadows": 22,
+        "of_sharpness": 28,
+        "of_storms": 24,
         "of_the_bear": 14,
         "of_the_cat": 16,
         "of_velocity": 12,
-        "of_venom": 8,
-        "of_wisdom": 10
+        "of_venom": 22,
+        "of_wisdom": 10,
+        "of_resonance": 18,
+        "of_multicast": 12,
+        "of_str_mastery": 10,
+        "of_dex_mastery": 10,
+        "of_int_mastery": 10
       },
       "armor": 2,
       "base_type": "gloves",
@@ -676,21 +688,21 @@
         "sat": 1.0
       },
       "drop_weights": [
-        40,
-        35,
-        8,
+        60,
+        12,
+        0,
         0,
         0
       ],
-      "enchant_chance": 0.05,
+      "enchant_chance": 0.3,
       "evasion": 3,
       "flavor_tags": [],
       "id": "studded_gloves_prismatic",
       "implicit_affixes": [],
       "item_tier": 1,
-      "lore": "A prismatic reflavor of the standard studded gloves.",
+      "lore": "Every glance reveals a new color, each one a real one \u2014 somewhere.",
       "name": "Prismatic Studded Gloves",
-      "rarity": "rare",
+      "rarity": "legendary",
       "slot": "gloves",
       "tile": "glove_2_old.png",
       "unique": false

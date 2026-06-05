@@ -128,7 +128,7 @@
       "name": "Bone Pendant",
       "slot": "amulet",
       "rarity": "common",
-      "tile": "item/amulet/bone_gray.png",
+      "tile": "bone_gray.png",
       "base_type": "amulet_regen",
       "item_tier": 1,
       "flavor_tags": [
@@ -170,7 +170,7 @@
       "name": "Cylinder Amulet",
       "slot": "amulet",
       "rarity": "common",
-      "tile": "item/amulet/cylinder_gray.png",
+      "tile": "cylinder_gray.png",
       "base_type": "amulet_reflection",
       "item_tier": 1,
       "flavor_tags": [
@@ -212,7 +212,7 @@
       "name": "Blue Cameo",
       "slot": "amulet",
       "rarity": "uncommon",
-      "tile": "item/amulet/cameo_blue.png",
+      "tile": "cameo_blue.png",
       "base_type": "amulet_faith",
       "item_tier": 1,
       "flavor_tags": [
@@ -254,7 +254,7 @@
       "name": "Celtic Knot Amulet",
       "slot": "amulet",
       "rarity": "uncommon",
-      "tile": "item/amulet/celtic_yellow.png",
+      "tile": "celtic_yellow.png",
       "base_type": "amulet_regen",
       "item_tier": 1,
       "flavor_tags": [
@@ -296,7 +296,7 @@
       "name": "Standing Stone",
       "slot": "amulet",
       "rarity": "uncommon",
-      "tile": "item/amulet/stone_1_cyan.png",
+      "tile": "stone_1_cyan.png",
       "base_type": "amulet_reflection",
       "item_tier": 2,
       "flavor_tags": [
@@ -339,7 +339,7 @@
       "name": "Ring Pendant",
       "slot": "amulet",
       "rarity": "uncommon",
-      "tile": "item/amulet/ring_red.png",
+      "tile": "ring_red.png",
       "base_type": "amulet_rage",
       "item_tier": 2,
       "flavor_tags": [
@@ -381,7 +381,7 @@
       "name": "Knot of the Faithful",
       "slot": "amulet",
       "rarity": "rare",
-      "tile": "item/amulet/celtic_red.png",
+      "tile": "celtic_red.png",
       "base_type": "amulet_faith",
       "item_tier": 2,
       "flavor_tags": [
@@ -424,7 +424,7 @@
       "name": "Watching Eye",
       "slot": "amulet",
       "rarity": "rare",
-      "tile": "item/amulet/eye_green.png",
+      "tile": "eye_green.png",
       "base_type": "amulet_acrobat",
       "item_tier": 2,
       "flavor_tags": [
@@ -466,7 +466,7 @@
       "name": "Bleeding Stone",
       "slot": "amulet",
       "rarity": "rare",
-      "tile": "item/amulet/stone_2_red.png",
+      "tile": "stone_2_red.png",
       "base_type": "amulet_harm",
       "item_tier": 3,
       "flavor_tags": [
@@ -508,7 +508,7 @@
       "name": "Verdant Pendant",
       "slot": "amulet",
       "rarity": "rare",
-      "tile": "item/amulet/crystal_green.png",
+      "tile": "crystal_green.png",
       "base_type": "amulet_regen",
       "item_tier": 3,
       "flavor_tags": [
@@ -551,7 +551,7 @@
       "name": "Sea-Worn Stone",
       "slot": "amulet",
       "rarity": "rare",
-      "tile": "item/amulet/stone_3_blue.png",
+      "tile": "stone_3_blue.png",
       "base_type": "amulet_guardian",
       "item_tier": 3,
       "flavor_tags": [
@@ -594,7 +594,7 @@
       "name": "Pentacle of Wrath",
       "slot": "amulet",
       "rarity": "rare",
-      "tile": "item/amulet/penta_orange.png",
+      "tile": "penta_orange.png",
       "base_type": "amulet_rage",
       "item_tier": 3,
       "flavor_tags": [
@@ -637,7 +637,7 @@
       "name": "Saintly Visage",
       "slot": "amulet",
       "rarity": "epic",
-      "tile": "item/amulet/face_1_gold.png",
+      "tile": "face_1_gold.png",
       "base_type": "amulet_faith",
       "item_tier": 4,
       "flavor_tags": [
@@ -681,7 +681,7 @@
       "name": "Verdant Cabochon",
       "slot": "amulet",
       "rarity": "epic",
-      "tile": "item/amulet/stone_2_green.png",
+      "tile": "stone_2_green.png",
       "base_type": "amulet_acrobat",
       "item_tier": 4,
       "flavor_tags": [
@@ -724,7 +724,7 @@
       "name": "Bloodstone Pendant",
       "slot": "amulet",
       "rarity": "epic",
-      "tile": "item/amulet/crystal_red.png",
+      "tile": "crystal_red.png",
       "base_type": "amulet_harm",
       "item_tier": 4,
       "flavor_tags": [
@@ -767,7 +767,7 @@
       "name": "Veiled Sigil",
       "slot": "amulet",
       "rarity": "epic",
-      "tile": "item/amulet/stone_3_magenta.png",
+      "tile": "stone_3_magenta.png",
       "base_type": "amulet_guardian",
       "item_tier": 4,
       "flavor_tags": [
@@ -810,7 +810,7 @@
       "name": "Pearl of Vitality",
       "slot": "amulet",
       "rarity": "epic",
-      "tile": "item/amulet/crystal_white.png",
+      "tile": "crystal_white.png",
       "base_type": "amulet_vitality",
       "item_tier": 5,
       "flavor_tags": [
@@ -853,7 +853,7 @@
       "name": "Sigil of the Last Line",
       "slot": "amulet",
       "rarity": "epic",
-      "tile": "item/amulet/penta_green.png",
+      "tile": "penta_green.png",
       "base_type": "amulet_reflection",
       "item_tier": 5,
       "flavor_tags": [
@@ -896,7 +896,7 @@
       "name": "King's Cameo",
       "slot": "amulet",
       "rarity": "epic",
-      "tile": "item/amulet/face_2.png",
+      "tile": "face_2.png",
       "base_type": "amulet_faith",
       "item_tier": 5,
       "flavor_tags": [
@@ -939,7 +939,7 @@
       "name": "Amulet of Vitality",
       "slot": "amulet",
       "rarity": "legendary",
-      "tile": "item/amulet/artefact/urand_vitality.png",
+      "tile": "urand_vitality.png",
       "base_type": "amulet_vitality",
       "item_tier": 5,
       "flavor_tags": [
@@ -983,7 +983,7 @@
       "name": "Amulet of Air",
       "slot": "amulet",
       "rarity": "legendary",
-      "tile": "item/amulet/artefact/urand_air_new.png",
+      "tile": "urand_air_new.png",
       "base_type": "amulet_air",
       "item_tier": 5,
       "flavor_tags": [
@@ -1027,7 +1027,7 @@
       "name": "Amulet of Bloodlust",
       "slot": "amulet",
       "rarity": "legendary",
-      "tile": "item/amulet/artefact/urand_bloodlust_new.png",
+      "tile": "urand_bloodlust_new.png",
       "base_type": "amulet_rage",
       "item_tier": 5,
       "flavor_tags": [
@@ -1070,7 +1070,7 @@
       "name": "Brooch of Shielding",
       "slot": "amulet",
       "rarity": "legendary",
-      "tile": "item/amulet/artefact/urand_brooch_of_shielding_new.png",
+      "tile": "urand_brooch_of_shielding_new.png",
       "base_type": "amulet_reflection",
       "item_tier": 5,
       "flavor_tags": [
@@ -1114,7 +1114,7 @@
       "name": "Cekugob's Amulet",
       "slot": "amulet",
       "rarity": "legendary",
-      "tile": "item/amulet/artefact/urand_cekugob_new.png",
+      "tile": "urand_cekugob_new.png",
       "base_type": "amulet_guardian",
       "item_tier": 5,
       "flavor_tags": [
@@ -1158,7 +1158,7 @@
       "name": "The Four Winds",
       "slot": "amulet",
       "rarity": "legendary",
-      "tile": "item/amulet/artefact/urand_four_winds_new.png",
+      "tile": "urand_four_winds_new.png",
       "base_type": "amulet_air",
       "item_tier": 5,
       "flavor_tags": [
@@ -1202,7 +1202,7 @@
       "name": "The Finger",
       "slot": "amulet",
       "rarity": "legendary",
-      "tile": "item/amulet/artefact/urand_finger.png",
+      "tile": "urand_finger.png",
       "base_type": "amulet_harm",
       "item_tier": 5,
       "flavor_tags": [
@@ -1243,9 +1243,9 @@
     {
       "affix_pool": {
         "of_channeling": 16,
-        "of_crit": 14,
-        "of_dex_mastery": 12,
-        "of_finesse": 16,
+        "of_crit": 29,
+        "of_dex_mastery": 26,
+        "of_finesse": 34,
         "of_haste": 14,
         "of_int_mastery": 14,
         "of_lifesteal": 10,
@@ -1258,7 +1258,8 @@
         "of_str_mastery": 12,
         "of_velocity": 10,
         "of_vitality": 14,
-        "of_wisdom": 18
+        "of_wisdom": 18,
+        "of_venom": 22
       },
       "base_type": "amulet_harm",
       "default_tint": {
@@ -1267,13 +1268,13 @@
         "sat": 0.939
       },
       "drop_weights": [
-        0,
-        18,
+        3,
+        25,
         60,
-        22,
-        4
+        12,
+        0
       ],
-      "enchant_chance": 0.1,
+      "enchant_chance": 0.18,
       "flavor_tags": [
         "harm",
         "poison"
@@ -1281,7 +1282,7 @@
       "id": "stone_2_red_jadeforged",
       "implicit_affixes": [],
       "item_tier": 3,
-      "lore": "A jade-forged reflavor of the standard bleeding stone.",
+      "lore": "Carved from one piece of imperial jade. Fault-lines make patterns.",
       "name": "Jade-forged Bleeding Stone",
       "rarity": "epic",
       "slot": "amulet",
@@ -1305,8 +1306,11 @@
         "of_resonance": 14,
         "of_str_mastery": 12,
         "of_velocity": 10,
-        "of_vitality": 14,
-        "of_wisdom": 18
+        "of_vitality": 32,
+        "of_wisdom": 18,
+        "of_shadows": 22,
+        "of_the_bear": 22,
+        "of_dark_resist": 18
       },
       "base_type": "amulet_guardian",
       "default_tint": {
@@ -1322,11 +1326,11 @@
       "drop_weights": [
         0,
         0,
-        0,
-        4,
-        22
+        3,
+        25,
+        60
       ],
-      "enchant_chance": 0.0,
+      "enchant_chance": 0.3,
       "flavor_tags": [
         "guardian",
         "willpower",
@@ -1336,7 +1340,7 @@
       "id": "cekugob_amulet_obsidian",
       "implicit_affixes": [],
       "item_tier": 5,
-      "lore": "A obsidian reflavor of the standard cekugob's amulet.",
+      "lore": "Volcanic glass, edge-flaked razor-sharp by patient hands.",
       "name": "Obsidian Cekugob's Amulet",
       "rarity": "legendary",
       "slot": "amulet",
@@ -1349,19 +1353,20 @@
         "of_crit": 14,
         "of_dex_mastery": 12,
         "of_finesse": 16,
-        "of_haste": 14,
+        "of_haste": 32,
         "of_int_mastery": 14,
-        "of_lifesteal": 10,
+        "of_lifesteal": 22,
         "of_lingering": 12,
         "of_might": 16,
         "of_multicast": 8,
-        "of_quickcast": 14,
+        "of_quickcast": 29,
         "of_regen": 10,
         "of_resonance": 14,
         "of_str_mastery": 12,
         "of_velocity": 10,
         "of_vitality": 14,
-        "of_wisdom": 18
+        "of_wisdom": 18,
+        "of_devotion": 22
       },
       "base_type": "amulet_harm",
       "default_tint": {
@@ -1372,11 +1377,11 @@
       "drop_weights": [
         0,
         0,
-        0,
         3,
-        18
+        25,
+        60
       ],
-      "enchant_chance": 0.0,
+      "enchant_chance": 0.3,
       "flavor_tags": [
         "harm",
         "rage",
@@ -1385,7 +1390,7 @@
       "id": "amulet_finger_rosegold",
       "implicit_affixes": [],
       "item_tier": 5,
-      "lore": "A rose-gold reflavor of the standard the finger.",
+      "lore": "An alloy out of fashion in this century. The shine is unmistakable.",
       "name": "Rose-gold The Finger",
       "rarity": "legendary",
       "slot": "amulet",
@@ -1400,9 +1405,9 @@
         "of_finesse": 16,
         "of_haste": 14,
         "of_int_mastery": 14,
-        "of_lifesteal": 10,
+        "of_lifesteal": 28,
         "of_lingering": 12,
-        "of_might": 16,
+        "of_might": 28,
         "of_multicast": 8,
         "of_quickcast": 14,
         "of_regen": 10,
@@ -1410,7 +1415,9 @@
         "of_str_mastery": 12,
         "of_velocity": 10,
         "of_vitality": 14,
-        "of_wisdom": 18
+        "of_wisdom": 18,
+        "of_shadows": 32,
+        "of_dark_resist": 22
       },
       "base_type": "amulet_vitality",
       "default_tint": {
@@ -1421,11 +1428,11 @@
       "drop_weights": [
         0,
         0,
-        0,
-        18,
-        70
+        3,
+        25,
+        60
       ],
-      "enchant_chance": 0.15,
+      "enchant_chance": 0.3,
       "flavor_tags": [
         "vitality",
         "regen",
@@ -1434,7 +1441,7 @@
       "id": "crystal_white_voidwrought",
       "implicit_affixes": [],
       "item_tier": 5,
-      "lore": "A voidwrought reflavor of the standard pearl of vitality.",
+      "lore": "Smithed somewhere between worlds. The shadow it casts is wrong.",
       "name": "Voidwrought Pearl of Vitality",
       "rarity": "legendary",
       "slot": "amulet",
@@ -1454,12 +1461,14 @@
         "of_might": 16,
         "of_multicast": 8,
         "of_quickcast": 14,
-        "of_regen": 10,
+        "of_regen": 24,
         "of_resonance": 14,
         "of_str_mastery": 12,
         "of_velocity": 10,
-        "of_vitality": 14,
-        "of_wisdom": 18
+        "of_vitality": 29,
+        "of_wisdom": 18,
+        "of_venom": 28,
+        "of_poison_resist": 22
       },
       "base_type": "amulet_reflection",
       "default_tint": {
@@ -1470,11 +1479,11 @@
       "drop_weights": [
         0,
         0,
-        0,
-        14,
-        70
+        3,
+        25,
+        60
       ],
-      "enchant_chance": 0.15,
+      "enchant_chance": 0.18,
       "flavor_tags": [
         "reflective",
         "fortified",
@@ -1483,7 +1492,7 @@
       "id": "penta_green_mossy",
       "implicit_affixes": [],
       "item_tier": 5,
-      "lore": "A mossy reflavor of the standard sigil of the last line.",
+      "lore": "Damp green spores drift from every notch \u2014 they twitch toward warm flesh.",
       "name": "Mossy Sigil of the Last Line",
       "rarity": "epic",
       "slot": "amulet",
@@ -1503,12 +1512,14 @@
         "of_might": 16,
         "of_multicast": 8,
         "of_quickcast": 14,
-        "of_regen": 10,
+        "of_regen": 28,
         "of_resonance": 14,
         "of_str_mastery": 12,
         "of_velocity": 10,
-        "of_vitality": 14,
-        "of_wisdom": 18
+        "of_vitality": 36,
+        "of_wisdom": 18,
+        "of_the_bear": 15,
+        "of_poison_resist": 18
       },
       "base_type": "amulet_air",
       "default_tint": {
@@ -1519,11 +1530,11 @@
       "drop_weights": [
         0,
         0,
-        0,
-        5,
-        25
+        3,
+        25,
+        60
       ],
-      "enchant_chance": 0.0,
+      "enchant_chance": 0.3,
       "flavor_tags": [
         "acrobat",
         "willpower",
@@ -1532,7 +1543,7 @@
       "id": "amulet_of_air_verdant",
       "implicit_affixes": [],
       "item_tier": 5,
-      "lore": "A verdant reflavor of the standard amulet of air.",
+      "lore": "Vines crawl over the haft, seeking soil that is not there.",
       "name": "Verdant Amulet of Air",
       "rarity": "legendary",
       "slot": "amulet",
@@ -1544,20 +1555,22 @@
         "of_channeling": 16,
         "of_crit": 14,
         "of_dex_mastery": 12,
-        "of_finesse": 16,
+        "of_finesse": 30,
         "of_haste": 14,
         "of_int_mastery": 14,
         "of_lifesteal": 10,
         "of_lingering": 12,
         "of_might": 16,
         "of_multicast": 8,
-        "of_quickcast": 14,
+        "of_quickcast": 26,
         "of_regen": 10,
         "of_resonance": 14,
         "of_str_mastery": 12,
         "of_velocity": 10,
         "of_vitality": 14,
-        "of_wisdom": 18
+        "of_wisdom": 18,
+        "of_shadows": 26,
+        "of_dark_resist": 18
       },
       "base_type": "amulet_guardian",
       "default_tint": {
@@ -1568,11 +1581,11 @@
       "drop_weights": [
         0,
         0,
-        0,
-        4,
-        22
+        3,
+        25,
+        60
       ],
-      "enchant_chance": 0.0,
+      "enchant_chance": 0.3,
       "flavor_tags": [
         "guardian",
         "willpower",
@@ -1582,7 +1595,7 @@
       "id": "cekugob_amulet_shadowed",
       "implicit_affixes": [],
       "item_tier": 5,
-      "lore": "A shadowed reflavor of the standard cekugob's amulet.",
+      "lore": "Hard to see in dim light, even when held directly before you.",
       "name": "Shadowed Cekugob's Amulet",
       "rarity": "legendary",
       "slot": "amulet",
@@ -1597,6 +1610,56 @@
         "of_finesse": 16,
         "of_haste": 14,
         "of_int_mastery": 14,
+        "of_lifesteal": 28,
+        "of_lingering": 12,
+        "of_might": 28,
+        "of_multicast": 8,
+        "of_quickcast": 14,
+        "of_regen": 10,
+        "of_resonance": 14,
+        "of_str_mastery": 12,
+        "of_velocity": 10,
+        "of_vitality": 14,
+        "of_wisdom": 18,
+        "of_shadows": 32,
+        "of_dark_resist": 22
+      },
+      "base_type": "amulet_harm",
+      "default_tint": {
+        "hue": 302.3,
+        "mode": "normal",
+        "sat": 1.084
+      },
+      "drop_weights": [
+        3,
+        25,
+        60,
+        12,
+        0
+      ],
+      "enchant_chance": 0.18,
+      "flavor_tags": [
+        "harm",
+        "dark"
+      ],
+      "id": "stone_2_red_voidwrought",
+      "implicit_affixes": [],
+      "item_tier": 3,
+      "lore": "Smithed somewhere between worlds. The shadow it casts is wrong.",
+      "name": "Voidwrought Bleeding Stone",
+      "rarity": "epic",
+      "slot": "amulet",
+      "tile": "stone_2_red.png",
+      "unique": false
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 30,
+        "of_crit": 14,
+        "of_dex_mastery": 12,
+        "of_finesse": 16,
+        "of_haste": 14,
+        "of_int_mastery": 28,
         "of_lifesteal": 10,
         "of_lingering": 12,
         "of_might": 16,
@@ -1607,34 +1670,351 @@
         "of_str_mastery": 12,
         "of_velocity": 10,
         "of_vitality": 14,
-        "of_wisdom": 18
+        "of_wisdom": 18,
+        "of_shadows": 30,
+        "of_dark_resist": 22
+      },
+      "base_type": "amulet_faith",
+      "default_tint": {
+        "hue": 0.0,
+        "mode": "colorize",
+        "sat": 1.0,
+        "target_rgb": [
+          0.25,
+          0.2,
+          0.3
+        ]
+      },
+      "drop_weights": [
+        25,
+        60,
+        12,
+        0,
+        0
+      ],
+      "enchant_chance": 0.18,
+      "flavor_tags": [
+        "faith",
+        "wisdom",
+        "shadow"
+      ],
+      "id": "celtic_red_umbral",
+      "implicit_affixes": [],
+      "item_tier": 2,
+      "lore": "The dark that settles on it cannot be polished off.",
+      "name": "Umbral Knot of the Faithful",
+      "rarity": "epic",
+      "slot": "amulet",
+      "tile": "celtic_red.png",
+      "unique": false
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 16,
+        "of_crit": 29,
+        "of_dex_mastery": 12,
+        "of_finesse": 16,
+        "of_haste": 14,
+        "of_int_mastery": 14,
+        "of_lifesteal": 10,
+        "of_lingering": 12,
+        "of_might": 16,
+        "of_multicast": 8,
+        "of_quickcast": 32,
+        "of_regen": 10,
+        "of_resonance": 14,
+        "of_str_mastery": 12,
+        "of_velocity": 10,
+        "of_vitality": 14,
+        "of_wisdom": 18,
+        "of_frost": 35,
+        "of_cold_resist": 22
       },
       "base_type": "amulet_harm",
       "default_tint": {
-        "hue": 302.3,
-        "mode": "normal",
-        "sat": 1.084
+        "hue": 195.5,
+        "mode": "shimmer",
+        "sat": 0.993
+      },
+      "drop_weights": [
+        3,
+        25,
+        60,
+        12,
+        0
+      ],
+      "enchant_chance": 0.3,
+      "flavor_tags": [
+        "harm",
+        "dark",
+        "cold"
+      ],
+      "id": "stone_2_red_voidwrought_frostbound",
+      "implicit_affixes": [],
+      "item_tier": 3,
+      "lore": "A rime of ice will not melt, no matter how warm the room.",
+      "name": "Frostbound Voidwrought Bleeding Stone",
+      "rarity": "legendary",
+      "slot": "amulet",
+      "tile": "stone_2_red.png",
+      "unique": false
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 16,
+        "of_crit": 14,
+        "of_dex_mastery": 12,
+        "of_finesse": 16,
+        "of_haste": 14,
+        "of_int_mastery": 14,
+        "of_lifesteal": 10,
+        "of_lingering": 12,
+        "of_might": 34,
+        "of_multicast": 8,
+        "of_quickcast": 14,
+        "of_regen": 22,
+        "of_resonance": 14,
+        "of_str_mastery": 12,
+        "of_velocity": 10,
+        "of_vitality": 14,
+        "of_wisdom": 18,
+        "of_devotion": 30,
+        "of_holy_resist": 22
+      },
+      "base_type": "amulet_harm",
+      "default_tint": {
+        "hue": 43.9,
+        "mode": "shimmer",
+        "sat": 0.845
       },
       "drop_weights": [
         0,
-        18,
+        3,
+        25,
         60,
-        22,
-        4
+        12
       ],
-      "enchant_chance": 0.1,
+      "enchant_chance": 0.3,
+      "flavor_tags": [
+        "harm",
+        "rage",
+        "holy"
+      ],
+      "id": "crystal_red_sunsteel",
+      "implicit_affixes": [],
+      "item_tier": 4,
+      "lore": "The metal is warm even at midnight. Undead dare not touch it.",
+      "name": "Sunsteel Bloodstone Pendant",
+      "rarity": "legendary",
+      "slot": "amulet",
+      "tile": "crystal_red.png",
+      "unique": false
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 16,
+        "of_crit": 14,
+        "of_dex_mastery": 24,
+        "of_finesse": 31,
+        "of_haste": 14,
+        "of_int_mastery": 14,
+        "of_lifesteal": 10,
+        "of_lingering": 12,
+        "of_might": 16,
+        "of_multicast": 8,
+        "of_quickcast": 14,
+        "of_regen": 10,
+        "of_resonance": 14,
+        "of_str_mastery": 12,
+        "of_velocity": 10,
+        "of_vitality": 14,
+        "of_wisdom": 18,
+        "of_frost": 22,
+        "of_dark_resist": 18
+      },
+      "base_type": "amulet_harm",
+      "default_tint": {
+        "hue": 198.2,
+        "mode": "shimmer",
+        "sat": 0.689
+      },
+      "drop_weights": [
+        3,
+        25,
+        60,
+        12,
+        0
+      ],
+      "enchant_chance": 0.3,
       "flavor_tags": [
         "harm",
         "dark"
       ],
-      "id": "stone_2_red_voidwrought",
+      "id": "stone_2_red_voidwrought_spectral",
       "implicit_affixes": [],
       "item_tier": 3,
-      "lore": "A voidwrought reflavor of the standard bleeding stone.",
-      "name": "Voidwrought Bleeding Stone",
-      "rarity": "epic",
+      "lore": "It is somehow always slightly cooler than its surroundings.",
+      "name": "Spectral Voidwrought Bleeding Stone",
+      "rarity": "legendary",
       "slot": "amulet",
       "tile": "stone_2_red.png",
+      "unique": false
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 26,
+        "of_crit": 14,
+        "of_dex_mastery": 12,
+        "of_finesse": 16,
+        "of_haste": 14,
+        "of_int_mastery": 14,
+        "of_lifesteal": 10,
+        "of_lingering": 12,
+        "of_might": 16,
+        "of_multicast": 8,
+        "of_quickcast": 28,
+        "of_regen": 10,
+        "of_resonance": 14,
+        "of_str_mastery": 12,
+        "of_velocity": 10,
+        "of_vitality": 14,
+        "of_wisdom": 18,
+        "of_embers": 30,
+        "of_fire_resist": 22
+      },
+      "base_type": "amulet_acrobat",
+      "default_tint": {
+        "hue": 15.2,
+        "mode": "shimmer",
+        "sat": 1.162
+      },
+      "drop_weights": [
+        0,
+        3,
+        25,
+        60,
+        12
+      ],
+      "enchant_chance": 0.18,
+      "flavor_tags": [
+        "acrobat",
+        "footwork",
+        "fire"
+      ],
+      "id": "stone_2_green_embered",
+      "implicit_affixes": [],
+      "item_tier": 4,
+      "lore": "Carries its own slow heat. Embers drift from it when struck.",
+      "name": "Embered Verdant Cabochon",
+      "rarity": "epic",
+      "slot": "amulet",
+      "tile": "stone_2_green.png",
+      "unique": false
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 16,
+        "of_crit": 14,
+        "of_dex_mastery": 12,
+        "of_finesse": 16,
+        "of_haste": 14,
+        "of_int_mastery": 14,
+        "of_lifesteal": 10,
+        "of_lingering": 12,
+        "of_might": 30,
+        "of_multicast": 8,
+        "of_quickcast": 14,
+        "of_regen": 10,
+        "of_resonance": 14,
+        "of_str_mastery": 12,
+        "of_velocity": 10,
+        "of_vitality": 36,
+        "of_wisdom": 18,
+        "of_the_bear": 30,
+        "of_sharpness": 14
+      },
+      "base_type": "amulet_rage",
+      "default_tint": {
+        "hue": 0.0,
+        "mode": "colorize",
+        "sat": 1.0,
+        "target_rgb": [
+          0.55,
+          0.58,
+          0.62
+        ]
+      },
+      "drop_weights": [
+        3,
+        25,
+        60,
+        12,
+        0
+      ],
+      "enchant_chance": 0.1,
+      "flavor_tags": [
+        "rage",
+        "harm"
+      ],
+      "id": "penta_orange_ironclad",
+      "implicit_affixes": [],
+      "item_tier": 3,
+      "lore": "Plain forged iron, but heavier than the metal alone explains.",
+      "name": "Ironclad Pentacle of Wrath",
+      "rarity": "rare",
+      "slot": "amulet",
+      "tile": "penta_orange.png",
+      "unique": false
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 16,
+        "of_crit": 29,
+        "of_dex_mastery": 26,
+        "of_finesse": 34,
+        "of_haste": 14,
+        "of_int_mastery": 14,
+        "of_lifesteal": 10,
+        "of_lingering": 12,
+        "of_might": 16,
+        "of_multicast": 8,
+        "of_quickcast": 14,
+        "of_regen": 10,
+        "of_resonance": 14,
+        "of_str_mastery": 12,
+        "of_velocity": 10,
+        "of_vitality": 14,
+        "of_wisdom": 18,
+        "of_venom": 22
+      },
+      "base_type": "amulet_faith",
+      "default_tint": {
+        "hue": 154.4,
+        "mode": "shimmer",
+        "sat": 1.083
+      },
+      "drop_weights": [
+        0,
+        3,
+        25,
+        60,
+        12
+      ],
+      "enchant_chance": 0.3,
+      "flavor_tags": [
+        "faith",
+        "regen",
+        "fortune",
+        "poison"
+      ],
+      "id": "face_amulet_gold_jadeforged",
+      "implicit_affixes": [],
+      "item_tier": 4,
+      "lore": "Carved from one piece of imperial jade. Fault-lines make patterns.",
+      "name": "Jade-forged Saintly Visage",
+      "rarity": "legendary",
+      "slot": "amulet",
+      "tile": "face_1_gold.png",
       "unique": false
     }
   ]

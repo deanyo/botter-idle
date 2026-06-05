@@ -49,10 +49,15 @@ def main():
     manifests['weapon_ext'] = (WEAPON_EXT_MANIFEST, m2)
     m1_base_types = set(m1.get('base_types', {}).keys())
 
-    # Existing items per manifest (id index for collision check).
-    existing_ids = {key: {i['id'] for i in mf['items']} for key, (_, mf) in manifests.items()}
+    # Build id-indexed views for in-place updates (so edits to items.json
+    # propagate even when ids already exist in the manifest — e.g. after
+    # balance_generated_items.py rewrites lore/rarity/affix_pool).
+    manifest_index = {
+        key: {i['id']: i for i in mf['items']} for key, (_, mf) in manifests.items()
+    }
 
-    missing = {key: [] for key in manifests}
+    additions = {key: 0 for key in manifests}
+    updates = {key: 0 for key in manifests}
     for it in db['items']:
         slot = it.get('slot')
         if slot == 'spell':
@@ -64,25 +69,42 @@ def main():
             target = slot
         else:
             continue
-        if it['id'] not in existing_ids[target]:
-            missing[target].append(it)
+        path, mf = manifests[target]
+        existing = manifest_index[target].get(it['id'])
+        if existing is None:
+            mf['items'].append(it)
+            manifest_index[target][it['id']] = it
+            additions[target] += 1
+        elif existing != it:
+            # Replace in-place to preserve item ordering inside the
+            # manifest. Same id, content drift detected.
+            for i, m_it in enumerate(mf['items']):
+                if m_it['id'] == it['id']:
+                    mf['items'][i] = it
+                    break
+            manifest_index[target][it['id']] = it
+            updates[target] += 1
 
     total_added = 0
-    for key, items_to_add in missing.items():
-        if not items_to_add:
-            continue
-        path, mf = manifests[key]
-        mf['items'].extend(items_to_add)
-        with open(ROOT / path, 'w') as f:
-            json.dump(mf, f, indent=2)
-            f.write('\n')
-        total_added += len(items_to_add)
-        print(f'  + {len(items_to_add):3} → {path} (now {len(mf["items"])} items)')
+    total_updated = 0
+    for key, (path, mf) in manifests.items():
+        if additions[key] or updates[key]:
+            with open(ROOT / path, 'w') as f:
+                json.dump(mf, f, indent=2)
+                f.write('\n')
+            bits = []
+            if additions[key]:
+                bits.append(f'+{additions[key]} new')
+            if updates[key]:
+                bits.append(f'~{updates[key]} updated')
+            print(f'  {", ".join(bits):20} → {path} (now {len(mf["items"])} items)')
+            total_added += additions[key]
+            total_updated += updates[key]
 
-    if total_added == 0:
+    if total_added == 0 and total_updated == 0:
         print('All manifests already in sync with items.json.')
     else:
-        print(f'\nAdded {total_added} items across all manifests. Reload the item editor.')
+        print(f'\nAdded {total_added}, updated {total_updated} across all manifests. Reload the item editor.')
 
 
 if __name__ == '__main__':

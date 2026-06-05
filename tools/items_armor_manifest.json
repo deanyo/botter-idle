@@ -144,7 +144,7 @@
       "name": "Tattered Hide",
       "slot": "armor",
       "rarity": "common",
-      "tile": "item/armor/torso/animal_skin_1_new.png",
+      "tile": "animal_skin_1_new.png",
       "base_type": "leather",
       "armor": 8,
       "evasion": 2,
@@ -181,7 +181,7 @@
       "name": "Patchwork Robe",
       "slot": "armor",
       "rarity": "common",
-      "tile": "item/armor/torso/robe_1_old.png",
+      "tile": "robe_1_old.png",
       "base_type": "robe",
       "armor": 8,
       "evasion": 2,
@@ -213,6 +213,11 @@
         "of_poison_resist": 10,
         "of_dark_resist": 8,
         "of_regen": 15
+      },
+      "default_tint": {
+        "hue": 280,
+        "sat": 1.0,
+        "mode": "normal"
       }
     },
     {
@@ -220,7 +225,7 @@
       "name": "Leather Jerkin",
       "slot": "armor",
       "rarity": "common",
-      "tile": "item/armor/torso/leather_armor_1.png",
+      "tile": "leather_armor_1.png",
       "base_type": "leather",
       "armor": 8,
       "evasion": 2,
@@ -257,7 +262,7 @@
       "name": "Studded Leather",
       "slot": "armor",
       "rarity": "uncommon",
-      "tile": "item/armor/torso/studded_leather_armor.png",
+      "tile": "studded_leather_armor.png",
       "base_type": "studded",
       "armor": 9,
       "evasion": 2,
@@ -294,7 +299,7 @@
       "name": "Iron Brigandine",
       "slot": "armor",
       "rarity": "uncommon",
-      "tile": "item/armor/torso/ring_mail_1_new.png",
+      "tile": "ring_mail_1_new.png",
       "base_type": "ring_mail",
       "armor": 9,
       "evasion": 2,
@@ -333,7 +338,7 @@
       "name": "Scout's Robe",
       "slot": "armor",
       "rarity": "uncommon",
-      "tile": "item/armor/torso/robe_1_new.png",
+      "tile": "robe_1_new.png",
       "base_type": "robe",
       "armor": 12,
       "evasion": 3,
@@ -342,7 +347,7 @@
         "stealth",
         "swiftness"
       ],
-      "lore": "Patterns dyed for grass shadow.",
+      "lore": "Dyed in grass-shadow. Nobody sees it coming.",
       "drop_weights": [
         15,
         65,
@@ -366,6 +371,11 @@
         "of_poison_resist": 10,
         "of_dark_resist": 8,
         "of_regen": 15
+      },
+      "default_tint": {
+        "hue": 110,
+        "sat": 1.0,
+        "mode": "normal"
       }
     },
     {
@@ -373,7 +383,7 @@
       "name": "Fine Chainmail",
       "slot": "armor",
       "rarity": "uncommon",
-      "tile": "item/armor/torso/chain_mail_1.png",
+      "tile": "chain_mail_1.png",
       "base_type": "chain_mail",
       "armor": 12,
       "evasion": 3,
@@ -412,7 +422,7 @@
       "name": "Elven Leather",
       "slot": "armor",
       "rarity": "rare",
-      "tile": "item/armor/torso/elven_leather_armor.png",
+      "tile": "elven_leather_armor.png",
       "base_type": "leather",
       "armor": 14,
       "evasion": 3,
@@ -452,7 +462,7 @@
       "name": "Orcish Chainmail",
       "slot": "armor",
       "rarity": "uncommon",
-      "tile": "item/armor/torso/orcish_chain_mail.png",
+      "tile": "orcish_chain_mail.png",
       "base_type": "chain_mail",
       "armor": 12,
       "evasion": 3,
@@ -491,7 +501,7 @@
       "name": "Scale Mail",
       "slot": "armor",
       "rarity": "rare",
-      "tile": "item/armor/torso/scale_mail_1_new.png",
+      "tile": "scale_mail_1_new.png",
       "base_type": "scale_mail",
       "armor": 14,
       "evasion": 3,
@@ -530,7 +540,7 @@
       "name": "Splint Mail",
       "slot": "armor",
       "rarity": "rare",
-      "tile": "item/armor/torso/splint_mail_1.png",
+      "tile": "splint_mail_1.png",
       "base_type": "splint_mail",
       "armor": 19,
       "evasion": 5,
@@ -569,7 +579,7 @@
       "name": "Banded Mail",
       "slot": "armor",
       "rarity": "rare",
-      "tile": "item/armor/torso/banded_mail_1.png",
+      "tile": "banded_mail_1.png",
       "base_type": "banded_mail",
       "armor": 19,
       "evasion": 5,
@@ -608,7 +618,7 @@
       "name": "Elven Scalemail",
       "slot": "armor",
       "rarity": "rare",
-      "tile": "item/armor/torso/elven_scalemail.png",
+      "tile": "elven_scalemail.png",
       "base_type": "scale_mail",
       "armor": 19,
       "evasion": 5,
@@ -648,7 +658,7 @@
       "name": "Troll Leather Armor",
       "slot": "armor",
       "rarity": "epic",
-      "tile": "item/armor/torso/troll_leather_armor.png",
+      "tile": "troll_leather_armor.png",
       "base_type": "troll_leather",
       "armor": 21,
       "evasion": 5,
@@ -687,7 +697,7 @@
       "name": "Plate Armor",
       "slot": "armor",
       "rarity": "rare",
-      "tile": "item/armor/torso/plate_mail_1.png",
+      "tile": "plate_mail_1.png",
       "base_type": "plate",
       "armor": 27,
       "evasion": 7,
@@ -727,7 +737,7 @@
       "name": "Swamp Dragon Armor",
       "slot": "armor",
       "rarity": "epic",
-      "tile": "item/armor/torso/swamp_dragon_armor_new.png",
+      "tile": "swamp_dragon_armor_new.png",
       "base_type": "dragon_scales",
       "armor": 30,
       "evasion": 7,
@@ -759,6 +769,11 @@
         "of_poison_resist": 10,
         "of_dark_resist": 8,
         "of_regen": 15
+      },
+      "default_tint": {
+        "hue": 85,
+        "sat": 0.95,
+        "mode": "normal"
       }
     },
     {
@@ -766,7 +781,7 @@
       "name": "Ice Dragon Armor",
       "slot": "armor",
       "rarity": "epic",
-      "tile": "item/armor/torso/ice_dragon_armor_new.png",
+      "tile": "ice_dragon_armor_new.png",
       "base_type": "dragon_scales",
       "armor": 30,
       "evasion": 7,
@@ -798,6 +813,11 @@
         "of_poison_resist": 10,
         "of_dark_resist": 8,
         "of_regen": 15
+      },
+      "default_tint": {
+        "hue": 200,
+        "sat": 1.1,
+        "mode": "normal"
       }
     },
     {
@@ -805,7 +825,7 @@
       "name": "Fire Dragon Armor",
       "slot": "armor",
       "rarity": "epic",
-      "tile": "item/armor/torso/blue_dragon_scale_mail_new.png",
+      "tile": "blue_dragon_scale_mail_new.png",
       "base_type": "dragon_scales",
       "armor": 30,
       "evasion": 7,
@@ -837,6 +857,11 @@
         "of_poison_resist": 10,
         "of_dark_resist": 8,
         "of_regen": 15
+      },
+      "default_tint": {
+        "hue": 0,
+        "sat": 1.2,
+        "mode": "normal"
       }
     },
     {
@@ -844,7 +869,7 @@
       "name": "Shimmering Dragon Scales",
       "slot": "armor",
       "rarity": "epic",
-      "tile": "item/armor/torso/shimmering_dragon_scales.png",
+      "tile": "shimmering_dragon_scales.png",
       "base_type": "dragon_scales",
       "armor": 30,
       "evasion": 7,
@@ -876,6 +901,11 @@
         "of_poison_resist": 10,
         "of_dark_resist": 8,
         "of_regen": 15
+      },
+      "default_tint": {
+        "hue": 0,
+        "sat": 1.0,
+        "mode": "shimmer"
       }
     },
     {
@@ -883,7 +913,7 @@
       "name": "Wyrmscale Hauberk",
       "slot": "armor",
       "rarity": "epic",
-      "tile": "item/armor/torso/scale_mail_3.png",
+      "tile": "scale_mail_3.png",
       "base_type": "scale_mail",
       "armor": 30,
       "evasion": 7,
@@ -923,7 +953,7 @@
       "name": "Shadow Dragon Armor",
       "slot": "armor",
       "rarity": "epic",
-      "tile": "item/armor/torso/shadow_dragon_scale_mail.png",
+      "tile": "shadow_dragon_scale_mail.png",
       "base_type": "dragon_scales",
       "armor": 42,
       "evasion": 10,
@@ -963,7 +993,7 @@
       "name": "Gold Dragon Armor",
       "slot": "armor",
       "rarity": "epic",
-      "tile": "item/armor/torso/gold_dragon_armor_new.png",
+      "tile": "gold_dragon_armor_new.png",
       "base_type": "dragon_scales",
       "armor": 42,
       "evasion": 10,
@@ -996,6 +1026,11 @@
         "of_poison_resist": 10,
         "of_dark_resist": 8,
         "of_regen": 15
+      },
+      "default_tint": {
+        "hue": 45,
+        "sat": 1.15,
+        "mode": "normal"
       }
     },
     {
@@ -1003,7 +1038,7 @@
       "name": "Pearl Dragon Armor",
       "slot": "armor",
       "rarity": "epic",
-      "tile": "item/armor/torso/pearl_dragon_armor.png",
+      "tile": "pearl_dragon_armor.png",
       "base_type": "dragon_scales",
       "armor": 42,
       "evasion": 10,
@@ -1036,6 +1071,12 @@
         "of_poison_resist": 10,
         "of_dark_resist": 8,
         "of_regen": 15
+      },
+      "default_tint": {
+        "hue": 200,
+        "sat": 0.5,
+        "mode": "colorize",
+        "colorize_strength": 0.35
       }
     },
     {
@@ -1043,7 +1084,7 @@
       "name": "Crystal Plate",
       "slot": "armor",
       "rarity": "epic",
-      "tile": "item/armor/torso/crystal_plate_mail.png",
+      "tile": "crystal_plate_mail.png",
       "base_type": "crystal_plate",
       "armor": 42,
       "evasion": 10,
@@ -1083,7 +1124,7 @@
       "name": "Lear's Chainmail",
       "slot": "armor",
       "rarity": "legendary",
-      "tile": "item/armor/artefact/urand_lear.png",
+      "tile": "urand_lear.png",
       "base_type": "chain_mail",
       "armor": 48,
       "evasion": 12,
@@ -1123,7 +1164,7 @@
       "name": "Robe of Folly",
       "slot": "armor",
       "rarity": "legendary",
-      "tile": "item/armor/artefact/urand_folly.png",
+      "tile": "urand_folly.png",
       "base_type": "robe",
       "armor": 48,
       "evasion": 12,
@@ -1163,7 +1204,7 @@
       "name": "Robe of Misfortune",
       "slot": "armor",
       "rarity": "legendary",
-      "tile": "item/armor/artefact/urand_misfortune.png",
+      "tile": "urand_misfortune.png",
       "base_type": "robe",
       "armor": 48,
       "evasion": 12,
@@ -1203,7 +1244,7 @@
       "name": "Orcish Leather",
       "slot": "armor",
       "rarity": "common",
-      "tile": "item/armor/torso/orcish_leather_armor.png",
+      "tile": "orcish_leather_armor.png",
       "base_type": "leather",
       "armor": 8,
       "evasion": 2,
@@ -1240,7 +1281,7 @@
       "name": "Orcish Ringmail",
       "slot": "armor",
       "rarity": "uncommon",
-      "tile": "item/armor/torso/orcish_ringmail.png",
+      "tile": "orcish_ringmail.png",
       "base_type": "ring_mail",
       "armor": 12,
       "evasion": 3,
@@ -1279,7 +1320,7 @@
       "name": "Orcish Platemail",
       "slot": "armor",
       "rarity": "rare",
-      "tile": "item/armor/torso/orcish_platemail.png",
+      "tile": "orcish_platemail.png",
       "base_type": "plate",
       "armor": 19,
       "evasion": 5,
@@ -1318,7 +1359,7 @@
       "name": "Troll Hide",
       "slot": "armor",
       "rarity": "rare",
-      "tile": "item/armor/torso/troll_hide.png",
+      "tile": "troll_hide.png",
       "base_type": "troll_leather",
       "armor": 14,
       "evasion": 3,
@@ -1357,7 +1398,7 @@
       "name": "Green Dragon Scales",
       "slot": "armor",
       "rarity": "epic",
-      "tile": "item/armor/torso/green_dragon_scale_mail.png",
+      "tile": "green_dragon_scale_mail.png",
       "base_type": "dragon_scales",
       "armor": 30,
       "evasion": 7,
@@ -1389,6 +1430,11 @@
         "of_poison_resist": 10,
         "of_dark_resist": 8,
         "of_regen": 15
+      },
+      "default_tint": {
+        "hue": 120,
+        "sat": 1.1,
+        "mode": "normal"
       }
     },
     {
@@ -1396,7 +1442,7 @@
       "name": "Mottled Dragon Scales",
       "slot": "armor",
       "rarity": "epic",
-      "tile": "item/armor/torso/mottled_dragon_armor_new.png",
+      "tile": "mottled_dragon_armor_new.png",
       "base_type": "dragon_scales",
       "armor": 30,
       "evasion": 7,
@@ -1436,7 +1482,7 @@
       "name": "Silver Dragon Armor",
       "slot": "armor",
       "rarity": "epic",
-      "tile": "item/armor/torso/silver_dragon_scale_mail_new.png",
+      "tile": "silver_dragon_scale_mail_new.png",
       "base_type": "dragon_scales",
       "armor": 42,
       "evasion": 10,
@@ -1469,6 +1515,12 @@
         "of_poison_resist": 10,
         "of_dark_resist": 8,
         "of_regen": 15
+      },
+      "default_tint": {
+        "hue": 200,
+        "sat": 1.0,
+        "mode": "colorize",
+        "colorize_strength": 0.45
       }
     },
     {
@@ -1476,7 +1528,7 @@
       "name": "Quicksilver Dragon Scales",
       "slot": "armor",
       "rarity": "epic",
-      "tile": "item/armor/torso/quicksilver_dragon_scale_mail.png",
+      "tile": "quicksilver_dragon_scale_mail.png",
       "base_type": "dragon_scales",
       "armor": 42,
       "evasion": 10,
@@ -1516,7 +1568,7 @@
       "name": "Shadow Dragon Scales",
       "slot": "armor",
       "rarity": "epic",
-      "tile": "item/armor/torso/shadow_dragon_scales.png",
+      "tile": "shadow_dragon_scales.png",
       "base_type": "dragon_scales",
       "armor": 42,
       "evasion": 10,
@@ -1548,6 +1600,11 @@
         "of_poison_resist": 10,
         "of_dark_resist": 8,
         "of_regen": 15
+      },
+      "default_tint": {
+        "hue": 270,
+        "sat": 1.1,
+        "mode": "normal"
       }
     },
     {
@@ -1555,7 +1612,7 @@
       "name": "Robe of Clouds",
       "slot": "armor",
       "rarity": "legendary",
-      "tile": "item/armor/artefact/urand_clouds.png",
+      "tile": "urand_clouds.png",
       "base_type": "robe",
       "armor": 48,
       "evasion": 12,
@@ -1596,7 +1653,7 @@
       "name": "Faerie Dragon Hide",
       "slot": "armor",
       "rarity": "legendary",
-      "tile": "item/armor/artefact/urand_faerie.png",
+      "tile": "urand_faerie.png",
       "base_type": "dragon_scales",
       "armor": 48,
       "evasion": 12,
@@ -1630,6 +1687,11 @@
         "of_poison_resist": 10,
         "of_dark_resist": 8,
         "of_regen": 15
+      },
+      "default_tint": {
+        "hue": 320,
+        "sat": 1.2,
+        "mode": "normal"
       }
     },
     {
@@ -1637,7 +1699,7 @@
       "name": "Salamander Hide",
       "slot": "armor",
       "rarity": "legendary",
-      "tile": "item/armor/artefact/urand_salamander.png",
+      "tile": "urand_salamander.png",
       "base_type": "leather",
       "armor": 48,
       "evasion": 12,
@@ -1677,7 +1739,7 @@
       "name": "Robe of the Dragon King",
       "slot": "armor",
       "rarity": "legendary",
-      "tile": "item/armor/artefact/urand_dragon_king.png",
+      "tile": "urand_dragon_king.png",
       "base_type": "robe",
       "armor": 48,
       "evasion": 12,
@@ -1718,7 +1780,7 @@
       "name": "Armor of Zhor",
       "slot": "armor",
       "rarity": "legendary",
-      "tile": "item/armor/artefact/urand_zhor.png",
+      "tile": "urand_zhor.png",
       "base_type": "leather",
       "armor": 48,
       "evasion": 12,
@@ -1758,7 +1820,7 @@
       "name": "Robe of Night",
       "slot": "armor",
       "rarity": "legendary",
-      "tile": "item/armor/artefact/urand_night_new.png",
+      "tile": "urand_night_new.png",
       "base_type": "robe",
       "armor": 48,
       "evasion": 12,
@@ -1807,7 +1869,11 @@
         "of_regen": 15,
         "of_the_bear": 30,
         "of_vitality": 30,
-        "of_wisdom": 12
+        "of_wisdom": 12,
+        "of_devotion": 22,
+        "of_haste": 18,
+        "of_lifesteal": 12,
+        "of_quickcast": 15
       },
       "armor": 48,
       "base_type": "robe",
@@ -1819,11 +1885,11 @@
       "drop_weights": [
         0,
         0,
-        0,
-        5,
-        25
+        3,
+        25,
+        60
       ],
-      "enchant_chance": 0.0,
+      "enchant_chance": 0.3,
       "evasion": 12,
       "flavor_tags": [
         "regen",
@@ -1833,7 +1899,7 @@
       "id": "robe_of_folly_rosegold",
       "implicit_affixes": [],
       "item_tier": 5,
-      "lore": "A rose-gold reflavor of the standard robe of folly.",
+      "lore": "An alloy out of fashion in this century. The shine is unmistakable.",
       "name": "Rose-gold Robe of Folly",
       "rarity": "legendary",
       "slot": "armor",
@@ -1844,7 +1910,7 @@
       "affix_pool": {
         "of_cold_resist": 12,
         "of_dark_resist": 8,
-        "of_finesse": 12,
+        "of_finesse": 30,
         "of_fire_resist": 12,
         "of_holy_resist": 8,
         "of_lightning_resist": 12,
@@ -1853,7 +1919,10 @@
         "of_regen": 15,
         "of_the_bear": 30,
         "of_vitality": 30,
-        "of_wisdom": 12
+        "of_wisdom": 12,
+        "of_int_mastery": 18,
+        "of_quickcast": 14,
+        "of_resonance": 14
       },
       "armor": 30,
       "base_type": "dragon_scales",
@@ -1864,12 +1933,12 @@
       },
       "drop_weights": [
         0,
-        0,
-        10,
-        55,
-        35
+        3,
+        25,
+        60,
+        12
       ],
-      "enchant_chance": 0.15,
+      "enchant_chance": 0.3,
       "evasion": 7,
       "flavor_tags": [
         "poison_res"
@@ -1877,7 +1946,7 @@
       "id": "green_dragon_inverse",
       "implicit_affixes": [],
       "item_tier": 4,
-      "lore": "A inverse reflavor of the standard green dragon scales.",
+      "lore": "Looking at it too long inverts what you saw before.",
       "name": "Inverse Green Dragon Scales",
       "rarity": "legendary",
       "slot": "armor",
@@ -1897,7 +1966,20 @@
         "of_regen": 15,
         "of_the_bear": 30,
         "of_vitality": 30,
-        "of_wisdom": 12
+        "of_wisdom": 12,
+        "of_embers": 14,
+        "of_frost": 14,
+        "of_storms": 14,
+        "of_devotion": 14,
+        "of_venom": 14,
+        "of_shadows": 14,
+        "of_sharpness": 14,
+        "of_resonance": 18,
+        "of_multicast": 12,
+        "of_channeling": 18,
+        "of_str_mastery": 10,
+        "of_dex_mastery": 10,
+        "of_int_mastery": 10
       },
       "armor": 48,
       "base_type": "robe",
@@ -1909,11 +1991,11 @@
       "drop_weights": [
         0,
         0,
-        0,
-        5,
-        25
+        3,
+        25,
+        60
       ],
-      "enchant_chance": 0.0,
+      "enchant_chance": 0.3,
       "evasion": 12,
       "flavor_tags": [
         "regen",
@@ -1922,7 +2004,7 @@
       "id": "robe_of_folly_prismatic",
       "implicit_affixes": [],
       "item_tier": 5,
-      "lore": "A prismatic reflavor of the standard robe of folly.",
+      "lore": "Every glance reveals a new color, each one a real one \u2014 somewhere.",
       "name": "Prismatic Robe of Folly",
       "rarity": "legendary",
       "slot": "armor",
@@ -1932,17 +2014,19 @@
     {
       "affix_pool": {
         "of_cold_resist": 12,
-        "of_dark_resist": 8,
+        "of_dark_resist": 30,
         "of_finesse": 12,
         "of_fire_resist": 12,
         "of_holy_resist": 8,
         "of_lightning_resist": 12,
-        "of_might": 15,
+        "of_might": 27,
         "of_poison_resist": 10,
         "of_regen": 15,
         "of_the_bear": 30,
         "of_vitality": 30,
-        "of_wisdom": 12
+        "of_wisdom": 12,
+        "of_shadows": 32,
+        "of_lifesteal": 18
       },
       "armor": 8,
       "base_type": "leather",
@@ -1952,9 +2036,9 @@
         "sat": 1.139
       },
       "drop_weights": [
-        70,
-        20,
-        2,
+        60,
+        12,
+        0,
         0,
         0
       ],
@@ -1966,7 +2050,7 @@
       "id": "leather_jerkin_voidwrought",
       "implicit_affixes": [],
       "item_tier": 1,
-      "lore": "A voidwrought reflavor of the standard leather jerkin.",
+      "lore": "Smithed somewhere between worlds. The shadow it casts is wrong.",
       "name": "Voidwrought Leather Jerkin",
       "rarity": "uncommon",
       "slot": "armor",
@@ -1986,7 +2070,11 @@
         "of_regen": 15,
         "of_the_bear": 30,
         "of_vitality": 30,
-        "of_wisdom": 12
+        "of_wisdom": 12,
+        "of_devotion": 22,
+        "of_haste": 18,
+        "of_lifesteal": 12,
+        "of_quickcast": 15
       },
       "armor": 19,
       "base_type": "banded_mail",
@@ -1996,13 +2084,13 @@
         "sat": 0.843
       },
       "drop_weights": [
-        0,
-        15,
-        58,
+        3,
         25,
-        5
+        60,
+        12,
+        0
       ],
-      "enchant_chance": 0.1,
+      "enchant_chance": 0.18,
       "evasion": 5,
       "flavor_tags": [
         "fortified",
@@ -2011,7 +2099,7 @@
       "id": "banded_mail_rosegold",
       "implicit_affixes": [],
       "item_tier": 3,
-      "lore": "A rose-gold reflavor of the standard banded mail.",
+      "lore": "An alloy out of fashion in this century. The shine is unmistakable.",
       "name": "Rose-gold Banded Mail",
       "rarity": "epic",
       "slot": "armor",
@@ -2024,14 +2112,17 @@
         "of_dark_resist": 8,
         "of_finesse": 12,
         "of_fire_resist": 12,
-        "of_holy_resist": 8,
+        "of_holy_resist": 26,
         "of_lightning_resist": 12,
         "of_might": 15,
         "of_poison_resist": 10,
         "of_regen": 15,
         "of_the_bear": 30,
         "of_vitality": 30,
-        "of_wisdom": 12
+        "of_wisdom": 12,
+        "of_devotion": 28,
+        "of_channeling": 15,
+        "of_quickcast": 12
       },
       "armor": 19,
       "base_type": "plate",
@@ -2041,13 +2132,13 @@
         "sat": 0.931
       },
       "drop_weights": [
-        0,
-        18,
+        3,
+        25,
         60,
-        22,
-        4
+        12,
+        0
       ],
-      "enchant_chance": 0.1,
+      "enchant_chance": 0.18,
       "evasion": 5,
       "flavor_tags": [
         "fortified",
@@ -2056,7 +2147,7 @@
       "id": "orcish_platemail_gilded",
       "implicit_affixes": [],
       "item_tier": 3,
-      "lore": "A gilded reflavor of the standard orcish platemail.",
+      "lore": "Cathedral-gold leaf, beaten thin and prayed over for a hundred years.",
       "name": "Gilded Orcish Platemail",
       "rarity": "epic",
       "slot": "armor",
@@ -2072,10 +2163,10 @@
         "of_holy_resist": 8,
         "of_lightning_resist": 12,
         "of_might": 15,
-        "of_poison_resist": 10,
-        "of_regen": 15,
-        "of_the_bear": 30,
-        "of_vitality": 30,
+        "of_poison_resist": 28,
+        "of_regen": 33,
+        "of_the_bear": 45,
+        "of_vitality": 52,
         "of_wisdom": 12
       },
       "armor": 48,
@@ -2088,11 +2179,11 @@
       "drop_weights": [
         0,
         0,
-        0,
-        4,
-        20
+        3,
+        25,
+        60
       ],
-      "enchant_chance": 0.0,
+      "enchant_chance": 0.3,
       "evasion": 12,
       "flavor_tags": [
         "thorns",
@@ -2101,12 +2192,209 @@
       "id": "robe_of_misfortune_verdant",
       "implicit_affixes": [],
       "item_tier": 5,
-      "lore": "A verdant reflavor of the standard robe of misfortune.",
+      "lore": "Vines crawl over the haft, seeking soil that is not there.",
       "name": "Verdant Robe of Misfortune",
       "rarity": "legendary",
       "slot": "armor",
       "tile": "urand_misfortune.png",
       "unique": true
+    },
+    {
+      "affix_pool": {
+        "of_cold_resist": 12,
+        "of_dark_resist": 8,
+        "of_finesse": 12,
+        "of_fire_resist": 12,
+        "of_holy_resist": 8,
+        "of_lightning_resist": 12,
+        "of_might": 29,
+        "of_poison_resist": 10,
+        "of_regen": 15,
+        "of_the_bear": 60,
+        "of_vitality": 52,
+        "of_wisdom": 12,
+        "of_sharpness": 14
+      },
+      "armor": 12,
+      "base_type": "robe",
+      "default_tint": {
+        "hue": 0.0,
+        "mode": "colorize",
+        "sat": 1.0,
+        "target_rgb": [
+          0.55,
+          0.58,
+          0.62
+        ]
+      },
+      "drop_weights": [
+        25,
+        60,
+        12,
+        0,
+        0
+      ],
+      "enchant_chance": 0.05,
+      "evasion": 3,
+      "flavor_tags": [
+        "stealth",
+        "swiftness"
+      ],
+      "id": "scout_robe_ironclad",
+      "implicit_affixes": [],
+      "item_tier": 2,
+      "lore": "Plain forged iron, but heavier than the metal alone explains.",
+      "name": "Ironclad Scout's Robe",
+      "rarity": "uncommon",
+      "slot": "armor",
+      "tile": "robe_1_new.png",
+      "unique": false
+    },
+    {
+      "affix_pool": {
+        "of_cold_resist": 12,
+        "of_dark_resist": 8,
+        "of_finesse": 12,
+        "of_fire_resist": 12,
+        "of_holy_resist": 8,
+        "of_lightning_resist": 12,
+        "of_might": 29,
+        "of_poison_resist": 10,
+        "of_regen": 15,
+        "of_the_bear": 60,
+        "of_vitality": 52,
+        "of_wisdom": 12,
+        "of_sharpness": 14
+      },
+      "armor": 48,
+      "base_type": "robe",
+      "default_tint": {
+        "hue": 0.0,
+        "mode": "colorize",
+        "sat": 1.0,
+        "target_rgb": [
+          0.55,
+          0.58,
+          0.62
+        ]
+      },
+      "drop_weights": [
+        0,
+        0,
+        3,
+        25,
+        60
+      ],
+      "enchant_chance": 0.3,
+      "evasion": 12,
+      "flavor_tags": [
+        "stealth",
+        "willpower",
+        "regen"
+      ],
+      "id": "robe_of_clouds_ironclad",
+      "implicit_affixes": [],
+      "item_tier": 5,
+      "lore": "Plain forged iron, but heavier than the metal alone explains.",
+      "name": "Ironclad Robe of Clouds",
+      "rarity": "legendary",
+      "slot": "armor",
+      "tile": "urand_clouds.png",
+      "unique": true
+    },
+    {
+      "affix_pool": {
+        "of_cold_resist": 12,
+        "of_dark_resist": 8,
+        "of_finesse": 30,
+        "of_fire_resist": 12,
+        "of_holy_resist": 8,
+        "of_lightning_resist": 12,
+        "of_might": 15,
+        "of_poison_resist": 10,
+        "of_regen": 15,
+        "of_the_bear": 30,
+        "of_vitality": 30,
+        "of_wisdom": 12,
+        "of_venom": 22,
+        "of_dex_mastery": 14,
+        "of_crit": 15
+      },
+      "armor": 8,
+      "base_type": "leather",
+      "default_tint": {
+        "hue": 148.1,
+        "mode": "shimmer",
+        "sat": 0.979
+      },
+      "drop_weights": [
+        60,
+        12,
+        0,
+        0,
+        0
+      ],
+      "enchant_chance": 0.05,
+      "evasion": 2,
+      "flavor_tags": [
+        "poison"
+      ],
+      "id": "tattered_hide_jadeforged",
+      "implicit_affixes": [],
+      "item_tier": 1,
+      "lore": "Carved from one piece of imperial jade. Fault-lines make patterns.",
+      "name": "Jade-forged Tattered Hide",
+      "rarity": "rare",
+      "slot": "armor",
+      "tile": "animal_skin_1_new.png",
+      "unique": false
+    },
+    {
+      "affix_pool": {
+        "of_cold_resist": 12,
+        "of_dark_resist": 8,
+        "of_finesse": 12,
+        "of_fire_resist": 34,
+        "of_holy_resist": 8,
+        "of_lightning_resist": 12,
+        "of_might": 15,
+        "of_poison_resist": 10,
+        "of_regen": 15,
+        "of_the_bear": 30,
+        "of_vitality": 30,
+        "of_wisdom": 12,
+        "of_embers": 30,
+        "of_quickcast": 14,
+        "of_channeling": 10
+      },
+      "armor": 8,
+      "base_type": "leather",
+      "default_tint": {
+        "hue": 27.9,
+        "mode": "shimmer",
+        "sat": 1.166
+      },
+      "drop_weights": [
+        60,
+        12,
+        0,
+        0,
+        0
+      ],
+      "enchant_chance": 0.05,
+      "evasion": 2,
+      "flavor_tags": [
+        "fire"
+      ],
+      "id": "orcish_leather_embered",
+      "implicit_affixes": [],
+      "item_tier": 1,
+      "lore": "Carries its own slow heat. Embers drift from it when struck.",
+      "name": "Embered Orcish Leather",
+      "rarity": "rare",
+      "slot": "armor",
+      "tile": "orcish_leather_armor.png",
+      "unique": false
     }
   ]
 }

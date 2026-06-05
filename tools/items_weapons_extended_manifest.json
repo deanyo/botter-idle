@@ -12,7 +12,7 @@
       "name": "Hand Axe",
       "slot": "weapon",
       "rarity": "common",
-      "tile": "item/weapon/hand_axe_1_new.png",
+      "tile": "hand_axe_1_new.png",
       "base_type": "hand_axe",
       "weapon_class": "1H",
       "damage_min": 10,
@@ -21,7 +21,7 @@
       "speed": 0.65,
       "item_tier": 1,
       "flavor_tags": [],
-      "lore": "",
+      "lore": "Plain hardwood haft, head bound with iron.",
       "drop_weights": [
         50,
         30,
@@ -55,7 +55,7 @@
       "name": "Orcish Hand Axe",
       "slot": "weapon",
       "rarity": "uncommon",
-      "tile": "item/weapon/hand_axe_2_new.png",
+      "tile": "hand_axe_2_new.png",
       "base_type": "hand_axe",
       "weapon_class": "1H",
       "damage_min": 15,
@@ -64,7 +64,7 @@
       "speed": 0.65,
       "item_tier": 2,
       "flavor_tags": [],
-      "lore": "",
+      "lore": "Orcish iron, crude and heavy at the head.",
       "drop_weights": [
         10,
         40,
@@ -98,7 +98,7 @@
       "name": "Steel Hand Axe",
       "slot": "weapon",
       "rarity": "rare",
-      "tile": "item/weapon/hand_axe_3.png",
+      "tile": "hand_axe_3.png",
       "base_type": "hand_axe",
       "weapon_class": "1H",
       "damage_min": 24,
@@ -107,7 +107,7 @@
       "speed": 0.65,
       "item_tier": 3,
       "flavor_tags": [],
-      "lore": "",
+      "lore": "Steel forged tight \u2014 splits more than wood now.",
       "drop_weights": [
         0,
         15,
@@ -141,7 +141,7 @@
       "name": "War Axe",
       "slot": "weapon",
       "rarity": "common",
-      "tile": "item/weapon/war_axe_1.png",
+      "tile": "war_axe_1.png",
       "base_type": "war_axe",
       "weapon_class": "1H",
       "damage_min": 14,
@@ -150,7 +150,7 @@
       "speed": 0.75,
       "item_tier": 1,
       "flavor_tags": [],
-      "lore": "",
+      "lore": "Plain head, plain shaft. Plain damage.",
       "drop_weights": [
         40,
         35,
@@ -184,7 +184,7 @@
       "name": "Dwarven War Axe",
       "slot": "weapon",
       "rarity": "uncommon",
-      "tile": "item/weapon/war_axe_2.png",
+      "tile": "war_axe_2.png",
       "base_type": "war_axe",
       "weapon_class": "1H",
       "damage_min": 22,
@@ -195,7 +195,7 @@
       "flavor_tags": [
         "fortified"
       ],
-      "lore": "",
+      "lore": "Dwarven iron, balanced for both hands or one.",
       "drop_weights": [
         10,
         40,
@@ -229,7 +229,7 @@
       "name": "Steel War Axe",
       "slot": "weapon",
       "rarity": "rare",
-      "tile": "item/weapon/war_axe_4.png",
+      "tile": "war_axe_4.png",
       "base_type": "war_axe",
       "weapon_class": "1H",
       "damage_min": 33,
@@ -238,7 +238,7 @@
       "speed": 0.75,
       "item_tier": 3,
       "flavor_tags": [],
-      "lore": "",
+      "lore": "Steel run thin enough to whistle on the swing.",
       "drop_weights": [
         0,
         15,
@@ -272,7 +272,7 @@
       "name": "Runed War Axe",
       "slot": "weapon",
       "rarity": "epic",
-      "tile": "item/weapon/war_axe_5.png",
+      "tile": "war_axe_5.png",
       "base_type": "war_axe",
       "weapon_class": "1H",
       "damage_min": 52,
@@ -283,7 +283,7 @@
       "flavor_tags": [
         "arcane"
       ],
-      "lore": "",
+      "lore": "Runes dyed dark in the blade \u2014 no one remembers their meaning.",
       "drop_weights": [
         0,
         0,
@@ -317,7 +317,7 @@
       "name": "Battle Axe",
       "slot": "weapon",
       "rarity": "uncommon",
-      "tile": "item/weapon/battle_axe_1.png",
+      "tile": "battle_axe_1.png",
       "base_type": "battle_axe",
       "weapon_class": "2H",
       "damage_min": 43,
@@ -328,7 +328,7 @@
       "flavor_tags": [
         "ponderous"
       ],
-      "lore": "",
+      "lore": "Two-handed iron. Pretends to nothing.",
       "drop_weights": [
         10,
         40,
@@ -362,7 +362,7 @@
       "name": "Steel Battle Axe",
       "slot": "weapon",
       "rarity": "rare",
-      "tile": "item/weapon/battle_axe_3.png",
+      "tile": "battle_axe_3.png",
       "base_type": "battle_axe",
       "weapon_class": "2H",
       "damage_min": 67,
@@ -373,7 +373,7 @@
       "flavor_tags": [
         "ponderous"
       ],
-      "lore": "",
+      "lore": "Steel head and ash haft, balanced cruelly.",
       "drop_weights": [
         0,
         15,
@@ -407,7 +407,7 @@
       "name": "Runed Battle Axe",
       "slot": "weapon",
       "rarity": "epic",
-      "tile": "item/weapon/battle_axe_5.png",
+      "tile": "battle_axe_5.png",
       "base_type": "battle_axe",
       "weapon_class": "2H",
       "damage_min": 104,
@@ -419,7 +419,7 @@
         "ponderous",
         "arcane"
       ],
-      "lore": "",
+      "lore": "Runes burn cold along the blade in winter air.",
       "drop_weights": [
         0,
         0,
@@ -453,7 +453,7 @@
       "name": "Warlord's Battle Axe",
       "slot": "weapon",
       "rarity": "legendary",
-      "tile": "item/weapon/battle_axe_7.png",
+      "tile": "battle_axe_7.png",
       "base_type": "battle_axe",
       "weapon_class": "2H",
       "damage_min": 167,
@@ -466,7 +466,7 @@
         "brutal",
         "lordly"
       ],
-      "lore": "",
+      "lore": "Carried into three hundred fights. Still hungry.",
       "drop_weights": [
         0,
         0,
@@ -500,7 +500,7 @@
       "name": "Broad Axe",
       "slot": "weapon",
       "rarity": "uncommon",
-      "tile": "item/weapon/broad_axe_1.png",
+      "tile": "broad_axe_1.png",
       "base_type": "broad_axe",
       "weapon_class": "2H",
       "damage_min": 46,
@@ -511,7 +511,7 @@
       "flavor_tags": [
         "slaying"
       ],
-      "lore": "",
+      "lore": "Wide bite. Wider crater.",
       "drop_weights": [
         10,
         40,
@@ -545,7 +545,7 @@
       "name": "Steel Broad Axe",
       "slot": "weapon",
       "rarity": "rare",
-      "tile": "item/weapon/broad_axe_3.png",
+      "tile": "broad_axe_3.png",
       "base_type": "broad_axe",
       "weapon_class": "2H",
       "damage_min": 72,
@@ -556,7 +556,7 @@
       "flavor_tags": [
         "slaying"
       ],
-      "lore": "",
+      "lore": "Steel forged thick \u2014 splits shields like kindling.",
       "drop_weights": [
         0,
         15,
@@ -590,7 +590,7 @@
       "name": "Runed Broad Axe",
       "slot": "weapon",
       "rarity": "epic",
-      "tile": "item/weapon/broad_axe_5.png",
+      "tile": "broad_axe_5.png",
       "base_type": "broad_axe",
       "weapon_class": "2H",
       "damage_min": 112,
@@ -602,7 +602,7 @@
         "slaying",
         "arcane"
       ],
-      "lore": "",
+      "lore": "Runed at the throat. The wind groans before it lands.",
       "drop_weights": [
         0,
         0,
@@ -636,7 +636,7 @@
       "name": "Executioner's Axe",
       "slot": "weapon",
       "rarity": "epic",
-      "tile": "item/weapon/executioner_axe_1.png",
+      "tile": "executioner_axe_1.png",
       "base_type": "executioner_axe",
       "weapon_class": "2H",
       "damage_min": 127,
@@ -648,7 +648,7 @@
         "ponderous",
         "brutal"
       ],
-      "lore": "",
+      "lore": "A cold weight. Nothing struck by it twice.",
       "drop_weights": [
         0,
         0,
@@ -682,7 +682,7 @@
       "name": "Doomed Executioner",
       "slot": "weapon",
       "rarity": "legendary",
-      "tile": "item/weapon/executioner_axe_5.png",
+      "tile": "executioner_axe_5.png",
       "base_type": "executioner_axe",
       "weapon_class": "2H",
       "damage_min": 202,
@@ -695,7 +695,7 @@
         "brutal",
         "death"
       ],
-      "lore": "",
+      "lore": "Said to fall by its own will once a name is spoken.",
       "drop_weights": [
         0,
         0,
@@ -729,7 +729,7 @@
       "name": "Club",
       "slot": "weapon",
       "rarity": "common",
-      "tile": "item/weapon/club_old.png",
+      "tile": "club_old.png",
       "base_type": "club",
       "weapon_class": "1H",
       "damage_min": 10,
@@ -738,7 +738,7 @@
       "speed": 0.7,
       "item_tier": 1,
       "flavor_tags": [],
-      "lore": "",
+      "lore": "Knotted wood. Crude, certain.",
       "drop_weights": [
         60,
         25,
@@ -772,7 +772,7 @@
       "name": "Spiked Club",
       "slot": "weapon",
       "rarity": "common",
-      "tile": "item/weapon/club_new.png",
+      "tile": "club_new.png",
       "base_type": "club",
       "weapon_class": "1H",
       "damage_min": 10,
@@ -781,7 +781,7 @@
       "speed": 0.7,
       "item_tier": 1,
       "flavor_tags": [],
-      "lore": "",
+      "lore": "A weight that ends arguments.",
       "drop_weights": [
         50,
         30,
@@ -815,7 +815,7 @@
       "name": "Mace",
       "slot": "weapon",
       "rarity": "common",
-      "tile": "item/weapon/mace_1_new.png",
+      "tile": "mace_1_new.png",
       "base_type": "mace",
       "weapon_class": "1H",
       "damage_min": 14,
@@ -824,7 +824,7 @@
       "speed": 0.8,
       "item_tier": 1,
       "flavor_tags": [],
-      "lore": "",
+      "lore": "Iron flanged. Settles bone disputes.",
       "drop_weights": [
         50,
         30,
@@ -858,7 +858,7 @@
       "name": "Steel Mace",
       "slot": "weapon",
       "rarity": "uncommon",
-      "tile": "item/weapon/mace_2_new.png",
+      "tile": "mace_2_new.png",
       "base_type": "mace",
       "weapon_class": "1H",
       "damage_min": 22,
@@ -867,7 +867,7 @@
       "speed": 0.8,
       "item_tier": 2,
       "flavor_tags": [],
-      "lore": "",
+      "lore": "Steel head, heavy as a verdict.",
       "drop_weights": [
         10,
         40,
@@ -901,7 +901,7 @@
       "name": "Dwarven Mace",
       "slot": "weapon",
       "rarity": "rare",
-      "tile": "item/weapon/mace_3_new.png",
+      "tile": "mace_3_new.png",
       "base_type": "mace",
       "weapon_class": "1H",
       "damage_min": 33,
@@ -912,7 +912,7 @@
       "flavor_tags": [
         "fortified"
       ],
-      "lore": "",
+      "lore": "Dwarven steel, fluted to crack plate.",
       "drop_weights": [
         0,
         15,
@@ -946,7 +946,7 @@
       "name": "Morningstar",
       "slot": "weapon",
       "rarity": "uncommon",
-      "tile": "item/weapon/morningstar_1_new.png",
+      "tile": "morningstar_1_new.png",
       "base_type": "morningstar",
       "weapon_class": "1H",
       "damage_min": 25,
@@ -957,7 +957,7 @@
       "flavor_tags": [
         "sound"
       ],
-      "lore": "",
+      "lore": "Spikes for the spaces armor forgets.",
       "drop_weights": [
         10,
         40,
@@ -991,7 +991,7 @@
       "name": "Steel Morningstar",
       "slot": "weapon",
       "rarity": "rare",
-      "tile": "item/weapon/morningstar_2_new.png",
+      "tile": "morningstar_2_new.png",
       "base_type": "morningstar",
       "weapon_class": "1H",
       "damage_min": 38,
@@ -1002,7 +1002,7 @@
       "flavor_tags": [
         "sound"
       ],
-      "lore": "",
+      "lore": "Steel and starlight; a heavier kind of light.",
       "drop_weights": [
         0,
         15,
@@ -1036,7 +1036,7 @@
       "name": "Runed Morningstar",
       "slot": "weapon",
       "rarity": "epic",
-      "tile": "item/weapon/morningstar_3.png",
+      "tile": "morningstar_3.png",
       "base_type": "morningstar",
       "weapon_class": "1H",
       "damage_min": 60,
@@ -1048,7 +1048,7 @@
         "sound",
         "arcane"
       ],
-      "lore": "",
+      "lore": "Each spike etched with a saint's name.",
       "drop_weights": [
         0,
         0,
@@ -1082,7 +1082,7 @@
       "name": "Eveningstar",
       "slot": "weapon",
       "rarity": "rare",
-      "tile": "item/weapon/eveningstar_1_new.png",
+      "tile": "eveningstar_1_new.png",
       "base_type": "eveningstar",
       "weapon_class": "1H",
       "damage_min": 57,
@@ -1093,7 +1093,7 @@
       "flavor_tags": [
         "dark"
       ],
-      "lore": "",
+      "lore": "Heavier than it ought to be. Quieter, too.",
       "drop_weights": [
         0,
         15,
@@ -1127,7 +1127,7 @@
       "name": "Runed Eveningstar",
       "slot": "weapon",
       "rarity": "epic",
-      "tile": "item/weapon/eveningstar_2_new.png",
+      "tile": "eveningstar_2_new.png",
       "base_type": "eveningstar",
       "weapon_class": "1H",
       "damage_min": 90,
@@ -1139,7 +1139,7 @@
         "dark",
         "arcane"
       ],
-      "lore": "",
+      "lore": "Cools the air around it. Steady. Silent. Inevitable.",
       "drop_weights": [
         0,
         0,
@@ -1173,7 +1173,7 @@
       "name": "Flail",
       "slot": "weapon",
       "rarity": "uncommon",
-      "tile": "item/weapon/flail_1_new.png",
+      "tile": "flail_1_new.png",
       "base_type": "flail",
       "weapon_class": "1H",
       "damage_min": 22,
@@ -1182,7 +1182,7 @@
       "speed": 0.8,
       "item_tier": 2,
       "flavor_tags": [],
-      "lore": "",
+      "lore": "A hinged answer to a shielded question.",
       "drop_weights": [
         10,
         40,
@@ -1216,7 +1216,7 @@
       "name": "Dire Flail",
       "slot": "weapon",
       "rarity": "rare",
-      "tile": "item/weapon/dire_flail_1.png",
+      "tile": "dire_flail_1.png",
       "base_type": "dire_flail",
       "weapon_class": "2H",
       "damage_min": 67,
@@ -1227,7 +1227,7 @@
       "flavor_tags": [
         "ponderous"
       ],
-      "lore": "",
+      "lore": "Two heads, one purpose. Both of them final.",
       "drop_weights": [
         0,
         15,
@@ -1261,7 +1261,7 @@
       "name": "Spiked Flail",
       "slot": "weapon",
       "rarity": "rare",
-      "tile": "item/weapon/spiked_flail_1_new.png",
+      "tile": "spiked_flail_1_new.png",
       "base_type": "flail",
       "weapon_class": "1H",
       "damage_min": 33,
@@ -1272,7 +1272,7 @@
       "flavor_tags": [
         "sound"
       ],
-      "lore": "",
+      "lore": "A hinged answer to a shielded question.",
       "drop_weights": [
         0,
         15,
@@ -1306,7 +1306,7 @@
       "name": "Warhammer",
       "slot": "weapon",
       "rarity": "uncommon",
-      "tile": "item/weapon/hammer_2_new.png",
+      "tile": "hammer_2_new.png",
       "base_type": "hammer",
       "weapon_class": "1H",
       "damage_min": 12,
@@ -1317,7 +1317,7 @@
       "flavor_tags": [
         "ponderous"
       ],
-      "lore": "",
+      "lore": "Squared head, square purpose.",
       "drop_weights": [
         10,
         40,
@@ -1351,7 +1351,7 @@
       "name": "Steel Warhammer",
       "slot": "weapon",
       "rarity": "rare",
-      "tile": "item/weapon/hammer_3.png",
+      "tile": "hammer_3.png",
       "base_type": "hammer",
       "weapon_class": "1H",
       "damage_min": 19,
@@ -1362,7 +1362,7 @@
       "flavor_tags": [
         "ponderous"
       ],
-      "lore": "",
+      "lore": "Squared head, square purpose.",
       "drop_weights": [
         0,
         15,
@@ -1396,7 +1396,7 @@
       "name": "Giant Club",
       "slot": "weapon",
       "rarity": "rare",
-      "tile": "item/weapon/giant_club_new.png",
+      "tile": "giant_club_new.png",
       "base_type": "giant_club",
       "weapon_class": "2H",
       "damage_min": 77,
@@ -1408,7 +1408,7 @@
         "ponderous",
         "brutal"
       ],
-      "lore": "",
+      "lore": "A whole thigh of oak. Listens for ribs.",
       "drop_weights": [
         0,
         15,
@@ -1442,7 +1442,7 @@
       "name": "Spear",
       "slot": "weapon",
       "rarity": "common",
-      "tile": "item/weapon/spear_1.png",
+      "tile": "spear_1.png",
       "base_type": "spear",
       "weapon_class": "1H",
       "damage_min": 12,
@@ -1451,7 +1451,7 @@
       "speed": 0.7,
       "item_tier": 1,
       "flavor_tags": [],
-      "lore": "",
+      "lore": "A pole, a point. The simplest mathematics.",
       "drop_weights": [
         50,
         30,
@@ -1485,7 +1485,7 @@
       "name": "Orcish Spear",
       "slot": "weapon",
       "rarity": "uncommon",
-      "tile": "item/weapon/spear_2_new.png",
+      "tile": "spear_2_new.png",
       "base_type": "spear",
       "weapon_class": "1H",
       "damage_min": 18,
@@ -1494,7 +1494,7 @@
       "speed": 0.7,
       "item_tier": 2,
       "flavor_tags": [],
-      "lore": "",
+      "lore": "A pole, a point. The simplest mathematics.",
       "drop_weights": [
         10,
         40,
@@ -1528,7 +1528,7 @@
       "name": "Steel Spear",
       "slot": "weapon",
       "rarity": "rare",
-      "tile": "item/weapon/spear_3.png",
+      "tile": "spear_3.png",
       "base_type": "spear",
       "weapon_class": "1H",
       "damage_min": 29,
@@ -1537,7 +1537,7 @@
       "speed": 0.7,
       "item_tier": 3,
       "flavor_tags": [],
-      "lore": "",
+      "lore": "A pole, a point. The simplest mathematics.",
       "drop_weights": [
         0,
         15,
@@ -1571,7 +1571,7 @@
       "name": "Trident",
       "slot": "weapon",
       "rarity": "rare",
-      "tile": "item/weapon/spear_5.png",
+      "tile": "spear_5.png",
       "base_type": "spear",
       "weapon_class": "1H",
       "damage_min": 29,
@@ -1580,7 +1580,7 @@
       "speed": 0.7,
       "item_tier": 3,
       "flavor_tags": [],
-      "lore": "",
+      "lore": "A pole, a point. The simplest mathematics.",
       "drop_weights": [
         0,
         15,
@@ -1614,7 +1614,7 @@
       "name": "Halberd",
       "slot": "weapon",
       "rarity": "uncommon",
-      "tile": "item/weapon/halberd_1.png",
+      "tile": "halberd_1.png",
       "base_type": "halberd",
       "weapon_class": "2H",
       "damage_min": 37,
@@ -1625,7 +1625,7 @@
       "flavor_tags": [
         "ponderous"
       ],
-      "lore": "",
+      "lore": "Half axe, half spear, all decision.",
       "drop_weights": [
         10,
         40,
@@ -1659,7 +1659,7 @@
       "name": "Steel Halberd",
       "slot": "weapon",
       "rarity": "rare",
-      "tile": "item/weapon/halberd_2.png",
+      "tile": "halberd_2.png",
       "base_type": "halberd",
       "weapon_class": "2H",
       "damage_min": 57,
@@ -1670,7 +1670,7 @@
       "flavor_tags": [
         "ponderous"
       ],
-      "lore": "",
+      "lore": "Half axe, half spear, all decision.",
       "drop_weights": [
         0,
         15,
@@ -1704,7 +1704,7 @@
       "name": "Bardiche",
       "slot": "weapon",
       "rarity": "rare",
-      "tile": "item/weapon/bardiche_1.png",
+      "tile": "bardiche_1.png",
       "base_type": "bardiche",
       "weapon_class": "2H",
       "damage_min": 67,
@@ -1716,7 +1716,7 @@
         "ponderous",
         "brutal"
       ],
-      "lore": "",
+      "lore": "A long blade on a longer haft. Reach kills.",
       "drop_weights": [
         0,
         15,
@@ -1750,7 +1750,7 @@
       "name": "Runed Bardiche",
       "slot": "weapon",
       "rarity": "epic",
-      "tile": "item/weapon/bardiche_4.png",
+      "tile": "bardiche_4.png",
       "base_type": "bardiche",
       "weapon_class": "2H",
       "damage_min": 104,
@@ -1763,7 +1763,7 @@
         "brutal",
         "arcane"
       ],
-      "lore": "",
+      "lore": "A long blade on a longer haft. Reach kills.",
       "drop_weights": [
         0,
         0,
@@ -1797,7 +1797,7 @@
       "name": "Scythe",
       "slot": "weapon",
       "rarity": "uncommon",
-      "tile": "item/weapon/scythe_1_new.png",
+      "tile": "scythe_1_new.png",
       "base_type": "scythe",
       "weapon_class": "2H",
       "damage_min": 40,
@@ -1808,7 +1808,7 @@
       "flavor_tags": [
         "dark"
       ],
-      "lore": "",
+      "lore": "Curved for harvest. Any kind of harvest.",
       "drop_weights": [
         10,
         40,
@@ -1842,7 +1842,7 @@
       "name": "Reaper's Scythe",
       "slot": "weapon",
       "rarity": "epic",
-      "tile": "item/weapon/scythe_3.png",
+      "tile": "scythe_3.png",
       "base_type": "scythe",
       "weapon_class": "2H",
       "damage_min": 97,
@@ -1854,7 +1854,7 @@
         "dark",
         "death"
       ],
-      "lore": "",
+      "lore": "Tall, thin, patient. Gathers what was promised.",
       "drop_weights": [
         0,
         0,
@@ -1888,7 +1888,7 @@
       "name": "Greatsword",
       "slot": "weapon",
       "rarity": "uncommon",
-      "tile": "item/weapon/greatsword_1_new.png",
+      "tile": "greatsword_1_new.png",
       "base_type": "greatsword",
       "weapon_class": "2H",
       "damage_min": 34,
@@ -1897,7 +1897,7 @@
       "speed": 1.0,
       "item_tier": 2,
       "flavor_tags": [],
-      "lore": "",
+      "lore": "Two-handed. Honest about it.",
       "drop_weights": [
         10,
         40,
@@ -1931,7 +1931,7 @@
       "name": "Steel Greatsword",
       "slot": "weapon",
       "rarity": "rare",
-      "tile": "item/weapon/greatsword_2.png",
+      "tile": "greatsword_2.png",
       "base_type": "greatsword",
       "weapon_class": "2H",
       "damage_min": 53,
@@ -1940,7 +1940,7 @@
       "speed": 1.0,
       "item_tier": 3,
       "flavor_tags": [],
-      "lore": "",
+      "lore": "Steel run long. Long enough to mind.",
       "drop_weights": [
         0,
         15,
@@ -1974,7 +1974,7 @@
       "name": "Claymore",
       "slot": "weapon",
       "rarity": "rare",
-      "tile": "item/weapon/claymore.png",
+      "tile": "claymore.png",
       "base_type": "claymore",
       "weapon_class": "2H",
       "damage_min": 57,
@@ -1985,7 +1985,7 @@
       "flavor_tags": [
         "ponderous"
       ],
-      "lore": "",
+      "lore": "Heavy steel, balanced against itself.",
       "drop_weights": [
         0,
         15,
@@ -2019,7 +2019,7 @@
       "name": "Runed Claymore",
       "slot": "weapon",
       "rarity": "epic",
-      "tile": "item/weapon/claymore_2.png",
+      "tile": "claymore_2.png",
       "base_type": "claymore",
       "weapon_class": "2H",
       "damage_min": 90,
@@ -2031,7 +2031,7 @@
         "ponderous",
         "arcane"
       ],
-      "lore": "",
+      "lore": "A wall of edge, swung like weather.",
       "drop_weights": [
         0,
         0,
@@ -2065,7 +2065,7 @@
       "name": "Blessed Claymore",
       "slot": "weapon",
       "rarity": "epic",
-      "tile": "item/weapon/claymore_blessed.png",
+      "tile": "claymore_blessed.png",
       "base_type": "claymore",
       "weapon_class": "2H",
       "damage_min": 90,
@@ -2076,7 +2076,7 @@
       "flavor_tags": [
         "holy"
       ],
-      "lore": "",
+      "lore": "A wall of edge, swung like weather.",
       "drop_weights": [
         0,
         0,
@@ -2110,7 +2110,7 @@
       "name": "Double Sword",
       "slot": "weapon",
       "rarity": "epic",
-      "tile": "item/weapon/double_sword_2.png",
+      "tile": "double_sword_2.png",
       "base_type": "double_sword",
       "weapon_class": "2H",
       "damage_min": 104,
@@ -2121,7 +2121,7 @@
       "flavor_tags": [
         "dual"
       ],
-      "lore": "",
+      "lore": "Two blades fused at the spine. Twice the verdict.",
       "drop_weights": [
         0,
         0,
@@ -2155,7 +2155,7 @@
       "name": "Triple Sword",
       "slot": "weapon",
       "rarity": "epic",
-      "tile": "item/weapon/triple_sword_2.png",
+      "tile": "triple_sword_2.png",
       "base_type": "triple_sword",
       "weapon_class": "2H",
       "damage_min": 119,
@@ -2167,7 +2167,7 @@
         "dual",
         "brutal"
       ],
-      "lore": "",
+      "lore": "Three edges nest like petals. Each finds its own.",
       "drop_weights": [
         0,
         0,
@@ -2201,7 +2201,7 @@
       "name": "Quarterstaff",
       "slot": "weapon",
       "rarity": "common",
-      "tile": "item/weapon/quarterstaff_2.png",
+      "tile": "quarterstaff_2.png",
       "base_type": "quarterstaff",
       "weapon_class": "2H",
       "damage_min": 16,
@@ -2210,7 +2210,7 @@
       "speed": 0.8,
       "item_tier": 1,
       "flavor_tags": [],
-      "lore": "",
+      "lore": "Two ends. Both wrong to stand near.",
       "drop_weights": [
         50,
         30,
@@ -2244,7 +2244,7 @@
       "name": "Metal Staff",
       "slot": "weapon",
       "rarity": "uncommon",
-      "tile": "item/weapon/quarterstaff_3.png",
+      "tile": "quarterstaff_3.png",
       "base_type": "quarterstaff",
       "weapon_class": "2H",
       "damage_min": 25,
@@ -2253,7 +2253,7 @@
       "speed": 0.8,
       "item_tier": 2,
       "flavor_tags": [],
-      "lore": "",
+      "lore": "Two ends. Both wrong to stand near.",
       "drop_weights": [
         10,
         40,
@@ -2287,7 +2287,7 @@
       "name": "Lajatang",
       "slot": "weapon",
       "rarity": "rare",
-      "tile": "item/weapon/lajatang_2.png",
+      "tile": "lajatang_2.png",
       "base_type": "lajatang",
       "weapon_class": "2H",
       "damage_min": 57,
@@ -2298,7 +2298,7 @@
       "flavor_tags": [
         "dual"
       ],
-      "lore": "",
+      "lore": "Twin blades on a single shaft. Nothing slips between.",
       "drop_weights": [
         0,
         15,
@@ -2332,7 +2332,7 @@
       "name": "Bullwhip",
       "slot": "weapon",
       "rarity": "uncommon",
-      "tile": "item/weapon/bullwhip_old.png",
+      "tile": "bullwhip_old.png",
       "base_type": "bullwhip",
       "weapon_class": "1H",
       "damage_min": 12,
@@ -2343,7 +2343,7 @@
       "flavor_tags": [
         "thunderous"
       ],
-      "lore": "",
+      "lore": "Forged with care, used with intent.",
       "drop_weights": [
         10,
         40,
@@ -2377,7 +2377,7 @@
       "name": "Braided Whip",
       "slot": "weapon",
       "rarity": "rare",
-      "tile": "item/weapon/bullwhip_new.png",
+      "tile": "bullwhip_new.png",
       "base_type": "bullwhip",
       "weapon_class": "1H",
       "damage_min": 19,
@@ -2388,7 +2388,7 @@
       "flavor_tags": [
         "thunderous"
       ],
-      "lore": "",
+      "lore": "Made by a hand that knew what it was for.",
       "drop_weights": [
         0,
         15,
@@ -2422,7 +2422,7 @@
       "name": "Demon Whip",
       "slot": "weapon",
       "rarity": "epic",
-      "tile": "item/weapon/demon_whip.png",
+      "tile": "demon_whip.png",
       "base_type": "demon_whip",
       "weapon_class": "1H",
       "damage_min": 75,
@@ -2435,7 +2435,7 @@
         "demon",
         "fire"
       ],
-      "lore": "",
+      "lore": "The leather is not leather. The cracking is not air.",
       "drop_weights": [
         0,
         0,
@@ -2469,7 +2469,7 @@
       "name": "Ankus",
       "slot": "weapon",
       "rarity": "rare",
-      "tile": "item/weapon/ankus.png",
+      "tile": "ankus.png",
       "base_type": "ankus",
       "weapon_class": "1H",
       "damage_min": 19,
@@ -2478,7 +2478,7 @@
       "speed": 0.6,
       "item_tier": 3,
       "flavor_tags": [],
-      "lore": "",
+      "lore": "Made by a hand that knew what it was for.",
       "drop_weights": [
         0,
         15,
@@ -2512,7 +2512,7 @@
       "name": "Cutlass",
       "slot": "weapon",
       "rarity": "uncommon",
-      "tile": "item/weapon/cutlass_1.png",
+      "tile": "cutlass_1.png",
       "base_type": "cutlass",
       "weapon_class": "1H",
       "damage_min": 12,
@@ -2521,7 +2521,7 @@
       "speed": 0.6,
       "item_tier": 2,
       "flavor_tags": [],
-      "lore": "",
+      "lore": "Forged with care, used with intent.",
       "drop_weights": [
         10,
         40,
@@ -2555,7 +2555,7 @@
       "name": "Naval Cutlass",
       "slot": "weapon",
       "rarity": "rare",
-      "tile": "item/weapon/cutlass_3.png",
+      "tile": "cutlass_3.png",
       "base_type": "cutlass",
       "weapon_class": "1H",
       "damage_min": 19,
@@ -2566,7 +2566,7 @@
       "flavor_tags": [
         "precision"
       ],
-      "lore": "",
+      "lore": "Made by a hand that knew what it was for.",
       "drop_weights": [
         0,
         15,
@@ -2598,10 +2598,10 @@
     {
       "affix_pool": {
         "of_channeling": 8,
-        "of_crit": 25,
+        "of_crit": 40,
         "of_devotion": 6,
         "of_embers": 8,
-        "of_finesse": 15,
+        "of_finesse": 33,
         "of_frost": 8,
         "of_haste": 20,
         "of_lifesteal": 15,
@@ -2610,8 +2610,9 @@
         "of_shadows": 6,
         "of_sharpness": 30,
         "of_storms": 8,
-        "of_venom": 6,
-        "of_wisdom": 10
+        "of_venom": 28,
+        "of_wisdom": 10,
+        "of_dex_mastery": 14
       },
       "base_type": "halberd",
       "damage_max": 68,
@@ -2623,10 +2624,10 @@
         "sat": 0.8
       },
       "drop_weights": [
-        10,
-        40,
-        30,
-        5,
+        25,
+        60,
+        12,
+        0,
         0
       ],
       "enchant_chance": 0.05,
@@ -2637,7 +2638,7 @@
       "id": "halberd_jadeforged",
       "implicit_affixes": [],
       "item_tier": 2,
-      "lore": "A jade-forged reflavor of the standard halberd.",
+      "lore": "Carved from one piece of imperial jade. Fault-lines make patterns.",
       "name": "Jade-forged Halberd",
       "rarity": "rare",
       "slot": "weapon",
@@ -2652,17 +2653,19 @@
         "of_crit": 25,
         "of_devotion": 6,
         "of_embers": 8,
-        "of_finesse": 15,
+        "of_finesse": 33,
         "of_frost": 8,
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_might": 25,
-        "of_quickcast": 8,
+        "of_quickcast": 22,
         "of_shadows": 6,
         "of_sharpness": 30,
         "of_storms": 8,
         "of_venom": 6,
-        "of_wisdom": 10
+        "of_wisdom": 10,
+        "of_int_mastery": 18,
+        "of_resonance": 14
       },
       "base_type": "quarterstaff",
       "damage_max": 43,
@@ -2674,10 +2677,10 @@
         "sat": 1.048
       },
       "drop_weights": [
-        10,
-        40,
-        30,
-        5,
+        25,
+        60,
+        12,
+        0,
         0
       ],
       "enchant_chance": 0.05,
@@ -2685,7 +2688,7 @@
       "id": "metal_staff_nightblue",
       "implicit_affixes": [],
       "item_tier": 2,
-      "lore": "A nightblue reflavor of the standard metal staff.",
+      "lore": "Indigo so dark it reads as black until light hits the right angle.",
       "name": "Nightblue Metal Staff",
       "rarity": "uncommon",
       "slot": "weapon",
@@ -2703,14 +2706,15 @@
         "of_finesse": 15,
         "of_frost": 8,
         "of_haste": 20,
-        "of_lifesteal": 15,
-        "of_might": 25,
+        "of_lifesteal": 33,
+        "of_might": 37,
         "of_quickcast": 8,
-        "of_shadows": 6,
+        "of_shadows": 38,
         "of_sharpness": 30,
         "of_storms": 8,
         "of_venom": 6,
-        "of_wisdom": 10
+        "of_wisdom": 10,
+        "of_dark_resist": 22
       },
       "base_type": "broad_axe",
       "damage_max": 80,
@@ -2722,10 +2726,10 @@
         "sat": 0.966
       },
       "drop_weights": [
-        10,
-        40,
-        30,
-        5,
+        25,
+        60,
+        12,
+        0,
         0
       ],
       "enchant_chance": 0.05,
@@ -2736,7 +2740,7 @@
       "id": "broad_axe_voidwrought",
       "implicit_affixes": [],
       "item_tier": 2,
-      "lore": "A voidwrought reflavor of the standard broad axe.",
+      "lore": "Smithed somewhere between worlds. The shadow it casts is wrong.",
       "name": "Voidwrought Broad Axe",
       "rarity": "rare",
       "slot": "weapon",
@@ -2760,8 +2764,11 @@
         "of_shadows": 6,
         "of_sharpness": 30,
         "of_storms": 8,
-        "of_venom": 6,
-        "of_wisdom": 10
+        "of_venom": 34,
+        "of_wisdom": 10,
+        "of_poison_resist": 22,
+        "of_regen": 14,
+        "of_vitality": 15
       },
       "base_type": "spear",
       "damage_max": 53,
@@ -2773,11 +2780,11 @@
         "sat": 0.636
       },
       "drop_weights": [
-        0,
-        15,
-        40,
-        30,
-        5
+        3,
+        25,
+        60,
+        12,
+        0
       ],
       "enchant_chance": 0.1,
       "flavor_tags": [
@@ -2786,7 +2793,7 @@
       "id": "steel_spear_mossy",
       "implicit_affixes": [],
       "item_tier": 3,
-      "lore": "A mossy reflavor of the standard steel spear.",
+      "lore": "Damp green spores drift from every notch \u2014 they twitch toward warm flesh.",
       "name": "Mossy Steel Spear",
       "rarity": "rare",
       "slot": "weapon",
@@ -2801,17 +2808,18 @@
         "of_crit": 25,
         "of_devotion": 6,
         "of_embers": 8,
-        "of_finesse": 15,
-        "of_frost": 8,
+        "of_finesse": 30,
+        "of_frost": 38,
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_might": 25,
-        "of_quickcast": 8,
+        "of_quickcast": 22,
         "of_shadows": 6,
         "of_sharpness": 30,
         "of_storms": 8,
         "of_venom": 6,
-        "of_wisdom": 10
+        "of_wisdom": 10,
+        "of_cold_resist": 22
       },
       "base_type": "claymore",
       "damage_max": 100,
@@ -2823,11 +2831,11 @@
         "sat": 1.07
       },
       "drop_weights": [
-        0,
-        15,
-        40,
-        30,
-        5
+        3,
+        25,
+        60,
+        12,
+        0
       ],
       "enchant_chance": 0.1,
       "flavor_tags": [
@@ -2837,7 +2845,7 @@
       "id": "claymore_azure",
       "implicit_affixes": [],
       "item_tier": 3,
-      "lore": "A azure reflavor of the standard claymore.",
+      "lore": "Cold to the touch. The air around it always tastes of winter.",
       "name": "Azure Claymore",
       "rarity": "rare",
       "slot": "weapon",
@@ -2850,14 +2858,14 @@
       "affix_pool": {
         "of_channeling": 8,
         "of_crit": 25,
-        "of_devotion": 6,
+        "of_devotion": 28,
         "of_embers": 8,
         "of_finesse": 15,
         "of_frost": 8,
-        "of_haste": 20,
-        "of_lifesteal": 15,
+        "of_haste": 38,
+        "of_lifesteal": 27,
         "of_might": 25,
-        "of_quickcast": 8,
+        "of_quickcast": 23,
         "of_shadows": 6,
         "of_sharpness": 30,
         "of_storms": 8,
@@ -2874,10 +2882,10 @@
         "sat": 0.762
       },
       "drop_weights": [
-        10,
-        40,
-        30,
-        5,
+        25,
+        60,
+        12,
+        0,
         0
       ],
       "enchant_chance": 0.05,
@@ -2888,7 +2896,7 @@
       "id": "warhammer_rosegold",
       "implicit_affixes": [],
       "item_tier": 2,
-      "lore": "A rose-gold reflavor of the standard warhammer.",
+      "lore": "An alloy out of fashion in this century. The shine is unmistakable.",
       "name": "Rose-gold Warhammer",
       "rarity": "rare",
       "slot": "weapon",
@@ -2900,10 +2908,10 @@
     {
       "affix_pool": {
         "of_channeling": 8,
-        "of_crit": 25,
+        "of_crit": 40,
         "of_devotion": 6,
         "of_embers": 8,
-        "of_finesse": 15,
+        "of_finesse": 33,
         "of_frost": 8,
         "of_haste": 20,
         "of_lifesteal": 15,
@@ -2912,8 +2920,9 @@
         "of_shadows": 6,
         "of_sharpness": 30,
         "of_storms": 8,
-        "of_venom": 6,
-        "of_wisdom": 10
+        "of_venom": 28,
+        "of_wisdom": 10,
+        "of_dex_mastery": 14
       },
       "base_type": "greatsword",
       "damage_max": 62,
@@ -2925,10 +2934,10 @@
         "sat": 1.011
       },
       "drop_weights": [
-        10,
-        40,
-        30,
-        5,
+        25,
+        60,
+        12,
+        0,
         0
       ],
       "enchant_chance": 0.05,
@@ -2938,12 +2947,117 @@
       "id": "greatsword_jadeforged",
       "implicit_affixes": [],
       "item_tier": 2,
-      "lore": "A jade-forged reflavor of the standard greatsword.",
+      "lore": "Carved from one piece of imperial jade. Fault-lines make patterns.",
       "name": "Jade-forged Greatsword",
       "rarity": "rare",
       "slot": "weapon",
       "speed": 1.0,
       "tile": "greatsword_1_new.png",
+      "unique": false,
+      "weapon_class": "2H"
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 23,
+        "of_crit": 25,
+        "of_devotion": 34,
+        "of_embers": 8,
+        "of_finesse": 15,
+        "of_frost": 8,
+        "of_haste": 20,
+        "of_lifesteal": 15,
+        "of_might": 25,
+        "of_quickcast": 20,
+        "of_shadows": 6,
+        "of_sharpness": 30,
+        "of_storms": 8,
+        "of_venom": 6,
+        "of_wisdom": 10,
+        "of_holy_resist": 18
+      },
+      "base_type": "bullwhip",
+      "damage_max": 22,
+      "damage_min": 12,
+      "damage_type": "lightning",
+      "default_tint": {
+        "hue": 51.9,
+        "mode": "shimmer",
+        "sat": 0.913
+      },
+      "drop_weights": [
+        25,
+        60,
+        12,
+        0,
+        0
+      ],
+      "enchant_chance": 0.05,
+      "flavor_tags": [
+        "thunderous",
+        "holy"
+      ],
+      "id": "bullwhip_gilded",
+      "implicit_affixes": [],
+      "item_tier": 2,
+      "lore": "Cathedral-gold leaf, beaten thin and prayed over for a hundred years.",
+      "name": "Gilded Bullwhip",
+      "rarity": "rare",
+      "slot": "weapon",
+      "speed": 0.6,
+      "tile": "bullwhip_old.png",
+      "unique": false,
+      "weapon_class": "1H"
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 8,
+        "of_crit": 25,
+        "of_devotion": 6,
+        "of_embers": 8,
+        "of_finesse": 30,
+        "of_frost": 38,
+        "of_haste": 20,
+        "of_lifesteal": 15,
+        "of_might": 25,
+        "of_quickcast": 22,
+        "of_shadows": 6,
+        "of_sharpness": 30,
+        "of_storms": 8,
+        "of_venom": 6,
+        "of_wisdom": 10,
+        "of_cold_resist": 22
+      },
+      "base_type": "broad_axe",
+      "damage_max": 194,
+      "damage_min": 112,
+      "damage_type": "physical",
+      "default_tint": {
+        "hue": 211.9,
+        "mode": "normal",
+        "sat": 1.093
+      },
+      "drop_weights": [
+        0,
+        3,
+        25,
+        60,
+        12
+      ],
+      "enchant_chance": 0.18,
+      "flavor_tags": [
+        "slaying",
+        "arcane",
+        "cold"
+      ],
+      "id": "runed_broad_axe_azure",
+      "implicit_affixes": [],
+      "item_tier": 4,
+      "lore": "Cold to the touch. The air around it always tastes of winter.",
+      "name": "Azure Runed Broad Axe",
+      "rarity": "epic",
+      "slot": "weapon",
+      "speed": 1.15,
+      "tile": "broad_axe_5.png",
       "unique": false,
       "weapon_class": "2H"
     },
@@ -2962,41 +3076,99 @@
         "of_shadows": 6,
         "of_sharpness": 30,
         "of_storms": 8,
-        "of_venom": 6,
-        "of_wisdom": 10
+        "of_venom": 34,
+        "of_wisdom": 10,
+        "of_poison_resist": 22,
+        "of_regen": 14,
+        "of_vitality": 15
       },
-      "base_type": "bullwhip",
-      "damage_max": 22,
-      "damage_min": 12,
-      "damage_type": "lightning",
+      "base_type": "bardiche",
+      "damage_max": 187,
+      "damage_min": 104,
+      "damage_type": "physical",
       "default_tint": {
-        "hue": 51.9,
-        "mode": "shimmer",
-        "sat": 0.913
+        "hue": 97.4,
+        "mode": "normal",
+        "sat": 0.739
       },
       "drop_weights": [
-        10,
-        40,
-        30,
-        5,
+        0,
+        3,
+        25,
+        60,
+        12
+      ],
+      "enchant_chance": 0.18,
+      "flavor_tags": [
+        "ponderous",
+        "brutal",
+        "arcane",
+        "poison"
+      ],
+      "id": "runed_bardiche_mossy",
+      "implicit_affixes": [],
+      "item_tier": 4,
+      "lore": "Damp green spores drift from every notch \u2014 they twitch toward warm flesh.",
+      "name": "Mossy Runed Bardiche",
+      "rarity": "epic",
+      "slot": "weapon",
+      "speed": 1.05,
+      "tile": "bardiche_4.png",
+      "unique": false,
+      "weapon_class": "2H"
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 8,
+        "of_crit": 25,
+        "of_devotion": 6,
+        "of_embers": 43,
+        "of_finesse": 15,
+        "of_frost": 8,
+        "of_haste": 32,
+        "of_lifesteal": 27,
+        "of_might": 43,
+        "of_quickcast": 8,
+        "of_shadows": 6,
+        "of_sharpness": 30,
+        "of_storms": 8,
+        "of_venom": 6,
+        "of_wisdom": 10,
+        "of_fire_resist": 18
+      },
+      "base_type": "giant_club",
+      "damage_max": 134,
+      "damage_min": 77,
+      "damage_type": "physical",
+      "default_tint": {
+        "hue": 351.3,
+        "mode": "normal",
+        "sat": 1.066
+      },
+      "drop_weights": [
+        3,
+        25,
+        60,
+        12,
         0
       ],
-      "enchant_chance": 0.05,
+      "enchant_chance": 0.1,
       "flavor_tags": [
-        "thunderous",
-        "holy"
+        "ponderous",
+        "brutal",
+        "fire"
       ],
-      "id": "bullwhip_gilded",
+      "id": "giant_club_crimson",
       "implicit_affixes": [],
-      "item_tier": 2,
-      "lore": "A gilded reflavor of the standard bullwhip.",
-      "name": "Gilded Bullwhip",
+      "item_tier": 3,
+      "lore": "Forged in dragonfire, the metal still glows when blood spills near it.",
+      "name": "Crimson Giant Club",
       "rarity": "rare",
       "slot": "weapon",
-      "speed": 0.6,
-      "tile": "bullwhip_old.png",
+      "speed": 1.2,
+      "tile": "giant_club_new.png",
       "unique": false,
-      "weapon_class": "1H"
+      "weapon_class": "2H"
     }
   ]
 }

@@ -102,7 +102,7 @@
       "name": "Battered Skullcap",
       "slot": "helm",
       "rarity": "common",
-      "tile": "item/armor/headgear/cap_1.png",
+      "tile": "cap_1.png",
       "base_type": "skullcap",
       "armor": 4,
       "evasion": 3,
@@ -140,7 +140,7 @@
       "name": "Leather Cap",
       "slot": "helm",
       "rarity": "common",
-      "tile": "item/armor/headgear/cap_2.png",
+      "tile": "cap_2.png",
       "base_type": "cap",
       "armor": 4,
       "evasion": 3,
@@ -178,7 +178,7 @@
       "name": "Iron Skullcap",
       "slot": "helm",
       "rarity": "common",
-      "tile": "item/armor/headgear/helmet_1.png",
+      "tile": "helmet_1.png",
       "base_type": "skullcap",
       "armor": 4,
       "evasion": 3,
@@ -216,7 +216,7 @@
       "name": "Padded Coif",
       "slot": "helm",
       "rarity": "uncommon",
-      "tile": "item/armor/headgear/cap_jester.png",
+      "tile": "cap_jester.png",
       "base_type": "cap",
       "armor": 4,
       "evasion": 3,
@@ -247,14 +247,15 @@
         "of_resonance": 12,
         "of_channeling": 12,
         "of_crit": 12
-      }
+      },
+      "overlay": "helm_padded_coif"
     },
     {
       "id": "plumed_helm",
       "name": "Plumed Helm",
       "slot": "helm",
       "rarity": "uncommon",
-      "tile": "item/armor/headgear/plumed_helmet.png",
+      "tile": "plumed_helmet.png",
       "base_type": "helmet",
       "armor": 4,
       "evasion": 3,
@@ -294,7 +295,7 @@
       "name": "Ranger's Hood",
       "slot": "helm",
       "rarity": "uncommon",
-      "tile": "item/armor/headgear/hat_1.png",
+      "tile": "hat_1.png",
       "base_type": "hood",
       "armor": 4,
       "evasion": 3,
@@ -334,7 +335,7 @@
       "name": "Kettle Helm",
       "slot": "helm",
       "rarity": "uncommon",
-      "tile": "item/armor/headgear/helmet_2.png",
+      "tile": "helmet_2.png",
       "base_type": "helmet",
       "armor": 6,
       "evasion": 5,
@@ -372,7 +373,7 @@
       "name": "Crested Helm",
       "slot": "helm",
       "rarity": "uncommon",
-      "tile": "item/armor/headgear/crested_helmet.png",
+      "tile": "crested_helmet.png",
       "base_type": "helmet",
       "armor": 6,
       "evasion": 5,
@@ -412,7 +413,7 @@
       "name": "Elven Leather Helm",
       "slot": "helm",
       "rarity": "rare",
-      "tile": "item/armor/headgear/elven_leather_helm.png",
+      "tile": "elven_leather_helm.png",
       "base_type": "cap",
       "armor": 7,
       "evasion": 5,
@@ -453,7 +454,7 @@
       "name": "Etched Helm",
       "slot": "helm",
       "rarity": "rare",
-      "tile": "item/armor/headgear/helmet_2_etched.png",
+      "tile": "helmet_2_etched.png",
       "base_type": "helmet",
       "armor": 7,
       "evasion": 5,
@@ -493,7 +494,7 @@
       "name": "Knight's Helm",
       "slot": "helm",
       "rarity": "rare",
-      "tile": "item/armor/headgear/helmet_3_new.png",
+      "tile": "helmet_3_new.png",
       "base_type": "great_helm",
       "armor": 10,
       "evasion": 7,
@@ -526,6 +527,12 @@
         "of_resonance": 12,
         "of_channeling": 12,
         "of_crit": 12
+      },
+      "default_tint": {
+        "hue": 220,
+        "sat": 0.6,
+        "mode": "colorize",
+        "colorize_strength": 0.35
       }
     },
     {
@@ -533,7 +540,7 @@
       "name": "Visored Basinet",
       "slot": "helm",
       "rarity": "rare",
-      "tile": "item/armor/headgear/helmet_1_visored.png",
+      "tile": "helmet_1_visored.png",
       "base_type": "great_helm",
       "armor": 10,
       "evasion": 7,
@@ -566,6 +573,12 @@
         "of_resonance": 12,
         "of_channeling": 12,
         "of_crit": 12
+      },
+      "default_tint": {
+        "hue": 200,
+        "sat": 0.7,
+        "mode": "colorize",
+        "colorize_strength": 0.4
       }
     },
     {
@@ -573,7 +586,7 @@
       "name": "Wizard's Hat",
       "slot": "helm",
       "rarity": "rare",
-      "tile": "item/armor/headgear/wizard_hat_1.png",
+      "tile": "wizard_hat_1.png",
       "base_type": "wizard_hat",
       "armor": 10,
       "evasion": 7,
@@ -614,7 +627,7 @@
       "name": "Champion's Helm",
       "slot": "helm",
       "rarity": "epic",
-      "tile": "item/armor/headgear/helmet_3_old.png",
+      "tile": "helmet_3_old.png",
       "base_type": "great_helm",
       "armor": 11,
       "evasion": 8,
@@ -655,7 +668,7 @@
       "name": "Warlord's Visor",
       "slot": "helm",
       "rarity": "epic",
-      "tile": "item/armor/headgear/helmet_4_visor.png",
+      "tile": "helmet_4_visor.png",
       "base_type": "great_helm",
       "armor": 15,
       "evasion": 11,
@@ -696,7 +709,7 @@
       "name": "Spectre's Cowl",
       "slot": "helm",
       "rarity": "epic",
-      "tile": "item/armor/headgear/hat_2.png",
+      "tile": "hat_2.png",
       "base_type": "hood",
       "armor": 15,
       "evasion": 11,
@@ -737,7 +750,7 @@
       "name": "Dragonbone Helm",
       "slot": "helm",
       "rarity": "epic",
-      "tile": "item/armor/headgear/helmet_5.png",
+      "tile": "helmet_5.png",
       "base_type": "helmet",
       "armor": 15,
       "evasion": 11,
@@ -778,7 +791,7 @@
       "name": "Mage-Bound Helm",
       "slot": "helm",
       "rarity": "epic",
-      "tile": "item/armor/headgear/helmet_ego_1.png",
+      "tile": "helmet_ego_1.png",
       "base_type": "great_helm",
       "armor": 15,
       "evasion": 11,
@@ -812,6 +825,11 @@
         "of_resonance": 12,
         "of_channeling": 12,
         "of_crit": 12
+      },
+      "default_tint": {
+        "hue": 50,
+        "sat": 1.1,
+        "mode": "normal"
       }
     },
     {
@@ -819,7 +837,7 @@
       "name": "King's Diadem",
       "slot": "helm",
       "rarity": "epic",
-      "tile": "item/armor/headgear/helmet_art_1.png",
+      "tile": "helmet_art_1.png",
       "base_type": "crown",
       "armor": 21,
       "evasion": 16,
@@ -860,7 +878,7 @@
       "name": "Crystal Crown",
       "slot": "helm",
       "rarity": "epic",
-      "tile": "item/armor/headgear/helmet_art_2.png",
+      "tile": "helmet_art_2.png",
       "base_type": "crown",
       "armor": 21,
       "evasion": 16,
@@ -901,7 +919,7 @@
       "name": "Halo of Ascension",
       "slot": "helm",
       "rarity": "epic",
-      "tile": "item/armor/headgear/helmet_art_3.png",
+      "tile": "helmet_art_3.png",
       "base_type": "crown",
       "armor": 21,
       "evasion": 16,
@@ -942,7 +960,7 @@
       "name": "Hat of Pondering",
       "slot": "helm",
       "rarity": "legendary",
-      "tile": "item/armor/artefact/urand_pondering_new.png",
+      "tile": "urand_pondering_new.png",
       "base_type": "wizard_hat",
       "armor": 24,
       "evasion": 18,
@@ -983,7 +1001,7 @@
       "name": "Cornuthaum",
       "slot": "helm",
       "rarity": "legendary",
-      "tile": "item/armor/headgear/cornuthaum.png",
+      "tile": "cornuthaum.png",
       "base_type": "wizard_hat",
       "armor": 24,
       "evasion": 18,
@@ -1024,7 +1042,7 @@
       "name": "Helm of the Dragon",
       "slot": "helm",
       "rarity": "legendary",
-      "tile": "item/armor/artefact/urand_dragonmask.png",
+      "tile": "urand_dragonmask.png",
       "base_type": "great_helm",
       "armor": 24,
       "evasion": 18,
@@ -1058,6 +1076,11 @@
         "of_resonance": 12,
         "of_channeling": 12,
         "of_crit": 12
+      },
+      "default_tint": {
+        "hue": 30,
+        "sat": 1.2,
+        "mode": "normal"
       }
     },
     {
@@ -1065,7 +1088,7 @@
       "name": "Crown of Dyrovepreva",
       "slot": "helm",
       "rarity": "legendary",
-      "tile": "item/armor/artefact/urand_dyrovepreva_new.png",
+      "tile": "urand_dyrovepreva_new.png",
       "base_type": "crown",
       "armor": 24,
       "evasion": 18,
@@ -1106,7 +1129,7 @@
       "name": "Helm of the High Council",
       "slot": "helm",
       "rarity": "legendary",
-      "tile": "item/armor/artefact/urand_high_council.png",
+      "tile": "urand_high_council.png",
       "base_type": "great_helm",
       "armor": 24,
       "evasion": 18,
@@ -1140,6 +1163,11 @@
         "of_resonance": 12,
         "of_channeling": 12,
         "of_crit": 12
+      },
+      "default_tint": {
+        "hue": 45,
+        "sat": 1.2,
+        "mode": "normal"
       }
     },
     {
@@ -1147,7 +1175,7 @@
       "name": "Jester's Cap",
       "slot": "helm",
       "rarity": "uncommon",
-      "tile": "item/armor/headgear/cap_jester.png",
+      "tile": "cap_jester.png",
       "base_type": "cap",
       "armor": 4,
       "evasion": 3,
@@ -1180,14 +1208,15 @@
         "of_resonance": 12,
         "of_channeling": 12,
         "of_crit": 12
-      }
+      },
+      "overlay": "helm_jesters_cap"
     },
     {
       "id": "green_mask",
       "name": "Green Mask",
       "slot": "helm",
       "rarity": "rare",
-      "tile": "item/armor/headgear/green_mask.png",
+      "tile": "green_mask.png",
       "base_type": "hood",
       "armor": 10,
       "evasion": 7,
@@ -1228,7 +1257,7 @@
       "name": "Visor of the Watchman",
       "slot": "helm",
       "rarity": "epic",
-      "tile": "item/armor/headgear/helmet_ego_2.png",
+      "tile": "helmet_ego_2.png",
       "base_type": "great_helm",
       "armor": 15,
       "evasion": 11,
@@ -1262,6 +1291,11 @@
         "of_resonance": 12,
         "of_channeling": 12,
         "of_crit": 12
+      },
+      "default_tint": {
+        "hue": 180,
+        "sat": 1.1,
+        "mode": "normal"
       }
     },
     {
@@ -1269,7 +1303,7 @@
       "name": "Helm of the Thane",
       "slot": "helm",
       "rarity": "epic",
-      "tile": "item/armor/headgear/helmet_ego_3.png",
+      "tile": "helmet_ego_3.png",
       "base_type": "great_helm",
       "armor": 15,
       "evasion": 11,
@@ -1303,6 +1337,12 @@
         "of_resonance": 12,
         "of_channeling": 12,
         "of_crit": 12
+      },
+      "default_tint": {
+        "hue": 280,
+        "sat": 1.1,
+        "mode": "colorize",
+        "colorize_strength": 0.35
       }
     },
     {
@@ -1310,7 +1350,7 @@
       "name": "Helm of the Warden",
       "slot": "helm",
       "rarity": "epic",
-      "tile": "item/armor/headgear/helmet_ego_4.png",
+      "tile": "helmet_ego_4.png",
       "base_type": "great_helm",
       "armor": 21,
       "evasion": 16,
@@ -1345,6 +1385,11 @@
         "of_resonance": 12,
         "of_channeling": 12,
         "of_crit": 12
+      },
+      "default_tint": {
+        "hue": 0,
+        "sat": 1.1,
+        "mode": "normal"
       }
     },
     {
@@ -1352,7 +1397,7 @@
       "name": "Hat of the Archmage",
       "slot": "helm",
       "rarity": "epic",
-      "tile": "item/armor/headgear/wizard_hat_2.png",
+      "tile": "wizard_hat_2.png",
       "base_type": "wizard_hat",
       "armor": 15,
       "evasion": 11,
@@ -1394,7 +1439,7 @@
       "name": "Maxwell's Etheric Cage",
       "slot": "helm",
       "rarity": "legendary",
-      "tile": "item/armor/artefact/urand_etheric_cage.png",
+      "tile": "urand_etheric_cage.png",
       "base_type": "great_helm",
       "armor": 24,
       "evasion": 18,
@@ -1435,16 +1480,18 @@
         "of_channeling": 12,
         "of_crit": 12,
         "of_dex_mastery": 8,
-        "of_finesse": 14,
+        "of_finesse": 28,
         "of_int_mastery": 8,
         "of_might": 14,
-        "of_quickcast": 12,
+        "of_quickcast": 24,
         "of_resonance": 12,
         "of_str_mastery": 8,
         "of_the_bear": 22,
         "of_the_cat": 14,
         "of_vitality": 18,
-        "of_wisdom": 18
+        "of_wisdom": 18,
+        "of_shadows": 26,
+        "of_dark_resist": 18
       },
       "armor": 10,
       "base_type": "hood",
@@ -1454,11 +1501,11 @@
         "sat": 0.66
       },
       "drop_weights": [
-        0,
+        3,
+        25,
+        60,
         12,
-        55,
-        28,
-        8
+        0
       ],
       "enchant_chance": 0.1,
       "evasion": 7,
@@ -1470,7 +1517,7 @@
       "id": "green_mask_shadowed",
       "implicit_affixes": [],
       "item_tier": 3,
-      "lore": "A shadowed reflavor of the standard green mask.",
+      "lore": "Hard to see in dim light, even when held directly before you.",
       "name": "Shadowed Green Mask",
       "rarity": "rare",
       "slot": "helm",
@@ -1482,7 +1529,7 @@
         "of_channeling": 12,
         "of_crit": 12,
         "of_dex_mastery": 8,
-        "of_finesse": 14,
+        "of_finesse": 28,
         "of_int_mastery": 8,
         "of_might": 14,
         "of_quickcast": 12,
@@ -1491,7 +1538,10 @@
         "of_the_bear": 22,
         "of_the_cat": 14,
         "of_vitality": 18,
-        "of_wisdom": 18
+        "of_wisdom": 18,
+        "of_shadows": 26,
+        "of_lifesteal": 14,
+        "of_dark_resist": 14
       },
       "armor": 21,
       "base_type": "crown",
@@ -1503,11 +1553,11 @@
       "drop_weights": [
         0,
         0,
-        0,
-        12,
-        70
+        3,
+        25,
+        60
       ],
-      "enchant_chance": 0.15,
+      "enchant_chance": 0.3,
       "evasion": 16,
       "flavor_tags": [
         "lordly",
@@ -1517,7 +1567,7 @@
       "id": "halo_of_ascension_twisted",
       "implicit_affixes": [],
       "item_tier": 5,
-      "lore": "A twisted reflavor of the standard halo of ascension.",
+      "lore": "It is not the same shape twice. Bending occurs when you look away.",
       "name": "Twisted Halo of Ascension",
       "rarity": "legendary",
       "slot": "helm",
@@ -1529,11 +1579,11 @@
         "of_channeling": 12,
         "of_crit": 12,
         "of_dex_mastery": 8,
-        "of_finesse": 14,
-        "of_int_mastery": 8,
+        "of_finesse": 32,
+        "of_int_mastery": 26,
         "of_might": 14,
-        "of_quickcast": 12,
-        "of_resonance": 12,
+        "of_quickcast": 26,
+        "of_resonance": 26,
         "of_str_mastery": 8,
         "of_the_bear": 22,
         "of_the_cat": 14,
@@ -1549,12 +1599,12 @@
       },
       "drop_weights": [
         0,
-        0,
-        6,
-        52,
-        38
+        3,
+        25,
+        60,
+        12
       ],
-      "enchant_chance": 0.15,
+      "enchant_chance": 0.3,
       "evasion": 11,
       "flavor_tags": [
         "wisdom",
@@ -1563,7 +1613,7 @@
       "id": "ego_etched_great_helm_inverse",
       "implicit_affixes": [],
       "item_tier": 4,
-      "lore": "A inverse reflavor of the standard mage-bound helm.",
+      "lore": "Looking at it too long inverts what you saw before.",
       "name": "Inverse Mage-Bound Helm",
       "rarity": "legendary",
       "slot": "helm",
@@ -1575,16 +1625,18 @@
         "of_channeling": 12,
         "of_crit": 12,
         "of_dex_mastery": 8,
-        "of_finesse": 14,
+        "of_finesse": 28,
         "of_int_mastery": 8,
-        "of_might": 14,
+        "of_might": 28,
         "of_quickcast": 12,
         "of_resonance": 12,
         "of_str_mastery": 8,
         "of_the_bear": 22,
         "of_the_cat": 14,
         "of_vitality": 18,
-        "of_wisdom": 18
+        "of_wisdom": 18,
+        "of_shadows": 22,
+        "of_lifesteal": 12
       },
       "armor": 24,
       "base_type": "crown",
@@ -1601,11 +1653,11 @@
       "drop_weights": [
         0,
         0,
-        0,
-        5,
-        22
+        3,
+        25,
+        60
       ],
-      "enchant_chance": 0.0,
+      "enchant_chance": 0.3,
       "evasion": 18,
       "flavor_tags": [
         "lordly",
@@ -1614,7 +1666,7 @@
       "id": "crown_of_dyrovepreva_bone",
       "implicit_affixes": [],
       "item_tier": 5,
-      "lore": "A bone reflavor of the standard crown of dyrovepreva.",
+      "lore": "Shaped from the long bones of something old. It still aches in the cold.",
       "name": "Bone Crown of Dyrovepreva",
       "rarity": "legendary",
       "slot": "helm",
@@ -1628,14 +1680,15 @@
         "of_dex_mastery": 8,
         "of_finesse": 14,
         "of_int_mastery": 8,
-        "of_might": 14,
+        "of_might": 28,
         "of_quickcast": 12,
         "of_resonance": 12,
         "of_str_mastery": 8,
-        "of_the_bear": 22,
+        "of_the_bear": 52,
         "of_the_cat": 14,
-        "of_vitality": 18,
-        "of_wisdom": 18
+        "of_vitality": 40,
+        "of_wisdom": 18,
+        "of_sharpness": 14
       },
       "armor": 7,
       "base_type": "helmet",
@@ -1650,11 +1703,11 @@
         ]
       },
       "drop_weights": [
-        5,
-        50,
-        35,
-        8,
-        2
+        25,
+        60,
+        12,
+        0,
+        0
       ],
       "enchant_chance": 0.1,
       "evasion": 5,
@@ -1664,11 +1717,221 @@
       "id": "etched_helm_ironclad",
       "implicit_affixes": [],
       "item_tier": 2,
-      "lore": "A ironclad reflavor of the standard etched helm.",
+      "lore": "Plain forged iron, but heavier than the metal alone explains.",
       "name": "Ironclad Etched Helm",
       "rarity": "rare",
       "slot": "helm",
       "tile": "helmet_2_etched.png",
+      "unique": false
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 12,
+        "of_crit": 12,
+        "of_dex_mastery": 8,
+        "of_finesse": 28,
+        "of_int_mastery": 8,
+        "of_might": 28,
+        "of_quickcast": 12,
+        "of_resonance": 12,
+        "of_str_mastery": 8,
+        "of_the_bear": 22,
+        "of_the_cat": 14,
+        "of_vitality": 18,
+        "of_wisdom": 18,
+        "of_shadows": 22,
+        "of_lifesteal": 12
+      },
+      "armor": 24,
+      "base_type": "wizard_hat",
+      "default_tint": {
+        "hue": 0.0,
+        "mode": "colorize",
+        "sat": 1.0,
+        "target_rgb": [
+          0.95,
+          0.92,
+          0.78
+        ]
+      },
+      "drop_weights": [
+        0,
+        0,
+        3,
+        25,
+        60
+      ],
+      "enchant_chance": 0.3,
+      "evasion": 18,
+      "flavor_tags": [
+        "wisdom",
+        "regen"
+      ],
+      "id": "hat_of_pondering_bone",
+      "implicit_affixes": [],
+      "item_tier": 5,
+      "lore": "Shaped from the long bones of something old. It still aches in the cold.",
+      "name": "Bone Hat of Pondering",
+      "rarity": "legendary",
+      "slot": "helm",
+      "tile": "urand_pondering_new.png",
+      "unique": true
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 12,
+        "of_crit": 12,
+        "of_dex_mastery": 8,
+        "of_finesse": 28,
+        "of_int_mastery": 8,
+        "of_might": 28,
+        "of_quickcast": 12,
+        "of_resonance": 12,
+        "of_str_mastery": 8,
+        "of_the_bear": 22,
+        "of_the_cat": 14,
+        "of_vitality": 18,
+        "of_wisdom": 18,
+        "of_shadows": 22,
+        "of_lifesteal": 12
+      },
+      "armor": 10,
+      "base_type": "wizard_hat",
+      "default_tint": {
+        "hue": 0.0,
+        "mode": "colorize",
+        "sat": 1.0,
+        "target_rgb": [
+          0.95,
+          0.92,
+          0.78
+        ]
+      },
+      "drop_weights": [
+        3,
+        25,
+        60,
+        12,
+        0
+      ],
+      "enchant_chance": 0.1,
+      "evasion": 7,
+      "flavor_tags": [
+        "wisdom",
+        "regen"
+      ],
+      "id": "wizard_hat_bone",
+      "implicit_affixes": [],
+      "item_tier": 3,
+      "lore": "Shaped from the long bones of something old. It still aches in the cold.",
+      "name": "Bone Wizard's Hat",
+      "rarity": "rare",
+      "slot": "helm",
+      "tile": "wizard_hat_1.png",
+      "unique": false
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 12,
+        "of_crit": 12,
+        "of_dex_mastery": 8,
+        "of_finesse": 14,
+        "of_int_mastery": 8,
+        "of_might": 14,
+        "of_quickcast": 12,
+        "of_resonance": 12,
+        "of_str_mastery": 8,
+        "of_the_bear": 44,
+        "of_the_cat": 14,
+        "of_vitality": 36,
+        "of_wisdom": 18,
+        "of_shadows": 22,
+        "of_dark_resist": 18
+      },
+      "armor": 24,
+      "base_type": "crown",
+      "default_tint": {
+        "hue": 0.0,
+        "mode": "colorize",
+        "sat": 1.0,
+        "target_rgb": [
+          0.15,
+          0.13,
+          0.18
+        ]
+      },
+      "drop_weights": [
+        0,
+        0,
+        3,
+        25,
+        60
+      ],
+      "enchant_chance": 0.3,
+      "evasion": 18,
+      "flavor_tags": [
+        "lordly",
+        "psychic",
+        "dark"
+      ],
+      "id": "crown_of_dyrovepreva_obsidian",
+      "implicit_affixes": [],
+      "item_tier": 5,
+      "lore": "Volcanic glass, edge-flaked razor-sharp by patient hands.",
+      "name": "Obsidian Crown of Dyrovepreva",
+      "rarity": "legendary",
+      "slot": "helm",
+      "tile": "urand_dyrovepreva_new.png",
+      "unique": true
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 12,
+        "of_crit": 12,
+        "of_dex_mastery": 8,
+        "of_finesse": 28,
+        "of_int_mastery": 8,
+        "of_might": 14,
+        "of_quickcast": 12,
+        "of_resonance": 12,
+        "of_str_mastery": 8,
+        "of_the_bear": 22,
+        "of_the_cat": 14,
+        "of_vitality": 18,
+        "of_wisdom": 18,
+        "of_shadows": 26,
+        "of_lifesteal": 14,
+        "of_dark_resist": 14
+      },
+      "armor": 10,
+      "base_type": "hood",
+      "default_tint": {
+        "hue": 109.3,
+        "mode": "inverted",
+        "sat": 0.673
+      },
+      "drop_weights": [
+        3,
+        25,
+        60,
+        12,
+        0
+      ],
+      "enchant_chance": 0.18,
+      "evasion": 7,
+      "flavor_tags": [
+        "stealth",
+        "psychic",
+        "shadow"
+      ],
+      "id": "green_mask_twisted",
+      "implicit_affixes": [],
+      "item_tier": 3,
+      "lore": "It is not the same shape twice. Bending occurs when you look away.",
+      "name": "Twisted Green Mask",
+      "rarity": "epic",
+      "slot": "helm",
+      "tile": "green_mask.png",
       "unique": false
     }
   ]

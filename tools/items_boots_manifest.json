@@ -86,7 +86,7 @@
       "name": "Worn Sandals",
       "slot": "boots",
       "rarity": "common",
-      "tile": "item/armor/feet/low_boots.png",
+      "tile": "low_boots.png",
       "base_type": "sandals",
       "armor": 3,
       "evasion": 4,
@@ -121,7 +121,7 @@
       "name": "Soft Shoes",
       "slot": "boots",
       "rarity": "common",
-      "tile": "item/armor/feet/boots_3_stripe_old.png",
+      "tile": "boots_3_stripe_old.png",
       "base_type": "shoes",
       "armor": 3,
       "evasion": 4,
@@ -156,7 +156,7 @@
       "name": "Leather Boots",
       "slot": "boots",
       "rarity": "common",
-      "tile": "item/armor/feet/boots_1_brown_new.png",
+      "tile": "boots_1_brown_new.png",
       "base_type": "leather_boots",
       "armor": 3,
       "evasion": 4,
@@ -189,7 +189,7 @@
       "name": "Studded Boots",
       "slot": "boots",
       "rarity": "uncommon",
-      "tile": "item/armor/feet/boots_2_jackboots.png",
+      "tile": "boots_2_jackboots.png",
       "base_type": "leather_boots",
       "armor": 3,
       "evasion": 4,
@@ -222,7 +222,7 @@
       "name": "Scout's Treads",
       "slot": "boots",
       "rarity": "uncommon",
-      "tile": "item/armor/feet/boots_4_green.png",
+      "tile": "boots_4_green.png",
       "base_type": "leather_boots",
       "armor": 5,
       "evasion": 6,
@@ -231,7 +231,7 @@
         "stealth",
         "swiftness"
       ],
-      "lore": "Patterned for forest floor.",
+      "lore": "Patterned to match the forest floor \u2014 and the boots that crossed it.",
       "drop_weights": [
         15,
         65,
@@ -251,14 +251,15 @@
         "of_the_cat": 26,
         "of_haste": 26,
         "of_regen": 10
-      }
+      },
+      "overlay": "boots_scouts"
     },
     {
       "id": "soldier_greaves",
       "name": "Soldier's Greaves",
       "slot": "boots",
       "rarity": "uncommon",
-      "tile": "item/armor/feet/boots_iron_2.png",
+      "tile": "boots_iron_2.png",
       "base_type": "greaves",
       "armor": 5,
       "evasion": 6,
@@ -286,14 +287,21 @@
         "of_the_cat": 26,
         "of_haste": 26,
         "of_regen": 10
-      }
+      },
+      "default_tint": {
+        "hue": 200,
+        "sat": 0.8,
+        "mode": "colorize",
+        "colorize_strength": 0.45
+      },
+      "overlay": "boots_soldier_greaves"
     },
     {
       "id": "ranger_boots",
       "name": "Ranger Boots",
       "slot": "boots",
       "rarity": "rare",
-      "tile": "item/armor/feet/boots_3_stripe_new.png",
+      "tile": "boots_3_stripe_new.png",
       "base_type": "leather_boots",
       "armor": 5,
       "evasion": 7,
@@ -322,14 +330,15 @@
         "of_the_cat": 26,
         "of_haste": 26,
         "of_regen": 10
-      }
+      },
+      "overlay": "boots_ranger"
     },
     {
       "id": "ironshod_boots",
       "name": "Ironshod Boots",
       "slot": "boots",
       "rarity": "rare",
-      "tile": "item/armor/feet/boots_iron_2.png",
+      "tile": "boots_iron_2.png",
       "base_type": "iron_boots",
       "armor": 7,
       "evasion": 10,
@@ -358,14 +367,20 @@
         "of_the_cat": 26,
         "of_haste": 26,
         "of_regen": 10
-      }
+      },
+      "default_tint": {
+        "hue": 220,
+        "sat": 1.1,
+        "mode": "normal"
+      },
+      "overlay": "boots_ironshod"
     },
     {
       "id": "swiftstep_boots",
       "name": "Swiftstep Boots",
       "slot": "boots",
       "rarity": "rare",
-      "tile": "item/armor/feet/boots_1_brown_old.png",
+      "tile": "boots_1_brown_old.png",
       "base_type": "leather_boots",
       "armor": 7,
       "evasion": 10,
@@ -401,7 +416,7 @@
       "name": "Sentinel Greaves",
       "slot": "boots",
       "rarity": "rare",
-      "tile": "item/armor/feet/boots_iron_2.png",
+      "tile": "boots_iron_2.png",
       "base_type": "greaves",
       "armor": 7,
       "evasion": 10,
@@ -430,14 +445,20 @@
         "of_the_cat": 26,
         "of_haste": 26,
         "of_regen": 10
-      }
+      },
+      "default_tint": {
+        "hue": 10,
+        "sat": 1.1,
+        "mode": "normal"
+      },
+      "overlay": "boots_sentinel"
     },
     {
       "id": "vanguard_sabatons",
       "name": "Vanguard Sabatons",
       "slot": "boots",
       "rarity": "epic",
-      "tile": "item/armor/feet/boots_iron_2.png",
+      "tile": "boots_iron_2.png",
       "base_type": "greaves",
       "armor": 11,
       "evasion": 15,
@@ -467,14 +488,20 @@
         "of_the_cat": 26,
         "of_haste": 26,
         "of_regen": 10
-      }
+      },
+      "default_tint": {
+        "hue": 220,
+        "sat": 1.2,
+        "mode": "normal"
+      },
+      "overlay": "boots_vanguard"
     },
     {
       "id": "stormrunner_boots",
       "name": "Stormrunner Boots",
       "slot": "boots",
       "rarity": "epic",
-      "tile": "item/armor/feet/boots_4_green.png",
+      "tile": "boots_4_green.png",
       "base_type": "leather_boots",
       "armor": 11,
       "evasion": 15,
@@ -504,14 +531,15 @@
         "of_the_cat": 26,
         "of_haste": 26,
         "of_regen": 10
-      }
+      },
+      "overlay": "boots_stormrunner"
     },
     {
       "id": "earthshaker_treads",
       "name": "Earthshaker Treads",
       "slot": "boots",
       "rarity": "epic",
-      "tile": "item/armor/feet/boots_iron_2.png",
+      "tile": "boots_iron_2.png",
       "base_type": "treads",
       "armor": 11,
       "evasion": 15,
@@ -540,14 +568,20 @@
         "of_the_cat": 26,
         "of_haste": 26,
         "of_regen": 10
-      }
+      },
+      "default_tint": {
+        "hue": 30,
+        "sat": 1.0,
+        "mode": "colorize"
+      },
+      "overlay": "boots_earthshaker"
     },
     {
       "id": "windwalker_boots",
       "name": "Windwalkers",
       "slot": "boots",
       "rarity": "epic",
-      "tile": "item/armor/feet/boots_3_stripe_new.png",
+      "tile": "boots_3_stripe_new.png",
       "base_type": "treads",
       "armor": 16,
       "evasion": 21,
@@ -576,14 +610,15 @@
         "of_the_cat": 26,
         "of_haste": 26,
         "of_regen": 10
-      }
+      },
+      "overlay": "boots_windwalker"
     },
     {
       "id": "march_of_kings",
       "name": "March of Kings",
       "slot": "boots",
       "rarity": "epic",
-      "tile": "item/armor/feet/boots_iron_2.png",
+      "tile": "boots_iron_2.png",
       "base_type": "greaves",
       "armor": 16,
       "evasion": 21,
@@ -613,14 +648,20 @@
         "of_the_cat": 26,
         "of_haste": 26,
         "of_regen": 10
-      }
+      },
+      "default_tint": {
+        "hue": 50,
+        "sat": 1.1,
+        "mode": "normal"
+      },
+      "overlay": "boots_march_of_kings"
     },
     {
       "id": "assassins_boots",
       "name": "Assassin's Boots",
       "slot": "boots",
       "rarity": "legendary",
-      "tile": "item/armor/artefact/urand_assassin.png",
+      "tile": "urand_assassin.png",
       "base_type": "shoes",
       "armor": 18,
       "evasion": 24,
@@ -656,7 +697,7 @@
       "name": "Treads of Apocalypse",
       "slot": "boots",
       "rarity": "legendary",
-      "tile": "item/armor/feet/boots_iron_2.png",
+      "tile": "boots_iron_2.png",
       "base_type": "treads",
       "armor": 18,
       "evasion": 24,
@@ -686,14 +727,20 @@
         "of_the_cat": 26,
         "of_haste": 26,
         "of_regen": 10
-      }
+      },
+      "default_tint": {
+        "hue": 0,
+        "sat": 1.0,
+        "mode": "colorize"
+      },
+      "overlay": "boots_apocalypse"
     },
     {
       "id": "lightning_scales",
       "name": "Lightning Scales",
       "slot": "boots",
       "rarity": "legendary",
-      "tile": "item/armor/artefact/urand_lightning_scales.png",
+      "tile": "urand_lightning_scales.png",
       "base_type": "iron_boots",
       "armor": 18,
       "evasion": 24,
@@ -728,12 +775,14 @@
       "affix_pool": {
         "of_finesse": 22,
         "of_haste": 26,
-        "of_might": 12,
-        "of_regen": 10,
+        "of_might": 30,
+        "of_regen": 22,
         "of_the_bear": 16,
         "of_the_cat": 26,
         "of_vitality": 14,
-        "of_wisdom": 10
+        "of_wisdom": 10,
+        "of_devotion": 30,
+        "of_holy_resist": 22
       },
       "armor": 3,
       "base_type": "sandals",
@@ -743,8 +792,8 @@
         "sat": 0.991
       },
       "drop_weights": [
-        80,
-        15,
+        60,
+        12,
         0,
         0,
         0
@@ -758,9 +807,9 @@
       "id": "worn_sandals_sunsteel",
       "implicit_affixes": [],
       "item_tier": 1,
-      "lore": "A sunsteel reflavor of the standard worn sandals.",
+      "lore": "The metal is warm even at midnight. Undead dare not touch it.",
       "name": "Sunsteel Worn Sandals",
-      "rarity": "uncommon",
+      "rarity": "rare",
       "slot": "boots",
       "tile": "low_boots.png",
       "unique": false
@@ -769,12 +818,15 @@
       "affix_pool": {
         "of_finesse": 22,
         "of_haste": 26,
-        "of_might": 12,
+        "of_might": 24,
         "of_regen": 10,
         "of_the_bear": 16,
         "of_the_cat": 26,
         "of_vitality": 14,
-        "of_wisdom": 10
+        "of_wisdom": 10,
+        "of_shadows": 32,
+        "of_dark_resist": 22,
+        "of_lifesteal": 18
       },
       "armor": 3,
       "base_type": "leather_boots",
@@ -784,9 +836,9 @@
         "sat": 0.976
       },
       "drop_weights": [
-        70,
-        22,
-        4,
+        60,
+        12,
+        0,
         0,
         0
       ],
@@ -798,7 +850,7 @@
       "id": "leather_boots_voidwrought",
       "implicit_affixes": [],
       "item_tier": 1,
-      "lore": "A voidwrought reflavor of the standard leather boots.",
+      "lore": "Smithed somewhere between worlds. The shadow it casts is wrong.",
       "name": "Voidwrought Leather Boots",
       "rarity": "uncommon",
       "slot": "boots",
@@ -807,14 +859,16 @@
     },
     {
       "affix_pool": {
-        "of_finesse": 22,
+        "of_finesse": 36,
         "of_haste": 26,
         "of_might": 12,
         "of_regen": 10,
         "of_the_bear": 16,
         "of_the_cat": 26,
         "of_vitality": 14,
-        "of_wisdom": 10
+        "of_wisdom": 22,
+        "of_holy_resist": 18,
+        "of_devotion": 14
       },
       "armor": 5,
       "base_type": "greaves",
@@ -829,10 +883,10 @@
         ]
       },
       "drop_weights": [
-        12,
+        25,
         60,
-        28,
-        5,
+        12,
+        0,
         0
       ],
       "enchant_chance": 0.05,
@@ -843,7 +897,7 @@
       "id": "soldier_greaves_pale",
       "implicit_affixes": [],
       "item_tier": 2,
-      "lore": "A pale reflavor of the standard soldier's greaves.",
+      "lore": "Bleached past white into a color the eye cannot name.",
       "name": "Pale Soldier's Greaves",
       "overlay": "boots_soldier_greaves",
       "rarity": "uncommon",
@@ -853,14 +907,17 @@
     },
     {
       "affix_pool": {
-        "of_finesse": 22,
+        "of_finesse": 40,
         "of_haste": 26,
         "of_might": 12,
         "of_regen": 10,
         "of_the_bear": 16,
         "of_the_cat": 26,
         "of_vitality": 14,
-        "of_wisdom": 10
+        "of_wisdom": 10,
+        "of_int_mastery": 18,
+        "of_quickcast": 14,
+        "of_resonance": 14
       },
       "armor": 5,
       "base_type": "leather_boots",
@@ -870,10 +927,10 @@
         "sat": 1.083
       },
       "drop_weights": [
-        8,
-        55,
-        32,
-        5,
+        25,
+        60,
+        12,
+        0,
         0
       ],
       "enchant_chance": 0.1,
@@ -885,12 +942,114 @@
       "id": "ranger_boots_nightblue",
       "implicit_affixes": [],
       "item_tier": 2,
-      "lore": "A nightblue reflavor of the standard ranger boots.",
+      "lore": "Indigo so dark it reads as black until light hits the right angle.",
       "name": "Nightblue Ranger Boots",
       "overlay": "boots_ranger",
       "rarity": "rare",
       "slot": "boots",
       "tile": "boots_3_stripe_new.png",
+      "unique": false
+    },
+    {
+      "affix_pool": {
+        "of_finesse": 22,
+        "of_haste": 26,
+        "of_might": 12,
+        "of_regen": 10,
+        "of_the_bear": 16,
+        "of_the_cat": 26,
+        "of_vitality": 14,
+        "of_wisdom": 10,
+        "of_embers": 14,
+        "of_frost": 14,
+        "of_storms": 14,
+        "of_devotion": 14,
+        "of_venom": 14,
+        "of_shadows": 14,
+        "of_sharpness": 14,
+        "of_resonance": 18,
+        "of_multicast": 12,
+        "of_channeling": 18,
+        "of_str_mastery": 10,
+        "of_dex_mastery": 10,
+        "of_int_mastery": 10
+      },
+      "armor": 3,
+      "base_type": "sandals",
+      "default_tint": {
+        "hue": 105.4,
+        "mode": "prismatic",
+        "sat": 1.0
+      },
+      "drop_weights": [
+        60,
+        12,
+        0,
+        0,
+        0
+      ],
+      "enchant_chance": 0.3,
+      "evasion": 4,
+      "flavor_tags": [
+        "swiftness",
+        "holy"
+      ],
+      "id": "worn_sandals_sunsteel_prismatic",
+      "implicit_affixes": [],
+      "item_tier": 1,
+      "lore": "Every glance reveals a new color, each one a real one \u2014 somewhere.",
+      "name": "Prismatic Sunsteel Worn Sandals",
+      "rarity": "legendary",
+      "slot": "boots",
+      "tile": "low_boots.png",
+      "unique": false
+    },
+    {
+      "affix_pool": {
+        "of_finesse": 22,
+        "of_haste": 26,
+        "of_might": 26,
+        "of_regen": 10,
+        "of_the_bear": 46,
+        "of_the_cat": 26,
+        "of_vitality": 36,
+        "of_wisdom": 10,
+        "of_sharpness": 14
+      },
+      "armor": 11,
+      "base_type": "treads",
+      "default_tint": {
+        "hue": 0.0,
+        "mode": "colorize",
+        "sat": 1.0,
+        "target_rgb": [
+          0.55,
+          0.58,
+          0.62
+        ]
+      },
+      "drop_weights": [
+        0,
+        3,
+        25,
+        60,
+        12
+      ],
+      "enchant_chance": 0.18,
+      "evasion": 15,
+      "flavor_tags": [
+        "earth",
+        "thunderous"
+      ],
+      "id": "earthshaker_treads_ironclad",
+      "implicit_affixes": [],
+      "item_tier": 4,
+      "lore": "Plain forged iron, but heavier than the metal alone explains.",
+      "name": "Ironclad Earthshaker Treads",
+      "overlay": "boots_earthshaker",
+      "rarity": "epic",
+      "slot": "boots",
+      "tile": "boots_iron_2.png",
       "unique": false
     }
   ]
