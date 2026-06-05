@@ -13475,7 +13475,7 @@
       "name": "Fireball Tome",
       "slot": "spell",
       "rarity": "common",
-      "tile": "spells/scrolls/i-immolation.png",
+      "tile": "spells/scrolls/scroll.png",
       "base_type": "spell_fireball",
       "primary_stat": "int",
       "damage_min": 15,
@@ -13511,6 +13511,11 @@
         "of_crit": 12,
         "of_haste": 12,
         "of_lifesteal": 6
+      },
+      "default_tint": {
+        "hue": 10.0,
+        "sat": 0.85,
+        "mode": "colorize"
       }
     },
     {
@@ -13518,7 +13523,7 @@
       "name": "Spinning Axes Tome",
       "slot": "spell",
       "rarity": "common",
-      "tile": "spells/scrolls/i-noise.png",
+      "tile": "spells/scrolls/scroll.png",
       "base_type": "spell_axes",
       "primary_stat": "str",
       "damage_min": 12,
@@ -13552,6 +13557,11 @@
         "of_crit": 12,
         "of_haste": 12,
         "of_lifesteal": 6
+      },
+      "default_tint": {
+        "hue": 0.0,
+        "sat": 0.85,
+        "mode": "colorize"
       }
     },
     {
@@ -13559,7 +13569,7 @@
       "name": "Holy Beam Tome",
       "slot": "spell",
       "rarity": "common",
-      "tile": "spells/scrolls/i-holy_word.png",
+      "tile": "spells/scrolls/scroll.png",
       "base_type": "spell_holy_beam",
       "primary_stat": "str",
       "damage_min": 22,
@@ -13595,6 +13605,11 @@
         "of_crit": 12,
         "of_haste": 12,
         "of_lifesteal": 6
+      },
+      "default_tint": {
+        "hue": 50.0,
+        "sat": 0.85,
+        "mode": "colorize"
       }
     },
     {
@@ -13602,7 +13617,7 @@
       "name": "Chain Lightning Tome",
       "slot": "spell",
       "rarity": "common",
-      "tile": "spells/scrolls/i-noise.png",
+      "tile": "spells/scrolls/scroll.png",
       "base_type": "spell_chain_lightning",
       "primary_stat": "dex",
       "damage_min": 14,
@@ -13638,6 +13653,11 @@
         "of_crit": 12,
         "of_haste": 12,
         "of_lifesteal": 6
+      },
+      "default_tint": {
+        "hue": 270.0,
+        "sat": 0.85,
+        "mode": "colorize"
       }
     },
     {
@@ -13645,7 +13665,7 @@
       "name": "Frost Nova Tome",
       "slot": "spell",
       "rarity": "common",
-      "tile": "spells/scrolls/i-fog.png",
+      "tile": "spells/scrolls/scroll.png",
       "base_type": "spell_frost_nova",
       "primary_stat": "int",
       "damage_min": 14,
@@ -13681,6 +13701,11 @@
         "of_crit": 12,
         "of_haste": 12,
         "of_lifesteal": 6
+      },
+      "default_tint": {
+        "hue": 210.0,
+        "sat": 0.85,
+        "mode": "colorize"
       }
     },
     {
@@ -13688,7 +13713,7 @@
       "name": "Apprentice Fireball",
       "slot": "spell",
       "rarity": "common",
-      "tile": "spells/scrolls/i-immolation.png",
+      "tile": "spells/scrolls/scroll.png",
       "base_type": "spell_fireball",
       "primary_stat": "int",
       "damage_min": 15,
@@ -13724,6 +13749,11 @@
         "of_crit": 12,
         "of_haste": 12,
         "of_lifesteal": 6
+      },
+      "default_tint": {
+        "hue": 280.0,
+        "sat": 0.85,
+        "mode": "colorize"
       }
     },
     {
@@ -13731,7 +13761,7 @@
       "name": "Forest Spinners",
       "slot": "spell",
       "rarity": "common",
-      "tile": "spells/scrolls/i-fog.png",
+      "tile": "spells/scrolls/scroll.png",
       "base_type": "spell_axes",
       "primary_stat": "str",
       "damage_min": 12,
@@ -13767,6 +13797,11 @@
         "of_crit": 12,
         "of_haste": 12,
         "of_lifesteal": 6
+      },
+      "default_tint": {
+        "hue": 0.0,
+        "sat": 0.85,
+        "mode": "colorize"
       }
     },
     {
@@ -13774,7 +13809,7 @@
       "name": "Whirling Axes",
       "slot": "spell",
       "rarity": "common",
-      "tile": "spells/scrolls/i-noise.png",
+      "tile": "spells/scrolls/scroll.png",
       "base_type": "spell_axes",
       "primary_stat": "str",
       "damage_min": 12,
@@ -13810,6 +13845,11 @@
         "of_crit": 12,
         "of_haste": 12,
         "of_lifesteal": 6
+      },
+      "default_tint": {
+        "hue": 0.0,
+        "sat": 0.85,
+        "mode": "colorize"
       }
     },
     {
@@ -13817,7 +13857,7 @@
       "name": "Coiled Frost",
       "slot": "spell",
       "rarity": "common",
-      "tile": "spells/scrolls/i-fog.png",
+      "tile": "spells/scrolls/scroll.png",
       "base_type": "spell_frost_nova",
       "primary_stat": "int",
       "damage_min": 14,
@@ -13853,6 +13893,11 @@
         "of_crit": 12,
         "of_haste": 12,
         "of_lifesteal": 6
+      },
+      "default_tint": {
+        "hue": 280.0,
+        "sat": 0.85,
+        "mode": "colorize"
       }
     },
     {
@@ -13860,7 +13905,7 @@
       "name": "Storm-Caw",
       "slot": "spell",
       "rarity": "common",
-      "tile": "spells/scrolls/i-noise.png",
+      "tile": "spells/scrolls/scroll.png",
       "base_type": "spell_chain_lightning",
       "primary_stat": "dex",
       "damage_min": 14,
@@ -13896,6 +13941,11 @@
         "of_crit": 12,
         "of_haste": 12,
         "of_lifesteal": 6
+      },
+      "default_tint": {
+        "hue": 280.0,
+        "sat": 0.85,
+        "mode": "colorize"
       }
     },
     {
@@ -13903,7 +13953,7 @@
       "name": "Heavy Cleavers",
       "slot": "spell",
       "rarity": "common",
-      "tile": "spells/scrolls/i-fog.png",
+      "tile": "spells/scrolls/scroll.png",
       "base_type": "spell_axes",
       "primary_stat": "str",
       "damage_min": 12,
@@ -13939,6 +13989,11 @@
         "of_crit": 12,
         "of_haste": 12,
         "of_lifesteal": 6
+      },
+      "default_tint": {
+        "hue": 0.0,
+        "sat": 0.85,
+        "mode": "colorize"
       }
     },
     {
@@ -13946,7 +14001,7 @@
       "name": "Ink Burst",
       "slot": "spell",
       "rarity": "common",
-      "tile": "spells/scrolls/i-torment.png",
+      "tile": "spells/scrolls/scroll.png",
       "base_type": "spell_frost_nova",
       "primary_stat": "int",
       "damage_min": 14,
@@ -13982,6 +14037,11 @@
         "of_crit": 12,
         "of_haste": 12,
         "of_lifesteal": 6
+      },
+      "default_tint": {
+        "hue": 280.0,
+        "sat": 0.85,
+        "mode": "colorize"
       }
     },
     {
@@ -13989,7 +14049,7 @@
       "name": "Hellfire Orbs",
       "slot": "spell",
       "rarity": "common",
-      "tile": "spells/scrolls/i-immolation.png",
+      "tile": "spells/scrolls/scroll.png",
       "base_type": "spell_axes",
       "primary_stat": "str",
       "damage_min": 12,
@@ -14025,6 +14085,11 @@
         "of_crit": 12,
         "of_haste": 12,
         "of_lifesteal": 6
+      },
+      "default_tint": {
+        "hue": 0.0,
+        "sat": 0.85,
+        "mode": "colorize"
       }
     },
     {
@@ -14032,7 +14097,7 @@
       "name": "Blood Arc",
       "slot": "spell",
       "rarity": "common",
-      "tile": "spells/scrolls/i-torment.png",
+      "tile": "spells/scrolls/scroll.png",
       "base_type": "spell_chain_lightning",
       "primary_stat": "dex",
       "damage_min": 14,
@@ -14068,6 +14133,11 @@
         "of_crit": 12,
         "of_haste": 12,
         "of_lifesteal": 6
+      },
+      "default_tint": {
+        "hue": 280.0,
+        "sat": 0.85,
+        "mode": "colorize"
       }
     },
     {
@@ -14075,7 +14145,7 @@
       "name": "Curse Cloud",
       "slot": "spell",
       "rarity": "common",
-      "tile": "spells/scrolls/i-torment.png",
+      "tile": "spells/scrolls/scroll.png",
       "base_type": "spell_frost_nova",
       "primary_stat": "int",
       "damage_min": 14,
@@ -14111,6 +14181,11 @@
         "of_crit": 12,
         "of_haste": 12,
         "of_lifesteal": 6
+      },
+      "default_tint": {
+        "hue": 280.0,
+        "sat": 0.85,
+        "mode": "colorize"
       }
     },
     {
@@ -14118,7 +14193,7 @@
       "name": "Battle Cry",
       "slot": "spell",
       "rarity": "common",
-      "tile": "spells/scrolls/i-holy_word.png",
+      "tile": "spells/scrolls/scroll.png",
       "base_type": "spell_holy_beam",
       "primary_stat": "str",
       "damage_min": 22,
@@ -14154,6 +14229,11 @@
         "of_crit": 12,
         "of_haste": 12,
         "of_lifesteal": 6
+      },
+      "default_tint": {
+        "hue": 0.0,
+        "sat": 0.85,
+        "mode": "colorize"
       }
     },
     {
@@ -14161,7 +14241,7 @@
       "name": "Elven Bolt",
       "slot": "spell",
       "rarity": "common",
-      "tile": "spells/scrolls/i-magic_mapping.png",
+      "tile": "spells/scrolls/scroll.png",
       "base_type": "spell_fireball",
       "primary_stat": "int",
       "damage_min": 15,
@@ -14197,6 +14277,11 @@
         "of_crit": 12,
         "of_haste": 12,
         "of_lifesteal": 6
+      },
+      "default_tint": {
+        "hue": 280.0,
+        "sat": 0.85,
+        "mode": "colorize"
       }
     },
     {
@@ -14204,7 +14289,7 @@
       "name": "Stone Beam",
       "slot": "spell",
       "rarity": "common",
-      "tile": "spells/scrolls/i-holy_word.png",
+      "tile": "spells/scrolls/scroll.png",
       "base_type": "spell_holy_beam",
       "primary_stat": "str",
       "damage_min": 22,
@@ -14240,6 +14325,11 @@
         "of_crit": 12,
         "of_haste": 12,
         "of_lifesteal": 6
+      },
+      "default_tint": {
+        "hue": 0.0,
+        "sat": 0.85,
+        "mode": "colorize"
       }
     },
     {
@@ -14247,7 +14337,7 @@
       "name": "Sling Spark",
       "slot": "spell",
       "rarity": "common",
-      "tile": "spells/scrolls/i-noise.png",
+      "tile": "spells/scrolls/scroll.png",
       "base_type": "spell_chain_lightning",
       "primary_stat": "dex",
       "damage_min": 14,
@@ -14283,6 +14373,11 @@
         "of_crit": 12,
         "of_haste": 12,
         "of_lifesteal": 6
+      },
+      "default_tint": {
+        "hue": 280.0,
+        "sat": 0.85,
+        "mode": "colorize"
       }
     },
     {
@@ -14290,7 +14385,7 @@
       "name": "Throwing Daggers",
       "slot": "spell",
       "rarity": "common",
-      "tile": "spells/scrolls/i-poison.png",
+      "tile": "spells/scrolls/scroll.png",
       "base_type": "spell_axes",
       "primary_stat": "str",
       "damage_min": 12,
@@ -14326,6 +14421,11 @@
         "of_crit": 12,
         "of_haste": 12,
         "of_lifesteal": 6
+      },
+      "default_tint": {
+        "hue": 0.0,
+        "sat": 0.85,
+        "mode": "colorize"
       }
     },
     {
@@ -14556,7 +14656,7 @@
       "name": "Magic Dart Scroll",
       "slot": "spell",
       "rarity": "common",
-      "tile": "spells/scrolls/i-magic_mapping.png",
+      "tile": "spells/scrolls/scroll.png",
       "base_type": "spell_magic_dart",
       "primary_stat": "int",
       "damage_min": 8,
@@ -14592,6 +14692,11 @@
         "of_crit": 12,
         "of_haste": 12,
         "of_lifesteal": 6
+      },
+      "default_tint": {
+        "hue": 280.0,
+        "sat": 0.85,
+        "mode": "colorize"
       }
     },
     {
@@ -14642,7 +14747,7 @@
       "name": "Sandblast Codex",
       "slot": "spell",
       "rarity": "common",
-      "tile": "spells/scrolls/i-fog.png",
+      "tile": "spells/scrolls/scroll.png",
       "base_type": "spell_sandblast",
       "primary_stat": "str",
       "damage_min": 26,
@@ -14678,6 +14783,11 @@
         "of_crit": 12,
         "of_haste": 12,
         "of_lifesteal": 6
+      },
+      "default_tint": {
+        "hue": 30.0,
+        "sat": 0.85,
+        "mode": "colorize"
       }
     },
     {
@@ -20974,7 +21084,12 @@
       "name": "Solar Fireball Scroll",
       "slot": "spell",
       "rarity": "common",
-      "tile": "spells/scrolls/scroll-red.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 350.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_fireball",
       "primary_stat": "dex",
       "damage_min": 15,
@@ -21017,7 +21132,12 @@
       "name": "Ashen Fireball Scroll",
       "slot": "spell",
       "rarity": "common",
-      "tile": "spells/scrolls/scroll-yellow.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 7.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_fireball",
       "primary_stat": "str",
       "damage_min": 15,
@@ -21060,7 +21180,12 @@
       "name": "Wildfire Fireball Scroll",
       "slot": "spell",
       "rarity": "common",
-      "tile": "spells/scrolls/scroll-blue.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 24.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_fireball",
       "primary_stat": "int",
       "damage_min": 15,
@@ -21103,7 +21228,12 @@
       "name": "Pyrelit Fireball Scroll",
       "slot": "spell",
       "rarity": "common",
-      "tile": "spells/scrolls/scroll-brown.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 0.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_fireball",
       "primary_stat": "dex",
       "damage_min": 15,
@@ -21146,7 +21276,12 @@
       "name": "Phoenix Fireball Scroll",
       "slot": "spell",
       "rarity": "common",
-      "tile": "spells/scrolls/scroll-cyan.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 17.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_fireball",
       "primary_stat": "str",
       "damage_min": 15,
@@ -21189,7 +21324,12 @@
       "name": "Searing Fireball Scroll",
       "slot": "spell",
       "rarity": "uncommon",
-      "tile": "spells/scrolls/scroll-red.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 353.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_fireball",
       "primary_stat": "int",
       "damage_min": 17,
@@ -21232,7 +21372,12 @@
       "name": "Volcanic Fireball Scroll",
       "slot": "spell",
       "rarity": "uncommon",
-      "tile": "spells/scrolls/scroll-yellow.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 10.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_fireball",
       "primary_stat": "str",
       "damage_min": 17,
@@ -21275,7 +21420,12 @@
       "name": "Cinder Fireball Scroll",
       "slot": "spell",
       "rarity": "uncommon",
-      "tile": "spells/scrolls/i-immolation.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 27.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_fireball",
       "primary_stat": "dex",
       "damage_min": 17,
@@ -21318,7 +21468,12 @@
       "name": "Hellforged Fireball Scroll",
       "slot": "spell",
       "rarity": "uncommon",
-      "tile": "spells/scrolls/scroll-blue.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 3.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_fireball",
       "primary_stat": "int",
       "damage_min": 17,
@@ -21362,6 +21517,11 @@
       "slot": "spell",
       "rarity": "rare",
       "tile": "spells/books/parchment.png",
+      "default_tint": {
+        "hue": 20.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_fireball",
       "primary_stat": "dex",
       "damage_min": 19,
@@ -21405,6 +21565,11 @@
       "slot": "spell",
       "rarity": "rare",
       "tile": "spells/books/cloth.png",
+      "default_tint": {
+        "hue": 356.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_fireball",
       "primary_stat": "int",
       "damage_min": 19,
@@ -21448,6 +21613,11 @@
       "slot": "spell",
       "rarity": "rare",
       "tile": "spells/books/leather.png",
+      "default_tint": {
+        "hue": 13.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_fireball",
       "primary_stat": "str",
       "damage_min": 19,
@@ -21491,6 +21661,11 @@
       "slot": "spell",
       "rarity": "epic",
       "tile": "spells/books/bronze.png",
+      "default_tint": {
+        "hue": 30.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_fireball",
       "primary_stat": "int",
       "damage_min": 21,
@@ -21534,6 +21709,11 @@
       "slot": "spell",
       "rarity": "legendary",
       "tile": "spells/books/manual2.png",
+      "default_tint": {
+        "hue": 6.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_fireball",
       "primary_stat": "str",
       "damage_min": 24,
@@ -21577,6 +21757,11 @@
       "slot": "spell",
       "rarity": "common",
       "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 13.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_axes",
       "primary_stat": "int",
       "damage_min": 12,
@@ -21616,7 +21801,12 @@
       "name": "Carving Spinning Axes Scroll",
       "slot": "spell",
       "rarity": "common",
-      "tile": "spells/scrolls/scroll-grey.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 349.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_axes",
       "primary_stat": "dex",
       "damage_min": 12,
@@ -21656,7 +21846,12 @@
       "name": "Sundering Spinning Axes Scroll",
       "slot": "spell",
       "rarity": "common",
-      "tile": "spells/scrolls/scroll-green.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 6.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_axes",
       "primary_stat": "str",
       "damage_min": 12,
@@ -21696,7 +21891,12 @@
       "name": "Rending Spinning Axes Scroll",
       "slot": "spell",
       "rarity": "common",
-      "tile": "spells/scrolls/scroll-purple.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 342.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_axes",
       "primary_stat": "int",
       "damage_min": 12,
@@ -21736,7 +21936,12 @@
       "name": "Hacking Spinning Axes Scroll",
       "slot": "spell",
       "rarity": "common",
-      "tile": "spells/scrolls/i-blinking.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 359.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_axes",
       "primary_stat": "dex",
       "damage_min": 12,
@@ -21777,6 +21982,11 @@
       "slot": "spell",
       "rarity": "uncommon",
       "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 16.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_axes",
       "primary_stat": "dex",
       "damage_min": 13,
@@ -21816,7 +22026,12 @@
       "name": "Whirling Spinning Axes Scroll",
       "slot": "spell",
       "rarity": "uncommon",
-      "tile": "spells/scrolls/i-noise.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 352.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_axes",
       "primary_stat": "str",
       "damage_min": 13,
@@ -21856,7 +22071,12 @@
       "name": "Spinning Spinning Axes Scroll",
       "slot": "spell",
       "rarity": "uncommon",
-      "tile": "spells/scrolls/scroll-grey.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 9.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_axes",
       "primary_stat": "int",
       "damage_min": 13,
@@ -21896,7 +22116,12 @@
       "name": "Brutal Spinning Axes Scroll",
       "slot": "spell",
       "rarity": "uncommon",
-      "tile": "spells/scrolls/scroll-brown.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 345.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_axes",
       "primary_stat": "dex",
       "damage_min": 13,
@@ -21937,6 +22162,11 @@
       "slot": "spell",
       "rarity": "rare",
       "tile": "spells/books/dark_brown.png",
+      "default_tint": {
+        "hue": 2.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_axes",
       "primary_stat": "int",
       "damage_min": 15,
@@ -21977,6 +22207,11 @@
       "slot": "spell",
       "rarity": "rare",
       "tile": "spells/books/light_brown.png",
+      "default_tint": {
+        "hue": 19.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_axes",
       "primary_stat": "dex",
       "damage_min": 15,
@@ -22017,6 +22252,11 @@
       "slot": "spell",
       "rarity": "rare",
       "tile": "spells/books/dark_gray.png",
+      "default_tint": {
+        "hue": 355.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_axes",
       "primary_stat": "str",
       "damage_min": 15,
@@ -22057,6 +22297,11 @@
       "slot": "spell",
       "rarity": "epic",
       "tile": "spells/books/copper.png",
+      "default_tint": {
+        "hue": 12.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_axes",
       "primary_stat": "str",
       "damage_min": 16,
@@ -22097,6 +22342,11 @@
       "slot": "spell",
       "rarity": "legendary",
       "tile": "spells/books/book_of_the_dead.png",
+      "default_tint": {
+        "hue": 348.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_axes",
       "primary_stat": "int",
       "damage_min": 18,
@@ -22136,7 +22386,12 @@
       "name": "Vigil Holy Beam Scroll",
       "slot": "spell",
       "rarity": "common",
-      "tile": "spells/scrolls/i-recharging.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 55.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_holy_beam",
       "primary_stat": "int",
       "damage_min": 22,
@@ -22179,7 +22434,12 @@
       "name": "Lambent Holy Beam Scroll",
       "slot": "spell",
       "rarity": "common",
-      "tile": "spells/scrolls/i-teleportation.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 31.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_holy_beam",
       "primary_stat": "dex",
       "damage_min": 22,
@@ -22222,7 +22482,12 @@
       "name": "Goldleaf Holy Beam Scroll",
       "slot": "spell",
       "rarity": "common",
-      "tile": "spells/scrolls/i-vulnerability.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 48.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_holy_beam",
       "primary_stat": "str",
       "damage_min": 22,
@@ -22265,7 +22530,12 @@
       "name": "Sanguine Holy Beam Scroll",
       "slot": "spell",
       "rarity": "common",
-      "tile": "spells/scrolls/i-fear.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 65.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_holy_beam",
       "primary_stat": "int",
       "damage_min": 22,
@@ -22308,7 +22578,12 @@
       "name": "Mantled Holy Beam Scroll",
       "slot": "spell",
       "rarity": "common",
-      "tile": "spells/scrolls/i-acquirement.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 41.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_holy_beam",
       "primary_stat": "dex",
       "damage_min": 22,
@@ -22351,7 +22626,12 @@
       "name": "Heavenly Holy Beam Scroll",
       "slot": "spell",
       "rarity": "uncommon",
-      "tile": "spells/scrolls/i-holy_word.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 58.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_holy_beam",
       "primary_stat": "dex",
       "damage_min": 24,
@@ -22394,7 +22674,12 @@
       "name": "Cathedral Holy Beam Scroll",
       "slot": "spell",
       "rarity": "uncommon",
-      "tile": "spells/scrolls/scroll-cyan.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 34.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_holy_beam",
       "primary_stat": "int",
       "damage_min": 24,
@@ -22437,7 +22722,12 @@
       "name": "Radiant Holy Beam Scroll",
       "slot": "spell",
       "rarity": "uncommon",
-      "tile": "spells/scrolls/scroll-green.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 51.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_holy_beam",
       "primary_stat": "str",
       "damage_min": 24,
@@ -22480,7 +22770,12 @@
       "name": "Pilgrim Holy Beam Scroll",
       "slot": "spell",
       "rarity": "uncommon",
-      "tile": "spells/scrolls/scroll-purple.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 68.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_holy_beam",
       "primary_stat": "dex",
       "damage_min": 24,
@@ -22524,6 +22819,11 @@
       "slot": "spell",
       "rarity": "rare",
       "tile": "spells/books/light_gray.png",
+      "default_tint": {
+        "hue": 44.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_holy_beam",
       "primary_stat": "dex",
       "damage_min": 27,
@@ -22567,6 +22867,11 @@
       "slot": "spell",
       "rarity": "rare",
       "tile": "spells/books/tan.png",
+      "default_tint": {
+        "hue": 61.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_holy_beam",
       "primary_stat": "int",
       "damage_min": 27,
@@ -22610,6 +22915,11 @@
       "slot": "spell",
       "rarity": "rare",
       "tile": "spells/books/light_blue.png",
+      "default_tint": {
+        "hue": 37.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_holy_beam",
       "primary_stat": "str",
       "damage_min": 27,
@@ -22653,6 +22963,11 @@
       "slot": "spell",
       "rarity": "epic",
       "tile": "spells/books/metal_blue.png",
+      "default_tint": {
+        "hue": 54.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_holy_beam",
       "primary_stat": "str",
       "damage_min": 30,
@@ -22696,6 +23011,11 @@
       "slot": "spell",
       "rarity": "legendary",
       "tile": "spells/books/gold.png",
+      "default_tint": {
+        "hue": 30.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_holy_beam",
       "primary_stat": "dex",
       "damage_min": 34,
@@ -22738,7 +23058,12 @@
       "name": "Voltaic Chain Lightning Scroll",
       "slot": "spell",
       "rarity": "common",
-      "tile": "spells/scrolls/i-amnesia.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 267.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_chain_lightning",
       "primary_stat": "str",
       "damage_min": 14,
@@ -22781,7 +23106,12 @@
       "name": "Forking Chain Lightning Scroll",
       "slot": "spell",
       "rarity": "common",
-      "tile": "spells/scrolls/i-brand-weapon.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 284.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_chain_lightning",
       "primary_stat": "dex",
       "damage_min": 14,
@@ -22824,7 +23154,12 @@
       "name": "Tempest Chain Lightning Scroll",
       "slot": "spell",
       "rarity": "common",
-      "tile": "spells/scrolls/i-butterflies.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 260.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_chain_lightning",
       "primary_stat": "int",
       "damage_min": 14,
@@ -22867,7 +23202,12 @@
       "name": "Gale Chain Lightning Scroll",
       "slot": "spell",
       "rarity": "common",
-      "tile": "spells/scrolls/i-enchant_armour.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 277.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_chain_lightning",
       "primary_stat": "str",
       "damage_min": 14,
@@ -22910,7 +23250,12 @@
       "name": "Static Chain Lightning Scroll",
       "slot": "spell",
       "rarity": "common",
-      "tile": "spells/scrolls/i-enchant-weapon.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 253.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_chain_lightning",
       "primary_stat": "dex",
       "damage_min": 14,
@@ -22953,7 +23298,12 @@
       "name": "Thunderhead Chain Lightning Scroll",
       "slot": "spell",
       "rarity": "uncommon",
-      "tile": "spells/scrolls/i-fog.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 270.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_chain_lightning",
       "primary_stat": "str",
       "damage_min": 15,
@@ -22996,7 +23346,12 @@
       "name": "Charged Chain Lightning Scroll",
       "slot": "spell",
       "rarity": "uncommon",
-      "tile": "spells/scrolls/i-poison.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 287.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_chain_lightning",
       "primary_stat": "int",
       "damage_min": 15,
@@ -23039,7 +23394,12 @@
       "name": "Cloudbreak Chain Lightning Scroll",
       "slot": "spell",
       "rarity": "uncommon",
-      "tile": "spells/scrolls/i-blinking.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 263.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_chain_lightning",
       "primary_stat": "dex",
       "damage_min": 15,
@@ -23082,7 +23442,12 @@
       "name": "Storm Chain Lightning Scroll",
       "slot": "spell",
       "rarity": "uncommon",
-      "tile": "spells/scrolls/i-magic_mapping.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 280.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_chain_lightning",
       "primary_stat": "str",
       "damage_min": 15,
@@ -23126,6 +23491,11 @@
       "slot": "spell",
       "rarity": "rare",
       "tile": "spells/books/light_green.png",
+      "default_tint": {
+        "hue": 256.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_chain_lightning",
       "primary_stat": "dex",
       "damage_min": 17,
@@ -23169,6 +23539,11 @@
       "slot": "spell",
       "rarity": "rare",
       "tile": "spells/books/cyan.png",
+      "default_tint": {
+        "hue": 273.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_chain_lightning",
       "primary_stat": "str",
       "damage_min": 17,
@@ -23212,6 +23587,11 @@
       "slot": "spell",
       "rarity": "rare",
       "tile": "spells/books/dark_blue.png",
+      "default_tint": {
+        "hue": 290.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_chain_lightning",
       "primary_stat": "int",
       "damage_min": 17,
@@ -23255,6 +23635,11 @@
       "slot": "spell",
       "rarity": "epic",
       "tile": "spells/books/metal_cyan.png",
+      "default_tint": {
+        "hue": 266.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_chain_lightning",
       "primary_stat": "dex",
       "damage_min": 19,
@@ -23298,6 +23683,11 @@
       "slot": "spell",
       "rarity": "legendary",
       "tile": "spells/books/silver.png",
+      "default_tint": {
+        "hue": 283.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_chain_lightning",
       "primary_stat": "str",
       "damage_min": 21,
@@ -23340,7 +23730,12 @@
       "name": "Glacial Frost Nova Scroll",
       "slot": "spell",
       "rarity": "common",
-      "tile": "spells/scrolls/i-identify.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 199.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_frost_nova",
       "primary_stat": "str",
       "damage_min": 14,
@@ -23383,7 +23778,12 @@
       "name": "Snowbound Frost Nova Scroll",
       "slot": "spell",
       "rarity": "common",
-      "tile": "spells/scrolls/i-remove_curse.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 216.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_frost_nova",
       "primary_stat": "int",
       "damage_min": 14,
@@ -23426,7 +23826,12 @@
       "name": "Freezing Frost Nova Scroll",
       "slot": "spell",
       "rarity": "common",
-      "tile": "spells/scrolls/i-silence.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 192.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_frost_nova",
       "primary_stat": "dex",
       "damage_min": 14,
@@ -23469,7 +23874,12 @@
       "name": "Polar Frost Nova Scroll",
       "slot": "spell",
       "rarity": "common",
-      "tile": "spells/scrolls/i-unholy_creation.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 209.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_frost_nova",
       "primary_stat": "str",
       "damage_min": 14,
@@ -23512,7 +23922,12 @@
       "name": "Bitterwind Frost Nova Scroll",
       "slot": "spell",
       "rarity": "common",
-      "tile": "spells/scrolls/i-butterflies.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 226.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_frost_nova",
       "primary_stat": "int",
       "damage_min": 14,
@@ -23555,7 +23970,12 @@
       "name": "Cryogenic Frost Nova Scroll",
       "slot": "spell",
       "rarity": "uncommon",
-      "tile": "spells/scrolls/i-recharging.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 202.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_frost_nova",
       "primary_stat": "str",
       "damage_min": 15,
@@ -23598,7 +24018,12 @@
       "name": "Icefall Frost Nova Scroll",
       "slot": "spell",
       "rarity": "uncommon",
-      "tile": "spells/scrolls/i-teleportation.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 219.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_frost_nova",
       "primary_stat": "dex",
       "damage_min": 15,
@@ -23641,7 +24066,12 @@
       "name": "Riming Frost Nova Scroll",
       "slot": "spell",
       "rarity": "uncommon",
-      "tile": "spells/scrolls/i-vulnerability.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 195.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_frost_nova",
       "primary_stat": "int",
       "damage_min": 15,
@@ -23684,7 +24114,12 @@
       "name": "Wintertide Frost Nova Scroll",
       "slot": "spell",
       "rarity": "uncommon",
-      "tile": "spells/scrolls/i-fear.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 212.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_frost_nova",
       "primary_stat": "str",
       "damage_min": 15,
@@ -23728,6 +24163,11 @@
       "slot": "spell",
       "rarity": "rare",
       "tile": "spells/books/dark_green.png",
+      "default_tint": {
+        "hue": 229.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_frost_nova",
       "primary_stat": "int",
       "damage_min": 17,
@@ -23771,6 +24211,11 @@
       "slot": "spell",
       "rarity": "rare",
       "tile": "spells/books/turquoise.png",
+      "default_tint": {
+        "hue": 205.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_frost_nova",
       "primary_stat": "dex",
       "damage_min": 17,
@@ -23814,6 +24259,11 @@
       "slot": "spell",
       "rarity": "rare",
       "tile": "spells/books/yellow.png",
+      "default_tint": {
+        "hue": 222.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_frost_nova",
       "primary_stat": "str",
       "damage_min": 17,
@@ -23857,6 +24307,11 @@
       "slot": "spell",
       "rarity": "epic",
       "tile": "spells/books/metal_green.png",
+      "default_tint": {
+        "hue": 198.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_frost_nova",
       "primary_stat": "str",
       "damage_min": 19,
@@ -23900,6 +24355,11 @@
       "slot": "spell",
       "rarity": "legendary",
       "tile": "spells/books/silver.png",
+      "default_tint": {
+        "hue": 215.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_frost_nova",
       "primary_stat": "dex",
       "damage_min": 21,
@@ -23942,7 +24402,12 @@
       "name": "Glyph Magic Dart Scroll",
       "slot": "spell",
       "rarity": "common",
-      "tile": "spells/scrolls/scroll-purple.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 261.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_magic_dart",
       "primary_stat": "str",
       "damage_min": 8,
@@ -23978,11 +24443,16 @@
       }
     },
     {
-      "id": "spell_magic_dart_inkwell_int",
-      "name": "Inkwell Magic Dart Scroll",
+      "id": "spell_magic_dart_verbatim_int",
+      "name": "Verbatim Magic Dart Scroll",
       "slot": "spell",
       "rarity": "common",
-      "tile": "spells/scrolls/i-amnesia.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 278.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_magic_dart",
       "primary_stat": "int",
       "damage_min": 8,
@@ -24018,11 +24488,16 @@
       }
     },
     {
-      "id": "spell_magic_dart_veil_dex",
-      "name": "Veil Magic Dart Scroll",
+      "id": "spell_magic_dart_inkwell_dex",
+      "name": "Inkwell Magic Dart Scroll",
       "slot": "spell",
       "rarity": "common",
-      "tile": "spells/scrolls/i-immolation.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 295.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_magic_dart",
       "primary_stat": "dex",
       "damage_min": 8,
@@ -24031,7 +24506,7 @@
       "spell_cooldown": 0.7,
       "item_tier": 1,
       "flavor_tags": [],
-      "lore": "Apprentices learn this first; masters never stop using it.",
+      "lore": "The simplest cantrip. A dart of focused will.",
       "drop_weights": [
         60,
         30,
@@ -24058,11 +24533,16 @@
       }
     },
     {
-      "id": "spell_magic_dart_echo_str",
-      "name": "Echo Magic Dart Scroll",
+      "id": "spell_magic_dart_veil_str",
+      "name": "Veil Magic Dart Scroll",
       "slot": "spell",
       "rarity": "common",
-      "tile": "spells/scrolls/scroll-green.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 271.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_magic_dart",
       "primary_stat": "str",
       "damage_min": 8,
@@ -24098,11 +24578,16 @@
       }
     },
     {
-      "id": "spell_magic_dart_spectral_int",
-      "name": "Spectral Magic Dart Scroll",
+      "id": "spell_magic_dart_cipher_int",
+      "name": "Cipher Magic Dart Scroll",
       "slot": "spell",
       "rarity": "common",
-      "tile": "spells/scrolls/i-unholy_creation.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 288.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_magic_dart",
       "primary_stat": "int",
       "damage_min": 8,
@@ -24111,7 +24596,7 @@
       "spell_cooldown": 0.7,
       "item_tier": 1,
       "flavor_tags": [],
-      "lore": "Apprentices learn this first; masters never stop using it.",
+      "lore": "The simplest cantrip. A dart of focused will.",
       "drop_weights": [
         60,
         30,
@@ -24138,11 +24623,16 @@
       }
     },
     {
-      "id": "spell_magic_dart_runebound_int",
-      "name": "Runebound Magic Dart Scroll",
+      "id": "spell_magic_dart_spectral_int",
+      "name": "Spectral Magic Dart Scroll",
       "slot": "spell",
       "rarity": "uncommon",
-      "tile": "spells/scrolls/i-acquirement.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 264.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_magic_dart",
       "primary_stat": "int",
       "damage_min": 8,
@@ -24178,11 +24668,16 @@
       }
     },
     {
-      "id": "spell_magic_dart_cantrip_dex",
-      "name": "Cantrip Magic Dart Scroll",
+      "id": "spell_magic_dart_sigil_dex",
+      "name": "Sigil Magic Dart Scroll",
       "slot": "spell",
       "rarity": "uncommon",
-      "tile": "spells/scrolls/i-amnesia.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 281.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_magic_dart",
       "primary_stat": "dex",
       "damage_min": 8,
@@ -24191,7 +24686,7 @@
       "spell_cooldown": 0.7,
       "item_tier": 2,
       "flavor_tags": [],
-      "lore": "The simplest cantrip. A dart of focused will.",
+      "lore": "Apprentices learn this first; masters never stop using it.",
       "drop_weights": [
         40,
         50,
@@ -24222,7 +24717,12 @@
       "name": "Whispering Magic Dart Scroll",
       "slot": "spell",
       "rarity": "uncommon",
-      "tile": "spells/scrolls/i-brand-weapon.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 298.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_magic_dart",
       "primary_stat": "str",
       "damage_min": 8,
@@ -24231,7 +24731,7 @@
       "spell_cooldown": 0.7,
       "item_tier": 2,
       "flavor_tags": [],
-      "lore": "The simplest cantrip. A dart of focused will.",
+      "lore": "Apprentices learn this first; masters never stop using it.",
       "drop_weights": [
         40,
         50,
@@ -24258,11 +24758,16 @@
       }
     },
     {
-      "id": "spell_magic_dart_ward_int",
-      "name": "Ward Magic Dart Scroll",
+      "id": "spell_magic_dart_mana_int",
+      "name": "Mana Magic Dart Scroll",
       "slot": "spell",
       "rarity": "uncommon",
-      "tile": "spells/scrolls/i-butterflies.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 274.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_magic_dart",
       "primary_stat": "int",
       "damage_min": 8,
@@ -24271,7 +24776,7 @@
       "spell_cooldown": 0.7,
       "item_tier": 2,
       "flavor_tags": [],
-      "lore": "The simplest cantrip. A dart of focused will.",
+      "lore": "Apprentices learn this first; masters never stop using it.",
       "drop_weights": [
         40,
         50,
@@ -24298,51 +24803,16 @@
       }
     },
     {
-      "id": "spell_magic_dart_resonant_str",
-      "name": "Resonant Magic Dart Tome",
+      "id": "spell_magic_dart_runebound_dex",
+      "name": "Runebound Magic Dart Tome",
       "slot": "spell",
       "rarity": "rare",
       "tile": "spells/books/pink.png",
-      "base_type": "spell_magic_dart",
-      "primary_stat": "str",
-      "damage_min": 9,
-      "damage_max": 13,
-      "damage_type": "physical",
-      "spell_cooldown": 0.7,
-      "item_tier": 3,
-      "flavor_tags": [],
-      "lore": "Apprentices learn this first; masters never stop using it.",
-      "drop_weights": [
-        10,
-        25,
-        50,
-        18,
-        5
-      ],
-      "unique": false,
-      "enchant_chance": 0.12,
-      "implicit_affixes": [],
-      "affix_pool": {
-        "of_wisdom": 14,
-        "of_quickcast": 22,
-        "of_resonance": 18,
-        "of_lingering": 16,
-        "of_velocity": 12,
-        "of_multicast": 10,
-        "of_channeling": 22,
-        "of_crit": 10,
-        "of_haste": 12,
-        "of_str_mastery": 26,
-        "of_dex_mastery": 6,
-        "of_int_mastery": 6
-      }
-    },
-    {
-      "id": "spell_magic_dart_sigil_dex",
-      "name": "Sigil Magic Dart Tome",
-      "slot": "spell",
-      "rarity": "rare",
-      "tile": "spells/books/dark_brown.png",
+      "default_tint": {
+        "hue": 291.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_magic_dart",
       "primary_stat": "dex",
       "damage_min": 9,
@@ -24378,11 +24848,61 @@
       }
     },
     {
-      "id": "spell_magic_dart_mana_int",
-      "name": "Mana Magic Dart Tome",
+      "id": "spell_magic_dart_echo_str",
+      "name": "Echo Magic Dart Tome",
       "slot": "spell",
       "rarity": "rare",
       "tile": "spells/books/turquoise.png",
+      "default_tint": {
+        "hue": 267.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
+      "base_type": "spell_magic_dart",
+      "primary_stat": "str",
+      "damage_min": 9,
+      "damage_max": 13,
+      "damage_type": "physical",
+      "spell_cooldown": 0.7,
+      "item_tier": 3,
+      "flavor_tags": [],
+      "lore": "The simplest cantrip. A dart of focused will.",
+      "drop_weights": [
+        10,
+        25,
+        50,
+        18,
+        5
+      ],
+      "unique": false,
+      "enchant_chance": 0.12,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_wisdom": 14,
+        "of_quickcast": 22,
+        "of_resonance": 18,
+        "of_lingering": 16,
+        "of_velocity": 12,
+        "of_multicast": 10,
+        "of_channeling": 22,
+        "of_crit": 10,
+        "of_haste": 12,
+        "of_str_mastery": 26,
+        "of_dex_mastery": 6,
+        "of_int_mastery": 6
+      }
+    },
+    {
+      "id": "spell_magic_dart_lexicon_int",
+      "name": "Lexicon Magic Dart Tome",
+      "slot": "spell",
+      "rarity": "rare",
+      "tile": "spells/books/dark_brown.png",
+      "default_tint": {
+        "hue": 284.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_magic_dart",
       "primary_stat": "int",
       "damage_min": 9,
@@ -24391,7 +24911,7 @@
       "spell_cooldown": 0.7,
       "item_tier": 3,
       "flavor_tags": [],
-      "lore": "Apprentices learn this first; masters never stop using it.",
+      "lore": "The simplest cantrip. A dart of focused will.",
       "drop_weights": [
         10,
         25,
@@ -24418,13 +24938,18 @@
       }
     },
     {
-      "id": "spell_magic_dart_verbatim_str",
-      "name": "Verbatim Magic Dart Tome",
+      "id": "spell_magic_dart_cantrip_dex",
+      "name": "Cantrip Magic Dart Tome",
       "slot": "spell",
       "rarity": "epic",
       "tile": "spells/books/red.png",
+      "default_tint": {
+        "hue": 260.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_magic_dart",
-      "primary_stat": "str",
+      "primary_stat": "dex",
       "damage_min": 11,
       "damage_max": 15,
       "damage_type": "physical",
@@ -24452,26 +24977,31 @@
         "of_channeling": 30,
         "of_crit": 10,
         "of_haste": 12,
-        "of_str_mastery": 26,
-        "of_dex_mastery": 6,
+        "of_dex_mastery": 26,
+        "of_str_mastery": 6,
         "of_int_mastery": 6
       }
     },
     {
-      "id": "spell_magic_dart_cipher_int",
-      "name": "Cipher Magic Dart Tome",
+      "id": "spell_magic_dart_ward_str",
+      "name": "Ward Magic Dart Tome",
       "slot": "spell",
       "rarity": "legendary",
-      "tile": "spells/books/manual1.png",
+      "tile": "spells/books/gold.png",
+      "default_tint": {
+        "hue": 277.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_magic_dart",
-      "primary_stat": "int",
+      "primary_stat": "str",
       "damage_min": 12,
       "damage_max": 17,
       "damage_type": "physical",
       "spell_cooldown": 0.7,
       "item_tier": 5,
       "flavor_tags": [],
-      "lore": "Apprentices learn this first; masters never stop using it.",
+      "lore": "The simplest cantrip. A dart of focused will.",
       "drop_weights": [
         0,
         0,
@@ -24492,328 +25022,8 @@
         "of_channeling": 30,
         "of_crit": 10,
         "of_haste": 12,
-        "of_int_mastery": 26,
-        "of_str_mastery": 6,
-        "of_dex_mastery": 6
-      }
-    },
-    {
-      "id": "spell_iron_shot_ridge_dex",
-      "name": "Ridge Iron Shot Scroll",
-      "slot": "spell",
-      "rarity": "common",
-      "tile": "spells/scrolls/i-torment.png",
-      "base_type": "spell_iron_shot",
-      "primary_stat": "dex",
-      "damage_min": 27,
-      "damage_max": 38,
-      "damage_type": "physical",
-      "spell_cooldown": 3.5,
-      "item_tier": 1,
-      "flavor_tags": [],
-      "lore": "The page sags slightly under its own implied weight.",
-      "drop_weights": [
-        60,
-        30,
-        8,
-        2,
-        0
-      ],
-      "unique": false,
-      "enchant_chance": 0.05,
-      "implicit_affixes": [],
-      "affix_pool": {
-        "of_wisdom": 14,
-        "of_quickcast": 22,
-        "of_resonance": 18,
-        "of_lingering": 16,
-        "of_velocity": 12,
-        "of_multicast": 10,
-        "of_channeling": 22,
-        "of_crit": 10,
-        "of_haste": 12,
-        "of_dex_mastery": 26,
-        "of_str_mastery": 6,
-        "of_int_mastery": 6
-      }
-    },
-    {
-      "id": "spell_iron_shot_riverstone_str",
-      "name": "Riverstone Iron Shot Scroll",
-      "slot": "spell",
-      "rarity": "common",
-      "tile": "spells/scrolls/i-identify.png",
-      "base_type": "spell_iron_shot",
-      "primary_stat": "str",
-      "damage_min": 27,
-      "damage_max": 38,
-      "damage_type": "physical",
-      "spell_cooldown": 3.5,
-      "item_tier": 1,
-      "flavor_tags": [],
-      "lore": "A round of inscribed iron, fired through the ranks.",
-      "drop_weights": [
-        60,
-        30,
-        8,
-        2,
-        0
-      ],
-      "unique": false,
-      "enchant_chance": 0.05,
-      "implicit_affixes": [],
-      "affix_pool": {
-        "of_wisdom": 14,
-        "of_quickcast": 22,
-        "of_resonance": 18,
-        "of_lingering": 16,
-        "of_velocity": 12,
-        "of_multicast": 10,
-        "of_channeling": 22,
-        "of_crit": 10,
-        "of_haste": 12,
         "of_str_mastery": 26,
         "of_dex_mastery": 6,
-        "of_int_mastery": 6
-      }
-    },
-    {
-      "id": "spell_iron_shot_mountain_int",
-      "name": "Mountain Iron Shot Scroll",
-      "slot": "spell",
-      "rarity": "common",
-      "tile": "spells/scrolls/i-holy_word.png",
-      "base_type": "spell_iron_shot",
-      "primary_stat": "int",
-      "damage_min": 27,
-      "damage_max": 38,
-      "damage_type": "physical",
-      "spell_cooldown": 3.5,
-      "item_tier": 1,
-      "flavor_tags": [],
-      "lore": "The page sags slightly under its own implied weight.",
-      "drop_weights": [
-        60,
-        30,
-        8,
-        2,
-        0
-      ],
-      "unique": false,
-      "enchant_chance": 0.05,
-      "implicit_affixes": [],
-      "affix_pool": {
-        "of_wisdom": 14,
-        "of_quickcast": 22,
-        "of_resonance": 18,
-        "of_lingering": 16,
-        "of_velocity": 12,
-        "of_multicast": 10,
-        "of_channeling": 22,
-        "of_crit": 10,
-        "of_haste": 12,
-        "of_int_mastery": 26,
-        "of_str_mastery": 6,
-        "of_dex_mastery": 6
-      }
-    },
-    {
-      "id": "spell_iron_shot_cragblade_dex",
-      "name": "Cragblade Iron Shot Scroll",
-      "slot": "spell",
-      "rarity": "common",
-      "tile": "spells/scrolls/i-recharging.png",
-      "base_type": "spell_iron_shot",
-      "primary_stat": "dex",
-      "damage_min": 27,
-      "damage_max": 38,
-      "damage_type": "physical",
-      "spell_cooldown": 3.5,
-      "item_tier": 1,
-      "flavor_tags": [],
-      "lore": "The page sags slightly under its own implied weight.",
-      "drop_weights": [
-        60,
-        30,
-        8,
-        2,
-        0
-      ],
-      "unique": false,
-      "enchant_chance": 0.05,
-      "implicit_affixes": [],
-      "affix_pool": {
-        "of_wisdom": 14,
-        "of_quickcast": 22,
-        "of_resonance": 18,
-        "of_lingering": 16,
-        "of_velocity": 12,
-        "of_multicast": 10,
-        "of_channeling": 22,
-        "of_crit": 10,
-        "of_haste": 12,
-        "of_dex_mastery": 26,
-        "of_str_mastery": 6,
-        "of_int_mastery": 6
-      }
-    },
-    {
-      "id": "spell_iron_shot_gravelstrike_str",
-      "name": "Gravelstrike Iron Shot Scroll",
-      "slot": "spell",
-      "rarity": "common",
-      "tile": "spells/scrolls/i-enchant_armour.png",
-      "base_type": "spell_iron_shot",
-      "primary_stat": "str",
-      "damage_min": 27,
-      "damage_max": 38,
-      "damage_type": "physical",
-      "spell_cooldown": 3.5,
-      "item_tier": 1,
-      "flavor_tags": [],
-      "lore": "The page sags slightly under its own implied weight.",
-      "drop_weights": [
-        60,
-        30,
-        8,
-        2,
-        0
-      ],
-      "unique": false,
-      "enchant_chance": 0.05,
-      "implicit_affixes": [],
-      "affix_pool": {
-        "of_wisdom": 14,
-        "of_quickcast": 22,
-        "of_resonance": 18,
-        "of_lingering": 16,
-        "of_velocity": 12,
-        "of_multicast": 10,
-        "of_channeling": 22,
-        "of_crit": 10,
-        "of_haste": 12,
-        "of_str_mastery": 26,
-        "of_dex_mastery": 6,
-        "of_int_mastery": 6
-      }
-    },
-    {
-      "id": "spell_iron_shot_bedrock_int",
-      "name": "Bedrock Iron Shot Scroll",
-      "slot": "spell",
-      "rarity": "uncommon",
-      "tile": "spells/scrolls/i-enchant_armour.png",
-      "base_type": "spell_iron_shot",
-      "primary_stat": "int",
-      "damage_min": 30,
-      "damage_max": 42,
-      "damage_type": "physical",
-      "spell_cooldown": 3.5,
-      "item_tier": 2,
-      "flavor_tags": [],
-      "lore": "The page sags slightly under its own implied weight.",
-      "drop_weights": [
-        40,
-        50,
-        20,
-        5,
-        0
-      ],
-      "unique": false,
-      "enchant_chance": 0.08,
-      "implicit_affixes": [],
-      "affix_pool": {
-        "of_wisdom": 14,
-        "of_quickcast": 22,
-        "of_resonance": 18,
-        "of_lingering": 16,
-        "of_velocity": 12,
-        "of_multicast": 10,
-        "of_channeling": 22,
-        "of_crit": 10,
-        "of_haste": 12,
-        "of_int_mastery": 26,
-        "of_str_mastery": 6,
-        "of_dex_mastery": 6
-      }
-    },
-    {
-      "id": "spell_iron_shot_earthworn_str",
-      "name": "Earthworn Iron Shot Scroll",
-      "slot": "spell",
-      "rarity": "uncommon",
-      "tile": "spells/scrolls/i-enchant-weapon.png",
-      "base_type": "spell_iron_shot",
-      "primary_stat": "str",
-      "damage_min": 30,
-      "damage_max": 42,
-      "damage_type": "physical",
-      "spell_cooldown": 3.5,
-      "item_tier": 2,
-      "flavor_tags": [],
-      "lore": "A round of inscribed iron, fired through the ranks.",
-      "drop_weights": [
-        40,
-        50,
-        20,
-        5,
-        0
-      ],
-      "unique": false,
-      "enchant_chance": 0.08,
-      "implicit_affixes": [],
-      "affix_pool": {
-        "of_wisdom": 14,
-        "of_quickcast": 22,
-        "of_resonance": 18,
-        "of_lingering": 16,
-        "of_velocity": 12,
-        "of_multicast": 10,
-        "of_channeling": 22,
-        "of_crit": 10,
-        "of_haste": 12,
-        "of_str_mastery": 26,
-        "of_dex_mastery": 6,
-        "of_int_mastery": 6
-      }
-    },
-    {
-      "id": "spell_iron_shot_stoneborn_dex",
-      "name": "Stoneborn Iron Shot Scroll",
-      "slot": "spell",
-      "rarity": "uncommon",
-      "tile": "spells/scrolls/i-identify.png",
-      "base_type": "spell_iron_shot",
-      "primary_stat": "dex",
-      "damage_min": 30,
-      "damage_max": 42,
-      "damage_type": "physical",
-      "spell_cooldown": 3.5,
-      "item_tier": 2,
-      "flavor_tags": [],
-      "lore": "The page sags slightly under its own implied weight.",
-      "drop_weights": [
-        40,
-        50,
-        20,
-        5,
-        0
-      ],
-      "unique": false,
-      "enchant_chance": 0.08,
-      "implicit_affixes": [],
-      "affix_pool": {
-        "of_wisdom": 14,
-        "of_quickcast": 22,
-        "of_resonance": 18,
-        "of_lingering": 16,
-        "of_velocity": 12,
-        "of_multicast": 10,
-        "of_channeling": 22,
-        "of_crit": 10,
-        "of_haste": 12,
-        "of_dex_mastery": 26,
-        "of_str_mastery": 6,
         "of_int_mastery": 6
       }
     },
@@ -24821,8 +25031,238 @@
       "id": "spell_iron_shot_granite_int",
       "name": "Granite Iron Shot Scroll",
       "slot": "spell",
+      "rarity": "common",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 44.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
+      "base_type": "spell_iron_shot",
+      "primary_stat": "int",
+      "damage_min": 27,
+      "damage_max": 38,
+      "damage_type": "physical",
+      "spell_cooldown": 3.5,
+      "item_tier": 1,
+      "flavor_tags": [],
+      "lore": "A round of inscribed iron, fired through the ranks.",
+      "drop_weights": [
+        60,
+        30,
+        8,
+        2,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_wisdom": 14,
+        "of_quickcast": 22,
+        "of_resonance": 18,
+        "of_lingering": 16,
+        "of_velocity": 12,
+        "of_multicast": 10,
+        "of_channeling": 22,
+        "of_crit": 10,
+        "of_haste": 12,
+        "of_int_mastery": 26,
+        "of_str_mastery": 6,
+        "of_dex_mastery": 6
+      }
+    },
+    {
+      "id": "spell_iron_shot_ridge_str",
+      "name": "Ridge Iron Shot Scroll",
+      "slot": "spell",
+      "rarity": "common",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 20.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
+      "base_type": "spell_iron_shot",
+      "primary_stat": "str",
+      "damage_min": 27,
+      "damage_max": 38,
+      "damage_type": "physical",
+      "spell_cooldown": 3.5,
+      "item_tier": 1,
+      "flavor_tags": [],
+      "lore": "The page sags slightly under its own implied weight.",
+      "drop_weights": [
+        60,
+        30,
+        8,
+        2,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_wisdom": 14,
+        "of_quickcast": 22,
+        "of_resonance": 18,
+        "of_lingering": 16,
+        "of_velocity": 12,
+        "of_multicast": 10,
+        "of_channeling": 22,
+        "of_crit": 10,
+        "of_haste": 12,
+        "of_str_mastery": 26,
+        "of_dex_mastery": 6,
+        "of_int_mastery": 6
+      }
+    },
+    {
+      "id": "spell_iron_shot_slate_dex",
+      "name": "Slate Iron Shot Scroll",
+      "slot": "spell",
+      "rarity": "common",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 37.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
+      "base_type": "spell_iron_shot",
+      "primary_stat": "dex",
+      "damage_min": 27,
+      "damage_max": 38,
+      "damage_type": "physical",
+      "spell_cooldown": 3.5,
+      "item_tier": 1,
+      "flavor_tags": [],
+      "lore": "A round of inscribed iron, fired through the ranks.",
+      "drop_weights": [
+        60,
+        30,
+        8,
+        2,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_wisdom": 14,
+        "of_quickcast": 22,
+        "of_resonance": 18,
+        "of_lingering": 16,
+        "of_velocity": 12,
+        "of_multicast": 10,
+        "of_channeling": 22,
+        "of_crit": 10,
+        "of_haste": 12,
+        "of_dex_mastery": 26,
+        "of_str_mastery": 6,
+        "of_int_mastery": 6
+      }
+    },
+    {
+      "id": "spell_iron_shot_riverstone_int",
+      "name": "Riverstone Iron Shot Scroll",
+      "slot": "spell",
+      "rarity": "common",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 13.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
+      "base_type": "spell_iron_shot",
+      "primary_stat": "int",
+      "damage_min": 27,
+      "damage_max": 38,
+      "damage_type": "physical",
+      "spell_cooldown": 3.5,
+      "item_tier": 1,
+      "flavor_tags": [],
+      "lore": "The page sags slightly under its own implied weight.",
+      "drop_weights": [
+        60,
+        30,
+        8,
+        2,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_wisdom": 14,
+        "of_quickcast": 22,
+        "of_resonance": 18,
+        "of_lingering": 16,
+        "of_velocity": 12,
+        "of_multicast": 10,
+        "of_channeling": 22,
+        "of_crit": 10,
+        "of_haste": 12,
+        "of_int_mastery": 26,
+        "of_str_mastery": 6,
+        "of_dex_mastery": 6
+      }
+    },
+    {
+      "id": "spell_iron_shot_cragblade_str",
+      "name": "Cragblade Iron Shot Scroll",
+      "slot": "spell",
+      "rarity": "common",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 30.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
+      "base_type": "spell_iron_shot",
+      "primary_stat": "str",
+      "damage_min": 27,
+      "damage_max": 38,
+      "damage_type": "physical",
+      "spell_cooldown": 3.5,
+      "item_tier": 1,
+      "flavor_tags": [],
+      "lore": "A round of inscribed iron, fired through the ranks.",
+      "drop_weights": [
+        60,
+        30,
+        8,
+        2,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_wisdom": 14,
+        "of_quickcast": 22,
+        "of_resonance": 18,
+        "of_lingering": 16,
+        "of_velocity": 12,
+        "of_multicast": 10,
+        "of_channeling": 22,
+        "of_crit": 10,
+        "of_haste": 12,
+        "of_str_mastery": 26,
+        "of_dex_mastery": 6,
+        "of_int_mastery": 6
+      }
+    },
+    {
+      "id": "spell_iron_shot_quartz_int",
+      "name": "Quartz Iron Shot Scroll",
+      "slot": "spell",
       "rarity": "uncommon",
-      "tile": "spells/scrolls/i-remove_curse.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 47.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_iron_shot",
       "primary_stat": "int",
       "damage_min": 30,
@@ -24831,7 +25271,142 @@
       "spell_cooldown": 3.5,
       "item_tier": 2,
       "flavor_tags": [],
-      "lore": "A round of inscribed iron, fired through the ranks.",
+      "lore": "The page sags slightly under its own implied weight.",
+      "drop_weights": [
+        40,
+        50,
+        20,
+        5,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.08,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_wisdom": 14,
+        "of_quickcast": 22,
+        "of_resonance": 18,
+        "of_lingering": 16,
+        "of_velocity": 12,
+        "of_multicast": 10,
+        "of_channeling": 22,
+        "of_crit": 10,
+        "of_haste": 12,
+        "of_int_mastery": 26,
+        "of_str_mastery": 6,
+        "of_dex_mastery": 6
+      }
+    },
+    {
+      "id": "spell_iron_shot_gravelstrike_dex",
+      "name": "Gravelstrike Iron Shot Scroll",
+      "slot": "spell",
+      "rarity": "uncommon",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 23.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
+      "base_type": "spell_iron_shot",
+      "primary_stat": "dex",
+      "damage_min": 30,
+      "damage_max": 42,
+      "damage_type": "physical",
+      "spell_cooldown": 3.5,
+      "item_tier": 2,
+      "flavor_tags": [],
+      "lore": "The page sags slightly under its own implied weight.",
+      "drop_weights": [
+        40,
+        50,
+        20,
+        5,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.08,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_wisdom": 14,
+        "of_quickcast": 22,
+        "of_resonance": 18,
+        "of_lingering": 16,
+        "of_velocity": 12,
+        "of_multicast": 10,
+        "of_channeling": 22,
+        "of_crit": 10,
+        "of_haste": 12,
+        "of_dex_mastery": 26,
+        "of_str_mastery": 6,
+        "of_int_mastery": 6
+      }
+    },
+    {
+      "id": "spell_iron_shot_mountain_str",
+      "name": "Mountain Iron Shot Scroll",
+      "slot": "spell",
+      "rarity": "uncommon",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 40.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
+      "base_type": "spell_iron_shot",
+      "primary_stat": "str",
+      "damage_min": 30,
+      "damage_max": 42,
+      "damage_type": "physical",
+      "spell_cooldown": 3.5,
+      "item_tier": 2,
+      "flavor_tags": [],
+      "lore": "The page sags slightly under its own implied weight.",
+      "drop_weights": [
+        40,
+        50,
+        20,
+        5,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.08,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_wisdom": 14,
+        "of_quickcast": 22,
+        "of_resonance": 18,
+        "of_lingering": 16,
+        "of_velocity": 12,
+        "of_multicast": 10,
+        "of_channeling": 22,
+        "of_crit": 10,
+        "of_haste": 12,
+        "of_str_mastery": 26,
+        "of_dex_mastery": 6,
+        "of_int_mastery": 6
+      }
+    },
+    {
+      "id": "spell_iron_shot_tectonic_int",
+      "name": "Tectonic Iron Shot Scroll",
+      "slot": "spell",
+      "rarity": "uncommon",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 16.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
+      "base_type": "spell_iron_shot",
+      "primary_stat": "int",
+      "damage_min": 30,
+      "damage_max": 42,
+      "damage_type": "physical",
+      "spell_cooldown": 3.5,
+      "item_tier": 2,
+      "flavor_tags": [],
+      "lore": "The page sags slightly under its own implied weight.",
       "drop_weights": [
         40,
         50,
@@ -24862,7 +25437,12 @@
       "name": "Pebble Iron Shot Tome",
       "slot": "spell",
       "rarity": "rare",
-      "tile": "spells/books/light_brown.png",
+      "tile": "spells/books/light_gray.png",
+      "default_tint": {
+        "hue": 33.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_iron_shot",
       "primary_stat": "str",
       "damage_min": 33,
@@ -24871,7 +25451,7 @@
       "spell_cooldown": 3.5,
       "item_tier": 3,
       "flavor_tags": [],
-      "lore": "A round of inscribed iron, fired through the ranks.",
+      "lore": "The page sags slightly under its own implied weight.",
       "drop_weights": [
         10,
         25,
@@ -24898,51 +25478,16 @@
       }
     },
     {
-      "id": "spell_iron_shot_ironvein_int",
-      "name": "Ironvein Iron Shot Tome",
-      "slot": "spell",
-      "rarity": "rare",
-      "tile": "spells/books/turquoise.png",
-      "base_type": "spell_iron_shot",
-      "primary_stat": "int",
-      "damage_min": 33,
-      "damage_max": 47,
-      "damage_type": "physical",
-      "spell_cooldown": 3.5,
-      "item_tier": 3,
-      "flavor_tags": [],
-      "lore": "A round of inscribed iron, fired through the ranks.",
-      "drop_weights": [
-        10,
-        25,
-        50,
-        18,
-        5
-      ],
-      "unique": false,
-      "enchant_chance": 0.12,
-      "implicit_affixes": [],
-      "affix_pool": {
-        "of_wisdom": 14,
-        "of_quickcast": 22,
-        "of_resonance": 18,
-        "of_lingering": 16,
-        "of_velocity": 12,
-        "of_multicast": 10,
-        "of_channeling": 22,
-        "of_crit": 10,
-        "of_haste": 12,
-        "of_int_mastery": 26,
-        "of_str_mastery": 6,
-        "of_dex_mastery": 6
-      }
-    },
-    {
-      "id": "spell_iron_shot_quartz_dex",
-      "name": "Quartz Iron Shot Tome",
+      "id": "spell_iron_shot_quarry_dex",
+      "name": "Quarry Iron Shot Tome",
       "slot": "spell",
       "rarity": "rare",
       "tile": "spells/books/light_green.png",
+      "default_tint": {
+        "hue": 50.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_iron_shot",
       "primary_stat": "dex",
       "damage_min": 33,
@@ -24978,11 +25523,61 @@
       }
     },
     {
-      "id": "spell_iron_shot_slate_str",
-      "name": "Slate Iron Shot Tome",
+      "id": "spell_iron_shot_bedrock_int",
+      "name": "Bedrock Iron Shot Tome",
+      "slot": "spell",
+      "rarity": "rare",
+      "tile": "spells/books/light_brown.png",
+      "default_tint": {
+        "hue": 26.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
+      "base_type": "spell_iron_shot",
+      "primary_stat": "int",
+      "damage_min": 33,
+      "damage_max": 47,
+      "damage_type": "physical",
+      "spell_cooldown": 3.5,
+      "item_tier": 3,
+      "flavor_tags": [],
+      "lore": "A round of inscribed iron, fired through the ranks.",
+      "drop_weights": [
+        10,
+        25,
+        50,
+        18,
+        5
+      ],
+      "unique": false,
+      "enchant_chance": 0.12,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_wisdom": 14,
+        "of_quickcast": 22,
+        "of_resonance": 18,
+        "of_lingering": 16,
+        "of_velocity": 12,
+        "of_multicast": 10,
+        "of_channeling": 22,
+        "of_crit": 10,
+        "of_haste": 12,
+        "of_int_mastery": 26,
+        "of_str_mastery": 6,
+        "of_dex_mastery": 6
+      }
+    },
+    {
+      "id": "spell_iron_shot_ironvein_str",
+      "name": "Ironvein Iron Shot Tome",
       "slot": "spell",
       "rarity": "epic",
       "tile": "spells/books/magenta.png",
+      "default_tint": {
+        "hue": 43.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_iron_shot",
       "primary_stat": "str",
       "damage_min": 38,
@@ -24991,7 +25586,7 @@
       "spell_cooldown": 3.5,
       "item_tier": 4,
       "flavor_tags": [],
-      "lore": "The page sags slightly under its own implied weight.",
+      "lore": "A round of inscribed iron, fired through the ranks.",
       "drop_weights": [
         0,
         5,
@@ -25018,13 +25613,18 @@
       }
     },
     {
-      "id": "spell_iron_shot_basalt_dex",
-      "name": "Basalt Iron Shot Tome",
+      "id": "spell_iron_shot_stoneborn_str",
+      "name": "Stoneborn Iron Shot Tome",
       "slot": "spell",
       "rarity": "legendary",
-      "tile": "spells/books/book_of_the_dead.png",
+      "tile": "spells/books/manual1.png",
+      "default_tint": {
+        "hue": 19.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_iron_shot",
-      "primary_stat": "dex",
+      "primary_stat": "str",
       "damage_min": 42,
       "damage_max": 60,
       "damage_type": "physical",
@@ -25052,17 +25652,22 @@
         "of_channeling": 30,
         "of_crit": 10,
         "of_haste": 12,
-        "of_dex_mastery": 26,
-        "of_str_mastery": 6,
+        "of_str_mastery": 26,
+        "of_dex_mastery": 6,
         "of_int_mastery": 6
       }
     },
     {
-      "id": "spell_sandblast_pebble_int",
-      "name": "Pebble Sandblast Scroll",
+      "id": "spell_sandblast_mountain_int",
+      "name": "Mountain Sandblast Scroll",
       "slot": "spell",
       "rarity": "common",
-      "tile": "spells/scrolls/i-identify.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 36.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_sandblast",
       "primary_stat": "int",
       "damage_min": 26,
@@ -25098,11 +25703,61 @@
       }
     },
     {
-      "id": "spell_sandblast_riverstone_str",
-      "name": "Riverstone Sandblast Scroll",
+      "id": "spell_sandblast_cragblade_dex",
+      "name": "Cragblade Sandblast Scroll",
       "slot": "spell",
       "rarity": "common",
-      "tile": "spells/scrolls/i-poison.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 12.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
+      "base_type": "spell_sandblast",
+      "primary_stat": "dex",
+      "damage_min": 26,
+      "damage_max": 36,
+      "damage_type": "physical",
+      "spell_cooldown": 2.6,
+      "item_tier": 1,
+      "flavor_tags": [],
+      "lore": "A pinch of grit pours from the pages whenever opened.",
+      "drop_weights": [
+        60,
+        30,
+        8,
+        2,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_wisdom": 14,
+        "of_quickcast": 22,
+        "of_resonance": 18,
+        "of_lingering": 16,
+        "of_velocity": 12,
+        "of_multicast": 10,
+        "of_channeling": 22,
+        "of_crit": 10,
+        "of_haste": 12,
+        "of_dex_mastery": 26,
+        "of_str_mastery": 6,
+        "of_int_mastery": 6
+      }
+    },
+    {
+      "id": "spell_sandblast_ironvein_str",
+      "name": "Ironvein Sandblast Scroll",
+      "slot": "spell",
+      "rarity": "common",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 29.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_sandblast",
       "primary_stat": "str",
       "damage_min": 26,
@@ -25138,11 +25793,61 @@
       }
     },
     {
-      "id": "spell_sandblast_tectonic_dex",
-      "name": "Tectonic Sandblast Scroll",
+      "id": "spell_sandblast_earthworn_int",
+      "name": "Earthworn Sandblast Scroll",
       "slot": "spell",
       "rarity": "common",
-      "tile": "spells/scrolls/i-silence.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 46.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
+      "base_type": "spell_sandblast",
+      "primary_stat": "int",
+      "damage_min": 26,
+      "damage_max": 36,
+      "damage_type": "physical",
+      "spell_cooldown": 2.6,
+      "item_tier": 1,
+      "flavor_tags": [],
+      "lore": "Reading aloud kicks up a fine dust at one's feet.",
+      "drop_weights": [
+        60,
+        30,
+        8,
+        2,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_wisdom": 14,
+        "of_quickcast": 22,
+        "of_resonance": 18,
+        "of_lingering": 16,
+        "of_velocity": 12,
+        "of_multicast": 10,
+        "of_channeling": 22,
+        "of_crit": 10,
+        "of_haste": 12,
+        "of_int_mastery": 26,
+        "of_str_mastery": 6,
+        "of_dex_mastery": 6
+      }
+    },
+    {
+      "id": "spell_sandblast_basalt_dex",
+      "name": "Basalt Sandblast Scroll",
+      "slot": "spell",
+      "rarity": "common",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 22.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_sandblast",
       "primary_stat": "dex",
       "damage_min": 26,
@@ -25174,86 +25879,6 @@
         "of_haste": 12,
         "of_dex_mastery": 26,
         "of_str_mastery": 6,
-        "of_int_mastery": 6
-      }
-    },
-    {
-      "id": "spell_sandblast_stoneborn_int",
-      "name": "Stoneborn Sandblast Scroll",
-      "slot": "spell",
-      "rarity": "common",
-      "tile": "spells/scrolls/scroll-yellow.png",
-      "base_type": "spell_sandblast",
-      "primary_stat": "int",
-      "damage_min": 26,
-      "damage_max": 36,
-      "damage_type": "physical",
-      "spell_cooldown": 2.6,
-      "item_tier": 1,
-      "flavor_tags": [],
-      "lore": "A pinch of grit pours from the pages whenever opened.",
-      "drop_weights": [
-        60,
-        30,
-        8,
-        2,
-        0
-      ],
-      "unique": false,
-      "enchant_chance": 0.05,
-      "implicit_affixes": [],
-      "affix_pool": {
-        "of_wisdom": 14,
-        "of_quickcast": 22,
-        "of_resonance": 18,
-        "of_lingering": 16,
-        "of_velocity": 12,
-        "of_multicast": 10,
-        "of_channeling": 22,
-        "of_crit": 10,
-        "of_haste": 12,
-        "of_int_mastery": 26,
-        "of_str_mastery": 6,
-        "of_dex_mastery": 6
-      }
-    },
-    {
-      "id": "spell_sandblast_ridge_str",
-      "name": "Ridge Sandblast Scroll",
-      "slot": "spell",
-      "rarity": "common",
-      "tile": "spells/scrolls/i-teleportation.png",
-      "base_type": "spell_sandblast",
-      "primary_stat": "str",
-      "damage_min": 26,
-      "damage_max": 36,
-      "damage_type": "physical",
-      "spell_cooldown": 2.6,
-      "item_tier": 1,
-      "flavor_tags": [],
-      "lore": "A pinch of grit pours from the pages whenever opened.",
-      "drop_weights": [
-        60,
-        30,
-        8,
-        2,
-        0
-      ],
-      "unique": false,
-      "enchant_chance": 0.05,
-      "implicit_affixes": [],
-      "affix_pool": {
-        "of_wisdom": 14,
-        "of_quickcast": 22,
-        "of_resonance": 18,
-        "of_lingering": 16,
-        "of_velocity": 12,
-        "of_multicast": 10,
-        "of_channeling": 22,
-        "of_crit": 10,
-        "of_haste": 12,
-        "of_str_mastery": 26,
-        "of_dex_mastery": 6,
         "of_int_mastery": 6
       }
     },
@@ -25262,7 +25887,12 @@
       "name": "Bedrock Sandblast Scroll",
       "slot": "spell",
       "rarity": "uncommon",
-      "tile": "spells/scrolls/i-silence.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 39.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_sandblast",
       "primary_stat": "int",
       "damage_min": 28,
@@ -25298,93 +25928,63 @@
       }
     },
     {
-      "id": "spell_sandblast_earthworn_dex",
-      "name": "Earthworn Sandblast Scroll",
-      "slot": "spell",
-      "rarity": "uncommon",
-      "tile": "spells/scrolls/i-torment.png",
-      "base_type": "spell_sandblast",
-      "primary_stat": "dex",
-      "damage_min": 28,
-      "damage_max": 40,
-      "damage_type": "physical",
-      "spell_cooldown": 2.6,
-      "item_tier": 2,
-      "flavor_tags": [],
-      "lore": "Reading aloud kicks up a fine dust at one's feet.",
-      "drop_weights": [
-        40,
-        50,
-        20,
-        5,
-        0
-      ],
-      "unique": false,
-      "enchant_chance": 0.08,
-      "implicit_affixes": [],
-      "affix_pool": {
-        "of_wisdom": 14,
-        "of_quickcast": 22,
-        "of_resonance": 18,
-        "of_lingering": 16,
-        "of_velocity": 12,
-        "of_multicast": 10,
-        "of_channeling": 22,
-        "of_crit": 10,
-        "of_haste": 12,
-        "of_dex_mastery": 26,
-        "of_str_mastery": 6,
-        "of_int_mastery": 6
-      }
-    },
-    {
-      "id": "spell_sandblast_cragblade_str",
-      "name": "Cragblade Sandblast Scroll",
-      "slot": "spell",
-      "rarity": "uncommon",
-      "tile": "spells/scrolls/i-unholy_creation.png",
-      "base_type": "spell_sandblast",
-      "primary_stat": "str",
-      "damage_min": 28,
-      "damage_max": 40,
-      "damage_type": "physical",
-      "spell_cooldown": 2.6,
-      "item_tier": 2,
-      "flavor_tags": [],
-      "lore": "A pinch of grit pours from the pages whenever opened.",
-      "drop_weights": [
-        40,
-        50,
-        20,
-        5,
-        0
-      ],
-      "unique": false,
-      "enchant_chance": 0.08,
-      "implicit_affixes": [],
-      "affix_pool": {
-        "of_wisdom": 14,
-        "of_quickcast": 22,
-        "of_resonance": 18,
-        "of_lingering": 16,
-        "of_velocity": 12,
-        "of_multicast": 10,
-        "of_channeling": 22,
-        "of_crit": 10,
-        "of_haste": 12,
-        "of_str_mastery": 26,
-        "of_dex_mastery": 6,
-        "of_int_mastery": 6
-      }
-    },
-    {
-      "id": "spell_sandblast_gravelstrike_int",
+      "id": "spell_sandblast_gravelstrike_str",
       "name": "Gravelstrike Sandblast Scroll",
       "slot": "spell",
       "rarity": "uncommon",
-      "tile": "spells/scrolls/i-noise.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 15.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_sandblast",
-      "primary_stat": "int",
+      "primary_stat": "str",
+      "damage_min": 28,
+      "damage_max": 40,
+      "damage_type": "physical",
+      "spell_cooldown": 2.6,
+      "item_tier": 2,
+      "flavor_tags": [],
+      "lore": "A pinch of grit pours from the pages whenever opened.",
+      "drop_weights": [
+        40,
+        50,
+        20,
+        5,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.08,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_wisdom": 14,
+        "of_quickcast": 22,
+        "of_resonance": 18,
+        "of_lingering": 16,
+        "of_velocity": 12,
+        "of_multicast": 10,
+        "of_channeling": 22,
+        "of_crit": 10,
+        "of_haste": 12,
+        "of_str_mastery": 26,
+        "of_dex_mastery": 6,
+        "of_int_mastery": 6
+      }
+    },
+    {
+      "id": "spell_sandblast_stoneborn_dex",
+      "name": "Stoneborn Sandblast Scroll",
+      "slot": "spell",
+      "rarity": "uncommon",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 32.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
+      "base_type": "spell_sandblast",
+      "primary_stat": "dex",
       "damage_min": 28,
       "damage_max": 40,
       "damage_type": "physical",
@@ -25412,97 +26012,67 @@
         "of_channeling": 22,
         "of_crit": 10,
         "of_haste": 12,
-        "of_int_mastery": 26,
-        "of_str_mastery": 6,
-        "of_dex_mastery": 6
-      }
-    },
-    {
-      "id": "spell_sandblast_basalt_int",
-      "name": "Basalt Sandblast Tome",
-      "slot": "spell",
-      "rarity": "rare",
-      "tile": "spells/books/leather.png",
-      "base_type": "spell_sandblast",
-      "primary_stat": "int",
-      "damage_min": 31,
-      "damage_max": 44,
-      "damage_type": "physical",
-      "spell_cooldown": 2.6,
-      "item_tier": 3,
-      "flavor_tags": [],
-      "lore": "Reading aloud kicks up a fine dust at one's feet.",
-      "drop_weights": [
-        10,
-        25,
-        50,
-        18,
-        5
-      ],
-      "unique": false,
-      "enchant_chance": 0.12,
-      "implicit_affixes": [],
-      "affix_pool": {
-        "of_wisdom": 14,
-        "of_quickcast": 22,
-        "of_resonance": 18,
-        "of_lingering": 16,
-        "of_velocity": 12,
-        "of_multicast": 10,
-        "of_channeling": 22,
-        "of_crit": 10,
-        "of_haste": 12,
-        "of_int_mastery": 26,
-        "of_str_mastery": 6,
-        "of_dex_mastery": 6
-      }
-    },
-    {
-      "id": "spell_sandblast_granite_dex",
-      "name": "Granite Sandblast Tome",
-      "slot": "spell",
-      "rarity": "rare",
-      "tile": "spells/books/light_green.png",
-      "base_type": "spell_sandblast",
-      "primary_stat": "dex",
-      "damage_min": 31,
-      "damage_max": 44,
-      "damage_type": "physical",
-      "spell_cooldown": 2.6,
-      "item_tier": 3,
-      "flavor_tags": [],
-      "lore": "A pinch of grit pours from the pages whenever opened.",
-      "drop_weights": [
-        10,
-        25,
-        50,
-        18,
-        5
-      ],
-      "unique": false,
-      "enchant_chance": 0.12,
-      "implicit_affixes": [],
-      "affix_pool": {
-        "of_wisdom": 14,
-        "of_quickcast": 22,
-        "of_resonance": 18,
-        "of_lingering": 16,
-        "of_velocity": 12,
-        "of_multicast": 10,
-        "of_channeling": 22,
-        "of_crit": 10,
-        "of_haste": 12,
         "of_dex_mastery": 26,
         "of_str_mastery": 6,
         "of_int_mastery": 6
       }
     },
     {
-      "id": "spell_sandblast_mountain_str",
-      "name": "Mountain Sandblast Tome",
+      "id": "spell_sandblast_slate_int",
+      "name": "Slate Sandblast Scroll",
+      "slot": "spell",
+      "rarity": "uncommon",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 49.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
+      "base_type": "spell_sandblast",
+      "primary_stat": "int",
+      "damage_min": 28,
+      "damage_max": 40,
+      "damage_type": "physical",
+      "spell_cooldown": 2.6,
+      "item_tier": 2,
+      "flavor_tags": [],
+      "lore": "A pinch of grit pours from the pages whenever opened.",
+      "drop_weights": [
+        40,
+        50,
+        20,
+        5,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.08,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_wisdom": 14,
+        "of_quickcast": 22,
+        "of_resonance": 18,
+        "of_lingering": 16,
+        "of_velocity": 12,
+        "of_multicast": 10,
+        "of_channeling": 22,
+        "of_crit": 10,
+        "of_haste": 12,
+        "of_int_mastery": 26,
+        "of_str_mastery": 6,
+        "of_dex_mastery": 6
+      }
+    },
+    {
+      "id": "spell_sandblast_tectonic_str",
+      "name": "Tectonic Sandblast Tome",
       "slot": "spell",
       "rarity": "rare",
-      "tile": "spells/books/tan.png",
+      "tile": "spells/books/parchment.png",
+      "default_tint": {
+        "hue": 25.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_sandblast",
       "primary_stat": "str",
       "damage_min": 31,
@@ -25538,20 +26108,115 @@
       }
     },
     {
-      "id": "spell_sandblast_slate_dex",
-      "name": "Slate Sandblast Tome",
+      "id": "spell_sandblast_pebble_dex",
+      "name": "Pebble Sandblast Tome",
+      "slot": "spell",
+      "rarity": "rare",
+      "tile": "spells/books/pink.png",
+      "default_tint": {
+        "hue": 42.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
+      "base_type": "spell_sandblast",
+      "primary_stat": "dex",
+      "damage_min": 31,
+      "damage_max": 44,
+      "damage_type": "physical",
+      "spell_cooldown": 2.6,
+      "item_tier": 3,
+      "flavor_tags": [],
+      "lore": "A pinch of grit pours from the pages whenever opened.",
+      "drop_weights": [
+        10,
+        25,
+        50,
+        18,
+        5
+      ],
+      "unique": false,
+      "enchant_chance": 0.12,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_wisdom": 14,
+        "of_quickcast": 22,
+        "of_resonance": 18,
+        "of_lingering": 16,
+        "of_velocity": 12,
+        "of_multicast": 10,
+        "of_channeling": 22,
+        "of_crit": 10,
+        "of_haste": 12,
+        "of_dex_mastery": 26,
+        "of_str_mastery": 6,
+        "of_int_mastery": 6
+      }
+    },
+    {
+      "id": "spell_sandblast_ridge_int",
+      "name": "Ridge Sandblast Tome",
+      "slot": "spell",
+      "rarity": "rare",
+      "tile": "spells/books/dark_blue.png",
+      "default_tint": {
+        "hue": 18.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
+      "base_type": "spell_sandblast",
+      "primary_stat": "int",
+      "damage_min": 31,
+      "damage_max": 44,
+      "damage_type": "physical",
+      "spell_cooldown": 2.6,
+      "item_tier": 3,
+      "flavor_tags": [],
+      "lore": "Reading aloud kicks up a fine dust at one's feet.",
+      "drop_weights": [
+        10,
+        25,
+        50,
+        18,
+        5
+      ],
+      "unique": false,
+      "enchant_chance": 0.12,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_wisdom": 14,
+        "of_quickcast": 22,
+        "of_resonance": 18,
+        "of_lingering": 16,
+        "of_velocity": 12,
+        "of_multicast": 10,
+        "of_channeling": 22,
+        "of_crit": 10,
+        "of_haste": 12,
+        "of_int_mastery": 26,
+        "of_str_mastery": 6,
+        "of_dex_mastery": 6
+      }
+    },
+    {
+      "id": "spell_sandblast_granite_int",
+      "name": "Granite Sandblast Tome",
       "slot": "spell",
       "rarity": "epic",
       "tile": "spells/books/purple.png",
+      "default_tint": {
+        "hue": 35.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_sandblast",
-      "primary_stat": "dex",
+      "primary_stat": "int",
       "damage_min": 35,
       "damage_max": 50,
       "damage_type": "physical",
       "spell_cooldown": 2.6,
       "item_tier": 4,
       "flavor_tags": [],
-      "lore": "A pinch of grit pours from the pages whenever opened.",
+      "lore": "Reading aloud kicks up a fine dust at one's feet.",
       "drop_weights": [
         0,
         5,
@@ -25572,17 +26237,22 @@
         "of_channeling": 30,
         "of_crit": 10,
         "of_haste": 12,
-        "of_dex_mastery": 26,
+        "of_int_mastery": 26,
         "of_str_mastery": 6,
-        "of_int_mastery": 6
+        "of_dex_mastery": 6
       }
     },
     {
-      "id": "spell_sandblast_ironvein_int",
-      "name": "Ironvein Sandblast Tome",
+      "id": "spell_sandblast_riverstone_int",
+      "name": "Riverstone Sandblast Tome",
       "slot": "spell",
       "rarity": "legendary",
       "tile": "spells/books/silver.png",
+      "default_tint": {
+        "hue": 11.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_sandblast",
       "primary_stat": "int",
       "damage_min": 40,
@@ -25591,7 +26261,7 @@
       "spell_cooldown": 2.6,
       "item_tier": 5,
       "flavor_tags": [],
-      "lore": "Reading aloud kicks up a fine dust at one's feet.",
+      "lore": "A pinch of grit pours from the pages whenever opened.",
       "drop_weights": [
         0,
         0,
@@ -25618,54 +26288,16 @@
       }
     },
     {
-      "id": "spell_drain_eclipse_str",
-      "name": "Eclipse Drain Scroll",
+      "id": "spell_drain_wraith_int",
+      "name": "Wraith Drain Scroll",
       "slot": "spell",
       "rarity": "common",
-      "tile": "spells/scrolls/i-vulnerability.png",
-      "base_type": "spell_drain",
-      "primary_stat": "str",
-      "damage_min": 19,
-      "damage_max": 26,
-      "damage_type": "dark",
-      "spell_cooldown": 2.4,
-      "item_tier": 1,
-      "flavor_tags": [
-        "dark"
-      ],
-      "lore": "A famished bolt \u2014 every kill stokes a quickening hunger.",
-      "drop_weights": [
-        60,
-        30,
-        8,
-        2,
-        0
-      ],
-      "unique": false,
-      "enchant_chance": 0.05,
-      "implicit_affixes": [],
-      "affix_pool": {
-        "of_wisdom": 14,
-        "of_quickcast": 22,
-        "of_resonance": 18,
-        "of_lingering": 16,
-        "of_velocity": 12,
-        "of_multicast": 10,
-        "of_channeling": 22,
-        "of_crit": 10,
-        "of_haste": 12,
-        "of_str_mastery": 26,
-        "of_dex_mastery": 6,
-        "of_int_mastery": 6,
-        "of_shadows": 24
-      }
-    },
-    {
-      "id": "spell_drain_murk_int",
-      "name": "Murk Drain Scroll",
-      "slot": "spell",
-      "rarity": "common",
-      "tile": "spells/scrolls/scroll-red.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 288.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_drain",
       "primary_stat": "int",
       "damage_min": 19,
@@ -25676,7 +26308,7 @@
       "flavor_tags": [
         "dark"
       ],
-      "lore": "A famished bolt \u2014 every kill stokes a quickening hunger.",
+      "lore": "The ink looks suspiciously like dried blood.",
       "drop_weights": [
         60,
         30,
@@ -25700,6 +26332,54 @@
         "of_int_mastery": 26,
         "of_str_mastery": 6,
         "of_dex_mastery": 6,
+        "of_shadows": 24
+      }
+    },
+    {
+      "id": "spell_drain_umbral_str",
+      "name": "Umbral Drain Scroll",
+      "slot": "spell",
+      "rarity": "common",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 305.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
+      "base_type": "spell_drain",
+      "primary_stat": "str",
+      "damage_min": 19,
+      "damage_max": 26,
+      "damage_type": "dark",
+      "spell_cooldown": 2.4,
+      "item_tier": 1,
+      "flavor_tags": [
+        "dark"
+      ],
+      "lore": "The ink looks suspiciously like dried blood.",
+      "drop_weights": [
+        60,
+        30,
+        8,
+        2,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_wisdom": 14,
+        "of_quickcast": 22,
+        "of_resonance": 18,
+        "of_lingering": 16,
+        "of_velocity": 12,
+        "of_multicast": 10,
+        "of_channeling": 22,
+        "of_crit": 10,
+        "of_haste": 12,
+        "of_str_mastery": 26,
+        "of_dex_mastery": 6,
+        "of_int_mastery": 6,
         "of_shadows": 24
       }
     },
@@ -25708,7 +26388,12 @@
       "name": "Gravekeeper Drain Scroll",
       "slot": "spell",
       "rarity": "common",
-      "tile": "spells/scrolls/i-fear.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 281.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_drain",
       "primary_stat": "dex",
       "damage_min": 19,
@@ -25719,7 +26404,7 @@
       "flavor_tags": [
         "dark"
       ],
-      "lore": "The ink looks suspiciously like dried blood.",
+      "lore": "A famished bolt \u2014 every kill stokes a quickening hunger.",
       "drop_weights": [
         60,
         30,
@@ -25747,54 +26432,16 @@
       }
     },
     {
-      "id": "spell_drain_shade_str",
-      "name": "Shade Drain Scroll",
+      "id": "spell_drain_withering_int",
+      "name": "Withering Drain Scroll",
       "slot": "spell",
       "rarity": "common",
-      "tile": "spells/scrolls/i-noise.png",
-      "base_type": "spell_drain",
-      "primary_stat": "str",
-      "damage_min": 19,
-      "damage_max": 26,
-      "damage_type": "dark",
-      "spell_cooldown": 2.4,
-      "item_tier": 1,
-      "flavor_tags": [
-        "dark"
-      ],
-      "lore": "A famished bolt \u2014 every kill stokes a quickening hunger.",
-      "drop_weights": [
-        60,
-        30,
-        8,
-        2,
-        0
-      ],
-      "unique": false,
-      "enchant_chance": 0.05,
-      "implicit_affixes": [],
-      "affix_pool": {
-        "of_wisdom": 14,
-        "of_quickcast": 22,
-        "of_resonance": 18,
-        "of_lingering": 16,
-        "of_velocity": 12,
-        "of_multicast": 10,
-        "of_channeling": 22,
-        "of_crit": 10,
-        "of_haste": 12,
-        "of_str_mastery": 26,
-        "of_dex_mastery": 6,
-        "of_int_mastery": 6,
-        "of_shadows": 24
-      }
-    },
-    {
-      "id": "spell_drain_sunless_int",
-      "name": "Sunless Drain Scroll",
-      "slot": "spell",
-      "rarity": "common",
-      "tile": "spells/scrolls/i-recharging.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 298.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_drain",
       "primary_stat": "int",
       "damage_min": 19,
@@ -25805,7 +26452,7 @@
       "flavor_tags": [
         "dark"
       ],
-      "lore": "A famished bolt \u2014 every kill stokes a quickening hunger.",
+      "lore": "The ink looks suspiciously like dried blood.",
       "drop_weights": [
         60,
         30,
@@ -25833,13 +26480,66 @@
       }
     },
     {
-      "id": "spell_drain_umbral_dex",
-      "name": "Umbral Drain Scroll",
+      "id": "spell_drain_eclipse_str",
+      "name": "Eclipse Drain Scroll",
+      "slot": "spell",
+      "rarity": "common",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 274.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
+      "base_type": "spell_drain",
+      "primary_stat": "str",
+      "damage_min": 19,
+      "damage_max": 26,
+      "damage_type": "dark",
+      "spell_cooldown": 2.4,
+      "item_tier": 1,
+      "flavor_tags": [
+        "dark"
+      ],
+      "lore": "The ink looks suspiciously like dried blood.",
+      "drop_weights": [
+        60,
+        30,
+        8,
+        2,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_wisdom": 14,
+        "of_quickcast": 22,
+        "of_resonance": 18,
+        "of_lingering": 16,
+        "of_velocity": 12,
+        "of_multicast": 10,
+        "of_channeling": 22,
+        "of_crit": 10,
+        "of_haste": 12,
+        "of_str_mastery": 26,
+        "of_dex_mastery": 6,
+        "of_int_mastery": 6,
+        "of_shadows": 24
+      }
+    },
+    {
+      "id": "spell_drain_shade_int",
+      "name": "Shade Drain Scroll",
       "slot": "spell",
       "rarity": "uncommon",
-      "tile": "spells/scrolls/scroll-grey.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 291.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_drain",
-      "primary_stat": "dex",
+      "primary_stat": "int",
       "damage_min": 21,
       "damage_max": 29,
       "damage_type": "dark",
@@ -25848,7 +26548,7 @@
       "flavor_tags": [
         "dark"
       ],
-      "lore": "The ink looks suspiciously like dried blood.",
+      "lore": "A famished bolt \u2014 every kill stokes a quickening hunger.",
       "drop_weights": [
         40,
         50,
@@ -25869,18 +26569,23 @@
         "of_channeling": 22,
         "of_crit": 10,
         "of_haste": 12,
-        "of_dex_mastery": 26,
+        "of_int_mastery": 26,
         "of_str_mastery": 6,
-        "of_int_mastery": 6,
+        "of_dex_mastery": 6,
         "of_shadows": 24
       }
     },
     {
-      "id": "spell_drain_shroud_str",
-      "name": "Shroud Drain Scroll",
+      "id": "spell_drain_voidbound_str",
+      "name": "Voidbound Drain Scroll",
       "slot": "spell",
       "rarity": "uncommon",
-      "tile": "spells/scrolls/scroll-purple.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 308.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_drain",
       "primary_stat": "str",
       "damage_min": 21,
@@ -25919,11 +26624,64 @@
       }
     },
     {
-      "id": "spell_drain_cinderash_int",
-      "name": "Cinderash Drain Scroll",
+      "id": "spell_drain_shroud_dex",
+      "name": "Shroud Drain Scroll",
       "slot": "spell",
       "rarity": "uncommon",
-      "tile": "spells/scrolls/scroll-brown.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 284.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
+      "base_type": "spell_drain",
+      "primary_stat": "dex",
+      "damage_min": 21,
+      "damage_max": 29,
+      "damage_type": "dark",
+      "spell_cooldown": 2.4,
+      "item_tier": 2,
+      "flavor_tags": [
+        "dark"
+      ],
+      "lore": "The ink looks suspiciously like dried blood.",
+      "drop_weights": [
+        40,
+        50,
+        20,
+        5,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.08,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_wisdom": 14,
+        "of_quickcast": 22,
+        "of_resonance": 18,
+        "of_lingering": 16,
+        "of_velocity": 12,
+        "of_multicast": 10,
+        "of_channeling": 22,
+        "of_crit": 10,
+        "of_haste": 12,
+        "of_dex_mastery": 26,
+        "of_str_mastery": 6,
+        "of_int_mastery": 6,
+        "of_shadows": 24
+      }
+    },
+    {
+      "id": "spell_drain_famine_int",
+      "name": "Famine Drain Scroll",
+      "slot": "spell",
+      "rarity": "uncommon",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 301.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_drain",
       "primary_stat": "int",
       "damage_min": 21,
@@ -25934,7 +26692,7 @@
       "flavor_tags": [
         "dark"
       ],
-      "lore": "The ink looks suspiciously like dried blood.",
+      "lore": "A famished bolt \u2014 every kill stokes a quickening hunger.",
       "drop_weights": [
         40,
         50,
@@ -25963,30 +26721,35 @@
     },
     {
       "id": "spell_drain_hollow_dex",
-      "name": "Hollow Drain Scroll",
+      "name": "Hollow Drain Tome",
       "slot": "spell",
-      "rarity": "uncommon",
-      "tile": "spells/scrolls/i-holy_word.png",
+      "rarity": "rare",
+      "tile": "spells/books/light_brown.png",
+      "default_tint": {
+        "hue": 277.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_drain",
       "primary_stat": "dex",
-      "damage_min": 21,
-      "damage_max": 29,
+      "damage_min": 23,
+      "damage_max": 32,
       "damage_type": "dark",
       "spell_cooldown": 2.4,
-      "item_tier": 2,
+      "item_tier": 3,
       "flavor_tags": [
         "dark"
       ],
       "lore": "The ink looks suspiciously like dried blood.",
       "drop_weights": [
-        40,
+        10,
+        25,
         50,
-        20,
-        5,
-        0
+        18,
+        5
       ],
       "unique": false,
-      "enchant_chance": 0.08,
+      "enchant_chance": 0.12,
       "implicit_affixes": [],
       "affix_pool": {
         "of_wisdom": 14,
@@ -26005,97 +26768,16 @@
       }
     },
     {
-      "id": "spell_drain_withering_dex",
-      "name": "Withering Drain Tome",
+      "id": "spell_drain_sunless_str",
+      "name": "Sunless Drain Tome",
       "slot": "spell",
       "rarity": "rare",
       "tile": "spells/books/yellow.png",
-      "base_type": "spell_drain",
-      "primary_stat": "dex",
-      "damage_min": 23,
-      "damage_max": 32,
-      "damage_type": "dark",
-      "spell_cooldown": 2.4,
-      "item_tier": 3,
-      "flavor_tags": [
-        "dark"
-      ],
-      "lore": "The ink looks suspiciously like dried blood.",
-      "drop_weights": [
-        10,
-        25,
-        50,
-        18,
-        5
-      ],
-      "unique": false,
-      "enchant_chance": 0.12,
-      "implicit_affixes": [],
-      "affix_pool": {
-        "of_wisdom": 14,
-        "of_quickcast": 22,
-        "of_resonance": 18,
-        "of_lingering": 16,
-        "of_velocity": 12,
-        "of_multicast": 10,
-        "of_channeling": 22,
-        "of_crit": 10,
-        "of_haste": 12,
-        "of_dex_mastery": 26,
-        "of_str_mastery": 6,
-        "of_int_mastery": 6,
-        "of_shadows": 24
-      }
-    },
-    {
-      "id": "spell_drain_famine_int",
-      "name": "Famine Drain Tome",
-      "slot": "spell",
-      "rarity": "rare",
-      "tile": "spells/books/light_green.png",
-      "base_type": "spell_drain",
-      "primary_stat": "int",
-      "damage_min": 23,
-      "damage_max": 32,
-      "damage_type": "dark",
-      "spell_cooldown": 2.4,
-      "item_tier": 3,
-      "flavor_tags": [
-        "dark"
-      ],
-      "lore": "A famished bolt \u2014 every kill stokes a quickening hunger.",
-      "drop_weights": [
-        10,
-        25,
-        50,
-        18,
-        5
-      ],
-      "unique": false,
-      "enchant_chance": 0.12,
-      "implicit_affixes": [],
-      "affix_pool": {
-        "of_wisdom": 14,
-        "of_quickcast": 22,
-        "of_resonance": 18,
-        "of_lingering": 16,
-        "of_velocity": 12,
-        "of_multicast": 10,
-        "of_channeling": 22,
-        "of_crit": 10,
-        "of_haste": 12,
-        "of_int_mastery": 26,
-        "of_str_mastery": 6,
-        "of_dex_mastery": 6,
-        "of_shadows": 24
-      }
-    },
-    {
-      "id": "spell_drain_wraith_str",
-      "name": "Wraith Drain Tome",
-      "slot": "spell",
-      "rarity": "rare",
-      "tile": "spells/books/pink.png",
+      "default_tint": {
+        "hue": 294.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_drain",
       "primary_stat": "str",
       "damage_min": 23,
@@ -26134,13 +26816,66 @@
       }
     },
     {
-      "id": "spell_drain_pall_dex",
-      "name": "Pall Drain Tome",
+      "id": "spell_drain_nightfall_int",
+      "name": "Nightfall Drain Tome",
+      "slot": "spell",
+      "rarity": "rare",
+      "tile": "spells/books/yellow.png",
+      "default_tint": {
+        "hue": 270.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
+      "base_type": "spell_drain",
+      "primary_stat": "int",
+      "damage_min": 23,
+      "damage_max": 32,
+      "damage_type": "dark",
+      "spell_cooldown": 2.4,
+      "item_tier": 3,
+      "flavor_tags": [
+        "dark"
+      ],
+      "lore": "A famished bolt \u2014 every kill stokes a quickening hunger.",
+      "drop_weights": [
+        10,
+        25,
+        50,
+        18,
+        5
+      ],
+      "unique": false,
+      "enchant_chance": 0.12,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_wisdom": 14,
+        "of_quickcast": 22,
+        "of_resonance": 18,
+        "of_lingering": 16,
+        "of_velocity": 12,
+        "of_multicast": 10,
+        "of_channeling": 22,
+        "of_crit": 10,
+        "of_haste": 12,
+        "of_int_mastery": 26,
+        "of_str_mastery": 6,
+        "of_dex_mastery": 6,
+        "of_shadows": 24
+      }
+    },
+    {
+      "id": "spell_drain_dirge_int",
+      "name": "Dirge Drain Tome",
       "slot": "spell",
       "rarity": "epic",
       "tile": "spells/books/plaid.png",
+      "default_tint": {
+        "hue": 287.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_drain",
-      "primary_stat": "dex",
+      "primary_stat": "int",
       "damage_min": 26,
       "damage_max": 36,
       "damage_type": "dark",
@@ -26149,7 +26884,7 @@
       "flavor_tags": [
         "dark"
       ],
-      "lore": "A famished bolt \u2014 every kill stokes a quickening hunger.",
+      "lore": "The ink looks suspiciously like dried blood.",
       "drop_weights": [
         0,
         5,
@@ -26170,18 +26905,23 @@
         "of_channeling": 30,
         "of_crit": 10,
         "of_haste": 12,
-        "of_dex_mastery": 26,
+        "of_int_mastery": 26,
         "of_str_mastery": 6,
-        "of_int_mastery": 6,
+        "of_dex_mastery": 6,
         "of_shadows": 24
       }
     },
     {
-      "id": "spell_drain_dirge_dex",
-      "name": "Dirge Drain Tome",
+      "id": "spell_drain_cinderash_dex",
+      "name": "Cinderash Drain Tome",
       "slot": "spell",
       "rarity": "legendary",
-      "tile": "spells/books/manual1.png",
+      "tile": "spells/books/silver.png",
+      "default_tint": {
+        "hue": 304.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_drain",
       "primary_stat": "dex",
       "damage_min": 29,
@@ -26220,13 +26960,108 @@
       }
     },
     {
-      "id": "spell_shatter_granite_str",
-      "name": "Granite Shatter Scroll",
+      "id": "spell_shatter_pebble_str",
+      "name": "Pebble Shatter Scroll",
       "slot": "spell",
       "rarity": "common",
-      "tile": "spells/scrolls/i-identify.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 20.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_shatter",
       "primary_stat": "str",
+      "damage_min": 24,
+      "damage_max": 34,
+      "damage_type": "physical",
+      "spell_cooldown": 5.0,
+      "item_tier": 1,
+      "flavor_tags": [],
+      "lore": "Hold the page wrong and the cover cracks down the middle.",
+      "drop_weights": [
+        60,
+        30,
+        8,
+        2,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_wisdom": 14,
+        "of_quickcast": 22,
+        "of_resonance": 18,
+        "of_lingering": 16,
+        "of_velocity": 12,
+        "of_multicast": 10,
+        "of_channeling": 22,
+        "of_crit": 10,
+        "of_haste": 12,
+        "of_str_mastery": 26,
+        "of_dex_mastery": 6,
+        "of_int_mastery": 6
+      }
+    },
+    {
+      "id": "spell_shatter_ridge_int",
+      "name": "Ridge Shatter Scroll",
+      "slot": "spell",
+      "rarity": "common",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 37.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
+      "base_type": "spell_shatter",
+      "primary_stat": "int",
+      "damage_min": 24,
+      "damage_max": 34,
+      "damage_type": "physical",
+      "spell_cooldown": 5.0,
+      "item_tier": 1,
+      "flavor_tags": [],
+      "lore": "Hold the page wrong and the cover cracks down the middle.",
+      "drop_weights": [
+        60,
+        30,
+        8,
+        2,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_wisdom": 14,
+        "of_quickcast": 22,
+        "of_resonance": 18,
+        "of_lingering": 16,
+        "of_velocity": 12,
+        "of_multicast": 10,
+        "of_channeling": 22,
+        "of_crit": 10,
+        "of_haste": 12,
+        "of_int_mastery": 26,
+        "of_str_mastery": 6,
+        "of_dex_mastery": 6
+      }
+    },
+    {
+      "id": "spell_shatter_riverstone_dex",
+      "name": "Riverstone Shatter Scroll",
+      "slot": "spell",
+      "rarity": "common",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 13.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
+      "base_type": "spell_shatter",
+      "primary_stat": "dex",
       "damage_min": 24,
       "damage_max": 34,
       "damage_type": "physical",
@@ -26254,26 +27089,31 @@
         "of_channeling": 22,
         "of_crit": 10,
         "of_haste": 12,
-        "of_str_mastery": 26,
-        "of_dex_mastery": 6,
+        "of_dex_mastery": 26,
+        "of_str_mastery": 6,
         "of_int_mastery": 6
       }
     },
     {
-      "id": "spell_shatter_gravelstrike_dex",
-      "name": "Gravelstrike Shatter Scroll",
+      "id": "spell_shatter_basalt_str",
+      "name": "Basalt Shatter Scroll",
       "slot": "spell",
       "rarity": "common",
-      "tile": "spells/scrolls/scroll-purple.png",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 30.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_shatter",
-      "primary_stat": "dex",
+      "primary_stat": "str",
       "damage_min": 24,
       "damage_max": 34,
       "damage_type": "physical",
       "spell_cooldown": 5.0,
       "item_tier": 1,
       "flavor_tags": [],
-      "lore": "A radial shockwave that bypasses armour and strikes bone.",
+      "lore": "Hold the page wrong and the cover cracks down the middle.",
       "drop_weights": [
         60,
         30,
@@ -26283,6 +27123,231 @@
       ],
       "unique": false,
       "enchant_chance": 0.05,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_wisdom": 14,
+        "of_quickcast": 22,
+        "of_resonance": 18,
+        "of_lingering": 16,
+        "of_velocity": 12,
+        "of_multicast": 10,
+        "of_channeling": 22,
+        "of_crit": 10,
+        "of_haste": 12,
+        "of_str_mastery": 26,
+        "of_dex_mastery": 6,
+        "of_int_mastery": 6
+      }
+    },
+    {
+      "id": "spell_shatter_quartz_int",
+      "name": "Quartz Shatter Scroll",
+      "slot": "spell",
+      "rarity": "common",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 47.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
+      "base_type": "spell_shatter",
+      "primary_stat": "int",
+      "damage_min": 24,
+      "damage_max": 34,
+      "damage_type": "physical",
+      "spell_cooldown": 5.0,
+      "item_tier": 1,
+      "flavor_tags": [],
+      "lore": "Hold the page wrong and the cover cracks down the middle.",
+      "drop_weights": [
+        60,
+        30,
+        8,
+        2,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_wisdom": 14,
+        "of_quickcast": 22,
+        "of_resonance": 18,
+        "of_lingering": 16,
+        "of_velocity": 12,
+        "of_multicast": 10,
+        "of_channeling": 22,
+        "of_crit": 10,
+        "of_haste": 12,
+        "of_int_mastery": 26,
+        "of_str_mastery": 6,
+        "of_dex_mastery": 6
+      }
+    },
+    {
+      "id": "spell_shatter_gravelstrike_dex",
+      "name": "Gravelstrike Shatter Scroll",
+      "slot": "spell",
+      "rarity": "uncommon",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 23.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
+      "base_type": "spell_shatter",
+      "primary_stat": "dex",
+      "damage_min": 26,
+      "damage_max": 37,
+      "damage_type": "physical",
+      "spell_cooldown": 5.0,
+      "item_tier": 2,
+      "flavor_tags": [],
+      "lore": "Hold the page wrong and the cover cracks down the middle.",
+      "drop_weights": [
+        40,
+        50,
+        20,
+        5,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.08,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_wisdom": 14,
+        "of_quickcast": 22,
+        "of_resonance": 18,
+        "of_lingering": 16,
+        "of_velocity": 12,
+        "of_multicast": 10,
+        "of_channeling": 22,
+        "of_crit": 10,
+        "of_haste": 12,
+        "of_dex_mastery": 26,
+        "of_str_mastery": 6,
+        "of_int_mastery": 6
+      }
+    },
+    {
+      "id": "spell_shatter_cragblade_int",
+      "name": "Cragblade Shatter Scroll",
+      "slot": "spell",
+      "rarity": "uncommon",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 40.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
+      "base_type": "spell_shatter",
+      "primary_stat": "int",
+      "damage_min": 26,
+      "damage_max": 37,
+      "damage_type": "physical",
+      "spell_cooldown": 5.0,
+      "item_tier": 2,
+      "flavor_tags": [],
+      "lore": "A radial shockwave that bypasses armour and strikes bone.",
+      "drop_weights": [
+        40,
+        50,
+        20,
+        5,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.08,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_wisdom": 14,
+        "of_quickcast": 22,
+        "of_resonance": 18,
+        "of_lingering": 16,
+        "of_velocity": 12,
+        "of_multicast": 10,
+        "of_channeling": 22,
+        "of_crit": 10,
+        "of_haste": 12,
+        "of_int_mastery": 26,
+        "of_str_mastery": 6,
+        "of_dex_mastery": 6
+      }
+    },
+    {
+      "id": "spell_shatter_granite_str",
+      "name": "Granite Shatter Scroll",
+      "slot": "spell",
+      "rarity": "uncommon",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 16.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
+      "base_type": "spell_shatter",
+      "primary_stat": "str",
+      "damage_min": 26,
+      "damage_max": 37,
+      "damage_type": "physical",
+      "spell_cooldown": 5.0,
+      "item_tier": 2,
+      "flavor_tags": [],
+      "lore": "A radial shockwave that bypasses armour and strikes bone.",
+      "drop_weights": [
+        40,
+        50,
+        20,
+        5,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.08,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_wisdom": 14,
+        "of_quickcast": 22,
+        "of_resonance": 18,
+        "of_lingering": 16,
+        "of_velocity": 12,
+        "of_multicast": 10,
+        "of_channeling": 22,
+        "of_crit": 10,
+        "of_haste": 12,
+        "of_str_mastery": 26,
+        "of_dex_mastery": 6,
+        "of_int_mastery": 6
+      }
+    },
+    {
+      "id": "spell_shatter_ironvein_dex",
+      "name": "Ironvein Shatter Scroll",
+      "slot": "spell",
+      "rarity": "uncommon",
+      "tile": "spells/scrolls/scroll.png",
+      "default_tint": {
+        "hue": 33.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
+      "base_type": "spell_shatter",
+      "primary_stat": "dex",
+      "damage_min": 26,
+      "damage_max": 37,
+      "damage_type": "physical",
+      "spell_cooldown": 5.0,
+      "item_tier": 2,
+      "flavor_tags": [],
+      "lore": "A radial shockwave that bypasses armour and strikes bone.",
+      "drop_weights": [
+        40,
+        50,
+        20,
+        5,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.08,
       "implicit_affixes": [],
       "affix_pool": {
         "of_wisdom": 14,
@@ -26301,290 +27366,15 @@
     },
     {
       "id": "spell_shatter_earthworn_int",
-      "name": "Earthworn Shatter Scroll",
-      "slot": "spell",
-      "rarity": "common",
-      "tile": "spells/scrolls/i-magic_mapping.png",
-      "base_type": "spell_shatter",
-      "primary_stat": "int",
-      "damage_min": 24,
-      "damage_max": 34,
-      "damage_type": "physical",
-      "spell_cooldown": 5.0,
-      "item_tier": 1,
-      "flavor_tags": [],
-      "lore": "Hold the page wrong and the cover cracks down the middle.",
-      "drop_weights": [
-        60,
-        30,
-        8,
-        2,
-        0
-      ],
-      "unique": false,
-      "enchant_chance": 0.05,
-      "implicit_affixes": [],
-      "affix_pool": {
-        "of_wisdom": 14,
-        "of_quickcast": 22,
-        "of_resonance": 18,
-        "of_lingering": 16,
-        "of_velocity": 12,
-        "of_multicast": 10,
-        "of_channeling": 22,
-        "of_crit": 10,
-        "of_haste": 12,
-        "of_int_mastery": 26,
-        "of_str_mastery": 6,
-        "of_dex_mastery": 6
-      }
-    },
-    {
-      "id": "spell_shatter_ironvein_str",
-      "name": "Ironvein Shatter Scroll",
-      "slot": "spell",
-      "rarity": "common",
-      "tile": "spells/scrolls/i-identify.png",
-      "base_type": "spell_shatter",
-      "primary_stat": "str",
-      "damage_min": 24,
-      "damage_max": 34,
-      "damage_type": "physical",
-      "spell_cooldown": 5.0,
-      "item_tier": 1,
-      "flavor_tags": [],
-      "lore": "A radial shockwave that bypasses armour and strikes bone.",
-      "drop_weights": [
-        60,
-        30,
-        8,
-        2,
-        0
-      ],
-      "unique": false,
-      "enchant_chance": 0.05,
-      "implicit_affixes": [],
-      "affix_pool": {
-        "of_wisdom": 14,
-        "of_quickcast": 22,
-        "of_resonance": 18,
-        "of_lingering": 16,
-        "of_velocity": 12,
-        "of_multicast": 10,
-        "of_channeling": 22,
-        "of_crit": 10,
-        "of_haste": 12,
-        "of_str_mastery": 26,
-        "of_dex_mastery": 6,
-        "of_int_mastery": 6
-      }
-    },
-    {
-      "id": "spell_shatter_mountain_dex",
-      "name": "Mountain Shatter Scroll",
-      "slot": "spell",
-      "rarity": "common",
-      "tile": "spells/scrolls/scroll-yellow.png",
-      "base_type": "spell_shatter",
-      "primary_stat": "dex",
-      "damage_min": 24,
-      "damage_max": 34,
-      "damage_type": "physical",
-      "spell_cooldown": 5.0,
-      "item_tier": 1,
-      "flavor_tags": [],
-      "lore": "A radial shockwave that bypasses armour and strikes bone.",
-      "drop_weights": [
-        60,
-        30,
-        8,
-        2,
-        0
-      ],
-      "unique": false,
-      "enchant_chance": 0.05,
-      "implicit_affixes": [],
-      "affix_pool": {
-        "of_wisdom": 14,
-        "of_quickcast": 22,
-        "of_resonance": 18,
-        "of_lingering": 16,
-        "of_velocity": 12,
-        "of_multicast": 10,
-        "of_channeling": 22,
-        "of_crit": 10,
-        "of_haste": 12,
-        "of_dex_mastery": 26,
-        "of_str_mastery": 6,
-        "of_int_mastery": 6
-      }
-    },
-    {
-      "id": "spell_shatter_riverstone_str",
-      "name": "Riverstone Shatter Scroll",
-      "slot": "spell",
-      "rarity": "uncommon",
-      "tile": "spells/scrolls/i-enchant-weapon.png",
-      "base_type": "spell_shatter",
-      "primary_stat": "str",
-      "damage_min": 26,
-      "damage_max": 37,
-      "damage_type": "physical",
-      "spell_cooldown": 5.0,
-      "item_tier": 2,
-      "flavor_tags": [],
-      "lore": "A radial shockwave that bypasses armour and strikes bone.",
-      "drop_weights": [
-        40,
-        50,
-        20,
-        5,
-        0
-      ],
-      "unique": false,
-      "enchant_chance": 0.08,
-      "implicit_affixes": [],
-      "affix_pool": {
-        "of_wisdom": 14,
-        "of_quickcast": 22,
-        "of_resonance": 18,
-        "of_lingering": 16,
-        "of_velocity": 12,
-        "of_multicast": 10,
-        "of_channeling": 22,
-        "of_crit": 10,
-        "of_haste": 12,
-        "of_str_mastery": 26,
-        "of_dex_mastery": 6,
-        "of_int_mastery": 6
-      }
-    },
-    {
-      "id": "spell_shatter_tectonic_dex",
-      "name": "Tectonic Shatter Scroll",
-      "slot": "spell",
-      "rarity": "uncommon",
-      "tile": "spells/scrolls/i-blinking.png",
-      "base_type": "spell_shatter",
-      "primary_stat": "dex",
-      "damage_min": 26,
-      "damage_max": 37,
-      "damage_type": "physical",
-      "spell_cooldown": 5.0,
-      "item_tier": 2,
-      "flavor_tags": [],
-      "lore": "Hold the page wrong and the cover cracks down the middle.",
-      "drop_weights": [
-        40,
-        50,
-        20,
-        5,
-        0
-      ],
-      "unique": false,
-      "enchant_chance": 0.08,
-      "implicit_affixes": [],
-      "affix_pool": {
-        "of_wisdom": 14,
-        "of_quickcast": 22,
-        "of_resonance": 18,
-        "of_lingering": 16,
-        "of_velocity": 12,
-        "of_multicast": 10,
-        "of_channeling": 22,
-        "of_crit": 10,
-        "of_haste": 12,
-        "of_dex_mastery": 26,
-        "of_str_mastery": 6,
-        "of_int_mastery": 6
-      }
-    },
-    {
-      "id": "spell_shatter_basalt_int",
-      "name": "Basalt Shatter Scroll",
-      "slot": "spell",
-      "rarity": "uncommon",
-      "tile": "spells/scrolls/scroll-grey.png",
-      "base_type": "spell_shatter",
-      "primary_stat": "int",
-      "damage_min": 26,
-      "damage_max": 37,
-      "damage_type": "physical",
-      "spell_cooldown": 5.0,
-      "item_tier": 2,
-      "flavor_tags": [],
-      "lore": "Hold the page wrong and the cover cracks down the middle.",
-      "drop_weights": [
-        40,
-        50,
-        20,
-        5,
-        0
-      ],
-      "unique": false,
-      "enchant_chance": 0.08,
-      "implicit_affixes": [],
-      "affix_pool": {
-        "of_wisdom": 14,
-        "of_quickcast": 22,
-        "of_resonance": 18,
-        "of_lingering": 16,
-        "of_velocity": 12,
-        "of_multicast": 10,
-        "of_channeling": 22,
-        "of_crit": 10,
-        "of_haste": 12,
-        "of_int_mastery": 26,
-        "of_str_mastery": 6,
-        "of_dex_mastery": 6
-      }
-    },
-    {
-      "id": "spell_shatter_pebble_str",
-      "name": "Pebble Shatter Scroll",
-      "slot": "spell",
-      "rarity": "uncommon",
-      "tile": "spells/scrolls/i-blinking.png",
-      "base_type": "spell_shatter",
-      "primary_stat": "str",
-      "damage_min": 26,
-      "damage_max": 37,
-      "damage_type": "physical",
-      "spell_cooldown": 5.0,
-      "item_tier": 2,
-      "flavor_tags": [],
-      "lore": "A radial shockwave that bypasses armour and strikes bone.",
-      "drop_weights": [
-        40,
-        50,
-        20,
-        5,
-        0
-      ],
-      "unique": false,
-      "enchant_chance": 0.08,
-      "implicit_affixes": [],
-      "affix_pool": {
-        "of_wisdom": 14,
-        "of_quickcast": 22,
-        "of_resonance": 18,
-        "of_lingering": 16,
-        "of_velocity": 12,
-        "of_multicast": 10,
-        "of_channeling": 22,
-        "of_crit": 10,
-        "of_haste": 12,
-        "of_str_mastery": 26,
-        "of_dex_mastery": 6,
-        "of_int_mastery": 6
-      }
-    },
-    {
-      "id": "spell_shatter_cragblade_int",
-      "name": "Cragblade Shatter Tome",
+      "name": "Earthworn Shatter Tome",
       "slot": "spell",
       "rarity": "rare",
-      "tile": "spells/books/dark_brown.png",
+      "tile": "spells/books/light_gray.png",
+      "default_tint": {
+        "hue": 50.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_shatter",
       "primary_stat": "int",
       "damage_min": 29,
@@ -26620,20 +27410,25 @@
       }
     },
     {
-      "id": "spell_shatter_quartz_dex",
-      "name": "Quartz Shatter Tome",
+      "id": "spell_shatter_tectonic_str",
+      "name": "Tectonic Shatter Tome",
       "slot": "spell",
       "rarity": "rare",
-      "tile": "spells/books/cyan.png",
+      "tile": "spells/books/tan.png",
+      "default_tint": {
+        "hue": 26.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_shatter",
-      "primary_stat": "dex",
+      "primary_stat": "str",
       "damage_min": 29,
       "damage_max": 41,
       "damage_type": "physical",
       "spell_cooldown": 5.0,
       "item_tier": 3,
       "flavor_tags": [],
-      "lore": "Hold the page wrong and the cover cracks down the middle.",
+      "lore": "A radial shockwave that bypasses armour and strikes bone.",
       "drop_weights": [
         10,
         25,
@@ -26654,26 +27449,31 @@
         "of_channeling": 22,
         "of_crit": 10,
         "of_haste": 12,
-        "of_dex_mastery": 26,
-        "of_str_mastery": 6,
+        "of_str_mastery": 26,
+        "of_dex_mastery": 6,
         "of_int_mastery": 6
       }
     },
     {
-      "id": "spell_shatter_slate_str",
+      "id": "spell_shatter_slate_dex",
       "name": "Slate Shatter Tome",
       "slot": "spell",
       "rarity": "rare",
-      "tile": "spells/books/yellow.png",
+      "tile": "spells/books/light_green.png",
+      "default_tint": {
+        "hue": 43.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_shatter",
-      "primary_stat": "str",
+      "primary_stat": "dex",
       "damage_min": 29,
       "damage_max": 41,
       "damage_type": "physical",
       "spell_cooldown": 5.0,
       "item_tier": 3,
       "flavor_tags": [],
-      "lore": "Hold the page wrong and the cover cracks down the middle.",
+      "lore": "A radial shockwave that bypasses armour and strikes bone.",
       "drop_weights": [
         10,
         25,
@@ -26694,19 +27494,24 @@
         "of_channeling": 22,
         "of_crit": 10,
         "of_haste": 12,
-        "of_str_mastery": 26,
-        "of_dex_mastery": 6,
+        "of_dex_mastery": 26,
+        "of_str_mastery": 6,
         "of_int_mastery": 6
       }
     },
     {
-      "id": "spell_shatter_bedrock_int",
-      "name": "Bedrock Shatter Tome",
+      "id": "spell_shatter_quarry_str",
+      "name": "Quarry Shatter Tome",
       "slot": "spell",
       "rarity": "epic",
       "tile": "spells/books/white.png",
+      "default_tint": {
+        "hue": 19.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_shatter",
-      "primary_stat": "int",
+      "primary_stat": "str",
       "damage_min": 33,
       "damage_max": 46,
       "damage_type": "physical",
@@ -26734,17 +27539,22 @@
         "of_channeling": 30,
         "of_crit": 10,
         "of_haste": 12,
-        "of_int_mastery": 26,
-        "of_str_mastery": 6,
-        "of_dex_mastery": 6
+        "of_str_mastery": 26,
+        "of_dex_mastery": 6,
+        "of_int_mastery": 6
       }
     },
     {
-      "id": "spell_shatter_ridge_dex",
-      "name": "Ridge Shatter Tome",
+      "id": "spell_shatter_bedrock_dex",
+      "name": "Bedrock Shatter Tome",
       "slot": "spell",
       "rarity": "legendary",
-      "tile": "spells/books/book_of_the_dead.png",
+      "tile": "spells/books/gold.png",
+      "default_tint": {
+        "hue": 36.0,
+        "sat": 0.85,
+        "mode": "colorize"
+      },
       "base_type": "spell_shatter",
       "primary_stat": "dex",
       "damage_min": 37,

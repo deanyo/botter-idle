@@ -114,6 +114,10 @@ LORE_BY_ARCHETYPE_ELEMENT = {
 # Which scroll sprites are "elemental-leaning" — picked first when the
 # spell has a matching element. Falls through to the full pool when
 # no thematic match. Path is relative to project/assets/tiles/.
+# Only the full-tile scroll sprites — DCSS i-*.png files are tiny
+# overlay pictograms (skull/eye/orb) intended to layer on top of a base
+# scroll, not used standalone. Used alone they read as "tiny icon in
+# empty space." User caught this 2026-06-05.
 SCROLL_SPRITES = [
     'spells/scrolls/scroll-blue.png',
     'spells/scrolls/scroll-brown.png',
@@ -124,28 +128,6 @@ SCROLL_SPRITES = [
     'spells/scrolls/scroll-red.png',
     'spells/scrolls/scroll-yellow.png',
     'spells/scrolls/scroll.png',
-    'spells/scrolls/i-fog.png',
-    'spells/scrolls/i-noise.png',
-    'spells/scrolls/i-immolation.png',
-    'spells/scrolls/i-poison.png',
-    'spells/scrolls/i-blinking.png',
-    'spells/scrolls/i-magic_mapping.png',
-    'spells/scrolls/i-holy_word.png',
-    'spells/scrolls/i-recharging.png',
-    'spells/scrolls/i-teleportation.png',
-    'spells/scrolls/i-vulnerability.png',
-    'spells/scrolls/i-fear.png',
-    'spells/scrolls/i-acquirement.png',
-    'spells/scrolls/i-amnesia.png',
-    'spells/scrolls/i-brand-weapon.png',
-    'spells/scrolls/i-butterflies.png',
-    'spells/scrolls/i-enchant_armour.png',
-    'spells/scrolls/i-enchant-weapon.png',
-    'spells/scrolls/i-identify.png',
-    'spells/scrolls/i-remove_curse.png',
-    'spells/scrolls/i-silence.png',
-    'spells/scrolls/i-torment.png',
-    'spells/scrolls/i-unholy_creation.png',
 ]
 
 # Books split by tier — uncommon/rare = simple bound books,
@@ -190,15 +172,17 @@ BOOKS_LEGENDARY = [  # signature
 
 # Per-element scroll picks — when an element matches, prefer this
 # subset so a fire spell looks fiery.
+# Element → preferred scroll color. Overlay icons (i-*.png) are NOT in
+# this list — they're tiny overlay pictograms, not main tile art.
 SCROLL_ELEMENT_HINTS = {
-    'fire':       ['scroll-red.png', 'scroll-yellow.png', 'i-immolation.png'],
-    'cold':       ['scroll-blue.png', 'scroll-cyan.png', 'i-fog.png', 'i-blinking.png'],
-    'thunderous': ['scroll-purple.png', 'scroll-blue.png', 'i-noise.png'],
-    'holy':       ['scroll-yellow.png', 'i-holy_word.png', 'scroll-grey.png'],
-    'dark':       ['scroll-grey.png', 'scroll-purple.png', 'i-torment.png', 'i-unholy_creation.png'],
-    'arcane':     ['scroll-purple.png', 'i-magic_mapping.png', 'i-recharging.png'],
-    'earth':      ['scroll-brown.png', 'scroll-green.png', 'i-noise.png'],
-    'brutal':     ['scroll.png', 'i-noise.png', 'scroll-grey.png'],
+    'fire':       ['scroll-red.png', 'scroll-yellow.png'],
+    'cold':       ['scroll-blue.png', 'scroll-cyan.png'],
+    'thunderous': ['scroll-purple.png', 'scroll-blue.png'],
+    'holy':       ['scroll-yellow.png', 'scroll-grey.png'],
+    'dark':       ['scroll-grey.png', 'scroll-purple.png'],
+    'arcane':     ['scroll-purple.png', 'scroll-cyan.png'],
+    'earth':      ['scroll-brown.png', 'scroll-green.png'],
+    'brutal':     ['scroll.png', 'scroll-grey.png', 'scroll-red.png'],
 }
 
 # Each archetype's variant plan — N variants per rarity tier, balanced
@@ -234,20 +218,20 @@ RARITY_ENCHANT_CHANCE = {
 
 
 def pick_scroll_or_book(element, rarity, used):
-    """Pick the best-fitting tile for this spell, avoiding ids already used."""
+    """Pick a base tile. Hue rotation (default_tint) handles the rest.
+
+    We use a small pool of clean base sprites and apply per-spell hue
+    shifts via the recolor shader (same system as the item generator)
+    so 50 commons can each look distinct without needing 50 unique
+    PNGs. 2026-06-05.
+    """
+    # Common/uncommon → use scroll.png as the unified base. The hue
+    # shift in default_tint colors it per element+variant.
     if rarity in ('common', 'uncommon'):
-        # Scrolls — prefer element-themed ones first, then pool.
-        hints = SCROLL_ELEMENT_HINTS.get(element, [])
-        # Build ranked candidates: element hints first, then full pool.
-        ranked = []
-        for h in hints:
-            for path in SCROLL_SPRITES:
-                if path.endswith(h) and path not in used:
-                    ranked.append(path)
-        for path in SCROLL_SPRITES:
-            if path not in used:
-                ranked.append(path)
-        return ranked[0] if ranked else SCROLL_SPRITES[rng.randrange(len(SCROLL_SPRITES))]
+        # Use a single neutral scroll as the canonical base — hue
+        # rotation does the rest. Fall through to scroll-grey if the
+        # blank one isn't available.
+        return 'spells/scrolls/scroll.png'
     pool = {
         'rare': BOOKS_RARE,
         'epic': BOOKS_EPIC,
@@ -255,6 +239,41 @@ def pick_scroll_or_book(element, rarity, used):
     }[rarity]
     avail = [p for p in pool if p not in used]
     return avail[0] if avail else pool[rng.randrange(len(pool))]
+
+
+# Element → base hue (degrees). Variants step ±20° around this so a
+# fire spell can read as red, orange, or amber — all clearly fire, none
+# identical. 2026-06-05.
+ELEMENT_BASE_HUE = {
+    'fire':       10.0,    # red-orange
+    'cold':       210.0,   # cyan-blue
+    'thunderous': 270.0,   # violet-purple
+    'lightning':  270.0,
+    'holy':       50.0,    # warm gold
+    'dark':       290.0,   # purple-magenta
+    'arcane':     280.0,   # purple
+    'earth':      30.0,    # brown-amber
+    'brutal':     0.0,     # red
+    'poison':     130.0,   # green
+    'vampiric':   355.0,   # blood-red
+    '':           200.0,   # default arcane-ish blue
+}
+
+def make_tint(element, variant_idx):
+    """Build a default_tint dict that hue-shifts the base scroll/book
+    sprite into the right element band, with a per-variant offset so
+    spells of the same element don't all look identical."""
+    base = ELEMENT_BASE_HUE.get(element, ELEMENT_BASE_HUE[''])
+    offset = ((variant_idx * 17) % 41) - 20  # ±20° spread
+    h = (base + offset) % 360.0
+    # Mode 'colorize' overrides the underlying color — works on the
+    # parchment-yellow scroll.png. Saturation 0.85 keeps some texture
+    # variation through the recolor.
+    return {
+        'hue': round(float(h), 1),
+        'sat': 0.85,
+        'mode': 'colorize',
+    }
 
 
 def build_affix_pool(element, primary_stat, rarity):
@@ -301,7 +320,7 @@ def build_affix_pool(element, primary_stat, rarity):
     return pool
 
 
-def make_variant(arch, rarity, primary_stat, used_ids, used_tiles, used_names):
+def make_variant(arch, rarity, primary_stat, used_ids, used_tiles, used_names, variant_idx):
     arch_id, def_stat, element, noun, label = arch
     # Read base stats from spell_data.gd source — easier than re-reading
     # the GD file. Approximate the values we know.
@@ -405,6 +424,7 @@ def make_variant(arch, rarity, primary_stat, used_ids, used_tiles, used_names):
         'slot': 'spell',
         'rarity': rarity,
         'tile': tile_path,
+        'default_tint': make_tint(element or label, variant_idx),
         'base_type': arch_id,
         'primary_stat': primary_stat,
         'damage_min': dmg_min,
@@ -463,6 +483,7 @@ def main():
     used_names = set()
     # Per-rarity tile usage — start from existing.
     used_tiles_per_rarity = {r: set(s) for r, s in existing_tiles_per_rarity.items()}
+    variant_counter = 0
     for arch in ARCHETYPES:
         for rarity, count, allow_stats in VARIANTS_PER_ARCHETYPE:
             # Distribute `count` variants across allow_stats roughly evenly.
@@ -472,7 +493,8 @@ def main():
             for i in range(count):
                 primary = stat_order[i % len(stat_order)]
                 used_tiles = used_tiles_per_rarity.setdefault(rarity, set())
-                item = make_variant(arch, rarity, primary, used_ids, used_tiles, used_names)
+                item = make_variant(arch, rarity, primary, used_ids, used_tiles, used_names, variant_counter)
+                variant_counter += 1
                 new_items.append(item)
     # Append + save.
     db['items'].extend(new_items)

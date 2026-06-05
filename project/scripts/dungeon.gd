@@ -2284,6 +2284,13 @@ func _pick_loot_id(rarity: String) -> String:
 	var ids: Array[String] = []
 	var weights: Array[float] = []
 	var total: float = 0.0
+	# Spells outnumber gear 175 → ~280 in the database, so without a
+	# slot-class weight they dominate every rarity tier (≥60% of common
+	# drops were spell tomes). Spells are *consumable-class* drops in the
+	# DCSS frame — should feel rare and exciting. We multiply spell
+	# pull-weight by 0.10 so they land at ~10-12% of all drops.
+	# 2026-06-05 user catch.
+	const SPELL_LOOT_WEIGHT_MULT: float = 0.10
 	for id in items_db.keys():
 		var item: Dictionary = items_db[id]
 		if String(item.get("rarity", "")) != rarity:
@@ -2300,6 +2307,8 @@ func _pick_loot_id(rarity: String) -> String:
 			# Legacy item without drop_weights — keep it eligible at all tiers
 			# until manifests cover its slot. Equal weight 1.
 			w = 1.0
+		if String(item.get("slot", "")) == "spell":
+			w *= SPELL_LOOT_WEIGHT_MULT
 		ids.append(id)
 		weights.append(w)
 		total += w

@@ -140,6 +140,17 @@ static func recolor_material_for(inst: Variant) -> ShaderMaterial:
 	if typeof(inst) != TYPE_DICTIONARY:
 		return null
 	var tint: Variant = inst.get("tint", null)
+	# Fallback — instances spawned outside _create_item_instance (e.g.
+	# starter spells in save_state.gd's new-save path) have no tint
+	# field. Look up the base item's default_tint via ItemsDb so the
+	# author-set scroll color still renders. 2026-06-05.
+	if typeof(tint) != TYPE_DICTIONARY:
+		var base_id: String = String(inst.get("base_id", ""))
+		if base_id != "":
+			var base: Dictionary = ItemsDb.items().get(base_id, {})
+			var dt: Variant = base.get("default_tint", null)
+			if typeof(dt) == TYPE_DICTIONARY:
+				tint = dt
 	if typeof(tint) != TYPE_DICTIONARY:
 		return null
 	var mat := ShaderMaterial.new()
