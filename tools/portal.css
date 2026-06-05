@@ -159,6 +159,61 @@ header.portal-header .stats {
   border-color: var(--accent-dim);
 }
 
+/* Shared cross-page navigation. Renders as a row of pill links across
+   the top of every editor + viewer page. Active page is highlighted.
+   Drop a `<nav class="portal-nav" data-active="atlas"></nav>` into the
+   page and call portalNav() at the end of the body to populate it.
+   2026-06-05 — replaces the per-page hand-rolled link rows. */
+.portal-nav {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 8px 14px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.portal-nav .nav-home {
+  color: var(--muted);
+  font-size: 12px;
+  border: 1px solid var(--border);
+  padding: 4px 10px;
+  border-radius: 12px;
+  text-decoration: none;
+  margin-right: 6px;
+}
+.portal-nav .nav-home:hover {
+  color: var(--accent);
+  border-color: var(--accent-dim);
+}
+.portal-nav a.nav-link {
+  color: var(--muted);
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  text-decoration: none;
+  border: 1px solid transparent;
+  transition: color 0.1s, border-color 0.1s, background 0.1s;
+}
+.portal-nav a.nav-link:hover {
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+.portal-nav a.nav-link.active {
+  color: var(--accent);
+  border-color: var(--accent-dim);
+  background: var(--accent-soft);
+}
+.portal-nav .nav-spacer { flex: 1; }
+.portal-nav .nav-title {
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 600;
+  margin-right: 12px;
+  letter-spacing: 0.5px;
+}
+
 /* Cards — used on the index page, run report, etc. */
 .card {
   background: var(--panel);

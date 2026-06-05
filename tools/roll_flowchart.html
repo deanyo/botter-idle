@@ -252,16 +252,7 @@
 </style>
 </head>
 <body>
-
-<header>
-  <a href="index.html" class="home-link">← portal</a>
-  <h1>Item Roll Flowchart</h1>
-  <a href="atlas_viewer.html">atlas</a>
-  <a href="item_editor.html">items</a>
-  <a href="affix_editor.html">bonuses</a>
-  <a href="drop_tuning.html">drop rates</a>
-  <span class="spacer" style="flex:1"></span>
-</header>
+<nav class="portal-nav" data-active="flowchart" data-title="Roll Flowchart"></nav>
 
 <main>
   <div class="intro">
@@ -638,5 +629,6 @@ row('row-combo',      COMBO_ROW.map(tooltip));
 row('row-meta',       META_ROW.map(tooltip));
 row('row-everything', EVERYTHING_ROW.map(tooltip));
 </script>
+<script src="portal_nav.js" defer></script>
 </body>
 </html>

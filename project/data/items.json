@@ -4155,7 +4155,8 @@
         "of_resonance": 12,
         "of_channeling": 12,
         "of_crit": 12
-      }
+      },
+      "overlay": "helm_jesters_cap"
     },
     {
       "id": "leather_cap",
@@ -4231,7 +4232,8 @@
         "of_resonance": 12,
         "of_channeling": 12,
         "of_crit": 12
-      }
+      },
+      "overlay": "helm_padded_coif"
     },
     {
       "id": "plumed_helm",
@@ -6053,7 +6055,8 @@
         "hue": 0,
         "sat": 1.2,
         "mode": "normal"
-      }
+      },
+      "overlay": "shield_dragoncrest"
     },
     {
       "id": "fortress_wall",
@@ -6395,7 +6398,8 @@
         "hue": 270,
         "sat": 1.1,
         "mode": "normal"
-      }
+      },
+      "overlay": "shield_phantom_aegis"
     },
     {
       "id": "shield_of_reflection",
@@ -6701,7 +6705,8 @@
         "of_the_cat": 26,
         "of_haste": 26,
         "of_regen": 10
-      }
+      },
+      "overlay": "boots_ranger"
     },
     {
       "id": "scouts_treads",
@@ -6737,7 +6742,8 @@
         "of_the_cat": 26,
         "of_haste": 26,
         "of_regen": 10
-      }
+      },
+      "overlay": "boots_scouts"
     },
     {
       "id": "soldier_greaves",
@@ -6778,7 +6784,8 @@
         "sat": 0.8,
         "mode": "colorize",
         "colorize_strength": 0.45
-      }
+      },
+      "overlay": "boots_soldier_greaves"
     },
     {
       "id": "ironshod_boots",
@@ -6819,7 +6826,8 @@
         "hue": 220,
         "sat": 1.1,
         "mode": "normal"
-      }
+      },
+      "overlay": "boots_ironshod"
     },
     {
       "id": "sentinel_greaves",
@@ -6860,7 +6868,8 @@
         "hue": 10,
         "sat": 1.1,
         "mode": "normal"
-      }
+      },
+      "overlay": "boots_sentinel"
     },
     {
       "id": "swiftstep_boots",
@@ -6937,7 +6946,8 @@
         "hue": 30,
         "sat": 1.0,
         "mode": "colorize"
-      }
+      },
+      "overlay": "boots_earthshaker"
     },
     {
       "id": "stormrunner_boots",
@@ -6974,7 +6984,8 @@
         "of_the_cat": 26,
         "of_haste": 26,
         "of_regen": 10
-      }
+      },
+      "overlay": "boots_stormrunner"
     },
     {
       "id": "vanguard_sabatons",
@@ -7016,7 +7027,8 @@
         "hue": 220,
         "sat": 1.2,
         "mode": "normal"
-      }
+      },
+      "overlay": "boots_vanguard"
     },
     {
       "id": "assassins_boots",
@@ -7184,7 +7196,8 @@
         "hue": 50,
         "sat": 1.1,
         "mode": "normal"
-      }
+      },
+      "overlay": "boots_march_of_kings"
     },
     {
       "id": "cloak_of_the_thief",
@@ -7270,7 +7283,8 @@
         "hue": 0,
         "sat": 1.0,
         "mode": "colorize"
-      }
+      },
+      "overlay": "boots_apocalypse"
     },
     {
       "id": "windwalker_boots",
@@ -7306,7 +7320,8 @@
         "of_the_cat": 26,
         "of_haste": 26,
         "of_regen": 10
-      }
+      },
+      "overlay": "boots_windwalker"
     },
     {
       "id": "brass_ring",
@@ -10553,7 +10568,8 @@
         "of_lingering": 14,
         "of_haste": 10,
         "of_regen": 8
-      }
+      },
+      "overlay": "cloak_leather"
     },
     {
       "id": "travelers_cloak",
@@ -10594,7 +10610,8 @@
         "of_lingering": 14,
         "of_haste": 10,
         "of_regen": 8
-      }
+      },
+      "overlay": "cloak_travelers"
     },
     {
       "id": "wool_cloak",
@@ -10637,7 +10654,8 @@
         "of_lingering": 14,
         "of_haste": 10,
         "of_regen": 8
-      }
+      },
+      "overlay": "cloak_wool"
     },
     {
       "id": "hooded_cloak",
@@ -10680,7 +10698,8 @@
         "of_lingering": 14,
         "of_haste": 10,
         "of_regen": 8
-      }
+      },
+      "overlay": "cloak_hooded"
     },
     {
       "id": "woven_cloak",
@@ -10724,7 +10743,8 @@
         "of_lingering": 14,
         "of_haste": 10,
         "of_regen": 8
-      }
+      },
+      "overlay": "cloak_woven"
     },
     {
       "id": "rangers_cloak",
@@ -10768,7 +10788,8 @@
         "of_lingering": 14,
         "of_haste": 10,
         "of_regen": 8
-      }
+      },
+      "overlay": "cloak_rangers"
     },
     {
       "id": "silken_cloak",
@@ -10813,7 +10834,8 @@
         "of_lingering": 14,
         "of_haste": 10,
         "of_regen": 8
-      }
+      },
+      "overlay": "cloak_silken"
     },
     {
       "id": "warlord_cloak",
@@ -10857,7 +10879,8 @@
         "of_lingering": 14,
         "of_haste": 10,
         "of_regen": 8
-      }
+      },
+      "overlay": "cloak_warlord"
     },
     {
       "id": "hand_axe",

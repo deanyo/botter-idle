@@ -9,6 +9,7 @@
      button styles live in portal.css. */
   body {
     display: flex;
+    flex-direction: column;
     height: 100vh;
   }
   header {
@@ -156,10 +157,11 @@
 </style>
 </head>
 <body>
+<nav class="portal-nav" data-active="biomes" data-title="Biome Editor"></nav>
+<div id="biome-shell" style="display:flex; flex:1; min-height:0; overflow:hidden;">
 
 <aside id="sidebar">
   <header style="display:flex; align-items:center; gap:10px;">
-    <a href="index.html" class="home-link">← portal</a>
     <h1>Biomes</h1>
   </header>
   <div id="biome-list"></div>
@@ -173,6 +175,8 @@
 <main id="main">
   <div class="empty">Loading…</div>
 </main>
+
+</div><!-- /#biome-shell -->
 
 <!-- Picker modal -->
 <div id="picker">
@@ -739,5 +743,6 @@ function escape(s) {
 
 load();
 </script>
+<script src="portal_nav.js" defer></script>
 </body>
 </html>

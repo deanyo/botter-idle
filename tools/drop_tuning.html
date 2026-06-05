@@ -74,18 +74,13 @@
 </style>
 </head>
 <body>
+<nav class="portal-nav" data-active="drops" data-title="Drop Rates"></nav>
 <header>
-  <a href="index.html" class="home-link">← portal</a>
-  <h1>Drop Tuning</h1>
-  <a href="atlas_viewer.html">atlas</a>
-  <a href="item_editor.html">items</a>
-  <a href="affix_editor.html">affixes</a>
-  <a href="biome_editor.html">biomes</a>
   <span class="spacer"></span>
   <span id="status"></span>
-  <button onclick="exportJSON()">⬇ Export drop_tuning.json</button>
-  <button onclick="copyToClipboard()">⧉ Copy to clipboard</button>
-  <button class="primary" onclick="resetToDefaults()">Reset to defaults</button>
+  <button onclick="copyToClipboard()" title="Copy all drop rates as JSON">⧉ Copy JSON</button>
+  <button class="primary" onclick="exportJSON()" title="Download all drop rates as a single JSON file">⬇ Export</button>
+  <button onclick="resetToDefaults()">Reset</button>
 </header>
 
 <main id="root"></main>
@@ -276,5 +271,6 @@ function escapeHtml(s) {
 
 load();
 </script>
+<script src="portal_nav.js" defer></script>
 </body>
 </html>

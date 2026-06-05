@@ -155,21 +155,16 @@
 </style>
 </head>
 <body>
+<nav class="portal-nav" data-active="affixes" data-title="Bonuses Editor"></nav>
 <header>
-  <a href="index.html" class="home-link">← portal</a>
-  <h1>Affix / Enchant Editor</h1>
-  <a href="atlas_viewer.html">atlas</a>
-  <a href="biome_editor.html">biomes</a>
-  <a href="item_editor.html">items</a>
-  <a href="drop_tuning.html">drop tuning</a>
-  <span class="spacer"></span>
   <span id="mode-tabs" style="display:flex; gap:4px;">
-    <button id="mode-affixes" class="primary" onclick="setMode('affixes')">Affixes</button>
-    <button id="mode-enchants" onclick="setMode('enchants')">Enchants</button>
+    <button id="mode-affixes" class="primary" onclick="setMode('affixes')">Item bonuses</button>
+    <button id="mode-enchants" onclick="setMode('enchants')">Enchant combos</button>
   </span>
+  <span class="spacer"></span>
   <span id="status" style="font-size: 12px; color: var(--muted);"></span>
-  <button id="btn-new-affix" onclick="addNew()">+ New affix</button>
-  <button id="btn-export" class="primary" onclick="exportJSON()">⬇ Export affixes.json</button>
+  <button id="btn-new-affix" onclick="addNew()">+ New bonus</button>
+  <button id="btn-export" class="primary" onclick="exportJSON()" title="Download all bonuses as a single JSON file">⬇ Export</button>
 </header>
 <div class="body" id="affixes-body">
   <aside>
@@ -682,5 +677,6 @@ function escapeAttr(s) { return escapeHtml(s); }
 
 load();
 </script>
+<script src="portal_nav.js" defer></script>
 </body>
 </html>
