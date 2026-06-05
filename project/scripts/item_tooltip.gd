@@ -304,6 +304,26 @@ func render_for(item_def: Dictionary, instance: Variant, db: Dictionary) -> void
 				ec = COLOR_BODY
 			_vbox.add_child(_make_label("✦ Enchant: %s" % single_enchant.capitalize(), 12, ec, false))
 			_vbox.add_child(_make_separator())
+	# Item Level — single integer summarising base stats + expected
+	# affix budget + implicits + flavor procs. Lets players spot
+	# strong vs weak rolls at a glance and surfaces outliers in the
+	# audit. Alt-hold expands to per-component breakdown. 2026-06-05.
+	var ilvl: Dictionary = ItemLevel.compute(item, inst)
+	if int(ilvl.get("level", 0)) > 0:
+		var ilvl_text: String = "iLvl %d  ·  %s" % [int(ilvl.level), String(ilvl.get("rarity", "")).capitalize()]
+		_vbox.add_child(_make_label(ilvl_text, 11, rarity_col, true))
+		if UILayout.alt_held():
+			for c in ilvl.get("components", []):
+				if c is Array and c.size() >= 2:
+					var comp_label: String = "    %s" % String(c[0])
+					var comp_score: int = int(c[1])
+					var comp_text: String = "%s%s%d" % [
+						comp_label,
+						" ".repeat(max(1, 32 - comp_label.length())),
+						comp_score,
+					]
+					_vbox.add_child(_make_label(comp_text, 10, Color(0.55, 0.55, 0.5), false))
+		_vbox.add_child(_make_separator())
 	# Flavor / lore.
 	var lore: String = String(item.get("lore", ""))
 	if lore != "":
