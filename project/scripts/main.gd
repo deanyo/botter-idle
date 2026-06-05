@@ -200,6 +200,8 @@ func _show_main_menu() -> void:
 		menu.create_character_pressed.connect(_show_character_create)
 	if menu.has_signal("paperdoll_audit_pressed"):
 		menu.paperdoll_audit_pressed.connect(_show_paperdoll_audit)
+	if menu.has_signal("spell_showcase_pressed"):
+		menu.spell_showcase_pressed.connect(_show_spell_showcase)
 
 func _show_video_options() -> void:
 	var opts: Node = VIDEO_OPTIONS_SCENE.instantiate()
@@ -214,6 +216,14 @@ func _show_fx_tuner() -> void:
 func _show_paperdoll_audit() -> void:
 	# Authoring screen — no .tscn; the script paints itself in _ready.
 	var script := load("res://scripts/paperdoll_audit.gd")
+	var screen: Control = script.new()
+	_swap(screen)
+	screen.back_pressed.connect(_show_main_menu)
+
+func _show_spell_showcase() -> void:
+	# Spell preview / authoring screen — same shape as paperdoll audit
+	# (script-only, no .tscn). 2026-06-05.
+	var script := load("res://scripts/spell_showcase.gd")
 	var screen: Control = script.new()
 	_swap(screen)
 	screen.back_pressed.connect(_show_main_menu)

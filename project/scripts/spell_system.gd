@@ -132,6 +132,16 @@ static func get_fire_by_arch() -> Dictionary:
 # Dispatch by archetype. Each archetype has its own fire function with
 # a unified signature (bot, dungeon, item) — keeps the tick-loop body
 # simple and lets Phase 3 add more archetypes by extending the match.
+# Test-only entry for the showcase screen — fires a spell as if it were
+# cast, but bypasses the cooldown gate. Mirrors process_tick's dispatch
+# but doesn't poke bot.spell_cooldowns. The "dungeon" arg can be any
+# node with `enemies: Array` and `actor_layer: Node` — the showcase
+# scene fakes both. 2026-06-05.
+static func test_fire_spell(bot: Node, dungeon: Node, item: Dictionary) -> void:
+	if bot == null or dungeon == null or item == null or item.is_empty():
+		return
+	_dispatch_fire(bot, dungeon, item)
+
 static func _dispatch_fire(bot: Node, dungeon: Node, item: Dictionary) -> void:
 	var base_type: String = String(item.get("base_type", ""))
 	var fired: bool = false

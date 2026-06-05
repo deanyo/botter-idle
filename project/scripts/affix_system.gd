@@ -146,6 +146,18 @@ static func get_affix_def(id: String) -> Dictionary:
 	_ensure_loaded()
 	return _affixes_by_id.get(id, {})
 
+# Return every affix def whose `family` field matches. Used by the
+# spell showcase to enumerate archetype-family flag affixes for the
+# checkbox panel. 2026-06-05.
+static func affixes_by_family(family: String) -> Array:
+	_ensure_loaded()
+	var out: Array = []
+	for id in _affixes_by_id.keys():
+		var af: Dictionary = _affixes_by_id[id]
+		if String(af.get("family", "")) == family:
+			out.append(af)
+	return out
+
 static func tier_index_for_rarity(rarity: String) -> int:
 	_ensure_loaded()
 	return int(_rarity_idx.get(rarity, 0))
