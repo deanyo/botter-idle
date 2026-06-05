@@ -1981,7 +1981,7 @@ func _create_item_instance(base_id: String) -> Dictionary:
 	# roll. Items with `default_tint: {hue, sat, mode}` in items.json
 	# always drop with that recolor — set via item_editor.html's Look
 	# section. 2026-06-05.
-	var def_tint: Variant = base_item.get("default_tint", null)
+	var def_tint: Variant = base.get("default_tint", null)
 	if typeof(def_tint) == TYPE_DICTIONARY and String(def_tint.get("mode", "")) != "":
 		var d: Dictionary = (def_tint as Dictionary).duplicate(true)
 		# Stat lean falls out of hue same as rolled tints, so build
