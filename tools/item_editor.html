@@ -231,13 +231,27 @@
      (player/<slot>/...). They use different sprite trees in DCSS so
      authors need to set them independently. */
   #edit-sprite-wrap, #edit-overlay-wrap {
-    width: 80px; height: 80px; background: var(--tile-bg); border: 1px solid var(--border);
+    width: 96px; height: 96px; background: var(--tile-bg); border: 1px solid var(--border);
     border-radius: 4px; display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
     position: relative;
   }
-  #edit-sprite-wrap img, #edit-overlay-wrap img {
-    width: 80px; height: 80px; image-rendering: pixelated;
+  #edit-sprite-wrap img {
+    width: 96px; height: 96px; image-rendering: pixelated;
+  }
+  /* Paperdoll preview — base sprite + overlay layered like the in-
+     game widget. Both children absolute-position to the same square so
+     the overlay sits on top of the base. 3× upscale on a 32×32 base. */
+  #edit-overlay-wrap {
+    width: 96px; height: 96px;
+    overflow: hidden;
+  }
+  #edit-overlay-wrap .layer {
+    position: absolute;
+    top: 0; left: 0;
+    width: 96px; height: 96px;
+    image-rendering: pixelated;
+    object-fit: contain;
   }
   /* Tiny corner labels so it's obvious which preview is which. */
   #edit-sprite-wrap::after, #edit-overlay-wrap::after {
@@ -267,11 +281,44 @@
   #picker-head { padding: 8px 12px; border-bottom: 1px solid var(--border); display: flex; gap: 8px; align-items: center; }
   #picker-head input { flex: 1; }
   #picker-filter { display: flex; gap: 4px; }
-  #picker-grid { flex: 1; overflow-y: auto; padding: 8px; display: grid; grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); gap: 4px; }
-  .pick-cell { background: var(--tile-bg); border: 1px solid var(--border); border-radius: 3px; padding: 4px; text-align: center; cursor: pointer; }
-  .pick-cell:hover { border-color: var(--accent); }
-  .pick-cell img { width: 100%; aspect-ratio: 1; object-fit: contain; image-rendering: pixelated; background: #000; }
-  .pick-cell .pick-name { font-size: 8px; color: var(--muted); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  #picker-grid {
+    flex: 1; overflow-y: auto; padding: 12px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 8px;
+  }
+  .pick-cell {
+    background: var(--tile-bg); border: 1px solid var(--border); border-radius: 4px;
+    padding: 6px; text-align: center; cursor: pointer;
+    transition: border-color 0.1s, transform 0.1s;
+  }
+  .pick-cell:hover {
+    border-color: var(--accent);
+    transform: translateY(-1px);
+  }
+  /* Picker thumbnail. The "on bot" mode renders the same paperdoll
+     preview shape as the edit panel (base + overlay layered) so the
+     player sees how the sprite will look on the bot, not just the
+     raw 32×32 art. .pick-cell.layered uses position:relative for
+     stacked .layer children. */
+  .pick-cell img {
+    width: 100%; aspect-ratio: 1;
+    object-fit: contain; image-rendering: pixelated; background: #000;
+  }
+  .pick-cell.layered .pick-img-wrap {
+    position: relative;
+    width: 100%; aspect-ratio: 1;
+    background: #000; border-radius: 2px;
+  }
+  .pick-cell.layered .pick-img-wrap .layer {
+    position: absolute; inset: 0;
+    image-rendering: pixelated; object-fit: contain;
+  }
+  .pick-cell .pick-name {
+    font-size: 10px; color: var(--muted);
+    overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+    margin-top: 4px;
+  }
 
   #status { padding: 8px 14px; font-size: 11px; color: var(--good); }
   #status.warn { color: var(--warn); }
@@ -760,6 +807,10 @@ const PAPERDOLL_SLOT_DIRS = {
   gloves: 'gloves/', cloak: 'cloak/',
 };
 const PAPERDOLL_BASE = "../project/assets/tiles/player/";
+// Base bot sprite for the paperdoll preview — same one paperdoll_renderer
+// uses for the in-game rig. Spriggan female default; falls back to
+// the generic bot.png if absent. 2026-06-05.
+const BASE_SPRITE_URL = "../project/assets/tiles/player/spriggan_female.png";
 // Resolve the paperdoll overlay sprite for an item — exact mirror of
 // paperdoll_renderer.gd::_resolve_overlay. Falls back to inventory
 // tile stem when no `overlay` field is set, so existing items keep
@@ -799,8 +850,11 @@ function overlayFallback(img, itemId) {
     img.style.opacity = '0.25';
     return;
   }
-  // Cycle through DCSS dirs for this slot, then fall back to the
-  // inventory icon as a last-ditch placeholder.
+  // Cycle through DCSS source dirs for this slot, then DCSS supp,
+  // then fall back to the inventory icon as a last-ditch placeholder.
+  // 2026-06-05 — picker can pick a sprite that hasn't been synced
+  // into project yet; the fallback walks the same trees the sprite
+  // came from so the editor always shows the right pixels.
   let step = parseInt(img.dataset.fallbackStep || '0', 10);
   const dirs = DCSS_OVERLAY_DIRS[it.slot] || [];
   if (step < dirs.length) {
@@ -808,11 +862,19 @@ function overlayFallback(img, itemId) {
     img.src = TILE_BASE + dirs[step] + stem + '.png';
     return;
   }
+  // Try DCSS Supplemental tree at the dir for this slot.
+  if (!img.dataset.suppTried) {
+    img.dataset.suppTried = '1';
+    if (dirs.length > 0) {
+      img.src = TILE_BASE_SUP + dirs[0] + stem + '.png';
+      return;
+    }
+  }
   // Final fallback: the inventory icon (so the user sees SOMETHING).
   if (!img.dataset.invFallback) {
     img.dataset.invFallback = '1';
     img.src = tileUrl(it.tile);
-    img.title = 'No paperdoll sprite found — showing inventory icon as placeholder.';
+    img.title = 'No paperdoll sprite found — showing inventory icon as placeholder. Run tools/sync_items.py to copy DCSS source into the project.';
     img.style.opacity = '0.55';
     return;
   }
@@ -925,7 +987,8 @@ function renderEditBody(it) {
       </div>
       ${PAPERDOLL_SLOT_DIRS[it.slot] ? `
         <div id="edit-overlay-wrap" title="Paperdoll sprite (how this item looks held / worn on the bot)">
-          <img id="edit-overlay-img" style="${recolorPreviewStyle(it.default_tint || {})}" src="${overlayUrl(it)}"
+          <img class="layer" id="edit-overlay-base" src="${BASE_SPRITE_URL}" alt="">
+          <img class="layer" id="edit-overlay-img" style="${recolorPreviewStyle(it.default_tint || {})}" src="${overlayUrl(it)}"
                onerror="overlayFallback(this, '${it.id}')">
         </div>
       ` : ''}
@@ -1432,10 +1495,26 @@ function renderPicker() {
     // is the basename only, because items.json's `tile` and `overlay`
     // fields are basename-only (sync_items.py flattens DCSS into
     // project/assets/tiles/items/ and player/<slot>/ at build time).
-    cell.innerHTML = `
-      <img src="${tileUrlDcssFull(path)}" onerror="if(!this.dataset.s){this.dataset.s='1';this.src='${tileUrlDcssSupp(path)}'}else{this.parentElement.style.opacity='.3'}">
-      <div class="pick-name">${shortName}</div>
-    `;
+    if (pickerMode === 'overlay') {
+      // Layered preview: base bot sprite + the candidate overlay on
+      // top, so authors see how the paperdoll WILL look without
+      // needing to commit + reload. Same shape as the edit-panel
+      // preview. 2026-06-05.
+      cell.classList.add('layered');
+      cell.innerHTML = `
+        <div class="pick-img-wrap">
+          <img class="layer" src="${BASE_SPRITE_URL}" alt="">
+          <img class="layer" src="${tileUrlDcssFull(path)}"
+               onerror="if(!this.dataset.s){this.dataset.s='1';this.src='${tileUrlDcssSupp(path)}'}else{this.style.display='none'}">
+        </div>
+        <div class="pick-name">${shortName}</div>
+      `;
+    } else {
+      cell.innerHTML = `
+        <img src="${tileUrlDcssFull(path)}" onerror="if(!this.dataset.s){this.dataset.s='1';this.src='${tileUrlDcssSupp(path)}'}else{this.parentElement.style.opacity='.3'}">
+        <div class="pick-name">${shortName}</div>
+      `;
+    }
     cell.onclick = () => {
       const it = items.find(x=>x.id===pickerItemId);
       if (it) {
