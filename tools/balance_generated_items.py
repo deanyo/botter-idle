@@ -85,14 +85,15 @@ FLAVOR_AFFIX_BUMPS = {
     'coppersworn': [('of_storms', 22), ('of_lightning_resist', 18), ('of_might', 14), ('of_haste', 12)],
     'nightblue':   [('of_finesse', 18), ('of_int_mastery', 18), ('of_quickcast', 14), ('of_resonance', 14)],
     # --- Chaos / prismatic ---
+    # 2026-06-05 retune: was 13 bumps totalling ~180 weight, which
+    # bloated the affix_pool of legendary prismatic armor/shield to
+    # +3σ in the iLvl audit. Trimmed to 7 element adders (the
+    # chaotic identity) at 18 each — total ~126 weight, in band with
+    # other legendary flavors.
     'prismatic':   [
-        # All 7 element adders weighted equally — chaotic identity.
-        ('of_embers', 14), ('of_frost', 14), ('of_storms', 14),
-        ('of_devotion', 14), ('of_venom', 14), ('of_shadows', 14),
-        ('of_sharpness', 14),
-        # Plus mastery + spell modifiers — prismatic items reward casters.
-        ('of_resonance', 18), ('of_multicast', 12), ('of_channeling', 18),
-        ('of_str_mastery', 10), ('of_dex_mastery', 10), ('of_int_mastery', 10),
+        ('of_embers', 18), ('of_frost', 18), ('of_storms', 18),
+        ('of_devotion', 18), ('of_venom', 18), ('of_shadows', 18),
+        ('of_sharpness', 18),
     ],
 }
 

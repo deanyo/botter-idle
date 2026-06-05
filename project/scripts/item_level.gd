@@ -258,12 +258,15 @@ static func compute_spell(item: Dictionary, inst: Variant = null) -> Dictionary:
 		return {"level": 0, "rarity": "common", "components": []}
 	var rarity: String = String(item.get("rarity", "common"))
 	var components: Array = []
-	# DPS proxy: avg damage / cooldown.
+	# DPS proxy: avg damage / effective cooldown. Floor cooldown at 1.0
+	# so micro-CD spells (magic_dart at 0.7s) don't get a runaway DPS
+	# score that puts them 2σ above bucket mean at every rarity.
 	var dmin: float = float(item.get("damage_min", 0))
 	var dmax: float = float(item.get("damage_max", 0))
 	var cd: float = float(item.get("spell_cooldown", 3.0))
+	var eff_cd: float = max(1.0, cd)
 	var avg_dmg: float = (dmin + dmax) * 0.5
-	var dps: float = avg_dmg / max(0.5, cd)
+	var dps: float = avg_dmg / eff_cd
 	var base_score: float = dps * 3.0  # spells weighted heavier than weapon DPS since they go through bot's spell_damage_pct
 	if base_score > 0:
 		components.append(["dmg %.0f-%.0f / %.1fs" % [dmin, dmax, cd], int(round(base_score))])

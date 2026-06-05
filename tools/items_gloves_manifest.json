@@ -680,23 +680,18 @@
         "of_wisdom": 10,
         "of_the_bear": 14,
         "of_the_cat": 16,
-        "of_sharpness": 28,
-        "of_embers": 24,
-        "of_frost": 24,
-        "of_storms": 24,
-        "of_devotion": 22,
-        "of_venom": 22,
-        "of_shadows": 22,
+        "of_sharpness": 32,
+        "of_embers": 28,
+        "of_frost": 28,
+        "of_storms": 28,
+        "of_devotion": 26,
+        "of_venom": 26,
+        "of_shadows": 26,
         "of_crit": 18,
         "of_haste": 18,
         "of_lifesteal": 10,
-        "of_channeling": 28,
-        "of_velocity": 12,
-        "of_resonance": 18,
-        "of_multicast": 12,
-        "of_str_mastery": 10,
-        "of_dex_mastery": 10,
-        "of_int_mastery": 10
+        "of_channeling": 10,
+        "of_velocity": 12
       },
       "armor": 2,
       "base_type": "gloves",
@@ -725,20 +720,15 @@
       "tile": "glove_2_old.png",
       "unique": false,
       "_balance_bumps": {
-        "of_embers": 14,
-        "of_frost": 14,
-        "of_storms": 14,
-        "of_devotion": 14,
-        "of_venom": 14,
-        "of_shadows": 14,
-        "of_sharpness": 14,
-        "of_resonance": 18,
-        "of_multicast": 12,
-        "of_channeling": 18,
-        "of_str_mastery": 10,
-        "of_dex_mastery": 10,
-        "of_int_mastery": 10
-      }
+        "of_embers": 18,
+        "of_frost": 18,
+        "of_storms": 18,
+        "of_devotion": 18,
+        "of_venom": 18,
+        "of_shadows": 18,
+        "of_sharpness": 18
+      },
+      "_rebalance_v5": true
     }
   ]
 }

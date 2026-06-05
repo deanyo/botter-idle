@@ -1979,19 +1979,13 @@
         "of_poison_resist": 10,
         "of_dark_resist": 8,
         "of_regen": 15,
-        "of_embers": 14,
-        "of_frost": 14,
-        "of_storms": 14,
-        "of_devotion": 14,
-        "of_venom": 14,
-        "of_shadows": 14,
-        "of_sharpness": 14,
-        "of_resonance": 18,
-        "of_multicast": 12,
-        "of_channeling": 18,
-        "of_str_mastery": 10,
-        "of_dex_mastery": 10,
-        "of_int_mastery": 10
+        "of_embers": 18,
+        "of_frost": 18,
+        "of_storms": 18,
+        "of_devotion": 18,
+        "of_venom": 18,
+        "of_shadows": 18,
+        "of_sharpness": 18
       },
       "armor": 48,
       "base_type": "robe",
@@ -2023,20 +2017,15 @@
       "tile": "urand_folly.png",
       "unique": true,
       "_balance_bumps": {
-        "of_embers": 14,
-        "of_frost": 14,
-        "of_storms": 14,
-        "of_devotion": 14,
-        "of_venom": 14,
-        "of_shadows": 14,
-        "of_sharpness": 14,
-        "of_resonance": 18,
-        "of_multicast": 12,
-        "of_channeling": 18,
-        "of_str_mastery": 10,
-        "of_dex_mastery": 10,
-        "of_int_mastery": 10
-      }
+        "of_embers": 18,
+        "of_frost": 18,
+        "of_storms": 18,
+        "of_devotion": 18,
+        "of_venom": 18,
+        "of_shadows": 18,
+        "of_sharpness": 18
+      },
+      "_rebalance_v5": true
     },
     {
       "affix_pool": {

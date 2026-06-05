@@ -685,8 +685,8 @@
       "tile": "executioner_axe_5.png",
       "base_type": "executioner_axe",
       "weapon_class": "2H",
-      "damage_min": 202,
-      "damage_max": 345,
+      "damage_min": 175,
+      "damage_max": 305,
       "damage_type": "physical",
       "speed": 1.2,
       "item_tier": 5,
@@ -722,7 +722,8 @@
         "of_lifesteal": 15,
         "of_channeling": 8,
         "of_quickcast": 8
-      }
+      },
+      "_rebalance_v6": true
     },
     {
       "id": "club",
@@ -1085,8 +1086,8 @@
       "tile": "eveningstar_1_new.png",
       "base_type": "eveningstar",
       "weapon_class": "1H",
-      "damage_min": 57,
-      "damage_max": 100,
+      "damage_min": 44,
+      "damage_max": 78,
       "damage_type": "dark",
       "speed": 1.0,
       "item_tier": 3,
@@ -1120,7 +1121,8 @@
         "of_lifesteal": 15,
         "of_channeling": 8,
         "of_quickcast": 8
-      }
+      },
+      "_rebalance_v6": true
     },
     {
       "id": "runed_eveningstar",
@@ -1130,8 +1132,8 @@
       "tile": "eveningstar_2_new.png",
       "base_type": "eveningstar",
       "weapon_class": "1H",
-      "damage_min": 90,
-      "damage_max": 157,
+      "damage_min": 70,
+      "damage_max": 124,
       "damage_type": "dark",
       "speed": 1.0,
       "item_tier": 4,
@@ -1166,7 +1168,8 @@
         "of_lifesteal": 15,
         "of_channeling": 8,
         "of_quickcast": 8
-      }
+      },
+      "_rebalance_v6": true
     },
     {
       "id": "flail",
@@ -1354,8 +1357,8 @@
       "tile": "hammer_3.png",
       "base_type": "hammer",
       "weapon_class": "1H",
-      "damage_min": 19,
-      "damage_max": 33,
+      "damage_min": 28,
+      "damage_max": 48,
       "damage_type": "physical",
       "speed": 0.6,
       "item_tier": 3,
@@ -1389,7 +1392,8 @@
         "of_lifesteal": 15,
         "of_channeling": 8,
         "of_quickcast": 8
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "giant_club",
@@ -1399,8 +1403,8 @@
       "tile": "giant_club_new.png",
       "base_type": "giant_club",
       "weapon_class": "2H",
-      "damage_min": 77,
-      "damage_max": 134,
+      "damage_min": 64,
+      "damage_max": 112,
       "damage_type": "physical",
       "speed": 1.2,
       "item_tier": 3,
@@ -1435,7 +1439,8 @@
         "of_lifesteal": 15,
         "of_channeling": 8,
         "of_quickcast": 8
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "spear",
@@ -1707,8 +1712,8 @@
       "tile": "bardiche_1.png",
       "base_type": "bardiche",
       "weapon_class": "2H",
-      "damage_min": 67,
-      "damage_max": 120,
+      "damage_min": 56,
+      "damage_max": 100,
       "damage_type": "physical",
       "speed": 1.05,
       "item_tier": 3,
@@ -1743,7 +1748,8 @@
         "of_lifesteal": 15,
         "of_channeling": 8,
         "of_quickcast": 8
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "runed_bardiche",
@@ -1800,8 +1806,8 @@
       "tile": "scythe_1_new.png",
       "base_type": "scythe",
       "weapon_class": "2H",
-      "damage_min": 40,
-      "damage_max": 74,
+      "damage_min": 32,
+      "damage_max": 60,
       "damage_type": "dark",
       "speed": 1.0,
       "item_tier": 2,
@@ -1835,7 +1841,8 @@
         "of_lifesteal": 15,
         "of_channeling": 8,
         "of_quickcast": 8
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "reapers_scythe",
@@ -2380,8 +2387,8 @@
       "tile": "bullwhip_new.png",
       "base_type": "bullwhip",
       "weapon_class": "1H",
-      "damage_min": 19,
-      "damage_max": 33,
+      "damage_min": 27,
+      "damage_max": 47,
       "damage_type": "lightning",
       "speed": 0.6,
       "item_tier": 3,
@@ -2415,7 +2422,8 @@
         "of_lifesteal": 15,
         "of_channeling": 8,
         "of_quickcast": 8
-      }
+      },
+      "_rebalance_v6": true
     },
     {
       "id": "demon_whip",
@@ -2425,8 +2433,8 @@
       "tile": "demon_whip.png",
       "base_type": "demon_whip",
       "weapon_class": "1H",
-      "damage_min": 75,
-      "damage_max": 134,
+      "damage_min": 60,
+      "damage_max": 108,
       "damage_type": "fire",
       "speed": 0.85,
       "item_tier": 4,
@@ -2462,7 +2470,8 @@
         "of_lifesteal": 15,
         "of_channeling": 8,
         "of_quickcast": 8
-      }
+      },
+      "_rebalance_v6": true
     },
     {
       "id": "ankus",
@@ -2472,8 +2481,8 @@
       "tile": "ankus.png",
       "base_type": "ankus",
       "weapon_class": "1H",
-      "damage_min": 19,
-      "damage_max": 33,
+      "damage_min": 28,
+      "damage_max": 48,
       "damage_type": "physical",
       "speed": 0.6,
       "item_tier": 3,
@@ -2505,7 +2514,8 @@
         "of_lifesteal": 15,
         "of_channeling": 8,
         "of_quickcast": 8
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "cutlass",
@@ -2558,8 +2568,8 @@
       "tile": "cutlass_3.png",
       "base_type": "cutlass",
       "weapon_class": "1H",
-      "damage_min": 19,
-      "damage_max": 33,
+      "damage_min": 28,
+      "damage_max": 48,
       "damage_type": "physical",
       "speed": 0.6,
       "item_tier": 3,
@@ -2593,7 +2603,8 @@
         "of_lifesteal": 15,
         "of_channeling": 8,
         "of_quickcast": 8
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "affix_pool": {
@@ -3197,8 +3208,8 @@
         "of_fire_resist": 18
       },
       "base_type": "giant_club",
-      "damage_max": 134,
-      "damage_min": 77,
+      "damage_max": 112,
+      "damage_min": 64,
       "damage_type": "physical",
       "default_tint": {
         "hue": 351.3,
@@ -3235,7 +3246,8 @@
         "of_lifesteal": 12,
         "of_fire_resist": 18,
         "of_haste": 12
-      }
+      },
+      "_rebalance_v5": true
     }
   ]
 }

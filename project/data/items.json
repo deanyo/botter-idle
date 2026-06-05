@@ -268,8 +268,8 @@
       "tile": "elven_dagger.png",
       "base_type": "dagger",
       "weapon_class": "1H",
-      "damage_min": 6,
-      "damage_max": 12,
+      "damage_min": 9,
+      "damage_max": 16,
       "damage_type": "physical",
       "speed": 0.5,
       "item_tier": 2,
@@ -303,7 +303,8 @@
         "of_lifesteal": 15,
         "of_channeling": 8,
         "of_quickcast": 8
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "iron_falchion",
@@ -578,8 +579,8 @@
       "tile": "short_sword_5.png",
       "base_type": "short_sword",
       "weapon_class": "1H",
-      "damage_min": 19,
-      "damage_max": 36,
+      "damage_min": 27,
+      "damage_max": 48,
       "damage_type": "physical",
       "speed": 0.6,
       "item_tier": 3,
@@ -611,7 +612,8 @@
         "of_lifesteal": 15,
         "of_channeling": 8,
         "of_quickcast": 8
-      }
+      },
+      "_rebalance_v6": true
     },
     {
       "id": "scimitar",
@@ -890,8 +892,8 @@
       "tile": "katana.png",
       "base_type": "katana",
       "weapon_class": "1H",
-      "damage_min": 30,
-      "damage_max": 52,
+      "damage_min": 38,
+      "damage_max": 65,
       "damage_type": "physical",
       "speed": 0.6,
       "item_tier": 4,
@@ -926,7 +928,8 @@
         "of_lifesteal": 15,
         "of_channeling": 8,
         "of_quickcast": 8
-      }
+      },
+      "_rebalance_v6": true
     },
     {
       "id": "knife_of_accuracy",
@@ -936,10 +939,10 @@
       "tile": "urand_knife_of_accuracy.png",
       "base_type": "knife",
       "weapon_class": "1H",
-      "damage_min": 15,
-      "damage_max": 30,
+      "damage_min": 24,
+      "damage_max": 46,
       "damage_type": "physical",
-      "speed": 0.5,
+      "speed": 0.45,
       "item_tier": 4,
       "flavor_tags": [
         "precision",
@@ -972,7 +975,8 @@
         "of_lifesteal": 15,
         "of_channeling": 8,
         "of_quickcast": 8
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "mithril_longsword",
@@ -1387,8 +1391,8 @@
       "tile": "demon_blade.png",
       "base_type": "demon_blade",
       "weapon_class": "1H",
-      "damage_min": 143,
-      "damage_max": 250,
+      "damage_min": 122,
+      "damage_max": 215,
       "damage_type": "fire",
       "speed": 0.9,
       "item_tier": 5,
@@ -1423,7 +1427,8 @@
         "of_lifesteal": 15,
         "of_channeling": 8,
         "of_quickcast": 8
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "doom_knight_blade",
@@ -1433,8 +1438,8 @@
       "tile": "urand_doom_knight_new.png",
       "base_type": "demon_blade",
       "weapon_class": "1H",
-      "damage_min": 143,
-      "damage_max": 250,
+      "damage_min": 122,
+      "damage_max": 215,
       "damage_type": "dark",
       "speed": 0.9,
       "item_tier": 5,
@@ -1469,7 +1474,8 @@
         "of_lifesteal": 15,
         "of_channeling": 8,
         "of_quickcast": 8
-      }
+      },
+      "_rebalance_v6": true
     },
     {
       "id": "eos",
@@ -1846,10 +1852,10 @@
       "tile": "urand_spriggans_knife_new.png",
       "base_type": "dagger",
       "weapon_class": "1H",
-      "damage_min": 24,
-      "damage_max": 48,
+      "damage_min": 38,
+      "damage_max": 70,
       "damage_type": "physical",
-      "speed": 0.5,
+      "speed": 0.45,
       "item_tier": 5,
       "flavor_tags": [
         "swiftness",
@@ -1882,7 +1888,8 @@
         "of_lifesteal": 15,
         "of_channeling": 8,
         "of_quickcast": 8
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "sword_of_cerebov",
@@ -1892,8 +1899,8 @@
       "tile": "spwpn_sword_of_cerebov_new.png",
       "base_type": "demon_blade",
       "weapon_class": "1H",
-      "damage_min": 143,
-      "damage_max": 250,
+      "damage_min": 122,
+      "damage_max": 215,
       "damage_type": "fire",
       "speed": 0.9,
       "item_tier": 5,
@@ -1929,7 +1936,8 @@
         "of_lifesteal": 15,
         "of_channeling": 8,
         "of_quickcast": 8
-      }
+      },
+      "_rebalance_v6": true
     },
     {
       "id": "sword_of_power",
@@ -11560,8 +11568,8 @@
       "tile": "executioner_axe_5.png",
       "base_type": "executioner_axe",
       "weapon_class": "2H",
-      "damage_min": 202,
-      "damage_max": 345,
+      "damage_min": 175,
+      "damage_max": 305,
       "damage_type": "physical",
       "speed": 1.2,
       "item_tier": 5,
@@ -11597,7 +11605,8 @@
         "of_lifesteal": 15,
         "of_channeling": 8,
         "of_quickcast": 8
-      }
+      },
+      "_rebalance_v6": true
     },
     {
       "id": "club",
@@ -11960,8 +11969,8 @@
       "tile": "eveningstar_1_new.png",
       "base_type": "eveningstar",
       "weapon_class": "1H",
-      "damage_min": 57,
-      "damage_max": 100,
+      "damage_min": 44,
+      "damage_max": 78,
       "damage_type": "dark",
       "speed": 1.0,
       "item_tier": 3,
@@ -11995,7 +12004,8 @@
         "of_lifesteal": 15,
         "of_channeling": 8,
         "of_quickcast": 8
-      }
+      },
+      "_rebalance_v6": true
     },
     {
       "id": "runed_eveningstar",
@@ -12005,8 +12015,8 @@
       "tile": "eveningstar_2_new.png",
       "base_type": "eveningstar",
       "weapon_class": "1H",
-      "damage_min": 90,
-      "damage_max": 157,
+      "damage_min": 70,
+      "damage_max": 124,
       "damage_type": "dark",
       "speed": 1.0,
       "item_tier": 4,
@@ -12041,7 +12051,8 @@
         "of_lifesteal": 15,
         "of_channeling": 8,
         "of_quickcast": 8
-      }
+      },
+      "_rebalance_v6": true
     },
     {
       "id": "flail",
@@ -12229,8 +12240,8 @@
       "tile": "hammer_3.png",
       "base_type": "hammer",
       "weapon_class": "1H",
-      "damage_min": 19,
-      "damage_max": 33,
+      "damage_min": 28,
+      "damage_max": 48,
       "damage_type": "physical",
       "speed": 0.6,
       "item_tier": 3,
@@ -12264,7 +12275,8 @@
         "of_lifesteal": 15,
         "of_channeling": 8,
         "of_quickcast": 8
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "giant_club",
@@ -12274,8 +12286,8 @@
       "tile": "giant_club_new.png",
       "base_type": "giant_club",
       "weapon_class": "2H",
-      "damage_min": 77,
-      "damage_max": 134,
+      "damage_min": 64,
+      "damage_max": 112,
       "damage_type": "physical",
       "speed": 1.2,
       "item_tier": 3,
@@ -12310,7 +12322,8 @@
         "of_lifesteal": 15,
         "of_channeling": 8,
         "of_quickcast": 8
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "spear",
@@ -12582,8 +12595,8 @@
       "tile": "bardiche_1.png",
       "base_type": "bardiche",
       "weapon_class": "2H",
-      "damage_min": 67,
-      "damage_max": 120,
+      "damage_min": 56,
+      "damage_max": 100,
       "damage_type": "physical",
       "speed": 1.05,
       "item_tier": 3,
@@ -12618,7 +12631,8 @@
         "of_lifesteal": 15,
         "of_channeling": 8,
         "of_quickcast": 8
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "runed_bardiche",
@@ -12675,8 +12689,8 @@
       "tile": "scythe_1_new.png",
       "base_type": "scythe",
       "weapon_class": "2H",
-      "damage_min": 40,
-      "damage_max": 74,
+      "damage_min": 32,
+      "damage_max": 60,
       "damage_type": "dark",
       "speed": 1.0,
       "item_tier": 2,
@@ -12710,7 +12724,8 @@
         "of_lifesteal": 15,
         "of_channeling": 8,
         "of_quickcast": 8
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "reapers_scythe",
@@ -13255,8 +13270,8 @@
       "tile": "bullwhip_new.png",
       "base_type": "bullwhip",
       "weapon_class": "1H",
-      "damage_min": 19,
-      "damage_max": 33,
+      "damage_min": 27,
+      "damage_max": 47,
       "damage_type": "lightning",
       "speed": 0.6,
       "item_tier": 3,
@@ -13290,7 +13305,8 @@
         "of_lifesteal": 15,
         "of_channeling": 8,
         "of_quickcast": 8
-      }
+      },
+      "_rebalance_v6": true
     },
     {
       "id": "demon_whip",
@@ -13300,8 +13316,8 @@
       "tile": "demon_whip.png",
       "base_type": "demon_whip",
       "weapon_class": "1H",
-      "damage_min": 75,
-      "damage_max": 134,
+      "damage_min": 60,
+      "damage_max": 108,
       "damage_type": "fire",
       "speed": 0.85,
       "item_tier": 4,
@@ -13337,7 +13353,8 @@
         "of_lifesteal": 15,
         "of_channeling": 8,
         "of_quickcast": 8
-      }
+      },
+      "_rebalance_v6": true
     },
     {
       "id": "ankus",
@@ -13347,8 +13364,8 @@
       "tile": "ankus.png",
       "base_type": "ankus",
       "weapon_class": "1H",
-      "damage_min": 19,
-      "damage_max": 33,
+      "damage_min": 28,
+      "damage_max": 48,
       "damage_type": "physical",
       "speed": 0.6,
       "item_tier": 3,
@@ -13380,7 +13397,8 @@
         "of_lifesteal": 15,
         "of_channeling": 8,
         "of_quickcast": 8
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "cutlass",
@@ -13433,8 +13451,8 @@
       "tile": "cutlass_3.png",
       "base_type": "cutlass",
       "weapon_class": "1H",
-      "damage_min": 19,
-      "damage_max": 33,
+      "damage_min": 28,
+      "damage_max": 48,
       "damage_type": "physical",
       "speed": 0.6,
       "item_tier": 3,
@@ -13468,7 +13486,8 @@
         "of_lifesteal": 15,
         "of_channeling": 8,
         "of_quickcast": 8
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "spell_fireball",
@@ -13526,8 +13545,8 @@
       "tile": "spells/scrolls/scroll.png",
       "base_type": "spell_axes",
       "primary_stat": "str",
-      "damage_min": 12,
-      "damage_max": 16,
+      "damage_min": 19,
+      "damage_max": 25,
       "damage_type": "physical",
       "spell_cooldown": 5.0,
       "item_tier": 1,
@@ -13562,7 +13581,8 @@
         "hue": 0.0,
         "sat": 0.85,
         "mode": "colorize"
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "spell_holy_beam",
@@ -13668,8 +13688,8 @@
       "tile": "spells/scrolls/scroll.png",
       "base_type": "spell_frost_nova",
       "primary_stat": "int",
-      "damage_min": 14,
-      "damage_max": 18,
+      "damage_min": 18,
+      "damage_max": 22,
       "damage_type": "cold",
       "spell_cooldown": 4.0,
       "item_tier": 1,
@@ -13706,7 +13726,8 @@
         "hue": 210.0,
         "sat": 0.85,
         "mode": "colorize"
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "starter_human_spell",
@@ -13764,8 +13785,8 @@
       "tile": "spells/scrolls/scroll.png",
       "base_type": "spell_axes",
       "primary_stat": "str",
-      "damage_min": 12,
-      "damage_max": 16,
+      "damage_min": 19,
+      "damage_max": 25,
       "damage_type": "physical",
       "spell_cooldown": 5.0,
       "item_tier": 1,
@@ -13802,7 +13823,8 @@
         "hue": 0.0,
         "sat": 0.85,
         "mode": "colorize"
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "starter_minotaur_spell",
@@ -13812,8 +13834,8 @@
       "tile": "spells/scrolls/scroll.png",
       "base_type": "spell_axes",
       "primary_stat": "str",
-      "damage_min": 12,
-      "damage_max": 16,
+      "damage_min": 19,
+      "damage_max": 25,
       "damage_type": "physical",
       "spell_cooldown": 5.0,
       "item_tier": 1,
@@ -13850,7 +13872,8 @@
         "hue": 0.0,
         "sat": 0.85,
         "mode": "colorize"
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "starter_naga_spell",
@@ -13860,8 +13883,8 @@
       "tile": "spells/scrolls/scroll.png",
       "base_type": "spell_frost_nova",
       "primary_stat": "int",
-      "damage_min": 14,
-      "damage_max": 18,
+      "damage_min": 18,
+      "damage_max": 22,
       "damage_type": "cold",
       "spell_cooldown": 4.0,
       "item_tier": 1,
@@ -13898,7 +13921,8 @@
         "hue": 280.0,
         "sat": 0.85,
         "mode": "colorize"
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "starter_tengu_spell",
@@ -13956,8 +13980,8 @@
       "tile": "spells/scrolls/scroll.png",
       "base_type": "spell_axes",
       "primary_stat": "str",
-      "damage_min": 12,
-      "damage_max": 16,
+      "damage_min": 19,
+      "damage_max": 25,
       "damage_type": "physical",
       "spell_cooldown": 5.0,
       "item_tier": 1,
@@ -13994,7 +14018,8 @@
         "hue": 0.0,
         "sat": 0.85,
         "mode": "colorize"
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "starter_octopode_spell",
@@ -14004,8 +14029,8 @@
       "tile": "spells/scrolls/scroll.png",
       "base_type": "spell_frost_nova",
       "primary_stat": "int",
-      "damage_min": 14,
-      "damage_max": 18,
+      "damage_min": 18,
+      "damage_max": 22,
       "damage_type": "dark",
       "spell_cooldown": 4.0,
       "item_tier": 1,
@@ -14042,7 +14067,8 @@
         "hue": 280.0,
         "sat": 0.85,
         "mode": "colorize"
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "starter_demonspawn_spell",
@@ -14052,8 +14078,8 @@
       "tile": "spells/scrolls/scroll.png",
       "base_type": "spell_axes",
       "primary_stat": "str",
-      "damage_min": 12,
-      "damage_max": 16,
+      "damage_min": 19,
+      "damage_max": 25,
       "damage_type": "fire",
       "spell_cooldown": 5.0,
       "item_tier": 1,
@@ -14090,7 +14116,8 @@
         "hue": 0.0,
         "sat": 0.85,
         "mode": "colorize"
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "starter_vampire_spell",
@@ -14148,8 +14175,8 @@
       "tile": "spells/scrolls/scroll.png",
       "base_type": "spell_frost_nova",
       "primary_stat": "int",
-      "damage_min": 14,
-      "damage_max": 18,
+      "damage_min": 18,
+      "damage_max": 22,
       "damage_type": "dark",
       "spell_cooldown": 4.0,
       "item_tier": 1,
@@ -14186,7 +14213,8 @@
         "hue": 280.0,
         "sat": 0.85,
         "mode": "colorize"
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "starter_hill_orc_spell",
@@ -14388,8 +14416,8 @@
       "tile": "spells/scrolls/scroll.png",
       "base_type": "spell_axes",
       "primary_stat": "str",
-      "damage_min": 12,
-      "damage_max": 16,
+      "damage_min": 19,
+      "damage_max": 25,
       "damage_type": "poison",
       "spell_cooldown": 5.0,
       "item_tier": 1,
@@ -14426,7 +14454,8 @@
         "hue": 0.0,
         "sat": 0.85,
         "mode": "colorize"
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "spell_axes_bleeding",
@@ -14436,8 +14465,8 @@
       "tile": "spells/books/manual1.png",
       "base_type": "spell_axes",
       "primary_stat": "str",
-      "damage_min": 14,
-      "damage_max": 22,
+      "damage_min": 22,
+      "damage_max": 34,
       "damage_type": "physical",
       "spell_cooldown": 5.0,
       "item_tier": 5,
@@ -14469,7 +14498,8 @@
         "of_crit": 12,
         "of_haste": 12,
         "of_lifesteal": 6
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "spell_fireball_comet",
@@ -14524,8 +14554,8 @@
       "tile": "spells/books/metal_cyan.png",
       "base_type": "spell_frost_nova",
       "primary_stat": "int",
-      "damage_min": 14,
-      "damage_max": 22,
+      "damage_min": 18,
+      "damage_max": 28,
       "damage_type": "cold",
       "spell_cooldown": 4.0,
       "item_tier": 5,
@@ -14559,7 +14589,8 @@
         "of_crit": 12,
         "of_haste": 12,
         "of_lifesteal": 6
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "spell_chain_lightning_brand",
@@ -14750,8 +14781,8 @@
       "tile": "spells/scrolls/scroll.png",
       "base_type": "spell_sandblast",
       "primary_stat": "str",
-      "damage_min": 26,
-      "damage_max": 34,
+      "damage_min": 21,
+      "damage_max": 27,
       "damage_type": "physical",
       "spell_cooldown": 2.6,
       "item_tier": 1,
@@ -14788,7 +14819,8 @@
         "hue": 30.0,
         "sat": 0.85,
         "mode": "colorize"
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "spell_drain",
@@ -14976,8 +15008,8 @@
       "tile": "spells/books/parchment.png",
       "base_type": "spell_sandblast",
       "primary_stat": "str",
-      "damage_min": 30,
-      "damage_max": 40,
+      "damage_min": 24,
+      "damage_max": 32,
       "damage_type": "physical",
       "spell_cooldown": 2.6,
       "item_tier": 3,
@@ -15011,7 +15043,8 @@
         "of_crit": 12,
         "of_haste": 12,
         "of_lifesteal": 6
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "soulhunger",
@@ -16006,8 +16039,8 @@
         "of_int_mastery": 14
       },
       "base_type": "demon_blade",
-      "damage_max": 250,
-      "damage_min": 143,
+      "damage_max": 215,
+      "damage_min": 122,
       "damage_type": "fire",
       "default_tint": {
         "hue": 0.0,
@@ -16048,7 +16081,8 @@
         "of_dark_resist": 22,
         "of_int_mastery": 14,
         "of_channeling": 14
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "affix_pool": {
@@ -16919,19 +16953,13 @@
         "of_poison_resist": 10,
         "of_dark_resist": 8,
         "of_regen": 15,
-        "of_embers": 14,
-        "of_frost": 14,
-        "of_storms": 14,
-        "of_devotion": 14,
-        "of_venom": 14,
-        "of_shadows": 14,
-        "of_sharpness": 14,
-        "of_resonance": 18,
-        "of_multicast": 12,
-        "of_channeling": 18,
-        "of_str_mastery": 10,
-        "of_dex_mastery": 10,
-        "of_int_mastery": 10
+        "of_embers": 18,
+        "of_frost": 18,
+        "of_storms": 18,
+        "of_devotion": 18,
+        "of_venom": 18,
+        "of_shadows": 18,
+        "of_sharpness": 18
       },
       "armor": 48,
       "base_type": "robe",
@@ -16963,20 +16991,15 @@
       "tile": "urand_folly.png",
       "unique": true,
       "_balance_bumps": {
-        "of_embers": 14,
-        "of_frost": 14,
-        "of_storms": 14,
-        "of_devotion": 14,
-        "of_venom": 14,
-        "of_shadows": 14,
-        "of_sharpness": 14,
-        "of_resonance": 18,
-        "of_multicast": 12,
-        "of_channeling": 18,
-        "of_str_mastery": 10,
-        "of_dex_mastery": 10,
-        "of_int_mastery": 10
-      }
+        "of_embers": 18,
+        "of_frost": 18,
+        "of_storms": 18,
+        "of_devotion": 18,
+        "of_venom": 18,
+        "of_shadows": 18,
+        "of_sharpness": 18
+      },
+      "_rebalance_v5": true
     },
     {
       "affix_pool": {
@@ -17395,8 +17418,8 @@
         "of_lightning_resist": 18
       },
       "base_type": "katana",
-      "damage_max": 52,
-      "damage_min": 30,
+      "damage_max": 65,
+      "damage_min": 38,
       "damage_type": "physical",
       "default_tint": {
         "hue": 27.6,
@@ -17431,7 +17454,8 @@
         "of_lightning_resist": 18,
         "of_might": 14,
         "of_haste": 12
-      }
+      },
+      "_rebalance_v6": true
     },
     {
       "affix_pool": {
@@ -18518,23 +18542,18 @@
         "of_wisdom": 10,
         "of_the_bear": 14,
         "of_the_cat": 16,
-        "of_sharpness": 28,
-        "of_embers": 24,
-        "of_frost": 24,
-        "of_storms": 24,
-        "of_devotion": 22,
-        "of_venom": 22,
-        "of_shadows": 22,
+        "of_sharpness": 32,
+        "of_embers": 28,
+        "of_frost": 28,
+        "of_storms": 28,
+        "of_devotion": 26,
+        "of_venom": 26,
+        "of_shadows": 26,
         "of_crit": 18,
         "of_haste": 18,
         "of_lifesteal": 10,
-        "of_channeling": 28,
-        "of_velocity": 12,
-        "of_resonance": 18,
-        "of_multicast": 12,
-        "of_str_mastery": 10,
-        "of_dex_mastery": 10,
-        "of_int_mastery": 10
+        "of_channeling": 10,
+        "of_velocity": 12
       },
       "armor": 2,
       "base_type": "gloves",
@@ -18563,20 +18582,15 @@
       "tile": "glove_2_old.png",
       "unique": false,
       "_balance_bumps": {
-        "of_embers": 14,
-        "of_frost": 14,
-        "of_storms": 14,
-        "of_devotion": 14,
-        "of_venom": 14,
-        "of_shadows": 14,
-        "of_sharpness": 14,
-        "of_resonance": 18,
-        "of_multicast": 12,
-        "of_channeling": 18,
-        "of_str_mastery": 10,
-        "of_dex_mastery": 10,
-        "of_int_mastery": 10
-      }
+        "of_embers": 18,
+        "of_frost": 18,
+        "of_storms": 18,
+        "of_devotion": 18,
+        "of_venom": 18,
+        "of_shadows": 18,
+        "of_sharpness": 18
+      },
+      "_rebalance_v5": true
     },
     {
       "affix_pool": {
@@ -18763,19 +18777,13 @@
         "of_holy_resist": 8,
         "of_poison_resist": 10,
         "of_dark_resist": 8,
-        "of_embers": 14,
-        "of_frost": 14,
-        "of_storms": 14,
-        "of_devotion": 14,
-        "of_venom": 14,
-        "of_shadows": 14,
-        "of_sharpness": 14,
-        "of_resonance": 18,
-        "of_multicast": 12,
-        "of_channeling": 18,
-        "of_str_mastery": 10,
-        "of_dex_mastery": 10,
-        "of_int_mastery": 10
+        "of_embers": 18,
+        "of_frost": 18,
+        "of_storms": 18,
+        "of_devotion": 18,
+        "of_venom": 18,
+        "of_shadows": 18,
+        "of_sharpness": 18
       },
       "armor": 36,
       "base_type": "buckler",
@@ -18807,20 +18815,15 @@
       "tile": "urand_gong.png",
       "unique": true,
       "_balance_bumps": {
-        "of_embers": 14,
-        "of_frost": 14,
-        "of_storms": 14,
-        "of_devotion": 14,
-        "of_venom": 14,
-        "of_shadows": 14,
-        "of_sharpness": 14,
-        "of_resonance": 18,
-        "of_multicast": 12,
-        "of_channeling": 18,
-        "of_str_mastery": 10,
-        "of_dex_mastery": 10,
-        "of_int_mastery": 10
-      }
+        "of_embers": 18,
+        "of_frost": 18,
+        "of_storms": 18,
+        "of_devotion": 18,
+        "of_venom": 18,
+        "of_shadows": 18,
+        "of_sharpness": 18
+      },
+      "_rebalance_v5": true
     },
     {
       "affix_pool": {
@@ -18953,19 +18956,13 @@
         "of_holy_resist": 8,
         "of_poison_resist": 10,
         "of_dark_resist": 8,
-        "of_embers": 14,
-        "of_frost": 14,
-        "of_storms": 14,
-        "of_devotion": 14,
-        "of_venom": 14,
-        "of_shadows": 14,
-        "of_sharpness": 14,
-        "of_resonance": 18,
-        "of_multicast": 12,
-        "of_channeling": 18,
-        "of_str_mastery": 10,
-        "of_dex_mastery": 10,
-        "of_int_mastery": 10
+        "of_embers": 18,
+        "of_frost": 18,
+        "of_storms": 18,
+        "of_devotion": 18,
+        "of_venom": 18,
+        "of_shadows": 18,
+        "of_sharpness": 18
       },
       "armor": 14,
       "base_type": "kite_shield",
@@ -18996,20 +18993,15 @@
       "tile": "large_shield_1_new.png",
       "unique": false,
       "_balance_bumps": {
-        "of_embers": 14,
-        "of_frost": 14,
-        "of_storms": 14,
-        "of_devotion": 14,
-        "of_venom": 14,
-        "of_shadows": 14,
-        "of_sharpness": 14,
-        "of_resonance": 18,
-        "of_multicast": 12,
-        "of_channeling": 18,
-        "of_str_mastery": 10,
-        "of_dex_mastery": 10,
-        "of_int_mastery": 10
-      }
+        "of_embers": 18,
+        "of_frost": 18,
+        "of_storms": 18,
+        "of_devotion": 18,
+        "of_venom": 18,
+        "of_shadows": 18,
+        "of_sharpness": 18
+      },
+      "_rebalance_v5": true
     },
     {
       "affix_pool": {
@@ -19031,8 +19023,8 @@
         "of_fire_resist": 22
       },
       "base_type": "demon_blade",
-      "damage_max": 250,
-      "damage_min": 143,
+      "damage_max": 215,
+      "damage_min": 122,
       "damage_type": "fire",
       "default_tint": {
         "hue": 16.8,
@@ -19067,7 +19059,8 @@
         "of_quickcast": 14,
         "of_fire_resist": 22,
         "of_channeling": 10
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "affix_pool": {
@@ -19431,17 +19424,17 @@
         "of_wisdom": 16,
         "of_vitality": 14,
         "of_quickcast": 14,
-        "of_resonance": 30,
+        "of_resonance": 12,
         "of_lingering": 12,
         "of_velocity": 10,
-        "of_multicast": 20,
-        "of_channeling": 32,
-        "of_embers": 24,
-        "of_frost": 24,
-        "of_storms": 24,
-        "of_devotion": 22,
-        "of_venom": 22,
-        "of_shadows": 22,
+        "of_multicast": 8,
+        "of_channeling": 14,
+        "of_embers": 28,
+        "of_frost": 28,
+        "of_storms": 28,
+        "of_devotion": 26,
+        "of_venom": 26,
+        "of_shadows": 26,
         "of_fire_resist": 8,
         "of_cold_resist": 8,
         "of_lightning_resist": 8,
@@ -19449,10 +19442,7 @@
         "of_haste": 16,
         "of_lifesteal": 10,
         "of_regen": 10,
-        "of_sharpness": 14,
-        "of_str_mastery": 10,
-        "of_dex_mastery": 10,
-        "of_int_mastery": 10
+        "of_sharpness": 18
       },
       "base_type": "ring_strength",
       "default_tint": {
@@ -19479,20 +19469,15 @@
       "tile": "bronze.png",
       "unique": false,
       "_balance_bumps": {
-        "of_embers": 14,
-        "of_frost": 14,
-        "of_storms": 14,
-        "of_devotion": 14,
-        "of_venom": 14,
-        "of_shadows": 14,
-        "of_sharpness": 14,
-        "of_resonance": 18,
-        "of_multicast": 12,
-        "of_channeling": 18,
-        "of_str_mastery": 10,
-        "of_dex_mastery": 10,
-        "of_int_mastery": 10
-      }
+        "of_embers": 18,
+        "of_frost": 18,
+        "of_storms": 18,
+        "of_devotion": 18,
+        "of_venom": 18,
+        "of_shadows": 18,
+        "of_sharpness": 18
+      },
+      "_rebalance_v5": true
     },
     {
       "affix_pool": {
@@ -19686,26 +19671,21 @@
         "of_might": 25,
         "of_finesse": 15,
         "of_wisdom": 10,
-        "of_sharpness": 44,
-        "of_embers": 22,
-        "of_frost": 22,
-        "of_storms": 22,
-        "of_devotion": 20,
-        "of_venom": 48,
-        "of_shadows": 20,
+        "of_sharpness": 48,
+        "of_embers": 26,
+        "of_frost": 26,
+        "of_storms": 26,
+        "of_devotion": 24,
+        "of_venom": 52,
+        "of_shadows": 24,
         "of_crit": 25,
         "of_haste": 20,
         "of_lifesteal": 15,
-        "of_channeling": 26,
+        "of_channeling": 8,
         "of_quickcast": 8,
         "of_poison_resist": 22,
         "of_regen": 14,
-        "of_vitality": 15,
-        "of_resonance": 18,
-        "of_multicast": 12,
-        "of_str_mastery": 10,
-        "of_dex_mastery": 10,
-        "of_int_mastery": 10
+        "of_vitality": 15
       },
       "base_type": "rapier",
       "damage_max": 43,
@@ -19741,20 +19721,15 @@
       "unique": false,
       "weapon_class": "1H",
       "_balance_bumps": {
-        "of_embers": 14,
-        "of_frost": 14,
-        "of_storms": 14,
-        "of_devotion": 14,
-        "of_venom": 14,
-        "of_shadows": 14,
-        "of_sharpness": 14,
-        "of_resonance": 18,
-        "of_multicast": 12,
-        "of_channeling": 18,
-        "of_str_mastery": 10,
-        "of_dex_mastery": 10,
-        "of_int_mastery": 10
-      }
+        "of_embers": 18,
+        "of_frost": 18,
+        "of_storms": 18,
+        "of_devotion": 18,
+        "of_venom": 18,
+        "of_shadows": 18,
+        "of_sharpness": 18
+      },
+      "_rebalance_v5": true
     },
     {
       "affix_pool": {
@@ -20009,21 +19984,15 @@
         "of_holy_resist": 8,
         "of_poison_resist": 10,
         "of_dark_resist": 8,
-        "of_frost": 49,
+        "of_frost": 53,
         "of_quickcast": 18,
         "of_crit": 15,
-        "of_embers": 14,
-        "of_storms": 14,
-        "of_devotion": 14,
-        "of_venom": 14,
-        "of_shadows": 14,
-        "of_sharpness": 14,
-        "of_resonance": 18,
-        "of_multicast": 12,
-        "of_channeling": 18,
-        "of_str_mastery": 10,
-        "of_dex_mastery": 10,
-        "of_int_mastery": 10
+        "of_embers": 18,
+        "of_storms": 18,
+        "of_devotion": 18,
+        "of_venom": 18,
+        "of_shadows": 18,
+        "of_sharpness": 18
       },
       "armor": 14,
       "base_type": "buckler",
@@ -20056,20 +20025,15 @@
       "tile": "dwarven_buckler_2.png",
       "unique": false,
       "_balance_bumps": {
-        "of_embers": 14,
-        "of_frost": 14,
-        "of_storms": 14,
-        "of_devotion": 14,
-        "of_venom": 14,
-        "of_shadows": 14,
-        "of_sharpness": 14,
-        "of_resonance": 18,
-        "of_multicast": 12,
-        "of_channeling": 18,
-        "of_str_mastery": 10,
-        "of_dex_mastery": 10,
-        "of_int_mastery": 10
-      }
+        "of_embers": 18,
+        "of_frost": 18,
+        "of_storms": 18,
+        "of_devotion": 18,
+        "of_venom": 18,
+        "of_shadows": 18,
+        "of_sharpness": 18
+      },
+      "_rebalance_v5": true
     },
     {
       "affix_pool": {
@@ -20081,20 +20045,14 @@
         "of_the_cat": 26,
         "of_haste": 26,
         "of_regen": 22,
-        "of_devotion": 44,
+        "of_devotion": 48,
         "of_holy_resist": 22,
-        "of_embers": 14,
-        "of_frost": 14,
-        "of_storms": 14,
-        "of_venom": 14,
-        "of_shadows": 14,
-        "of_sharpness": 14,
-        "of_resonance": 18,
-        "of_multicast": 12,
-        "of_channeling": 18,
-        "of_str_mastery": 10,
-        "of_dex_mastery": 10,
-        "of_int_mastery": 10
+        "of_embers": 18,
+        "of_frost": 18,
+        "of_storms": 18,
+        "of_venom": 18,
+        "of_shadows": 18,
+        "of_sharpness": 18
       },
       "armor": 3,
       "base_type": "sandals",
@@ -20126,20 +20084,15 @@
       "tile": "low_boots.png",
       "unique": false,
       "_balance_bumps": {
-        "of_embers": 14,
-        "of_frost": 14,
-        "of_storms": 14,
-        "of_devotion": 14,
-        "of_venom": 14,
-        "of_shadows": 14,
-        "of_sharpness": 14,
-        "of_resonance": 18,
-        "of_multicast": 12,
-        "of_channeling": 18,
-        "of_str_mastery": 10,
-        "of_dex_mastery": 10,
-        "of_int_mastery": 10
-      }
+        "of_embers": 18,
+        "of_frost": 18,
+        "of_storms": 18,
+        "of_devotion": 18,
+        "of_venom": 18,
+        "of_shadows": 18,
+        "of_sharpness": 18
+      },
+      "_rebalance_v5": true
     },
     {
       "affix_pool": {
@@ -21277,17 +21230,17 @@
         "of_wisdom": 16,
         "of_vitality": 14,
         "of_quickcast": 14,
-        "of_resonance": 30,
+        "of_resonance": 12,
         "of_lingering": 12,
         "of_velocity": 10,
-        "of_multicast": 20,
-        "of_channeling": 32,
-        "of_embers": 24,
-        "of_frost": 24,
-        "of_storms": 24,
-        "of_devotion": 22,
-        "of_venom": 22,
-        "of_shadows": 22,
+        "of_multicast": 8,
+        "of_channeling": 14,
+        "of_embers": 28,
+        "of_frost": 28,
+        "of_storms": 28,
+        "of_devotion": 26,
+        "of_venom": 26,
+        "of_shadows": 26,
         "of_fire_resist": 8,
         "of_cold_resist": 8,
         "of_lightning_resist": 8,
@@ -21295,10 +21248,7 @@
         "of_haste": 16,
         "of_lifesteal": 10,
         "of_regen": 10,
-        "of_sharpness": 14,
-        "of_str_mastery": 10,
-        "of_dex_mastery": 10,
-        "of_int_mastery": 10
+        "of_sharpness": 18
       },
       "base_type": "ring_protection",
       "default_tint": {
@@ -21327,20 +21277,15 @@
       "tile": "brass.png",
       "unique": false,
       "_balance_bumps": {
-        "of_embers": 14,
-        "of_frost": 14,
-        "of_storms": 14,
-        "of_devotion": 14,
-        "of_venom": 14,
-        "of_shadows": 14,
-        "of_sharpness": 14,
-        "of_resonance": 18,
-        "of_multicast": 12,
-        "of_channeling": 18,
-        "of_str_mastery": 10,
-        "of_dex_mastery": 10,
-        "of_int_mastery": 10
-      }
+        "of_embers": 18,
+        "of_frost": 18,
+        "of_storms": 18,
+        "of_devotion": 18,
+        "of_venom": 18,
+        "of_shadows": 18,
+        "of_sharpness": 18
+      },
+      "_rebalance_v5": true
     },
     {
       "affix_pool": {
@@ -21759,8 +21704,8 @@
         "of_fire_resist": 18
       },
       "base_type": "giant_club",
-      "damage_max": 134,
-      "damage_min": 77,
+      "damage_max": 112,
+      "damage_min": 64,
       "damage_type": "physical",
       "default_tint": {
         "hue": 351.3,
@@ -21797,7 +21742,8 @@
         "of_lifesteal": 12,
         "of_fire_resist": 18,
         "of_haste": 12
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "affix_pool": {
@@ -22546,8 +22492,8 @@
       },
       "base_type": "spell_axes",
       "primary_stat": "int",
-      "damage_min": 12,
-      "damage_max": 17,
+      "damage_min": 19,
+      "damage_max": 26,
       "damage_type": "physical",
       "spell_cooldown": 5.0,
       "item_tier": 1,
@@ -22576,7 +22522,8 @@
         "of_int_mastery": 26,
         "of_str_mastery": 6,
         "of_dex_mastery": 6
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "spell_axes_carving_dex",
@@ -22591,8 +22538,8 @@
       },
       "base_type": "spell_axes",
       "primary_stat": "dex",
-      "damage_min": 12,
-      "damage_max": 17,
+      "damage_min": 19,
+      "damage_max": 26,
       "damage_type": "physical",
       "spell_cooldown": 5.0,
       "item_tier": 1,
@@ -22621,7 +22568,8 @@
         "of_dex_mastery": 26,
         "of_str_mastery": 6,
         "of_int_mastery": 6
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "spell_axes_sundering_str",
@@ -22636,8 +22584,8 @@
       },
       "base_type": "spell_axes",
       "primary_stat": "str",
-      "damage_min": 12,
-      "damage_max": 17,
+      "damage_min": 19,
+      "damage_max": 26,
       "damage_type": "physical",
       "spell_cooldown": 5.0,
       "item_tier": 1,
@@ -22666,7 +22614,8 @@
         "of_str_mastery": 26,
         "of_dex_mastery": 6,
         "of_int_mastery": 6
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "spell_axes_rending_int",
@@ -22681,8 +22630,8 @@
       },
       "base_type": "spell_axes",
       "primary_stat": "int",
-      "damage_min": 12,
-      "damage_max": 17,
+      "damage_min": 19,
+      "damage_max": 26,
       "damage_type": "physical",
       "spell_cooldown": 5.0,
       "item_tier": 1,
@@ -22711,7 +22660,8 @@
         "of_int_mastery": 26,
         "of_str_mastery": 6,
         "of_dex_mastery": 6
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "spell_axes_hacking_dex",
@@ -22726,8 +22676,8 @@
       },
       "base_type": "spell_axes",
       "primary_stat": "dex",
-      "damage_min": 12,
-      "damage_max": 17,
+      "damage_min": 19,
+      "damage_max": 26,
       "damage_type": "physical",
       "spell_cooldown": 5.0,
       "item_tier": 1,
@@ -22756,7 +22706,8 @@
         "of_dex_mastery": 26,
         "of_str_mastery": 6,
         "of_int_mastery": 6
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "spell_axes_cleaving_dex",
@@ -22771,8 +22722,8 @@
       },
       "base_type": "spell_axes",
       "primary_stat": "dex",
-      "damage_min": 13,
-      "damage_max": 18,
+      "damage_min": 20,
+      "damage_max": 28,
       "damage_type": "physical",
       "spell_cooldown": 5.0,
       "item_tier": 2,
@@ -22801,7 +22752,8 @@
         "of_dex_mastery": 26,
         "of_str_mastery": 6,
         "of_int_mastery": 6
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "spell_axes_whirling_str",
@@ -22816,8 +22768,8 @@
       },
       "base_type": "spell_axes",
       "primary_stat": "str",
-      "damage_min": 13,
-      "damage_max": 18,
+      "damage_min": 20,
+      "damage_max": 28,
       "damage_type": "physical",
       "spell_cooldown": 5.0,
       "item_tier": 2,
@@ -22846,7 +22798,8 @@
         "of_str_mastery": 26,
         "of_dex_mastery": 6,
         "of_int_mastery": 6
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "spell_axes_spinning_int",
@@ -22861,8 +22814,8 @@
       },
       "base_type": "spell_axes",
       "primary_stat": "int",
-      "damage_min": 13,
-      "damage_max": 18,
+      "damage_min": 20,
+      "damage_max": 28,
       "damage_type": "physical",
       "spell_cooldown": 5.0,
       "item_tier": 2,
@@ -22891,7 +22844,8 @@
         "of_int_mastery": 26,
         "of_str_mastery": 6,
         "of_dex_mastery": 6
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "spell_axes_brutal_dex",
@@ -22906,8 +22860,8 @@
       },
       "base_type": "spell_axes",
       "primary_stat": "dex",
-      "damage_min": 13,
-      "damage_max": 18,
+      "damage_min": 20,
+      "damage_max": 28,
       "damage_type": "physical",
       "spell_cooldown": 5.0,
       "item_tier": 2,
@@ -22936,7 +22890,8 @@
         "of_dex_mastery": 26,
         "of_str_mastery": 6,
         "of_int_mastery": 6
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "spell_axes_threshing_int",
@@ -22951,8 +22906,8 @@
       },
       "base_type": "spell_axes",
       "primary_stat": "int",
-      "damage_min": 15,
-      "damage_max": 20,
+      "damage_min": 23,
+      "damage_max": 31,
       "damage_type": "physical",
       "spell_cooldown": 5.0,
       "item_tier": 3,
@@ -22981,7 +22936,8 @@
         "of_int_mastery": 26,
         "of_str_mastery": 6,
         "of_dex_mastery": 6
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "spell_axes_vortex_dex",
@@ -22996,8 +22952,8 @@
       },
       "base_type": "spell_axes",
       "primary_stat": "dex",
-      "damage_min": 15,
-      "damage_max": 20,
+      "damage_min": 23,
+      "damage_max": 31,
       "damage_type": "physical",
       "spell_cooldown": 5.0,
       "item_tier": 3,
@@ -23026,7 +22982,8 @@
         "of_dex_mastery": 26,
         "of_str_mastery": 6,
         "of_int_mastery": 6
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "spell_axes_hewn_str",
@@ -23041,8 +22998,8 @@
       },
       "base_type": "spell_axes",
       "primary_stat": "str",
-      "damage_min": 15,
-      "damage_max": 20,
+      "damage_min": 23,
+      "damage_max": 31,
       "damage_type": "physical",
       "spell_cooldown": 5.0,
       "item_tier": 3,
@@ -23071,7 +23028,8 @@
         "of_str_mastery": 26,
         "of_dex_mastery": 6,
         "of_int_mastery": 6
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "spell_axes_furious_str",
@@ -23086,8 +23044,8 @@
       },
       "base_type": "spell_axes",
       "primary_stat": "str",
-      "damage_min": 16,
-      "damage_max": 23,
+      "damage_min": 25,
+      "damage_max": 36,
       "damage_type": "physical",
       "spell_cooldown": 5.0,
       "item_tier": 4,
@@ -23116,7 +23074,8 @@
         "of_str_mastery": 26,
         "of_dex_mastery": 6,
         "of_int_mastery": 6
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "spell_axes_cyclone_int",
@@ -23131,8 +23090,8 @@
       },
       "base_type": "spell_axes",
       "primary_stat": "int",
-      "damage_min": 18,
-      "damage_max": 26,
+      "damage_min": 28,
+      "damage_max": 40,
       "damage_type": "physical",
       "spell_cooldown": 5.0,
       "item_tier": 5,
@@ -23161,7 +23120,8 @@
         "of_int_mastery": 26,
         "of_str_mastery": 6,
         "of_dex_mastery": 6
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "spell_holy_beam_vigil_int",
@@ -24520,8 +24480,8 @@
       },
       "base_type": "spell_frost_nova",
       "primary_stat": "str",
-      "damage_min": 14,
-      "damage_max": 19,
+      "damage_min": 18,
+      "damage_max": 24,
       "damage_type": "cold",
       "spell_cooldown": 4.0,
       "item_tier": 1,
@@ -24553,7 +24513,8 @@
         "of_dex_mastery": 6,
         "of_int_mastery": 6,
         "of_frost": 24
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "spell_frost_nova_snowbound_int",
@@ -24568,8 +24529,8 @@
       },
       "base_type": "spell_frost_nova",
       "primary_stat": "int",
-      "damage_min": 14,
-      "damage_max": 19,
+      "damage_min": 18,
+      "damage_max": 24,
       "damage_type": "cold",
       "spell_cooldown": 4.0,
       "item_tier": 1,
@@ -24601,7 +24562,8 @@
         "of_str_mastery": 6,
         "of_dex_mastery": 6,
         "of_frost": 24
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "spell_frost_nova_freezing_dex",
@@ -24616,8 +24578,8 @@
       },
       "base_type": "spell_frost_nova",
       "primary_stat": "dex",
-      "damage_min": 14,
-      "damage_max": 19,
+      "damage_min": 18,
+      "damage_max": 24,
       "damage_type": "cold",
       "spell_cooldown": 4.0,
       "item_tier": 1,
@@ -24649,7 +24611,8 @@
         "of_str_mastery": 6,
         "of_int_mastery": 6,
         "of_frost": 24
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "spell_frost_nova_polar_str",
@@ -24664,8 +24627,8 @@
       },
       "base_type": "spell_frost_nova",
       "primary_stat": "str",
-      "damage_min": 14,
-      "damage_max": 19,
+      "damage_min": 18,
+      "damage_max": 24,
       "damage_type": "cold",
       "spell_cooldown": 4.0,
       "item_tier": 1,
@@ -24697,7 +24660,8 @@
         "of_dex_mastery": 6,
         "of_int_mastery": 6,
         "of_frost": 24
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "spell_frost_nova_bitterwind_int",
@@ -24712,8 +24676,8 @@
       },
       "base_type": "spell_frost_nova",
       "primary_stat": "int",
-      "damage_min": 14,
-      "damage_max": 19,
+      "damage_min": 18,
+      "damage_max": 24,
       "damage_type": "cold",
       "spell_cooldown": 4.0,
       "item_tier": 1,
@@ -24745,7 +24709,8 @@
         "of_str_mastery": 6,
         "of_dex_mastery": 6,
         "of_frost": 24
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "spell_frost_nova_cryogenic_str",
@@ -24760,8 +24725,8 @@
       },
       "base_type": "spell_frost_nova",
       "primary_stat": "str",
-      "damage_min": 15,
-      "damage_max": 21,
+      "damage_min": 19,
+      "damage_max": 26,
       "damage_type": "cold",
       "spell_cooldown": 4.0,
       "item_tier": 2,
@@ -24793,7 +24758,8 @@
         "of_dex_mastery": 6,
         "of_int_mastery": 6,
         "of_frost": 24
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "spell_frost_nova_icefall_dex",
@@ -24808,8 +24774,8 @@
       },
       "base_type": "spell_frost_nova",
       "primary_stat": "dex",
-      "damage_min": 15,
-      "damage_max": 21,
+      "damage_min": 19,
+      "damage_max": 26,
       "damage_type": "cold",
       "spell_cooldown": 4.0,
       "item_tier": 2,
@@ -24841,7 +24807,8 @@
         "of_str_mastery": 6,
         "of_int_mastery": 6,
         "of_frost": 24
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "spell_frost_nova_riming_int",
@@ -24856,8 +24823,8 @@
       },
       "base_type": "spell_frost_nova",
       "primary_stat": "int",
-      "damage_min": 15,
-      "damage_max": 21,
+      "damage_min": 19,
+      "damage_max": 26,
       "damage_type": "cold",
       "spell_cooldown": 4.0,
       "item_tier": 2,
@@ -24889,7 +24856,8 @@
         "of_str_mastery": 6,
         "of_dex_mastery": 6,
         "of_frost": 24
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "spell_frost_nova_wintertide_str",
@@ -24904,8 +24872,8 @@
       },
       "base_type": "spell_frost_nova",
       "primary_stat": "str",
-      "damage_min": 15,
-      "damage_max": 21,
+      "damage_min": 19,
+      "damage_max": 26,
       "damage_type": "cold",
       "spell_cooldown": 4.0,
       "item_tier": 2,
@@ -24937,7 +24905,8 @@
         "of_dex_mastery": 6,
         "of_int_mastery": 6,
         "of_frost": 24
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "spell_frost_nova_blizzardborn_int",
@@ -24952,8 +24921,8 @@
       },
       "base_type": "spell_frost_nova",
       "primary_stat": "int",
-      "damage_min": 17,
-      "damage_max": 23,
+      "damage_min": 21,
+      "damage_max": 29,
       "damage_type": "cold",
       "spell_cooldown": 4.0,
       "item_tier": 3,
@@ -24985,7 +24954,8 @@
         "of_str_mastery": 6,
         "of_dex_mastery": 6,
         "of_frost": 24
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "spell_frost_nova_frozen_dex",
@@ -25000,8 +24970,8 @@
       },
       "base_type": "spell_frost_nova",
       "primary_stat": "dex",
-      "damage_min": 17,
-      "damage_max": 23,
+      "damage_min": 21,
+      "damage_max": 29,
       "damage_type": "cold",
       "spell_cooldown": 4.0,
       "item_tier": 3,
@@ -25033,7 +25003,8 @@
         "of_str_mastery": 6,
         "of_int_mastery": 6,
         "of_frost": 24
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "spell_frost_nova_permafrost_str",
@@ -25048,8 +25019,8 @@
       },
       "base_type": "spell_frost_nova",
       "primary_stat": "str",
-      "damage_min": 17,
-      "damage_max": 23,
+      "damage_min": 21,
+      "damage_max": 29,
       "damage_type": "cold",
       "spell_cooldown": 4.0,
       "item_tier": 3,
@@ -25081,7 +25052,8 @@
         "of_dex_mastery": 6,
         "of_int_mastery": 6,
         "of_frost": 24
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "spell_frost_nova_whitefrost_str",
@@ -25096,8 +25068,8 @@
       },
       "base_type": "spell_frost_nova",
       "primary_stat": "str",
-      "damage_min": 19,
-      "damage_max": 26,
+      "damage_min": 24,
+      "damage_max": 32,
       "damage_type": "cold",
       "spell_cooldown": 4.0,
       "item_tier": 4,
@@ -25129,7 +25101,8 @@
         "of_dex_mastery": 6,
         "of_int_mastery": 6,
         "of_frost": 24
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "spell_frost_nova_numbing_dex",
@@ -25144,8 +25117,8 @@
       },
       "base_type": "spell_frost_nova",
       "primary_stat": "dex",
-      "damage_min": 21,
-      "damage_max": 30,
+      "damage_min": 26,
+      "damage_max": 38,
       "damage_type": "cold",
       "spell_cooldown": 4.0,
       "item_tier": 5,
@@ -25177,7 +25150,8 @@
         "of_str_mastery": 6,
         "of_int_mastery": 6,
         "of_frost": 24
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "spell_magic_dart_glyph_str",
@@ -26452,8 +26426,8 @@
       },
       "base_type": "spell_sandblast",
       "primary_stat": "int",
-      "damage_min": 26,
-      "damage_max": 36,
+      "damage_min": 21,
+      "damage_max": 29,
       "damage_type": "physical",
       "spell_cooldown": 2.6,
       "item_tier": 1,
@@ -26482,7 +26456,8 @@
         "of_int_mastery": 26,
         "of_str_mastery": 6,
         "of_dex_mastery": 6
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "spell_sandblast_cragblade_dex",
@@ -26497,8 +26472,8 @@
       },
       "base_type": "spell_sandblast",
       "primary_stat": "dex",
-      "damage_min": 26,
-      "damage_max": 36,
+      "damage_min": 21,
+      "damage_max": 29,
       "damage_type": "physical",
       "spell_cooldown": 2.6,
       "item_tier": 1,
@@ -26527,7 +26502,8 @@
         "of_dex_mastery": 26,
         "of_str_mastery": 6,
         "of_int_mastery": 6
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "spell_sandblast_ironvein_str",
@@ -26542,8 +26518,8 @@
       },
       "base_type": "spell_sandblast",
       "primary_stat": "str",
-      "damage_min": 26,
-      "damage_max": 36,
+      "damage_min": 21,
+      "damage_max": 29,
       "damage_type": "physical",
       "spell_cooldown": 2.6,
       "item_tier": 1,
@@ -26572,7 +26548,8 @@
         "of_str_mastery": 26,
         "of_dex_mastery": 6,
         "of_int_mastery": 6
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "spell_sandblast_earthworn_int",
@@ -26587,8 +26564,8 @@
       },
       "base_type": "spell_sandblast",
       "primary_stat": "int",
-      "damage_min": 26,
-      "damage_max": 36,
+      "damage_min": 21,
+      "damage_max": 29,
       "damage_type": "physical",
       "spell_cooldown": 2.6,
       "item_tier": 1,
@@ -26617,7 +26594,8 @@
         "of_int_mastery": 26,
         "of_str_mastery": 6,
         "of_dex_mastery": 6
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "spell_sandblast_basalt_dex",
@@ -26632,8 +26610,8 @@
       },
       "base_type": "spell_sandblast",
       "primary_stat": "dex",
-      "damage_min": 26,
-      "damage_max": 36,
+      "damage_min": 21,
+      "damage_max": 29,
       "damage_type": "physical",
       "spell_cooldown": 2.6,
       "item_tier": 1,
@@ -26662,7 +26640,8 @@
         "of_dex_mastery": 26,
         "of_str_mastery": 6,
         "of_int_mastery": 6
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "spell_sandblast_bedrock_int",
@@ -26677,8 +26656,8 @@
       },
       "base_type": "spell_sandblast",
       "primary_stat": "int",
-      "damage_min": 28,
-      "damage_max": 40,
+      "damage_min": 22,
+      "damage_max": 32,
       "damage_type": "physical",
       "spell_cooldown": 2.6,
       "item_tier": 2,
@@ -26707,7 +26686,8 @@
         "of_int_mastery": 26,
         "of_str_mastery": 6,
         "of_dex_mastery": 6
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "spell_sandblast_gravelstrike_str",
@@ -26722,8 +26702,8 @@
       },
       "base_type": "spell_sandblast",
       "primary_stat": "str",
-      "damage_min": 28,
-      "damage_max": 40,
+      "damage_min": 22,
+      "damage_max": 32,
       "damage_type": "physical",
       "spell_cooldown": 2.6,
       "item_tier": 2,
@@ -26752,7 +26732,8 @@
         "of_str_mastery": 26,
         "of_dex_mastery": 6,
         "of_int_mastery": 6
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "spell_sandblast_stoneborn_dex",
@@ -26767,8 +26748,8 @@
       },
       "base_type": "spell_sandblast",
       "primary_stat": "dex",
-      "damage_min": 28,
-      "damage_max": 40,
+      "damage_min": 22,
+      "damage_max": 32,
       "damage_type": "physical",
       "spell_cooldown": 2.6,
       "item_tier": 2,
@@ -26797,7 +26778,8 @@
         "of_dex_mastery": 26,
         "of_str_mastery": 6,
         "of_int_mastery": 6
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "spell_sandblast_slate_int",
@@ -26812,8 +26794,8 @@
       },
       "base_type": "spell_sandblast",
       "primary_stat": "int",
-      "damage_min": 28,
-      "damage_max": 40,
+      "damage_min": 22,
+      "damage_max": 32,
       "damage_type": "physical",
       "spell_cooldown": 2.6,
       "item_tier": 2,
@@ -26842,7 +26824,8 @@
         "of_int_mastery": 26,
         "of_str_mastery": 6,
         "of_dex_mastery": 6
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "spell_sandblast_tectonic_str",
@@ -26857,8 +26840,8 @@
       },
       "base_type": "spell_sandblast",
       "primary_stat": "str",
-      "damage_min": 31,
-      "damage_max": 44,
+      "damage_min": 25,
+      "damage_max": 35,
       "damage_type": "physical",
       "spell_cooldown": 2.6,
       "item_tier": 3,
@@ -26887,7 +26870,8 @@
         "of_str_mastery": 26,
         "of_dex_mastery": 6,
         "of_int_mastery": 6
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "spell_sandblast_pebble_dex",
@@ -26902,8 +26886,8 @@
       },
       "base_type": "spell_sandblast",
       "primary_stat": "dex",
-      "damage_min": 31,
-      "damage_max": 44,
+      "damage_min": 25,
+      "damage_max": 35,
       "damage_type": "physical",
       "spell_cooldown": 2.6,
       "item_tier": 3,
@@ -26932,7 +26916,8 @@
         "of_dex_mastery": 26,
         "of_str_mastery": 6,
         "of_int_mastery": 6
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "spell_sandblast_ridge_int",
@@ -26947,8 +26932,8 @@
       },
       "base_type": "spell_sandblast",
       "primary_stat": "int",
-      "damage_min": 31,
-      "damage_max": 44,
+      "damage_min": 25,
+      "damage_max": 35,
       "damage_type": "physical",
       "spell_cooldown": 2.6,
       "item_tier": 3,
@@ -26977,7 +26962,8 @@
         "of_int_mastery": 26,
         "of_str_mastery": 6,
         "of_dex_mastery": 6
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "spell_sandblast_granite_int",
@@ -26992,8 +26978,8 @@
       },
       "base_type": "spell_sandblast",
       "primary_stat": "int",
-      "damage_min": 35,
-      "damage_max": 50,
+      "damage_min": 28,
+      "damage_max": 40,
       "damage_type": "physical",
       "spell_cooldown": 2.6,
       "item_tier": 4,
@@ -27022,7 +27008,8 @@
         "of_int_mastery": 26,
         "of_str_mastery": 6,
         "of_dex_mastery": 6
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "spell_sandblast_riverstone_int",
@@ -27037,8 +27024,8 @@
       },
       "base_type": "spell_sandblast",
       "primary_stat": "int",
-      "damage_min": 40,
-      "damage_max": 56,
+      "damage_min": 32,
+      "damage_max": 45,
       "damage_type": "physical",
       "spell_cooldown": 2.6,
       "item_tier": 5,
@@ -27067,7 +27054,8 @@
         "of_int_mastery": 26,
         "of_str_mastery": 6,
         "of_dex_mastery": 6
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "spell_drain_wraith_int",

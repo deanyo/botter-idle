@@ -148,7 +148,10 @@ def compute_spell(item):
     dmax = float(item.get('damage_max', 0))
     cd = float(item.get('spell_cooldown', 3.0))
     avg = (dmin + dmax) / 2
-    dps = avg / max(0.5, cd)
+    # Floor cooldown at 1.0s so micro-CD spells (magic_dart 0.7s) don't
+    # get runaway DPS scores. 2026-06-05.
+    eff_cd = max(1.0, cd)
+    dps = avg / eff_cd
     base = dps * 3.0
     if base > 0:
         components.append((f"dmg {dmin:.0f}-{dmax:.0f}/{cd:.1f}s", int(round(base))))
@@ -187,19 +190,26 @@ def main():
             'level': ilvl,
         })
 
-    # Bucket by (slot, rarity, item_tier).
+    # Bucket by (slot, rarity, item_tier, weapon_class).
+    # weapon_class included so 1H and 2H weapons are compared
+    # separately (a 2H sword has higher base damage by design).
+    # Non-weapon slots have weapon_class="" — they all share one bucket.
     buckets = defaultdict(list)
+    items_by_id = {it['id']: it for it in items}
     for s in scored:
-        key = (s['slot'], s['rarity'], s['item_tier'])
+        wc = ''
+        if s['slot'] == 'weapon':
+            wc = items_by_id[s['id']].get('weapon_class', '1H')
+        key = (s['slot'], s['rarity'], s['item_tier'], wc)
         buckets[key].append(s)
 
     print('# Item-level audit\n')
     print('## Bucket means (slot · rarity · tier)\n')
-    print('| Slot | Rarity | Tier | N | Mean | Median | Stddev | Min | Max |')
-    print('|---|---|---|---:|---:|---:|---:|---:|---:|')
+    print('| Slot | Rarity | Tier | Class | N | Mean | Median | Stddev | Min | Max |')
+    print('|---|---|---|---|---:|---:|---:|---:|---:|---:|')
     bucket_stats = {}
     for key in sorted(buckets.keys()):
-        slot, rarity, tier = key
+        slot, rarity, tier, wc = key
         levels = [s['level'] for s in buckets[key]]
         if not levels: continue
         n = len(levels)
@@ -207,7 +217,8 @@ def main():
         median = statistics.median(levels)
         sd = statistics.stdev(levels) if n > 1 else 0.0
         bucket_stats[key] = {'mean': mean, 'sd': sd}
-        print(f'| {slot} | {rarity} | T{tier} | {n} | {mean:.0f} | {median:.0f} | {sd:.0f} | {min(levels)} | {max(levels)} |')
+        wc_label = wc if wc else '—'
+        print(f'| {slot} | {rarity} | T{tier} | {wc_label} | {n} | {mean:.0f} | {median:.0f} | {sd:.0f} | {min(levels)} | {max(levels)} |')
 
     print('\n## Outliers (>2σ from bucket mean)\n')
     outliers = []
@@ -216,18 +227,19 @@ def main():
         if not st or st['sd'] < 1: continue
         for s in buckets[key]:
             z = (s['level'] - st['mean']) / max(1.0, st['sd'])
-            if abs(z) >= 2.0:
+            if abs(z) >= 1.5:
                 outliers.append((z, s, key))
     outliers.sort(key=lambda x: -abs(x[0]))
     if outliers:
         print('| z | Item | Slot · Rarity · Tier | Lvl | Bucket μ ± σ |')
         print('|---:|---|---|---:|---:|')
         for z, s, key in outliers[:40]:
-            slot, rarity, tier = key
+            slot, rarity, tier, wc = key
             mean = bucket_stats[key]['mean']
             sd = bucket_stats[key]['sd']
             arrow = '↑' if z > 0 else '↓'
-            print(f'| {z:+.1f}σ {arrow} | `{s["id"]}` | {slot} · {rarity} · T{tier} | {s["level"]} | {mean:.0f} ± {sd:.0f} |')
+            wc_label = ' ' + wc if wc else ''
+            print(f'| {z:+.1f}σ {arrow} | `{s["id"]}` | {slot}{wc_label} · {rarity} · T{tier} | {s["level"]} | {mean:.0f} ± {sd:.0f} |')
     else:
         print('No outliers.')
 

@@ -453,8 +453,8 @@
       "tile": "elven_dagger.png",
       "base_type": "dagger",
       "weapon_class": "1H",
-      "damage_min": 6,
-      "damage_max": 12,
+      "damage_min": 9,
+      "damage_max": 16,
       "damage_type": "physical",
       "speed": 0.5,
       "item_tier": 2,
@@ -488,7 +488,8 @@
         "of_lifesteal": 15,
         "of_channeling": 8,
         "of_quickcast": 8
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "iron_falchion",
@@ -720,8 +721,8 @@
       "tile": "short_sword_5.png",
       "base_type": "short_sword",
       "weapon_class": "1H",
-      "damage_min": 19,
-      "damage_max": 36,
+      "damage_min": 27,
+      "damage_max": 48,
       "damage_type": "physical",
       "speed": 0.6,
       "item_tier": 3,
@@ -753,7 +754,8 @@
         "of_lifesteal": 15,
         "of_channeling": 8,
         "of_quickcast": 8
-      }
+      },
+      "_rebalance_v6": true
     },
     {
       "id": "iron_longsword",
@@ -1117,8 +1119,8 @@
       "tile": "katana.png",
       "base_type": "katana",
       "weapon_class": "1H",
-      "damage_min": 30,
-      "damage_max": 52,
+      "damage_min": 38,
+      "damage_max": 65,
       "damage_type": "physical",
       "speed": 0.6,
       "item_tier": 4,
@@ -1153,7 +1155,8 @@
         "of_lifesteal": 15,
         "of_channeling": 8,
         "of_quickcast": 8
-      }
+      },
+      "_rebalance_v6": true
     },
     {
       "id": "runed_scimitar",
@@ -1392,8 +1395,8 @@
       "tile": "demon_blade.png",
       "base_type": "demon_blade",
       "weapon_class": "1H",
-      "damage_min": 143,
-      "damage_max": 250,
+      "damage_min": 122,
+      "damage_max": 215,
       "damage_type": "fire",
       "speed": 0.9,
       "item_tier": 5,
@@ -1428,7 +1431,8 @@
         "of_lifesteal": 15,
         "of_channeling": 8,
         "of_quickcast": 8
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "singing_sword",
@@ -1711,8 +1715,8 @@
       "tile": "urand_doom_knight_new.png",
       "base_type": "demon_blade",
       "weapon_class": "1H",
-      "damage_min": 143,
-      "damage_max": 250,
+      "damage_min": 122,
+      "damage_max": 215,
       "damage_type": "dark",
       "speed": 0.9,
       "item_tier": 5,
@@ -1747,7 +1751,8 @@
         "of_lifesteal": 15,
         "of_channeling": 8,
         "of_quickcast": 8
-      }
+      },
+      "_rebalance_v6": true
     },
     {
       "id": "knife_of_accuracy",
@@ -1757,10 +1762,10 @@
       "tile": "urand_knife_of_accuracy.png",
       "base_type": "knife",
       "weapon_class": "1H",
-      "damage_min": 15,
-      "damage_max": 30,
+      "damage_min": 24,
+      "damage_max": 46,
       "damage_type": "physical",
-      "speed": 0.5,
+      "speed": 0.45,
       "item_tier": 4,
       "flavor_tags": [
         "precision",
@@ -1793,7 +1798,8 @@
         "of_lifesteal": 15,
         "of_channeling": 8,
         "of_quickcast": 8
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "spriggans_knife",
@@ -1803,10 +1809,10 @@
       "tile": "urand_spriggans_knife_new.png",
       "base_type": "dagger",
       "weapon_class": "1H",
-      "damage_min": 24,
-      "damage_max": 48,
+      "damage_min": 38,
+      "damage_max": 70,
       "damage_type": "physical",
-      "speed": 0.5,
+      "speed": 0.45,
       "item_tier": 5,
       "flavor_tags": [
         "swiftness",
@@ -1839,7 +1845,8 @@
         "of_lifesteal": 15,
         "of_channeling": 8,
         "of_quickcast": 8
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "id": "vampires_tooth",
@@ -2082,8 +2089,8 @@
       "tile": "spwpn_sword_of_cerebov_new.png",
       "base_type": "demon_blade",
       "weapon_class": "1H",
-      "damage_min": 143,
-      "damage_max": 250,
+      "damage_min": 122,
+      "damage_max": 215,
       "damage_type": "fire",
       "speed": 0.9,
       "item_tier": 5,
@@ -2119,7 +2126,8 @@
         "of_lifesteal": 15,
         "of_channeling": 8,
         "of_quickcast": 8
-      }
+      },
+      "_rebalance_v6": true
     },
     {
       "id": "sword_of_power",
@@ -2524,8 +2532,8 @@
         "of_int_mastery": 14
       },
       "base_type": "demon_blade",
-      "damage_max": 250,
-      "damage_min": 143,
+      "damage_max": 215,
+      "damage_min": 122,
       "damage_type": "fire",
       "default_tint": {
         "hue": 0.0,
@@ -2566,7 +2574,8 @@
         "of_dark_resist": 22,
         "of_int_mastery": 14,
         "of_channeling": 14
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "affix_pool": {
@@ -2822,8 +2831,8 @@
         "of_lightning_resist": 18
       },
       "base_type": "katana",
-      "damage_max": 52,
-      "damage_min": 30,
+      "damage_max": 65,
+      "damage_min": 38,
       "damage_type": "physical",
       "default_tint": {
         "hue": 27.6,
@@ -2858,7 +2867,8 @@
         "of_lightning_resist": 18,
         "of_might": 14,
         "of_haste": 12
-      }
+      },
+      "_rebalance_v6": true
     },
     {
       "affix_pool": {
@@ -3123,8 +3133,8 @@
         "of_fire_resist": 22
       },
       "base_type": "demon_blade",
-      "damage_max": 250,
-      "damage_min": 143,
+      "damage_max": 215,
+      "damage_min": 122,
       "damage_type": "fire",
       "default_tint": {
         "hue": 16.8,
@@ -3159,7 +3169,8 @@
         "of_quickcast": 14,
         "of_fire_resist": 22,
         "of_channeling": 10
-      }
+      },
+      "_rebalance_v5": true
     },
     {
       "affix_pool": {
@@ -3285,26 +3296,21 @@
         "of_might": 25,
         "of_finesse": 15,
         "of_wisdom": 10,
-        "of_sharpness": 44,
-        "of_embers": 22,
-        "of_frost": 22,
-        "of_storms": 22,
-        "of_devotion": 20,
-        "of_venom": 48,
-        "of_shadows": 20,
+        "of_sharpness": 48,
+        "of_embers": 26,
+        "of_frost": 26,
+        "of_storms": 26,
+        "of_devotion": 24,
+        "of_venom": 52,
+        "of_shadows": 24,
         "of_crit": 25,
         "of_haste": 20,
         "of_lifesteal": 15,
-        "of_channeling": 26,
+        "of_channeling": 8,
         "of_quickcast": 8,
         "of_poison_resist": 22,
         "of_regen": 14,
-        "of_vitality": 15,
-        "of_resonance": 18,
-        "of_multicast": 12,
-        "of_str_mastery": 10,
-        "of_dex_mastery": 10,
-        "of_int_mastery": 10
+        "of_vitality": 15
       },
       "base_type": "rapier",
       "damage_max": 43,
@@ -3340,20 +3346,15 @@
       "unique": false,
       "weapon_class": "1H",
       "_balance_bumps": {
-        "of_embers": 14,
-        "of_frost": 14,
-        "of_storms": 14,
-        "of_devotion": 14,
-        "of_venom": 14,
-        "of_shadows": 14,
-        "of_sharpness": 14,
-        "of_resonance": 18,
-        "of_multicast": 12,
-        "of_channeling": 18,
-        "of_str_mastery": 10,
-        "of_dex_mastery": 10,
-        "of_int_mastery": 10
-      }
+        "of_embers": 18,
+        "of_frost": 18,
+        "of_storms": 18,
+        "of_devotion": 18,
+        "of_venom": 18,
+        "of_shadows": 18,
+        "of_sharpness": 18
+      },
+      "_rebalance_v5": true
     },
     {
       "affix_pool": {
