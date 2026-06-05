@@ -353,8 +353,12 @@
 <script>
 const ITEM_TILE_BASE = "../project/assets/tiles/items/";
 const TILE_BASE      = "../dcss/Dungeon Crawl Stone Soup Full/";
+// Try project/items first (flat), then DCSS pack under item/weapon/.
+// item/weapon/ is where DCSS keeps the inventory-icon sprites for all
+// the weapons we use here. Fallback chain is silent — sprites that
+// genuinely don't exist anywhere just hide cleanly. 2026-06-05.
 const FALLBACK_SRC = (path) =>
-  `<img src="${ITEM_TILE_BASE}${path}" onerror="if(!this.dataset.f){this.dataset.f='1';this.src='${TILE_BASE}${path}'}else{this.src='';this.replaceWith(document.createTextNode('?'))}">`;
+  `<img src="${ITEM_TILE_BASE}${path}" onerror="if(!this.dataset.f){this.dataset.f='1';this.src='${TILE_BASE}item/weapon/${path}'}else if(!this.dataset.s){this.dataset.s='1';this.src='${TILE_BASE}${path}'}else{this.style.display='none'}">`;
 
 // Tooltip builder — renders a card with the same field shape as the
 // in-game ItemTooltip widget. Each field is optional so we can demo
@@ -475,10 +479,10 @@ function renderRates() {
 
 // ------- Stage 1: rarity progression -------
 const RARITY_ROW = [
-  { name: 'Rusty Dagger',    sprite: 'dagger_1.png', rarity: 'common',
+  { name: 'Rusty Dagger',    sprite: 'dagger_new.png', rarity: 'common',
     stats: [{label:'Damage', val:'4-7'}, {label:'Speed', val:'0.55s'}],
     tags: ['physical'], rollLabel: 'Common — no bonuses' },
-  { name: 'Iron Dagger',     sprite: 'dagger_1.png', rarity: 'uncommon',
+  { name: 'Iron Dagger',     sprite: 'dagger_new.png', rarity: 'uncommon',
     stats: [{label:'Damage', val:'7-11'}, {label:'Speed', val:'0.55s'}],
     affixes: ['+ 4 Strength'],
     tags: ['physical'], rollLabel: '+1 affix' },
@@ -490,7 +494,7 @@ const RARITY_ROW = [
     stats: [{label:'Damage', val:'18-26'}, {label:'Speed', val:'0.40s'}],
     affixes: ['+ 11 Dexterity', '+ 14% Haste', '+ 6% Lifesteal'],
     tags: ['physical'], rollLabel: '+3 affixes' },
-  { name: "Vampire's Tooth", sprite: 'urand_vampires_tooth.png', rarity: 'legendary',
+  { name: "Vampire's Tooth", sprite: 'spwpn_vampires_tooth.png', rarity: 'legendary',
     stats: [{label:'Damage', val:'48-79'}, {label:'Speed', val:'0.55s'}],
     affixes: ['+ 18 Strength', '+ 22% Haste', '+ 15% Crit', '+ 12% Lifesteal'],
     tags: ['vampiric'],
@@ -500,19 +504,19 @@ const RARITY_ROW = [
 
 // ------- Stage 2: quality -------
 const QUALITY_ROW = [
-  { name: 'Long Sword', sprite: 'long_sword_1.png', rarity: 'rare',
+  { name: 'Long Sword', sprite: 'long_sword_1_new.png', rarity: 'rare',
     qualityLabel: 'Rusted', stats: [{label:'Damage', val:'9-15'}],
     affixes: ['+ 5 Strength', '+ 4% Crit'],
     rollLabel: '0.80× stats' },
-  { name: 'Long Sword', sprite: 'long_sword_1.png', rarity: 'rare',
+  { name: 'Long Sword', sprite: 'long_sword_1_new.png', rarity: 'rare',
     stats: [{label:'Damage', val:'14-22'}],
     affixes: ['+ 7 Strength', '+ 5% Crit'],
     rollLabel: 'Standard (1.00×)' },
-  { name: 'Long Sword', sprite: 'long_sword_1.png', rarity: 'rare',
+  { name: 'Long Sword', sprite: 'long_sword_1_new.png', rarity: 'rare',
     qualityLabel: 'Mastercrafted', stats: [{label:'Damage', val:'17-26'}],
     affixes: ['+ 8 Strength', '+ 6% Crit'],
     rollLabel: '1.15× stats' },
-  { name: 'Long Sword', sprite: 'long_sword_1.png', rarity: 'rare',
+  { name: 'Long Sword', sprite: 'long_sword_1_new.png', rarity: 'rare',
     qualityLabel: 'Sublime', stats: [{label:'Damage', val:'19-30'}],
     affixes: ['+ 8 Strength', '+ 7% Crit'],
     rollLabel: '1.20× stats — extreme tail' },
@@ -520,26 +524,26 @@ const QUALITY_ROW = [
 
 // ------- Stage 3: recolor -------
 const RECOLOR_ROW = [
-  { name: 'Long Sword', sprite: 'long_sword_1.png', rarity: 'rare',
+  { name: 'Long Sword', sprite: 'long_sword_1_new.png', rarity: 'rare',
     stats: [{label:'Damage', val:'14-22'}],
     affixes: ['+ 7 Strength'],
     rollLabel: 'No recolor (~70%)' },
-  { name: 'Long Sword', sprite: 'long_sword_1.png', rarity: 'rare',
+  { name: 'Long Sword', sprite: 'long_sword_1_new.png', rarity: 'rare',
     recolor: 'hue180',
     stats: [{label:'Damage', val:'14-22'}],
     affixes: ['+ 7 Strength', '+ 4 Regen (lean)'],
     rollLabel: 'Hue shift (~30%)' },
-  { name: 'Long Sword', sprite: 'long_sword_1.png', rarity: 'rare',
+  { name: 'Long Sword', sprite: 'long_sword_1_new.png', rarity: 'rare',
     recolor: 'shimmer',
     stats: [{label:'Damage', val:'14-22'}],
     affixes: ['+ 7 Strength', '+ 6% Crit (lean)'],
     rollLabel: 'Shimmer (0.5%)' },
-  { name: 'Long Sword', sprite: 'long_sword_1.png', rarity: 'rare',
+  { name: 'Long Sword', sprite: 'long_sword_1_new.png', rarity: 'rare',
     recolor: 'inverted',
     stats: [{label:'Damage', val:'14-22'}],
     affixes: ['+ 7 Strength', '+ 5% Haste (lean)'],
     rollLabel: 'Inverted (0.1%)' },
-  { name: 'Long Sword', sprite: 'long_sword_1.png', rarity: 'rare',
+  { name: 'Long Sword', sprite: 'long_sword_1_new.png', rarity: 'rare',
     recolor: 'prismatic',
     stats: [{label:'Damage', val:'14-22'}],
     affixes: ['+ 7 Strength', '+ 8% spell damage (lean)'],
@@ -548,19 +552,19 @@ const RECOLOR_ROW = [
 
 // ------- Stage 4: enchant -------
 const ENCHANT_ROW = [
-  { name: 'Iron Mace', sprite: 'mace_1.png', rarity: 'rare',
+  { name: 'Iron Mace', sprite: 'mace_1_new.png', rarity: 'rare',
     stats: [{label:'Damage', val:'18-30'}],
     affixes: ['+ 6 Strength'],
     rollLabel: 'No enchant' },
-  { name: 'Iron Mace', sprite: 'mace_1.png', rarity: 'rare',
+  { name: 'Iron Mace', sprite: 'mace_1_new.png', rarity: 'rare',
     stats: [{label:'Damage', val:'18-30'}],
     affixes: ['+ 6 Strength'], tags: ['fire'],
     rollLabel: '+ Fire enchant' },
-  { name: 'Iron Mace', sprite: 'mace_1.png', rarity: 'rare',
+  { name: 'Iron Mace', sprite: 'mace_1_new.png', rarity: 'rare',
     stats: [{label:'Damage', val:'18-30'}],
     affixes: ['+ 6 Strength'], tags: ['vampiric'],
     rollLabel: '+ Vampiric enchant' },
-  { name: 'Iron Mace', sprite: 'mace_1.png', rarity: 'rare',
+  { name: 'Iron Mace', sprite: 'mace_1_new.png', rarity: 'rare',
     stats: [{label:'Damage', val:'18-30'}],
     affixes: ['+ 6 Strength'], tags: ['holy'],
     rollLabel: '+ Holy enchant' },
@@ -568,19 +572,19 @@ const ENCHANT_ROW = [
 
 // ------- Stage 5: combo -------
 const COMBO_ROW = [
-  { name: 'Spiked Mace', sprite: 'mace_1.png', rarity: 'epic',
+  { name: 'Spiked Mace', sprite: 'mace_1_new.png', rarity: 'epic',
     stats: [{label:'Damage', val:'24-38'}],
     affixes: ['+ 9 Strength', '+ 12% Crit'],
     tags: ['fire', 'cold'],
     rollLabel: 'Both fire + cold rolled — no combo registered',
   },
-  { name: 'Spiked Mace', sprite: 'mace_1.png', rarity: 'epic',
+  { name: 'Spiked Mace', sprite: 'mace_1_new.png', rarity: 'epic',
     stats: [{label:'Damage', val:'24-38'}],
     affixes: ['+ 9 Strength', '+ 12% Crit'],
     combo: { name: 'Bloodfire', color: '#ff4488', desc: 'Lifesteal hits leave a 2s burn DoT.' },
     rollLabel: 'fire + vampiric → Bloodfire combo',
   },
-  { name: 'Spiked Mace', sprite: 'mace_1.png', rarity: 'epic',
+  { name: 'Spiked Mace', sprite: 'mace_1_new.png', rarity: 'epic',
     stats: [{label:'Damage', val:'24-38'}],
     affixes: ['+ 9 Strength', '+ 12% Crit'],
     combo: { name: 'Cleansing Frost', color: '#aae6ff', desc: 'Cold hits restore 1% HP and shed any DoT.' },
@@ -614,7 +618,7 @@ const META_ROW = [
 
 // ------- Stage 7: the full chase -------
 const EVERYTHING_ROW = [
-  { name: "Vampire's Tooth", sprite: 'urand_vampires_tooth.png', rarity: 'legendary',
+  { name: "Vampire's Tooth", sprite: 'spwpn_vampires_tooth.png', rarity: 'legendary',
     qualityLabel: 'Sublime', meta: 'primal', recolor: 'prismatic',
     stats: [{label:'Damage', val:'95-148'}, {label:'Speed', val:'0.50s'}],
     affixes: ['+ 27 Strength', '+ 32% Haste', '+ 24% Crit', '+ 21% Lifesteal'],
