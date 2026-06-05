@@ -201,14 +201,38 @@
   }
   .tag-toggle.on { color: #000; font-weight: 600; }
 
-  /* Sprite preview in edit */
-  #edit-sprite-wrap {
+  /* Sprite preview in edit — left side carries TWO previews
+     side-by-side: inventory icon (item/...) and paperdoll overlay
+     (player/<slot>/...). They use different sprite trees in DCSS so
+     authors need to set them independently. */
+  #edit-sprite-wrap, #edit-overlay-wrap {
     width: 80px; height: 80px; background: var(--tile-bg); border: 1px solid var(--border);
     border-radius: 4px; display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
+    position: relative;
   }
-  #edit-sprite-wrap img { width: 80px; height: 80px; image-rendering: pixelated; }
-  .edit-sprite-row { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 14px; }
+  #edit-sprite-wrap img, #edit-overlay-wrap img {
+    width: 80px; height: 80px; image-rendering: pixelated;
+  }
+  /* Tiny corner labels so it's obvious which preview is which. */
+  #edit-sprite-wrap::after, #edit-overlay-wrap::after {
+    position: absolute;
+    bottom: -16px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 9px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+  #edit-sprite-wrap::after { content: "inventory"; }
+  #edit-overlay-wrap::after { content: "on bot"; }
+  .edit-sprite-row {
+    display: flex; gap: 10px; align-items: flex-start;
+    margin-bottom: 22px;  /* extra space for the corner labels */
+  }
   .edit-sprite-row .right { flex: 1; }
 
   /* Picker modal */
@@ -295,11 +319,18 @@ const TILE_BASE_SUP  = "../dcss/Dungeon Crawl Stone Soup Supplemental/";
 // Per-slot config: manifest path + picker root + export name + label.
 // picker_roots controls which atlas paths the sprite picker offers when
 // the user clicks "Browse sprites…". Listed in display order in the tab strip.
+// `picker_roots` is the inventory-icon source tree (item/...).
+// `overlay_roots` is the hand/body/cloak-aligned source tree
+// (player/...). The two trees are separate in DCSS because the
+// inventory icons are drawn diagonally for the bag, while the
+// paperdoll overlays are pre-aligned to the bot's grip / body /
+// head positions. See paperdoll_renderer.gd::_resolve_overlay.
 const SLOTS = [
   { id:'weapon', label:'1H Swords',
     manifest:'items_manifest.json',
     export_key:'items_1h_swords', export_file:'items_1h_swords.json',
     picker_roots:['item/weapon/'],
+    overlay_roots:['player/hand_right/','player/hand1/'],
     picker_extras:[
       { key:'sword', label:'Swords',
         keywords:['dagger','knife','short_sword','falchion','long_sword','scimitar','rapier','katana','sabre','quickblade','ancient_sword','demon_blade','elven','orcish','cutlass'] },
@@ -309,6 +340,7 @@ const SLOTS = [
     manifest:'items_helms_manifest.json',
     export_key:'items_helms', export_file:'items_helms.json',
     picker_roots:['item/armor/headgear/','item/armor/artefact/'],
+    overlay_roots:['player/head/'],
     picker_extras:[
       { key:'hat', label:'Hats/Caps', keywords:['hat','cap','hood','cornuthaum','jester'] },
       { key:'helmet', label:'Helmets', keywords:['helmet','helm','crown'] },
@@ -318,6 +350,7 @@ const SLOTS = [
     manifest:'items_armor_manifest.json',
     export_key:'items_armor', export_file:'items_armor.json',
     picker_roots:['item/armor/torso/','item/armor/artefact/'],
+    overlay_roots:['player/body/'],
     picker_extras:[
       { key:'cloth', label:'Cloth/Leather', keywords:['robe','leather','animal_skin'] },
       { key:'mail', label:'Mail', keywords:['chain','ring_mail','scale','splint','banded'] },
@@ -329,6 +362,7 @@ const SLOTS = [
     manifest:'items_shields_manifest.json',
     export_key:'items_shields', export_file:'items_shields.json',
     picker_roots:['item/armor/shields/','item/armor/artefact/'],
+    overlay_roots:['player/hand_left/','player/hand2/'],
     picker_extras:[
       { key:'buckler', label:'Bucklers', keywords:['buckler'] },
       { key:'shield', label:'Shields', keywords:['shield','lshield'] },
@@ -338,6 +372,7 @@ const SLOTS = [
     manifest:'items_boots_manifest.json',
     export_key:'items_boots', export_file:'items_boots.json',
     picker_roots:['item/armor/feet/','item/armor/artefact/'],
+    overlay_roots:['player/boots/'],
     picker_extras:[
       { key:'boots', label:'Boots', keywords:['boot','low_boot'] },
       { key:'artefact', label:'Artefacts', path_includes:'/artefact/' }
@@ -346,6 +381,7 @@ const SLOTS = [
     manifest:'items_rings_manifest.json',
     export_key:'items_rings', export_file:'items_rings.json',
     picker_roots:['item/ring/'],
+    overlay_roots:[],  // jewelry doesn't render on the paperdoll
     picker_extras:[
       { key:'ring', label:'Rings', keywords:['ring_','agate','brass','bronze','clay','copper','coral','diamond','emerald','glass','gold','granite','iron','jade','moonstone','opal','pearl','plain','ruby','silver','steel','tiger_eye','tourmaline','wooden'] },
       { key:'artefact', label:'Artefacts', path_includes:'/artefact/' }
@@ -354,6 +390,7 @@ const SLOTS = [
     manifest:'items_amulets_manifest.json',
     export_key:'items_amulets', export_file:'items_amulets.json',
     picker_roots:['item/amulet/'],
+    overlay_roots:[],  // jewelry doesn't render on the paperdoll
     picker_extras:[
       { key:'amulet', label:'Amulets', keywords:['amulet','bone','cameo','celtic','crystal','cylinder','eye','face','penta','ring_','stone'] },
       { key:'artefact', label:'Artefacts', path_includes:'/artefact/' }
@@ -362,6 +399,7 @@ const SLOTS = [
     manifest:'items_gloves_manifest.json',
     export_key:'items_gloves', export_file:'items_gloves.json',
     picker_roots:['item/armor/hands/','item/armor/artefact/'],
+    overlay_roots:['player/gloves/'],
     picker_extras:[
       { key:'gloves', label:'Gloves', keywords:['glove','gauntlet','mitt'] },
       { key:'artefact', label:'Artefacts', path_includes:'/artefact/' }
@@ -370,6 +408,7 @@ const SLOTS = [
     manifest:'items_cloaks_manifest.json',
     export_key:'items_cloaks', export_file:'items_cloaks.json',
     picker_roots:['item/armor/back/','item/armor/artefact/'],
+    overlay_roots:['player/cloak/'],
     picker_extras:[
       { key:'cloak', label:'Cloaks', keywords:['cloak','cape','scarf'] },
       { key:'artefact', label:'Artefacts', path_includes:'/artefact/' }
@@ -378,6 +417,7 @@ const SLOTS = [
     manifest:'items_weapons_extended_manifest.json',
     export_key:'items_weapons_extended', export_file:'items_weapons_extended.json',
     picker_roots:['item/weapon/','item/weapon/artefact/'],
+    overlay_roots:['player/hand_right/','player/hand1/'],
     picker_extras:[
       { key:'axes',   label:'Axes',     keywords:['axe','battle_axe','war_axe','hand_axe','broad_axe','executioner_axe'] },
       { key:'maces',  label:'Maces',    keywords:['mace','morningstar','eveningstar','flail','hammer','club','ankus'] },
@@ -531,8 +571,10 @@ async function loadSlot(slot) {
       return;
     }
   }
-  // Reset picker state for this slot
+  // Reset picker state for this slot — picker_roots + overlay_roots
+  // change per slot so both cached lists need to rebuild.
   allWeaponTiles = [];
+  allOverlayTiles = [];
   pickerCategory = 'all';
   closeEdit();
   renderSidebar();
@@ -657,6 +699,28 @@ function tileUrl(path) {
 function tileUrlDcssFull(path) { return TILE_BASE + path; }
 function tileUrlDcssSupp(path) { return TILE_BASE_SUP + path; }
 
+// Mirrors paperdoll_renderer.gd::SLOT_DIRS so the editor can preview
+// the actual on-doll sprite. Slots without an entry (ring, amulet,
+// spell) don't render on the paperdoll. 2026-06-05.
+const PAPERDOLL_SLOT_DIRS = {
+  weapon: 'weapons/', armor: 'body/', helm: 'helm/',
+  shield: 'shield/', boots: 'boots/',
+  gloves: 'gloves/', cloak: 'cloak/',
+};
+const PAPERDOLL_BASE = "../project/assets/tiles/player/";
+// Resolve the paperdoll overlay sprite for an item — exact mirror of
+// paperdoll_renderer.gd::_resolve_overlay. Falls back to inventory
+// tile stem when no `overlay` field is set, so existing items keep
+// working. Returns "" for slots without paperdoll rendering.
+function overlayUrl(it) {
+  const slot = it.slot;
+  const dir = PAPERDOLL_SLOT_DIRS[slot];
+  if (!dir) return "";
+  let stem = it.overlay || (it.tile || "").replace(/\.png$/, "");
+  if (!stem) return "";
+  return PAPERDOLL_BASE + dir + stem + ".png";
+}
+
 // ---------- Edit panel ----------
 function openEdit(id) {
   selectedId = id;
@@ -754,14 +818,37 @@ function renderEditBody(it) {
 
   body.innerHTML = `
     <div class="edit-sprite-row">
-      <div id="edit-sprite-wrap"><img id="edit-sprite-img" style="${recolorPreviewStyle(it.default_tint || {})}" src="${tileUrl(it.tile)}" onerror="if(!this.dataset.f){this.dataset.f='1';this.src='${tileUrlDcssFull(it.tile)}'}else if(!this.dataset.s){this.dataset.s='1';this.src='${tileUrlDcssSupp(it.tile)}'}else{this.src='';this.style.display='none'}"></div>
+      <div id="edit-sprite-wrap" title="Inventory icon (the diagonal sprite the player sees in the bag)">
+        <img id="edit-sprite-img" style="${recolorPreviewStyle(it.default_tint || {})}" src="${tileUrl(it.tile)}" onerror="if(!this.dataset.f){this.dataset.f='1';this.src='${tileUrlDcssFull(it.tile)}'}else if(!this.dataset.s){this.dataset.s='1';this.src='${tileUrlDcssSupp(it.tile)}'}else{this.src='';this.style.display='none'}">
+      </div>
+      ${PAPERDOLL_SLOT_DIRS[it.slot] ? `
+        <div id="edit-overlay-wrap" title="Paperdoll sprite (how this item looks held / worn on the bot)">
+          <img id="edit-overlay-img" style="${recolorPreviewStyle(it.default_tint || {})}" src="${overlayUrl(it)}" onerror="this.style.opacity='0.25';this.title='No paperdoll overlay found at ' + this.src">
+        </div>
+      ` : ''}
       <div class="right">
         <div class="field-group">
-          <label>Sprite filename</label>
+          <label>Inventory icon (sprite filename)</label>
           <input type="text" style="width:100%;font-size:11px" value="${it.tile}" id="tile-path-input"
-            onchange="setField('${it.id}','tile',this.value);document.getElementById('edit-sprite-img').src=tileUrl(this.value)">
+            onchange="setField('${it.id}','tile',this.value);refreshSpritePreviews('${it.id}')">
+          <div style="font-size:10px;color:var(--muted);margin-top:2px">The diagonal sprite shown in the bag + on the floor when dropped.</div>
         </div>
-        <button onclick="openPicker('${it.id}')">Browse sprites…</button>
+        <div style="display:flex;gap:6px;margin-bottom:8px">
+          <button onclick="openPicker('${it.id}','inventory')">Browse inventory icons…</button>
+        </div>
+        ${PAPERDOLL_SLOT_DIRS[it.slot] ? `
+          <div class="field-group">
+            <label>Paperdoll sprite (overlay)</label>
+            <input type="text" style="width:100%;font-size:11px" value="${it.overlay || ''}" id="overlay-path-input"
+              placeholder="(matches inventory filename)"
+              onchange="setOverlayField('${it.id}',this.value);refreshSpritePreviews('${it.id}')">
+            <div style="font-size:10px;color:var(--muted);margin-top:2px">How the item renders held / worn on the bot. Leave blank to reuse the inventory filename.</div>
+          </div>
+          <div style="display:flex;gap:6px">
+            <button onclick="openPicker('${it.id}','overlay')">Browse paperdoll sprites…</button>
+            <button onclick="clearOverlay('${it.id}')" class="subtle" title="Clear the override and fall back to the inventory filename">Clear</button>
+          </div>
+        ` : ''}
       </div>
     </div>
 
@@ -1132,20 +1219,50 @@ function deleteItem() {
 }
 
 // ---------- Sprite picker ----------
+// pickerMode is "inventory" (default — sets it.tile from item/...
+// trees) or "overlay" (sets it.overlay from player/... trees). The
+// two trees are visually different in DCSS, so authors choose them
+// independently. 2026-06-05.
 let pickerItemId = null;
+let pickerMode = 'inventory';
 let allWeaponTiles = [];
+let allOverlayTiles = [];
 
 function buildWeaponTileList() {
-  // Pull all atlas paths under any of the active slot's picker_roots.
-  const roots = activeSlot.picker_roots || [];
+  // Pull all atlas paths under any of the active slot's picker_roots
+  // (inventory icons) and overlay_roots (paperdoll overlays). Both
+  // lists rebuild when activeSlot changes via switchSlot.
+  const invRoots = activeSlot.picker_roots || [];
+  const ovRoots = activeSlot.overlay_roots || [];
   allWeaponTiles = Object.keys(atlas)
-    .filter(k => roots.some(r => k.startsWith(r)))
+    .filter(k => invRoots.some(r => k.startsWith(r)))
+    .sort();
+  allOverlayTiles = Object.keys(atlas)
+    .filter(k => ovRoots.some(r => k.startsWith(r)))
     .sort();
 }
 
 function renderPickerFilterBar() {
   const bar = document.getElementById('picker-filter');
   bar.innerHTML = '';
+  // Title hint — flips per pickerMode so the user knows whether they
+  // are picking the inventory or paperdoll sprite.
+  const title = document.querySelector('#picker-head strong');
+  if (title) {
+    title.textContent = pickerMode === 'overlay'
+      ? 'Pick paperdoll sprite (how it looks on the bot)'
+      : 'Pick inventory icon (how it looks in the bag)';
+  }
+  // Filter chips only apply to the inventory tree (which has hand-
+  // tagged categories); the overlay tree is small and doesn't need
+  // them — show a single "All" for clarity.
+  if (pickerMode === 'overlay') {
+    const btn = document.createElement('button');
+    btn.textContent = 'All paperdoll sprites';
+    btn.classList.add('active');
+    bar.appendChild(btn);
+    return;
+  }
   const buttons = [{ key:'all', label:'All '+activeSlot.label }, ...(activeSlot.picker_extras || [])];
   buttons.forEach(b => {
     const btn = document.createElement('button');
@@ -1163,9 +1280,10 @@ function setPickerCategory(cat, btn) {
   renderPicker();
 }
 
-function openPicker(id) {
+function openPicker(id, mode) {
   pickerItemId = id;
-  if (!allWeaponTiles.length) buildWeaponTileList();
+  pickerMode = mode || 'inventory';
+  if (!allWeaponTiles.length && !allOverlayTiles.length) buildWeaponTileList();
   pickerCategory = 'all';
   renderPickerFilterBar();
   document.getElementById('picker').classList.add('open');
@@ -1179,8 +1297,8 @@ function renderPicker() {
   const grid = document.getElementById('picker-grid');
   grid.innerHTML = '';
 
-  let tiles = allWeaponTiles;
-  if (pickerCategory !== 'all') {
+  let tiles = pickerMode === 'overlay' ? allOverlayTiles : allWeaponTiles;
+  if (pickerMode !== 'overlay' && pickerCategory !== 'all') {
     const cfg = (activeSlot.picker_extras || []).find(e => e.key === pickerCategory);
     if (cfg) {
       if (cfg.path_includes) tiles = tiles.filter(k => k.includes(cfg.path_includes));
@@ -1195,9 +1313,9 @@ function renderPicker() {
     const shortName = path.split('/').pop().replace('.png','');
     // Picker thumbnails read from dcss/Full (the source-of-truth tree
     // with category subfolders). The CHOSEN value stored on the item
-    // is the basename only, because items.json's `tile` field is
-    // basename-only (sync_items.py flattens DCSS into
-    // project/assets/tiles/items/<basename>.png at build time).
+    // is the basename only, because items.json's `tile` and `overlay`
+    // fields are basename-only (sync_items.py flattens DCSS into
+    // project/assets/tiles/items/ and player/<slot>/ at build time).
     cell.innerHTML = `
       <img src="${tileUrlDcssFull(path)}" onerror="if(!this.dataset.s){this.dataset.s='1';this.src='${tileUrlDcssSupp(path)}'}else{this.parentElement.style.opacity='.3'}">
       <div class="pick-name">${shortName}</div>
@@ -1205,21 +1323,75 @@ function renderPicker() {
     cell.onclick = () => {
       const it = items.find(x=>x.id===pickerItemId);
       if (it) {
-        // Store basename only — game runtime expects items.json tile
-        // to be a basename inside project/assets/tiles/items/.
         const basename = path.split('/').pop();
-        setField(pickerItemId, 'tile', basename);
-        document.getElementById('tile-path-input').value = basename;
-        // Refresh preview using the same fallback chain as the card.
-        const img = document.getElementById('edit-sprite-img');
-        img.dataset.f = ''; img.dataset.s = '';
-        img.src = tileUrl(basename);
+        if (pickerMode === 'overlay') {
+          // Store stem (no .png extension) so it matches paperdoll
+          // resolver's `stem + ".png"` concatenation.
+          const stem = basename.replace(/\.png$/, '');
+          setOverlayField(pickerItemId, stem);
+          const inp = document.getElementById('overlay-path-input');
+          if (inp) inp.value = stem;
+        } else {
+          setField(pickerItemId, 'tile', basename);
+          const inp = document.getElementById('tile-path-input');
+          if (inp) inp.value = basename;
+        }
+        refreshSpritePreviews(pickerItemId);
       }
       closePicker();
     };
     grid.appendChild(cell);
   });
   if (!grid.children.length) grid.innerHTML = '<div style="color:var(--muted);padding:16px">No tiles match</div>';
+}
+
+// Set the per-item paperdoll overlay override. Empty string deletes
+// the field so the resolver falls back to the inventory tile stem.
+function setOverlayField(id, val) {
+  const it = items.find(x => x.id === id);
+  if (!it) return;
+  const trimmed = String(val || '').trim();
+  if (trimmed === '') {
+    delete it.overlay;
+  } else {
+    it.overlay = trimmed;
+  }
+  dirty.add(id);
+}
+
+function clearOverlay(id) {
+  setOverlayField(id, '');
+  const inp = document.getElementById('overlay-path-input');
+  if (inp) inp.value = '';
+  refreshSpritePreviews(id);
+}
+
+// Re-resolve both preview <img> srcs from the live item state so an
+// inventory or overlay change updates without a full panel rebuild.
+// Picks up authored `default_tint` via the recolor preview filter
+// already on the elements.
+function refreshSpritePreviews(id) {
+  const it = items.find(x => x.id === id);
+  if (!it) return;
+  const inv = document.getElementById('edit-sprite-img');
+  if (inv) {
+    inv.dataset.f = ''; inv.dataset.s = '';
+    inv.src = tileUrl(it.tile || '');
+    inv.style.display = '';
+  }
+  const ov = document.getElementById('edit-overlay-img');
+  if (ov) {
+    const url = overlayUrl(it);
+    ov.style.opacity = '1';
+    ov.src = url;
+  }
+  // Card thumbnail in the grid.
+  const cardImg = document.querySelector(`[data-id="${id}"] .sprite-wrap img`);
+  if (cardImg) {
+    cardImg.dataset.f = ''; cardImg.dataset.s = '';
+    cardImg.src = tileUrl(it.tile || '');
+    cardImg.style.display = '';
+  }
 }
 
 // ---------- Export ----------
@@ -1245,6 +1417,7 @@ function exportJSON() {
       lore: it.lore || '',
       drop_weights: it.drop_weights || [0,0,0,0,0],
       unique: it.unique || false,
+      ...(it.overlay ? {overlay: it.overlay} : {}),
       ...(it.enchant_chance ? {enchant_chance: it.enchant_chance} : {}),
       ...(it.enchant_pool && it.enchant_pool.length ? {enchant_pool: it.enchant_pool} : {}),
       ...(it.affix_pool && Object.keys(it.affix_pool).length ? {affix_pool: it.affix_pool} : {}),
@@ -1287,6 +1460,7 @@ function singleItemPayload(it) {
     lore: it.lore || '',
     drop_weights: it.drop_weights || [0,0,0,0,0],
     unique: it.unique || false,
+    ...(it.overlay ? {overlay: it.overlay} : {}),
     ...(it.enchant_chance ? {enchant_chance: it.enchant_chance} : {}),
     ...(it.enchant_pool && it.enchant_pool.length ? {enchant_pool: it.enchant_pool} : {}),
     ...(it.affix_pool && Object.keys(it.affix_pool).length ? {affix_pool: it.affix_pool} : {}),
