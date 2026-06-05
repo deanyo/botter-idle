@@ -202,7 +202,12 @@ static func _apply(grid: Array, vault: Dictionary, ox: int, oy: int, results: Di
 					_set_cell(grid, cell, C.T_WATER)
 				"I":
 					_set_cell(grid, cell, C.T_ICE)
-				"t":
+				"t", "T":
+					# Both `t` and `T` mean TREE in DCSS .des format —
+					# impassable decor with the tree texture. The
+					# previous mapping treated `T` as a fountain, which
+					# made tree-heavy swamp/forest vaults render with
+					# 30+ fountains stamped in a grid. 2026-06-05 fix.
 					_set_cell(grid, cell, C.T_WALL)
 					decor_marks.append({"cell": cell, "texture": "tree", "is_wall": true})
 				"B":
@@ -211,7 +216,10 @@ static func _apply(grid: Array, vault: Dictionary, ox: int, oy: int, results: Di
 				"M":
 					_set_cell(grid, cell, C.T_WALL)
 					decor_marks.append({"cell": cell, "texture": "mushroom", "is_wall": true})
-				"T":
+				"Y":
+					# DCSS `Y` is fountain (blood). Keep that glyph as
+					# a fountain mapping. Bare-T fountains never
+					# existed in DCSS — that was a port-time mistake.
 					_set_cell(grid, cell, C.T_FLOOR)
 					fountains.append(cell)
 				"S":

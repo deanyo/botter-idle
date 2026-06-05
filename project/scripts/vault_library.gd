@@ -64,11 +64,21 @@ static func _theme_match_any(vault: Dictionary, themes: Array) -> bool:
 	var v_themes: Array = vault.get("themes", [])
 	if v_themes.has("any"):
 		return true
-	# DCSS-port vaults are bulk-tagged 'dungeon' plus their real branch tag
-	# (e.g. 'lair'). To stop branch-specific vaults from leaking into
-	# atmospherically-wrong biomes, require a NON-dungeon tag overlap whenever
-	# the vault has branch tags. The bare 'dungeon' biome (and any biome whose
-	# only request is 'dungeon') still matches via the dungeon tag itself.
+	# DCSS-port vaults are bulk-tagged 'dungeon' plus their real branch
+	# tag (e.g. 'lair', 'tomb', 'swamp'). The bulk tag means a literal
+	# `themes.has("dungeon")` would let every branch-specific vault
+	# stamp on the generic dungeon biome — which is the
+	# tomb-vault-on-D:2 bug from 2026-06-05.
+	#
+	# Rules:
+	#   - 'any' wildcard always matches.
+	#   - For every requested theme: a vault matches if it has that
+	#     theme AND (the vault has no branch tag OR the requested
+	#     theme is the vault's actual branch).
+	#   - Bare 'dungeon' requests only match vaults that have NO
+	#     branch tag — i.e. true generic-dungeon vaults, not tomb /
+	#     swamp / lair vaults that happen to carry the bulk
+	#     'dungeon' tag.
 	var has_branch_tag: bool = false
 	for vt in v_themes:
 		if String(vt) != "dungeon":
@@ -76,12 +86,11 @@ static func _theme_match_any(vault: Dictionary, themes: Array) -> bool:
 			break
 	for t in themes:
 		if t == "dungeon":
-			# Dungeon-tag matches only when the vault has no branch tag, OR
-			# the requesting set is dungeon-only (caller is the generic biome).
-			if not has_branch_tag or themes.size() == 1:
-				if v_themes.has(t):
-					return true
+			# Generic dungeon request matches only branchless vaults.
+			if not has_branch_tag and v_themes.has("dungeon"):
+				return true
 			continue
+		# Branch-specific request — must match the actual branch tag.
 		if v_themes.has(t):
 			return true
 	return false
