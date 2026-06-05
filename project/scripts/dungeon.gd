@@ -490,6 +490,11 @@ func _async_build_floor() -> void:
 	await get_tree().process_frame
 	if my_gen != _build_generation: return
 	var t_spawn: int = Time.get_ticks_usec()
+	# Boss-floor lethality snapshot reset — must run BEFORE _spawn_enemies()
+	# so the spawn-time write to _boss_initial_hp survives. Pre-2026-06-05
+	# this was below floor_started.emit, AFTER spawn, so spawn's write was
+	# clobbered to 0 immediately.
+	_boss_initial_hp = 0
 	if not DebugJump.showcase:
 		_spawn_enemies()
 	# Threat-tier auras: classify each spawned enemy by power-vs-bot.
@@ -525,12 +530,13 @@ func _async_build_floor() -> void:
 	PerfMon.floor_begin(perf_label)
 	# Boss-floor lethality snapshot — captures the bot's entry HP and
 	# wall-clock so the [boss-killed] / [boss-died] log lines can report
-	# how lethal the boss was relative to bot capacity. 2026-06-05.
+	# how lethal the boss was relative to bot capacity. _boss_initial_hp
+	# was already reset before _spawn_enemies() and populated by the
+	# boss-spawn paths. 2026-06-05.
 	if current_floor >= _boss_floor and is_instance_valid(bot):
 		_boss_floor_entry_hp = int(bot.hp)
 		_boss_floor_entry_ms = Time.get_ticks_msec()
 		_boss_floor_branch = String(current_biome.get("id", ""))
-		_boss_initial_hp = 0  # set on boss spawn below
 	floor_started.emit(current_floor)
 
 	# Debug-jump screenshot mode: after a short settle delay, save the
