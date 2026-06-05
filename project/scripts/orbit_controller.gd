@@ -29,7 +29,7 @@ var elapsed: float = 0.0
 var angle_offset: float = 0.0
 var axes: Array = []  # [{sprite: Sprite2D, base_angle: float, hits: Dictionary}]
 
-static func spawn_axes(parent: Node, bot: Node, count: int, radius: float, duration: float, dmg: int, tint: Color = Color(1, 1, 1, 1), sprite_path: String = "") -> OrbitController:
+static func spawn_axes(parent: Node, bot: Node, count: int, radius: float, duration: float, dmg: int, tint: Color = Color(1, 1, 1, 1), sprite_path: String = "", scale_mult: float = 1.0) -> OrbitController:
 	var ctrl := OrbitController.new()
 	ctrl.bot_ref = bot
 	ctrl.radius_px = radius
@@ -64,10 +64,10 @@ static func spawn_axes(parent: Node, bot: Node, count: int, radius: float, durat
 		# reads as a real spinning weapon instead of a tiny moving icon.
 		# Combat-pivot follow-up 2026-06-04.
 		# Larger scale — DCSS hand sprites are 32×32, but on the orbit
-		# radius (~48px) a 1× sprite reads tiny. 1.5× makes the axe
-		# silhouette legible while still leaving headroom around the
-		# bot. 2026-06-05 — was 1.15×.
-		spr.scale = Vector2(1.5, 1.5)
+		# radius (~48px) a 1× sprite reads tiny. 1.5× base; rarity-tier
+		# scale_mult bumps Legendary executioner-axes to ~1.95×. 2026-06-05.
+		var s: float = 1.5 * scale_mult
+		spr.scale = Vector2(s, s)
 		spr.modulate = resolved_tint
 		ctrl.add_child(spr)
 		# Trailing glow Sprite2D — same texture at lower alpha + bigger
@@ -76,7 +76,8 @@ static func spawn_axes(parent: Node, bot: Node, count: int, radius: float, durat
 		var glow := Sprite2D.new()
 		glow.texture = tex
 		glow.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-		glow.scale = Vector2(1.85, 1.85)
+		var gs: float = 1.85 * scale_mult
+		glow.scale = Vector2(gs, gs)
 		glow.modulate = Color(resolved_tint.r, resolved_tint.g, resolved_tint.b, 0.35)
 		glow.z_index = -1  # behind the lead axe sprite
 		ctrl.add_child(glow)

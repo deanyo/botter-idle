@@ -207,9 +207,10 @@ static func _fire_fireball(bot: Node, dungeon: Node, item: Dictionary) -> bool:
 	var tint: Color = _visual_color_for_item(item, element if element != "" else "fire")
 	# Spawn from bot center.
 	var origin: Vector2 = bot.position + Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5)
+	var scale_mult: float = _scale_mult_for(item)
 	for i in proj_count:
 		var target: Node = candidates[i % candidates.size()].e
-		Projectile.spawn_fireball(dungeon.actor_layer, origin, target, damage, speed, sprite_path, element, dungeon, tint)
+		Projectile.spawn_fireball(dungeon.actor_layer, origin, target, damage, speed, sprite_path, element, dungeon, tint, scale_mult)
 	return true
 
 # Frost Nova — radial AoE pulse around the bot. Hits all enemies in
@@ -360,7 +361,11 @@ static func _fire_axes(bot: Node, dungeon: Node, item: Dictionary) -> bool:
 	# default (hand_axe). 2026-06-05.
 	var sprite_path: String = _resolve_sprite_path(item, "spell_axes",
 		"res://assets/tiles/spells/weapons/hand_axe_new.png")
-	OrbitController.spawn_axes(dungeon.actor_layer, bot, n, radius_px, duration, damage, _visual_color_for_item(item, "brutal"), sprite_path)
+	# Rarity scales the visible orbit size — a Legendary executioner-axe
+	# orbit reads as ~30% larger than a Common hand-axe orbit so the
+	# rarity tier is felt, not just stat-sheet'd. 2026-06-05.
+	OrbitController.spawn_axes(dungeon.actor_layer, bot, n, radius_px, duration, damage,
+		_visual_color_for_item(item, "brutal"), sprite_path, _scale_mult_for(item))
 	return true
 
 # --- 2026-06-04 expansion archetypes -------------------------------
@@ -392,17 +397,18 @@ static func _fire_magic_dart(bot: Node, dungeon: Node, item: Dictionary) -> bool
 	# fanned ±25° from the main shot. Splinterfang unique carries this
 	# implicitly. Spell expansion 2026-06-04.
 	var split: bool = bool(item.get("spell_dart_split", false))
+	var scale_mult: float = _scale_mult_for(item)
 	for i in proj_count:
 		var target: Node = candidates[i % candidates.size()].e
-		Projectile.spawn_fireball(dungeon.actor_layer, origin, target, damage, speed, sprite_path, element, dungeon, tint)
+		Projectile.spawn_fireball(dungeon.actor_layer, origin, target, damage, speed, sprite_path, element, dungeon, tint, scale_mult)
 		if split and is_instance_valid(target):
 			# Side darts target enemies at ±1 in the candidate list when
 			# they exist; otherwise fall back to the same target so the
 			# sprites at least visualise the splinter.
 			var alt_a: Node = candidates[(i + 1) % candidates.size()].e
 			var alt_b: Node = candidates[(i + candidates.size() - 1) % candidates.size()].e
-			Projectile.spawn_fireball(dungeon.actor_layer, origin, alt_a, int(damage * 0.5), speed, sprite_path, element, dungeon, tint)
-			Projectile.spawn_fireball(dungeon.actor_layer, origin, alt_b, int(damage * 0.5), speed, sprite_path, element, dungeon, tint)
+			Projectile.spawn_fireball(dungeon.actor_layer, origin, alt_a, int(damage * 0.5), speed, sprite_path, element, dungeon, tint, scale_mult)
+			Projectile.spawn_fireball(dungeon.actor_layer, origin, alt_b, int(damage * 0.5), speed, sprite_path, element, dungeon, tint, scale_mult)
 	return true
 
 # Iron Shot — slow heavy projectile that hits every enemy along its
@@ -430,7 +436,7 @@ static func _fire_iron_shot(bot: Node, dungeon: Node, item: Dictionary) -> bool:
 	var tint: Color = _visual_color_for_item(item, "earth")
 	var origin: Vector2 = bot.position + Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5)
 	var target: Node = candidates[0].e
-	var p: Projectile = Projectile.spawn_fireball(dungeon.actor_layer, origin, target, damage, speed, sprite_path, element, dungeon, tint)
+	var p: Projectile = Projectile.spawn_fireball(dungeon.actor_layer, origin, target, damage, speed, sprite_path, element, dungeon, tint, _scale_mult_for(item))
 	if p != null:
 		p.piercing = true
 		p.pierce_falloff = 0.75
@@ -516,9 +522,10 @@ static func _fire_drain(bot: Node, dungeon: Node, item: Dictionary) -> bool:
 	var origin: Vector2 = bot.position + Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5)
 	var proj_count: int = SpellData.compute_proj_count(bot, item)
 	var ravenous: bool = bool(item.get("spell_drain_buff", false))
+	var scale_mult: float = _scale_mult_for(item)
 	for i in proj_count:
 		var target: Node = candidates[i % candidates.size()].e
-		var p: Projectile = Projectile.spawn_fireball(dungeon.actor_layer, origin, target, damage, speed, sprite_path, element, dungeon, tint)
+		var p: Projectile = Projectile.spawn_fireball(dungeon.actor_layer, origin, target, damage, speed, sprite_path, element, dungeon, tint, scale_mult)
 		if p != null:
 			p.lifesteal_pct = 35.0
 			p.lifesteal_target = bot
@@ -588,11 +595,170 @@ static func _visual_color_for_item(item: Dictionary, default_tag: String) -> Col
 			return c
 	return UITheme.flavor_color_for([default_tag])
 
-# Per-archetype + per-flavor sprite picker. Different flavor tags pick
-# different sprite variants from the synced spells/effects/ +
-# spells/weapons/ trees so e.g. fire fireball vs holy fireball vs
-# arcane bolt all look distinct without needing per-item authoring.
-# 2026-06-05 — replaces the single hardcoded path per archetype.
+# Per-archetype + per-flavor + per-rarity sprite picker. Different
+# flavor tags pick different sprite variants, AND higher-rarity items
+# render more impressive art. Common Spinning Axes orbits hand_axes;
+# Legendary Spinning Axes orbits executioner axes. Same archetype, very
+# different read.
+#
+# Rarity → tier index in the per-flavor sprite table:
+#   common/uncommon → tier 0 (humble: hand_axe, flame0, magic_dart0)
+#   rare            → tier 1 (notable: battleaxe, fire_storm0, magic_dart3)
+#   epic            → tier 2 (impressive: great_axe, frostfire7, crystal_spear5)
+#   legendary       → tier 3 (showstopper: executioner, blood_for_blood, etc)
+#
+# Sprite picks below verified to exist in project/assets/tiles/spells/
+# (synced 2026-06-05). 2026-06-05 — added rarity tiers.
+const _RARITY_TO_SPRITE_TIER := {
+	"common": 0, "uncommon": 0, "rare": 1, "epic": 2, "legendary": 3,
+}
+
+# Per-(archetype, flavor) → 4-element tier ladder.
+# Index 0 = common/uncommon, 3 = legendary. When a tier slot is empty
+# string, fall back to the next-lower-non-empty tier.
+const _SPRITE_LADDERS := {
+	"spell_fireball": {
+		"fire":     ["res://assets/tiles/spells/effects/flame0.png",
+		             "res://assets/tiles/spells/effects/flame2.png",
+		             "res://assets/tiles/spells/effects/cloud_fire2.png",
+		             "res://assets/tiles/spells/effects/fire_storm0.png"],
+		"cold":     ["res://assets/tiles/spells/effects/iceblast0.png",
+		             "res://assets/tiles/spells/effects/iceblast1.png",
+		             "res://assets/tiles/spells/effects/frostfire3.png",
+		             "res://assets/tiles/spells/effects/frostfire7.png"],
+		"vampiric": ["res://assets/tiles/spells/effects/blood_arrow0.png",
+		             "res://assets/tiles/spells/effects/blood_arrow3.png",
+		             "res://assets/tiles/spells/effects/blood_arrow7.png",
+		             "res://assets/tiles/spells/effects/blood_for_blood.png"],
+		"dark":     ["res://assets/tiles/spells/effects/bolt0.png",
+		             "res://assets/tiles/spells/effects/bolt3.png",
+		             "res://assets/tiles/spells/effects/bolt7.png",
+		             "res://assets/tiles/spells/effects/cloud_misery2.png"],
+		"poison":   ["res://assets/tiles/spells/effects/poison_arrow0.png",
+		             "res://assets/tiles/spells/effects/poison_arrow3.png",
+		             "res://assets/tiles/spells/effects/poison_arrow7.png",
+		             "res://assets/tiles/spells/effects/cloud_poison2.png"],
+		"thunderous":["res://assets/tiles/spells/effects/bolt2.png",
+		             "res://assets/tiles/spells/effects/bolt5.png",
+		             "res://assets/tiles/spells/effects/cloud_storm1.png",
+		             "res://assets/tiles/spells/effects/cloud_storm2.png"],
+		"lightning":["res://assets/tiles/spells/effects/bolt2.png",
+		             "res://assets/tiles/spells/effects/bolt5.png",
+		             "res://assets/tiles/spells/effects/cloud_storm1.png",
+		             "res://assets/tiles/spells/effects/cloud_storm2.png"],
+		"arcane":   ["res://assets/tiles/spells/effects/magic_dart0.png",
+		             "res://assets/tiles/spells/effects/magic_dart3.png",
+		             "res://assets/tiles/spells/effects/magic_dart5.png",
+		             "res://assets/tiles/spells/effects/cloud_magic_trail3.png"],
+		"holy":     ["res://assets/tiles/spells/effects/orb_glow0.png",
+		             "res://assets/tiles/spells/effects/orb_glow1.png",
+		             "res://assets/tiles/spells/effects/searing_ray2.png",
+		             "res://assets/tiles/spells/effects/searing_ray5.png"],
+		"":         ["res://assets/tiles/projectiles/fireball.png", "", "", ""],
+	},
+	"spell_magic_dart": {
+		"fire":     ["res://assets/tiles/spells/effects/flame0.png",
+		             "res://assets/tiles/spells/effects/flame2.png", "", ""],
+		"cold":     ["res://assets/tiles/spells/effects/frost0.png",
+		             "res://assets/tiles/spells/effects/frost1.png",
+		             "res://assets/tiles/spells/effects/iceblast0.png", ""],
+		"thunderous":["res://assets/tiles/spells/effects/bolt2.png",
+		             "res://assets/tiles/spells/effects/bolt5.png",
+		             "res://assets/tiles/spells/effects/bolt7.png", ""],
+		"lightning":["res://assets/tiles/spells/effects/bolt2.png",
+		             "res://assets/tiles/spells/effects/bolt5.png",
+		             "res://assets/tiles/spells/effects/bolt7.png", ""],
+		"holy":     ["res://assets/tiles/spells/effects/orb_glow0.png",
+		             "res://assets/tiles/spells/effects/orb_glow1.png", "", ""],
+		"vampiric": ["res://assets/tiles/spells/effects/blood_arrow0.png",
+		             "res://assets/tiles/spells/effects/blood_arrow3.png", "", ""],
+		"poison":   ["res://assets/tiles/spells/effects/poison_arrow0.png",
+		             "res://assets/tiles/spells/effects/poison_arrow3.png", "", ""],
+		"dark":     ["res://assets/tiles/spells/effects/bolt0.png",
+		             "res://assets/tiles/spells/effects/bolt3.png", "", ""],
+		"":         ["res://assets/tiles/projectiles/magic_dart.png",
+		             "res://assets/tiles/spells/effects/magic_dart3.png",
+		             "res://assets/tiles/spells/effects/magic_dart5.png", ""],
+	},
+	"spell_iron_shot": {
+		"fire":     ["res://assets/tiles/spells/effects/iron_shot0.png",
+		             "res://assets/tiles/spells/effects/iron_shot3.png",
+		             "res://assets/tiles/spells/effects/iron_shot5.png",
+		             "res://assets/tiles/spells/effects/iron_shot7.png"],
+		"earth":    ["res://assets/tiles/spells/effects/crystal_spear0.png",
+		             "res://assets/tiles/spells/effects/crystal_spear3.png",
+		             "res://assets/tiles/spells/effects/crystal_spear5.png",
+		             "res://assets/tiles/spells/effects/crystal_spear7.png"],
+		"":         ["res://assets/tiles/projectiles/iron_shot.png",
+		             "res://assets/tiles/spells/effects/iron_shot3.png",
+		             "res://assets/tiles/spells/effects/iron_shot5.png",
+		             "res://assets/tiles/spells/effects/iron_shot7.png"],
+	},
+	"spell_drain": {
+		"vampiric": ["res://assets/tiles/spells/effects/blood_arrow0.png",
+		             "res://assets/tiles/spells/effects/blood_arrow3.png",
+		             "res://assets/tiles/spells/effects/blood_arrow7.png",
+		             "res://assets/tiles/spells/effects/blood_for_blood.png"],
+		"dark":     ["res://assets/tiles/spells/effects/bolt0.png",
+		             "res://assets/tiles/spells/effects/bolt3.png",
+		             "res://assets/tiles/spells/effects/cloud_misery1.png",
+		             "res://assets/tiles/spells/effects/cloud_misery2.png"],
+		"holy":     ["res://assets/tiles/spells/effects/orb_glow0.png",
+		             "res://assets/tiles/spells/effects/orb_glow1.png", "", ""],
+		"":         ["res://assets/tiles/projectiles/drain.png", "", "", ""],
+	},
+	"spell_axes": {
+		# Common = small hand axe, rare = battle axe, epic = great axe,
+		# legendary = executioner axe. Distinct silhouettes at every tier.
+		"brutal":    ["res://assets/tiles/spells/weapons/battleaxe.png",
+		              "res://assets/tiles/spells/weapons/battleaxe_2.png",
+		              "res://assets/tiles/spells/weapons/great_axe.png",
+		              "res://assets/tiles/spells/weapons/axe_executioner_old.png"],
+		"fire":      ["res://assets/tiles/spells/weapons/axe_blood.png",
+		              "res://assets/tiles/spells/weapons/axe_blood.png",
+		              "res://assets/tiles/spells/weapons/great_axe.png",
+		              "res://assets/tiles/spells/weapons/axe_executioner_old.png"],
+		"holy":      ["res://assets/tiles/spells/weapons/axe.png",
+		              "res://assets/tiles/spells/weapons/axe.png",
+		              "res://assets/tiles/spells/weapons/great_axe.png",
+		              "res://assets/tiles/spells/weapons/axe_executioner_new.png"],
+		"swiftness": ["res://assets/tiles/spells/weapons/axe_small.png",
+		              "res://assets/tiles/spells/weapons/axe_short.png",
+		              "res://assets/tiles/spells/weapons/hand_axe_new.png", ""],
+		"earth":     ["res://assets/tiles/spells/weapons/broad_axe.png",
+		              "res://assets/tiles/spells/weapons/broad_axe.png",
+		              "res://assets/tiles/spells/weapons/great_axe.png",
+		              "res://assets/tiles/spells/weapons/axe_executioner_old.png"],
+		"dark":      ["res://assets/tiles/spells/weapons/axe.png",
+		              "res://assets/tiles/spells/weapons/war_axe_old.png",
+		              "res://assets/tiles/spells/weapons/axe_double.png",
+		              "res://assets/tiles/spells/weapons/axe_executioner_2.png"],
+		"":          ["res://assets/tiles/spells/weapons/hand_axe_new.png",
+		              "res://assets/tiles/spells/weapons/battleaxe.png",
+		              "res://assets/tiles/spells/weapons/great_axe.png",
+		              "res://assets/tiles/spells/weapons/axe_executioner_old.png"],
+	},
+}
+
+# Rarity → projectile/orbit scale multiplier. Same curve as the visual
+# tier: legendaries +30% bigger, epics +20%, rares +10%. 2026-06-05.
+const _RARITY_SCALE := {
+	"common": 1.0, "uncommon": 1.0, "rare": 1.10, "epic": 1.20, "legendary": 1.30,
+}
+
+static func _scale_mult_for(item: Dictionary) -> float:
+	var rarity: String = String(item.get("rarity", "common")) if item != null else "common"
+	return float(_RARITY_SCALE.get(rarity, 1.0))
+
+# Pick best art tier ≤ requested. Falls back through ladder until a
+# non-empty path is found.
+static func _ladder_pick(ladder: Array, tier: int) -> String:
+	for t in range(min(tier, ladder.size() - 1), -1, -1):
+		var p: String = String(ladder[t])
+		if p != "":
+			return p
+	return ""
+
 static func _visual_sprite_for_item(item: Dictionary, archetype: String) -> String:
 	var tags: Array = item.get("flavor_tags", []) if item != null else []
 	# Per-item override wins.
@@ -603,65 +769,24 @@ static func _visual_sprite_for_item(item: Dictionary, archetype: String) -> Stri
 	var primary: String = ""
 	var visual_priority: Array = ["fire", "cold", "thunderous", "lightning",
 		"holy", "vampiric", "dark", "poison", "arcane", "earth",
-		"brutal", "fortified", "lordly"]
+		"brutal", "fortified", "lordly", "swiftness"]
 	for vt in visual_priority:
 		if vt in tags:
 			primary = vt
 			break
-	# Resolve to an actual file path. Each (archetype, flavor) cell
-	# below points at a real sprite that lives in the project. When
-	# no flavor matches, fall back to the archetype's canonical art.
-	# Sprite picks below verified to exist in
-	# project/assets/tiles/spells/effects/ + spells/weapons/ (synced
-	# 2026-06-05). Picks where the elemental variant is missing fall
-	# through to a sensible alternate so nothing renders invisible.
-	match archetype:
-		"spell_fireball":
-			match primary:
-				"fire":      return "res://assets/tiles/spells/effects/flame0.png"
-				"cold":      return "res://assets/tiles/spells/effects/iceblast0.png"
-				"vampiric":  return "res://assets/tiles/spells/effects/blood_arrow0.png"
-				"dark":      return "res://assets/tiles/spells/effects/bolt0.png"
-				"poison":    return "res://assets/tiles/spells/effects/poison_arrow0.png"
-				"thunderous","lightning": return "res://assets/tiles/spells/effects/bolt2.png"
-				"arcane":    return "res://assets/tiles/spells/effects/magic_dart0.png"
-				"holy":      return "res://assets/tiles/spells/effects/orb_glow0.png"
-				_:           return "res://assets/tiles/projectiles/fireball.png"
-		"spell_magic_dart":
-			match primary:
-				"fire":      return "res://assets/tiles/spells/effects/flame0.png"
-				"cold":      return "res://assets/tiles/spells/effects/frost0.png"
-				"thunderous","lightning": return "res://assets/tiles/spells/effects/bolt2.png"
-				"holy":      return "res://assets/tiles/spells/effects/orb_glow0.png"
-				"vampiric":  return "res://assets/tiles/spells/effects/blood_arrow0.png"
-				"poison":    return "res://assets/tiles/spells/effects/poison_arrow0.png"
-				"dark":      return "res://assets/tiles/spells/effects/bolt0.png"
-				_:           return "res://assets/tiles/projectiles/magic_dart.png"
-		"spell_iron_shot":
-			match primary:
-				"fire":      return "res://assets/tiles/spells/effects/iron_shot0.png"
-				"earth":     return "res://assets/tiles/spells/effects/crystal_spear0.png"
-				_:           return "res://assets/tiles/projectiles/iron_shot.png"
-		"spell_drain":
-			match primary:
-				"vampiric":  return "res://assets/tiles/spells/effects/blood_arrow0.png"
-				"dark":      return "res://assets/tiles/spells/effects/bolt0.png"
-				"holy":      return "res://assets/tiles/spells/effects/orb_glow0.png"
-				_:           return "res://assets/tiles/projectiles/drain.png"
-		"spell_axes":
-			# Orbit picks an actual visible axe sprite from the synced
-			# spells/weapons tree. Per-flavor variant: brutal = big
-			# battleaxe, fire = blood-axe, swiftness = small axe, etc.
-			# Pre-2026-06-05 the path pointed at a missing file →
-			# completely invisible orbit. Fixed.
-			match primary:
-				"brutal":    return "res://assets/tiles/spells/weapons/battleaxe.png"
-				"fire":      return "res://assets/tiles/spells/weapons/axe_blood.png"
-				"holy":      return "res://assets/tiles/spells/weapons/axe.png"
-				"swiftness": return "res://assets/tiles/spells/weapons/axe_small.png"
-				"earth":     return "res://assets/tiles/spells/weapons/broad_axe.png"
-				_:           return "res://assets/tiles/spells/weapons/hand_axe_new.png"
-	return ""
+	# Rarity → ladder tier.
+	var rarity: String = String(item.get("rarity", "common")) if item != null else "common"
+	var tier: int = int(_RARITY_TO_SPRITE_TIER.get(rarity, 0))
+	# Archetype → flavor → ladder lookup.
+	var arch_table: Dictionary = _SPRITE_LADDERS.get(archetype, {})
+	if arch_table.is_empty():
+		return ""
+	var ladder: Array = arch_table.get(primary, arch_table.get("", []))
+	if ladder.is_empty():
+		ladder = arch_table.get("", [])
+	if ladder.is_empty():
+		return ""
+	return _ladder_pick(ladder, tier)
 
 # Same idea but returns a path that's verified to exist — falls back
 # through alternates if the primary picks aren't in the project. Used

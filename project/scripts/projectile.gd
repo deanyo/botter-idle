@@ -42,7 +42,7 @@ var lifesteal_buff_bot: bool = false  # Ravenous affix — apply hasted on hit
 
 @onready var sprite: Sprite2D = $Sprite
 
-static func spawn_fireball(parent: Node, world_pos: Vector2, target_enemy: Node, dmg: int, speed: float, sprite_path: String, element_key: String, dungeon: Node, tint: Color = Color(0, 0, 0, 0)) -> Projectile:
+static func spawn_fireball(parent: Node, world_pos: Vector2, target_enemy: Node, dmg: int, speed: float, sprite_path: String, element_key: String, dungeon: Node, tint: Color = Color(0, 0, 0, 0), scale_mult: float = 1.0) -> Projectile:
 	var p := Projectile.new()
 	p.position = world_pos
 	p.damage = dmg
@@ -60,7 +60,11 @@ static func spawn_fireball(parent: Node, world_pos: Vector2, target_enemy: Node,
 	if sprite_path != "" and ResourceLoader.exists(sprite_path):
 		spr.texture = load(sprite_path)
 	spr.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	spr.scale = Vector2(0.75, 0.75)  # readable at 24px not 32
+	# Base 0.75× (24px tile read); scale_mult bumps it to ~1.0× at
+	# legendary so a Comet Tome's projectile is visibly bigger than a
+	# Common Fireball Scroll's. 2026-06-05.
+	var base_scale: float = 0.75 * scale_mult
+	spr.scale = Vector2(base_scale, base_scale)
 	# Per-item flavor tint wins (alpha>0 = caller passed one). Otherwise
 	# resolve from element_key (fire→orange, etc.), or fall back to the
 	# Int class blue if no element.
