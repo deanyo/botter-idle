@@ -202,6 +202,8 @@ func _show_main_menu() -> void:
 		menu.paperdoll_audit_pressed.connect(_show_paperdoll_audit)
 	if menu.has_signal("spell_showcase_pressed"):
 		menu.spell_showcase_pressed.connect(_show_spell_showcase)
+	if menu.has_signal("item_generator_pressed"):
+		menu.item_generator_pressed.connect(_show_item_generator)
 
 func _show_video_options() -> void:
 	var opts: Node = VIDEO_OPTIONS_SCENE.instantiate()
@@ -224,6 +226,15 @@ func _show_spell_showcase() -> void:
 	# Spell preview / authoring screen — same shape as paperdoll audit
 	# (script-only, no .tscn). 2026-06-05.
 	var script := load("res://scripts/spell_showcase.gd")
+	var screen: Control = script.new()
+	_swap(screen)
+	screen.back_pressed.connect(_show_main_menu)
+
+func _show_item_generator() -> void:
+	# Random-item-generator screen — same script-only shape. Rolls 100
+	# random instances, lets the user select + export favorites.
+	# 2026-06-05.
+	var script := load("res://scripts/item_generator.gd")
 	var screen: Control = script.new()
 	_swap(screen)
 	screen.back_pressed.connect(_show_main_menu)

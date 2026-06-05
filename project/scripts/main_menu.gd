@@ -9,6 +9,7 @@ signal video_options_pressed
 signal fx_tuner_pressed
 signal paperdoll_audit_pressed
 signal spell_showcase_pressed
+signal item_generator_pressed
 signal create_character_pressed
 
 # Colors mirror UITheme — see hud_chrome.gd note for why these are inline.
@@ -244,6 +245,7 @@ func _build_buttons(x: int, y: int, w: int, h: int) -> void:
 	_make_button("FX Tuner", col_x, by, col_w, 44, 16, false, _on_fx_tuner); by += 44 + gap
 	_make_button("Paperdoll Audit", col_x, by, col_w, 44, 16, false, _on_paperdoll_audit); by += 44 + gap
 	_make_button("Spell Showcase", col_x, by, col_w, 44, 16, false, _on_spell_showcase); by += 44 + gap
+	_make_button("Item Generator", col_x, by, col_w, 44, 16, false, _on_item_generator); by += 44 + gap
 	_make_button("Reset Save", col_x, by, col_w, 44, 16, false, _on_reset); by += 44 + gap
 	_make_button("Quit", col_x, by, col_w, 44, 16, false, _on_quit)
 
@@ -283,6 +285,9 @@ func _on_paperdoll_audit() -> void:
 
 func _on_spell_showcase() -> void:
 	spell_showcase_pressed.emit()
+
+func _on_item_generator() -> void:
+	item_generator_pressed.emit()
 
 func _on_create_character() -> void:
 	create_character_pressed.emit()
