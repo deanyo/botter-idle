@@ -282,18 +282,27 @@
   #picker-head input { flex: 1; }
   #picker-filter { display: flex; gap: 4px; }
   #picker-grid {
-    flex: 1; overflow-y: auto; padding: 12px;
+    flex: 1; overflow-y: auto; padding: 14px;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 8px;
+    /* Picker tile size — driven by --pick-size CSS variable. Bumped
+       way up (default 144px) so 32×32 source art reads at 4× zoom and
+       authors can actually tell the silhouettes apart. The
+       Ctrl+wheel handler in JS adjusts --pick-size live. */
+    grid-template-columns: repeat(auto-fill, minmax(var(--pick-size, 144px), 1fr));
+    gap: 10px;
   }
   .pick-cell {
     background: var(--tile-bg); border: 1px solid var(--border); border-radius: 4px;
-    padding: 6px; text-align: center; cursor: pointer;
-    transition: border-color 0.1s, transform 0.1s;
+    padding: 8px; text-align: center; cursor: pointer;
+    transition: border-color 0.1s, transform 0.1s, box-shadow 0.1s;
+    /* Make the entire cell click-target — fixes the "selecting a
+       sprite doesn't work" reports where clicks landed on padding
+       gaps and missed both the image and the name label. */
+    user-select: none;
   }
   .pick-cell:hover {
     border-color: var(--accent);
+    box-shadow: 0 2px 8px rgba(255, 184, 77, 0.25);
     transform: translateY(-1px);
   }
   /* Picker thumbnail. The "on bot" mode renders the same paperdoll
@@ -304,6 +313,7 @@
   .pick-cell img {
     width: 100%; aspect-ratio: 1;
     object-fit: contain; image-rendering: pixelated; background: #000;
+    pointer-events: none;  /* let the cell click handler win */
   }
   .pick-cell.layered .pick-img-wrap {
     position: relative;
@@ -313,11 +323,22 @@
   .pick-cell.layered .pick-img-wrap .layer {
     position: absolute; inset: 0;
     image-rendering: pixelated; object-fit: contain;
+    pointer-events: none;
   }
   .pick-cell .pick-name {
-    font-size: 10px; color: var(--muted);
+    font-size: 11px; color: var(--muted);
     overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
-    margin-top: 4px;
+    margin-top: 6px;
+    pointer-events: none;
+  }
+  #picker-zoom {
+    display: flex; align-items: center; gap: 4px;
+    color: var(--muted); font-size: 11px;
+  }
+  #picker-zoom button {
+    width: 24px; height: 24px;
+    padding: 0; line-height: 1;
+    font-size: 14px;
   }
 
   #status { padding: 8px 14px; font-size: 11px; color: var(--good); }
@@ -369,9 +390,14 @@
         <!-- Rebuilt by renderPickerFilterBar() per active slot -->
       </div>
       <input type="text" id="picker-search" placeholder="filter…" oninput="renderPicker()">
+      <div id="picker-zoom" title="Zoom thumbnail size (Ctrl+wheel inside the grid)">
+        <button onclick="adjustPickerZoom(-32)">−</button>
+        <span id="picker-zoom-val">144px</span>
+        <button onclick="adjustPickerZoom(32)">+</button>
+      </div>
       <button onclick="closePicker()">Close</button>
     </div>
-    <div id="picker-grid"></div>
+    <div id="picker-grid" onwheel="onPickerWheel(event)"></div>
   </div>
 </div>
 
@@ -1407,10 +1433,86 @@ let pickerMode = 'inventory';
 let allWeaponTiles = [];
 let allOverlayTiles = [];
 
+// Stems we know are generic positional weapon/gear sprites — i.e.
+// drawn aligned to a hand/body/head canvas position, suitable for any
+// item of the right shape. DCSS's player/hand_right tree mixes these
+// with character-named one-off sprites (aragorn, frodo, gandalf,
+// enchantress_dagger) and ranged-weapon poses (bow, crossbow, dart,
+// blowgun) that should NEVER appear as picker options for melee items.
+//
+// We filter the overlay list down to entries whose basename starts
+// with one of these prefixes. Per-character art still ships in the
+// project for the items that actually use them, but never appears as
+// a candidate for a fresh authoring choice. 2026-06-05.
+const GENERIC_OVERLAY_PREFIXES = {
+  // Melee weapons (player/hand_right)
+  weapon: [
+    'dagger', 'knife', 'short_sword', 'long_sword', 'falchion',
+    'rapier', 'scimitar', 'sabre', 'cutlass', 'katana', 'broadsword',
+    'demonblade', 'demon_blade', 'heavy_sword', 'great_sword',
+    'greatsword', 'claymore', 'double_sword', 'triple_sword',
+    'mace', 'morningstar', 'eveningstar', 'flail', 'hammer',
+    'club', 'giant_club', 'great_mace', 'large_mace', 'rod_hammer',
+    'axe', 'battleaxe', 'broad_axe', 'hand_axe', 'war_axe',
+    'spear', 'halberd', 'bardiche', 'glaive', 'trident', 'fork',
+    'scythe', 'lance', 'pole',
+    'quarterstaff', 'staff', 'lajatang',
+    'whip',
+  ],
+  // Off-hand sprites for shields (player/hand_left) — DCSS ships
+  // lshield_*, buckler_*, plus a few named exceptions we want to allow.
+  shield: [
+    'buckler', 'lshield', 'shield_kite', 'shield_round', 'shield_diamond',
+    'shield_holy', 'shield_dd', 'shield_donald', 'shield_goblin',
+    'shield_draconic', 'gong', 'bullseye',
+  ],
+  // Body torsos (player/body) — exclude full-figure dragon armor variants
+  // we DON'T want and accept the named common-shape items.
+  armor: [
+    'jacket', 'chainmail', 'scalemail', 'half_plate', 'plate',
+    'bplate', 'leather_jacket', 'robe', 'shoulder_pad',
+    'dragon_armor', 'dragon_scale', 'crystal_plate', 'green_chain',
+    'lears_chain', 'plate_and_cloth', 'deep_troll', 'iron_plate',
+  ],
+  helm: [
+    'cap', 'hat', 'helm', 'fhelm', 'hood', 'crown', 'cone',
+    'feather', 'horn', 'turban', 'plume', 'visor', 'mask',
+    'bandana', 'helmet', 'full_', 'mitre',
+  ],
+  boots: [
+    'long', 'short', 'middle', 'mesh', 'pj', 'spider',
+    'slippers', 'hooves', 'seven_league',
+  ],
+  gloves: [
+    'glove', 'gauntlet', 'mitten', 'claws',
+  ],
+  cloak: [
+    'black', 'blue', 'brown', 'cyan', 'gray', 'green',
+    'magenta', 'red', 'white', 'yellow', 'dragonskin',
+    'ratskin', 'scarf',
+  ],
+};
+
+function _isGenericOverlay(slotId, basename) {
+  const prefixes = GENERIC_OVERLAY_PREFIXES[slotId] || [];
+  if (prefixes.length === 0) return true;  // unknown slot — pass everything
+  for (const p of prefixes) {
+    if (basename.startsWith(p)) return true;
+  }
+  return false;
+}
+
 function buildWeaponTileList() {
   // Pull all atlas paths under any of the active slot's picker_roots
   // (inventory icons) and overlay_roots (paperdoll overlays). Both
   // lists rebuild when activeSlot changes via switchSlot.
+  //
+  // Overlay list is filtered to GENERIC positional sprites — strips
+  // out character-named one-offs (aragorn, frodo) and shape-specific
+  // sprites that don't belong in a generic-melee picker (bow,
+  // crossbow, blowgun, dart). Artefact subfolder is also excluded
+  // so authors don't accidentally pick a unique's bespoke art for a
+  // common item. 2026-06-05.
   const invRoots = activeSlot.picker_roots || [];
   const ovRoots = activeSlot.overlay_roots || [];
   allWeaponTiles = Object.keys(atlas)
@@ -1418,6 +1520,8 @@ function buildWeaponTileList() {
     .sort();
   allOverlayTiles = Object.keys(atlas)
     .filter(k => ovRoots.some(r => k.startsWith(r)))
+    .filter(k => !k.includes('/artefact/'))
+    .filter(k => _isGenericOverlay(activeSlot.id, k.split('/').pop().replace('.png', '')))
     .sort();
 }
 
@@ -1459,11 +1563,36 @@ function setPickerCategory(cat, btn) {
   renderPicker();
 }
 
+// Picker thumbnail size — bigger sprites are essential for the
+// overlay-mode picker where authors compare 32×32 silhouettes.
+// Persisted to localStorage so the zoom level survives across reloads.
+// 2026-06-05.
+let pickerZoom = parseInt(localStorage.getItem('item_editor_picker_zoom') || '144', 10);
+function _applyPickerZoom() {
+  pickerZoom = Math.max(80, Math.min(320, pickerZoom));
+  document.documentElement.style.setProperty('--pick-size', pickerZoom + 'px');
+  const lbl = document.getElementById('picker-zoom-val');
+  if (lbl) lbl.textContent = pickerZoom + 'px';
+  localStorage.setItem('item_editor_picker_zoom', String(pickerZoom));
+}
+function adjustPickerZoom(delta) {
+  pickerZoom += delta;
+  _applyPickerZoom();
+}
+function onPickerWheel(ev) {
+  // Ctrl+wheel = zoom; bare wheel = native scroll.
+  if (!ev.ctrlKey && !ev.metaKey) return;
+  ev.preventDefault();
+  pickerZoom += (ev.deltaY < 0 ? 16 : -16);
+  _applyPickerZoom();
+}
+
 function openPicker(id, mode) {
   pickerItemId = id;
   pickerMode = mode || 'inventory';
   if (!allWeaponTiles.length && !allOverlayTiles.length) buildWeaponTileList();
   pickerCategory = 'all';
+  _applyPickerZoom();
   renderPickerFilterBar();
   document.getElementById('picker').classList.add('open');
   document.getElementById('picker-search').value = '';
