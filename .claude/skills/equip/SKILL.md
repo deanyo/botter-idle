@@ -19,7 +19,8 @@ python3 /Users/dyo/claude/botter/.claude/skills/equip/equip.py "<spec tokens>"
 Tokens are space-separated. Each is either:
 
 - `<slot>=<base_id>[,<affix>...]` — equip an item, optionally with affixes.
-  Slots: weapon, armor, helm, boots, shield, ring1, ring2, amulet.
+  Slots: `weapon`, `armor`, `helm`, `boots`, `shield`, `gloves`, `cloak`,
+  `ring1`, `ring2`, `amulet`, `spell1`-`spell5`.
 - `level=<int>`, `gold=<int>`, `xp=<int>`
 - `max_revives=<int>` — death-retreat budget per run
 - `loot_filter=<rarity>` — common|uncommon|rare|epic|legendary

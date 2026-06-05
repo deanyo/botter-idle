@@ -110,6 +110,14 @@ var run_dropped_uniques: Array[String] = []
 # real run-end. Scales later via bot upgrades / gear affixes.
 var revives_remaining: int = 0
 var retreats_this_run: int = 0
+
+# Per-boss-floor lethality state. Captured on entry to the boss floor;
+# read on boss death (bot won) or bot death (bot lost). Logged as
+# [boss-killed] or [boss-died] for balance analysis. 2026-06-05.
+var _boss_floor_entry_hp: int = 0
+var _boss_floor_entry_ms: int = 0
+var _boss_floor_branch: String = ""
+var _boss_initial_hp: int = 0
 # Active run modifiers (Crowded, Endless, etc). Set at run start from
 # save.branch_modifiers[branch_id]; cached here so spawn-time code paths
 # don't reload the save. Effects fold into enemy count, floor count,
@@ -515,6 +523,14 @@ func _async_build_floor() -> void:
 		current_floor,
 	]
 	PerfMon.floor_begin(perf_label)
+	# Boss-floor lethality snapshot — captures the bot's entry HP and
+	# wall-clock so the [boss-killed] / [boss-died] log lines can report
+	# how lethal the boss was relative to bot capacity. 2026-06-05.
+	if current_floor >= _boss_floor and is_instance_valid(bot):
+		_boss_floor_entry_hp = int(bot.hp)
+		_boss_floor_entry_ms = Time.get_ticks_msec()
+		_boss_floor_branch = String(current_biome.get("id", ""))
+		_boss_initial_hp = 0  # set on boss spawn below
 	floor_started.emit(current_floor)
 
 	# Debug-jump screenshot mode: after a short settle delay, save the
@@ -1698,6 +1714,9 @@ func _spawn_branch_boss(id: String, at_cell: Vector2i) -> void:
 	e.atk = int(round(float(def.atk) * floor_mult * tier_mult * 1.7))
 	e.defense = int(round(float(def.def) * floor_mult * tier_mult * 1.5))
 	e.hp = e.max_hp
+	# Stash the boss's max HP for the [boss-died] log line so we can
+	# report how close the bot got. 2026-06-05.
+	_boss_initial_hp = e.max_hp
 	e.move_speed = float(def.speed) * 4.0
 	var tex: Texture2D = load(ENEMY_TILE_DIR + def.tile)
 	if tex:
@@ -1831,6 +1850,11 @@ func _spawn_specific(id: String, at_cell: Vector2i, force_pack_tier: int = -1) -
 	e.atk = int(round(float(def.atk) * floor_mult * tier_mult * champ_mult * pack_atk_mult))
 	e.defense = int(round(float(def.def) * floor_mult * tier_mult * (1.2 if is_champion else 1.0)))
 	e.hp = e.max_hp
+	# Stash boss max-HP for the [boss-killed] / [boss-died] log lines —
+	# this is the vault-stamped boss path (def.boss=true). The other
+	# spawn path at ~line 1716 has its own snapshot.
+	if e.is_boss:
+		_boss_initial_hp = e.max_hp
 	e.move_speed = float(def.speed) * 4.0
 	var tex: Texture2D = load(ENEMY_TILE_DIR + def.tile)
 	if tex:
@@ -1904,6 +1928,20 @@ func _on_enemy_died(actor: Actor) -> void:
 	loot_log.append("%s slain (+%d gold, +%d xp)" % [e.display_name, gold_drop, e.xp_reward])
 	if e.is_boss:
 		_log("Slew %s. (+%d gold, +%d xp)" % [e.display_name, gold_drop, e.xp_reward])
+		# Boss-lethality log: how lethal was this boss? Reports bot HP
+		# delta on the boss floor (entry → now), wall-clock spent on
+		# the floor, boss max-HP-vs-bot-max-HP, and which branch.
+		# Reads on a per-tier table to identify which bosses are too
+		# hard / too soft. 2026-06-05.
+		if current_floor >= _boss_floor and is_instance_valid(bot):
+			var dt_ms: int = Time.get_ticks_msec() - _boss_floor_entry_ms
+			var hp_lost: int = max(0, _boss_floor_entry_hp - int(bot.hp))
+			GrindLog.log_line("[boss-killed] branch=%s boss=%s boss_hp=%d bot_entry_hp=%d bot_now_hp=%d hp_lost=%d hp_pct=%.1f time_ms=%d" % [
+				_boss_floor_branch, e.display_name, _boss_initial_hp,
+				_boss_floor_entry_hp, int(bot.hp), hp_lost,
+				100.0 * float(hp_lost) / float(max(1, bot.max_hp)),
+				dt_ms,
+			])
 		# Branch boss dead → notify main.gd so the player unlocks the next
 		# tier's branches. Branch id comes from current biome (boss floors
 		# always sit on the chosen branch's biome).
@@ -3301,6 +3339,25 @@ func _tick_enemies(delta: float) -> void:
 			e.attempt_attack(bot, delta)
 			if not bot.is_alive:
 				_log("Slain by %s on floor %d." % [e.display_name, current_floor])
+				# Boss-lethality log on death: identify the killer +
+				# how much damage the bot did to the boss before dying.
+				# 2026-06-05.
+				if current_floor >= _boss_floor:
+					var dt_ms: int = Time.get_ticks_msec() - _boss_floor_entry_ms
+					# Find a still-living boss to report its remaining HP.
+					var boss_hp_left: int = 0
+					var boss_name: String = "?"
+					for be in enemies:
+						if is_instance_valid(be) and be.is_alive and be.is_boss:
+							boss_hp_left = int(be.hp)
+							boss_name = be.display_name
+							break
+					var dmg_to_boss: int = max(0, _boss_initial_hp - boss_hp_left)
+					var pct_killed: float = 100.0 * float(dmg_to_boss) / float(max(1, _boss_initial_hp))
+					GrindLog.log_line("[boss-died] branch=%s killer=%s boss=%s boss_hp=%d boss_hp_left=%d dmg_dealt=%d pct=%.1f time_ms=%d" % [
+						_boss_floor_branch, e.display_name, boss_name,
+						_boss_initial_hp, boss_hp_left, dmg_to_boss, pct_killed, dt_ms,
+					])
 				if _try_death_retreat("slain by %s on f%d" % [e.display_name, current_floor]):
 					return
 				_end_run(false)

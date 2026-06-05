@@ -31,7 +31,17 @@ from typing import Optional
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 INJECT = REPO_ROOT / "tools" / "inject_save.py"
 
-VALID_SLOTS = {"weapon", "armor", "helm", "boots", "shield", "ring1", "ring2", "amulet"}
+# Equip slots — covers the bot's full equipped[] dict including gloves,
+# cloak, all 5 spell tomes (spell1..spell5), and both jewellery slots.
+# Pre-2026-06-05 this was missing gloves/cloak/spells, which silently
+# broke balance test scripts that included them: equip aborted on
+# "unknown key" before --reset wiped the save, leaving stale state.
+VALID_SLOTS = {
+    "weapon", "armor", "helm", "boots", "shield",
+    "gloves", "cloak",
+    "ring1", "ring2", "amulet",
+    "spell1", "spell2", "spell3", "spell4", "spell5",
+}
 SCALAR_KEYS = {"level", "gold", "xp", "max_revives", "loot_filter",
                "inventory_cap", "branch", "mods"}
 
