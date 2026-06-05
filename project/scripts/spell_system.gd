@@ -336,7 +336,9 @@ static func _fire_holy_beam(bot: Node, dungeon: Node, item: Dictionary) -> bool:
 			hits += 1
 	if hits == 0:
 		return false
-	SpellAoe.spawn_cone(dungeon.actor_layer, origin, facing, max_dist, cone_half_angle, _visual_color_for_item(item, "holy"))
+	# Holy beam — bright searing-ray sprites painted over a gold/white
+	# volume. Per-flavor visual presets in spell_aoe.gd.
+	SpellAoe.spawn_cone(dungeon.actor_layer, origin, facing, max_dist, cone_half_angle, _visual_color_for_item(item, "holy"), "holy")
 	return true
 
 # Spinning Axes — spawns N orbiting axe sprites that circle the bot for
@@ -487,7 +489,9 @@ static func _fire_sandblast(bot: Node, dungeon: Node, item: Dictionary) -> bool:
 			hits += 1
 	if hits == 0:
 		return false
-	SpellAoe.spawn_cone(dungeon.actor_layer, origin, facing, max_dist, cone_half_angle, _visual_color_for_item(item, "earth"))
+	# Sandblast — DCSS sandblast0/1/2 + cloud_dust sprites painted over
+	# a tan/brown volume. Per-flavor preset in spell_aoe.gd.
+	SpellAoe.spawn_cone(dungeon.actor_layer, origin, facing, max_dist, cone_half_angle, _visual_color_for_item(item, "earth"), "sand")
 	return true
 
 # Vampiric Drain — homing dark projectile that heals the bot for 35%
