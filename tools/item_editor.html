@@ -203,6 +203,35 @@
     background: var(--bg); color: var(--muted);
   }
   .tier-btn.active { color: #000; border-color: transparent; }
+
+  /* Weapon stat presets — same shape as tier buttons (consistent
+     selector pattern across the editor: tier-btn, tag-toggle,
+     preset-btn all use the same chip-on-grid style). 2026-06-05. */
+  .preset-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 4px;
+  }
+  .preset-btn {
+    padding: 6px 8px;
+    font-size: 11px;
+    font-weight: 600;
+    text-align: left;
+    border-radius: 3px;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
+    transition: border-color .1s, background .1s, transform .1s;
+  }
+  .preset-btn:hover { border-color: var(--accent); background: var(--panel-2); transform: translateY(-1px); }
+  .preset-btn .preset-stats {
+    display: block;
+    font-size: 10px;
+    font-weight: 400;
+    color: var(--muted);
+    margin-top: 2px;
+  }
   .tier-btn.t1.active { background: var(--tier1); }
   .tier-btn.t2.active { background: var(--tier2); }
   .tier-btn.t3.active { background: var(--tier3); }
@@ -220,11 +249,26 @@
 
   /* Flavor tag grid */
   .tag-grid { display: flex; flex-wrap: wrap; gap: 6px; }
-  .tag-toggle {
-    padding: 2px 8px; border-radius: 10px; font-size: 10px; cursor: pointer;
-    border: 1px solid var(--border); background: var(--bg); color: var(--muted);
+  /* Single chip style — used by every "click to toggle" pill in the
+     editor: combat tags, enchant pool, implicit affixes. Was three
+     classes (tag-toggle / tag-chip / chip) with .tag-chip never
+     defined, so implicit affixes rendered as unstyled spans. Unified
+     2026-06-05 — both classes resolve to the same look. */
+  .tag-toggle, .tag-chip {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 10px;
+    font-size: 11px;
+    line-height: 1.4;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--muted);
+    user-select: none;
+    transition: border-color .1s, background .1s, color .1s;
   }
-  .tag-toggle.on { color: #000; font-weight: 600; }
+  .tag-toggle:hover, .tag-chip:hover { border-color: var(--accent); color: var(--text); }
+  .tag-toggle.on, .tag-chip.on { color: #000; font-weight: 600; }
 
   /* Sprite preview in edit — left side carries TWO previews
      side-by-side: inventory icon (item/...) and paperdoll overlay
@@ -284,21 +328,23 @@
   #picker-grid {
     flex: 1; overflow-y: auto; padding: 14px;
     display: grid;
-    /* Picker tile size — driven by --pick-size CSS variable. Bumped
-       way up (default 144px) so 32×32 source art reads at 4× zoom and
-       authors can actually tell the silhouettes apart. The
-       Ctrl+wheel handler in JS adjusts --pick-size live. */
-    grid-template-columns: repeat(auto-fill, minmax(var(--pick-size, 144px), 1fr));
+    /* Picker tile size — driven by --pick-size CSS variable. Default
+       192px so layered paperdoll thumbs (small base + overlay) actually
+       read; the previous 144px default left only ~96px of image area
+       after padding + name strip, which made overlay sprites look like
+       tiny rectangles. Ctrl+wheel + the +/- buttons adjust live. */
+    grid-template-columns: repeat(auto-fill, minmax(var(--pick-size, 192px), 1fr));
     gap: 10px;
   }
   .pick-cell {
     background: var(--tile-bg); border: 1px solid var(--border); border-radius: 4px;
-    padding: 8px; text-align: center; cursor: pointer;
+    padding: 4px 4px 6px; text-align: center; cursor: pointer;
     transition: border-color 0.1s, transform 0.1s, box-shadow 0.1s;
     /* Make the entire cell click-target — fixes the "selecting a
        sprite doesn't work" reports where clicks landed on padding
        gaps and missed both the image and the name label. */
     user-select: none;
+    display: flex; flex-direction: column; gap: 4px;
   }
   .pick-cell:hover {
     border-color: var(--accent);
@@ -314,11 +360,22 @@
     width: 100%; aspect-ratio: 1;
     object-fit: contain; image-rendering: pixelated; background: #000;
     pointer-events: none;  /* let the cell click handler win */
+    border-radius: 2px;
   }
   .pick-cell.layered .pick-img-wrap {
     position: relative;
     width: 100%; aspect-ratio: 1;
     background: #000; border-radius: 2px;
+    /* Layered paperdoll preview — checkered backdrop helps the bot
+       silhouette read against varying overlay colors. */
+    background-image:
+      linear-gradient(45deg, #0a0a0a 25%, transparent 25%),
+      linear-gradient(-45deg, #0a0a0a 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, #0a0a0a 75%),
+      linear-gradient(-45deg, transparent 75%, #0a0a0a 75%);
+    background-size: 12px 12px;
+    background-position: 0 0, 0 6px, 6px -6px, -6px 0px;
+    background-color: #050505;
   }
   .pick-cell.layered .pick-img-wrap .layer {
     position: absolute; inset: 0;
@@ -328,8 +385,9 @@
   .pick-cell .pick-name {
     font-size: 11px; color: var(--muted);
     overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
-    margin-top: 6px;
+    margin-top: 0;
     pointer-events: none;
+    line-height: 1.4;
   }
   #picker-zoom {
     display: flex; align-items: center; gap: 4px;
@@ -392,7 +450,7 @@
       <input type="text" id="picker-search" placeholder="filter…" oninput="renderPicker()">
       <div id="picker-zoom" title="Zoom thumbnail size (Ctrl+wheel inside the grid)">
         <button onclick="adjustPickerZoom(-32)">−</button>
-        <span id="picker-zoom-val">144px</span>
+        <span id="picker-zoom-val">192px</span>
         <button onclick="adjustPickerZoom(32)">+</button>
       </div>
       <button onclick="closePicker()">Close</button>
@@ -1001,9 +1059,9 @@ function renderEditBody(it) {
     .filter(af => (af.family || 'generic') !== 'archetype' || it.slot === 'spell')
     .map(af => {
       const on = implicits.includes(af.id);
-      const swatch = `background:${affixColorFor(af.stat)}`;
-      const className = on ? 'tag-chip on' : 'tag-chip';
-      return `<span class="${className}" data-implicit="${af.id}" style="border-color:${affixColorFor(af.stat)}${on ? ';' + swatch : ''}" onclick="toggleImplicit('${it.id}','${af.id}')">${af.name||af.id}</span>`;
+      const color = affixColorFor(af.stat);
+      const onStyle = on ? `background:${color};color:#000;border-color:${color}` : `border-color:${color}`;
+      return `<button class="tag-toggle${on?' on':''}" data-implicit="${af.id}" style="${onStyle}" onclick="toggleImplicit('${it.id}','${af.id}')" title="${(af.desc||'').replace(/"/g,'&quot;')}">${af.name||af.id}</button>`;
     }).join('');
 
   body.innerHTML = `
@@ -1077,6 +1135,12 @@ function renderEditBody(it) {
     <div class="field-group">
       <label>Base stats</label>
       ${(it.slot === 'weapon' || it.slot === 'spell') ? `
+        ${it.slot === 'weapon' ? `
+          <div style="margin-bottom:8px">
+            <div style="font-size:11px;color:var(--muted);margin-bottom:4px">Quick presets — click to fill in damage / swing-time / hand count for a typical archetype, then tweak below.</div>
+            <div class="preset-grid">${weaponPresetButtons(it)}</div>
+          </div>
+        ` : ''}
         <div class="field-row">
           <span style="font-size:11px;color:var(--muted)">Min damage</span>
           <input type="number" value="${it.damage_min||0}" min="0" max="999" onchange="setField('${it.id}','damage_min',+this.value)">
@@ -1316,6 +1380,65 @@ function setField(id, key, val) {
   dirty.add(id);
   updateCard(id);
 }
+
+// Weapon stat presets. Each entry is a baseline DPS curve at a given
+// rarity tier — matches the spread already shipping in items.json so a
+// new item drops cleanly into the existing tier curve without manual
+// math. Damage values are pre-affix; tier/rarity scaling lives on top.
+// Player presses one, the inputs get filled, then they tweak.
+// 2026-06-05.
+const WEAPON_PRESETS = [
+  // label, dmg_min, dmg_max, speed, hands, item_tier, rarity, weapon_class
+  // -- 1H ----------------------------------------------------------
+  { label:'Common Dagger',    dmg_min:4,  dmg_max:8,   speed:0.45, weapon_class:'1H', item_tier:1, rarity:'common' },
+  { label:'Common Sword',     dmg_min:8,  dmg_max:15,  speed:0.6,  weapon_class:'1H', item_tier:1, rarity:'common' },
+  { label:'Uncommon Sword',   dmg_min:12, dmg_max:22,  speed:0.6,  weapon_class:'1H', item_tier:2, rarity:'uncommon' },
+  { label:'Rare Sword',       dmg_min:20, dmg_max:36,  speed:0.55, weapon_class:'1H', item_tier:3, rarity:'rare' },
+  { label:'Epic Sword',       dmg_min:32, dmg_max:58,  speed:0.55, weapon_class:'1H', item_tier:4, rarity:'epic' },
+  { label:'Legendary Sword',  dmg_min:50, dmg_max:90,  speed:0.55, weapon_class:'1H', item_tier:5, rarity:'legendary' },
+  { label:'Fast Rapier',      dmg_min:14, dmg_max:24,  speed:0.40, weapon_class:'1H', item_tier:3, rarity:'rare' },
+  { label:'Heavy Mace',       dmg_min:24, dmg_max:42,  speed:0.75, weapon_class:'1H', item_tier:3, rarity:'rare' },
+  // -- 2H ----------------------------------------------------------
+  { label:'2H Greatsword',    dmg_min:34, dmg_max:62,  speed:0.85, weapon_class:'2H', item_tier:3, rarity:'rare' },
+  { label:'2H Epic Greatsword',dmg_min:54,dmg_max:96,  speed:0.85, weapon_class:'2H', item_tier:4, rarity:'epic' },
+  { label:'2H Legendary',     dmg_min:80, dmg_max:140, speed:0.90, weapon_class:'2H', item_tier:5, rarity:'legendary' },
+  { label:'2H Polearm',       dmg_min:38, dmg_max:68,  speed:0.95, weapon_class:'2H', item_tier:3, rarity:'rare' },
+  { label:'2H Battleaxe',     dmg_min:42, dmg_max:78,  speed:1.05, weapon_class:'2H', item_tier:3, rarity:'rare' },
+  // -- Dual ---------------------------------------------------------
+  { label:'Dual Daggers',     dmg_min:6,  dmg_max:11,  speed:0.35, weapon_class:'dual', item_tier:1, rarity:'common' },
+  { label:'Dual Rare',        dmg_min:14, dmg_max:24,  speed:0.40, weapon_class:'dual', item_tier:3, rarity:'rare' },
+  { label:'Dual Legendary',   dmg_min:32, dmg_max:58,  speed:0.40, weapon_class:'dual', item_tier:5, rarity:'legendary' },
+];
+
+function weaponPresetButtons(it) {
+  return WEAPON_PRESETS.map((p, idx) => `
+    <button class="preset-btn" onclick="applyWeaponPreset('${it.id}', ${idx})"
+      title="${p.dmg_min}-${p.dmg_max} dmg · ${p.speed}s · ${p.weapon_class} · T${p.item_tier} · ${p.rarity}">
+      ${p.label}
+      <span class="preset-stats">${p.dmg_min}–${p.dmg_max} · ${p.speed}s · ${p.weapon_class}</span>
+    </button>
+  `).join('');
+}
+
+function applyWeaponPreset(id, presetIdx) {
+  const it = items.find(x => x.id === id);
+  const p = WEAPON_PRESETS[presetIdx];
+  if (!it || !p) return;
+  it.damage_min = p.dmg_min;
+  it.damage_max = p.dmg_max;
+  it.speed = p.speed;
+  it.weapon_class = p.weapon_class;
+  it.item_tier = p.item_tier;
+  it.rarity = p.rarity;
+  // Steer drop_weights toward the preset's tier so the new item shows
+  // up at sensible floors. Single-tier-100 — author can broaden later.
+  const dw = [0, 0, 0, 0, 0];
+  dw[p.item_tier - 1] = 100;
+  it.drop_weights = dw;
+  dirty.add(id);
+  updateCard(id);
+  renderEditBody(it);
+}
 function setDW(id, idx, val) {
   const it = items.find(x=>x.id===id);
   if (!it) return;
@@ -1403,6 +1526,21 @@ function addItem() {
     drop_weights: [0, 0, 100, 0, 0],
     unique: false
   };
+  // Weapon-slot defaults — start from the "Rare Sword" preset so a
+  // brand-new weapon already has playable damage numbers instead of
+  // 0/0/0. Author hits "+ New item", picks a preset to refine, then
+  // tweaks. Saves a hand-math round.
+  if (activeSlot.id === 'weapon') {
+    const seed = WEAPON_PRESETS.find(p => p.label === 'Rare Sword') || WEAPON_PRESETS[0];
+    tpl.damage_min = seed.dmg_min;
+    tpl.damage_max = seed.dmg_max;
+    tpl.damage_type = 'physical';
+    tpl.speed = seed.speed;
+    tpl.weapon_class = seed.weapon_class;
+    tpl.item_tier = seed.item_tier;
+    tpl.rarity = seed.rarity;
+    tpl.enchant_chance = 0.10;
+  }
   items.push(tpl);
   dirty.add(id);
   updateSlotCount(activeSlot.id, items.length);
@@ -1567,9 +1705,9 @@ function setPickerCategory(cat, btn) {
 // overlay-mode picker where authors compare 32×32 silhouettes.
 // Persisted to localStorage so the zoom level survives across reloads.
 // 2026-06-05.
-let pickerZoom = parseInt(localStorage.getItem('item_editor_picker_zoom') || '144', 10);
+let pickerZoom = parseInt(localStorage.getItem('item_editor_picker_zoom') || '192', 10);
 function _applyPickerZoom() {
-  pickerZoom = Math.max(80, Math.min(320, pickerZoom));
+  pickerZoom = Math.max(96, Math.min(480, pickerZoom));
   document.documentElement.style.setProperty('--pick-size', pickerZoom + 'px');
   const lbl = document.getElementById('picker-zoom-val');
   if (lbl) lbl.textContent = pickerZoom + 'px';
