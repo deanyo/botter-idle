@@ -3,18 +3,36 @@
 # Godot prints "[run] auto-grind COMPLETE", then exits with a structured
 # summary. No fixed sleep.
 #
-# Usage: grind.sh <runs> [speed]
+# Usage: grind.sh <runs> [speed] [--mortal] [--branch <id>]
+#   --mortal       — disable bot invincibility (balance / death testing)
+#   --branch <id>  — force every run to deploy to <id> (default: real
+#                    progression — picks under-cleared branch in lowest
+#                    unlocked tier, advances as bosses are killed)
 #
 # Logs land in logs/grind/<timestamp>_<speed>x_<runs>runs.log inside the
 # repo (gitignored).
 
 set -euo pipefail
 
-RUNS="${1:-}"
-SPEED="${2:-16}"
+RUNS=""
+SPEED="16"
+MORTAL=0
+FORCE_BRANCH=""
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --mortal) MORTAL=1; shift ;;
+        --branch) FORCE_BRANCH="${2:-}"; shift 2 ;;
+        --branch=*) FORCE_BRANCH="${1#--branch=}"; shift ;;
+        *)
+            if [[ -z "$RUNS" ]]; then RUNS="$1"
+            else SPEED="$1"
+            fi
+            shift ;;
+    esac
+done
 
 if [[ -z "$RUNS" ]]; then
-    echo "Usage: $0 <runs> [speed]" >&2
+    echo "Usage: $0 <runs> [speed] [--mortal] [--branch <id>]" >&2
     exit 64
 fi
 if ! [[ "$RUNS" =~ ^[0-9]+$ ]]; then
@@ -53,8 +71,20 @@ fi
 # Write the marker.
 echo "${SPEED},${RUNS}" > "$GRIND_MARKER"
 
+# Launch envs:
+#  --mortal               → BOTTER_NO_INVINCIBLE=1 disables grind invuln
+#  --branch <id>          → BOTTER_GRIND_BRANCH=<id> forces every deploy
+#                           (main.gd::_pick_grind_branch reads this env)
+LAUNCH_ENV=()
+if [[ "$MORTAL" == "1" ]]; then
+    LAUNCH_ENV+=("BOTTER_NO_INVINCIBLE=1")
+fi
+if [[ -n "$FORCE_BRANCH" ]]; then
+    LAUNCH_ENV+=("BOTTER_GRIND_BRANCH=$FORCE_BRANCH")
+fi
+
 # Launch Godot headless, log to file, run in background.
-"$GODOT" --path "$PROJECT" --headless >"$LOG" 2>&1 &
+env "${LAUNCH_ENV[@]+"${LAUNCH_ENV[@]}"}" "$GODOT" --path "$PROJECT" --headless >"$LOG" 2>&1 &
 PID=$!
 
 # Tail the log waiting for the COMPLETE line. Hard timeout: 240s/run.
@@ -103,7 +133,7 @@ if [[ $DONE -eq 0 ]]; then
         echo "grind: detected stale class cache, refreshing and retrying..." >&2
         bash "$REPO/tools/refresh_class_cache.sh" >/dev/null 2>&1 || true
         echo "${SPEED},${RUNS}" > "$GRIND_MARKER"
-        "$GODOT" --path "$PROJECT" --headless >>"$LOG" 2>&1 &
+        env "${LAUNCH_ENV[@]+"${LAUNCH_ENV[@]}"}" "$GODOT" --path "$PROJECT" --headless >>"$LOG" 2>&1 &
         PID=$!
         DEADLINE=$(( $(date +%s) + TIMEOUT_S ))
         while [[ $(date +%s) -lt $DEADLINE ]]; do

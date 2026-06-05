@@ -123,6 +123,13 @@ func _ready() -> void:
 		GrindLog.log_line("[run] auto-grind ENABLED speed=%sx max_runs=%d" % [str(auto_grind_speed), auto_grind_max_runs])
 		Engine.time_scale = auto_grind_speed
 		auto_grind_start_time = Time.get_ticks_msec()
+		# Auto-grind picks a real branch instead of leaving _selected_branch
+		# empty — empty triggers BiomeData.roll_run_plan's legacy "random
+		# biome each floor" path, which deposits a level-1 bot in tier-3
+		# Crypt floors and stalemates against liches. Picks the lowest
+		# tier with under-cleared branches so the run mirrors a real
+		# player progression. 2026-06-05.
+		_selected_branch = _pick_grind_branch()
 		_on_deploy()
 	elif DebugJump.active:
 		# Skip the garage; jump straight into the dungeon.
@@ -383,6 +390,58 @@ func _on_boss_killed(branch_id: String) -> void:
 		branch_id, tier, str(tier_complete), str(added),
 	])
 
+# Pick a deploy branch for the next auto-grind run that simulates a
+# real player progression. Walks tiers low → high, picks the FIRST
+# tier whose branches haven't all been cleared (bosses_killed[branch] <
+# KILLS_PER_BRANCH_TO_UNLOCK_NEXT_TIER), and within that tier selects
+# the branch with the fewest kills (so progression spreads evenly
+# across siblings). Falls back to the highest unlocked branch if every
+# unlocked tier is fully cleared.
+# 2026-06-05 — was: branch_id="" → random per-floor biome ignoring tier.
+func _pick_grind_branch() -> String:
+	# Forced override via env var. /grind --branch <id> sets this so a
+	# regression sweep can pin every run to a specific biome (e.g. "lair"
+	# to verify lair-spawn loadouts after a balance change).
+	if OS.has_environment("BOTTER_GRIND_BRANCH"):
+		var forced: String = OS.get_environment("BOTTER_GRIND_BRANCH")
+		if forced != "":
+			return forced
+	var save: Dictionary = SaveState.load_state()
+	var unlocked: Array = save.get("unlocked_branches", ["dungeon"])
+	var bosses_killed: Dictionary = save.get("bosses_killed", {})
+	# Match the next-tier-unlock threshold so the picker advances exactly
+	# when the unlock fires. Keep in sync with _on_boss_killed's constant.
+	const KILLS_PER_BRANCH_TO_UNLOCK_NEXT_TIER: int = 2
+	for tier in range(1, 6):
+		var sibs: Array = _TIER_BRANCHES.get(tier, [])
+		var unlocked_sibs: Array = []
+		for s in sibs:
+			if unlocked.has(s):
+				unlocked_sibs.append(s)
+		if unlocked_sibs.is_empty():
+			continue
+		# Pick the under-cleared sibling with the fewest kills so the
+		# bot tends to balance kills across the tier. If everyone in
+		# the tier already has KILLS+ kills, move to the next tier.
+		var best: String = ""
+		var best_kills: int = 9999
+		for s in unlocked_sibs:
+			var k: int = int(bosses_killed.get(s, 0))
+			if k >= KILLS_PER_BRANCH_TO_UNLOCK_NEXT_TIER:
+				continue
+			if k < best_kills:
+				best_kills = k
+				best = s
+		if best != "":
+			return best
+	# Every unlocked branch is fully cleared — pick the highest-tier
+	# unlocked branch as the "endgame loop" target.
+	for tier in range(5, 0, -1):
+		for s in _TIER_BRANCHES.get(tier, []):
+			if unlocked.has(s):
+				return s
+	return "dungeon"  # safety fallback
+
 func _on_floor_started(_floor_num: int) -> void:
 	# Per-floor summary is emitted by Dungeon when the floor is cleared (see
 	# _descend in dungeon.gd). Nothing else to log here.
@@ -432,6 +491,10 @@ func _on_run_ended(victory: bool, report: Dictionary) -> void:
 			GrindLog.log_line("[run] auto-grind COMPLETE total=%d runs" % auto_grind_runs)
 			get_tree().quit()
 			return
+		# Re-pick a branch each run so progression unlocks change which
+		# branch the next run targets. Without this every run after the
+		# first would re-use _selected_branch from the boot pick.
+		_selected_branch = _pick_grind_branch()
 		_on_deploy()
 		return
 	# Compute any branches newly unlocked during this run so the run
