@@ -1,0 +1,348 @@
+{
+  "format_version": 2,
+  "notes": "Cloak slot \u2014 DCSS ARM_CLOAK. Sprites under item/armor/ matching cloak shapes.",
+  "base_types": {
+    "cloak": {
+      "label": "Cloak"
+    }
+  },
+  "flavor_tags": {},
+  "drop_weight_schema": {
+    "description": "5 ints, T1..T5"
+  },
+  "items": [
+    {
+      "id": "ratskin_cloak",
+      "name": "Ratskin Cloak",
+      "base_type": "cloak",
+      "slot": "cloak",
+      "item_tier": 5,
+      "rarity": "legendary",
+      "tile": "item/armor/artefact/urand_ratskin_cloak.png",
+      "atk": 0,
+      "def": 16,
+      "hp": 230,
+      "flavor_tags": [
+        "stealth",
+        "regen"
+      ],
+      "lore": "Stitched from a thousand rats. They were a problem first.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        22
+      ],
+      "unique": true,
+      "affix_pool": {
+        "stamina": 15,
+        "agility": 25,
+        "regen": 35,
+        "crit": 10,
+        "haste": 25
+      },
+      "hp_regen": 0.5,
+      "future_mechanic": "Disease immunity. Lower aggro range."
+    },
+    {
+      "id": "starlight_cloak",
+      "name": "Cloak of Starlight",
+      "base_type": "cloak",
+      "slot": "cloak",
+      "item_tier": 5,
+      "rarity": "legendary",
+      "tile": "item/armor/artefact/urand_starlight.png",
+      "atk": 0,
+      "def": 18,
+      "hp": 240,
+      "flavor_tags": [
+        "stealth",
+        "willpower"
+      ],
+      "lore": "Twilight clings to it. So does whatever's hunting you.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        4,
+        22
+      ],
+      "unique": true,
+      "affix_pool": {
+        "stamina": 20,
+        "agility": 35,
+        "regen": 15,
+        "crit": 10,
+        "haste": 25
+      },
+      "hp_regen": 0.5,
+      "future_mechanic": "Periodically blinks the wearer 3 cells in a random direction during combat."
+    },
+    {
+      "id": "cloak_of_flash",
+      "name": "Cloak of Flash",
+      "base_type": "cloak",
+      "slot": "cloak",
+      "item_tier": 5,
+      "rarity": "legendary",
+      "tile": "item/armor/artefact/urand_flash.png",
+      "atk": 0,
+      "def": 10,
+      "hp": 130,
+      "flavor_tags": [
+        "swiftness",
+        "flying",
+        "thunderous"
+      ],
+      "lore": "When they move, light moves out of the way.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        25
+      ],
+      "unique": true,
+      "affix_pool": {
+        "strength": 15,
+        "agility": 35,
+        "crit": 10,
+        "haste": 90
+      },
+      "future_mechanic": "Periodic short-range blink in combat."
+    },
+    {
+      "id": "cloak_of_the_thief",
+      "name": "Cloak of the Thief",
+      "base_type": "cloak",
+      "slot": "cloak",
+      "item_tier": 5,
+      "rarity": "legendary",
+      "tile": "item/armor/artefact/urand_thief.png",
+      "atk": 0,
+      "def": 7,
+      "hp": 100,
+      "flavor_tags": [
+        "stealth",
+        "footwork"
+      ],
+      "lore": "They've left more places than they've entered.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        4,
+        22
+      ],
+      "unique": true,
+      "affix_pool": {
+        "agility": 60,
+        "crit": 10,
+        "haste": 40
+      },
+      "future_mechanic": "+10% chance to find extra gold per chest. Stealth bonus."
+    },
+    {
+      "id": "leather_cloak",
+      "name": "Leather Cloak",
+      "base_type": "cloak",
+      "slot": "cloak",
+      "item_tier": 1,
+      "rarity": "common",
+      "tile": "item/armor/back/cloak_1_leather.png",
+      "atk": 0,
+      "def": 1,
+      "hp": 18,
+      "flavor_tags": [],
+      "lore": "",
+      "drop_weights": [
+        50,
+        30,
+        5,
+        0,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05
+    },
+    {
+      "id": "travelers_cloak",
+      "name": "Traveler's Cloak",
+      "base_type": "cloak",
+      "slot": "cloak",
+      "item_tier": 1,
+      "rarity": "common",
+      "tile": "item/armor/back/cloak_2.png",
+      "atk": 0,
+      "def": 2,
+      "hp": 24,
+      "flavor_tags": [],
+      "lore": "",
+      "drop_weights": [
+        45,
+        32,
+        8,
+        0,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05
+    },
+    {
+      "id": "wool_cloak",
+      "name": "Wool Cloak",
+      "base_type": "cloak",
+      "slot": "cloak",
+      "item_tier": 2,
+      "rarity": "uncommon",
+      "tile": "item/armor/back/cloak_3.png",
+      "atk": 0,
+      "def": 3,
+      "hp": 30,
+      "flavor_tags": [
+        "stealth"
+      ],
+      "lore": "",
+      "drop_weights": [
+        10,
+        40,
+        30,
+        5,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05
+    },
+    {
+      "id": "hooded_cloak",
+      "name": "Hooded Cloak",
+      "base_type": "cloak",
+      "slot": "cloak",
+      "item_tier": 2,
+      "rarity": "uncommon",
+      "tile": "item/armor/back/cloak_4.png",
+      "atk": 0,
+      "def": 4,
+      "hp": 35,
+      "flavor_tags": [
+        "stealth"
+      ],
+      "lore": "",
+      "drop_weights": [
+        5,
+        40,
+        30,
+        10,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05
+    },
+    {
+      "id": "woven_cloak",
+      "name": "Woven Cloak",
+      "base_type": "cloak",
+      "slot": "cloak",
+      "item_tier": 3,
+      "rarity": "rare",
+      "tile": "item/armor/back/cloak_2.png",
+      "atk": 0,
+      "def": 5,
+      "hp": 50,
+      "flavor_tags": [
+        "stealth",
+        "willpower"
+      ],
+      "lore": "",
+      "drop_weights": [
+        0,
+        15,
+        40,
+        30,
+        5
+      ],
+      "unique": false,
+      "enchant_chance": 0.1
+    },
+    {
+      "id": "rangers_cloak",
+      "name": "Ranger's Cloak",
+      "base_type": "cloak",
+      "slot": "cloak",
+      "item_tier": 3,
+      "rarity": "rare",
+      "tile": "item/armor/back/cloak_4.png",
+      "atk": 0,
+      "def": 4,
+      "hp": 55,
+      "flavor_tags": [
+        "stealth",
+        "swiftness"
+      ],
+      "lore": "",
+      "drop_weights": [
+        0,
+        10,
+        35,
+        35,
+        10
+      ],
+      "unique": false,
+      "enchant_chance": 0.1
+    },
+    {
+      "id": "silken_cloak",
+      "name": "Silken Cloak",
+      "base_type": "cloak",
+      "slot": "cloak",
+      "item_tier": 4,
+      "rarity": "epic",
+      "tile": "item/armor/back/cloak_3.png",
+      "atk": 2,
+      "def": 6,
+      "hp": 70,
+      "flavor_tags": [
+        "stealth",
+        "willpower",
+        "regen"
+      ],
+      "lore": "",
+      "drop_weights": [
+        0,
+        0,
+        15,
+        35,
+        30
+      ],
+      "unique": false,
+      "enchant_chance": 0.15
+    },
+    {
+      "id": "warlord_cloak",
+      "name": "Warlord's Cloak",
+      "base_type": "cloak",
+      "slot": "cloak",
+      "item_tier": 4,
+      "rarity": "epic",
+      "tile": "item/armor/back/cloak_1_leather.png",
+      "atk": 3,
+      "def": 7,
+      "hp": 80,
+      "flavor_tags": [
+        "lordly",
+        "fortified"
+      ],
+      "lore": "",
+      "drop_weights": [
+        0,
+        0,
+        5,
+        30,
+        40
+      ],
+      "unique": false,
+      "enchant_chance": 0.15
+    }
+  ]
+}

@@ -1477,19 +1477,19 @@
     },
     {
       "affix_pool": {
-        "of_channeling": 12,
-        "of_crit": 12,
-        "of_dex_mastery": 8,
-        "of_finesse": 28,
-        "of_int_mastery": 8,
         "of_might": 14,
-        "of_quickcast": 24,
-        "of_resonance": 12,
-        "of_str_mastery": 8,
+        "of_finesse": 28,
+        "of_wisdom": 18,
+        "of_vitality": 18,
         "of_the_bear": 22,
         "of_the_cat": 14,
-        "of_vitality": 18,
-        "of_wisdom": 18,
+        "of_str_mastery": 8,
+        "of_dex_mastery": 8,
+        "of_int_mastery": 8,
+        "of_quickcast": 24,
+        "of_resonance": 12,
+        "of_channeling": 12,
+        "of_crit": 12,
         "of_shadows": 26,
         "of_dark_resist": 18
       },
@@ -1522,23 +1522,29 @@
       "rarity": "rare",
       "slot": "helm",
       "tile": "green_mask.png",
-      "unique": false
+      "unique": false,
+      "_balance_bumps": {
+        "of_shadows": 26,
+        "of_dark_resist": 18,
+        "of_finesse": 14,
+        "of_quickcast": 12
+      }
     },
     {
       "affix_pool": {
-        "of_channeling": 12,
-        "of_crit": 12,
-        "of_dex_mastery": 8,
-        "of_finesse": 28,
-        "of_int_mastery": 8,
         "of_might": 14,
-        "of_quickcast": 12,
-        "of_resonance": 12,
-        "of_str_mastery": 8,
+        "of_finesse": 28,
+        "of_wisdom": 18,
+        "of_vitality": 18,
         "of_the_bear": 22,
         "of_the_cat": 14,
-        "of_vitality": 18,
-        "of_wisdom": 18,
+        "of_str_mastery": 8,
+        "of_dex_mastery": 8,
+        "of_int_mastery": 8,
+        "of_quickcast": 12,
+        "of_resonance": 12,
+        "of_channeling": 12,
+        "of_crit": 12,
         "of_shadows": 26,
         "of_lifesteal": 14,
         "of_dark_resist": 14
@@ -1572,23 +1578,29 @@
       "rarity": "legendary",
       "slot": "helm",
       "tile": "helmet_art_3.png",
-      "unique": false
+      "unique": false,
+      "_balance_bumps": {
+        "of_shadows": 26,
+        "of_finesse": 14,
+        "of_lifesteal": 14,
+        "of_dark_resist": 14
+      }
     },
     {
       "affix_pool": {
-        "of_channeling": 12,
-        "of_crit": 12,
-        "of_dex_mastery": 8,
-        "of_finesse": 32,
-        "of_int_mastery": 26,
         "of_might": 14,
-        "of_quickcast": 26,
-        "of_resonance": 26,
-        "of_str_mastery": 8,
+        "of_finesse": 32,
+        "of_wisdom": 18,
+        "of_vitality": 18,
         "of_the_bear": 22,
         "of_the_cat": 14,
-        "of_vitality": 18,
-        "of_wisdom": 18
+        "of_str_mastery": 8,
+        "of_dex_mastery": 8,
+        "of_int_mastery": 26,
+        "of_quickcast": 26,
+        "of_resonance": 26,
+        "of_channeling": 12,
+        "of_crit": 12
       },
       "armor": 15,
       "base_type": "great_helm",
@@ -1618,23 +1630,29 @@
       "rarity": "legendary",
       "slot": "helm",
       "tile": "helmet_ego_1.png",
-      "unique": false
+      "unique": false,
+      "_balance_bumps": {
+        "of_finesse": 18,
+        "of_int_mastery": 18,
+        "of_quickcast": 14,
+        "of_resonance": 14
+      }
     },
     {
       "affix_pool": {
-        "of_channeling": 12,
-        "of_crit": 12,
-        "of_dex_mastery": 8,
-        "of_finesse": 28,
-        "of_int_mastery": 8,
         "of_might": 28,
-        "of_quickcast": 12,
-        "of_resonance": 12,
-        "of_str_mastery": 8,
+        "of_finesse": 28,
+        "of_wisdom": 18,
+        "of_vitality": 18,
         "of_the_bear": 22,
         "of_the_cat": 14,
-        "of_vitality": 18,
-        "of_wisdom": 18,
+        "of_str_mastery": 8,
+        "of_dex_mastery": 8,
+        "of_int_mastery": 8,
+        "of_quickcast": 12,
+        "of_resonance": 12,
+        "of_channeling": 12,
+        "of_crit": 12,
         "of_shadows": 22,
         "of_lifesteal": 12
       },
@@ -1671,23 +1689,29 @@
       "rarity": "legendary",
       "slot": "helm",
       "tile": "urand_dyrovepreva_new.png",
-      "unique": true
+      "unique": true,
+      "_balance_bumps": {
+        "of_shadows": 22,
+        "of_might": 14,
+        "of_finesse": 14,
+        "of_lifesteal": 12
+      }
     },
     {
       "affix_pool": {
-        "of_channeling": 12,
-        "of_crit": 12,
-        "of_dex_mastery": 8,
-        "of_finesse": 14,
-        "of_int_mastery": 8,
         "of_might": 28,
-        "of_quickcast": 12,
-        "of_resonance": 12,
-        "of_str_mastery": 8,
+        "of_finesse": 14,
+        "of_wisdom": 18,
+        "of_vitality": 40,
         "of_the_bear": 52,
         "of_the_cat": 14,
-        "of_vitality": 40,
-        "of_wisdom": 18,
+        "of_str_mastery": 8,
+        "of_dex_mastery": 8,
+        "of_int_mastery": 8,
+        "of_quickcast": 12,
+        "of_resonance": 12,
+        "of_channeling": 12,
+        "of_crit": 12,
         "of_sharpness": 14
       },
       "armor": 7,
@@ -1722,23 +1746,29 @@
       "rarity": "rare",
       "slot": "helm",
       "tile": "helmet_2_etched.png",
-      "unique": false
+      "unique": false,
+      "_balance_bumps": {
+        "of_the_bear": 30,
+        "of_vitality": 22,
+        "of_might": 14,
+        "of_sharpness": 14
+      }
     },
     {
       "affix_pool": {
-        "of_channeling": 12,
-        "of_crit": 12,
-        "of_dex_mastery": 8,
-        "of_finesse": 28,
-        "of_int_mastery": 8,
         "of_might": 28,
-        "of_quickcast": 12,
-        "of_resonance": 12,
-        "of_str_mastery": 8,
+        "of_finesse": 28,
+        "of_wisdom": 18,
+        "of_vitality": 18,
         "of_the_bear": 22,
         "of_the_cat": 14,
-        "of_vitality": 18,
-        "of_wisdom": 18,
+        "of_str_mastery": 8,
+        "of_dex_mastery": 8,
+        "of_int_mastery": 8,
+        "of_quickcast": 12,
+        "of_resonance": 12,
+        "of_channeling": 12,
+        "of_crit": 12,
         "of_shadows": 22,
         "of_lifesteal": 12
       },
@@ -1775,23 +1805,29 @@
       "rarity": "legendary",
       "slot": "helm",
       "tile": "urand_pondering_new.png",
-      "unique": true
+      "unique": true,
+      "_balance_bumps": {
+        "of_shadows": 22,
+        "of_might": 14,
+        "of_finesse": 14,
+        "of_lifesteal": 12
+      }
     },
     {
       "affix_pool": {
-        "of_channeling": 12,
-        "of_crit": 12,
-        "of_dex_mastery": 8,
-        "of_finesse": 28,
-        "of_int_mastery": 8,
         "of_might": 28,
-        "of_quickcast": 12,
-        "of_resonance": 12,
-        "of_str_mastery": 8,
+        "of_finesse": 28,
+        "of_wisdom": 18,
+        "of_vitality": 18,
         "of_the_bear": 22,
         "of_the_cat": 14,
-        "of_vitality": 18,
-        "of_wisdom": 18,
+        "of_str_mastery": 8,
+        "of_dex_mastery": 8,
+        "of_int_mastery": 8,
+        "of_quickcast": 12,
+        "of_resonance": 12,
+        "of_channeling": 12,
+        "of_crit": 12,
         "of_shadows": 22,
         "of_lifesteal": 12
       },
@@ -1828,23 +1864,29 @@
       "rarity": "rare",
       "slot": "helm",
       "tile": "wizard_hat_1.png",
-      "unique": false
+      "unique": false,
+      "_balance_bumps": {
+        "of_shadows": 22,
+        "of_might": 14,
+        "of_finesse": 14,
+        "of_lifesteal": 12
+      }
     },
     {
       "affix_pool": {
-        "of_channeling": 12,
-        "of_crit": 12,
-        "of_dex_mastery": 8,
-        "of_finesse": 14,
-        "of_int_mastery": 8,
         "of_might": 14,
-        "of_quickcast": 12,
-        "of_resonance": 12,
-        "of_str_mastery": 8,
+        "of_finesse": 14,
+        "of_wisdom": 18,
+        "of_vitality": 36,
         "of_the_bear": 44,
         "of_the_cat": 14,
-        "of_vitality": 36,
-        "of_wisdom": 18,
+        "of_str_mastery": 8,
+        "of_dex_mastery": 8,
+        "of_int_mastery": 8,
+        "of_quickcast": 12,
+        "of_resonance": 12,
+        "of_channeling": 12,
+        "of_crit": 12,
         "of_shadows": 22,
         "of_dark_resist": 18
       },
@@ -1882,23 +1924,29 @@
       "rarity": "legendary",
       "slot": "helm",
       "tile": "urand_dyrovepreva_new.png",
-      "unique": true
+      "unique": true,
+      "_balance_bumps": {
+        "of_shadows": 22,
+        "of_the_bear": 22,
+        "of_dark_resist": 18,
+        "of_vitality": 18
+      }
     },
     {
       "affix_pool": {
-        "of_channeling": 12,
-        "of_crit": 12,
-        "of_dex_mastery": 8,
-        "of_finesse": 28,
-        "of_int_mastery": 8,
         "of_might": 14,
-        "of_quickcast": 12,
-        "of_resonance": 12,
-        "of_str_mastery": 8,
+        "of_finesse": 28,
+        "of_wisdom": 18,
+        "of_vitality": 18,
         "of_the_bear": 22,
         "of_the_cat": 14,
-        "of_vitality": 18,
-        "of_wisdom": 18,
+        "of_str_mastery": 8,
+        "of_dex_mastery": 8,
+        "of_int_mastery": 8,
+        "of_quickcast": 12,
+        "of_resonance": 12,
+        "of_channeling": 12,
+        "of_crit": 12,
         "of_shadows": 26,
         "of_lifesteal": 14,
         "of_dark_resist": 14
@@ -1932,7 +1980,13 @@
       "rarity": "epic",
       "slot": "helm",
       "tile": "green_mask.png",
-      "unique": false
+      "unique": false,
+      "_balance_bumps": {
+        "of_shadows": 26,
+        "of_finesse": 14,
+        "of_lifesteal": 14,
+        "of_dark_resist": 14
+      }
     }
   ]
 }

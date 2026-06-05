@@ -1,0 +1,1437 @@
+{
+  "format_version": 1,
+  "slot": "armor",
+  "notes": "Source of truth for the item editor (armor tab). DCSS base types from item-prop.cc: robe (AC 2), leather (3), ring_mail (5), scale_mail (6), chain_mail (8), plate (10), crystal_plate (14), troll_leather (3+regen), dragon armours (5-12+ego). Heavy bias on dragon and unique armors at T5.",
+  "base_types": {
+    "robe": {
+      "label": "Robe",
+      "category": "armor",
+      "dcss_base": "robe",
+      "dcss_ac": 2,
+      "flavor": "Cloth, fast, casts well. Future: regen + spell synergy."
+    },
+    "leather": {
+      "label": "Leather",
+      "category": "armor",
+      "dcss_base": "leather",
+      "dcss_ac": 3,
+      "flavor": "Light, mobile. Stealth/agility flavor."
+    },
+    "studded": {
+      "label": "Studded Leather",
+      "category": "armor",
+      "dcss_base": "leather",
+      "dcss_ac": 3,
+      "flavor": "Reinforced leather. The mid-light option."
+    },
+    "ring_mail": {
+      "label": "Ring Mail",
+      "category": "armor",
+      "dcss_base": "ring_mail",
+      "dcss_ac": 5,
+      "flavor": "Riveted iron rings. Common medium armor."
+    },
+    "scale_mail": {
+      "label": "Scale Mail",
+      "category": "armor",
+      "dcss_base": "scale_mail",
+      "dcss_ac": 6,
+      "flavor": "Layered metal scales. Solid mid-tier."
+    },
+    "chain_mail": {
+      "label": "Chain Mail",
+      "category": "armor",
+      "dcss_base": "chain_mail",
+      "dcss_ac": 8,
+      "flavor": "Interlinked rings. The workhorse heavy."
+    },
+    "splint_mail": {
+      "label": "Splint Mail",
+      "category": "armor",
+      "dcss_base": "scale_mail",
+      "dcss_ac": 7,
+      "flavor": "Strips of metal over chain. Heavy but flexible."
+    },
+    "banded_mail": {
+      "label": "Banded Mail",
+      "category": "armor",
+      "dcss_base": "scale_mail",
+      "dcss_ac": 7,
+      "flavor": "Concentric bands. Mid-heavy choice."
+    },
+    "plate": {
+      "label": "Plate Armor",
+      "category": "armor",
+      "dcss_base": "plate",
+      "dcss_ac": 10,
+      "flavor": "Forged plates. Heaviest standard armor."
+    },
+    "crystal_plate": {
+      "label": "Crystal Plate",
+      "category": "armor",
+      "dcss_base": "crystal_plate",
+      "dcss_ac": 14,
+      "flavor": "Living crystal lattice. End-game heavy."
+    },
+    "troll_leather": {
+      "label": "Troll Leather",
+      "category": "armor",
+      "dcss_base": "troll_leather",
+      "dcss_ac": 3,
+      "flavor": "Light hide that knits its own wounds. Future: regen."
+    },
+    "dragon_scales": {
+      "label": "Dragon Scales",
+      "category": "armor",
+      "dcss_base": "dragon",
+      "dcss_ac": 9,
+      "flavor": "Hide pulled from dragons. Each color carries an element."
+    }
+  },
+  "flavor_tags": {
+    "fortified": {
+      "color": "#aaccdd",
+      "desc": "Future: flat damage reduction. Currently: Stamina affix bonus."
+    },
+    "stealth": {
+      "color": "#666688",
+      "desc": "Future: lower aggro range. Currently: Agility affix bonus."
+    },
+    "regen": {
+      "color": "#66cc88",
+      "desc": "Future: HP regen tick. Currently: Regen affix bonus."
+    },
+    "fire_res": {
+      "color": "#ff6633",
+      "desc": "Future: % damage reduction from fire. Currently: Stamina affix bonus."
+    },
+    "cold_res": {
+      "color": "#66ccff",
+      "desc": "Future: % damage reduction from cold. Currently: Stamina affix bonus."
+    },
+    "poison_res": {
+      "color": "#66cc44",
+      "desc": "Future: immune to poison DoT. Currently: Stamina affix bonus."
+    },
+    "willpower": {
+      "color": "#ffaa88",
+      "desc": "Future: magic resistance. Currently: Stamina affix bonus."
+    },
+    "swiftness": {
+      "color": "#aaddff",
+      "desc": "Future: +move speed. Currently: Agility affix bonus."
+    },
+    "ponderous": {
+      "color": "#998866",
+      "desc": "Future: -move speed (drawback). Currently: no penalty."
+    },
+    "elemental": {
+      "color": "#ff8866",
+      "desc": "Future: multi-element resistance. Currently: Stamina affix bonus."
+    },
+    "lordly": {
+      "color": "#ffdd44",
+      "desc": "Future: aura buff. Currently: Strength affix bonus."
+    },
+    "thorns": {
+      "color": "#aa6666",
+      "desc": "Future: reflect % melee damage. Currently: no bonus."
+    }
+  },
+  "items": [
+    {
+      "id": "tattered_hide",
+      "name": "Tattered Hide",
+      "base_type": "leather",
+      "slot": "armor",
+      "item_tier": 1,
+      "rarity": "common",
+      "tile": "item/armor/torso/animal_skin_1_new.png",
+      "atk": 0,
+      "def": 4,
+      "hp": 55,
+      "flavor_tags": [],
+      "lore": "Whatever it was, it's leather now.",
+      "drop_weights": [
+        80,
+        15,
+        0,
+        0,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "agility": 25,
+        "haste": 15,
+        "stamina": 15
+      }
+    },
+    {
+      "id": "patchwork_robe",
+      "name": "Patchwork Robe",
+      "base_type": "robe",
+      "slot": "armor",
+      "item_tier": 1,
+      "rarity": "common",
+      "tile": "item/armor/torso/robe_1_old.png",
+      "atk": 0,
+      "def": 2,
+      "hp": 50,
+      "flavor_tags": [
+        "regen"
+      ],
+      "lore": "Mended often. Keeps falling apart.",
+      "drop_weights": [
+        80,
+        15,
+        0,
+        0,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "regen": 25,
+        "haste": 15,
+        "stamina": 10
+      }
+    },
+    {
+      "id": "leather_jerkin",
+      "name": "Leather Jerkin",
+      "base_type": "leather",
+      "slot": "armor",
+      "item_tier": 1,
+      "rarity": "common",
+      "tile": "item/armor/torso/leather_armor_1.png",
+      "atk": 0,
+      "def": 4,
+      "hp": 60,
+      "flavor_tags": [],
+      "lore": "Smells of old smoke.",
+      "drop_weights": [
+        70,
+        20,
+        2,
+        0,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "agility": 25,
+        "haste": 15,
+        "stamina": 15
+      }
+    },
+    {
+      "id": "studded_leather",
+      "name": "Studded Leather",
+      "base_type": "studded",
+      "slot": "armor",
+      "item_tier": 1,
+      "rarity": "uncommon",
+      "tile": "item/armor/torso/studded_leather_armor.png",
+      "atk": 0,
+      "def": 5,
+      "hp": 70,
+      "flavor_tags": [],
+      "lore": "Iron rivets in a leather grid. Doesn't catch on fences.",
+      "drop_weights": [
+        55,
+        35,
+        5,
+        0,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "agility": 25,
+        "haste": 10,
+        "stamina": 20
+      }
+    },
+    {
+      "id": "iron_brigandine",
+      "name": "Iron Brigandine",
+      "base_type": "ring_mail",
+      "slot": "armor",
+      "item_tier": 1,
+      "rarity": "uncommon",
+      "tile": "item/armor/torso/ring_mail_1_new.png",
+      "atk": 0,
+      "def": 7,
+      "hp": 85,
+      "flavor_tags": [
+        "fortified"
+      ],
+      "lore": "Cheap and reliable. Heavy on the shoulders.",
+      "drop_weights": [
+        50,
+        35,
+        8,
+        0,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "stamina": 25,
+        "agility": 20,
+        "strength": 5
+      }
+    },
+    {
+      "id": "scout_robe",
+      "name": "Scout's Robe",
+      "base_type": "robe",
+      "slot": "armor",
+      "item_tier": 2,
+      "rarity": "uncommon",
+      "tile": "item/armor/torso/robe_1_new.png",
+      "atk": 0,
+      "def": 4,
+      "hp": 75,
+      "flavor_tags": [
+        "stealth",
+        "swiftness"
+      ],
+      "lore": "Patterns dyed for grass shadow.",
+      "drop_weights": [
+        15,
+        65,
+        22,
+        3,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "regen": 25,
+        "haste": 15,
+        "stamina": 10
+      }
+    },
+    {
+      "id": "fine_chainmail",
+      "name": "Fine Chainmail",
+      "base_type": "chain_mail",
+      "slot": "armor",
+      "item_tier": 2,
+      "rarity": "uncommon",
+      "tile": "item/armor/torso/chain_mail_1.png",
+      "atk": 0,
+      "def": 9,
+      "hp": 105,
+      "flavor_tags": [
+        "fortified"
+      ],
+      "lore": "Each ring closed cleanly. A craftsman's pride.",
+      "drop_weights": [
+        12,
+        60,
+        28,
+        5,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "stamina": 30,
+        "agility": 15,
+        "regen": 5
+      }
+    },
+    {
+      "id": "elven_leather",
+      "name": "Elven Leather",
+      "base_type": "leather",
+      "slot": "armor",
+      "item_tier": 2,
+      "rarity": "rare",
+      "tile": "item/armor/torso/elven_leather_armor.png",
+      "atk": 0,
+      "def": 6,
+      "hp": 90,
+      "flavor_tags": [
+        "stealth",
+        "swiftness"
+      ],
+      "lore": "Lighter than air, by all accounts.",
+      "drop_weights": [
+        8,
+        55,
+        32,
+        5,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "agility": 25,
+        "haste": 15,
+        "stamina": 15
+      }
+    },
+    {
+      "id": "orcish_chain",
+      "name": "Orcish Chainmail",
+      "base_type": "chain_mail",
+      "slot": "armor",
+      "item_tier": 2,
+      "rarity": "uncommon",
+      "tile": "item/armor/torso/orcish_chain_mail.png",
+      "atk": 0,
+      "def": 8,
+      "hp": 102,
+      "flavor_tags": [
+        "fortified"
+      ],
+      "lore": "Not pretty. Not subtle. Stops things.",
+      "drop_weights": [
+        12,
+        55,
+        28,
+        5,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "stamina": 30,
+        "agility": 15,
+        "regen": 5
+      }
+    },
+    {
+      "id": "scale_mail",
+      "name": "Scale Mail",
+      "base_type": "scale_mail",
+      "slot": "armor",
+      "item_tier": 2,
+      "rarity": "rare",
+      "tile": "item/armor/torso/scale_mail_1_new.png",
+      "atk": 0,
+      "def": 10,
+      "hp": 115,
+      "flavor_tags": [
+        "fortified"
+      ],
+      "lore": "Each scale overlaps the next. Almost fish.",
+      "drop_weights": [
+        5,
+        50,
+        35,
+        8,
+        2
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "stamina": 30,
+        "agility": 15,
+        "regen": 5
+      }
+    },
+    {
+      "id": "splint_mail",
+      "name": "Splint Mail",
+      "base_type": "splint_mail",
+      "slot": "armor",
+      "item_tier": 3,
+      "rarity": "rare",
+      "tile": "item/armor/torso/splint_mail_1.png",
+      "atk": 0,
+      "def": 13,
+      "hp": 140,
+      "flavor_tags": [
+        "fortified"
+      ],
+      "lore": "Strips of steel over linen. A compromise that works.",
+      "drop_weights": [
+        0,
+        18,
+        60,
+        22,
+        4
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "stamina": 35,
+        "agility": 10
+      }
+    },
+    {
+      "id": "banded_mail",
+      "name": "Banded Mail",
+      "base_type": "banded_mail",
+      "slot": "armor",
+      "item_tier": 3,
+      "rarity": "rare",
+      "tile": "item/armor/torso/banded_mail_1.png",
+      "atk": 0,
+      "def": 14,
+      "hp": 150,
+      "flavor_tags": [
+        "fortified"
+      ],
+      "lore": "Bands ring against each other when you walk.",
+      "drop_weights": [
+        0,
+        15,
+        58,
+        25,
+        5
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "stamina": 35,
+        "agility": 10
+      }
+    },
+    {
+      "id": "elven_scalemail",
+      "name": "Elven Scalemail",
+      "base_type": "scale_mail",
+      "slot": "armor",
+      "item_tier": 3,
+      "rarity": "rare",
+      "tile": "item/armor/torso/elven_scalemail.png",
+      "atk": 0,
+      "def": 12,
+      "hp": 130,
+      "flavor_tags": [
+        "swiftness",
+        "willpower"
+      ],
+      "lore": "Mithril-scaled, light as silk, strong as steel.",
+      "drop_weights": [
+        0,
+        12,
+        55,
+        28,
+        8
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "stamina": 30,
+        "agility": 15,
+        "regen": 5
+      }
+    },
+    {
+      "id": "troll_leather",
+      "name": "Troll Leather Armor",
+      "base_type": "troll_leather",
+      "slot": "armor",
+      "item_tier": 3,
+      "rarity": "epic",
+      "tile": "item/armor/torso/troll_leather_armor.png",
+      "atk": 0,
+      "def": 10,
+      "hp": 160,
+      "flavor_tags": [
+        "regen"
+      ],
+      "lore": "It bleeds when struck. The bleeding stops on its own.",
+      "drop_weights": [
+        0,
+        8,
+        50,
+        32,
+        12
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "regen": 30,
+        "stamina": 25,
+        "agility": 10
+      }
+    },
+    {
+      "id": "plate_armor",
+      "name": "Plate Armor",
+      "base_type": "plate",
+      "slot": "armor",
+      "item_tier": 4,
+      "rarity": "rare",
+      "tile": "item/armor/torso/plate_mail_1.png",
+      "atk": 0,
+      "def": 18,
+      "hp": 175,
+      "flavor_tags": [
+        "fortified",
+        "ponderous"
+      ],
+      "lore": "Forged plates. Heavy. Honest.",
+      "drop_weights": [
+        0,
+        0,
+        12,
+        60,
+        28
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "stamina": 40,
+        "regen": 10
+      }
+    },
+    {
+      "id": "swamp_dragon_armor",
+      "name": "Swamp Dragon Armor",
+      "base_type": "dragon_scales",
+      "slot": "armor",
+      "item_tier": 4,
+      "rarity": "epic",
+      "tile": "item/armor/torso/swamp_dragon_armor_new.png",
+      "atk": 0,
+      "def": 16,
+      "hp": 170,
+      "flavor_tags": [
+        "poison_res"
+      ],
+      "lore": "Always damp. Smells faintly of bog.",
+      "drop_weights": [
+        0,
+        0,
+        10,
+        55,
+        35
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "stamina": 30,
+        "regen": 15,
+        "strength": 10
+      }
+    },
+    {
+      "id": "ice_dragon_armor",
+      "name": "Ice Dragon Armor",
+      "base_type": "dragon_scales",
+      "slot": "armor",
+      "item_tier": 4,
+      "rarity": "epic",
+      "tile": "item/armor/torso/ice_dragon_armor_new.png",
+      "atk": 0,
+      "def": 17,
+      "hp": 170,
+      "flavor_tags": [
+        "cold_res"
+      ],
+      "lore": "Cold to the touch. Colder when struck.",
+      "drop_weights": [
+        0,
+        0,
+        10,
+        55,
+        35
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "stamina": 30,
+        "regen": 15,
+        "strength": 10
+      }
+    },
+    {
+      "id": "fire_dragon_armor",
+      "name": "Fire Dragon Armor",
+      "base_type": "dragon_scales",
+      "slot": "armor",
+      "item_tier": 4,
+      "rarity": "epic",
+      "tile": "item/armor/torso/blue_dragon_scale_mail_new.png",
+      "atk": 0,
+      "def": 17,
+      "hp": 170,
+      "flavor_tags": [
+        "fire_res"
+      ],
+      "lore": "Warm where you wear it. Warmer where it strikes.",
+      "drop_weights": [
+        0,
+        0,
+        10,
+        55,
+        35
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "stamina": 30,
+        "regen": 15,
+        "strength": 10
+      }
+    },
+    {
+      "id": "shimmering_armor",
+      "name": "Shimmering Dragon Scales",
+      "base_type": "dragon_scales",
+      "slot": "armor",
+      "item_tier": 4,
+      "rarity": "epic",
+      "tile": "item/armor/torso/shimmering_dragon_scales.png",
+      "atk": 0,
+      "def": 16,
+      "hp": 175,
+      "flavor_tags": [
+        "willpower"
+      ],
+      "lore": "The colors shift with what's looking at it.",
+      "drop_weights": [
+        0,
+        0,
+        8,
+        50,
+        40
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "stamina": 30,
+        "regen": 15,
+        "strength": 10
+      }
+    },
+    {
+      "id": "wyrmscale_hauberk",
+      "name": "Wyrmscale Hauberk",
+      "base_type": "scale_mail",
+      "slot": "armor",
+      "item_tier": 4,
+      "rarity": "epic",
+      "tile": "item/armor/torso/scale_mail_3.png",
+      "atk": 0,
+      "def": 18,
+      "hp": 200,
+      "flavor_tags": [
+        "fortified",
+        "elemental"
+      ],
+      "lore": "Built around the spine of something that never stopped flying.",
+      "drop_weights": [
+        0,
+        0,
+        8,
+        55,
+        38
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "stamina": 30,
+        "agility": 15,
+        "regen": 5
+      }
+    },
+    {
+      "id": "shadow_dragon",
+      "name": "Shadow Dragon Armor",
+      "base_type": "dragon_scales",
+      "slot": "armor",
+      "item_tier": 5,
+      "rarity": "epic",
+      "tile": "item/armor/torso/shadow_dragon_scale_mail.png",
+      "atk": 0,
+      "def": 20,
+      "hp": 222,
+      "flavor_tags": [
+        "stealth",
+        "willpower"
+      ],
+      "lore": "Light bends around it. So do gazes.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        18,
+        70
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "stamina": 30,
+        "regen": 15,
+        "strength": 10
+      }
+    },
+    {
+      "id": "gold_dragon_armor",
+      "name": "Gold Dragon Armor",
+      "base_type": "dragon_scales",
+      "slot": "armor",
+      "item_tier": 5,
+      "rarity": "epic",
+      "tile": "item/armor/torso/gold_dragon_armor_new.png",
+      "atk": 0,
+      "def": 22,
+      "hp": 240,
+      "flavor_tags": [
+        "elemental",
+        "fortified"
+      ],
+      "lore": "Each scale catches the sun. Catches the spell, too.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        12,
+        72
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "stamina": 30,
+        "regen": 15,
+        "strength": 10
+      }
+    },
+    {
+      "id": "pearl_dragon",
+      "name": "Pearl Dragon Armor",
+      "base_type": "dragon_scales",
+      "slot": "armor",
+      "item_tier": 5,
+      "rarity": "epic",
+      "tile": "item/armor/torso/pearl_dragon_armor.png",
+      "atk": 0,
+      "def": 20,
+      "hp": 230,
+      "flavor_tags": [
+        "willpower",
+        "regen"
+      ],
+      "lore": "Worn by saints, briefly. Always returned.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        12,
+        70
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "stamina": 30,
+        "regen": 15,
+        "strength": 10
+      }
+    },
+    {
+      "id": "crystal_plate",
+      "name": "Crystal Plate",
+      "base_type": "crystal_plate",
+      "slot": "armor",
+      "item_tier": 5,
+      "rarity": "epic",
+      "tile": "item/armor/torso/crystal_plate_mail.png",
+      "atk": 0,
+      "def": 26,
+      "hp": 260,
+      "flavor_tags": [
+        "fortified",
+        "thorns"
+      ],
+      "lore": "Living crystal grown over a hauberk. Hums in melee.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        10,
+        65
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "stamina": 35,
+        "regen": 15,
+        "agility": 5
+      }
+    },
+    {
+      "id": "lear_chainmail",
+      "name": "Lear's Chainmail",
+      "base_type": "chain_mail",
+      "slot": "armor",
+      "item_tier": 5,
+      "rarity": "legendary",
+      "tile": "item/armor/artefact/urand_lear.png",
+      "atk": 0,
+      "def": 24,
+      "hp": 280,
+      "flavor_tags": [
+        "lordly",
+        "willpower"
+      ],
+      "lore": "Worn by a king who refused to take it off.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        25
+      ],
+      "unique": true,
+      "future_mechanic": "+15% damage when surrounded by 3+ enemies.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "strength": 15,
+        "stamina": 35,
+        "agility": 10,
+        "regen": 25
+      }
+    },
+    {
+      "id": "robe_of_folly",
+      "name": "Robe of Folly",
+      "base_type": "robe",
+      "slot": "armor",
+      "item_tier": 5,
+      "rarity": "legendary",
+      "tile": "item/armor/artefact/urand_folly.png",
+      "atk": 0,
+      "def": 14,
+      "hp": 220,
+      "flavor_tags": [
+        "regen",
+        "willpower"
+      ],
+      "lore": "Anyone who wears it makes one terrible decision. They survive it.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        25
+      ],
+      "unique": true,
+      "future_mechanic": "Regen 8 HP/s. -20% DEF (drawback).",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "stamina": 35,
+        "agility": 10,
+        "regen": 50
+      }
+    },
+    {
+      "id": "robe_of_misfortune",
+      "name": "Robe of Misfortune",
+      "base_type": "robe",
+      "slot": "armor",
+      "item_tier": 5,
+      "rarity": "legendary",
+      "tile": "item/armor/artefact/urand_misfortune.png",
+      "atk": 0,
+      "def": 15,
+      "hp": 220,
+      "flavor_tags": [
+        "thorns",
+        "willpower"
+      ],
+      "lore": "Bad things happen near it. Worse things happen when struck.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        4,
+        20
+      ],
+      "unique": true,
+      "future_mechanic": "Reflects 15% of melee damage. Random affix swap each floor.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "stamina": 40,
+        "agility": 25,
+        "regen": 25
+      }
+    },
+    {
+      "id": "orcish_leather",
+      "name": "Orcish Leather",
+      "base_type": "leather",
+      "slot": "armor",
+      "item_tier": 1,
+      "rarity": "common",
+      "tile": "item/armor/torso/orcish_leather_armor.png",
+      "atk": 0,
+      "def": 4,
+      "hp": 55,
+      "flavor_tags": [],
+      "lore": "Cured rough. Smells like a forge.",
+      "drop_weights": [
+        70,
+        22,
+        4,
+        0,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "agility": 25,
+        "haste": 15,
+        "stamina": 15
+      }
+    },
+    {
+      "id": "orcish_ringmail",
+      "name": "Orcish Ringmail",
+      "base_type": "ring_mail",
+      "slot": "armor",
+      "item_tier": 2,
+      "rarity": "uncommon",
+      "tile": "item/armor/torso/orcish_ringmail.png",
+      "atk": 0,
+      "def": 6,
+      "hp": 80,
+      "flavor_tags": [
+        "fortified"
+      ],
+      "lore": "Hammered hot, riveted cold. Effective.",
+      "drop_weights": [
+        15,
+        60,
+        28,
+        5,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "stamina": 25,
+        "agility": 20,
+        "strength": 5
+      }
+    },
+    {
+      "id": "orcish_platemail",
+      "name": "Orcish Platemail",
+      "base_type": "plate",
+      "slot": "armor",
+      "item_tier": 3,
+      "rarity": "rare",
+      "tile": "item/armor/torso/orcish_platemail.png",
+      "atk": 0,
+      "def": 14,
+      "hp": 145,
+      "flavor_tags": [
+        "fortified"
+      ],
+      "lore": "Looks like it was bashed into shape. It was.",
+      "drop_weights": [
+        0,
+        18,
+        60,
+        22,
+        4
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "stamina": 40,
+        "regen": 10
+      }
+    },
+    {
+      "id": "troll_hide",
+      "name": "Troll Hide",
+      "base_type": "troll_leather",
+      "slot": "armor",
+      "item_tier": 2,
+      "rarity": "rare",
+      "tile": "item/armor/torso/troll_hide.png",
+      "atk": 0,
+      "def": 5,
+      "hp": 85,
+      "flavor_tags": [
+        "regen"
+      ],
+      "lore": "Raw hide, still healing slowly. So is the wearer.",
+      "drop_weights": [
+        10,
+        50,
+        32,
+        8,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "regen": 30,
+        "stamina": 25,
+        "agility": 10
+      }
+    },
+    {
+      "id": "green_dragon",
+      "name": "Green Dragon Scales",
+      "base_type": "dragon_scales",
+      "slot": "armor",
+      "item_tier": 4,
+      "rarity": "epic",
+      "tile": "item/armor/torso/green_dragon_scale_mail.png",
+      "atk": 0,
+      "def": 16,
+      "hp": 170,
+      "flavor_tags": [
+        "poison_res"
+      ],
+      "lore": "Dappled jade. Worn by a wyrm who poisoned cities.",
+      "drop_weights": [
+        0,
+        0,
+        10,
+        55,
+        35
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "stamina": 30,
+        "regen": 15,
+        "strength": 10
+      }
+    },
+    {
+      "id": "mottled_dragon",
+      "name": "Mottled Dragon Scales",
+      "base_type": "dragon_scales",
+      "slot": "armor",
+      "item_tier": 4,
+      "rarity": "epic",
+      "tile": "item/armor/torso/mottled_dragon_armor_new.png",
+      "atk": 0,
+      "def": 17,
+      "hp": 170,
+      "flavor_tags": [
+        "fire_res",
+        "elemental"
+      ],
+      "lore": "Patchwork brown. Spat sticky napalm.",
+      "drop_weights": [
+        0,
+        0,
+        10,
+        55,
+        35
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "stamina": 30,
+        "regen": 15,
+        "strength": 10
+      }
+    },
+    {
+      "id": "silver_dragon",
+      "name": "Silver Dragon Armor",
+      "base_type": "dragon_scales",
+      "slot": "armor",
+      "item_tier": 5,
+      "rarity": "epic",
+      "tile": "item/armor/torso/silver_dragon_scale_mail_new.png",
+      "atk": 0,
+      "def": 21,
+      "hp": 230,
+      "flavor_tags": [
+        "willpower",
+        "fortified"
+      ],
+      "lore": "Spectral wyrm. Spell-thirsty even in death.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        12,
+        72
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "stamina": 30,
+        "regen": 15,
+        "strength": 10
+      }
+    },
+    {
+      "id": "quicksilver_dragon",
+      "name": "Quicksilver Dragon Scales",
+      "base_type": "dragon_scales",
+      "slot": "armor",
+      "item_tier": 5,
+      "rarity": "epic",
+      "tile": "item/armor/torso/quicksilver_dragon_scale_mail.png",
+      "atk": 0,
+      "def": 20,
+      "hp": 222,
+      "flavor_tags": [
+        "swiftness",
+        "willpower"
+      ],
+      "lore": "Liquid sheen. Always slightly off-pace with the rest of the world.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        12,
+        72
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "stamina": 30,
+        "regen": 15,
+        "strength": 10
+      }
+    },
+    {
+      "id": "shadow_dragon_scales",
+      "name": "Shadow Dragon Scales",
+      "base_type": "dragon_scales",
+      "slot": "armor",
+      "item_tier": 5,
+      "rarity": "epic",
+      "tile": "item/armor/torso/shadow_dragon_scales.png",
+      "atk": 0,
+      "def": 20,
+      "hp": 222,
+      "flavor_tags": [
+        "stealth"
+      ],
+      "lore": "Lighter than the mail. Darker than the void.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        14,
+        70
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "stamina": 30,
+        "regen": 15,
+        "strength": 10
+      }
+    },
+    {
+      "id": "robe_of_clouds",
+      "name": "Robe of Clouds",
+      "base_type": "robe",
+      "slot": "armor",
+      "item_tier": 5,
+      "rarity": "legendary",
+      "tile": "item/armor/artefact/urand_clouds.png",
+      "atk": 0,
+      "def": 12,
+      "hp": 200,
+      "flavor_tags": [
+        "stealth",
+        "willpower",
+        "regen"
+      ],
+      "lore": "Fades in and out of solid the longer the wearer stands still.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        25
+      ],
+      "unique": true,
+      "future_mechanic": "+30% dodge while moving. Concealment effect briefly after staying still.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "stamina": 35,
+        "agility": 35,
+        "regen": 50,
+        "crit": 10,
+        "haste": 25
+      }
+    },
+    {
+      "id": "faerie_dragon",
+      "name": "Faerie Dragon Hide",
+      "base_type": "dragon_scales",
+      "slot": "armor",
+      "item_tier": 5,
+      "rarity": "legendary",
+      "tile": "item/armor/artefact/urand_faerie.png",
+      "atk": 0,
+      "def": 16,
+      "hp": 225,
+      "flavor_tags": [
+        "elemental",
+        "willpower",
+        "swiftness"
+      ],
+      "lore": "Light enough to be silly. Strong enough to be feared.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        25
+      ],
+      "unique": true,
+      "future_mechanic": "All elemental resistances. Mana regen scaling.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "stamina": 20,
+        "agility": 25,
+        "regen": 25,
+        "crit": 20,
+        "haste": 45
+      }
+    },
+    {
+      "id": "salamander_hide",
+      "name": "Salamander Hide",
+      "base_type": "leather",
+      "slot": "armor",
+      "item_tier": 5,
+      "rarity": "legendary",
+      "tile": "item/armor/artefact/urand_salamander.png",
+      "atk": 4,
+      "def": 18,
+      "hp": 200,
+      "flavor_tags": [
+        "fire_res",
+        "regen"
+      ],
+      "lore": "Hot to the touch. Cold to the things hitting it.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        22
+      ],
+      "unique": true,
+      "future_mechanic": "Fire immunity. Burning enemies near you take +20% damage.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "stamina": 40,
+        "regen": 50
+      }
+    },
+    {
+      "id": "dragon_kings_robe",
+      "name": "Robe of the Dragon King",
+      "base_type": "robe",
+      "slot": "armor",
+      "item_tier": 5,
+      "rarity": "legendary",
+      "tile": "item/armor/artefact/urand_dragon_king.png",
+      "atk": 5,
+      "def": 16,
+      "hp": 235,
+      "flavor_tags": [
+        "elemental",
+        "lordly",
+        "willpower"
+      ],
+      "lore": "Worn by the wyrm who claimed the title. Briefly.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        4,
+        22
+      ],
+      "unique": true,
+      "future_mechanic": "+40% damage vs dragon-type. All elemental resistances.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "strength": 15,
+        "stamina": 35,
+        "agility": 10,
+        "regen": 35,
+        "crit": 20,
+        "haste": 10
+      }
+    },
+    {
+      "id": "armor_of_zhor",
+      "name": "Armor of Zhor",
+      "base_type": "leather",
+      "slot": "armor",
+      "item_tier": 5,
+      "rarity": "legendary",
+      "tile": "item/armor/artefact/urand_zhor.png",
+      "atk": 0,
+      "def": 14,
+      "hp": 240,
+      "flavor_tags": [
+        "regen",
+        "stealth"
+      ],
+      "lore": "Worn by Zhor, who could not be found. Or hurt.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        4,
+        22
+      ],
+      "unique": true,
+      "future_mechanic": "+12 HP regen tick. Lower aggro range.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "stamina": 15,
+        "agility": 25,
+        "regen": 35,
+        "crit": 10,
+        "haste": 25
+      }
+    },
+    {
+      "id": "robe_of_night",
+      "name": "Robe of Night",
+      "base_type": "robe",
+      "slot": "armor",
+      "item_tier": 5,
+      "rarity": "legendary",
+      "tile": "item/armor/artefact/urand_night_new.png",
+      "atk": 0,
+      "def": 13,
+      "hp": 200,
+      "flavor_tags": [
+        "stealth",
+        "dark",
+        "willpower"
+      ],
+      "lore": "Dimmer than the room around it. Always.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        4,
+        20
+      ],
+      "unique": true,
+      "future_mechanic": "Darkness aura: enemy aggro range -3 cells. +30% crit at <50% HP.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "strength": 20,
+        "stamina": 20,
+        "agility": 35,
+        "regen": 15,
+        "crit": 25,
+        "haste": 30
+      }
+    }
+  ]
+}

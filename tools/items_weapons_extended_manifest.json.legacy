@@ -1,0 +1,1729 @@
+{
+  "format_version": 2,
+  "notes": "Extended weapon families (axes, maces, polearms, 2H, staves, exotics). Sprites under item/weapon/ in DCSS source.",
+  "base_types": {},
+  "flavor_tags": {},
+  "drop_weight_schema": {
+    "description": "5 ints, T1..T5"
+  },
+  "items": [
+    {
+      "id": "hand_axe",
+      "name": "Hand Axe",
+      "base_type": "hand_axe",
+      "slot": "weapon",
+      "item_tier": 1,
+      "rarity": "common",
+      "tile": "item/weapon/hand_axe_1_new.png",
+      "atk": 14,
+      "def": 0,
+      "hp": 0,
+      "flavor_tags": [],
+      "lore": "",
+      "drop_weights": [
+        50,
+        30,
+        5,
+        0,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "crit": 25,
+        "haste": 25,
+        "strength": 15,
+        "agility": 5
+      }
+    },
+    {
+      "id": "orcish_hand_axe",
+      "name": "Orcish Hand Axe",
+      "base_type": "hand_axe",
+      "slot": "weapon",
+      "item_tier": 2,
+      "rarity": "uncommon",
+      "tile": "item/weapon/hand_axe_2_new.png",
+      "atk": 24,
+      "def": 0,
+      "hp": 4,
+      "flavor_tags": [],
+      "lore": "",
+      "drop_weights": [
+        10,
+        40,
+        30,
+        5,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "crit": 25,
+        "haste": 25,
+        "strength": 15,
+        "agility": 5
+      }
+    },
+    {
+      "id": "steel_hand_axe",
+      "name": "Steel Hand Axe",
+      "base_type": "hand_axe",
+      "slot": "weapon",
+      "item_tier": 3,
+      "rarity": "rare",
+      "tile": "item/weapon/hand_axe_3.png",
+      "atk": 34,
+      "def": 0,
+      "hp": 7,
+      "flavor_tags": [],
+      "lore": "",
+      "drop_weights": [
+        0,
+        15,
+        40,
+        30,
+        5
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "crit": 25,
+        "haste": 25,
+        "strength": 15,
+        "agility": 5
+      }
+    },
+    {
+      "id": "war_axe",
+      "name": "War Axe",
+      "base_type": "war_axe",
+      "slot": "weapon",
+      "item_tier": 1,
+      "rarity": "common",
+      "tile": "item/weapon/war_axe_1.png",
+      "atk": 22,
+      "def": 0,
+      "hp": 2,
+      "flavor_tags": [],
+      "lore": "",
+      "drop_weights": [
+        40,
+        35,
+        8,
+        0,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "strength": 25,
+        "stamina": 15,
+        "crit": 15
+      }
+    },
+    {
+      "id": "dwarven_war_axe",
+      "name": "Dwarven War Axe",
+      "base_type": "war_axe",
+      "slot": "weapon",
+      "item_tier": 2,
+      "rarity": "uncommon",
+      "tile": "item/weapon/war_axe_2.png",
+      "atk": 30,
+      "def": 0,
+      "hp": 5,
+      "flavor_tags": [
+        "fortified"
+      ],
+      "lore": "",
+      "drop_weights": [
+        10,
+        40,
+        30,
+        5,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "strength": 25,
+        "stamina": 15,
+        "crit": 15
+      }
+    },
+    {
+      "id": "steel_war_axe",
+      "name": "Steel War Axe",
+      "base_type": "war_axe",
+      "slot": "weapon",
+      "item_tier": 3,
+      "rarity": "rare",
+      "tile": "item/weapon/war_axe_4.png",
+      "atk": 42,
+      "def": 0,
+      "hp": 8,
+      "flavor_tags": [],
+      "lore": "",
+      "drop_weights": [
+        0,
+        15,
+        40,
+        30,
+        5
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "strength": 25,
+        "stamina": 15,
+        "crit": 15
+      }
+    },
+    {
+      "id": "runed_war_axe",
+      "name": "Runed War Axe",
+      "base_type": "war_axe",
+      "slot": "weapon",
+      "item_tier": 4,
+      "rarity": "epic",
+      "tile": "item/weapon/war_axe_5.png",
+      "atk": 58,
+      "def": 0,
+      "hp": 12,
+      "flavor_tags": [
+        "arcane"
+      ],
+      "lore": "",
+      "drop_weights": [
+        0,
+        0,
+        15,
+        35,
+        30
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "strength": 25,
+        "stamina": 15,
+        "crit": 15
+      }
+    },
+    {
+      "id": "battle_axe",
+      "name": "Battle Axe",
+      "base_type": "battle_axe",
+      "slot": "weapon",
+      "item_tier": 2,
+      "rarity": "uncommon",
+      "tile": "item/weapon/battle_axe_1.png",
+      "atk": 32,
+      "def": 0,
+      "hp": 6,
+      "flavor_tags": [
+        "ponderous"
+      ],
+      "lore": "",
+      "drop_weights": [
+        10,
+        40,
+        30,
+        5,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "strength": 35,
+        "stamina": 15,
+        "haste": 5
+      }
+    },
+    {
+      "id": "steel_battle_axe",
+      "name": "Steel Battle Axe",
+      "base_type": "battle_axe",
+      "slot": "weapon",
+      "item_tier": 3,
+      "rarity": "rare",
+      "tile": "item/weapon/battle_axe_3.png",
+      "atk": 44,
+      "def": 0,
+      "hp": 10,
+      "flavor_tags": [
+        "ponderous"
+      ],
+      "lore": "",
+      "drop_weights": [
+        0,
+        15,
+        40,
+        30,
+        5
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "strength": 35,
+        "stamina": 15,
+        "haste": 5
+      }
+    },
+    {
+      "id": "runed_battle_axe",
+      "name": "Runed Battle Axe",
+      "base_type": "battle_axe",
+      "slot": "weapon",
+      "item_tier": 4,
+      "rarity": "epic",
+      "tile": "item/weapon/battle_axe_5.png",
+      "atk": 60,
+      "def": 0,
+      "hp": 14,
+      "flavor_tags": [
+        "ponderous",
+        "arcane"
+      ],
+      "lore": "",
+      "drop_weights": [
+        0,
+        0,
+        15,
+        35,
+        30
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "strength": 35,
+        "stamina": 15,
+        "haste": 5
+      }
+    },
+    {
+      "id": "warlord_battle_axe",
+      "name": "Warlord's Battle Axe",
+      "base_type": "battle_axe",
+      "slot": "weapon",
+      "item_tier": 5,
+      "rarity": "legendary",
+      "tile": "item/weapon/battle_axe_7.png",
+      "atk": 82,
+      "def": 0,
+      "hp": 20,
+      "flavor_tags": [
+        "ponderous",
+        "brutal",
+        "lordly"
+      ],
+      "lore": "",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        15,
+        40
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "strength": 35,
+        "stamina": 15,
+        "haste": 5
+      }
+    },
+    {
+      "id": "broad_axe",
+      "name": "Broad Axe",
+      "base_type": "broad_axe",
+      "slot": "weapon",
+      "item_tier": 2,
+      "rarity": "uncommon",
+      "tile": "item/weapon/broad_axe_1.png",
+      "atk": 30,
+      "def": 0,
+      "hp": 6,
+      "flavor_tags": [
+        "slaying"
+      ],
+      "lore": "",
+      "drop_weights": [
+        10,
+        40,
+        30,
+        5,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "strength": 30,
+        "crit": 20,
+        "stamina": 10
+      }
+    },
+    {
+      "id": "steel_broad_axe",
+      "name": "Steel Broad Axe",
+      "base_type": "broad_axe",
+      "slot": "weapon",
+      "item_tier": 3,
+      "rarity": "rare",
+      "tile": "item/weapon/broad_axe_3.png",
+      "atk": 42,
+      "def": 0,
+      "hp": 9,
+      "flavor_tags": [
+        "slaying"
+      ],
+      "lore": "",
+      "drop_weights": [
+        0,
+        15,
+        40,
+        30,
+        5
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "strength": 30,
+        "crit": 20,
+        "stamina": 10
+      }
+    },
+    {
+      "id": "runed_broad_axe",
+      "name": "Runed Broad Axe",
+      "base_type": "broad_axe",
+      "slot": "weapon",
+      "item_tier": 4,
+      "rarity": "epic",
+      "tile": "item/weapon/broad_axe_5.png",
+      "atk": 58,
+      "def": 0,
+      "hp": 13,
+      "flavor_tags": [
+        "slaying",
+        "arcane"
+      ],
+      "lore": "",
+      "drop_weights": [
+        0,
+        0,
+        15,
+        35,
+        30
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "strength": 30,
+        "crit": 20,
+        "stamina": 10
+      }
+    },
+    {
+      "id": "executioner_axe",
+      "name": "Executioner's Axe",
+      "base_type": "executioner_axe",
+      "slot": "weapon",
+      "item_tier": 4,
+      "rarity": "epic",
+      "tile": "item/weapon/executioner_axe_1.png",
+      "atk": 64,
+      "def": 0,
+      "hp": 14,
+      "flavor_tags": [
+        "ponderous",
+        "brutal"
+      ],
+      "lore": "",
+      "drop_weights": [
+        0,
+        0,
+        10,
+        30,
+        40
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "strength": 40,
+        "crit": 25,
+        "stamina": 10
+      }
+    },
+    {
+      "id": "doomed_executioner",
+      "name": "Doomed Executioner",
+      "base_type": "executioner_axe",
+      "slot": "weapon",
+      "item_tier": 5,
+      "rarity": "legendary",
+      "tile": "item/weapon/executioner_axe_5.png",
+      "atk": 92,
+      "def": 0,
+      "hp": 22,
+      "flavor_tags": [
+        "ponderous",
+        "brutal",
+        "death"
+      ],
+      "lore": "",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        15,
+        40
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "strength": 40,
+        "crit": 25,
+        "stamina": 10
+      }
+    },
+    {
+      "id": "club",
+      "name": "Club",
+      "base_type": "club",
+      "slot": "weapon",
+      "item_tier": 1,
+      "rarity": "common",
+      "tile": "item/weapon/club_old.png",
+      "atk": 10,
+      "def": 0,
+      "hp": 0,
+      "flavor_tags": [],
+      "lore": "",
+      "drop_weights": [
+        60,
+        25,
+        5,
+        0,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "strength": 30,
+        "stamina": 10
+      }
+    },
+    {
+      "id": "spiked_club",
+      "name": "Spiked Club",
+      "base_type": "club",
+      "slot": "weapon",
+      "item_tier": 1,
+      "rarity": "common",
+      "tile": "item/weapon/club_new.png",
+      "atk": 14,
+      "def": 0,
+      "hp": 1,
+      "flavor_tags": [],
+      "lore": "",
+      "drop_weights": [
+        50,
+        30,
+        5,
+        0,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "strength": 30,
+        "stamina": 10
+      }
+    },
+    {
+      "id": "mace",
+      "name": "Mace",
+      "base_type": "mace",
+      "slot": "weapon",
+      "item_tier": 1,
+      "rarity": "common",
+      "tile": "item/weapon/mace_1_new.png",
+      "atk": 16,
+      "def": 0,
+      "hp": 1,
+      "flavor_tags": [],
+      "lore": "",
+      "drop_weights": [
+        50,
+        30,
+        5,
+        0,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "strength": 25,
+        "stamina": 15,
+        "crit": 10
+      }
+    },
+    {
+      "id": "steel_mace",
+      "name": "Steel Mace",
+      "base_type": "mace",
+      "slot": "weapon",
+      "item_tier": 2,
+      "rarity": "uncommon",
+      "tile": "item/weapon/mace_2_new.png",
+      "atk": 24,
+      "def": 0,
+      "hp": 3,
+      "flavor_tags": [],
+      "lore": "",
+      "drop_weights": [
+        10,
+        40,
+        30,
+        5,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "strength": 25,
+        "stamina": 15,
+        "crit": 10
+      }
+    },
+    {
+      "id": "dwarven_mace",
+      "name": "Dwarven Mace",
+      "base_type": "mace",
+      "slot": "weapon",
+      "item_tier": 3,
+      "rarity": "rare",
+      "tile": "item/weapon/mace_3_new.png",
+      "atk": 34,
+      "def": 0,
+      "hp": 7,
+      "flavor_tags": [
+        "fortified"
+      ],
+      "lore": "",
+      "drop_weights": [
+        0,
+        15,
+        40,
+        30,
+        5
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "strength": 25,
+        "stamina": 15,
+        "crit": 10
+      }
+    },
+    {
+      "id": "morningstar",
+      "name": "Morningstar",
+      "base_type": "morningstar",
+      "slot": "weapon",
+      "item_tier": 2,
+      "rarity": "uncommon",
+      "tile": "item/weapon/morningstar_1_new.png",
+      "atk": 28,
+      "def": 0,
+      "hp": 4,
+      "flavor_tags": [
+        "sound"
+      ],
+      "lore": "",
+      "drop_weights": [
+        10,
+        40,
+        30,
+        5,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "strength": 25,
+        "crit": 20,
+        "haste": 5
+      }
+    },
+    {
+      "id": "steel_morningstar",
+      "name": "Steel Morningstar",
+      "base_type": "morningstar",
+      "slot": "weapon",
+      "item_tier": 3,
+      "rarity": "rare",
+      "tile": "item/weapon/morningstar_2_new.png",
+      "atk": 38,
+      "def": 0,
+      "hp": 8,
+      "flavor_tags": [
+        "sound"
+      ],
+      "lore": "",
+      "drop_weights": [
+        0,
+        15,
+        40,
+        30,
+        5
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "strength": 25,
+        "crit": 20,
+        "haste": 5
+      }
+    },
+    {
+      "id": "runed_morningstar",
+      "name": "Runed Morningstar",
+      "base_type": "morningstar",
+      "slot": "weapon",
+      "item_tier": 4,
+      "rarity": "epic",
+      "tile": "item/weapon/morningstar_3.png",
+      "atk": 54,
+      "def": 0,
+      "hp": 12,
+      "flavor_tags": [
+        "sound",
+        "arcane"
+      ],
+      "lore": "",
+      "drop_weights": [
+        0,
+        0,
+        15,
+        35,
+        30
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "strength": 25,
+        "crit": 20,
+        "haste": 5
+      }
+    },
+    {
+      "id": "eveningstar",
+      "name": "Eveningstar",
+      "base_type": "eveningstar",
+      "slot": "weapon",
+      "item_tier": 3,
+      "rarity": "rare",
+      "tile": "item/weapon/eveningstar_1_new.png",
+      "atk": 42,
+      "def": 0,
+      "hp": 9,
+      "flavor_tags": [
+        "dark"
+      ],
+      "lore": "",
+      "drop_weights": [
+        0,
+        15,
+        40,
+        30,
+        5
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "strength": 20,
+        "crit": 25,
+        "haste": 10
+      }
+    },
+    {
+      "id": "runed_eveningstar",
+      "name": "Runed Eveningstar",
+      "base_type": "eveningstar",
+      "slot": "weapon",
+      "item_tier": 4,
+      "rarity": "epic",
+      "tile": "item/weapon/eveningstar_2_new.png",
+      "atk": 58,
+      "def": 0,
+      "hp": 13,
+      "flavor_tags": [
+        "dark",
+        "arcane"
+      ],
+      "lore": "",
+      "drop_weights": [
+        0,
+        0,
+        15,
+        35,
+        30
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "strength": 20,
+        "crit": 25,
+        "haste": 10
+      }
+    },
+    {
+      "id": "flail",
+      "name": "Flail",
+      "base_type": "flail",
+      "slot": "weapon",
+      "item_tier": 2,
+      "rarity": "uncommon",
+      "tile": "item/weapon/flail_1_new.png",
+      "atk": 26,
+      "def": 0,
+      "hp": 4,
+      "flavor_tags": [],
+      "lore": "",
+      "drop_weights": [
+        10,
+        40,
+        30,
+        5,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "strength": 25,
+        "haste": 15,
+        "crit": 15
+      }
+    },
+    {
+      "id": "dire_flail",
+      "name": "Dire Flail",
+      "base_type": "dire_flail",
+      "slot": "weapon",
+      "item_tier": 3,
+      "rarity": "rare",
+      "tile": "item/weapon/dire_flail_1.png",
+      "atk": 44,
+      "def": 0,
+      "hp": 11,
+      "flavor_tags": [
+        "ponderous"
+      ],
+      "lore": "",
+      "drop_weights": [
+        0,
+        15,
+        40,
+        30,
+        5
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "strength": 35,
+        "stamina": 15
+      }
+    },
+    {
+      "id": "spiked_flail",
+      "name": "Spiked Flail",
+      "base_type": "flail",
+      "slot": "weapon",
+      "item_tier": 3,
+      "rarity": "rare",
+      "tile": "item/weapon/spiked_flail_1_new.png",
+      "atk": 40,
+      "def": 0,
+      "hp": 9,
+      "flavor_tags": [
+        "sound"
+      ],
+      "lore": "",
+      "drop_weights": [
+        0,
+        15,
+        40,
+        30,
+        5
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "strength": 25,
+        "haste": 15,
+        "crit": 15
+      }
+    },
+    {
+      "id": "warhammer",
+      "name": "Warhammer",
+      "base_type": "hammer",
+      "slot": "weapon",
+      "item_tier": 2,
+      "rarity": "uncommon",
+      "tile": "item/weapon/hammer_2_new.png",
+      "atk": 28,
+      "def": 0,
+      "hp": 5,
+      "flavor_tags": [
+        "ponderous"
+      ],
+      "lore": "",
+      "drop_weights": [
+        10,
+        40,
+        30,
+        5,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "strength": 35,
+        "stamina": 15,
+        "crit": 5
+      }
+    },
+    {
+      "id": "steel_warhammer",
+      "name": "Steel Warhammer",
+      "base_type": "hammer",
+      "slot": "weapon",
+      "item_tier": 3,
+      "rarity": "rare",
+      "tile": "item/weapon/hammer_3.png",
+      "atk": 40,
+      "def": 0,
+      "hp": 9,
+      "flavor_tags": [
+        "ponderous"
+      ],
+      "lore": "",
+      "drop_weights": [
+        0,
+        15,
+        40,
+        30,
+        5
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "strength": 35,
+        "stamina": 15,
+        "crit": 5
+      }
+    },
+    {
+      "id": "giant_club",
+      "name": "Giant Club",
+      "base_type": "giant_club",
+      "slot": "weapon",
+      "item_tier": 3,
+      "rarity": "rare",
+      "tile": "item/weapon/giant_club_new.png",
+      "atk": 44,
+      "def": 0,
+      "hp": 12,
+      "flavor_tags": [
+        "ponderous",
+        "brutal"
+      ],
+      "lore": "",
+      "drop_weights": [
+        0,
+        15,
+        40,
+        30,
+        5
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "strength": 40,
+        "stamina": 20
+      }
+    },
+    {
+      "id": "spear",
+      "name": "Spear",
+      "base_type": "spear",
+      "slot": "weapon",
+      "item_tier": 1,
+      "rarity": "common",
+      "tile": "item/weapon/spear_1.png",
+      "atk": 16,
+      "def": 0,
+      "hp": 1,
+      "flavor_tags": [],
+      "lore": "",
+      "drop_weights": [
+        50,
+        30,
+        5,
+        0,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "crit": 30,
+        "haste": 15,
+        "strength": 15
+      }
+    },
+    {
+      "id": "orcish_spear",
+      "name": "Orcish Spear",
+      "base_type": "spear",
+      "slot": "weapon",
+      "item_tier": 2,
+      "rarity": "uncommon",
+      "tile": "item/weapon/spear_2_new.png",
+      "atk": 24,
+      "def": 0,
+      "hp": 3,
+      "flavor_tags": [],
+      "lore": "",
+      "drop_weights": [
+        10,
+        40,
+        30,
+        5,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "crit": 30,
+        "haste": 15,
+        "strength": 15
+      }
+    },
+    {
+      "id": "steel_spear",
+      "name": "Steel Spear",
+      "base_type": "spear",
+      "slot": "weapon",
+      "item_tier": 3,
+      "rarity": "rare",
+      "tile": "item/weapon/spear_3.png",
+      "atk": 34,
+      "def": 0,
+      "hp": 7,
+      "flavor_tags": [],
+      "lore": "",
+      "drop_weights": [
+        0,
+        15,
+        40,
+        30,
+        5
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "crit": 30,
+        "haste": 15,
+        "strength": 15
+      }
+    },
+    {
+      "id": "trident",
+      "name": "Trident",
+      "base_type": "spear",
+      "slot": "weapon",
+      "item_tier": 3,
+      "rarity": "rare",
+      "tile": "item/weapon/spear_5.png",
+      "atk": 38,
+      "def": 0,
+      "hp": 8,
+      "flavor_tags": [],
+      "lore": "",
+      "drop_weights": [
+        0,
+        15,
+        40,
+        30,
+        5
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "crit": 30,
+        "haste": 15,
+        "strength": 15
+      }
+    },
+    {
+      "id": "halberd",
+      "name": "Halberd",
+      "base_type": "halberd",
+      "slot": "weapon",
+      "item_tier": 2,
+      "rarity": "uncommon",
+      "tile": "item/weapon/halberd_1.png",
+      "atk": 30,
+      "def": 0,
+      "hp": 6,
+      "flavor_tags": [
+        "ponderous"
+      ],
+      "lore": "",
+      "drop_weights": [
+        10,
+        40,
+        30,
+        5,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "strength": 25,
+        "crit": 20,
+        "stamina": 10
+      }
+    },
+    {
+      "id": "steel_halberd",
+      "name": "Steel Halberd",
+      "base_type": "halberd",
+      "slot": "weapon",
+      "item_tier": 3,
+      "rarity": "rare",
+      "tile": "item/weapon/halberd_2.png",
+      "atk": 42,
+      "def": 0,
+      "hp": 10,
+      "flavor_tags": [
+        "ponderous"
+      ],
+      "lore": "",
+      "drop_weights": [
+        0,
+        15,
+        40,
+        30,
+        5
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "strength": 25,
+        "crit": 20,
+        "stamina": 10
+      }
+    },
+    {
+      "id": "bardiche",
+      "name": "Bardiche",
+      "base_type": "bardiche",
+      "slot": "weapon",
+      "item_tier": 3,
+      "rarity": "rare",
+      "tile": "item/weapon/bardiche_1.png",
+      "atk": 44,
+      "def": 0,
+      "hp": 11,
+      "flavor_tags": [
+        "ponderous",
+        "brutal"
+      ],
+      "lore": "",
+      "drop_weights": [
+        0,
+        15,
+        40,
+        30,
+        5
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "strength": 35,
+        "crit": 20,
+        "stamina": 5
+      }
+    },
+    {
+      "id": "runed_bardiche",
+      "name": "Runed Bardiche",
+      "base_type": "bardiche",
+      "slot": "weapon",
+      "item_tier": 4,
+      "rarity": "epic",
+      "tile": "item/weapon/bardiche_4.png",
+      "atk": 62,
+      "def": 0,
+      "hp": 15,
+      "flavor_tags": [
+        "ponderous",
+        "brutal",
+        "arcane"
+      ],
+      "lore": "",
+      "drop_weights": [
+        0,
+        0,
+        15,
+        35,
+        30
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "strength": 35,
+        "crit": 20,
+        "stamina": 5
+      }
+    },
+    {
+      "id": "scythe",
+      "name": "Scythe",
+      "base_type": "scythe",
+      "slot": "weapon",
+      "item_tier": 2,
+      "rarity": "uncommon",
+      "tile": "item/weapon/scythe_1_new.png",
+      "atk": 28,
+      "def": 0,
+      "hp": 5,
+      "flavor_tags": [
+        "dark"
+      ],
+      "lore": "",
+      "drop_weights": [
+        10,
+        40,
+        30,
+        5,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "crit": 30,
+        "haste": 10,
+        "strength": 20
+      }
+    },
+    {
+      "id": "reapers_scythe",
+      "name": "Reaper's Scythe",
+      "base_type": "scythe",
+      "slot": "weapon",
+      "item_tier": 4,
+      "rarity": "epic",
+      "tile": "item/weapon/scythe_3.png",
+      "atk": 58,
+      "def": 0,
+      "hp": 14,
+      "flavor_tags": [
+        "dark",
+        "death"
+      ],
+      "lore": "",
+      "drop_weights": [
+        0,
+        0,
+        15,
+        35,
+        30
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "crit": 30,
+        "haste": 10,
+        "strength": 20
+      }
+    },
+    {
+      "id": "greatsword",
+      "name": "Greatsword",
+      "base_type": "greatsword",
+      "slot": "weapon",
+      "item_tier": 2,
+      "rarity": "uncommon",
+      "tile": "item/weapon/greatsword_1_new.png",
+      "atk": 30,
+      "def": 0,
+      "hp": 6,
+      "flavor_tags": [],
+      "lore": "",
+      "drop_weights": [
+        10,
+        40,
+        30,
+        5,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "strength": 30,
+        "stamina": 15,
+        "crit": 10
+      }
+    },
+    {
+      "id": "steel_greatsword",
+      "name": "Steel Greatsword",
+      "base_type": "greatsword",
+      "slot": "weapon",
+      "item_tier": 3,
+      "rarity": "rare",
+      "tile": "item/weapon/greatsword_2.png",
+      "atk": 42,
+      "def": 0,
+      "hp": 10,
+      "flavor_tags": [],
+      "lore": "",
+      "drop_weights": [
+        0,
+        15,
+        40,
+        30,
+        5
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "strength": 30,
+        "stamina": 15,
+        "crit": 10
+      }
+    },
+    {
+      "id": "claymore",
+      "name": "Claymore",
+      "base_type": "claymore",
+      "slot": "weapon",
+      "item_tier": 3,
+      "rarity": "rare",
+      "tile": "item/weapon/claymore.png",
+      "atk": 44,
+      "def": 0,
+      "hp": 11,
+      "flavor_tags": [
+        "ponderous"
+      ],
+      "lore": "",
+      "drop_weights": [
+        0,
+        15,
+        40,
+        30,
+        5
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "strength": 35,
+        "stamina": 15,
+        "crit": 5
+      }
+    },
+    {
+      "id": "runed_claymore",
+      "name": "Runed Claymore",
+      "base_type": "claymore",
+      "slot": "weapon",
+      "item_tier": 4,
+      "rarity": "epic",
+      "tile": "item/weapon/claymore_2.png",
+      "atk": 60,
+      "def": 0,
+      "hp": 15,
+      "flavor_tags": [
+        "ponderous",
+        "arcane"
+      ],
+      "lore": "",
+      "drop_weights": [
+        0,
+        0,
+        15,
+        35,
+        30
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "strength": 35,
+        "stamina": 15,
+        "crit": 5
+      }
+    },
+    {
+      "id": "blessed_claymore",
+      "name": "Blessed Claymore",
+      "base_type": "claymore",
+      "slot": "weapon",
+      "item_tier": 4,
+      "rarity": "epic",
+      "tile": "item/weapon/claymore_blessed.png",
+      "atk": 62,
+      "def": 0,
+      "hp": 14,
+      "flavor_tags": [
+        "holy"
+      ],
+      "lore": "",
+      "drop_weights": [
+        0,
+        0,
+        10,
+        35,
+        40
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "strength": 35,
+        "stamina": 15,
+        "crit": 5
+      }
+    },
+    {
+      "id": "double_sword",
+      "name": "Double Sword",
+      "base_type": "double_sword",
+      "slot": "weapon",
+      "item_tier": 4,
+      "rarity": "epic",
+      "tile": "item/weapon/double_sword_2.png",
+      "atk": 56,
+      "def": 0,
+      "hp": 13,
+      "flavor_tags": [
+        "dual"
+      ],
+      "lore": "",
+      "drop_weights": [
+        0,
+        0,
+        15,
+        35,
+        30
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "haste": 30,
+        "crit": 25,
+        "strength": 15
+      }
+    },
+    {
+      "id": "triple_sword",
+      "name": "Triple Sword",
+      "base_type": "triple_sword",
+      "slot": "weapon",
+      "item_tier": 4,
+      "rarity": "epic",
+      "tile": "item/weapon/triple_sword_2.png",
+      "atk": 64,
+      "def": 0,
+      "hp": 16,
+      "flavor_tags": [
+        "dual",
+        "brutal"
+      ],
+      "lore": "",
+      "drop_weights": [
+        0,
+        0,
+        10,
+        30,
+        40
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "haste": 30,
+        "crit": 30,
+        "strength": 15
+      }
+    },
+    {
+      "id": "quarterstaff",
+      "name": "Quarterstaff",
+      "base_type": "quarterstaff",
+      "slot": "weapon",
+      "item_tier": 1,
+      "rarity": "common",
+      "tile": "item/weapon/quarterstaff_2.png",
+      "atk": 14,
+      "def": 0,
+      "hp": 2,
+      "flavor_tags": [],
+      "lore": "",
+      "drop_weights": [
+        50,
+        30,
+        5,
+        0,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "haste": 25,
+        "agility": 20,
+        "stamina": 15
+      }
+    },
+    {
+      "id": "metal_staff",
+      "name": "Metal Staff",
+      "base_type": "quarterstaff",
+      "slot": "weapon",
+      "item_tier": 2,
+      "rarity": "uncommon",
+      "tile": "item/weapon/quarterstaff_3.png",
+      "atk": 22,
+      "def": 0,
+      "hp": 4,
+      "flavor_tags": [],
+      "lore": "",
+      "drop_weights": [
+        10,
+        40,
+        30,
+        5,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "haste": 25,
+        "agility": 20,
+        "stamina": 15
+      }
+    },
+    {
+      "id": "lajatang",
+      "name": "Lajatang",
+      "base_type": "lajatang",
+      "slot": "weapon",
+      "item_tier": 3,
+      "rarity": "rare",
+      "tile": "item/weapon/lajatang_2.png",
+      "atk": 38,
+      "def": 0,
+      "hp": 8,
+      "flavor_tags": [
+        "dual"
+      ],
+      "lore": "",
+      "drop_weights": [
+        0,
+        15,
+        40,
+        30,
+        5
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "haste": 35,
+        "crit": 25,
+        "agility": 10
+      }
+    },
+    {
+      "id": "bullwhip",
+      "name": "Bullwhip",
+      "base_type": "bullwhip",
+      "slot": "weapon",
+      "item_tier": 2,
+      "rarity": "uncommon",
+      "tile": "item/weapon/bullwhip_old.png",
+      "atk": 18,
+      "def": 0,
+      "hp": 2,
+      "flavor_tags": [
+        "thunderous"
+      ],
+      "lore": "",
+      "drop_weights": [
+        10,
+        40,
+        30,
+        5,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "haste": 30,
+        "crit": 20,
+        "agility": 10
+      }
+    },
+    {
+      "id": "braided_whip",
+      "name": "Braided Whip",
+      "base_type": "bullwhip",
+      "slot": "weapon",
+      "item_tier": 3,
+      "rarity": "rare",
+      "tile": "item/weapon/bullwhip_new.png",
+      "atk": 28,
+      "def": 0,
+      "hp": 5,
+      "flavor_tags": [
+        "thunderous"
+      ],
+      "lore": "",
+      "drop_weights": [
+        0,
+        15,
+        40,
+        30,
+        5
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "haste": 30,
+        "crit": 20,
+        "agility": 10
+      }
+    },
+    {
+      "id": "demon_whip",
+      "name": "Demon Whip",
+      "base_type": "demon_whip",
+      "slot": "weapon",
+      "item_tier": 4,
+      "rarity": "epic",
+      "tile": "item/weapon/demon_whip.png",
+      "atk": 46,
+      "def": 0,
+      "hp": 10,
+      "flavor_tags": [
+        "thunderous",
+        "demon",
+        "fire"
+      ],
+      "lore": "",
+      "drop_weights": [
+        0,
+        0,
+        15,
+        35,
+        30
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "haste": 25,
+        "crit": 25,
+        "strength": 15,
+        "regen": 5
+      }
+    },
+    {
+      "id": "ankus",
+      "name": "Ankus",
+      "base_type": "ankus",
+      "slot": "weapon",
+      "item_tier": 3,
+      "rarity": "rare",
+      "tile": "item/weapon/ankus.png",
+      "atk": 36,
+      "def": 0,
+      "hp": 7,
+      "flavor_tags": [],
+      "lore": "",
+      "drop_weights": [
+        0,
+        15,
+        40,
+        30,
+        5
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "strength": 30,
+        "haste": 15,
+        "crit": 15
+      }
+    },
+    {
+      "id": "cutlass",
+      "name": "Cutlass",
+      "base_type": "cutlass",
+      "slot": "weapon",
+      "item_tier": 2,
+      "rarity": "uncommon",
+      "tile": "item/weapon/cutlass_1.png",
+      "atk": 24,
+      "def": 0,
+      "hp": 3,
+      "flavor_tags": [],
+      "lore": "",
+      "drop_weights": [
+        10,
+        40,
+        30,
+        5,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "crit": 30,
+        "haste": 25,
+        "strength": 10
+      }
+    },
+    {
+      "id": "naval_cutlass",
+      "name": "Naval Cutlass",
+      "base_type": "cutlass",
+      "slot": "weapon",
+      "item_tier": 3,
+      "rarity": "rare",
+      "tile": "item/weapon/cutlass_3.png",
+      "atk": 34,
+      "def": 0,
+      "hp": 6,
+      "flavor_tags": [
+        "precision"
+      ],
+      "lore": "",
+      "drop_weights": [
+        0,
+        15,
+        40,
+        30,
+        5
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "crit": 30,
+        "haste": 25,
+        "strength": 10
+      }
+    }
+  ]
+}

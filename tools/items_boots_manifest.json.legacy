@@ -1,0 +1,640 @@
+{
+  "format_version": 1,
+  "slot": "boots",
+  "notes": "Source of truth for the item editor (boots tab). DCSS base type from item-prop.cc: boots (AC 1) with egos for flying/stealth/rampaging/earth. Sparse base sprite library (8 tiles), so T4-T5 leans on artefact-flavored uniques (fencer/assassin/thief/flash).",
+  "base_types": {
+    "sandals": {
+      "label": "Sandals",
+      "category": "boots",
+      "dcss_base": "boots",
+      "dcss_ac": 0,
+      "flavor": "Open-toed footwear. Light, swift, fragile."
+    },
+    "shoes": {
+      "label": "Shoes",
+      "category": "boots",
+      "dcss_base": "boots",
+      "dcss_ac": 1,
+      "flavor": "Soft-soled. Sneaks well, blocks little."
+    },
+    "leather_boots": {
+      "label": "Leather Boots",
+      "category": "boots",
+      "dcss_base": "boots",
+      "dcss_ac": 1,
+      "flavor": "Standard ankle-height boots."
+    },
+    "iron_boots": {
+      "label": "Iron Boots",
+      "category": "boots",
+      "dcss_base": "boots",
+      "dcss_ac": 1,
+      "flavor": "Steel toe, plated shins. Loud. Solid."
+    },
+    "greaves": {
+      "label": "Greaves",
+      "category": "boots",
+      "dcss_base": "boots",
+      "dcss_ac": 1,
+      "flavor": "Knee-height plate over boot. Heaviest standard."
+    },
+    "treads": {
+      "label": "Treads",
+      "category": "boots",
+      "dcss_base": "boots",
+      "dcss_ac": 1,
+      "flavor": "Endgame boots \u2014 flavor-laden uniques live here."
+    }
+  },
+  "flavor_tags": {
+    "swiftness": {
+      "color": "#aaddff",
+      "desc": "Future: +move speed. Currently: Agility affix bonus."
+    },
+    "stealth": {
+      "color": "#666688",
+      "desc": "Future: lower aggro range. Currently: Agility affix bonus."
+    },
+    "rampaging": {
+      "color": "#ff8844",
+      "desc": "Future: charge attacks gain bonus damage. Currently: Strength affix bonus."
+    },
+    "earth": {
+      "color": "#998866",
+      "desc": "Future: grants stomp/AoE on charge. Currently: Stamina affix bonus."
+    },
+    "flying": {
+      "color": "#aaddff",
+      "desc": "Future: ignore terrain damage (lava, water slow). Currently: Agility affix bonus."
+    },
+    "fortified": {
+      "color": "#aaccdd",
+      "desc": "Future: flat damage reduction. Currently: Stamina affix bonus."
+    },
+    "footwork": {
+      "color": "#cc88ff",
+      "desc": "Future: dodge chance. Currently: Crit affix bonus."
+    },
+    "thunderous": {
+      "color": "#ffaa44",
+      "desc": "Future: stomp emit shockwave on charge. Currently: Strength affix bonus."
+    }
+  },
+  "items": [
+    {
+      "id": "worn_sandals",
+      "name": "Worn Sandals",
+      "base_type": "sandals",
+      "slot": "boots",
+      "item_tier": 1,
+      "rarity": "common",
+      "tile": "item/armor/feet/low_boots.png",
+      "atk": 0,
+      "def": 1,
+      "hp": 13,
+      "flavor_tags": [
+        "swiftness"
+      ],
+      "lore": "Soles thinner than mood.",
+      "drop_weights": [
+        80,
+        15,
+        0,
+        0,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "haste": 35,
+        "agility": 15
+      }
+    },
+    {
+      "id": "soft_shoes",
+      "name": "Soft Shoes",
+      "base_type": "shoes",
+      "slot": "boots",
+      "item_tier": 1,
+      "rarity": "common",
+      "tile": "item/armor/feet/boots_3_stripe_old.png",
+      "atk": 0,
+      "def": 1,
+      "hp": 18,
+      "flavor_tags": [
+        "stealth"
+      ],
+      "lore": "Quieter than the bot wearing them.",
+      "drop_weights": [
+        75,
+        18,
+        2,
+        0,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "haste": 30,
+        "agility": 20,
+        "stamina": 5
+      }
+    },
+    {
+      "id": "leather_boots",
+      "name": "Leather Boots",
+      "base_type": "leather_boots",
+      "slot": "boots",
+      "item_tier": 1,
+      "rarity": "common",
+      "tile": "item/armor/feet/boots_1_brown_new.png",
+      "atk": 0,
+      "def": 2,
+      "hp": 28,
+      "flavor_tags": [],
+      "lore": "Cracked, weather-beaten, comfortable.",
+      "drop_weights": [
+        70,
+        22,
+        4,
+        0,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "haste": 25,
+        "agility": 25,
+        "stamina": 10
+      }
+    },
+    {
+      "id": "studded_boots",
+      "name": "Studded Boots",
+      "base_type": "leather_boots",
+      "slot": "boots",
+      "item_tier": 1,
+      "rarity": "uncommon",
+      "tile": "item/armor/feet/boots_2_jackboots.png",
+      "atk": 0,
+      "def": 3,
+      "hp": 32,
+      "flavor_tags": [],
+      "lore": "Brass studs. Loud on stone.",
+      "drop_weights": [
+        55,
+        35,
+        5,
+        0,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "haste": 25,
+        "agility": 25,
+        "stamina": 10
+      }
+    },
+    {
+      "id": "scouts_treads",
+      "name": "Scout's Treads",
+      "base_type": "leather_boots",
+      "slot": "boots",
+      "item_tier": 2,
+      "rarity": "uncommon",
+      "tile": "item/armor/feet/boots_4_green.png",
+      "atk": 0,
+      "def": 4,
+      "hp": 38,
+      "flavor_tags": [
+        "stealth",
+        "swiftness"
+      ],
+      "lore": "Patterned for forest floor.",
+      "drop_weights": [
+        15,
+        65,
+        25,
+        3,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "haste": 25,
+        "agility": 25,
+        "stamina": 10
+      }
+    },
+    {
+      "id": "soldier_greaves",
+      "name": "Soldier's Greaves",
+      "base_type": "greaves",
+      "slot": "boots",
+      "item_tier": 2,
+      "rarity": "uncommon",
+      "tile": "item/armor/feet/boots_iron_2.png",
+      "atk": 0,
+      "def": 5,
+      "hp": 50,
+      "flavor_tags": [
+        "fortified"
+      ],
+      "lore": "Government issue. Blood-stained at the seams.",
+      "drop_weights": [
+        12,
+        60,
+        28,
+        5,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "stamina": 30,
+        "agility": 20
+      }
+    },
+    {
+      "id": "ranger_boots",
+      "name": "Ranger Boots",
+      "base_type": "leather_boots",
+      "slot": "boots",
+      "item_tier": 2,
+      "rarity": "rare",
+      "tile": "item/armor/feet/boots_3_stripe_new.png",
+      "atk": 0,
+      "def": 4,
+      "hp": 42,
+      "flavor_tags": [
+        "stealth",
+        "footwork"
+      ],
+      "lore": "Soft soles, double-stitched. Worn by those who don't want to be heard.",
+      "drop_weights": [
+        8,
+        55,
+        32,
+        5,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "haste": 25,
+        "agility": 25,
+        "stamina": 10
+      }
+    },
+    {
+      "id": "ironshod_boots",
+      "name": "Ironshod Boots",
+      "base_type": "iron_boots",
+      "slot": "boots",
+      "item_tier": 3,
+      "rarity": "rare",
+      "tile": "item/armor/feet/boots_iron_2.png",
+      "atk": 0,
+      "def": 6,
+      "hp": 60,
+      "flavor_tags": [
+        "fortified",
+        "thunderous"
+      ],
+      "lore": "Iron plates over felt. Heavy enough to be heard.",
+      "drop_weights": [
+        0,
+        18,
+        60,
+        22,
+        4
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "stamina": 25,
+        "agility": 15,
+        "regen": 10
+      }
+    },
+    {
+      "id": "swiftstep_boots",
+      "name": "Swiftstep Boots",
+      "base_type": "leather_boots",
+      "slot": "boots",
+      "item_tier": 3,
+      "rarity": "rare",
+      "tile": "item/armor/feet/boots_1_brown_old.png",
+      "atk": 0,
+      "def": 4,
+      "hp": 48,
+      "flavor_tags": [
+        "swiftness",
+        "footwork"
+      ],
+      "lore": "Lightly enchanted. Each step shorter than the last.",
+      "drop_weights": [
+        0,
+        15,
+        58,
+        25,
+        5
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "haste": 25,
+        "agility": 25,
+        "stamina": 10
+      }
+    },
+    {
+      "id": "sentinel_greaves",
+      "name": "Sentinel Greaves",
+      "base_type": "greaves",
+      "slot": "boots",
+      "item_tier": 3,
+      "rarity": "rare",
+      "tile": "item/armor/feet/boots_iron_2.png",
+      "atk": 0,
+      "def": 7,
+      "hp": 75,
+      "flavor_tags": [
+        "fortified",
+        "rampaging"
+      ],
+      "lore": "Built for the watch. Built for the charge.",
+      "drop_weights": [
+        0,
+        12,
+        55,
+        28,
+        8
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "stamina": 30,
+        "agility": 20
+      }
+    },
+    {
+      "id": "vanguard_sabatons",
+      "name": "Vanguard Sabatons",
+      "base_type": "greaves",
+      "slot": "boots",
+      "item_tier": 4,
+      "rarity": "epic",
+      "tile": "item/armor/feet/boots_iron_2.png",
+      "atk": 0,
+      "def": 9,
+      "hp": 95,
+      "flavor_tags": [
+        "fortified",
+        "rampaging",
+        "earth"
+      ],
+      "lore": "First through the breach. Last to leave the field.",
+      "drop_weights": [
+        0,
+        0,
+        12,
+        58,
+        30
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "stamina": 30,
+        "agility": 20
+      }
+    },
+    {
+      "id": "stormrunner_boots",
+      "name": "Stormrunner Boots",
+      "base_type": "leather_boots",
+      "slot": "boots",
+      "item_tier": 4,
+      "rarity": "epic",
+      "tile": "item/armor/feet/boots_4_green.png",
+      "atk": 0,
+      "def": 6,
+      "hp": 80,
+      "flavor_tags": [
+        "swiftness",
+        "flying",
+        "footwork"
+      ],
+      "lore": "Lightning never quite catches them.",
+      "drop_weights": [
+        0,
+        0,
+        10,
+        55,
+        35
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "haste": 25,
+        "agility": 25,
+        "stamina": 10
+      }
+    },
+    {
+      "id": "earthshaker_treads",
+      "name": "Earthshaker Treads",
+      "base_type": "treads",
+      "slot": "boots",
+      "item_tier": 4,
+      "rarity": "epic",
+      "tile": "item/armor/feet/boots_iron_2.png",
+      "atk": 0,
+      "def": 11,
+      "hp": 110,
+      "flavor_tags": [
+        "earth",
+        "thunderous"
+      ],
+      "lore": "Each step leaves a shallow crater in stone.",
+      "drop_weights": [
+        0,
+        0,
+        8,
+        55,
+        38
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "haste": 30,
+        "agility": 20,
+        "stamina": 10
+      }
+    },
+    {
+      "id": "windwalker_boots",
+      "name": "Windwalkers",
+      "base_type": "treads",
+      "slot": "boots",
+      "item_tier": 5,
+      "rarity": "epic",
+      "tile": "item/armor/feet/boots_3_stripe_new.png",
+      "atk": 0,
+      "def": 8,
+      "hp": 110,
+      "flavor_tags": [
+        "swiftness",
+        "flying"
+      ],
+      "lore": "Heels barely brush the ground.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        18,
+        70
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "haste": 30,
+        "agility": 20,
+        "stamina": 10
+      }
+    },
+    {
+      "id": "march_of_kings",
+      "name": "March of Kings",
+      "base_type": "greaves",
+      "slot": "boots",
+      "item_tier": 5,
+      "rarity": "epic",
+      "tile": "item/armor/feet/boots_iron_2.png",
+      "atk": 0,
+      "def": 13,
+      "hp": 135,
+      "flavor_tags": [
+        "lordly",
+        "rampaging",
+        "fortified"
+      ],
+      "lore": "Worn at the head of the column. Always.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        14,
+        70
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "stamina": 30,
+        "agility": 20
+      }
+    },
+    {
+      "id": "assassins_boots",
+      "name": "Assassin's Boots",
+      "base_type": "shoes",
+      "slot": "boots",
+      "item_tier": 5,
+      "rarity": "legendary",
+      "tile": "item/armor/artefact/urand_assassin.png",
+      "atk": 0,
+      "def": 8,
+      "hp": 105,
+      "flavor_tags": [
+        "stealth",
+        "swiftness"
+      ],
+      "lore": "Silent on stone, silent on grass, silent on graves.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        25
+      ],
+      "unique": true,
+      "future_mechanic": "+25% damage on first hit per enemy. Lower aggro range.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "agility": 40,
+        "crit": 10,
+        "haste": 60
+      }
+    },
+    {
+      "id": "treads_apocalypse",
+      "name": "Treads of Apocalypse",
+      "base_type": "treads",
+      "slot": "boots",
+      "item_tier": 5,
+      "rarity": "legendary",
+      "tile": "item/armor/feet/boots_iron_2.png",
+      "atk": 0,
+      "def": 14,
+      "hp": 160,
+      "flavor_tags": [
+        "earth",
+        "thunderous",
+        "rampaging"
+      ],
+      "lore": "What the wearer steps on does not get up.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        4,
+        22
+      ],
+      "unique": true,
+      "future_mechanic": "Each step damages adjacent enemies. -5% move speed (drawback).",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "strength": 35,
+        "stamina": 30,
+        "regen": 10,
+        "crit": 10,
+        "haste": 50
+      }
+    },
+    {
+      "id": "lightning_scales",
+      "name": "Lightning Scales",
+      "base_type": "iron_boots",
+      "slot": "boots",
+      "item_tier": 5,
+      "rarity": "legendary",
+      "tile": "item/armor/artefact/urand_lightning_scales.png",
+      "atk": 6,
+      "def": 20,
+      "hp": 215,
+      "flavor_tags": [
+        "thorns",
+        "elemental"
+      ],
+      "lore": "Crackles when struck. Doesn't always wait to be struck.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        22
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "stamina": 20,
+        "agility": 15,
+        "regen": 20,
+        "crit": 20,
+        "haste": 10
+      },
+      "future_mechanic": "Reflects 25% of melee as lightning damage to attacker."
+    }
+  ]
+}

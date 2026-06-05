@@ -1,0 +1,927 @@
+{
+  "format_version": 1,
+  "slot": "amulet",
+  "notes": "Source of truth for the item editor (amulet tab). DCSS base types from item-prop-enum.h jewellery_type enum: AMU_REFLECTION/REGENERATION/FAITH/GUARDIAN_SPIRIT/RAGE/HARM/MANA_REGENERATION/ACROBAT. Single equip slot. Amulets carry the run-flavoring tradeoffs \u2014 mostly utility over raw stats.",
+  "base_types": {
+    "amulet_reflection": {
+      "label": "Amulet of Reflection",
+      "category": "amulet",
+      "dcss_base": "AMU_REFLECTION",
+      "flavor": "Reflects ranged attacks. Defensive utility."
+    },
+    "amulet_regen": {
+      "label": "Amulet of Regeneration",
+      "category": "amulet",
+      "dcss_base": "AMU_REGENERATION",
+      "flavor": "Steady HP regen. Sustain build."
+    },
+    "amulet_mana_regen": {
+      "label": "Amulet of Mana Regen",
+      "category": "amulet",
+      "dcss_base": "AMU_MANA_REGENERATION",
+      "flavor": "Regen mana. Future caster mechanic."
+    },
+    "amulet_faith": {
+      "label": "Amulet of Faith",
+      "category": "amulet",
+      "dcss_base": "AMU_FAITH",
+      "flavor": "Stronger altar blessings. Holy build."
+    },
+    "amulet_rage": {
+      "label": "Amulet of Rage",
+      "category": "amulet",
+      "dcss_base": "AMU_RAGE",
+      "flavor": "Berserker trigger. Damage at the cost of safety."
+    },
+    "amulet_harm": {
+      "label": "Amulet of Harm",
+      "category": "amulet",
+      "dcss_base": "AMU_HARM",
+      "flavor": "Trade defense for damage. Glass cannon."
+    },
+    "amulet_guardian": {
+      "label": "Amulet of Guardian",
+      "category": "amulet",
+      "dcss_base": "AMU_GUARDIAN_SPIRIT",
+      "flavor": "Damage routes through HP and MP. Survival."
+    },
+    "amulet_acrobat": {
+      "label": "Amulet of Acrobat",
+      "category": "amulet",
+      "dcss_base": "AMU_ACROBAT",
+      "flavor": "Bonus dodge while moving. Mobile build."
+    },
+    "amulet_vitality": {
+      "label": "Amulet of Vitality",
+      "category": "amulet",
+      "dcss_base": "amulet_unique",
+      "flavor": "End-game HP boost. Tanky cornerstone."
+    },
+    "amulet_air": {
+      "label": "Amulet of Air",
+      "category": "amulet",
+      "dcss_base": "amulet_unique",
+      "flavor": "Wind-themed unique. Movement + lightning res."
+    }
+  },
+  "flavor_tags": {
+    "fortified": {
+      "color": "#aaccdd",
+      "desc": "Future: flat damage reduction. Currently: Stamina affix bonus."
+    },
+    "regen": {
+      "color": "#66cc88",
+      "desc": "Future: HP regen tick. Currently: Regen affix bonus."
+    },
+    "reflective": {
+      "color": "#88ccff",
+      "desc": "Future: reflect ranged attacks. Currently: Agility affix bonus."
+    },
+    "faith": {
+      "color": "#ffeebb",
+      "desc": "Future: stronger altar blessings. Currently: no bonus."
+    },
+    "rage": {
+      "color": "#ff6655",
+      "desc": "Future: berserk trigger at low HP. Currently: Strength affix bonus."
+    },
+    "harm": {
+      "color": "#ff5577",
+      "desc": "Future: +damage dealt, +damage taken. Currently: Crit affix bonus."
+    },
+    "guardian": {
+      "color": "#88ddff",
+      "desc": "Future: damage routes via mana pool. Currently: Stamina affix bonus."
+    },
+    "acrobat": {
+      "color": "#cc88ff",
+      "desc": "Future: dodge bonus while moving. Currently: Crit affix bonus."
+    },
+    "willpower": {
+      "color": "#ffaa88",
+      "desc": "Future: magic resistance. Currently: Stamina affix bonus."
+    },
+    "wisdom": {
+      "color": "#cc88ff",
+      "desc": "Future: +XP gain. Currently: no bonus."
+    },
+    "elemental": {
+      "color": "#ff8866",
+      "desc": "Future: multi-element resistance. Currently: Stamina affix bonus."
+    },
+    "lordly": {
+      "color": "#ffdd44",
+      "desc": "Future: aura buff to bot. Currently: Strength affix bonus."
+    },
+    "fortune": {
+      "color": "#ffdd44",
+      "desc": "Future: bonus gold/loot. Currently: no bonus."
+    },
+    "vitality": {
+      "color": "#ffaaaa",
+      "desc": "Future: +max HP. Currently: Stamina affix bonus."
+    }
+  },
+  "items": [
+    {
+      "id": "bone_pendant",
+      "name": "Bone Pendant",
+      "base_type": "amulet_regen",
+      "slot": "amulet",
+      "item_tier": 1,
+      "rarity": "common",
+      "tile": "item/amulet/bone_gray.png",
+      "atk": 0,
+      "def": 2,
+      "hp": 21,
+      "flavor_tags": [
+        "regen"
+      ],
+      "lore": "Bone wrapped in twine. Bleached by something.",
+      "drop_weights": [
+        80,
+        15,
+        0,
+        0,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "regen": 50,
+        "stamina": 15
+      }
+    },
+    {
+      "id": "cylinder_amulet",
+      "name": "Cylinder Amulet",
+      "base_type": "amulet_reflection",
+      "slot": "amulet",
+      "item_tier": 1,
+      "rarity": "common",
+      "tile": "item/amulet/cylinder_gray.png",
+      "atk": 0,
+      "def": 2,
+      "hp": 14,
+      "flavor_tags": [
+        "reflective"
+      ],
+      "lore": "Hollow lead. Rattles.",
+      "drop_weights": [
+        75,
+        18,
+        2,
+        0,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "stamina": 25,
+        "agility": 25
+      }
+    },
+    {
+      "id": "blue_cameo",
+      "name": "Blue Cameo",
+      "base_type": "amulet_faith",
+      "slot": "amulet",
+      "item_tier": 1,
+      "rarity": "uncommon",
+      "tile": "item/amulet/cameo_blue.png",
+      "atk": 0,
+      "def": 1,
+      "hp": 22,
+      "flavor_tags": [
+        "faith"
+      ],
+      "lore": "A face carved into shell. Looks vaguely benevolent.",
+      "drop_weights": [
+        55,
+        35,
+        5,
+        0,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "regen": 35,
+        "stamina": 15
+      }
+    },
+    {
+      "id": "celtic_yellow",
+      "name": "Celtic Knot Amulet",
+      "base_type": "amulet_regen",
+      "slot": "amulet",
+      "item_tier": 1,
+      "rarity": "uncommon",
+      "tile": "item/amulet/celtic_yellow.png",
+      "atk": 0,
+      "def": 2,
+      "hp": 24,
+      "flavor_tags": [
+        "regen"
+      ],
+      "lore": "Endless knot. Heals slow.",
+      "drop_weights": [
+        50,
+        35,
+        8,
+        0,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "regen": 50,
+        "stamina": 15
+      }
+    },
+    {
+      "id": "stone_amulet_1",
+      "name": "Standing Stone",
+      "base_type": "amulet_reflection",
+      "slot": "amulet",
+      "item_tier": 2,
+      "rarity": "uncommon",
+      "tile": "item/amulet/stone_1_cyan.png",
+      "atk": 0,
+      "def": 3,
+      "hp": 28,
+      "flavor_tags": [
+        "reflective",
+        "fortified"
+      ],
+      "lore": "Smooth stone with a hole bored through. Older than language.",
+      "drop_weights": [
+        15,
+        65,
+        25,
+        3,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "stamina": 25,
+        "agility": 25
+      }
+    },
+    {
+      "id": "ring_pendant_red",
+      "name": "Ring Pendant",
+      "base_type": "amulet_rage",
+      "slot": "amulet",
+      "item_tier": 2,
+      "rarity": "uncommon",
+      "tile": "item/amulet/ring_red.png",
+      "atk": 2,
+      "def": 0,
+      "hp": 22,
+      "flavor_tags": [
+        "rage"
+      ],
+      "lore": "Glows when its wearer is angry. Often.",
+      "drop_weights": [
+        12,
+        60,
+        28,
+        5,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "affix_pool": {
+        "strength": 30,
+        "haste": 20,
+        "crit": 10
+      }
+    },
+    {
+      "id": "celtic_red",
+      "name": "Knot of the Faithful",
+      "base_type": "amulet_faith",
+      "slot": "amulet",
+      "item_tier": 2,
+      "rarity": "rare",
+      "tile": "item/amulet/celtic_red.png",
+      "atk": 0,
+      "def": 2,
+      "hp": 30,
+      "flavor_tags": [
+        "faith",
+        "wisdom"
+      ],
+      "lore": "Worn by pilgrims. Their gods listen back.",
+      "drop_weights": [
+        8,
+        55,
+        32,
+        5,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "regen": 35,
+        "stamina": 15
+      }
+    },
+    {
+      "id": "eye_pendant_green",
+      "name": "Watching Eye",
+      "base_type": "amulet_acrobat",
+      "slot": "amulet",
+      "item_tier": 2,
+      "rarity": "rare",
+      "tile": "item/amulet/eye_green.png",
+      "atk": 0,
+      "def": 4,
+      "hp": 26,
+      "flavor_tags": [
+        "acrobat"
+      ],
+      "lore": "It tracks across the room. So does its wearer.",
+      "drop_weights": [
+        8,
+        50,
+        35,
+        7,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "haste": 30,
+        "agility": 30
+      }
+    },
+    {
+      "id": "stone_2_red",
+      "name": "Bleeding Stone",
+      "base_type": "amulet_harm",
+      "slot": "amulet",
+      "item_tier": 3,
+      "rarity": "rare",
+      "tile": "item/amulet/stone_2_red.png",
+      "atk": 4,
+      "def": -1,
+      "hp": 30,
+      "flavor_tags": [
+        "harm"
+      ],
+      "lore": "Always slightly damp. Always. The wearer cuts deeper.",
+      "drop_weights": [
+        0,
+        18,
+        60,
+        22,
+        4
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "strength": 35,
+        "crit": 20
+      }
+    },
+    {
+      "id": "crystal_green",
+      "name": "Verdant Pendant",
+      "base_type": "amulet_regen",
+      "slot": "amulet",
+      "item_tier": 3,
+      "rarity": "rare",
+      "tile": "item/amulet/crystal_green.png",
+      "atk": 0,
+      "def": 2,
+      "hp": 45,
+      "flavor_tags": [
+        "regen",
+        "elemental"
+      ],
+      "lore": "Living crystal. Drinks light to heal its wearer.",
+      "drop_weights": [
+        0,
+        15,
+        58,
+        25,
+        5
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "regen": 50,
+        "stamina": 15
+      }
+    },
+    {
+      "id": "stone_3_blue",
+      "name": "Sea-Worn Stone",
+      "base_type": "amulet_guardian",
+      "slot": "amulet",
+      "item_tier": 3,
+      "rarity": "rare",
+      "tile": "item/amulet/stone_3_blue.png",
+      "atk": 0,
+      "def": 3,
+      "hp": 50,
+      "flavor_tags": [
+        "guardian",
+        "willpower"
+      ],
+      "lore": "Smooth as a tide pool. Watches.",
+      "drop_weights": [
+        0,
+        12,
+        55,
+        28,
+        8
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "stamina": 35,
+        "regen": 20
+      }
+    },
+    {
+      "id": "penta_orange",
+      "name": "Pentacle of Wrath",
+      "base_type": "amulet_rage",
+      "slot": "amulet",
+      "item_tier": 3,
+      "rarity": "rare",
+      "tile": "item/amulet/penta_orange.png",
+      "atk": 5,
+      "def": 0,
+      "hp": 35,
+      "flavor_tags": [
+        "rage",
+        "harm"
+      ],
+      "lore": "Five points. Each one a name burned in.",
+      "drop_weights": [
+        0,
+        10,
+        55,
+        28,
+        10
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "affix_pool": {
+        "strength": 30,
+        "haste": 20,
+        "crit": 10
+      }
+    },
+    {
+      "id": "face_amulet_gold",
+      "name": "Saintly Visage",
+      "base_type": "amulet_faith",
+      "slot": "amulet",
+      "item_tier": 4,
+      "rarity": "epic",
+      "tile": "item/amulet/face_1_gold.png",
+      "atk": 0,
+      "def": 4,
+      "hp": 60,
+      "flavor_tags": [
+        "faith",
+        "regen",
+        "fortune"
+      ],
+      "lore": "Cast in gold. Probably copies a real face.",
+      "drop_weights": [
+        0,
+        0,
+        12,
+        58,
+        30
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "regen": 35,
+        "stamina": 15
+      }
+    },
+    {
+      "id": "stone_2_green",
+      "name": "Verdant Cabochon",
+      "base_type": "amulet_acrobat",
+      "slot": "amulet",
+      "item_tier": 4,
+      "rarity": "epic",
+      "tile": "item/amulet/stone_2_green.png",
+      "atk": 3,
+      "def": 4,
+      "hp": 55,
+      "flavor_tags": [
+        "acrobat",
+        "footwork"
+      ],
+      "lore": "The wearer's center of gravity shifts.",
+      "drop_weights": [
+        0,
+        0,
+        10,
+        58,
+        32
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "haste": 30,
+        "agility": 30
+      }
+    },
+    {
+      "id": "crystal_red",
+      "name": "Bloodstone Pendant",
+      "base_type": "amulet_harm",
+      "slot": "amulet",
+      "item_tier": 4,
+      "rarity": "epic",
+      "tile": "item/amulet/crystal_red.png",
+      "atk": 7,
+      "def": -2,
+      "hp": 50,
+      "flavor_tags": [
+        "harm",
+        "rage"
+      ],
+      "lore": "It hungers. The wearer's edges sharpen, their guard slips.",
+      "drop_weights": [
+        0,
+        0,
+        8,
+        55,
+        38
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "strength": 35,
+        "crit": 20
+      }
+    },
+    {
+      "id": "stone_3_magenta",
+      "name": "Veiled Sigil",
+      "base_type": "amulet_guardian",
+      "slot": "amulet",
+      "item_tier": 4,
+      "rarity": "epic",
+      "tile": "item/amulet/stone_3_magenta.png",
+      "atk": 0,
+      "def": 5,
+      "hp": 70,
+      "flavor_tags": [
+        "guardian",
+        "willpower"
+      ],
+      "lore": "A purple sigil floats above the stone, slightly above. Always.",
+      "drop_weights": [
+        0,
+        0,
+        8,
+        55,
+        38
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "stamina": 35,
+        "regen": 20
+      }
+    },
+    {
+      "id": "crystal_white",
+      "name": "Pearl of Vitality",
+      "base_type": "amulet_vitality",
+      "slot": "amulet",
+      "item_tier": 5,
+      "rarity": "epic",
+      "tile": "item/amulet/crystal_white.png",
+      "atk": 0,
+      "def": 4,
+      "hp": 100,
+      "flavor_tags": [
+        "vitality",
+        "regen"
+      ],
+      "lore": "Bright. Still. Growing slowly.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        18,
+        70
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "regen": 40,
+        "stamina": 25
+      }
+    },
+    {
+      "id": "penta_green",
+      "name": "Sigil of the Last Line",
+      "base_type": "amulet_reflection",
+      "slot": "amulet",
+      "item_tier": 5,
+      "rarity": "epic",
+      "tile": "item/amulet/penta_green.png",
+      "atk": 0,
+      "def": 7,
+      "hp": 85,
+      "flavor_tags": [
+        "reflective",
+        "fortified"
+      ],
+      "lore": "Five points held tight. Whatever crosses, returns.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        14,
+        70
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "stamina": 25,
+        "agility": 25
+      }
+    },
+    {
+      "id": "face_amulet_2",
+      "name": "King's Cameo",
+      "base_type": "amulet_faith",
+      "slot": "amulet",
+      "item_tier": 5,
+      "rarity": "epic",
+      "tile": "item/amulet/face_2.png",
+      "atk": 0,
+      "def": 5,
+      "hp": 95,
+      "flavor_tags": [
+        "faith",
+        "lordly"
+      ],
+      "lore": "Worn by a king who outlived his enemies. Most of them.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        12,
+        70
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "affix_pool": {
+        "regen": 35,
+        "stamina": 15
+      }
+    },
+    {
+      "id": "amulet_of_vitality",
+      "name": "Amulet of Vitality",
+      "base_type": "amulet_vitality",
+      "slot": "amulet",
+      "item_tier": 5,
+      "rarity": "legendary",
+      "tile": "item/amulet/artefact/urand_vitality.png",
+      "atk": 0,
+      "def": 5,
+      "hp": 150,
+      "flavor_tags": [
+        "vitality",
+        "regen",
+        "fortified"
+      ],
+      "lore": "Worn by those who refused to fall.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        25
+      ],
+      "unique": true,
+      "future_mechanic": "+25% max HP. +50% out-of-combat regen.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "stamina": 65,
+        "agility": 15,
+        "regen": 80
+      }
+    },
+    {
+      "id": "amulet_of_air",
+      "name": "Amulet of Air",
+      "base_type": "amulet_air",
+      "slot": "amulet",
+      "item_tier": 5,
+      "rarity": "legendary",
+      "tile": "item/amulet/artefact/urand_air_new.png",
+      "atk": 4,
+      "def": 4,
+      "hp": 90,
+      "flavor_tags": [
+        "acrobat",
+        "willpower",
+        "elemental"
+      ],
+      "lore": "Cool wind around the wearer's neck. Always.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        25
+      ],
+      "unique": true,
+      "future_mechanic": "Lightning resistance. +10% movement speed. Periodic dodge.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "stamina": 20,
+        "agility": 40,
+        "regen": 25,
+        "crit": 20,
+        "haste": 25
+      }
+    },
+    {
+      "id": "amulet_bloodlust",
+      "name": "Amulet of Bloodlust",
+      "base_type": "amulet_rage",
+      "slot": "amulet",
+      "item_tier": 5,
+      "rarity": "legendary",
+      "tile": "item/amulet/artefact/urand_bloodlust_new.png",
+      "atk": 10,
+      "def": -2,
+      "hp": 75,
+      "flavor_tags": [
+        "rage",
+        "harm"
+      ],
+      "lore": "Beats slightly faster than the wearer's heart. Always slightly faster.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        22
+      ],
+      "unique": true,
+      "future_mechanic": "+20% damage when below 50% HP. -15% DEF (drawback).",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "strength": 55,
+        "crit": 15,
+        "haste": 15
+      }
+    },
+    {
+      "id": "brooch_of_shielding",
+      "name": "Brooch of Shielding",
+      "base_type": "amulet_reflection",
+      "slot": "amulet",
+      "item_tier": 5,
+      "rarity": "legendary",
+      "tile": "item/amulet/artefact/urand_brooch_of_shielding_new.png",
+      "atk": 0,
+      "def": 9,
+      "hp": 110,
+      "flavor_tags": [
+        "reflective",
+        "fortified",
+        "willpower"
+      ],
+      "lore": "A faint shimmer surrounds the wearer in any light.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        25
+      ],
+      "unique": true,
+      "future_mechanic": "+10% block chance. Reflects projectiles back at attacker.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "stamina": 65,
+        "agility": 50,
+        "regen": 30
+      }
+    },
+    {
+      "id": "cekugob_amulet",
+      "name": "Cekugob's Amulet",
+      "base_type": "amulet_guardian",
+      "slot": "amulet",
+      "item_tier": 5,
+      "rarity": "legendary",
+      "tile": "item/amulet/artefact/urand_cekugob_new.png",
+      "atk": 5,
+      "def": 6,
+      "hp": 120,
+      "flavor_tags": [
+        "guardian",
+        "willpower",
+        "fortune"
+      ],
+      "lore": "Cekugob never died. The amulet is the proof.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        4,
+        22
+      ],
+      "unique": true,
+      "future_mechanic": "Once per run, prevent fatal damage and fully heal. Cooldown resets per run.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "stamina": 45,
+        "agility": 35,
+        "regen": 45,
+        "haste": 15
+      }
+    },
+    {
+      "id": "four_winds",
+      "name": "The Four Winds",
+      "base_type": "amulet_air",
+      "slot": "amulet",
+      "item_tier": 5,
+      "rarity": "legendary",
+      "tile": "item/amulet/artefact/urand_four_winds_new.png",
+      "atk": 6,
+      "def": 6,
+      "hp": 100,
+      "flavor_tags": [
+        "acrobat",
+        "elemental",
+        "willpower"
+      ],
+      "lore": "Four directions held in one circle. Each promises something.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        4,
+        22
+      ],
+      "unique": true,
+      "future_mechanic": "All four elemental resistances. +15% dodge while moving.",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "stamina": 20,
+        "agility": 40,
+        "regen": 25,
+        "crit": 20,
+        "haste": 25
+      }
+    },
+    {
+      "id": "amulet_finger",
+      "name": "The Finger",
+      "base_type": "amulet_harm",
+      "slot": "amulet",
+      "item_tier": 5,
+      "rarity": "legendary",
+      "tile": "item/amulet/artefact/urand_finger.png",
+      "atk": 12,
+      "def": -3,
+      "hp": 60,
+      "flavor_tags": [
+        "harm",
+        "rage"
+      ],
+      "lore": "A real finger. Old. Don't ask whose.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        3,
+        18
+      ],
+      "unique": true,
+      "future_mechanic": "+30% damage dealt. +20% damage taken (drawback).",
+      "enchant_chance": 0.0,
+      "affix_pool": {
+        "strength": 55,
+        "crit": 15,
+        "haste": 15
+      }
+    }
+  ]
+}

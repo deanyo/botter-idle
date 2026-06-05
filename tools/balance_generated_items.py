@@ -153,7 +153,10 @@ def floor_rarity(item, flavor):
     """Bump rarity up to a floor based on flavor + tint mode."""
     current = item.get('rarity', 'common')
     cur_idx = RARITY_INDEX.get(current, 0)
-    floor_idx = cur_idx
+    # Any flavor-suffixed variant is at minimum uncommon — the name
+    # ('Shadowed Leather Cloak', 'Mossy Bone Knife') promises a theme
+    # that a 0-affix common can't deliver. 2026-06-05 user catch.
+    floor_idx = max(cur_idx, RARITY_INDEX['uncommon'])
     # Flavor-specific floors.
     if flavor in FLAVOR_RARITY_FLOOR:
         floor_idx = max(floor_idx, RARITY_INDEX[FLAVOR_RARITY_FLOOR[flavor]])
@@ -187,11 +190,45 @@ def smooth_drop_weights(item_tier):
     return weights
 
 
-def merge_affix_pool(parent_pool, bumps):
-    """Add bumps to a copy of parent_pool. Existing weights stay; bumps add."""
-    pool = dict(parent_pool or {})
+def merge_affix_pool(item, bumps, items_by_id):
+    """Apply flavor bumps to the item's pool, idempotently.
+
+    Pre-2026-06-05 this function ADDED bumps to whatever was already in
+    pool — re-running the balance pass compounded the bumps, so an
+    item that had been balanced 3 times had 3× the flavor weight.
+
+    Fix: when `_balance_bumps` is present, reverse those exact bumps
+    before re-applying. When ABSENT (first run after the fix on items
+    that compounded across earlier runs), reset the pool to the
+    parent base's authored pool so we rebuild cleanly. Tracks the
+    fresh bumps in `_balance_bumps` for the next pass.
+    """
+    if '_balance_bumps' in item:
+        # Reverse prior bumps so the pool returns to its parent-derived state.
+        pool = dict(item.get('affix_pool') or {})
+        prior = item['_balance_bumps']
+        for affix_id, w in prior.items():
+            if affix_id in pool:
+                pool[affix_id] = pool[affix_id] - int(w)
+                if pool[affix_id] <= 0:
+                    del pool[affix_id]
+    else:
+        # No marker = recovery. The pool may have compounded multiple
+        # bumps from past balance runs; the safe reset is to rebuild
+        # from the parent base's authored affix_pool.
+        flavor = parse_flavor(item['id'])
+        parent_id = item['id'].rsplit('_' + flavor, 1)[0] if flavor else None
+        parent = items_by_id.get(parent_id) if parent_id else None
+        if parent and parent.get('affix_pool'):
+            pool = dict(parent['affix_pool'])
+        else:
+            pool = dict(item.get('affix_pool') or {})
+    # Apply current bumps and remember them.
+    new_bumps = {}
     for affix_id, w in bumps:
-        pool[affix_id] = pool.get(affix_id, 0) + w
+        pool[affix_id] = pool.get(affix_id, 0) + int(w)
+        new_bumps[affix_id] = new_bumps.get(affix_id, 0) + int(w)
+    item['_balance_bumps'] = new_bumps
     return pool
 
 
@@ -236,10 +273,12 @@ def main():
 
         # 2. Flavor-thematic affix pool bumps. Filter bumps to those
         #    whose affix actually applies to this slot (skips
-        #    weapon-only "of_sharpness" on a helm, etc).
+        #    weapon-only "of_sharpness" on a helm, etc). merge_affix_pool
+        #    is idempotent — it reverses prior bumps via the
+        #    _balance_bumps tracker before applying the current ones.
         bumps = FLAVOR_AFFIX_BUMPS.get(flavor, [])
         if bumps:
-            new_pool = merge_affix_pool(item.get('affix_pool', {}), bumps)
+            new_pool = merge_affix_pool(item, bumps, items_by_id)
             if new_pool != item.get('affix_pool'):
                 item['affix_pool'] = new_pool
                 pool_bumps += 1

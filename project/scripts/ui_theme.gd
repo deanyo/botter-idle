@@ -390,11 +390,20 @@ const _META_BADGE := {
 # moves too fast to read. Empty array when no badge applies.
 # 2026-06-05 — multi-badge: cells fade between them on a loop so a
 # Vampiric Fire weapon shows BOTH a red skull + an orange flame.
+# 2026-06-05 follow-up: common-rarity items get NO flavor badge.
+# Reason: a "Shadowed Leather Cloak" rolled at common rarity reads as
+# misleading — name promises a shadow theme, but the item has 0 affixes
+# (rarity_affix_count=0), no implicit, and the default_tint mode=normal
+# can't visibly recolor a white-base sprite. Showing a shadow corner
+# badge made it look "special" while delivering nothing. Meta-rarity
+# (Primal/Ancient) badges still fire on commons since those ARE
+# meaningful upgrades regardless of base rarity.
 static func badges_for_item(item: Dictionary, inst: Variant) -> Array:
 	if typeof(item) != TYPE_DICTIONARY or item.is_empty():
 		return []
 	var out: Array = []
-	# Meta-rarity always leads.
+	# Meta-rarity always leads — fires regardless of base rarity since
+	# Primal / Ancient is mechanically meaningful by itself.
 	if typeof(inst) == TYPE_DICTIONARY:
 		var meta: String = String(inst.get("meta_rarity", ""))
 		if _META_BADGE.has(meta):
@@ -403,15 +412,22 @@ static func badges_for_item(item: Dictionary, inst: Variant) -> Array:
 				"icon": _BADGE_BASE + String(entry[0]) + ".png",
 				"tint": entry[1],
 			})
-	var tags: Array = combined_flavor_tags(item, inst)
-	for tag in _FLAVOR_PRIORITY:
-		if tag in tags and _FLAVOR_BADGE.has(tag):
-			out.append({
-				"icon": _BADGE_BASE + String(_FLAVOR_BADGE[tag]) + ".png",
-				"tint": FLAVOR_COLORS.get(tag, Color(0.95, 0.95, 0.95, 1.0)),
-			})
-		if out.size() >= 3:
-			break
+	# Flavor badges suppressed on commons. The flavor TAG is still on
+	# the item def for combat math (a "fire" common dagger still procs
+	# fire) but the corner badge is reserved for items where the
+	# flavor actually carries a payload (≥1 rolled affix, an implicit,
+	# or a meaningful default_tint).
+	var rarity: String = String(item.get("rarity", "common"))
+	if rarity != "common":
+		var tags: Array = combined_flavor_tags(item, inst)
+		for tag in _FLAVOR_PRIORITY:
+			if tag in tags and _FLAVOR_BADGE.has(tag):
+				out.append({
+					"icon": _BADGE_BASE + String(_FLAVOR_BADGE[tag]) + ".png",
+					"tint": FLAVOR_COLORS.get(tag, Color(0.95, 0.95, 0.95, 1.0)),
+				})
+			if out.size() >= 3:
+				break
 	return out
 
 # Back-compat single-badge helper.

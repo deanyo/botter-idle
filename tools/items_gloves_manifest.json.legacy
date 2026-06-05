@@ -1,0 +1,302 @@
+{
+  "format_version": 2,
+  "notes": "Gloves slot \u2014 DCSS ARM_GLOVES. Sprites under item/armor/ matching glove/gauntlet shapes.",
+  "base_types": {
+    "gloves": {
+      "label": "Gloves / Gauntlets"
+    }
+  },
+  "flavor_tags": {},
+  "drop_weight_schema": {
+    "description": "5 ints, T1..T5"
+  },
+  "items": [
+    {
+      "id": "gauntlets_of_war",
+      "name": "Gauntlets of War",
+      "base_type": "gloves",
+      "slot": "gloves",
+      "item_tier": 5,
+      "rarity": "legendary",
+      "tile": "item/armor/artefact/urand_war.png",
+      "atk": 0,
+      "def": 22,
+      "hp": 200,
+      "flavor_tags": [
+        "lordly",
+        "fortified"
+      ],
+      "lore": "Carried to a thousand battles. Always returned home.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        25
+      ],
+      "unique": true,
+      "affix_pool": {
+        "strength": 15,
+        "stamina": 45,
+        "agility": 15,
+        "regen": 15
+      },
+      "future_mechanic": "+15% damage when at full HP. +25% damage to bosses."
+    },
+    {
+      "id": "fencer_gauntlets",
+      "name": "Fencer's Gauntlets",
+      "base_type": "gloves",
+      "slot": "gloves",
+      "item_tier": 5,
+      "rarity": "legendary",
+      "tile": "item/armor/artefact/urand_fencer_new.png",
+      "atk": 0,
+      "def": 7,
+      "hp": 100,
+      "flavor_tags": [
+        "footwork",
+        "swiftness"
+      ],
+      "lore": "They lead. The rest of the body follows.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        25
+      ],
+      "unique": true,
+      "affix_pool": {
+        "agility": 50,
+        "haste": 50
+      },
+      "crit_chance": 12,
+      "atk_speed_pct": 8,
+      "future_mechanic": "+15% dodge chance. +10% crit chance."
+    },
+    {
+      "id": "leather_gloves",
+      "name": "Leather Gloves",
+      "base_type": "gloves",
+      "slot": "gloves",
+      "item_tier": 1,
+      "rarity": "common",
+      "tile": "item/armor/hands/glove_1_old.png",
+      "atk": 0,
+      "def": 1,
+      "hp": 12,
+      "flavor_tags": [],
+      "lore": "",
+      "drop_weights": [
+        50,
+        30,
+        5,
+        0,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05
+    },
+    {
+      "id": "studded_gloves",
+      "name": "Studded Gloves",
+      "base_type": "gloves",
+      "slot": "gloves",
+      "item_tier": 1,
+      "rarity": "common",
+      "tile": "item/armor/hands/glove_2_old.png",
+      "atk": 0,
+      "def": 2,
+      "hp": 18,
+      "flavor_tags": [],
+      "lore": "",
+      "drop_weights": [
+        40,
+        35,
+        8,
+        0,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05
+    },
+    {
+      "id": "riveted_gloves",
+      "name": "Riveted Gloves",
+      "base_type": "gloves",
+      "slot": "gloves",
+      "item_tier": 2,
+      "rarity": "uncommon",
+      "tile": "item/armor/hands/glove_2_new.png",
+      "atk": 0,
+      "def": 3,
+      "hp": 25,
+      "flavor_tags": [],
+      "lore": "",
+      "drop_weights": [
+        10,
+        40,
+        30,
+        5,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05
+    },
+    {
+      "id": "plate_gauntlets",
+      "name": "Plate Gauntlets",
+      "base_type": "gloves",
+      "slot": "gloves",
+      "item_tier": 2,
+      "rarity": "uncommon",
+      "tile": "item/armor/hands/glove_4_gauntlets.png",
+      "atk": 0,
+      "def": 4,
+      "hp": 32,
+      "flavor_tags": [
+        "fortified"
+      ],
+      "lore": "",
+      "drop_weights": [
+        5,
+        40,
+        30,
+        10,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05
+    },
+    {
+      "id": "dwarven_gloves",
+      "name": "Dwarven Gloves",
+      "base_type": "gloves",
+      "slot": "gloves",
+      "item_tier": 3,
+      "rarity": "rare",
+      "tile": "item/armor/hands/glove_1_new.png",
+      "atk": 0,
+      "def": 5,
+      "hp": 45,
+      "flavor_tags": [
+        "fortified"
+      ],
+      "lore": "",
+      "drop_weights": [
+        0,
+        15,
+        40,
+        30,
+        5
+      ],
+      "unique": false,
+      "enchant_chance": 0.1
+    },
+    {
+      "id": "elven_gauntlets",
+      "name": "Elven Gauntlets",
+      "base_type": "gloves",
+      "slot": "gloves",
+      "item_tier": 3,
+      "rarity": "rare",
+      "tile": "item/armor/hands/glove_3_old.png",
+      "atk": 0,
+      "def": 4,
+      "hp": 50,
+      "flavor_tags": [
+        "agility",
+        "footwork"
+      ],
+      "lore": "",
+      "drop_weights": [
+        0,
+        10,
+        35,
+        35,
+        10
+      ],
+      "unique": false,
+      "enchant_chance": 0.1
+    },
+    {
+      "id": "ring_inlaid_gloves",
+      "name": "Ring-Inlaid Gloves",
+      "base_type": "gloves",
+      "slot": "gloves",
+      "item_tier": 4,
+      "rarity": "epic",
+      "tile": "item/armor/hands/glove_3_new.png",
+      "atk": 2,
+      "def": 6,
+      "hp": 60,
+      "flavor_tags": [
+        "arcane"
+      ],
+      "lore": "",
+      "drop_weights": [
+        0,
+        0,
+        15,
+        35,
+        30
+      ],
+      "unique": false,
+      "enchant_chance": 0.15
+    },
+    {
+      "id": "warlord_gauntlets",
+      "name": "Warlord's Gauntlets",
+      "base_type": "gloves",
+      "slot": "gloves",
+      "item_tier": 4,
+      "rarity": "epic",
+      "tile": "item/armor/hands/glove_4_new.png",
+      "atk": 4,
+      "def": 7,
+      "hp": 70,
+      "flavor_tags": [
+        "lordly",
+        "slaying"
+      ],
+      "lore": "",
+      "drop_weights": [
+        0,
+        0,
+        5,
+        30,
+        40
+      ],
+      "unique": false,
+      "enchant_chance": 0.15
+    },
+    {
+      "id": "storm_gauntlets",
+      "name": "Storm Gauntlets",
+      "base_type": "gloves",
+      "slot": "gloves",
+      "item_tier": 5,
+      "rarity": "legendary",
+      "tile": "item/armor/hands/glove_5.png",
+      "atk": 5,
+      "def": 8,
+      "hp": 80,
+      "flavor_tags": [
+        "thunderous",
+        "swiftness"
+      ],
+      "lore": "",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        15,
+        40
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "atk_speed_pct": 15
+    }
+  ]
+}

@@ -1858,18 +1858,18 @@
     },
     {
       "affix_pool": {
-        "of_cold_resist": 12,
-        "of_dark_resist": 8,
-        "of_finesse": 12,
-        "of_fire_resist": 12,
-        "of_holy_resist": 8,
-        "of_lightning_resist": 12,
         "of_might": 15,
-        "of_poison_resist": 10,
-        "of_regen": 15,
-        "of_the_bear": 30,
-        "of_vitality": 30,
+        "of_finesse": 12,
         "of_wisdom": 12,
+        "of_vitality": 30,
+        "of_the_bear": 30,
+        "of_fire_resist": 12,
+        "of_cold_resist": 12,
+        "of_lightning_resist": 12,
+        "of_holy_resist": 8,
+        "of_poison_resist": 10,
+        "of_dark_resist": 8,
+        "of_regen": 15,
         "of_devotion": 22,
         "of_haste": 18,
         "of_lifesteal": 12,
@@ -1904,22 +1904,28 @@
       "rarity": "legendary",
       "slot": "armor",
       "tile": "urand_folly.png",
-      "unique": true
+      "unique": true,
+      "_balance_bumps": {
+        "of_devotion": 22,
+        "of_haste": 18,
+        "of_lifesteal": 12,
+        "of_quickcast": 15
+      }
     },
     {
       "affix_pool": {
-        "of_cold_resist": 12,
-        "of_dark_resist": 8,
-        "of_finesse": 30,
-        "of_fire_resist": 12,
-        "of_holy_resist": 8,
-        "of_lightning_resist": 12,
         "of_might": 15,
-        "of_poison_resist": 10,
-        "of_regen": 15,
-        "of_the_bear": 30,
-        "of_vitality": 30,
+        "of_finesse": 30,
         "of_wisdom": 12,
+        "of_vitality": 30,
+        "of_the_bear": 30,
+        "of_fire_resist": 12,
+        "of_cold_resist": 12,
+        "of_lightning_resist": 12,
+        "of_holy_resist": 8,
+        "of_poison_resist": 10,
+        "of_dark_resist": 8,
+        "of_regen": 15,
         "of_int_mastery": 18,
         "of_quickcast": 14,
         "of_resonance": 14
@@ -1951,22 +1957,28 @@
       "rarity": "legendary",
       "slot": "armor",
       "tile": "green_dragon_scale_mail.png",
-      "unique": false
+      "unique": false,
+      "_balance_bumps": {
+        "of_finesse": 18,
+        "of_int_mastery": 18,
+        "of_quickcast": 14,
+        "of_resonance": 14
+      }
     },
     {
       "affix_pool": {
-        "of_cold_resist": 12,
-        "of_dark_resist": 8,
-        "of_finesse": 12,
-        "of_fire_resist": 12,
-        "of_holy_resist": 8,
-        "of_lightning_resist": 12,
         "of_might": 15,
-        "of_poison_resist": 10,
-        "of_regen": 15,
-        "of_the_bear": 30,
-        "of_vitality": 30,
+        "of_finesse": 12,
         "of_wisdom": 12,
+        "of_vitality": 30,
+        "of_the_bear": 30,
+        "of_fire_resist": 12,
+        "of_cold_resist": 12,
+        "of_lightning_resist": 12,
+        "of_holy_resist": 8,
+        "of_poison_resist": 10,
+        "of_dark_resist": 8,
+        "of_regen": 15,
         "of_embers": 14,
         "of_frost": 14,
         "of_storms": 14,
@@ -2009,22 +2021,37 @@
       "rarity": "legendary",
       "slot": "armor",
       "tile": "urand_folly.png",
-      "unique": true
+      "unique": true,
+      "_balance_bumps": {
+        "of_embers": 14,
+        "of_frost": 14,
+        "of_storms": 14,
+        "of_devotion": 14,
+        "of_venom": 14,
+        "of_shadows": 14,
+        "of_sharpness": 14,
+        "of_resonance": 18,
+        "of_multicast": 12,
+        "of_channeling": 18,
+        "of_str_mastery": 10,
+        "of_dex_mastery": 10,
+        "of_int_mastery": 10
+      }
     },
     {
       "affix_pool": {
-        "of_cold_resist": 12,
-        "of_dark_resist": 30,
-        "of_finesse": 12,
-        "of_fire_resist": 12,
-        "of_holy_resist": 8,
-        "of_lightning_resist": 12,
         "of_might": 27,
-        "of_poison_resist": 10,
-        "of_regen": 15,
-        "of_the_bear": 30,
-        "of_vitality": 30,
+        "of_finesse": 12,
         "of_wisdom": 12,
+        "of_vitality": 30,
+        "of_the_bear": 30,
+        "of_fire_resist": 12,
+        "of_cold_resist": 12,
+        "of_lightning_resist": 12,
+        "of_holy_resist": 8,
+        "of_poison_resist": 10,
+        "of_dark_resist": 30,
+        "of_regen": 15,
         "of_shadows": 32,
         "of_lifesteal": 18
       },
@@ -2055,22 +2082,28 @@
       "rarity": "uncommon",
       "slot": "armor",
       "tile": "leather_armor_1.png",
-      "unique": false
+      "unique": false,
+      "_balance_bumps": {
+        "of_shadows": 32,
+        "of_dark_resist": 22,
+        "of_lifesteal": 18,
+        "of_might": 12
+      }
     },
     {
       "affix_pool": {
-        "of_cold_resist": 12,
-        "of_dark_resist": 8,
-        "of_finesse": 12,
-        "of_fire_resist": 12,
-        "of_holy_resist": 8,
-        "of_lightning_resist": 12,
         "of_might": 15,
-        "of_poison_resist": 10,
-        "of_regen": 15,
-        "of_the_bear": 30,
-        "of_vitality": 30,
+        "of_finesse": 12,
         "of_wisdom": 12,
+        "of_vitality": 30,
+        "of_the_bear": 30,
+        "of_fire_resist": 12,
+        "of_cold_resist": 12,
+        "of_lightning_resist": 12,
+        "of_holy_resist": 8,
+        "of_poison_resist": 10,
+        "of_dark_resist": 8,
+        "of_regen": 15,
         "of_devotion": 22,
         "of_haste": 18,
         "of_lifesteal": 12,
@@ -2104,22 +2137,28 @@
       "rarity": "epic",
       "slot": "armor",
       "tile": "banded_mail_1.png",
-      "unique": false
+      "unique": false,
+      "_balance_bumps": {
+        "of_devotion": 22,
+        "of_haste": 18,
+        "of_lifesteal": 12,
+        "of_quickcast": 15
+      }
     },
     {
       "affix_pool": {
-        "of_cold_resist": 12,
-        "of_dark_resist": 8,
-        "of_finesse": 12,
-        "of_fire_resist": 12,
-        "of_holy_resist": 26,
-        "of_lightning_resist": 12,
         "of_might": 15,
-        "of_poison_resist": 10,
-        "of_regen": 15,
-        "of_the_bear": 30,
-        "of_vitality": 30,
+        "of_finesse": 12,
         "of_wisdom": 12,
+        "of_vitality": 30,
+        "of_the_bear": 30,
+        "of_fire_resist": 12,
+        "of_cold_resist": 12,
+        "of_lightning_resist": 12,
+        "of_holy_resist": 26,
+        "of_poison_resist": 10,
+        "of_dark_resist": 8,
+        "of_regen": 15,
         "of_devotion": 28,
         "of_channeling": 15,
         "of_quickcast": 12
@@ -2152,22 +2191,28 @@
       "rarity": "epic",
       "slot": "armor",
       "tile": "orcish_platemail.png",
-      "unique": false
+      "unique": false,
+      "_balance_bumps": {
+        "of_devotion": 28,
+        "of_holy_resist": 18,
+        "of_channeling": 15,
+        "of_quickcast": 12
+      }
     },
     {
       "affix_pool": {
-        "of_cold_resist": 12,
-        "of_dark_resist": 8,
-        "of_finesse": 12,
-        "of_fire_resist": 12,
-        "of_holy_resist": 8,
-        "of_lightning_resist": 12,
         "of_might": 15,
-        "of_poison_resist": 28,
-        "of_regen": 33,
-        "of_the_bear": 45,
+        "of_finesse": 12,
+        "of_wisdom": 12,
         "of_vitality": 52,
-        "of_wisdom": 12
+        "of_the_bear": 45,
+        "of_fire_resist": 12,
+        "of_cold_resist": 12,
+        "of_lightning_resist": 12,
+        "of_holy_resist": 8,
+        "of_poison_resist": 28,
+        "of_dark_resist": 8,
+        "of_regen": 33
       },
       "armor": 48,
       "base_type": "robe",
@@ -2197,22 +2242,28 @@
       "rarity": "legendary",
       "slot": "armor",
       "tile": "urand_misfortune.png",
-      "unique": true
+      "unique": true,
+      "_balance_bumps": {
+        "of_regen": 18,
+        "of_vitality": 22,
+        "of_the_bear": 15,
+        "of_poison_resist": 18
+      }
     },
     {
       "affix_pool": {
-        "of_cold_resist": 12,
-        "of_dark_resist": 8,
-        "of_finesse": 12,
-        "of_fire_resist": 12,
-        "of_holy_resist": 8,
-        "of_lightning_resist": 12,
         "of_might": 29,
-        "of_poison_resist": 10,
-        "of_regen": 15,
-        "of_the_bear": 60,
-        "of_vitality": 52,
+        "of_finesse": 12,
         "of_wisdom": 12,
+        "of_vitality": 52,
+        "of_the_bear": 60,
+        "of_fire_resist": 12,
+        "of_cold_resist": 12,
+        "of_lightning_resist": 12,
+        "of_holy_resist": 8,
+        "of_poison_resist": 10,
+        "of_dark_resist": 8,
+        "of_regen": 15,
         "of_sharpness": 14
       },
       "armor": 12,
@@ -2248,22 +2299,28 @@
       "rarity": "uncommon",
       "slot": "armor",
       "tile": "robe_1_new.png",
-      "unique": false
+      "unique": false,
+      "_balance_bumps": {
+        "of_the_bear": 30,
+        "of_vitality": 22,
+        "of_might": 14,
+        "of_sharpness": 14
+      }
     },
     {
       "affix_pool": {
-        "of_cold_resist": 12,
-        "of_dark_resist": 8,
-        "of_finesse": 12,
-        "of_fire_resist": 12,
-        "of_holy_resist": 8,
-        "of_lightning_resist": 12,
         "of_might": 29,
-        "of_poison_resist": 10,
-        "of_regen": 15,
-        "of_the_bear": 60,
-        "of_vitality": 52,
+        "of_finesse": 12,
         "of_wisdom": 12,
+        "of_vitality": 52,
+        "of_the_bear": 60,
+        "of_fire_resist": 12,
+        "of_cold_resist": 12,
+        "of_lightning_resist": 12,
+        "of_holy_resist": 8,
+        "of_poison_resist": 10,
+        "of_dark_resist": 8,
+        "of_regen": 15,
         "of_sharpness": 14
       },
       "armor": 48,
@@ -2300,22 +2357,28 @@
       "rarity": "legendary",
       "slot": "armor",
       "tile": "urand_clouds.png",
-      "unique": true
+      "unique": true,
+      "_balance_bumps": {
+        "of_the_bear": 30,
+        "of_vitality": 22,
+        "of_might": 14,
+        "of_sharpness": 14
+      }
     },
     {
       "affix_pool": {
-        "of_cold_resist": 12,
-        "of_dark_resist": 8,
-        "of_finesse": 30,
-        "of_fire_resist": 12,
-        "of_holy_resist": 8,
-        "of_lightning_resist": 12,
         "of_might": 15,
-        "of_poison_resist": 10,
-        "of_regen": 15,
-        "of_the_bear": 30,
-        "of_vitality": 30,
+        "of_finesse": 30,
         "of_wisdom": 12,
+        "of_vitality": 30,
+        "of_the_bear": 30,
+        "of_fire_resist": 12,
+        "of_cold_resist": 12,
+        "of_lightning_resist": 12,
+        "of_holy_resist": 8,
+        "of_poison_resist": 10,
+        "of_dark_resist": 8,
+        "of_regen": 15,
         "of_venom": 22,
         "of_dex_mastery": 14,
         "of_crit": 15
@@ -2347,22 +2410,28 @@
       "rarity": "rare",
       "slot": "armor",
       "tile": "animal_skin_1_new.png",
-      "unique": false
+      "unique": false,
+      "_balance_bumps": {
+        "of_venom": 22,
+        "of_finesse": 18,
+        "of_dex_mastery": 14,
+        "of_crit": 15
+      }
     },
     {
       "affix_pool": {
-        "of_cold_resist": 12,
-        "of_dark_resist": 8,
-        "of_finesse": 12,
-        "of_fire_resist": 34,
-        "of_holy_resist": 8,
-        "of_lightning_resist": 12,
         "of_might": 15,
-        "of_poison_resist": 10,
-        "of_regen": 15,
-        "of_the_bear": 30,
-        "of_vitality": 30,
+        "of_finesse": 12,
         "of_wisdom": 12,
+        "of_vitality": 30,
+        "of_the_bear": 30,
+        "of_fire_resist": 34,
+        "of_cold_resist": 12,
+        "of_lightning_resist": 12,
+        "of_holy_resist": 8,
+        "of_poison_resist": 10,
+        "of_dark_resist": 8,
+        "of_regen": 15,
         "of_embers": 30,
         "of_quickcast": 14,
         "of_channeling": 10
@@ -2394,7 +2463,13 @@
       "rarity": "rare",
       "slot": "armor",
       "tile": "orcish_leather_armor.png",
-      "unique": false
+      "unique": false,
+      "_balance_bumps": {
+        "of_embers": 30,
+        "of_quickcast": 14,
+        "of_fire_resist": 22,
+        "of_channeling": 10
+      }
     }
   ]
 }
