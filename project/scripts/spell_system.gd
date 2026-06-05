@@ -198,7 +198,9 @@ static func _fire_fireball(bot: Node, dungeon: Node, item: Dictionary) -> bool:
 	candidates.sort_custom(func(a, b): return a.d < b.d)
 	var proj_count: int = SpellData.compute_proj_count(bot, item)
 	var damage: int = SpellData.compute_damage(bot, item)
-	var sprite_path: String = String(arch.get("projectile", ""))
+	# Per-flavor sprite picker — fire flavor gets a real flame sprite,
+	# cold gets iceblast, holy gets holy_flame, etc. 2026-06-05.
+	var sprite_path: String = _resolve_sprite_path(item, "spell_fireball", String(arch.get("projectile", "")))
 	var element: String = String(arch.get("element", ""))
 	var base_speed: float = float(arch.get("projectile_speed", 320.0))
 	var speed: float = base_speed * (1.0 + float(bot.spell_proj_speed_pct) / 100.0)
@@ -349,7 +351,14 @@ static func _fire_axes(bot: Node, dungeon: Node, item: Dictionary) -> bool:
 	var damage: int = SpellData.compute_damage(bot, item)
 	var duration: float = 2.5 * (1.0 + float(bot.spell_duration_pct) / 100.0)
 	var radius_px: float = 48.0 * (1.0 + float(bot.spell_area_pct) / 100.0)
-	OrbitController.spawn_axes(dungeon.actor_layer, bot, n, radius_px, duration, damage, _visual_color_for_item(item, "brutal"))
+	# Resolve a real visible axe sprite — the previous fallback at
+	# res://assets/tiles/items/hand_axe.png didn't exist, so the orbit
+	# rendered with no texture. Per-flavor axe variants distinguish
+	# brutal (battleaxe), fire (axe_blood), holy (clean axe), and
+	# default (hand_axe). 2026-06-05.
+	var sprite_path: String = _resolve_sprite_path(item, "spell_axes",
+		"res://assets/tiles/spells/weapons/hand_axe_new.png")
+	OrbitController.spawn_axes(dungeon.actor_layer, bot, n, radius_px, duration, damage, _visual_color_for_item(item, "brutal"), sprite_path)
 	return true
 
 # --- 2026-06-04 expansion archetypes -------------------------------
@@ -368,7 +377,9 @@ static func _fire_magic_dart(bot: Node, dungeon: Node, item: Dictionary) -> bool
 		return false
 	candidates.sort_custom(func(a, b): return a.d < b.d)
 	var damage: int = SpellData.compute_damage(bot, item)
-	var sprite_path: String = String(arch.get("projectile", ""))
+	# Per-flavor sprite — fire dart shows a fire bolt, cold dart an
+	# ice bolt, etc. 2026-06-05.
+	var sprite_path: String = _resolve_sprite_path(item, "spell_magic_dart", String(arch.get("projectile", "")))
 	var element: String = String(arch.get("element", ""))
 	var base_speed: float = float(arch.get("projectile_speed", 420.0))
 	var speed: float = base_speed * (1.0 + float(bot.spell_proj_speed_pct) / 100.0)
@@ -410,7 +421,7 @@ static func _fire_iron_shot(bot: Node, dungeon: Node, item: Dictionary) -> bool:
 		return false
 	candidates.sort_custom(func(a, b): return a.d < b.d)
 	var damage: int = SpellData.compute_damage(bot, item)
-	var sprite_path: String = String(arch.get("projectile", ""))
+	var sprite_path: String = _resolve_sprite_path(item, "spell_iron_shot", String(arch.get("projectile", "")))
 	var element: String = String(arch.get("element", ""))
 	var base_speed: float = float(arch.get("projectile_speed", 220.0))
 	var speed: float = base_speed * (1.0 + float(bot.spell_proj_speed_pct) / 100.0)
@@ -493,7 +504,7 @@ static func _fire_drain(bot: Node, dungeon: Node, item: Dictionary) -> bool:
 		return false
 	candidates.sort_custom(func(a, b): return a.d < b.d)
 	var damage: int = SpellData.compute_damage(bot, item)
-	var sprite_path: String = String(arch.get("projectile", ""))
+	var sprite_path: String = _resolve_sprite_path(item, "spell_drain", String(arch.get("projectile", "")))
 	var element: String = String(arch.get("element", ""))
 	var base_speed: float = float(arch.get("projectile_speed", 280.0))
 	var speed: float = base_speed * (1.0 + float(bot.spell_proj_speed_pct) / 100.0)
@@ -572,6 +583,92 @@ static func _visual_color_for_item(item: Dictionary, default_tag: String) -> Col
 		if c.a > 0.0:
 			return c
 	return UITheme.flavor_color_for([default_tag])
+
+# Per-archetype + per-flavor sprite picker. Different flavor tags pick
+# different sprite variants from the synced spells/effects/ +
+# spells/weapons/ trees so e.g. fire fireball vs holy fireball vs
+# arcane bolt all look distinct without needing per-item authoring.
+# 2026-06-05 — replaces the single hardcoded path per archetype.
+static func _visual_sprite_for_item(item: Dictionary, archetype: String) -> String:
+	var tags: Array = item.get("flavor_tags", []) if item != null else []
+	# Per-item override wins.
+	var override: String = String(item.get("projectile_sprite", "")) if item != null else ""
+	if override != "":
+		return override
+	# Pick the priority flavor — first tag matching our visual family.
+	var primary: String = ""
+	var visual_priority: Array = ["fire", "cold", "thunderous", "lightning",
+		"holy", "vampiric", "dark", "poison", "arcane", "earth",
+		"brutal", "fortified", "lordly"]
+	for vt in visual_priority:
+		if vt in tags:
+			primary = vt
+			break
+	# Resolve to an actual file path. Each (archetype, flavor) cell
+	# below points at a real sprite that lives in the project. When
+	# no flavor matches, fall back to the archetype's canonical art.
+	# Sprite picks below verified to exist in
+	# project/assets/tiles/spells/effects/ + spells/weapons/ (synced
+	# 2026-06-05). Picks where the elemental variant is missing fall
+	# through to a sensible alternate so nothing renders invisible.
+	match archetype:
+		"spell_fireball":
+			match primary:
+				"fire":      return "res://assets/tiles/spells/effects/flame0.png"
+				"cold":      return "res://assets/tiles/spells/effects/iceblast0.png"
+				"vampiric":  return "res://assets/tiles/spells/effects/blood_arrow0.png"
+				"dark":      return "res://assets/tiles/spells/effects/bolt0.png"
+				"poison":    return "res://assets/tiles/spells/effects/poison_arrow0.png"
+				"thunderous","lightning": return "res://assets/tiles/spells/effects/bolt2.png"
+				"arcane":    return "res://assets/tiles/spells/effects/magic_dart0.png"
+				"holy":      return "res://assets/tiles/spells/effects/orb_glow0.png"
+				_:           return "res://assets/tiles/projectiles/fireball.png"
+		"spell_magic_dart":
+			match primary:
+				"fire":      return "res://assets/tiles/spells/effects/flame0.png"
+				"cold":      return "res://assets/tiles/spells/effects/frost0.png"
+				"thunderous","lightning": return "res://assets/tiles/spells/effects/bolt2.png"
+				"holy":      return "res://assets/tiles/spells/effects/orb_glow0.png"
+				"vampiric":  return "res://assets/tiles/spells/effects/blood_arrow0.png"
+				"poison":    return "res://assets/tiles/spells/effects/poison_arrow0.png"
+				"dark":      return "res://assets/tiles/spells/effects/bolt0.png"
+				_:           return "res://assets/tiles/projectiles/magic_dart.png"
+		"spell_iron_shot":
+			match primary:
+				"fire":      return "res://assets/tiles/spells/effects/iron_shot0.png"
+				"earth":     return "res://assets/tiles/spells/effects/crystal_spear0.png"
+				_:           return "res://assets/tiles/projectiles/iron_shot.png"
+		"spell_drain":
+			match primary:
+				"vampiric":  return "res://assets/tiles/spells/effects/blood_arrow0.png"
+				"dark":      return "res://assets/tiles/spells/effects/bolt0.png"
+				"holy":      return "res://assets/tiles/spells/effects/orb_glow0.png"
+				_:           return "res://assets/tiles/projectiles/drain.png"
+		"spell_axes":
+			# Orbit picks an actual visible axe sprite from the synced
+			# spells/weapons tree. Per-flavor variant: brutal = big
+			# battleaxe, fire = blood-axe, swiftness = small axe, etc.
+			# Pre-2026-06-05 the path pointed at a missing file →
+			# completely invisible orbit. Fixed.
+			match primary:
+				"brutal":    return "res://assets/tiles/spells/weapons/battleaxe.png"
+				"fire":      return "res://assets/tiles/spells/weapons/axe_blood.png"
+				"holy":      return "res://assets/tiles/spells/weapons/axe.png"
+				"swiftness": return "res://assets/tiles/spells/weapons/axe_small.png"
+				"earth":     return "res://assets/tiles/spells/weapons/broad_axe.png"
+				_:           return "res://assets/tiles/spells/weapons/hand_axe_new.png"
+	return ""
+
+# Same idea but returns a path that's verified to exist — falls back
+# through alternates if the primary picks aren't in the project. Used
+# at fire-time so a missing variant doesn't render an invisible spell.
+static func _resolve_sprite_path(item: Dictionary, archetype: String, fallback: String) -> String:
+	var p: String = _visual_sprite_for_item(item, archetype)
+	if p != "" and ResourceLoader.exists(p):
+		return p
+	if fallback != "" and ResourceLoader.exists(fallback):
+		return fallback
+	return ""
 
 # Helper: enemies within `radius_cells` chebyshev of bot. Used by all
 # AoE / range-gated spells.

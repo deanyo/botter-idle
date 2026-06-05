@@ -11,12 +11,15 @@ extends Node2D
 # orbit centers on the bot — even if the bot moves between rooms during
 # the spell's duration.
 
-const HIT_RADIUS_PX := 18.0
-const HIT_INVULN_SEC := 0.3
-const ANGULAR_VELOCITY := 5.5  # rad/sec at base speed
+const HIT_RADIUS_PX := 22.0
+const HIT_INVULN_SEC := 0.25
+# VS-style fast orbit. Was 5.5 rad/sec — felt sluggish. ~7.0 rad/sec
+# completes a revolution in <1s so the axes always read as "orbiting"
+# even on small radii. 2026-06-05.
+const ANGULAR_VELOCITY := 7.0
 # Each axe spins about its own center as it orbits — feels like a real
 # whirling weapon instead of a frozen sprite tracking a circle.
-const SPIN_VELOCITY := 14.0
+const SPIN_VELOCITY := 18.0
 
 var bot_ref: Node = null
 var radius_px: float = 48.0
@@ -26,7 +29,7 @@ var elapsed: float = 0.0
 var angle_offset: float = 0.0
 var axes: Array = []  # [{sprite: Sprite2D, base_angle: float, hits: Dictionary}]
 
-static func spawn_axes(parent: Node, bot: Node, count: int, radius: float, duration: float, dmg: int, tint: Color = Color(1, 1, 1, 1)) -> OrbitController:
+static func spawn_axes(parent: Node, bot: Node, count: int, radius: float, duration: float, dmg: int, tint: Color = Color(1, 1, 1, 1), sprite_path: String = "") -> OrbitController:
 	var ctrl := OrbitController.new()
 	ctrl.bot_ref = bot
 	ctrl.radius_px = radius
@@ -34,8 +37,15 @@ static func spawn_axes(parent: Node, bot: Node, count: int, radius: float, durat
 	ctrl.damage = dmg
 	ctrl.z_index = 11
 	parent.add_child(ctrl)
-	# Build N axe sprites evenly spaced.
-	var axe_tex_path := "res://assets/tiles/items/hand_axe.png"
+	# Build N axe sprites evenly spaced. Caller picks the texture (per
+	# flavor) — fall back to a known-good axe in spells/weapons/. The
+	# old hardcoded res://assets/tiles/items/hand_axe.png was missing,
+	# which made the orbit invisible. 2026-06-05.
+	var axe_tex_path: String = sprite_path
+	if axe_tex_path == "" or not ResourceLoader.exists(axe_tex_path):
+		axe_tex_path = "res://assets/tiles/spells/weapons/hand_axe_new.png"
+	if not ResourceLoader.exists(axe_tex_path):
+		axe_tex_path = "res://assets/tiles/spells/weapons/axe.png"
 	var tex: Texture2D = null
 	if ResourceLoader.exists(axe_tex_path):
 		tex = load(axe_tex_path)
@@ -53,7 +63,11 @@ static func spawn_axes(parent: Node, bot: Node, count: int, radius: float, durat
 		# Bigger sprite + a soft glow trailing the orbit so each axe
 		# reads as a real spinning weapon instead of a tiny moving icon.
 		# Combat-pivot follow-up 2026-06-04.
-		spr.scale = Vector2(1.15, 1.15)
+		# Larger scale — DCSS hand sprites are 32×32, but on the orbit
+		# radius (~48px) a 1× sprite reads tiny. 1.5× makes the axe
+		# silhouette legible while still leaving headroom around the
+		# bot. 2026-06-05 — was 1.15×.
+		spr.scale = Vector2(1.5, 1.5)
 		spr.modulate = resolved_tint
 		ctrl.add_child(spr)
 		# Trailing glow Sprite2D — same texture at lower alpha + bigger
@@ -62,8 +76,8 @@ static func spawn_axes(parent: Node, bot: Node, count: int, radius: float, durat
 		var glow := Sprite2D.new()
 		glow.texture = tex
 		glow.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-		glow.scale = Vector2(1.45, 1.45)
-		glow.modulate = Color(resolved_tint.r, resolved_tint.g, resolved_tint.b, 0.30)
+		glow.scale = Vector2(1.85, 1.85)
+		glow.modulate = Color(resolved_tint.r, resolved_tint.g, resolved_tint.b, 0.35)
 		glow.z_index = -1  # behind the lead axe sprite
 		ctrl.add_child(glow)
 		ctrl.axes.append({
