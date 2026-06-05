@@ -1429,6 +1429,247 @@
         "of_channeling": 12,
         "of_crit": 12
       }
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 12,
+        "of_crit": 12,
+        "of_dex_mastery": 8,
+        "of_finesse": 14,
+        "of_int_mastery": 8,
+        "of_might": 14,
+        "of_quickcast": 12,
+        "of_resonance": 12,
+        "of_str_mastery": 8,
+        "of_the_bear": 22,
+        "of_the_cat": 14,
+        "of_vitality": 18,
+        "of_wisdom": 18
+      },
+      "armor": 10,
+      "base_type": "hood",
+      "default_tint": {
+        "hue": 282.6,
+        "mode": "normal",
+        "sat": 0.66
+      },
+      "drop_weights": [
+        0,
+        12,
+        55,
+        28,
+        8
+      ],
+      "enchant_chance": 0.1,
+      "evasion": 7,
+      "flavor_tags": [
+        "stealth",
+        "psychic",
+        "dark"
+      ],
+      "id": "green_mask_shadowed",
+      "implicit_affixes": [],
+      "item_tier": 3,
+      "lore": "A shadowed reflavor of the standard green mask.",
+      "name": "Shadowed Green Mask",
+      "rarity": "rare",
+      "slot": "helm",
+      "tile": "green_mask.png",
+      "unique": false
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 12,
+        "of_crit": 12,
+        "of_dex_mastery": 8,
+        "of_finesse": 14,
+        "of_int_mastery": 8,
+        "of_might": 14,
+        "of_quickcast": 12,
+        "of_resonance": 12,
+        "of_str_mastery": 8,
+        "of_the_bear": 22,
+        "of_the_cat": 14,
+        "of_vitality": 18,
+        "of_wisdom": 18
+      },
+      "armor": 21,
+      "base_type": "crown",
+      "default_tint": {
+        "hue": 20.5,
+        "mode": "inverted",
+        "sat": 0.841
+      },
+      "drop_weights": [
+        0,
+        0,
+        0,
+        12,
+        70
+      ],
+      "enchant_chance": 0.15,
+      "evasion": 16,
+      "flavor_tags": [
+        "lordly",
+        "wisdom",
+        "shadow"
+      ],
+      "id": "halo_of_ascension_twisted",
+      "implicit_affixes": [],
+      "item_tier": 5,
+      "lore": "A twisted reflavor of the standard halo of ascension.",
+      "name": "Twisted Halo of Ascension",
+      "rarity": "legendary",
+      "slot": "helm",
+      "tile": "helmet_art_3.png",
+      "unique": false
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 12,
+        "of_crit": 12,
+        "of_dex_mastery": 8,
+        "of_finesse": 14,
+        "of_int_mastery": 8,
+        "of_might": 14,
+        "of_quickcast": 12,
+        "of_resonance": 12,
+        "of_str_mastery": 8,
+        "of_the_bear": 22,
+        "of_the_cat": 14,
+        "of_vitality": 18,
+        "of_wisdom": 18
+      },
+      "armor": 15,
+      "base_type": "great_helm",
+      "default_tint": {
+        "hue": 339.9,
+        "mode": "inverted",
+        "sat": 0.826
+      },
+      "drop_weights": [
+        0,
+        0,
+        6,
+        52,
+        38
+      ],
+      "enchant_chance": 0.15,
+      "evasion": 11,
+      "flavor_tags": [
+        "wisdom",
+        "warding"
+      ],
+      "id": "ego_etched_great_helm_inverse",
+      "implicit_affixes": [],
+      "item_tier": 4,
+      "lore": "A inverse reflavor of the standard mage-bound helm.",
+      "name": "Inverse Mage-Bound Helm",
+      "rarity": "legendary",
+      "slot": "helm",
+      "tile": "helmet_ego_1.png",
+      "unique": false
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 12,
+        "of_crit": 12,
+        "of_dex_mastery": 8,
+        "of_finesse": 14,
+        "of_int_mastery": 8,
+        "of_might": 14,
+        "of_quickcast": 12,
+        "of_resonance": 12,
+        "of_str_mastery": 8,
+        "of_the_bear": 22,
+        "of_the_cat": 14,
+        "of_vitality": 18,
+        "of_wisdom": 18
+      },
+      "armor": 24,
+      "base_type": "crown",
+      "default_tint": {
+        "hue": 0.0,
+        "mode": "colorize",
+        "sat": 1.0,
+        "target_rgb": [
+          0.95,
+          0.92,
+          0.78
+        ]
+      },
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        22
+      ],
+      "enchant_chance": 0.0,
+      "evasion": 18,
+      "flavor_tags": [
+        "lordly",
+        "psychic"
+      ],
+      "id": "crown_of_dyrovepreva_bone",
+      "implicit_affixes": [],
+      "item_tier": 5,
+      "lore": "A bone reflavor of the standard crown of dyrovepreva.",
+      "name": "Bone Crown of Dyrovepreva",
+      "rarity": "legendary",
+      "slot": "helm",
+      "tile": "urand_dyrovepreva_new.png",
+      "unique": true
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 12,
+        "of_crit": 12,
+        "of_dex_mastery": 8,
+        "of_finesse": 14,
+        "of_int_mastery": 8,
+        "of_might": 14,
+        "of_quickcast": 12,
+        "of_resonance": 12,
+        "of_str_mastery": 8,
+        "of_the_bear": 22,
+        "of_the_cat": 14,
+        "of_vitality": 18,
+        "of_wisdom": 18
+      },
+      "armor": 7,
+      "base_type": "helmet",
+      "default_tint": {
+        "hue": 0.0,
+        "mode": "colorize",
+        "sat": 1.0,
+        "target_rgb": [
+          0.55,
+          0.58,
+          0.62
+        ]
+      },
+      "drop_weights": [
+        5,
+        50,
+        35,
+        8,
+        2
+      ],
+      "enchant_chance": 0.1,
+      "evasion": 5,
+      "flavor_tags": [
+        "warding"
+      ],
+      "id": "etched_helm_ironclad",
+      "implicit_affixes": [],
+      "item_tier": 2,
+      "lore": "A ironclad reflavor of the standard etched helm.",
+      "name": "Ironclad Etched Helm",
+      "rarity": "rare",
+      "slot": "helm",
+      "tile": "helmet_2_etched.png",
+      "unique": false
     }
   ]
 }

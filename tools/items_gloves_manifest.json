@@ -493,6 +493,207 @@
         "of_channeling": 10,
         "of_velocity": 12
       }
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 10,
+        "of_crit": 18,
+        "of_devotion": 8,
+        "of_embers": 10,
+        "of_finesse": 18,
+        "of_frost": 10,
+        "of_haste": 18,
+        "of_lifesteal": 10,
+        "of_might": 16,
+        "of_shadows": 8,
+        "of_sharpness": 14,
+        "of_storms": 10,
+        "of_the_bear": 14,
+        "of_the_cat": 16,
+        "of_velocity": 12,
+        "of_venom": 8,
+        "of_wisdom": 10
+      },
+      "armor": 3,
+      "base_type": "gloves",
+      "default_tint": {
+        "hue": 0.0,
+        "mode": "colorize",
+        "sat": 1.0,
+        "target_rgb": [
+          0.25,
+          0.2,
+          0.3
+        ]
+      },
+      "drop_weights": [
+        5,
+        40,
+        30,
+        10,
+        0
+      ],
+      "enchant_chance": 0.05,
+      "evasion": 5,
+      "flavor_tags": [
+        "fortified",
+        "shadow"
+      ],
+      "id": "plate_gauntlets_umbral",
+      "implicit_affixes": [],
+      "item_tier": 2,
+      "lore": "A umbral reflavor of the standard plate gauntlets.",
+      "name": "Umbral Plate Gauntlets",
+      "rarity": "rare",
+      "slot": "gloves",
+      "tile": "glove_4_gauntlets.png",
+      "unique": false
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 10,
+        "of_crit": 18,
+        "of_devotion": 8,
+        "of_embers": 10,
+        "of_finesse": 18,
+        "of_frost": 10,
+        "of_haste": 18,
+        "of_lifesteal": 10,
+        "of_might": 16,
+        "of_shadows": 8,
+        "of_sharpness": 14,
+        "of_storms": 10,
+        "of_the_bear": 14,
+        "of_the_cat": 16,
+        "of_velocity": 12,
+        "of_venom": 8,
+        "of_wisdom": 10
+      },
+      "armor": 5,
+      "base_type": "gloves",
+      "default_tint": {
+        "hue": 190.4,
+        "mode": "shimmer",
+        "sat": 0.805
+      },
+      "drop_weights": [
+        0,
+        15,
+        40,
+        30,
+        5
+      ],
+      "enchant_chance": 0.1,
+      "evasion": 7,
+      "flavor_tags": [
+        "fortified",
+        "cold"
+      ],
+      "id": "dwarven_gloves_frostbound",
+      "implicit_affixes": [],
+      "item_tier": 3,
+      "lore": "A frostbound reflavor of the standard dwarven gloves.",
+      "name": "Frostbound Dwarven Gloves",
+      "rarity": "epic",
+      "slot": "gloves",
+      "tile": "glove_1_new.png",
+      "unique": false
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 10,
+        "of_crit": 18,
+        "of_devotion": 8,
+        "of_embers": 10,
+        "of_finesse": 18,
+        "of_frost": 10,
+        "of_haste": 18,
+        "of_lifesteal": 10,
+        "of_might": 16,
+        "of_shadows": 8,
+        "of_sharpness": 14,
+        "of_storms": 10,
+        "of_the_bear": 14,
+        "of_the_cat": 16,
+        "of_velocity": 12,
+        "of_venom": 8,
+        "of_wisdom": 10
+      },
+      "armor": 5,
+      "base_type": "gloves",
+      "default_tint": {
+        "hue": 222.4,
+        "mode": "normal",
+        "sat": 1.003
+      },
+      "drop_weights": [
+        0,
+        15,
+        40,
+        30,
+        5
+      ],
+      "enchant_chance": 0.1,
+      "evasion": 7,
+      "flavor_tags": [
+        "fortified"
+      ],
+      "id": "dwarven_gloves_nightblue",
+      "implicit_affixes": [],
+      "item_tier": 3,
+      "lore": "A nightblue reflavor of the standard dwarven gloves.",
+      "name": "Nightblue Dwarven Gloves",
+      "rarity": "rare",
+      "slot": "gloves",
+      "tile": "glove_1_new.png",
+      "unique": false
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 10,
+        "of_crit": 18,
+        "of_devotion": 8,
+        "of_embers": 10,
+        "of_finesse": 18,
+        "of_frost": 10,
+        "of_haste": 18,
+        "of_lifesteal": 10,
+        "of_might": 16,
+        "of_shadows": 8,
+        "of_sharpness": 14,
+        "of_storms": 10,
+        "of_the_bear": 14,
+        "of_the_cat": 16,
+        "of_velocity": 12,
+        "of_venom": 8,
+        "of_wisdom": 10
+      },
+      "armor": 2,
+      "base_type": "gloves",
+      "default_tint": {
+        "hue": 229.2,
+        "mode": "prismatic",
+        "sat": 1.0
+      },
+      "drop_weights": [
+        40,
+        35,
+        8,
+        0,
+        0
+      ],
+      "enchant_chance": 0.05,
+      "evasion": 3,
+      "flavor_tags": [],
+      "id": "studded_gloves_prismatic",
+      "implicit_affixes": [],
+      "item_tier": 1,
+      "lore": "A prismatic reflavor of the standard studded gloves.",
+      "name": "Prismatic Studded Gloves",
+      "rarity": "rare",
+      "slot": "gloves",
+      "tile": "glove_2_old.png",
+      "unique": false
     }
   ]
 }

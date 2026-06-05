@@ -532,6 +532,212 @@
         "of_haste": 10,
         "of_regen": 8
       }
+    },
+    {
+      "affix_pool": {
+        "of_cold_resist": 14,
+        "of_dark_resist": 8,
+        "of_finesse": 12,
+        "of_fire_resist": 14,
+        "of_haste": 10,
+        "of_holy_resist": 8,
+        "of_lightning_resist": 14,
+        "of_lingering": 14,
+        "of_might": 10,
+        "of_poison_resist": 10,
+        "of_regen": 8,
+        "of_resonance": 12,
+        "of_the_bear": 12,
+        "of_the_cat": 22,
+        "of_vitality": 18,
+        "of_wisdom": 14
+      },
+      "armor": 1,
+      "base_type": "cloak",
+      "default_tint": {
+        "hue": 0.0,
+        "mode": "colorize",
+        "sat": 1.0,
+        "target_rgb": [
+          0.25,
+          0.2,
+          0.3
+        ]
+      },
+      "drop_weights": [
+        50,
+        30,
+        5,
+        0,
+        0
+      ],
+      "enchant_chance": 0.05,
+      "evasion": 6,
+      "flavor_tags": [
+        "shadow"
+      ],
+      "id": "leather_cloak_umbral",
+      "implicit_affixes": [],
+      "item_tier": 1,
+      "lore": "A umbral reflavor of the standard leather cloak.",
+      "name": "Umbral Leather Cloak",
+      "overlay": "cloak_leather",
+      "rarity": "uncommon",
+      "slot": "cloak",
+      "tile": "cloak_1_leather.png",
+      "unique": false
+    },
+    {
+      "affix_pool": {
+        "of_cold_resist": 14,
+        "of_dark_resist": 8,
+        "of_finesse": 12,
+        "of_fire_resist": 14,
+        "of_haste": 10,
+        "of_holy_resist": 8,
+        "of_lightning_resist": 14,
+        "of_lingering": 14,
+        "of_might": 10,
+        "of_poison_resist": 10,
+        "of_regen": 8,
+        "of_resonance": 12,
+        "of_the_bear": 12,
+        "of_the_cat": 22,
+        "of_vitality": 18,
+        "of_wisdom": 14
+      },
+      "armor": 1,
+      "base_type": "cloak",
+      "default_tint": {
+        "hue": 248.7,
+        "mode": "shimmer",
+        "sat": 1.079
+      },
+      "drop_weights": [
+        45,
+        32,
+        8,
+        0,
+        0
+      ],
+      "enchant_chance": 0.05,
+      "evasion": 6,
+      "flavor_tags": [
+        "lightning"
+      ],
+      "id": "travelers_cloak_stormtouched",
+      "implicit_affixes": [],
+      "item_tier": 1,
+      "lore": "A stormtouched reflavor of the standard traveler's cloak.",
+      "name": "Stormtouched Traveler's Cloak",
+      "overlay": "cloak_travelers",
+      "rarity": "uncommon",
+      "slot": "cloak",
+      "tile": "cloak_2.png",
+      "unique": false
+    },
+    {
+      "affix_pool": {
+        "of_cold_resist": 14,
+        "of_dark_resist": 8,
+        "of_finesse": 12,
+        "of_fire_resist": 14,
+        "of_haste": 10,
+        "of_holy_resist": 8,
+        "of_lightning_resist": 14,
+        "of_lingering": 14,
+        "of_might": 10,
+        "of_poison_resist": 10,
+        "of_regen": 8,
+        "of_resonance": 12,
+        "of_the_bear": 12,
+        "of_the_cat": 22,
+        "of_vitality": 18,
+        "of_wisdom": 14
+      },
+      "armor": 1,
+      "base_type": "cloak",
+      "default_tint": {
+        "hue": 0.0,
+        "mode": "colorize",
+        "sat": 1.0,
+        "target_rgb": [
+          0.25,
+          0.2,
+          0.3
+        ]
+      },
+      "drop_weights": [
+        45,
+        32,
+        8,
+        0,
+        0
+      ],
+      "enchant_chance": 0.05,
+      "evasion": 6,
+      "flavor_tags": [
+        "shadow"
+      ],
+      "id": "travelers_cloak_umbral",
+      "implicit_affixes": [],
+      "item_tier": 1,
+      "lore": "A umbral reflavor of the standard traveler's cloak.",
+      "name": "Umbral Traveler's Cloak",
+      "overlay": "cloak_travelers",
+      "rarity": "uncommon",
+      "slot": "cloak",
+      "tile": "cloak_2.png",
+      "unique": false
+    },
+    {
+      "affix_pool": {
+        "of_cold_resist": 14,
+        "of_dark_resist": 8,
+        "of_finesse": 12,
+        "of_fire_resist": 14,
+        "of_haste": 10,
+        "of_holy_resist": 8,
+        "of_lightning_resist": 14,
+        "of_lingering": 14,
+        "of_might": 10,
+        "of_poison_resist": 10,
+        "of_regen": 8,
+        "of_resonance": 12,
+        "of_the_bear": 12,
+        "of_the_cat": 22,
+        "of_vitality": 18,
+        "of_wisdom": 14
+      },
+      "armor": 1,
+      "base_type": "cloak",
+      "default_tint": {
+        "hue": 107.1,
+        "mode": "normal",
+        "sat": 0.793
+      },
+      "drop_weights": [
+        45,
+        32,
+        8,
+        0,
+        0
+      ],
+      "enchant_chance": 0.05,
+      "evasion": 6,
+      "flavor_tags": [
+        "poison"
+      ],
+      "id": "travelers_cloak_mossy",
+      "implicit_affixes": [],
+      "item_tier": 1,
+      "lore": "A mossy reflavor of the standard traveler's cloak.",
+      "name": "Mossy Traveler's Cloak",
+      "overlay": "cloak_travelers",
+      "rarity": "common",
+      "slot": "cloak",
+      "tile": "cloak_2.png",
+      "unique": false
     }
   ]
 }

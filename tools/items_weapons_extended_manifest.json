@@ -2594,6 +2594,409 @@
         "of_channeling": 8,
         "of_quickcast": 8
       }
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 8,
+        "of_crit": 25,
+        "of_devotion": 6,
+        "of_embers": 8,
+        "of_finesse": 15,
+        "of_frost": 8,
+        "of_haste": 20,
+        "of_lifesteal": 15,
+        "of_might": 25,
+        "of_quickcast": 8,
+        "of_shadows": 6,
+        "of_sharpness": 30,
+        "of_storms": 8,
+        "of_venom": 6,
+        "of_wisdom": 10
+      },
+      "base_type": "halberd",
+      "damage_max": 68,
+      "damage_min": 37,
+      "damage_type": "physical",
+      "default_tint": {
+        "hue": 132.4,
+        "mode": "shimmer",
+        "sat": 0.8
+      },
+      "drop_weights": [
+        10,
+        40,
+        30,
+        5,
+        0
+      ],
+      "enchant_chance": 0.05,
+      "flavor_tags": [
+        "ponderous",
+        "poison"
+      ],
+      "id": "halberd_jadeforged",
+      "implicit_affixes": [],
+      "item_tier": 2,
+      "lore": "A jade-forged reflavor of the standard halberd.",
+      "name": "Jade-forged Halberd",
+      "rarity": "rare",
+      "slot": "weapon",
+      "speed": 0.95,
+      "tile": "halberd_1.png",
+      "unique": false,
+      "weapon_class": "2H"
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 8,
+        "of_crit": 25,
+        "of_devotion": 6,
+        "of_embers": 8,
+        "of_finesse": 15,
+        "of_frost": 8,
+        "of_haste": 20,
+        "of_lifesteal": 15,
+        "of_might": 25,
+        "of_quickcast": 8,
+        "of_shadows": 6,
+        "of_sharpness": 30,
+        "of_storms": 8,
+        "of_venom": 6,
+        "of_wisdom": 10
+      },
+      "base_type": "quarterstaff",
+      "damage_max": 43,
+      "damage_min": 25,
+      "damage_type": "physical",
+      "default_tint": {
+        "hue": 223.4,
+        "mode": "normal",
+        "sat": 1.048
+      },
+      "drop_weights": [
+        10,
+        40,
+        30,
+        5,
+        0
+      ],
+      "enchant_chance": 0.05,
+      "flavor_tags": [],
+      "id": "metal_staff_nightblue",
+      "implicit_affixes": [],
+      "item_tier": 2,
+      "lore": "A nightblue reflavor of the standard metal staff.",
+      "name": "Nightblue Metal Staff",
+      "rarity": "uncommon",
+      "slot": "weapon",
+      "speed": 0.8,
+      "tile": "quarterstaff_3.png",
+      "unique": false,
+      "weapon_class": "2H"
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 8,
+        "of_crit": 25,
+        "of_devotion": 6,
+        "of_embers": 8,
+        "of_finesse": 15,
+        "of_frost": 8,
+        "of_haste": 20,
+        "of_lifesteal": 15,
+        "of_might": 25,
+        "of_quickcast": 8,
+        "of_shadows": 6,
+        "of_sharpness": 30,
+        "of_storms": 8,
+        "of_venom": 6,
+        "of_wisdom": 10
+      },
+      "base_type": "broad_axe",
+      "damage_max": 80,
+      "damage_min": 46,
+      "damage_type": "physical",
+      "default_tint": {
+        "hue": 290.0,
+        "mode": "normal",
+        "sat": 0.966
+      },
+      "drop_weights": [
+        10,
+        40,
+        30,
+        5,
+        0
+      ],
+      "enchant_chance": 0.05,
+      "flavor_tags": [
+        "slaying",
+        "dark"
+      ],
+      "id": "broad_axe_voidwrought",
+      "implicit_affixes": [],
+      "item_tier": 2,
+      "lore": "A voidwrought reflavor of the standard broad axe.",
+      "name": "Voidwrought Broad Axe",
+      "rarity": "rare",
+      "slot": "weapon",
+      "speed": 1.15,
+      "tile": "broad_axe_1.png",
+      "unique": false,
+      "weapon_class": "2H"
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 8,
+        "of_crit": 25,
+        "of_devotion": 6,
+        "of_embers": 8,
+        "of_finesse": 15,
+        "of_frost": 8,
+        "of_haste": 20,
+        "of_lifesteal": 15,
+        "of_might": 25,
+        "of_quickcast": 8,
+        "of_shadows": 6,
+        "of_sharpness": 30,
+        "of_storms": 8,
+        "of_venom": 6,
+        "of_wisdom": 10
+      },
+      "base_type": "spear",
+      "damage_max": 53,
+      "damage_min": 29,
+      "damage_type": "physical",
+      "default_tint": {
+        "hue": 119.0,
+        "mode": "normal",
+        "sat": 0.636
+      },
+      "drop_weights": [
+        0,
+        15,
+        40,
+        30,
+        5
+      ],
+      "enchant_chance": 0.1,
+      "flavor_tags": [
+        "poison"
+      ],
+      "id": "steel_spear_mossy",
+      "implicit_affixes": [],
+      "item_tier": 3,
+      "lore": "A mossy reflavor of the standard steel spear.",
+      "name": "Mossy Steel Spear",
+      "rarity": "rare",
+      "slot": "weapon",
+      "speed": 0.7,
+      "tile": "spear_3.png",
+      "unique": false,
+      "weapon_class": "1H"
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 8,
+        "of_crit": 25,
+        "of_devotion": 6,
+        "of_embers": 8,
+        "of_finesse": 15,
+        "of_frost": 8,
+        "of_haste": 20,
+        "of_lifesteal": 15,
+        "of_might": 25,
+        "of_quickcast": 8,
+        "of_shadows": 6,
+        "of_sharpness": 30,
+        "of_storms": 8,
+        "of_venom": 6,
+        "of_wisdom": 10
+      },
+      "base_type": "claymore",
+      "damage_max": 100,
+      "damage_min": 57,
+      "damage_type": "physical",
+      "default_tint": {
+        "hue": 206.0,
+        "mode": "normal",
+        "sat": 1.07
+      },
+      "drop_weights": [
+        0,
+        15,
+        40,
+        30,
+        5
+      ],
+      "enchant_chance": 0.1,
+      "flavor_tags": [
+        "ponderous",
+        "cold"
+      ],
+      "id": "claymore_azure",
+      "implicit_affixes": [],
+      "item_tier": 3,
+      "lore": "A azure reflavor of the standard claymore.",
+      "name": "Azure Claymore",
+      "rarity": "rare",
+      "slot": "weapon",
+      "speed": 1.05,
+      "tile": "claymore.png",
+      "unique": false,
+      "weapon_class": "2H"
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 8,
+        "of_crit": 25,
+        "of_devotion": 6,
+        "of_embers": 8,
+        "of_finesse": 15,
+        "of_frost": 8,
+        "of_haste": 20,
+        "of_lifesteal": 15,
+        "of_might": 25,
+        "of_quickcast": 8,
+        "of_shadows": 6,
+        "of_sharpness": 30,
+        "of_storms": 8,
+        "of_venom": 6,
+        "of_wisdom": 10
+      },
+      "base_type": "hammer",
+      "damage_max": 22,
+      "damage_min": 12,
+      "damage_type": "physical",
+      "default_tint": {
+        "hue": 335.8,
+        "mode": "shimmer",
+        "sat": 0.762
+      },
+      "drop_weights": [
+        10,
+        40,
+        30,
+        5,
+        0
+      ],
+      "enchant_chance": 0.05,
+      "flavor_tags": [
+        "ponderous",
+        "holy"
+      ],
+      "id": "warhammer_rosegold",
+      "implicit_affixes": [],
+      "item_tier": 2,
+      "lore": "A rose-gold reflavor of the standard warhammer.",
+      "name": "Rose-gold Warhammer",
+      "rarity": "rare",
+      "slot": "weapon",
+      "speed": 0.6,
+      "tile": "hammer_2_new.png",
+      "unique": false,
+      "weapon_class": "1H"
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 8,
+        "of_crit": 25,
+        "of_devotion": 6,
+        "of_embers": 8,
+        "of_finesse": 15,
+        "of_frost": 8,
+        "of_haste": 20,
+        "of_lifesteal": 15,
+        "of_might": 25,
+        "of_quickcast": 8,
+        "of_shadows": 6,
+        "of_sharpness": 30,
+        "of_storms": 8,
+        "of_venom": 6,
+        "of_wisdom": 10
+      },
+      "base_type": "greatsword",
+      "damage_max": 62,
+      "damage_min": 34,
+      "damage_type": "physical",
+      "default_tint": {
+        "hue": 141.1,
+        "mode": "shimmer",
+        "sat": 1.011
+      },
+      "drop_weights": [
+        10,
+        40,
+        30,
+        5,
+        0
+      ],
+      "enchant_chance": 0.05,
+      "flavor_tags": [
+        "poison"
+      ],
+      "id": "greatsword_jadeforged",
+      "implicit_affixes": [],
+      "item_tier": 2,
+      "lore": "A jade-forged reflavor of the standard greatsword.",
+      "name": "Jade-forged Greatsword",
+      "rarity": "rare",
+      "slot": "weapon",
+      "speed": 1.0,
+      "tile": "greatsword_1_new.png",
+      "unique": false,
+      "weapon_class": "2H"
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 8,
+        "of_crit": 25,
+        "of_devotion": 6,
+        "of_embers": 8,
+        "of_finesse": 15,
+        "of_frost": 8,
+        "of_haste": 20,
+        "of_lifesteal": 15,
+        "of_might": 25,
+        "of_quickcast": 8,
+        "of_shadows": 6,
+        "of_sharpness": 30,
+        "of_storms": 8,
+        "of_venom": 6,
+        "of_wisdom": 10
+      },
+      "base_type": "bullwhip",
+      "damage_max": 22,
+      "damage_min": 12,
+      "damage_type": "lightning",
+      "default_tint": {
+        "hue": 51.9,
+        "mode": "shimmer",
+        "sat": 0.913
+      },
+      "drop_weights": [
+        10,
+        40,
+        30,
+        5,
+        0
+      ],
+      "enchant_chance": 0.05,
+      "flavor_tags": [
+        "thunderous",
+        "holy"
+      ],
+      "id": "bullwhip_gilded",
+      "implicit_affixes": [],
+      "item_tier": 2,
+      "lore": "A gilded reflavor of the standard bullwhip.",
+      "name": "Gilded Bullwhip",
+      "rarity": "rare",
+      "slot": "weapon",
+      "speed": 0.6,
+      "tile": "bullwhip_old.png",
+      "unique": false,
+      "weapon_class": "1H"
     }
   ]
 }

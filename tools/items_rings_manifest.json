@@ -1836,6 +1836,277 @@
         "of_lifesteal": 10,
         "of_regen": 10
       }
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 14,
+        "of_cold_resist": 8,
+        "of_crit": 16,
+        "of_devotion": 8,
+        "of_embers": 10,
+        "of_finesse": 16,
+        "of_fire_resist": 8,
+        "of_frost": 10,
+        "of_haste": 16,
+        "of_lifesteal": 10,
+        "of_lightning_resist": 8,
+        "of_lingering": 12,
+        "of_might": 16,
+        "of_multicast": 8,
+        "of_quickcast": 14,
+        "of_regen": 10,
+        "of_resonance": 12,
+        "of_shadows": 8,
+        "of_storms": 10,
+        "of_velocity": 10,
+        "of_venom": 8,
+        "of_vitality": 14,
+        "of_wisdom": 16
+      },
+      "base_type": "ring_flight",
+      "default_tint": {
+        "hue": 26.0,
+        "mode": "normal",
+        "sat": 0.752
+      },
+      "drop_weights": [
+        0,
+        0,
+        8,
+        55,
+        38
+      ],
+      "enchant_chance": 0.15,
+      "flavor_tags": [
+        "flying",
+        "swiftness"
+      ],
+      "id": "ring_of_flight_coppersworn",
+      "implicit_affixes": [],
+      "item_tier": 4,
+      "lore": "A coppersworn reflavor of the standard ring of flight.",
+      "name": "Coppersworn Ring of Flight",
+      "rarity": "epic",
+      "slot": "ring",
+      "tile": "ring_gold_white.png",
+      "unique": false
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 14,
+        "of_cold_resist": 8,
+        "of_crit": 16,
+        "of_devotion": 8,
+        "of_embers": 10,
+        "of_finesse": 16,
+        "of_fire_resist": 8,
+        "of_frost": 10,
+        "of_haste": 16,
+        "of_lifesteal": 10,
+        "of_lightning_resist": 8,
+        "of_lingering": 12,
+        "of_might": 16,
+        "of_multicast": 8,
+        "of_quickcast": 14,
+        "of_regen": 10,
+        "of_resonance": 12,
+        "of_shadows": 8,
+        "of_storms": 10,
+        "of_velocity": 10,
+        "of_venom": 8,
+        "of_vitality": 14,
+        "of_wisdom": 16
+      },
+      "base_type": "ring_evasion",
+      "default_tint": {
+        "hue": 95.0,
+        "mode": "normal",
+        "sat": 0.667
+      },
+      "drop_weights": [
+        75,
+        18,
+        2,
+        0,
+        0
+      ],
+      "enchant_chance": 0.05,
+      "flavor_tags": [
+        "footwork",
+        "poison"
+      ],
+      "id": "copper_ring_mossy",
+      "implicit_affixes": [],
+      "item_tier": 1,
+      "lore": "A mossy reflavor of the standard copper ring.",
+      "name": "Mossy Copper Ring",
+      "rarity": "common",
+      "slot": "ring",
+      "tile": "copper.png",
+      "unique": false
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 14,
+        "of_cold_resist": 8,
+        "of_crit": 16,
+        "of_devotion": 8,
+        "of_embers": 10,
+        "of_finesse": 16,
+        "of_fire_resist": 8,
+        "of_frost": 10,
+        "of_haste": 16,
+        "of_lifesteal": 10,
+        "of_lightning_resist": 8,
+        "of_lingering": 12,
+        "of_might": 16,
+        "of_multicast": 8,
+        "of_quickcast": 14,
+        "of_regen": 10,
+        "of_resonance": 12,
+        "of_shadows": 8,
+        "of_storms": 10,
+        "of_velocity": 10,
+        "of_venom": 8,
+        "of_vitality": 14,
+        "of_wisdom": 16
+      },
+      "base_type": "ring_magic",
+      "default_tint": {
+        "hue": 261.7,
+        "mode": "inverted",
+        "sat": 0.901
+      },
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        25
+      ],
+      "enchant_chance": 0.0,
+      "flavor_tags": [
+        "wisdom",
+        "fortune"
+      ],
+      "id": "octoring_inverse",
+      "implicit_affixes": [],
+      "item_tier": 5,
+      "lore": "A inverse reflavor of the standard the octoring.",
+      "name": "Inverse The Octoring",
+      "rarity": "legendary",
+      "slot": "ring",
+      "tile": "urand_octoring.png",
+      "unique": true
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 14,
+        "of_cold_resist": 8,
+        "of_crit": 16,
+        "of_devotion": 8,
+        "of_embers": 10,
+        "of_finesse": 16,
+        "of_fire_resist": 8,
+        "of_frost": 10,
+        "of_haste": 16,
+        "of_lifesteal": 10,
+        "of_lightning_resist": 8,
+        "of_lingering": 12,
+        "of_might": 16,
+        "of_multicast": 8,
+        "of_quickcast": 14,
+        "of_regen": 10,
+        "of_resonance": 12,
+        "of_shadows": 8,
+        "of_storms": 10,
+        "of_velocity": 10,
+        "of_venom": 8,
+        "of_vitality": 14,
+        "of_wisdom": 16
+      },
+      "base_type": "ring_strength",
+      "default_tint": {
+        "hue": 216.7,
+        "mode": "shimmer",
+        "sat": 0.881
+      },
+      "drop_weights": [
+        0,
+        0,
+        8,
+        55,
+        38
+      ],
+      "enchant_chance": 0.15,
+      "flavor_tags": [
+        "slaying",
+        "fire_res",
+        "cold"
+      ],
+      "id": "ruby_ring_frostbound",
+      "implicit_affixes": [],
+      "item_tier": 4,
+      "lore": "A frostbound reflavor of the standard ruby ring.",
+      "name": "Frostbound Ruby Ring",
+      "rarity": "legendary",
+      "slot": "ring",
+      "tile": "ruby.png",
+      "unique": false
+    },
+    {
+      "affix_pool": {
+        "of_channeling": 14,
+        "of_cold_resist": 8,
+        "of_crit": 16,
+        "of_devotion": 8,
+        "of_embers": 10,
+        "of_finesse": 16,
+        "of_fire_resist": 8,
+        "of_frost": 10,
+        "of_haste": 16,
+        "of_lifesteal": 10,
+        "of_lightning_resist": 8,
+        "of_lingering": 12,
+        "of_might": 16,
+        "of_multicast": 8,
+        "of_quickcast": 14,
+        "of_regen": 10,
+        "of_resonance": 12,
+        "of_shadows": 8,
+        "of_storms": 10,
+        "of_velocity": 10,
+        "of_venom": 8,
+        "of_vitality": 14,
+        "of_wisdom": 16
+      },
+      "base_type": "ring_regen",
+      "default_tint": {
+        "hue": 271.7,
+        "mode": "normal",
+        "sat": 0.645
+      },
+      "drop_weights": [
+        0,
+        18,
+        60,
+        22,
+        4
+      ],
+      "enchant_chance": 0.1,
+      "flavor_tags": [
+        "regen",
+        "dark"
+      ],
+      "id": "moonstone_ring_shadowed",
+      "implicit_affixes": [],
+      "item_tier": 3,
+      "lore": "A shadowed reflavor of the standard moonstone ring.",
+      "name": "Shadowed Moonstone Ring",
+      "rarity": "rare",
+      "slot": "ring",
+      "tile": "moonstone.png",
+      "unique": false
     }
   ]
 }
