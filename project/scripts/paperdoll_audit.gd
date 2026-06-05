@@ -222,10 +222,20 @@ func _build_item_cell(item: Dictionary) -> Control:
 	# Build a single-item paperdoll rig, scaled up so the 32×32 art is
 	# legible. Centered in the subviewport.
 	var inst: Dictionary = {"base_id": item_id, "instance_id": "audit_" + item_id, "affixes": []}
-	# Inject the previewed recolor so the rig's _apply_recolor picks it up.
-	var tint: Dictionary = _tint_for_preview(_recolor_preview)
-	if not tint.is_empty():
-		inst["tint"] = tint
+	# Tint resolution priority:
+	#   1. Recolor preview dropdown (when set to anything but "none")
+	#      — lets the user demo what each mode looks like.
+	#   2. Item-authored default_tint from items.json — lets the
+	#      authoring round-trip (set in item editor → see in audit).
+	#   3. No tint — the sprite renders as-is.
+	# 2026-06-05 — was always overwriting authored tint with preview.
+	var preview_tint: Dictionary = _tint_for_preview(_recolor_preview)
+	if not preview_tint.is_empty():
+		inst["tint"] = preview_tint
+	else:
+		var authored: Variant = item.get("default_tint", null)
+		if typeof(authored) == TYPE_DICTIONARY and String(authored.get("mode", "")) != "":
+			inst["tint"] = authored
 	var equipped: Dictionary = {slot_id: inst}
 	# static_only=true skips the infinite-loop glow + hand-enchant
 	# tweens. 250 cells with looping tweens caused 500ms+ click latency

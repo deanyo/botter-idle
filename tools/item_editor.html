@@ -624,8 +624,12 @@ function makeCard(it) {
   const rarityColor = RARITY_COLORS[it.rarity]||'#ccc';
   const textColor = ['common','uncommon','rare'].includes(it.rarity) ? '#000' : '#fff';
 
+  // Apply the authored recolor (default_tint) to the card sprite via
+  // CSS filter so the grid view reflects what the player will see.
+  // Uses recolorPreviewStyle from the recolor section. 2026-06-05.
+  const cardTintStyle = recolorPreviewStyle(it.default_tint || {});
   card.innerHTML = `
-    <div class="sprite-wrap"><img src="${tileUrl(it.tile)}" onerror="if(!this.dataset.f){this.dataset.f='1';this.src='${tileUrlDcssFull(it.tile)}'}else if(!this.dataset.s){this.dataset.s='1';this.src='${tileUrlDcssSupp(it.tile)}'}else{this.src='';this.style.display='none'}"></div>
+    <div class="sprite-wrap"><img style="${cardTintStyle}" src="${tileUrl(it.tile)}" onerror="if(!this.dataset.f){this.dataset.f='1';this.src='${tileUrlDcssFull(it.tile)}'}else if(!this.dataset.s){this.dataset.s='1';this.src='${tileUrlDcssSupp(it.tile)}'}else{this.src='';this.style.display='none'}"></div>
     <div class="card-name">${it.name}</div>
     <div class="card-meta">
       <span class="rarity-pill rarity-${it.rarity}" style="background:${rarityColor};color:${textColor}">${it.rarity}</span>
@@ -750,7 +754,7 @@ function renderEditBody(it) {
 
   body.innerHTML = `
     <div class="edit-sprite-row">
-      <div id="edit-sprite-wrap"><img id="edit-sprite-img" src="${tileUrl(it.tile)}" onerror="if(!this.dataset.f){this.dataset.f='1';this.src='${tileUrlDcssFull(it.tile)}'}else if(!this.dataset.s){this.dataset.s='1';this.src='${tileUrlDcssSupp(it.tile)}'}else{this.src='';this.style.display='none'}"></div>
+      <div id="edit-sprite-wrap"><img id="edit-sprite-img" style="${recolorPreviewStyle(it.default_tint || {})}" src="${tileUrl(it.tile)}" onerror="if(!this.dataset.f){this.dataset.f='1';this.src='${tileUrlDcssFull(it.tile)}'}else if(!this.dataset.s){this.dataset.s='1';this.src='${tileUrlDcssSupp(it.tile)}'}else{this.src='';this.style.display='none'}"></div>
       <div class="right">
         <div class="field-group">
           <label>Sprite filename</label>
@@ -993,11 +997,18 @@ function setRecolorField(id, key, val) {
   it.default_tint[key] = val;
   dirty.add(id);
   // Live-update the preview filter without a full panel rebuild so
-  // the slider drag stays smooth.
-  const img = document.getElementById('recolor-preview-' + id);
-  if (img) {
-    img.style.cssText = 'width:96px;height:96px;image-rendering:pixelated;' + recolorPreviewStyle(it.default_tint);
+  // the slider drag stays smooth. Also updates the big edit-panel
+  // sprite + the card sprite in the grid behind the editor.
+  const styleSuffix = recolorPreviewStyle(it.default_tint);
+  const previewImg = document.getElementById('recolor-preview-' + id);
+  if (previewImg) {
+    previewImg.style.cssText = 'width:96px;height:96px;image-rendering:pixelated;' + styleSuffix;
   }
+  const editImg = document.getElementById('edit-sprite-img');
+  if (editImg) editImg.style.cssText = styleSuffix;
+  // Card sprite in the grid — find the matching card-id img.
+  const cardImg = document.querySelector(`[data-id="${id}"] .sprite-wrap img`);
+  if (cardImg) cardImg.style.cssText = styleSuffix;
 }
 
 function applyEdit() {

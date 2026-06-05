@@ -74,6 +74,13 @@ func _ready() -> void:
 		tex = load(ITEM_TILE_DIR + String(item.tile))
 	if tex:
 		sprite.texture = tex
+	# Per-instance recolor — same shader the inventory cell + paperdoll
+	# use. Items with `default_tint` authored in the item editor (or a
+	# random tint rolled at drop time) display correctly on the floor
+	# pickup. 2026-06-05.
+	var recolor: ShaderMaterial = UITheme.recolor_material_for(instance)
+	if recolor != null:
+		sprite.material = recolor
 	add_child(sprite)
 	# Loot has no overlay stack — pass the sprite itself as both rig and sprite
 	# so loot_pop tweens the sprite directly.

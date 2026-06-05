@@ -5799,6 +5799,11 @@
         "of_holy_resist": 8,
         "of_poison_resist": 10,
         "of_dark_resist": 8
+      },
+      "default_tint": {
+        "hue": 280.0,
+        "sat": 1.1,
+        "mode": "normal"
       }
     },
     {
@@ -5916,6 +5921,11 @@
         "of_holy_resist": 8,
         "of_poison_resist": 10,
         "of_dark_resist": 8
+      },
+      "default_tint": {
+        "hue": 30.0,
+        "sat": 1.15,
+        "mode": "normal"
       }
     },
     {
@@ -5993,6 +6003,11 @@
         "of_holy_resist": 8,
         "of_poison_resist": 10,
         "of_dark_resist": 8
+      },
+      "default_tint": {
+        "hue": 200.0,
+        "sat": 1.1,
+        "mode": "normal"
       }
     },
     {
@@ -6111,6 +6126,11 @@
         "of_holy_resist": 8,
         "of_poison_resist": 10,
         "of_dark_resist": 8
+      },
+      "default_tint": {
+        "hue": 320.0,
+        "sat": 1.2,
+        "mode": "shimmer"
       }
     },
     {
@@ -6150,6 +6170,11 @@
         "of_holy_resist": 8,
         "of_poison_resist": 10,
         "of_dark_resist": 8
+      },
+      "default_tint": {
+        "hue": 130.0,
+        "sat": 1.15,
+        "mode": "inverted"
       }
     },
     {
@@ -6312,6 +6337,11 @@
         "of_holy_resist": 8,
         "of_poison_resist": 10,
         "of_dark_resist": 8
+      },
+      "default_tint": {
+        "hue": 0.0,
+        "sat": 1.2,
+        "mode": "normal"
       }
     },
     {
