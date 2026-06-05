@@ -891,7 +891,28 @@ func update_inventory_segments(segments: Array, items_db: Dictionary, slot_coold
 		var prev_count: int = int(cached.get("count", 0))
 		var new_count: int = items.size()
 		if new_count == prev_count:
-			continue  # no change
+			# Even when the count matches, the CONTENT can have shifted —
+			# equipping a 2H weapon over a shield removes the picked
+			# item AND appends the displaced shield in one tick, leaving
+			# the segment same-size but with a different instance at
+			# multiple indices. Without rebuilding, cell metas point at
+			# stale (seg, item_idx) pairs and the click + drag guards
+			# desync from the data model. 2026-06-05 corruption fix.
+			var prev_ids_eq: Array = cached.get("ids", [])
+			var new_ids_eq: Array = []
+			for it in items:
+				new_ids_eq.append(_inst_key(it))
+			var changed: bool = false
+			if prev_ids_eq.size() != new_ids_eq.size():
+				changed = true
+			else:
+				for k in new_ids_eq.size():
+					if String(prev_ids_eq[k]) != String(new_ids_eq[k]):
+						changed = true
+						break
+			if changed:
+				_rebuild_one_segment(i, segments, items_db, slot_cooldowns)
+			continue
 		if new_count > prev_count:
 			# Growth path. If we already have a grid (segment had items
 			# before), append new cells. If this segment was empty
