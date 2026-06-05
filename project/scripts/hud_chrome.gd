@@ -334,7 +334,6 @@ func _build_sidebar() -> void:
 func _build_paperdoll(sidebar_x0: int, top_y: int, bottom_y: int) -> void:
 	# L-shape: bot sprite top-left, slots run down the right column and across
 	# the bottom row. Slots have no on-screen labels — hover for tooltip.
-	var slot := PAPERDOLL_SLOT_SIZE
 	var inner_w: int = _sidebar_w - SIDEBAR_PAD * 2
 	var header_h: int = 18
 	var gap: int = 6
@@ -343,15 +342,20 @@ func _build_paperdoll(sidebar_x0: int, top_y: int, bottom_y: int) -> void:
 	var doll_top: int = top_y + header_h
 	var doll_left: int = sidebar_x0 + SIDEBAR_PAD
 	var available_h: int = bottom_y - doll_top
-	# Bottom row + spell row each eat slot+gap. Sprite gets whatever's
-	# left, clamped to a sane band so the sprite doesn't disappear on
-	# narrow viewports. UI polish 2026-06-04 — previously the spell
-	# row's height wasn't reserved here, so it overflowed under the bag.
-	var sprite_block_h: int = available_h - (slot + gap) * 2
-	sprite_block_h = clampi(sprite_block_h, 80, 260)
+	# Slot size shrinks to fit BOTH the right column (5 slots) and the
+	# bottom row (5 slots) in the available space. Pre-2026-06-05 was
+	# a hard 56px which silently dropped the lower right-column slots
+	# (gloves/cloak) when sprite_h was constrained. UI polish 2026-06-05.
+	const _RIGHT_COLUMN_COUNT := 5  # PAPERDOLL_RIGHT_COLUMN.size()
+	const _BOTTOM_ROW_COUNT := 5    # PAPERDOLL_BOTTOM_ROW.size()
+	var max_slot_by_w: int = int((inner_w - gap * (_BOTTOM_ROW_COUNT - 1)) / _BOTTOM_ROW_COUNT)
+	# Vertical budget: right column slots + bottom row slot + spell label +
+	# spell slot + 4×gap.
+	var max_slot_by_h: int = int((available_h - 16 - gap * 4) / (_RIGHT_COLUMN_COUNT + 2))
+	var slot: int = clampi(mini(max_slot_by_w, max_slot_by_h), 36, PAPERDOLL_SLOT_SIZE)
 	# Right column width = slot. Sprite width fills remaining inner_w.
 	var sprite_w: int = inner_w - slot - gap
-	var sprite_h: int = sprite_block_h
+	var sprite_h: int = slot * _RIGHT_COLUMN_COUNT + gap * (_RIGHT_COLUMN_COUNT - 1)
 	# Sprite frame top-left
 	var sprite_box := ColorRect.new()
 	sprite_box.color = Color(0, 0, 0, 0.35)
@@ -390,19 +394,16 @@ func _build_paperdoll(sidebar_x0: int, top_y: int, bottom_y: int) -> void:
 			ring_pool_idx += 1
 		else:
 			resolved_bottom.append(sid)
-	# Right column slots.
+	# Right column slots — the slot-shrink math above guarantees fit.
 	var right_x: int = doll_left + sprite_w + gap
-	var col_h_budget: int = sprite_h
-	var col_count: int = mini(resolved_right.size(), maxi(1, col_h_budget / (slot + gap)))
-	for i in col_count:
+	for i in resolved_right.size():
 		var sy_i: int = doll_top + i * (slot + gap)
-		_make_paperdoll_slot(resolved_right[i], right_x, sy_i)
+		_make_paperdoll_slot(resolved_right[i], right_x, sy_i, slot)
 	# Bottom row slots.
 	var row_y: int = doll_top + sprite_h + gap
-	var row_count: int = mini(resolved_bottom.size(), maxi(1, inner_w / (slot + gap)))
-	for i in row_count:
+	for i in resolved_bottom.size():
 		var rx: int = doll_left + i * (slot + gap)
-		_make_paperdoll_slot(resolved_bottom[i], rx, row_y)
+		_make_paperdoll_slot(resolved_bottom[i], rx, row_y, slot)
 	# Spell row — 5 autocast cells under the gear row. They reuse the
 	# same cooldown overlay machinery already wired into _make_paperdoll_slot.
 	# UI polish 2026-06-04: shrink spell cells to fit all 5 across the

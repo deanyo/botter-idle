@@ -272,11 +272,15 @@ func _build_layout() -> void:
 	bg.anchor_right = 1.0
 	bg.anchor_bottom = 1.0
 	add_child(bg)
-	# Title bar.
+	# Title bar — title centered, but constrained between the End-Run
+	# button (left) and Shop button (right) so the buttons can't sit
+	# ON TOP of the title text. UI polish 2026-06-05.
+	const TITLE_LEFT_RESERVE := 140  # End-Run button + padding
+	const TITLE_RIGHT_RESERVE := 140  # Shop button + padding
 	var title := Label.new()
 	title.text = "OUTPOST"
-	title.position = Vector2(0, 12)
-	title.size = Vector2(view.x, 36)
+	title.position = Vector2(TITLE_LEFT_RESERVE, 12)
+	title.size = Vector2(view.x - TITLE_LEFT_RESERVE - TITLE_RIGHT_RESERVE, 36)
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	title.add_theme_font_size_override("font_size", 28)
 	title.add_theme_color_override("font_color", COL_AMBER)
@@ -530,15 +534,33 @@ func _make_panel(x: int, y: int, w: int, h: int, header: String) -> void:
 
 func _build_paperdoll_pane(x: int, y: int, w: int, h: int) -> void:
 	_make_panel(x, y, w, h, "Equipment")
-	var slot := PAPERDOLL_SLOT_SIZE
 	var gap := 8
 	var inner_x := x + 16
 	var inner_y := y + 36
 	var inner_w := w - 32
 	var inner_h := h - 52
+	# Slot size shrinks to fit the right column (5 slots) AND the
+	# bottom row (5 slots). Was a hard 56px which caused gloves to drop
+	# off the right column when sprite_h was constrained, and bottom
+	# row to overflow on narrow panes. UI polish 2026-06-05.
+	# Reserve ~50% of inner_h for the bot sprite + spell row, the rest
+	# for the right column. spell row eats 1 slot+gap+label, bottom
+	# row eats 1 slot+gap.
+	const _RIGHT_COLUMN_COUNT := 5  # PAPERDOLL_RIGHT_COLUMN.size()
+	const _BOTTOM_ROW_COUNT := 5    # PAPERDOLL_BOTTOM_ROW.size()
+	var max_slot_by_w: int = int((inner_w - gap * (_BOTTOM_ROW_COUNT - 1)) / _BOTTOM_ROW_COUNT)
+	# Right column needs to fit 5 slots stacked under the sprite.
+	# Spell row eats slot+label_h+gap below the bottom row. So total
+	# vertical budget is sprite_h + bottom_slot + spell_label_h +
+	# spell_slot + 3×gap.
+	var max_slot_by_h: int = int((inner_h - 16 - gap * 4) / (_RIGHT_COLUMN_COUNT + 2))
+	# This ↑ means: sprite_h ≥ right_col_slots × slot + (n-1)×gap.
+	# We pick a slot size that fits both constraints, then sprite_h
+	# is whatever's left.
+	var slot: int = clampi(mini(max_slot_by_w, max_slot_by_h), 36, PAPERDOLL_SLOT_SIZE)
 	# Sprite top-left, right column slots, bottom row slots.
 	var sprite_w: int = inner_w - slot - gap
-	var sprite_h: int = inner_h - slot - gap
+	var sprite_h: int = slot * _RIGHT_COLUMN_COUNT + gap * (_RIGHT_COLUMN_COUNT - 1)
 	# Bot sprite frame.
 	var sprite_box := ColorRect.new()
 	sprite_box.color = Color(0, 0, 0, 0.35)
@@ -575,16 +597,15 @@ func _build_paperdoll_pane(x: int, y: int, w: int, h: int) -> void:
 			ring_pool_idx += 1
 		else:
 			resolved_bottom.append(sid)
-	# Right column.
+	# Right column. The shrink-to-fit `slot` math above guarantees all
+	# 5 cells fit; no silent clipping.
 	var right_x: int = inner_x + sprite_w + gap
-	var col_count: int = mini(resolved_right.size(), maxi(1, sprite_h / (slot + gap)))
-	for i in col_count:
-		_make_paperdoll_slot(resolved_right[i], right_x, inner_y + i * (slot + gap))
-	# Bottom row.
+	for i in resolved_right.size():
+		_make_paperdoll_slot(resolved_right[i], right_x, inner_y + i * (slot + gap), slot)
+	# Bottom row. Same — slot is sized so the row fits.
 	var row_y: int = inner_y + sprite_h + gap
-	var row_count: int = mini(resolved_bottom.size(), maxi(1, inner_w / (slot + gap)))
-	for i in row_count:
-		_make_paperdoll_slot(resolved_bottom[i], inner_x + i * (slot + gap), row_y)
+	for i in resolved_bottom.size():
+		_make_paperdoll_slot(resolved_bottom[i], inner_x + i * (slot + gap), row_y, slot)
 	# Spell row — 5 autocast cells under the gear row. Wraps to a
 	# second row if the pane is too narrow to fit all 5 across.
 	# UI polish 2026-06-04: previously spell cells overflowed silently
@@ -898,15 +919,23 @@ func _build_inventory_pane(x: int, y: int, w: int, h: int) -> void:
 	var inner_x := x + 12
 	var inner_y := y + 36
 	var inner_w := w - 24
-	# Filter chip row above the grid.
-	var chip_row := HBoxContainer.new()
+	# Filter chip row — wrap into a HFlowContainer so on narrow panes
+	# the dropdowns reflow onto a second line instead of overflowing
+	# off the right edge of the inventory pane. Reserve up to 2 rows
+	# of vertical space for the filters before the grid starts.
+	# UI polish 2026-06-05.
+	var chip_row := HFlowContainer.new()
 	chip_row.position = Vector2(inner_x, inner_y)
-	chip_row.size = Vector2(inner_w, 28)
-	chip_row.add_theme_constant_override("separation", 6)
+	chip_row.size = Vector2(inner_w, 64)  # 2 rows max
+	chip_row.add_theme_constant_override("h_separation", 6)
+	chip_row.add_theme_constant_override("v_separation", 4)
 	add_child(chip_row)
 	_build_filter_chips(chip_row)
-	# Grid sits below the chip row.
-	var grid_y: int = inner_y + 32
+	# Wait one frame for HFlowContainer to lay out, then read its
+	# actual height to position the grid below.
+	# Grid sits below the chip row. Reserve 64px so a wrapped 2-row
+	# chip layout still fits cleanly.
+	var grid_y: int = inner_y + 68
 	var inner_h := h - (grid_y - y) - 12
 	var scroll := ScrollContainer.new()
 	scroll.position = Vector2(inner_x, grid_y)
@@ -958,7 +987,7 @@ const _RARITY_FILTER_OPTIONS := [
 	{ "id": "legendary", "label": "Legendary",    "min_rank": 4 },
 ]
 
-func _build_filter_chips(parent: HBoxContainer) -> void:
+func _build_filter_chips(parent: Container) -> void:
 	# Slot filter dropdown.
 	var slot_opt := OptionButton.new()
 	for i in _SLOT_FILTER_OPTIONS.size():
