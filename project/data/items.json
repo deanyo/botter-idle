@@ -13500,7 +13500,7 @@
       "damage_min": 15,
       "damage_max": 21,
       "damage_type": "fire",
-      "spell_cooldown": 1.6,
+      "spell_cooldown": 27.4,
       "item_tier": 1,
       "flavor_tags": [
         "fire"
@@ -13548,7 +13548,7 @@
       "damage_min": 19,
       "damage_max": 25,
       "damage_type": "physical",
-      "spell_cooldown": 5.0,
+      "spell_cooldown": 34.5,
       "item_tier": 1,
       "flavor_tags": [],
       "lore": "An autocast tome \u2014 pages crackle as the spell readies itself.",
@@ -13595,7 +13595,7 @@
       "damage_min": 22,
       "damage_max": 30,
       "damage_type": "holy",
-      "spell_cooldown": 3.2,
+      "spell_cooldown": 30.7,
       "item_tier": 1,
       "flavor_tags": [
         "holy"
@@ -13643,7 +13643,7 @@
       "damage_min": 14,
       "damage_max": 18,
       "damage_type": "lightning",
-      "spell_cooldown": 2.4,
+      "spell_cooldown": 29.1,
       "item_tier": 1,
       "flavor_tags": [
         "thunderous"
@@ -13691,7 +13691,7 @@
       "damage_min": 18,
       "damage_max": 22,
       "damage_type": "cold",
-      "spell_cooldown": 4.0,
+      "spell_cooldown": 32.4,
       "item_tier": 1,
       "flavor_tags": [
         "cold"
@@ -13740,7 +13740,7 @@
       "damage_min": 15,
       "damage_max": 21,
       "damage_type": "fire",
-      "spell_cooldown": 1.6,
+      "spell_cooldown": 27.4,
       "item_tier": 1,
       "flavor_tags": [
         "fire"
@@ -13788,7 +13788,7 @@
       "damage_min": 19,
       "damage_max": 25,
       "damage_type": "physical",
-      "spell_cooldown": 5.0,
+      "spell_cooldown": 34.5,
       "item_tier": 1,
       "flavor_tags": [
         "earth"
@@ -13837,7 +13837,7 @@
       "damage_min": 19,
       "damage_max": 25,
       "damage_type": "physical",
-      "spell_cooldown": 5.0,
+      "spell_cooldown": 34.5,
       "item_tier": 1,
       "flavor_tags": [
         "brutal"
@@ -13886,7 +13886,7 @@
       "damage_min": 18,
       "damage_max": 22,
       "damage_type": "cold",
-      "spell_cooldown": 4.0,
+      "spell_cooldown": 32.4,
       "item_tier": 1,
       "flavor_tags": [
         "cold"
@@ -13935,7 +13935,7 @@
       "damage_min": 14,
       "damage_max": 18,
       "damage_type": "lightning",
-      "spell_cooldown": 2.4,
+      "spell_cooldown": 29.1,
       "item_tier": 1,
       "flavor_tags": [
         "thunderous"
@@ -13983,7 +13983,7 @@
       "damage_min": 19,
       "damage_max": 25,
       "damage_type": "physical",
-      "spell_cooldown": 5.0,
+      "spell_cooldown": 34.5,
       "item_tier": 1,
       "flavor_tags": [
         "earth"
@@ -14032,7 +14032,7 @@
       "damage_min": 18,
       "damage_max": 22,
       "damage_type": "dark",
-      "spell_cooldown": 4.0,
+      "spell_cooldown": 32.4,
       "item_tier": 1,
       "flavor_tags": [
         "dark"
@@ -14081,7 +14081,7 @@
       "damage_min": 19,
       "damage_max": 25,
       "damage_type": "fire",
-      "spell_cooldown": 5.0,
+      "spell_cooldown": 34.5,
       "item_tier": 1,
       "flavor_tags": [
         "fire"
@@ -14130,7 +14130,7 @@
       "damage_min": 14,
       "damage_max": 18,
       "damage_type": "dark",
-      "spell_cooldown": 2.4,
+      "spell_cooldown": 29.1,
       "item_tier": 1,
       "flavor_tags": [
         "vampiric"
@@ -14178,7 +14178,7 @@
       "damage_min": 18,
       "damage_max": 22,
       "damage_type": "dark",
-      "spell_cooldown": 4.0,
+      "spell_cooldown": 32.4,
       "item_tier": 1,
       "flavor_tags": [
         "dark"
@@ -14227,7 +14227,7 @@
       "damage_min": 22,
       "damage_max": 30,
       "damage_type": "holy",
-      "spell_cooldown": 3.2,
+      "spell_cooldown": 30.7,
       "item_tier": 1,
       "flavor_tags": [
         "holy"
@@ -14275,7 +14275,7 @@
       "damage_min": 15,
       "damage_max": 21,
       "damage_type": "physical",
-      "spell_cooldown": 1.6,
+      "spell_cooldown": 27.4,
       "item_tier": 1,
       "flavor_tags": [
         "arcane"
@@ -14323,7 +14323,7 @@
       "damage_min": 22,
       "damage_max": 30,
       "damage_type": "holy",
-      "spell_cooldown": 3.2,
+      "spell_cooldown": 30.7,
       "item_tier": 1,
       "flavor_tags": [
         "holy"
@@ -14371,7 +14371,7 @@
       "damage_min": 14,
       "damage_max": 18,
       "damage_type": "lightning",
-      "spell_cooldown": 2.4,
+      "spell_cooldown": 29.1,
       "item_tier": 1,
       "flavor_tags": [
         "thunderous"
@@ -14419,7 +14419,7 @@
       "damage_min": 19,
       "damage_max": 25,
       "damage_type": "poison",
-      "spell_cooldown": 5.0,
+      "spell_cooldown": 34.5,
       "item_tier": 1,
       "flavor_tags": [
         "poison"
@@ -14468,7 +14468,7 @@
       "damage_min": 22,
       "damage_max": 34,
       "damage_type": "physical",
-      "spell_cooldown": 5.0,
+      "spell_cooldown": 9.2,
       "item_tier": 5,
       "flavor_tags": [],
       "lore": "Each axe weeps a thin, crimson line through the air.",
@@ -14512,7 +14512,7 @@
       "damage_min": 16,
       "damage_max": 26,
       "damage_type": "fire",
-      "spell_cooldown": 1.6,
+      "spell_cooldown": 7.3,
       "item_tier": 5,
       "flavor_tags": [
         "fire"
@@ -14557,7 +14557,7 @@
       "damage_min": 18,
       "damage_max": 28,
       "damage_type": "cold",
-      "spell_cooldown": 4.0,
+      "spell_cooldown": 8.6,
       "item_tier": 5,
       "flavor_tags": [
         "cold"
@@ -14603,7 +14603,7 @@
       "damage_min": 14,
       "damage_max": 22,
       "damage_type": "lightning",
-      "spell_cooldown": 2.4,
+      "spell_cooldown": 7.7,
       "item_tier": 5,
       "flavor_tags": [
         "lightning"
@@ -14648,7 +14648,7 @@
       "damage_min": 26,
       "damage_max": 38,
       "damage_type": "holy",
-      "spell_cooldown": 4.2,
+      "spell_cooldown": 8.8,
       "item_tier": 5,
       "flavor_tags": [
         "holy"
@@ -14693,7 +14693,7 @@
       "damage_min": 8,
       "damage_max": 11,
       "damage_type": "physical",
-      "spell_cooldown": 0.7,
+      "spell_cooldown": 25.5,
       "item_tier": 1,
       "flavor_tags": [
         "arcane"
@@ -14741,7 +14741,7 @@
       "damage_min": 28,
       "damage_max": 38,
       "damage_type": "physical",
-      "spell_cooldown": 3.5,
+      "spell_cooldown": 23.0,
       "item_tier": 2,
       "flavor_tags": [
         "earth"
@@ -14784,7 +14784,7 @@
       "damage_min": 21,
       "damage_max": 27,
       "damage_type": "physical",
-      "spell_cooldown": 2.6,
+      "spell_cooldown": 29.5,
       "item_tier": 1,
       "flavor_tags": [
         "earth"
@@ -14833,7 +14833,7 @@
       "damage_min": 18,
       "damage_max": 26,
       "damage_type": "dark",
-      "spell_cooldown": 2.4,
+      "spell_cooldown": 21.3,
       "item_tier": 2,
       "flavor_tags": [
         "dark",
@@ -14877,7 +14877,7 @@
       "damage_min": 24,
       "damage_max": 34,
       "damage_type": "physical",
-      "spell_cooldown": 5.0,
+      "spell_cooldown": 18.4,
       "item_tier": 3,
       "flavor_tags": [
         "earth"
@@ -14920,7 +14920,7 @@
       "damage_min": 11,
       "damage_max": 15,
       "damage_type": "physical",
-      "spell_cooldown": 0.7,
+      "spell_cooldown": 10.2,
       "item_tier": 3,
       "flavor_tags": [
         "arcane"
@@ -14965,7 +14965,7 @@
       "damage_min": 36,
       "damage_max": 50,
       "damage_type": "physical",
-      "spell_cooldown": 3.5,
+      "spell_cooldown": 12.5,
       "item_tier": 3,
       "flavor_tags": [
         "earth",
@@ -15011,7 +15011,7 @@
       "damage_min": 24,
       "damage_max": 32,
       "damage_type": "physical",
-      "spell_cooldown": 2.6,
+      "spell_cooldown": 11.8,
       "item_tier": 3,
       "flavor_tags": [
         "earth"
@@ -15057,7 +15057,7 @@
       "damage_min": 22,
       "damage_max": 32,
       "damage_type": "dark",
-      "spell_cooldown": 2.4,
+      "spell_cooldown": 7.7,
       "item_tier": 4,
       "flavor_tags": [
         "dark",
@@ -15103,7 +15103,7 @@
       "damage_min": 28,
       "damage_max": 40,
       "damage_type": "physical",
-      "spell_cooldown": 5.0,
+      "spell_cooldown": 9.2,
       "item_tier": 4,
       "flavor_tags": [
         "earth",
@@ -21823,7 +21823,7 @@
       "damage_min": 15,
       "damage_max": 22,
       "damage_type": "fire",
-      "spell_cooldown": 1.6,
+      "spell_cooldown": 27.4,
       "item_tier": 1,
       "flavor_tags": [
         "fire"
@@ -21871,7 +21871,7 @@
       "damage_min": 15,
       "damage_max": 22,
       "damage_type": "fire",
-      "spell_cooldown": 1.6,
+      "spell_cooldown": 27.4,
       "item_tier": 1,
       "flavor_tags": [
         "fire"
@@ -21919,7 +21919,7 @@
       "damage_min": 15,
       "damage_max": 22,
       "damage_type": "fire",
-      "spell_cooldown": 1.6,
+      "spell_cooldown": 27.4,
       "item_tier": 1,
       "flavor_tags": [
         "fire"
@@ -21967,7 +21967,7 @@
       "damage_min": 15,
       "damage_max": 22,
       "damage_type": "fire",
-      "spell_cooldown": 1.6,
+      "spell_cooldown": 27.4,
       "item_tier": 1,
       "flavor_tags": [
         "fire"
@@ -22015,7 +22015,7 @@
       "damage_min": 15,
       "damage_max": 22,
       "damage_type": "fire",
-      "spell_cooldown": 1.6,
+      "spell_cooldown": 27.4,
       "item_tier": 1,
       "flavor_tags": [
         "fire"
@@ -22063,7 +22063,7 @@
       "damage_min": 17,
       "damage_max": 24,
       "damage_type": "fire",
-      "spell_cooldown": 1.6,
+      "spell_cooldown": 20.1,
       "item_tier": 2,
       "flavor_tags": [
         "fire"
@@ -22111,7 +22111,7 @@
       "damage_min": 17,
       "damage_max": 24,
       "damage_type": "fire",
-      "spell_cooldown": 1.6,
+      "spell_cooldown": 20.1,
       "item_tier": 2,
       "flavor_tags": [
         "fire"
@@ -22159,7 +22159,7 @@
       "damage_min": 17,
       "damage_max": 24,
       "damage_type": "fire",
-      "spell_cooldown": 1.6,
+      "spell_cooldown": 20.1,
       "item_tier": 2,
       "flavor_tags": [
         "fire"
@@ -22207,7 +22207,7 @@
       "damage_min": 17,
       "damage_max": 24,
       "damage_type": "fire",
-      "spell_cooldown": 1.6,
+      "spell_cooldown": 20.1,
       "item_tier": 2,
       "flavor_tags": [
         "fire"
@@ -22255,7 +22255,7 @@
       "damage_min": 19,
       "damage_max": 26,
       "damage_type": "fire",
-      "spell_cooldown": 1.6,
+      "spell_cooldown": 14.6,
       "item_tier": 3,
       "flavor_tags": [
         "fire"
@@ -22303,7 +22303,7 @@
       "damage_min": 19,
       "damage_max": 26,
       "damage_type": "fire",
-      "spell_cooldown": 1.6,
+      "spell_cooldown": 14.6,
       "item_tier": 3,
       "flavor_tags": [
         "fire"
@@ -22351,7 +22351,7 @@
       "damage_min": 19,
       "damage_max": 26,
       "damage_type": "fire",
-      "spell_cooldown": 1.6,
+      "spell_cooldown": 14.6,
       "item_tier": 3,
       "flavor_tags": [
         "fire"
@@ -22399,7 +22399,7 @@
       "damage_min": 21,
       "damage_max": 30,
       "damage_type": "fire",
-      "spell_cooldown": 1.6,
+      "spell_cooldown": 11.0,
       "item_tier": 4,
       "flavor_tags": [
         "fire"
@@ -22447,7 +22447,7 @@
       "damage_min": 24,
       "damage_max": 33,
       "damage_type": "fire",
-      "spell_cooldown": 1.6,
+      "spell_cooldown": 7.3,
       "item_tier": 5,
       "flavor_tags": [
         "fire"
@@ -22495,7 +22495,7 @@
       "damage_min": 19,
       "damage_max": 26,
       "damage_type": "physical",
-      "spell_cooldown": 5.0,
+      "spell_cooldown": 34.5,
       "item_tier": 1,
       "flavor_tags": [],
       "lore": "The diagrams revolve around the reader on their own.",
@@ -22541,7 +22541,7 @@
       "damage_min": 19,
       "damage_max": 26,
       "damage_type": "physical",
-      "spell_cooldown": 5.0,
+      "spell_cooldown": 34.5,
       "item_tier": 1,
       "flavor_tags": [],
       "lore": "Iron filings on the page form an axe-shape, then disperse.",
@@ -22587,7 +22587,7 @@
       "damage_min": 19,
       "damage_max": 26,
       "damage_type": "physical",
-      "spell_cooldown": 5.0,
+      "spell_cooldown": 34.5,
       "item_tier": 1,
       "flavor_tags": [],
       "lore": "The diagrams revolve around the reader on their own.",
@@ -22633,7 +22633,7 @@
       "damage_min": 19,
       "damage_max": 26,
       "damage_type": "physical",
-      "spell_cooldown": 5.0,
+      "spell_cooldown": 34.5,
       "item_tier": 1,
       "flavor_tags": [],
       "lore": "Iron filings on the page form an axe-shape, then disperse.",
@@ -22679,7 +22679,7 @@
       "damage_min": 19,
       "damage_max": 26,
       "damage_type": "physical",
-      "spell_cooldown": 5.0,
+      "spell_cooldown": 34.5,
       "item_tier": 1,
       "flavor_tags": [],
       "lore": "The diagrams revolve around the reader on their own.",
@@ -22725,7 +22725,7 @@
       "damage_min": 20,
       "damage_max": 28,
       "damage_type": "physical",
-      "spell_cooldown": 5.0,
+      "spell_cooldown": 25.3,
       "item_tier": 2,
       "flavor_tags": [],
       "lore": "The diagrams revolve around the reader on their own.",
@@ -22771,7 +22771,7 @@
       "damage_min": 20,
       "damage_max": 28,
       "damage_type": "physical",
-      "spell_cooldown": 5.0,
+      "spell_cooldown": 25.3,
       "item_tier": 2,
       "flavor_tags": [],
       "lore": "The diagrams revolve around the reader on their own.",
@@ -22817,7 +22817,7 @@
       "damage_min": 20,
       "damage_max": 28,
       "damage_type": "physical",
-      "spell_cooldown": 5.0,
+      "spell_cooldown": 25.3,
       "item_tier": 2,
       "flavor_tags": [],
       "lore": "Iron filings on the page form an axe-shape, then disperse.",
@@ -22863,7 +22863,7 @@
       "damage_min": 20,
       "damage_max": 28,
       "damage_type": "physical",
-      "spell_cooldown": 5.0,
+      "spell_cooldown": 25.3,
       "item_tier": 2,
       "flavor_tags": [],
       "lore": "Iron filings on the page form an axe-shape, then disperse.",
@@ -22909,7 +22909,7 @@
       "damage_min": 23,
       "damage_max": 31,
       "damage_type": "physical",
-      "spell_cooldown": 5.0,
+      "spell_cooldown": 18.4,
       "item_tier": 3,
       "flavor_tags": [],
       "lore": "The diagrams revolve around the reader on their own.",
@@ -22955,7 +22955,7 @@
       "damage_min": 23,
       "damage_max": 31,
       "damage_type": "physical",
-      "spell_cooldown": 5.0,
+      "spell_cooldown": 18.4,
       "item_tier": 3,
       "flavor_tags": [],
       "lore": "The diagrams revolve around the reader on their own.",
@@ -23001,7 +23001,7 @@
       "damage_min": 23,
       "damage_max": 31,
       "damage_type": "physical",
-      "spell_cooldown": 5.0,
+      "spell_cooldown": 18.4,
       "item_tier": 3,
       "flavor_tags": [],
       "lore": "Iron filings on the page form an axe-shape, then disperse.",
@@ -23047,7 +23047,7 @@
       "damage_min": 25,
       "damage_max": 36,
       "damage_type": "physical",
-      "spell_cooldown": 5.0,
+      "spell_cooldown": 13.8,
       "item_tier": 4,
       "flavor_tags": [],
       "lore": "The diagrams revolve around the reader on their own.",
@@ -23093,7 +23093,7 @@
       "damage_min": 28,
       "damage_max": 40,
       "damage_type": "physical",
-      "spell_cooldown": 5.0,
+      "spell_cooldown": 9.2,
       "item_tier": 5,
       "flavor_tags": [],
       "lore": "Iron filings on the page form an axe-shape, then disperse.",
@@ -23139,7 +23139,7 @@
       "damage_min": 22,
       "damage_max": 31,
       "damage_type": "holy",
-      "spell_cooldown": 3.2,
+      "spell_cooldown": 30.7,
       "item_tier": 1,
       "flavor_tags": [
         "holy"
@@ -23187,7 +23187,7 @@
       "damage_min": 22,
       "damage_max": 31,
       "damage_type": "holy",
-      "spell_cooldown": 3.2,
+      "spell_cooldown": 30.7,
       "item_tier": 1,
       "flavor_tags": [
         "holy"
@@ -23235,7 +23235,7 @@
       "damage_min": 22,
       "damage_max": 31,
       "damage_type": "holy",
-      "spell_cooldown": 3.2,
+      "spell_cooldown": 30.7,
       "item_tier": 1,
       "flavor_tags": [
         "holy"
@@ -23283,7 +23283,7 @@
       "damage_min": 22,
       "damage_max": 31,
       "damage_type": "holy",
-      "spell_cooldown": 3.2,
+      "spell_cooldown": 30.7,
       "item_tier": 1,
       "flavor_tags": [
         "holy"
@@ -23331,7 +23331,7 @@
       "damage_min": 22,
       "damage_max": 31,
       "damage_type": "holy",
-      "spell_cooldown": 3.2,
+      "spell_cooldown": 30.7,
       "item_tier": 1,
       "flavor_tags": [
         "holy"
@@ -23379,7 +23379,7 @@
       "damage_min": 24,
       "damage_max": 34,
       "damage_type": "holy",
-      "spell_cooldown": 3.2,
+      "spell_cooldown": 22.5,
       "item_tier": 2,
       "flavor_tags": [
         "holy"
@@ -23427,7 +23427,7 @@
       "damage_min": 24,
       "damage_max": 34,
       "damage_type": "holy",
-      "spell_cooldown": 3.2,
+      "spell_cooldown": 22.5,
       "item_tier": 2,
       "flavor_tags": [
         "holy"
@@ -23475,7 +23475,7 @@
       "damage_min": 24,
       "damage_max": 34,
       "damage_type": "holy",
-      "spell_cooldown": 3.2,
+      "spell_cooldown": 22.5,
       "item_tier": 2,
       "flavor_tags": [
         "holy"
@@ -23523,7 +23523,7 @@
       "damage_min": 24,
       "damage_max": 34,
       "damage_type": "holy",
-      "spell_cooldown": 3.2,
+      "spell_cooldown": 22.5,
       "item_tier": 2,
       "flavor_tags": [
         "holy"
@@ -23571,7 +23571,7 @@
       "damage_min": 27,
       "damage_max": 38,
       "damage_type": "holy",
-      "spell_cooldown": 3.2,
+      "spell_cooldown": 16.4,
       "item_tier": 3,
       "flavor_tags": [
         "holy"
@@ -23619,7 +23619,7 @@
       "damage_min": 27,
       "damage_max": 38,
       "damage_type": "holy",
-      "spell_cooldown": 3.2,
+      "spell_cooldown": 16.4,
       "item_tier": 3,
       "flavor_tags": [
         "holy"
@@ -23667,7 +23667,7 @@
       "damage_min": 27,
       "damage_max": 38,
       "damage_type": "holy",
-      "spell_cooldown": 3.2,
+      "spell_cooldown": 16.4,
       "item_tier": 3,
       "flavor_tags": [
         "holy"
@@ -23715,7 +23715,7 @@
       "damage_min": 30,
       "damage_max": 43,
       "damage_type": "holy",
-      "spell_cooldown": 3.2,
+      "spell_cooldown": 12.3,
       "item_tier": 4,
       "flavor_tags": [
         "holy"
@@ -23763,7 +23763,7 @@
       "damage_min": 34,
       "damage_max": 48,
       "damage_type": "holy",
-      "spell_cooldown": 3.2,
+      "spell_cooldown": 8.2,
       "item_tier": 5,
       "flavor_tags": [
         "holy"
@@ -23811,7 +23811,7 @@
       "damage_min": 14,
       "damage_max": 19,
       "damage_type": "lightning",
-      "spell_cooldown": 2.4,
+      "spell_cooldown": 29.1,
       "item_tier": 1,
       "flavor_tags": [
         "thunderous"
@@ -23859,7 +23859,7 @@
       "damage_min": 14,
       "damage_max": 19,
       "damage_type": "lightning",
-      "spell_cooldown": 2.4,
+      "spell_cooldown": 29.1,
       "item_tier": 1,
       "flavor_tags": [
         "thunderous"
@@ -23907,7 +23907,7 @@
       "damage_min": 14,
       "damage_max": 19,
       "damage_type": "lightning",
-      "spell_cooldown": 2.4,
+      "spell_cooldown": 29.1,
       "item_tier": 1,
       "flavor_tags": [
         "thunderous"
@@ -23955,7 +23955,7 @@
       "damage_min": 14,
       "damage_max": 19,
       "damage_type": "lightning",
-      "spell_cooldown": 2.4,
+      "spell_cooldown": 29.1,
       "item_tier": 1,
       "flavor_tags": [
         "thunderous"
@@ -24003,7 +24003,7 @@
       "damage_min": 14,
       "damage_max": 19,
       "damage_type": "lightning",
-      "spell_cooldown": 2.4,
+      "spell_cooldown": 29.1,
       "item_tier": 1,
       "flavor_tags": [
         "thunderous"
@@ -24051,7 +24051,7 @@
       "damage_min": 15,
       "damage_max": 21,
       "damage_type": "lightning",
-      "spell_cooldown": 2.4,
+      "spell_cooldown": 21.3,
       "item_tier": 2,
       "flavor_tags": [
         "thunderous"
@@ -24099,7 +24099,7 @@
       "damage_min": 15,
       "damage_max": 21,
       "damage_type": "lightning",
-      "spell_cooldown": 2.4,
+      "spell_cooldown": 21.3,
       "item_tier": 2,
       "flavor_tags": [
         "thunderous"
@@ -24147,7 +24147,7 @@
       "damage_min": 15,
       "damage_max": 21,
       "damage_type": "lightning",
-      "spell_cooldown": 2.4,
+      "spell_cooldown": 21.3,
       "item_tier": 2,
       "flavor_tags": [
         "thunderous"
@@ -24195,7 +24195,7 @@
       "damage_min": 15,
       "damage_max": 21,
       "damage_type": "lightning",
-      "spell_cooldown": 2.4,
+      "spell_cooldown": 21.3,
       "item_tier": 2,
       "flavor_tags": [
         "thunderous"
@@ -24243,7 +24243,7 @@
       "damage_min": 17,
       "damage_max": 23,
       "damage_type": "lightning",
-      "spell_cooldown": 2.4,
+      "spell_cooldown": 15.5,
       "item_tier": 3,
       "flavor_tags": [
         "thunderous"
@@ -24291,7 +24291,7 @@
       "damage_min": 17,
       "damage_max": 23,
       "damage_type": "lightning",
-      "spell_cooldown": 2.4,
+      "spell_cooldown": 15.5,
       "item_tier": 3,
       "flavor_tags": [
         "thunderous"
@@ -24339,7 +24339,7 @@
       "damage_min": 17,
       "damage_max": 23,
       "damage_type": "lightning",
-      "spell_cooldown": 2.4,
+      "spell_cooldown": 15.5,
       "item_tier": 3,
       "flavor_tags": [
         "thunderous"
@@ -24387,7 +24387,7 @@
       "damage_min": 19,
       "damage_max": 26,
       "damage_type": "lightning",
-      "spell_cooldown": 2.4,
+      "spell_cooldown": 11.6,
       "item_tier": 4,
       "flavor_tags": [
         "thunderous"
@@ -24435,7 +24435,7 @@
       "damage_min": 21,
       "damage_max": 30,
       "damage_type": "lightning",
-      "spell_cooldown": 2.4,
+      "spell_cooldown": 7.7,
       "item_tier": 5,
       "flavor_tags": [
         "thunderous"
@@ -24483,7 +24483,7 @@
       "damage_min": 18,
       "damage_max": 24,
       "damage_type": "cold",
-      "spell_cooldown": 4.0,
+      "spell_cooldown": 32.4,
       "item_tier": 1,
       "flavor_tags": [
         "cold"
@@ -24532,7 +24532,7 @@
       "damage_min": 18,
       "damage_max": 24,
       "damage_type": "cold",
-      "spell_cooldown": 4.0,
+      "spell_cooldown": 32.4,
       "item_tier": 1,
       "flavor_tags": [
         "cold"
@@ -24581,7 +24581,7 @@
       "damage_min": 18,
       "damage_max": 24,
       "damage_type": "cold",
-      "spell_cooldown": 4.0,
+      "spell_cooldown": 32.4,
       "item_tier": 1,
       "flavor_tags": [
         "cold"
@@ -24630,7 +24630,7 @@
       "damage_min": 18,
       "damage_max": 24,
       "damage_type": "cold",
-      "spell_cooldown": 4.0,
+      "spell_cooldown": 32.4,
       "item_tier": 1,
       "flavor_tags": [
         "cold"
@@ -24679,7 +24679,7 @@
       "damage_min": 18,
       "damage_max": 24,
       "damage_type": "cold",
-      "spell_cooldown": 4.0,
+      "spell_cooldown": 32.4,
       "item_tier": 1,
       "flavor_tags": [
         "cold"
@@ -24728,7 +24728,7 @@
       "damage_min": 19,
       "damage_max": 26,
       "damage_type": "cold",
-      "spell_cooldown": 4.0,
+      "spell_cooldown": 23.8,
       "item_tier": 2,
       "flavor_tags": [
         "cold"
@@ -24777,7 +24777,7 @@
       "damage_min": 19,
       "damage_max": 26,
       "damage_type": "cold",
-      "spell_cooldown": 4.0,
+      "spell_cooldown": 23.8,
       "item_tier": 2,
       "flavor_tags": [
         "cold"
@@ -24826,7 +24826,7 @@
       "damage_min": 19,
       "damage_max": 26,
       "damage_type": "cold",
-      "spell_cooldown": 4.0,
+      "spell_cooldown": 23.8,
       "item_tier": 2,
       "flavor_tags": [
         "cold"
@@ -24875,7 +24875,7 @@
       "damage_min": 19,
       "damage_max": 26,
       "damage_type": "cold",
-      "spell_cooldown": 4.0,
+      "spell_cooldown": 23.8,
       "item_tier": 2,
       "flavor_tags": [
         "cold"
@@ -24924,7 +24924,7 @@
       "damage_min": 21,
       "damage_max": 29,
       "damage_type": "cold",
-      "spell_cooldown": 4.0,
+      "spell_cooldown": 17.3,
       "item_tier": 3,
       "flavor_tags": [
         "cold"
@@ -24973,7 +24973,7 @@
       "damage_min": 21,
       "damage_max": 29,
       "damage_type": "cold",
-      "spell_cooldown": 4.0,
+      "spell_cooldown": 17.3,
       "item_tier": 3,
       "flavor_tags": [
         "cold"
@@ -25022,7 +25022,7 @@
       "damage_min": 21,
       "damage_max": 29,
       "damage_type": "cold",
-      "spell_cooldown": 4.0,
+      "spell_cooldown": 17.3,
       "item_tier": 3,
       "flavor_tags": [
         "cold"
@@ -25071,7 +25071,7 @@
       "damage_min": 24,
       "damage_max": 32,
       "damage_type": "cold",
-      "spell_cooldown": 4.0,
+      "spell_cooldown": 13.0,
       "item_tier": 4,
       "flavor_tags": [
         "cold"
@@ -25120,7 +25120,7 @@
       "damage_min": 26,
       "damage_max": 38,
       "damage_type": "cold",
-      "spell_cooldown": 4.0,
+      "spell_cooldown": 8.6,
       "item_tier": 5,
       "flavor_tags": [
         "cold"
@@ -25169,7 +25169,7 @@
       "damage_min": 8,
       "damage_max": 11,
       "damage_type": "physical",
-      "spell_cooldown": 0.7,
+      "spell_cooldown": 25.5,
       "item_tier": 1,
       "flavor_tags": [],
       "lore": "The simplest cantrip. A dart of focused will.",
@@ -25214,7 +25214,7 @@
       "damage_min": 8,
       "damage_max": 11,
       "damage_type": "physical",
-      "spell_cooldown": 0.7,
+      "spell_cooldown": 25.5,
       "item_tier": 1,
       "flavor_tags": [],
       "lore": "The simplest cantrip. A dart of focused will.",
@@ -25259,7 +25259,7 @@
       "damage_min": 8,
       "damage_max": 11,
       "damage_type": "physical",
-      "spell_cooldown": 0.7,
+      "spell_cooldown": 25.5,
       "item_tier": 1,
       "flavor_tags": [],
       "lore": "The simplest cantrip. A dart of focused will.",
@@ -25304,7 +25304,7 @@
       "damage_min": 8,
       "damage_max": 11,
       "damage_type": "physical",
-      "spell_cooldown": 0.7,
+      "spell_cooldown": 25.5,
       "item_tier": 1,
       "flavor_tags": [],
       "lore": "Apprentices learn this first; masters never stop using it.",
@@ -25349,7 +25349,7 @@
       "damage_min": 8,
       "damage_max": 11,
       "damage_type": "physical",
-      "spell_cooldown": 0.7,
+      "spell_cooldown": 25.5,
       "item_tier": 1,
       "flavor_tags": [],
       "lore": "The simplest cantrip. A dart of focused will.",
@@ -25394,7 +25394,7 @@
       "damage_min": 8,
       "damage_max": 12,
       "damage_type": "physical",
-      "spell_cooldown": 0.7,
+      "spell_cooldown": 18.7,
       "item_tier": 2,
       "flavor_tags": [],
       "lore": "Apprentices learn this first; masters never stop using it.",
@@ -25439,7 +25439,7 @@
       "damage_min": 8,
       "damage_max": 12,
       "damage_type": "physical",
-      "spell_cooldown": 0.7,
+      "spell_cooldown": 18.7,
       "item_tier": 2,
       "flavor_tags": [],
       "lore": "Apprentices learn this first; masters never stop using it.",
@@ -25484,7 +25484,7 @@
       "damage_min": 8,
       "damage_max": 12,
       "damage_type": "physical",
-      "spell_cooldown": 0.7,
+      "spell_cooldown": 18.7,
       "item_tier": 2,
       "flavor_tags": [],
       "lore": "Apprentices learn this first; masters never stop using it.",
@@ -25529,7 +25529,7 @@
       "damage_min": 8,
       "damage_max": 12,
       "damage_type": "physical",
-      "spell_cooldown": 0.7,
+      "spell_cooldown": 18.7,
       "item_tier": 2,
       "flavor_tags": [],
       "lore": "Apprentices learn this first; masters never stop using it.",
@@ -25574,7 +25574,7 @@
       "damage_min": 9,
       "damage_max": 13,
       "damage_type": "physical",
-      "spell_cooldown": 0.7,
+      "spell_cooldown": 13.6,
       "item_tier": 3,
       "flavor_tags": [],
       "lore": "The simplest cantrip. A dart of focused will.",
@@ -25619,7 +25619,7 @@
       "damage_min": 9,
       "damage_max": 13,
       "damage_type": "physical",
-      "spell_cooldown": 0.7,
+      "spell_cooldown": 13.6,
       "item_tier": 3,
       "flavor_tags": [],
       "lore": "The simplest cantrip. A dart of focused will.",
@@ -25664,7 +25664,7 @@
       "damage_min": 9,
       "damage_max": 13,
       "damage_type": "physical",
-      "spell_cooldown": 0.7,
+      "spell_cooldown": 13.6,
       "item_tier": 3,
       "flavor_tags": [],
       "lore": "The simplest cantrip. A dart of focused will.",
@@ -25709,7 +25709,7 @@
       "damage_min": 11,
       "damage_max": 15,
       "damage_type": "physical",
-      "spell_cooldown": 0.7,
+      "spell_cooldown": 10.2,
       "item_tier": 4,
       "flavor_tags": [],
       "lore": "Apprentices learn this first; masters never stop using it.",
@@ -25754,7 +25754,7 @@
       "damage_min": 12,
       "damage_max": 17,
       "damage_type": "physical",
-      "spell_cooldown": 0.7,
+      "spell_cooldown": 6.8,
       "item_tier": 5,
       "flavor_tags": [],
       "lore": "The simplest cantrip. A dart of focused will.",
@@ -25799,7 +25799,7 @@
       "damage_min": 27,
       "damage_max": 38,
       "damage_type": "physical",
-      "spell_cooldown": 3.5,
+      "spell_cooldown": 31.4,
       "item_tier": 1,
       "flavor_tags": [],
       "lore": "A round of inscribed iron, fired through the ranks.",
@@ -25844,7 +25844,7 @@
       "damage_min": 27,
       "damage_max": 38,
       "damage_type": "physical",
-      "spell_cooldown": 3.5,
+      "spell_cooldown": 31.4,
       "item_tier": 1,
       "flavor_tags": [],
       "lore": "The page sags slightly under its own implied weight.",
@@ -25889,7 +25889,7 @@
       "damage_min": 27,
       "damage_max": 38,
       "damage_type": "physical",
-      "spell_cooldown": 3.5,
+      "spell_cooldown": 31.4,
       "item_tier": 1,
       "flavor_tags": [],
       "lore": "A round of inscribed iron, fired through the ranks.",
@@ -25934,7 +25934,7 @@
       "damage_min": 27,
       "damage_max": 38,
       "damage_type": "physical",
-      "spell_cooldown": 3.5,
+      "spell_cooldown": 31.4,
       "item_tier": 1,
       "flavor_tags": [],
       "lore": "The page sags slightly under its own implied weight.",
@@ -25979,7 +25979,7 @@
       "damage_min": 27,
       "damage_max": 38,
       "damage_type": "physical",
-      "spell_cooldown": 3.5,
+      "spell_cooldown": 31.4,
       "item_tier": 1,
       "flavor_tags": [],
       "lore": "A round of inscribed iron, fired through the ranks.",
@@ -26024,7 +26024,7 @@
       "damage_min": 30,
       "damage_max": 42,
       "damage_type": "physical",
-      "spell_cooldown": 3.5,
+      "spell_cooldown": 23.0,
       "item_tier": 2,
       "flavor_tags": [],
       "lore": "The page sags slightly under its own implied weight.",
@@ -26069,7 +26069,7 @@
       "damage_min": 30,
       "damage_max": 42,
       "damage_type": "physical",
-      "spell_cooldown": 3.5,
+      "spell_cooldown": 23.0,
       "item_tier": 2,
       "flavor_tags": [],
       "lore": "The page sags slightly under its own implied weight.",
@@ -26114,7 +26114,7 @@
       "damage_min": 30,
       "damage_max": 42,
       "damage_type": "physical",
-      "spell_cooldown": 3.5,
+      "spell_cooldown": 23.0,
       "item_tier": 2,
       "flavor_tags": [],
       "lore": "The page sags slightly under its own implied weight.",
@@ -26159,7 +26159,7 @@
       "damage_min": 30,
       "damage_max": 42,
       "damage_type": "physical",
-      "spell_cooldown": 3.5,
+      "spell_cooldown": 23.0,
       "item_tier": 2,
       "flavor_tags": [],
       "lore": "The page sags slightly under its own implied weight.",
@@ -26204,7 +26204,7 @@
       "damage_min": 33,
       "damage_max": 47,
       "damage_type": "physical",
-      "spell_cooldown": 3.5,
+      "spell_cooldown": 16.7,
       "item_tier": 3,
       "flavor_tags": [],
       "lore": "The page sags slightly under its own implied weight.",
@@ -26249,7 +26249,7 @@
       "damage_min": 33,
       "damage_max": 47,
       "damage_type": "physical",
-      "spell_cooldown": 3.5,
+      "spell_cooldown": 16.7,
       "item_tier": 3,
       "flavor_tags": [],
       "lore": "A round of inscribed iron, fired through the ranks.",
@@ -26294,7 +26294,7 @@
       "damage_min": 33,
       "damage_max": 47,
       "damage_type": "physical",
-      "spell_cooldown": 3.5,
+      "spell_cooldown": 16.7,
       "item_tier": 3,
       "flavor_tags": [],
       "lore": "A round of inscribed iron, fired through the ranks.",
@@ -26339,7 +26339,7 @@
       "damage_min": 38,
       "damage_max": 53,
       "damage_type": "physical",
-      "spell_cooldown": 3.5,
+      "spell_cooldown": 12.5,
       "item_tier": 4,
       "flavor_tags": [],
       "lore": "A round of inscribed iron, fired through the ranks.",
@@ -26384,7 +26384,7 @@
       "damage_min": 42,
       "damage_max": 60,
       "damage_type": "physical",
-      "spell_cooldown": 3.5,
+      "spell_cooldown": 8.4,
       "item_tier": 5,
       "flavor_tags": [],
       "lore": "The page sags slightly under its own implied weight.",
@@ -26429,7 +26429,7 @@
       "damage_min": 21,
       "damage_max": 29,
       "damage_type": "physical",
-      "spell_cooldown": 2.6,
+      "spell_cooldown": 29.5,
       "item_tier": 1,
       "flavor_tags": [],
       "lore": "A pinch of grit pours from the pages whenever opened.",
@@ -26475,7 +26475,7 @@
       "damage_min": 21,
       "damage_max": 29,
       "damage_type": "physical",
-      "spell_cooldown": 2.6,
+      "spell_cooldown": 29.5,
       "item_tier": 1,
       "flavor_tags": [],
       "lore": "A pinch of grit pours from the pages whenever opened.",
@@ -26521,7 +26521,7 @@
       "damage_min": 21,
       "damage_max": 29,
       "damage_type": "physical",
-      "spell_cooldown": 2.6,
+      "spell_cooldown": 29.5,
       "item_tier": 1,
       "flavor_tags": [],
       "lore": "A pinch of grit pours from the pages whenever opened.",
@@ -26567,7 +26567,7 @@
       "damage_min": 21,
       "damage_max": 29,
       "damage_type": "physical",
-      "spell_cooldown": 2.6,
+      "spell_cooldown": 29.5,
       "item_tier": 1,
       "flavor_tags": [],
       "lore": "Reading aloud kicks up a fine dust at one's feet.",
@@ -26613,7 +26613,7 @@
       "damage_min": 21,
       "damage_max": 29,
       "damage_type": "physical",
-      "spell_cooldown": 2.6,
+      "spell_cooldown": 29.5,
       "item_tier": 1,
       "flavor_tags": [],
       "lore": "Reading aloud kicks up a fine dust at one's feet.",
@@ -26659,7 +26659,7 @@
       "damage_min": 22,
       "damage_max": 32,
       "damage_type": "physical",
-      "spell_cooldown": 2.6,
+      "spell_cooldown": 21.6,
       "item_tier": 2,
       "flavor_tags": [],
       "lore": "A pinch of grit pours from the pages whenever opened.",
@@ -26705,7 +26705,7 @@
       "damage_min": 22,
       "damage_max": 32,
       "damage_type": "physical",
-      "spell_cooldown": 2.6,
+      "spell_cooldown": 21.6,
       "item_tier": 2,
       "flavor_tags": [],
       "lore": "A pinch of grit pours from the pages whenever opened.",
@@ -26751,7 +26751,7 @@
       "damage_min": 22,
       "damage_max": 32,
       "damage_type": "physical",
-      "spell_cooldown": 2.6,
+      "spell_cooldown": 21.6,
       "item_tier": 2,
       "flavor_tags": [],
       "lore": "Reading aloud kicks up a fine dust at one's feet.",
@@ -26797,7 +26797,7 @@
       "damage_min": 22,
       "damage_max": 32,
       "damage_type": "physical",
-      "spell_cooldown": 2.6,
+      "spell_cooldown": 21.6,
       "item_tier": 2,
       "flavor_tags": [],
       "lore": "A pinch of grit pours from the pages whenever opened.",
@@ -26843,7 +26843,7 @@
       "damage_min": 25,
       "damage_max": 35,
       "damage_type": "physical",
-      "spell_cooldown": 2.6,
+      "spell_cooldown": 15.7,
       "item_tier": 3,
       "flavor_tags": [],
       "lore": "Reading aloud kicks up a fine dust at one's feet.",
@@ -26889,7 +26889,7 @@
       "damage_min": 25,
       "damage_max": 35,
       "damage_type": "physical",
-      "spell_cooldown": 2.6,
+      "spell_cooldown": 15.7,
       "item_tier": 3,
       "flavor_tags": [],
       "lore": "A pinch of grit pours from the pages whenever opened.",
@@ -26935,7 +26935,7 @@
       "damage_min": 25,
       "damage_max": 35,
       "damage_type": "physical",
-      "spell_cooldown": 2.6,
+      "spell_cooldown": 15.7,
       "item_tier": 3,
       "flavor_tags": [],
       "lore": "Reading aloud kicks up a fine dust at one's feet.",
@@ -26981,7 +26981,7 @@
       "damage_min": 28,
       "damage_max": 40,
       "damage_type": "physical",
-      "spell_cooldown": 2.6,
+      "spell_cooldown": 11.8,
       "item_tier": 4,
       "flavor_tags": [],
       "lore": "Reading aloud kicks up a fine dust at one's feet.",
@@ -27027,7 +27027,7 @@
       "damage_min": 32,
       "damage_max": 45,
       "damage_type": "physical",
-      "spell_cooldown": 2.6,
+      "spell_cooldown": 7.9,
       "item_tier": 5,
       "flavor_tags": [],
       "lore": "A pinch of grit pours from the pages whenever opened.",
@@ -27073,7 +27073,7 @@
       "damage_min": 19,
       "damage_max": 26,
       "damage_type": "dark",
-      "spell_cooldown": 2.4,
+      "spell_cooldown": 29.1,
       "item_tier": 1,
       "flavor_tags": [
         "dark"
@@ -27121,7 +27121,7 @@
       "damage_min": 19,
       "damage_max": 26,
       "damage_type": "dark",
-      "spell_cooldown": 2.4,
+      "spell_cooldown": 29.1,
       "item_tier": 1,
       "flavor_tags": [
         "dark"
@@ -27169,7 +27169,7 @@
       "damage_min": 19,
       "damage_max": 26,
       "damage_type": "dark",
-      "spell_cooldown": 2.4,
+      "spell_cooldown": 29.1,
       "item_tier": 1,
       "flavor_tags": [
         "dark"
@@ -27217,7 +27217,7 @@
       "damage_min": 19,
       "damage_max": 26,
       "damage_type": "dark",
-      "spell_cooldown": 2.4,
+      "spell_cooldown": 29.1,
       "item_tier": 1,
       "flavor_tags": [
         "dark"
@@ -27265,7 +27265,7 @@
       "damage_min": 19,
       "damage_max": 26,
       "damage_type": "dark",
-      "spell_cooldown": 2.4,
+      "spell_cooldown": 29.1,
       "item_tier": 1,
       "flavor_tags": [
         "dark"
@@ -27313,7 +27313,7 @@
       "damage_min": 21,
       "damage_max": 29,
       "damage_type": "dark",
-      "spell_cooldown": 2.4,
+      "spell_cooldown": 21.3,
       "item_tier": 2,
       "flavor_tags": [
         "dark"
@@ -27361,7 +27361,7 @@
       "damage_min": 21,
       "damage_max": 29,
       "damage_type": "dark",
-      "spell_cooldown": 2.4,
+      "spell_cooldown": 21.3,
       "item_tier": 2,
       "flavor_tags": [
         "dark"
@@ -27409,7 +27409,7 @@
       "damage_min": 21,
       "damage_max": 29,
       "damage_type": "dark",
-      "spell_cooldown": 2.4,
+      "spell_cooldown": 21.3,
       "item_tier": 2,
       "flavor_tags": [
         "dark"
@@ -27457,7 +27457,7 @@
       "damage_min": 21,
       "damage_max": 29,
       "damage_type": "dark",
-      "spell_cooldown": 2.4,
+      "spell_cooldown": 21.3,
       "item_tier": 2,
       "flavor_tags": [
         "dark"
@@ -27505,7 +27505,7 @@
       "damage_min": 23,
       "damage_max": 32,
       "damage_type": "dark",
-      "spell_cooldown": 2.4,
+      "spell_cooldown": 15.5,
       "item_tier": 3,
       "flavor_tags": [
         "dark"
@@ -27553,7 +27553,7 @@
       "damage_min": 23,
       "damage_max": 32,
       "damage_type": "dark",
-      "spell_cooldown": 2.4,
+      "spell_cooldown": 15.5,
       "item_tier": 3,
       "flavor_tags": [
         "dark"
@@ -27601,7 +27601,7 @@
       "damage_min": 23,
       "damage_max": 32,
       "damage_type": "dark",
-      "spell_cooldown": 2.4,
+      "spell_cooldown": 15.5,
       "item_tier": 3,
       "flavor_tags": [
         "dark"
@@ -27649,7 +27649,7 @@
       "damage_min": 26,
       "damage_max": 36,
       "damage_type": "dark",
-      "spell_cooldown": 2.4,
+      "spell_cooldown": 11.6,
       "item_tier": 4,
       "flavor_tags": [
         "dark"
@@ -27697,7 +27697,7 @@
       "damage_min": 29,
       "damage_max": 41,
       "damage_type": "dark",
-      "spell_cooldown": 2.4,
+      "spell_cooldown": 7.7,
       "item_tier": 5,
       "flavor_tags": [
         "dark"
@@ -27745,7 +27745,7 @@
       "damage_min": 24,
       "damage_max": 34,
       "damage_type": "physical",
-      "spell_cooldown": 5.0,
+      "spell_cooldown": 34.5,
       "item_tier": 1,
       "flavor_tags": [],
       "lore": "Hold the page wrong and the cover cracks down the middle.",
@@ -27790,7 +27790,7 @@
       "damage_min": 24,
       "damage_max": 34,
       "damage_type": "physical",
-      "spell_cooldown": 5.0,
+      "spell_cooldown": 34.5,
       "item_tier": 1,
       "flavor_tags": [],
       "lore": "Hold the page wrong and the cover cracks down the middle.",
@@ -27835,7 +27835,7 @@
       "damage_min": 24,
       "damage_max": 34,
       "damage_type": "physical",
-      "spell_cooldown": 5.0,
+      "spell_cooldown": 34.5,
       "item_tier": 1,
       "flavor_tags": [],
       "lore": "A radial shockwave that bypasses armour and strikes bone.",
@@ -27880,7 +27880,7 @@
       "damage_min": 24,
       "damage_max": 34,
       "damage_type": "physical",
-      "spell_cooldown": 5.0,
+      "spell_cooldown": 34.5,
       "item_tier": 1,
       "flavor_tags": [],
       "lore": "Hold the page wrong and the cover cracks down the middle.",
@@ -27925,7 +27925,7 @@
       "damage_min": 24,
       "damage_max": 34,
       "damage_type": "physical",
-      "spell_cooldown": 5.0,
+      "spell_cooldown": 34.5,
       "item_tier": 1,
       "flavor_tags": [],
       "lore": "Hold the page wrong and the cover cracks down the middle.",
@@ -27970,7 +27970,7 @@
       "damage_min": 26,
       "damage_max": 37,
       "damage_type": "physical",
-      "spell_cooldown": 5.0,
+      "spell_cooldown": 25.3,
       "item_tier": 2,
       "flavor_tags": [],
       "lore": "Hold the page wrong and the cover cracks down the middle.",
@@ -28015,7 +28015,7 @@
       "damage_min": 26,
       "damage_max": 37,
       "damage_type": "physical",
-      "spell_cooldown": 5.0,
+      "spell_cooldown": 25.3,
       "item_tier": 2,
       "flavor_tags": [],
       "lore": "A radial shockwave that bypasses armour and strikes bone.",
@@ -28060,7 +28060,7 @@
       "damage_min": 26,
       "damage_max": 37,
       "damage_type": "physical",
-      "spell_cooldown": 5.0,
+      "spell_cooldown": 25.3,
       "item_tier": 2,
       "flavor_tags": [],
       "lore": "A radial shockwave that bypasses armour and strikes bone.",
@@ -28105,7 +28105,7 @@
       "damage_min": 26,
       "damage_max": 37,
       "damage_type": "physical",
-      "spell_cooldown": 5.0,
+      "spell_cooldown": 25.3,
       "item_tier": 2,
       "flavor_tags": [],
       "lore": "A radial shockwave that bypasses armour and strikes bone.",
@@ -28150,7 +28150,7 @@
       "damage_min": 29,
       "damage_max": 41,
       "damage_type": "physical",
-      "spell_cooldown": 5.0,
+      "spell_cooldown": 18.4,
       "item_tier": 3,
       "flavor_tags": [],
       "lore": "A radial shockwave that bypasses armour and strikes bone.",
@@ -28195,7 +28195,7 @@
       "damage_min": 29,
       "damage_max": 41,
       "damage_type": "physical",
-      "spell_cooldown": 5.0,
+      "spell_cooldown": 18.4,
       "item_tier": 3,
       "flavor_tags": [],
       "lore": "A radial shockwave that bypasses armour and strikes bone.",
@@ -28240,7 +28240,7 @@
       "damage_min": 29,
       "damage_max": 41,
       "damage_type": "physical",
-      "spell_cooldown": 5.0,
+      "spell_cooldown": 18.4,
       "item_tier": 3,
       "flavor_tags": [],
       "lore": "A radial shockwave that bypasses armour and strikes bone.",
@@ -28285,7 +28285,7 @@
       "damage_min": 33,
       "damage_max": 46,
       "damage_type": "physical",
-      "spell_cooldown": 5.0,
+      "spell_cooldown": 13.8,
       "item_tier": 4,
       "flavor_tags": [],
       "lore": "Hold the page wrong and the cover cracks down the middle.",
@@ -28330,7 +28330,7 @@
       "damage_min": 37,
       "damage_max": 52,
       "damage_type": "physical",
-      "spell_cooldown": 5.0,
+      "spell_cooldown": 9.2,
       "item_tier": 5,
       "flavor_tags": [],
       "lore": "A radial shockwave that bypasses armour and strikes bone.",

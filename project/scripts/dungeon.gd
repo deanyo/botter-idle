@@ -2005,9 +2005,19 @@ func _maybe_drop_item(e: Enemy) -> void:
 	if e.is_boss:
 		drop_count = int(round(RunModifiers.sum_effect(active_modifiers, "boss_loot_mult", 1.0)))
 		drop_count = maxi(drop_count, 1)
+	# Spell drops gated to magic/rare/miniboss/boss. Common mobs never
+	# drop spell tomes — the user explicitly: "spells should be
+	# separated, only drop from rares/bosses." Pre-fix a fresh run
+	# could fill all 5 spell slots from common-mob trash drops.
+	var allow_spell: bool = (
+		e.is_boss
+		or e.is_miniboss
+		or e.pack_tier == Enemy.PACK_RARE
+		or e.pack_tier == Enemy.PACK_MAGIC
+	)
 	for _i in drop_count:
 		var rarity: String = _roll_rarity(e.is_boss or e.is_miniboss or e.pack_tier == Enemy.PACK_RARE)
-		var picked: String = _pick_loot_id(rarity)
+		var picked: String = _pick_loot_id(rarity, allow_spell)
 		if picked == "":
 			continue
 		var instance: Dictionary = _create_item_instance(picked)
@@ -2330,28 +2340,48 @@ func _clamp_rarity_to_tier(rarity: String, tier: int = -1) -> String:
 		return rarity
 	return cap
 
-# Pick an item id of the given rarity, weighted by drop_weights[source_tier-1].
-# Items with no drop_weights field still roll (legacy fallback, weight 1).
+# Slot-drop weights — proportion of drops that should go to each slot
+# class. Pre-2026-06-06 _pick_loot_id picked uniformly across all items
+# of the requested rarity, which meant slots with bigger pools (weapons
+# 139, spells 175) drowned out slots with smaller pools (gloves 15,
+# cloak 19). User catch: "you never see gloves because there are less
+# unique types of gloves." Now we pick slot first via this table, then
+# pick an item within that slot weighted by its drop_weights[tier-1].
+const _SLOT_DROP_WEIGHTS: Dictionary = {
+	"weapon": 18,
+	"armor":  10,
+	"helm":   10,
+	"shield": 10,
+	"boots":  10,
+	"gloves": 10,
+	"cloak":  10,
+	"ring":   10,
+	"amulet":  8,
+	"spell":   4,  # gated below to magic+ kills, see _is_spell_eligible_drop
+}
+
+# Pick an item id of the given rarity. Two-stage roll:
+#   1. Pick a slot from _SLOT_DROP_WEIGHTS (gated by `allow_spell` —
+#      common-mob kills can't roll spells).
+#   2. Pick an item within that slot, weighted by drop_weights[source_tier-1].
 # Items already dropped this run AND flagged unique are excluded.
 # Returns "" if no eligible item exists.
-func _pick_loot_id(rarity: String) -> String:
+func _pick_loot_id(rarity: String, allow_spell: bool = true) -> String:
 	var tier: int = _source_tier()
 	var idx: int = tier - 1
-	var ids: Array[String] = []
-	var weights: Array[float] = []
-	var total: float = 0.0
-	# Spells outnumber gear 175 → ~280 in the database, so without a
-	# slot-class weight they dominate every rarity tier (≥60% of common
-	# drops were spell tomes). Spells are *consumable-class* drops in the
-	# DCSS frame — should feel rare and exciting. We multiply spell
-	# pull-weight by 0.10 so they land at ~10-12% of all drops.
-	# 2026-06-05 user catch.
-	const SPELL_LOOT_WEIGHT_MULT: float = 0.10
+	# Build per-slot pools at the requested rarity. Each pool entry:
+	#   {id: String, weight: float}
+	var pools: Dictionary = {}  # slot → Array[Dict]
 	for id in items_db.keys():
 		var item: Dictionary = items_db[id]
 		if String(item.get("rarity", "")) != rarity:
 			continue
 		if bool(item.get("unique", false)) and run_dropped_uniques.has(id):
+			continue
+		var slot: String = String(item.get("slot", ""))
+		if slot == "":
+			continue
+		if slot == "spell" and not allow_spell:
 			continue
 		var dw: Array = item.get("drop_weights", [])
 		var w: float
@@ -2360,27 +2390,59 @@ func _pick_loot_id(rarity: String) -> String:
 			if w <= 0.0:
 				continue
 		else:
-			# Legacy item without drop_weights — keep it eligible at all tiers
-			# until manifests cover its slot. Equal weight 1.
 			w = 1.0
-		if String(item.get("slot", "")) == "spell":
-			w *= SPELL_LOOT_WEIGHT_MULT
-		ids.append(id)
-		weights.append(w)
-		total += w
-	if ids.is_empty():
+		var p: Array = pools.get(slot, [])
+		p.append({"id": id, "weight": w})
+		pools[slot] = p
+	if pools.is_empty():
 		return ""
-	var roll: float = rng.randf() * total
-	var acc: float = 0.0
-	for i in ids.size():
-		acc += weights[i]
-		if roll <= acc:
-			var picked: String = ids[i]
-			var item: Dictionary = items_db[picked]
-			if bool(item.get("unique", false)):
-				run_dropped_uniques.append(picked)
-			return picked
-	return ids[ids.size() - 1]
+	# Pick a slot first, weighted by _SLOT_DROP_WEIGHTS but skipping
+	# slots with empty pools at this rarity.
+	var slot_total: float = 0.0
+	var slot_keys: Array = []
+	var slot_weights: Array = []
+	for slot in pools.keys():
+		var w: float = float(_SLOT_DROP_WEIGHTS.get(slot, 5))
+		slot_keys.append(slot)
+		slot_weights.append(w)
+		slot_total += w
+	if slot_total <= 0.0:
+		return ""
+	var slot_roll: float = rng.randf() * slot_total
+	var picked_slot: String = ""
+	var slot_acc: float = 0.0
+	for i in slot_keys.size():
+		slot_acc += float(slot_weights[i])
+		if slot_roll <= slot_acc:
+			picked_slot = String(slot_keys[i])
+			break
+	if picked_slot == "":
+		return ""
+	# Pick an item within the slot weighted by its drop_weights.
+	var slot_pool: Array = pools[picked_slot]
+	var item_total: float = 0.0
+	for entry in slot_pool:
+		item_total += float(entry.weight)
+	if item_total <= 0.0:
+		return ""
+	var item_roll: float = rng.randf() * item_total
+	var item_acc: float = 0.0
+	for entry in slot_pool:
+		item_acc += float(entry.weight)
+		if item_roll <= item_acc:
+			var picked_id: String = String(entry.id)
+			var picked_item: Dictionary = items_db[picked_id]
+			if bool(picked_item.get("unique", false)):
+				run_dropped_uniques.append(picked_id)
+			return picked_id
+	# Floating-point fallback: if accumulator never crosses the roll
+	# (rare rounding edge case), pick the last entry deterministically.
+	var last_entry: Dictionary = slot_pool[slot_pool.size() - 1]
+	var last_id: String = String(last_entry.id)
+	var last_item: Dictionary = items_db[last_id]
+	if bool(last_item.get("unique", false)):
+		run_dropped_uniques.append(last_id)
+	return last_id
 
 func _roll_rarity(is_boss: bool) -> String:
 	# Tier ceiling: source branch tier (NOT portal-overridden biome tier),

@@ -72,14 +72,28 @@ static func process_tick(bot: Node, dungeon: Node, delta: float, items_db: Dicti
 		var t: float = float(cds.get(slot, 0.0)) - delta
 		if t <= 0.0:
 			var item: Dictionary = items_db[base_id]
-			# Merge per-instance archetype affix flags into the item view
-			# so dispatch can read e.g. spell_dart_split / spell_drain_buff
-			# off the same dict regardless of whether the flag came from
-			# implicit_affixes or a rolled affix. 2026-06-04 spell expansion.
-			var view: Dictionary = item.duplicate()
-			_fold_inst_affixes_into(view, inst)
-			_dispatch_fire(bot, dungeon, view)
-			t = SpellData.compute_cooldown(bot, item)
+			# Long-cooldown spells (≥10s base) hold their cast when no
+			# enemy is in scan range. Wasting a 30s common spell on an
+			# empty corridor felt awful — better to fire it on the next
+			# pack. Short-CD spells (under 10s) fire freely; their
+			# cheap cost makes "miss" a non-issue.
+			# 2026-06-06 user catch.
+			var base_cd: float = _base_cooldown_for(item)
+			var skip_no_target: bool = base_cd >= 10.0 and not _has_target_in_range(bot, dungeon)
+			if not skip_no_target:
+				# Merge per-instance archetype affix flags into the item view
+				# so dispatch can read e.g. spell_dart_split / spell_drain_buff
+				# off the same dict regardless of whether the flag came from
+				# implicit_affixes or a rolled affix. 2026-06-04 spell expansion.
+				var view: Dictionary = item.duplicate()
+				_fold_inst_affixes_into(view, inst)
+				_dispatch_fire(bot, dungeon, view)
+				t = SpellData.compute_cooldown(bot, item)
+			else:
+				# Hold the cast: reset to a short re-check window so we
+				# don't burn CPU re-scanning every frame, but still fire
+				# promptly when an enemy enters range.
+				t = 0.5
 		cds[slot] = t
 	bot.spell_cooldowns = cds
 
@@ -116,6 +130,27 @@ static func _fold_inst_affixes_into(view: Dictionary, inst: Dictionary) -> void:
 static func _base_cooldown_for(item: Dictionary) -> float:
 	var arch: Dictionary = SpellData.archetype_def(String(item.get("base_type", "")))
 	return float(item.get("spell_cooldown", arch.get("cooldown", 3.0)))
+
+# Spell-target scan: any live enemy within SCAN_RANGE cells of the bot
+# counts. Used to gate long-CD spell fires so a 30s common spell isn't
+# wasted on an empty corridor. Range slightly > melee aggro (8) so the
+# bot starts queueing casts as it approaches a pack.
+const _SPELL_TARGET_SCAN_RANGE := 10
+
+static func _has_target_in_range(bot: Node, dungeon: Node) -> bool:
+	if bot == null or dungeon == null:
+		return false
+	if not "enemies" in dungeon:
+		return true  # no enemies array = no info, fire freely
+	var bot_cell: Vector2i = bot.cell
+	for e in dungeon.enemies:
+		if not is_instance_valid(e) or not e.is_alive:
+			continue
+		var dx: int = absi(e.cell.x - bot_cell.x)
+		var dy: int = absi(e.cell.y - bot_cell.y)
+		if maxi(dx, dy) <= _SPELL_TARGET_SCAN_RANGE:
+			return true
+	return false
 
 # Module-level fire counter so /grind and /screenshot can verify spells
 # are actually casting (impossible to see in headless mode without it).
