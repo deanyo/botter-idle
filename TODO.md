@@ -5,6 +5,49 @@ the durable rules in `CLAUDE.md`. Update this file when committing.
 
 ---
 
+## Balance validation snapshot (2026-06-07)
+
+After landing the affix DR, soft caps, XP doubling, slot-weighted
+drops, spell gating, and longer spell CDs, ran mortal preset grinds
+to actually test the curve. Results below.
+
+| Preset | Branch  | Run 1 | Run 2 | Run 3 | Trend |
+|--------|---------|-------|-------|-------|-------|
+| naked  | dungeon | f1 0k | f1 0k | f1 0k | dies in 1-3s |
+| t1     | dungeon | f1 0k | f2 115k | f2 175k | f2-2-2 |
+| t2     | lair    | f1 0k | f1 0k | f4 879k 2 portals | spike up |
+| t3     | snake   | f4 1081k | f3 493k | f6 2070k 95 loot | f4-3-6 |
+
+Reads:
+
+- **`naked` is too brutal.** Lv 1 with no gear dies in 1-3 seconds
+  before getting a single kill. A fresh-save first run should at
+  least clear a few rats. Either the starting hp/atk needs a buff
+  or the early floor-1 spawn density needs to scale to bot CR.
+  ⬜ TODO: investigate _spawn_enemies for floor-1 density and the
+     base bot HP/atk at level 1.
+- **`t1` is good.** First run is hard (dies floor 1) but levels 5→8
+  by run 2, makes floor 2 with 115 kills. Run 3 → floor 2 with 175
+  kills. Roughly the "leveling-up curve in tier-1" feel.
+- **`t2` is bumpy.** Two floor-1 deaths then a huge run with 879
+  kills + 2 portals + reaching floor 4. The variance is real but
+  could mean lair RNG is swingy. Worth a 10-run grind for stats.
+- **`t3` works as intended.** Bot reaches floor 6 in two of three
+  runs but doesn't clear the boss. Boss floors gating progression
+  is the design — to advance you need rare+ gear with strong affixes,
+  which the t3 preset has but only just enough.
+
+Net: balance changes are directionally right. Curve is real, gear
+matters, deaths happen at sensible rates. Two findings flagged for
+follow-up:
+- ⬜ **Floor-1 lethality in `naked` preset** — a Lv 1 player should
+  not die in 1-3s on dungeon. May be a bug in encounter scaling
+  vs CR=20 (cr_recommended).
+- ⬜ **t2 variance** — 10-run sample needed to know if it's RNG
+  or a real curve gap.
+
+---
+
 ## Balance pass (HIGHEST priority — surfaced 2026-06-06 after stat audit)
 
 The stat-system unification (StatCalc.compute) now correctly applies
