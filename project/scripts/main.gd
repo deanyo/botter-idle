@@ -161,10 +161,16 @@ func _install_pause_menu() -> void:
 	pause_menu.abandon_requested.connect(_pause_abandon_run)
 	pause_menu.quit_requested.connect(func(): get_tree().quit())
 
-# Returning to the main menu mid-run discards the active dungeon. The
-# save state is untouched (no run_ended emit), so loot picked up but
-# not banked is lost. Mirrors Quit-then-relaunch behavior — clean.
+# Returning to the main menu mid-run discards the active dungeon
+# scene. Pre-2026-06-07 the dungeon never serialized so loot picked
+# up this run vanished — user catch. Now we flush the dungeon's
+# in-memory state to disk first (gold/xp/level/inventory/equipped +
+# the run_active flag so the outpost shows the in-progress banner).
+# Pause-Abandon takes a different path (_pause_abandon_run) — that
+# DOES treat the run as defeated and shows the run report.
 func _pause_to_main_menu() -> void:
+	if current_screen and current_screen.has_method("flush_to_save"):
+		current_screen.flush_to_save()
 	_show_main_menu()
 
 # Abandoning a run = treat it as a loss. Calls dungeon._end_run(false)

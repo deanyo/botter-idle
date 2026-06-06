@@ -3567,6 +3567,36 @@ func _try_death_retreat(reason: String) -> bool:
 	_build_floor()
 	return true
 
+# Public: persist mid-run state to disk WITHOUT ending the run. Called
+# by main.gd when the player goes back to the main menu mid-run so
+# loot/gold/xp earned this run isn't lost when the dungeon scene
+# discards. Pre-2026-06-07 the back-to-menu path bypassed any save
+# and items vanished — user catch.
+func flush_to_save() -> void:
+	if not is_instance_valid(bot):
+		return
+	if _pending_salvage_check or _hud_inv_cache.size() > _inventory_cap:
+		_pending_salvage_check = false
+		_maybe_auto_salvage()
+	var save: Dictionary = SaveState.load_state()
+	save.gold = bot.gold
+	save.level = bot.level
+	save.xp = bot.xp
+	save.inventory = _hud_inv_cache.duplicate(true)
+	save.equipped = bot.equipped.duplicate(true)
+	save.highest_floor = maxi(int(save.get("highest_floor", 0)), current_floor)
+	save.stat_points_unspent = int(bot.upgrade_state.get("stat_points_unspent", 0))
+	save.stat_alloc_str = int(bot.upgrade_state.get("stat_alloc_str", 0))
+	save.stat_alloc_dex = int(bot.upgrade_state.get("stat_alloc_dex", 0))
+	save.stat_alloc_int = int(bot.upgrade_state.get("stat_alloc_int", 0))
+	# Mark the run as still-active so the outpost shows the "Run in
+	# progress: <branch> — Floor N" banner when the player returns.
+	# Same flag _end_run sets on defeat (so they can redeploy).
+	save.run_active = true
+	save.run_branch = String(run_plan[0]) if run_plan.size() > 0 else ""
+	save.run_floor_reached = current_floor
+	SaveState.save_state(save)
+
 func _end_run(victory: bool) -> void:
 	# Final salvage pass before we serialize. Done unconditionally so
 	# the saved inventory respects the cap even if the run ended on a
