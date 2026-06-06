@@ -128,9 +128,11 @@ func _install_unlock_banner(newly_unlocked: Array) -> void:
 	for b in newly_unlocked:
 		pretty.append(String(b).capitalize())
 	var line: String = "BRANCHES UNLOCKED: " + ", ".join(pretty)
-	if _unlock_banner == null or not is_instance_valid(_unlock_banner):
+	var first_build: bool = _unlock_banner == null or not is_instance_valid(_unlock_banner)
+	if first_build:
 		_unlock_banner = Label.new()
 		_unlock_banner.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		_unlock_banner.clip_text = true
 		_unlock_banner.add_theme_font_size_override("font_size", 18)
 		_unlock_banner.add_theme_color_override("font_color", Color(1.0, 0.85, 0.30))
 		_unlock_banner.add_theme_color_override("font_outline_color", Color(0, 0, 0))
@@ -146,11 +148,14 @@ func _install_unlock_banner(newly_unlocked: Array) -> void:
 			parent.move_child(_unlock_banner, idx)
 	_unlock_banner.text = line
 	_unlock_banner.visible = true
-	# Subtle slow pulse so the eye lands on it.
-	var t := _unlock_banner.create_tween().set_loops()
-	t.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	t.tween_property(_unlock_banner, "modulate:a", 0.55, 1.4)
-	t.tween_property(_unlock_banner, "modulate:a", 1.0, 1.4)
+	# Pulse tween only on FIRST build — pre-2026-06-06 we re-attached
+	# a looping tween every show_report() call, leaking N tweens per N
+	# defeat-redeploy cycles.
+	if first_build:
+		var t := _unlock_banner.create_tween().set_loops()
+		t.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		t.tween_property(_unlock_banner, "modulate:a", 0.55, 1.4)
+		t.tween_property(_unlock_banner, "modulate:a", 1.0, 1.4)
 
 func _format_instance(inst: Dictionary, items_db: Dictionary, dimmed: bool) -> String:
 	var base_id: String = String(inst.get("base_id", ""))

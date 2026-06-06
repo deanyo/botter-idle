@@ -145,6 +145,7 @@ func _build_layout() -> void:
 	title.position = Vector2(0, 12)
 	title.size = Vector2(view.x, 36)
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.clip_text = true
 	title.add_theme_font_size_override("font_size", 28)
 	title.add_theme_color_override("font_color", COL_AMBER)
 	add_child(title)
@@ -170,12 +171,14 @@ func _build_layout() -> void:
 	lbl_modifier = Label.new()
 	lbl_modifier.position = Vector2(PANEL_PAD + 16, banner_y + 28)
 	lbl_modifier.size = Vector2(int(view.x) - PANEL_PAD * 2 - 280, 32)
+	lbl_modifier.clip_text = true
 	lbl_modifier.add_theme_font_size_override("font_size", 14)
 	lbl_modifier.add_theme_color_override("font_color", COL_AMBER)
 	add_child(lbl_modifier)
 	lbl_countdown = Label.new()
 	lbl_countdown.position = Vector2(int(view.x) - PANEL_PAD - 260, banner_y + 28)
 	lbl_countdown.size = Vector2(240, 32)
+	lbl_countdown.clip_text = true
 	lbl_countdown.add_theme_font_size_override("font_size", 14)
 	lbl_countdown.add_theme_color_override("font_color", COL_DIM)
 	lbl_countdown.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
@@ -323,6 +326,7 @@ func _make_panel(x: int, y: int, w: int, h: int, header: String) -> void:
 	hdr.text = header
 	hdr.position = Vector2(x + 12, y + 6)
 	hdr.size = Vector2(w - 24, 22)
+	hdr.clip_text = true
 	hdr.add_theme_font_size_override("font_size", 13)
 	hdr.add_theme_color_override("font_color", COL_AMBER)
 	add_child(hdr)
