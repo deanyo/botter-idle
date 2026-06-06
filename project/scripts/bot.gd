@@ -459,6 +459,12 @@ func _refresh_gear_overlays() -> void:
 		# attach a soft pulsing halo behind epic+ items so they read as
 		# "obviously a special weapon" at a glance.
 		_apply_rarity_decor(sprite, equipped.get(slot_id, null), slot_id)
+		# Per-instance hue/sat recolor — `inst.tint` is rolled at drop
+		# time and drives item_recolor.gdshader. Was previously only
+		# applied to the paperdoll path, so a green-tinted item read as
+		# the base red on the in-game bot but green on the paperdoll.
+		# Mirrors paperdoll_renderer._apply_recolor 2026-06-06.
+		_apply_overlay_recolor(sprite, equipped.get(slot_id, null))
 	weapon_sprite = _gear_sprites.get("weapon", null)
 	# Fire-tagged weapons emit their own light from the held sprite.
 	if weapon_sprite != null:
@@ -552,6 +558,19 @@ var _hand_enchant_sprite: Sprite2D = null
 # this when the bot turns around — see paperdoll_renderer comment.
 const _HAND_OFFSET_X := -8.0
 const _HAND_OFFSET_Y := 1.0
+
+func _apply_overlay_recolor(sprite: Sprite2D, inst: Variant) -> void:
+	# Mirror PaperdollRenderer._apply_recolor on the live-bot rig path.
+	# If a glow shader is already attached (rarity glow on weapons), we
+	# don't overwrite — the glow takes priority and the recolor would
+	# conflict. Same rule the paperdoll renderer uses.
+	if sprite == null or not is_instance_valid(sprite):
+		return
+	if sprite.material != null:
+		return
+	var mat: ShaderMaterial = UITheme.recolor_material_for(inst)
+	if mat != null:
+		sprite.material = mat
 
 func _apply_hand_enchant_ambience(weapon_inst: Variant) -> void:
 	if _hand_enchant_sprite != null and is_instance_valid(_hand_enchant_sprite):
