@@ -3338,6 +3338,14 @@ func _tick_enemies(delta: float) -> void:
 	# (still animates) and try again next frame — at 60Hz the player
 	# never sees the difference.
 	var repaths_this_frame: int = 0
+	# Build a per-frame cell-occupancy map for O(1) collision checks.
+	# Pre-2026-06-06 the soft-collision branch called cell_has_other_enemy
+	# which walked the whole enemies array — O(N²) per frame, ~10k ops at
+	# 100 enemies, ~40k at 200. Now O(N) build + O(1) lookup.
+	var occupancy: Dictionary = {}
+	for occ_e in enemies:
+		if is_instance_valid(occ_e) and occ_e.is_alive:
+			occupancy[occ_e.cell] = occ_e
 	for e in enemies:
 		if not is_instance_valid(e) or not e.is_alive:
 			continue
@@ -3386,11 +3394,14 @@ func _tick_enemies(delta: float) -> void:
 			# Soft collision: if our next path-cell already has another live
 			# enemy on it, hold this tick so we don't visually stack.
 			# Bot's cell is exempt — the goal of pursuit IS to share that cell.
+			# O(1) dict lookup vs the prior O(N) scan.
 			if e.path.size() > 0 and e.path_index < e.path.size():
 				var next: Vector2 = e.path[e.path_index]
 				var next_cell := Vector2i(int(next.x / C.TILE_SIZE), int(next.y / C.TILE_SIZE))
-				if next_cell != bot.cell and cell_has_other_enemy(next_cell, e):
-					continue
+				if next_cell != bot.cell:
+					var occupant: Variant = occupancy.get(next_cell, null)
+					if occupant != null and occupant != e:
+						continue
 			e.step_movement(delta)
 
 func _mark_room_visited_at(cell: Vector2i) -> void:
