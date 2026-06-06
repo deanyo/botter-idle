@@ -277,6 +277,7 @@ func _build_layout() -> void:
 	title.position = Vector2(TITLE_LEFT_RESERVE, 12)
 	title.size = Vector2(view.x - TITLE_LEFT_RESERVE - TITLE_RIGHT_RESERVE, 36)
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.clip_text = true
 	title.add_theme_font_size_override("font_size", 28)
 	title.add_theme_color_override("font_color", COL_AMBER)
 	add_child(title)
@@ -300,6 +301,7 @@ func _build_layout() -> void:
 		banner.position = Vector2(0, 48)
 		banner.size = Vector2(view.x, 24)
 		banner.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		banner.clip_text = true
 		banner.add_theme_font_size_override("font_size", 13)
 		banner.add_theme_color_override("font_color", Color(0.95, 0.65, 0.35))
 		add_child(banner)
@@ -433,10 +435,15 @@ func _make_branch_card(branch_id: String, is_unlocked: bool, tier: int) -> Contr
 		icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		btn.add_child(icon)
 	# Name label at top.
+	# Card-bound clipping: btn itself clips so any child label (name,
+	# tier, chips, cr) can never bleed past the card rect on long branch
+	# names like "Pandemonium" or "Dis (Hellish Vault)".
+	btn.clip_contents = true
 	var name_lbl := Label.new()
 	name_lbl.text = pretty
 	name_lbl.position = Vector2(8, 8)
 	name_lbl.size = Vector2(_BRANCH_CARD_W - 16, 24)
+	name_lbl.clip_text = true
 	name_lbl.add_theme_font_size_override("font_size", 16)
 	name_lbl.add_theme_color_override("font_color", rarity_col if is_unlocked else COL_DIM)
 	name_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -450,6 +457,7 @@ func _make_branch_card(branch_id: String, is_unlocked: bool, tier: int) -> Contr
 	tier_lbl.text = "Tier %d" % tier
 	tier_lbl.position = Vector2(8, 32)
 	tier_lbl.size = Vector2(_BRANCH_CARD_W - 16, 16)
+	tier_lbl.clip_text = true
 	tier_lbl.add_theme_font_size_override("font_size", 11)
 	tier_lbl.add_theme_color_override("font_color", COL_DIM)
 	tier_lbl.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.85))
@@ -470,6 +478,7 @@ func _make_branch_card(branch_id: String, is_unlocked: bool, tier: int) -> Contr
 			chip.text = "+ " + label
 			chip.position = Vector2(12, mod_y)
 			chip.size = Vector2(_BRANCH_CARD_W - 24, line_h + 2)
+			chip.clip_text = true
 			chip.add_theme_font_size_override("font_size", 11)
 			chip.add_theme_color_override("font_color", COL_AMBER)
 			chip.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.85))
@@ -526,6 +535,8 @@ func _make_panel(x: int, y: int, w: int, h: int, header: String) -> void:
 		var lbl := Label.new()
 		lbl.text = header
 		lbl.position = Vector2(x + 12, y + 8)
+		lbl.size = Vector2(w - 24, 22)
+		lbl.clip_text = true
 		lbl.add_theme_font_size_override("font_size", 14)
 		lbl.add_theme_color_override("font_color", COL_DIM)
 		add_child(lbl)

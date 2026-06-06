@@ -167,11 +167,15 @@ func _make_bot_card(bot: Dictionary) -> Control:
 		spr.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 		spr.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		card.add_child(spr)
-	# Name + level beneath.
+	# Name + level beneath. Cards are 96px wide — species like
+	# "Demonspawn" can overflow at font_size 11. clip_text + clipping
+	# the card itself catches overflow at both layers.
+	card.clip_contents = true
 	var name_lbl := Label.new()
 	name_lbl.text = sp_name
 	name_lbl.position = Vector2(0, 58)
 	name_lbl.size = Vector2(_BOT_CARD_W, 16)
+	name_lbl.clip_text = true
 	name_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	name_lbl.add_theme_font_size_override("font_size", 11)
 	name_lbl.add_theme_color_override("font_color", COL_AMBER if bool(bot.is_active) else COL_DIM)
@@ -181,6 +185,7 @@ func _make_bot_card(bot: Dictionary) -> Control:
 	lv_lbl.text = "Lv %d" % int(bot.level)
 	lv_lbl.position = Vector2(0, 76)
 	lv_lbl.size = Vector2(_BOT_CARD_W, 16)
+	lv_lbl.clip_text = true
 	lv_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	lv_lbl.add_theme_font_size_override("font_size", 10)
 	lv_lbl.add_theme_color_override("font_color", COL_DIM)
