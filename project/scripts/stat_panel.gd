@@ -50,12 +50,14 @@ func render(stats: Dictionary) -> void:
 	_apply_values(stats)
 
 func _build_layout(stats: Dictionary) -> void:
-	# ScrollContainer fills the panel; VBox holds all sections in order.
+	# ScrollContainer pinned to fill the panel via anchors. Setting an
+	# explicit size + anchors=1.0 can race in Godot's layout pass, so we
+	# anchor-only and let the engine derive the size each frame.
 	_scroll = ScrollContainer.new()
-	_scroll.position = Vector2(0, 0)
-	_scroll.size = size
 	_scroll.anchor_right = 1.0
 	_scroll.anchor_bottom = 1.0
+	_scroll.offset_right = 0
+	_scroll.offset_bottom = 0
 	_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	add_child(_scroll)
 	_content = VBoxContainer.new()
@@ -133,17 +135,24 @@ func _section(title: String) -> void:
 	_content.add_child(hdr_holder)
 
 # Standard stat row — name on left, value on right, fixed font size.
+# Both labels get SIZE_EXPAND_FILL so the HBox lays them out predictably:
+# 60% to the name, 40% to the value column. Pre-fix the value label had
+# only `custom_minimum_size` and no expand flag — it could collapse to
+# zero width and show nothing while the name still rendered, leaving
+# the user staring at "labels with no values."
 func _row(key: String, label_text: String, color: Color) -> void:
 	var row := HBoxContainer.new()
 	row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	row.add_theme_constant_override("separation", 6)
 	var name_lbl := UITheme.label(label_text, UITheme.FS_SMALL, COL_DIM)
 	name_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	name_lbl.size_flags_stretch_ratio = 0.6
 	name_lbl.clip_text = true
 	row.add_child(name_lbl)
 	var val_lbl := UITheme.label("—", UITheme.FS_SMALL, color)
 	val_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	val_lbl.custom_minimum_size = Vector2(80, 0)
+	val_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	val_lbl.size_flags_stretch_ratio = 0.4
 	val_lbl.clip_text = true
 	row.add_child(val_lbl)
 	_content.add_child(row)
@@ -156,10 +165,13 @@ func _attribute_row(stat: String, label_text: String, color: Color) -> void:
 	row.add_theme_constant_override("separation", 6)
 	var name_lbl := UITheme.label(label_text, UITheme.FS_SMALL, COL_DIM)
 	name_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	name_lbl.size_flags_stretch_ratio = 0.6
 	name_lbl.clip_text = true
 	row.add_child(name_lbl)
 	var val_lbl := UITheme.label("—", UITheme.FS_SMALL, color)
 	val_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	val_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	val_lbl.size_flags_stretch_ratio = 0.4
 	val_lbl.custom_minimum_size = Vector2(40, 0)
 	val_lbl.clip_text = true
 	row.add_child(val_lbl)
@@ -189,10 +201,13 @@ func _unspent_row() -> void:
 	row.add_theme_constant_override("separation", 6)
 	var name_lbl := UITheme.label("Unspent", UITheme.FS_SMALL, COL_AMBER)
 	name_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	name_lbl.size_flags_stretch_ratio = 0.6
 	name_lbl.clip_text = true
 	row.add_child(name_lbl)
 	var val_lbl := UITheme.label("—", UITheme.FS_SMALL, COL_AMBER)
 	val_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	val_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	val_lbl.size_flags_stretch_ratio = 0.4
 	val_lbl.custom_minimum_size = Vector2(40, 0)
 	val_lbl.clip_text = true
 	row.add_child(val_lbl)
