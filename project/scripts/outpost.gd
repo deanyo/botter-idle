@@ -731,6 +731,13 @@ func _build_stats_tab(tabs: TabContainer, w: int, h: int) -> void:
 	_add_section(page, sx, sy, "Bot Instructions"); sy += 22
 	var pickup_lbl := Label.new()
 	pickup_lbl.text = "Pick up:"
+	pickup_lbl.position = Vector2(sx, sy)
+	pickup_lbl.add_theme_font_size_override("font_size", 12)
+	pickup_lbl.add_theme_color_override("font_color", COL_DIM)
+	page.add_child(pickup_lbl); sy += 18
+	var filter_btn := OptionButton.new()
+	filter_btn.position = Vector2(sx, sy)
+	filter_btn.size = Vector2(w - 16, 28)
 	for filter_name in ["Common+ (everything)", "Uncommon+", "Rare+", "Epic+", "Legendary only"]:
 		filter_btn.add_item(filter_name)
 	var filter_idx: int = LootDrop.RARITY_RANK.get(String(state.get("loot_filter", "common")), 0)
@@ -857,7 +864,7 @@ func _add_stat_alloc_buttons_to(parent: Node, x: int, y: int, stat: String) -> v
 	minus.size = Vector2(22, 22)
 	minus.add_theme_font_size_override("font_size", 13)
 	minus.tooltip_text = "Refund 1 point"
-	minus.pressed.connect(_on_stat_alloc.bind(stat, -1))
+	minus.pressed.connect(_on_stat_minus_pressed.bind(stat))
 	parent.add_child(minus)
 	var plus := Button.new()
 	plus.text = "+"
@@ -865,7 +872,7 @@ func _add_stat_alloc_buttons_to(parent: Node, x: int, y: int, stat: String) -> v
 	plus.size = Vector2(22, 22)
 	plus.add_theme_font_size_override("font_size", 13)
 	plus.tooltip_text = "Allocate 1 point"
-	plus.pressed.connect(_on_stat_alloc.bind(stat, 1))
+	plus.pressed.connect(_on_stat_plus_pressed.bind(stat))
 	parent.add_child(plus)
 
 func _build_upgrades_section_in(parent: Node, x: int, y: int, w: int, h: int) -> void:
