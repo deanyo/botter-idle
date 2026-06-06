@@ -18,11 +18,14 @@ RUNS=""
 SPEED="16"
 MORTAL=0
 FORCE_BRANCH=""
+PRESET=""
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --mortal) MORTAL=1; shift ;;
         --branch) FORCE_BRANCH="${2:-}"; shift 2 ;;
         --branch=*) FORCE_BRANCH="${1#--branch=}"; shift ;;
+        --preset) PRESET="${2:-}"; shift 2 ;;
+        --preset=*) PRESET="${1#--preset=}"; shift ;;
         *)
             if [[ -z "$RUNS" ]]; then RUNS="$1"
             else SPEED="$1"
@@ -32,7 +35,9 @@ while [[ $# -gt 0 ]]; do
 done
 
 if [[ -z "$RUNS" ]]; then
-    echo "Usage: $0 <runs> [speed] [--mortal] [--branch <id>]" >&2
+    echo "Usage: $0 <runs> [speed] [--mortal] [--branch <id>] [--preset <name>]" >&2
+    echo "  --preset <name>   Wipe debug save + inject a tier-appropriate loadout." >&2
+    echo "                    Names: naked t1 t2 t3 t4 t5" >&2
     exit 64
 fi
 if ! [[ "$RUNS" =~ ^[0-9]+$ ]]; then
@@ -66,6 +71,22 @@ DEBUG_SAVE="$USER_DIR/botter_save_debug.json"
 if [[ "${BOTTER_PURGE_SAVE:-0}" == "1" ]] && [[ -f "$DEBUG_SAVE" ]]; then
     rm -f "$DEBUG_SAVE"
     echo "Purged debug save."
+fi
+
+# Preset application — wipe the debug save then inject a fresh
+# tier-appropriate loadout. Lets balance experiments run against a
+# clean baseline instead of the cumulative Lv 300 god the legacy
+# debug save has become. New 2026-06-07.
+if [[ -n "$PRESET" ]]; then
+    PRESET_FILE="$REPO/.claude/skills/grind/presets/${PRESET}.json"
+    if [[ ! -f "$PRESET_FILE" ]]; then
+        echo "Unknown preset '$PRESET'. Available:" >&2
+        ls "$REPO/.claude/skills/grind/presets/" 2>/dev/null | sed 's/\.json$//' | sed 's/^/  /' >&2
+        exit 64
+    fi
+    rm -f "$DEBUG_SAVE"
+    cd "$REPO" && python3 tools/inject_save.py "$PRESET_FILE" >/dev/null
+    echo "Applied preset: $PRESET"
 fi
 
 # Write the marker.

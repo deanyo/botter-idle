@@ -1,6 +1,6 @@
 ---
 name: grind
-description: Run a headless N-run benchmark grind on Botter. Use when the user wants to validate generation, measure variety, sanity-check changes, or just see runs play out at speed. Args - "<runs>" or "<runs> <speed>" (default speed 16x). Pass --mortal for balance testing (bot can die) and --branch <id> to pin every run to a specific biome.
+description: Run a headless N-run benchmark grind on Botter. Use when the user wants to validate generation, measure variety, sanity-check changes, or just see runs play out at speed. Args - "<runs>" or "<runs> <speed>" (default speed 16x). Pass --mortal for balance testing (bot can die), --branch <id> to pin every run to a specific biome, or --preset <name> (naked/t1/t2/t3/t4/t5) to inject a tier-appropriate fresh save before launching.
 user_invocable: true
 ---
 
@@ -28,6 +28,13 @@ BOTTER_PURGE_SAVE=1 bash /Users/dyo/claude/botter/.claude/skills/grind/grind.sh 
 
 # Pin every run to a specific biome (lair, crypt, vaults, forge, etc).
 bash /Users/dyo/claude/botter/.claude/skills/grind/grind.sh 5 16 --branch crypt
+
+# Fresh-save preset — wipes the debug save and injects a tier-
+# appropriate loadout. Use this for balance verification: the legacy
+# debug save accumulates across sessions into a Lv 300 god that
+# trivializes any tier, making balance changes invisible.
+bash /Users/dyo/claude/botter/.claude/skills/grind/grind.sh 5 16 --preset t1 --mortal
+bash /Users/dyo/claude/botter/.claude/skills/grind/grind.sh 5 16 --preset naked --mortal --branch dungeon
 ```
 
 `<runs>` is the number of complete runs. `<speed>` is `Engine.time_scale`
@@ -40,6 +47,30 @@ reach floor 6 reliably. **For balance work pass `--mortal`** —
 otherwise the bot can't die so deaths-vs-progression is unmeasurable.
 Mortal mode also makes per-run length meaningful (a fresh-save run
 that dies on floor 1 in 3s vs one that wins floor 6 in 90s).
+
+### `--preset <name>` — fresh-save tier-appropriate loadout
+
+Wipes the debug save and injects a known-good loadout for the named
+tier before launching. Use this for balance work where the legacy
+accumulated save (Lv 300, full legendary gear, all branches unlocked)
+would trivialize any test.
+
+Available presets (under `.claude/skills/grind/presets/*.json`):
+- `naked` — Lv 1, no gear, dungeon + dungeon_dark unlocked. The
+  most pessimistic possible bot. Use to verify tier-1 baseline isn't
+  insurmountable.
+- `t1` — Lv 5, common gear with single tier-1 affixes. Expected
+  power for a bot clearing a couple D:1 / D:2 runs.
+- `t2` — Lv 12, uncommon gear, T2 branches unlocked, conditioning 2.
+- `t3` — Lv 22, rare gear with 3 affixes, T3 branches, more upgrades.
+- `t4` — Lv 35, epic gear with 4 affixes, T4 branches.
+- `t5` — Lv 50, legendary gear with 4-5 affixes, all branches unlocked.
+
+Pair with `--mortal` so deaths produce signal. Pair with `--branch <id>`
+to pin the test to a specific tier-appropriate biome.
+
+Author/edit presets directly: `.claude/skills/grind/presets/<name>.json`
+follow the inject_save.py spec (see `tools/inject_save.py` header).
 
 ### `--branch <id>` — pin every run to one biome
 

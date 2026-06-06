@@ -1,0 +1,24 @@
+{
+  "_comment": "Fresh save baseline — Lv 1, no gear, no upgrades. Use this to validate balance changes from absolute zero. Most pessimistic outcome: a level-1 bot with bare hands deploying to whatever branch the grind picker picks.",
+  "level": 1,
+  "xp": 0,
+  "gold": 0,
+  "loot_filter": "common",
+  "inventory_cap": 50,
+  "unlocked_branches": ["dungeon", "dungeon_dark"],
+  "bosses_killed": {},
+  "bot_upgrades": {},
+  "branch_modifiers": {},
+  "equipped": {
+    "weapon": null,
+    "armor": null,
+    "helm": null,
+    "shield": null,
+    "boots": null,
+    "gloves": null,
+    "cloak": null,
+    "ring": null,
+    "amulet": null
+  },
+  "inventory": []
+}

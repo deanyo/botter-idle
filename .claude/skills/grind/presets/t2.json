@@ -1,0 +1,24 @@
+{
+  "_comment": "Tier-2 baseline — Lv 12, uncommon gear with 2 affixes. What a player should look like after a few T1 clears, ready to start T2.",
+  "level": 12,
+  "xp": 0,
+  "gold": 200,
+  "loot_filter": "uncommon",
+  "inventory_cap": 50,
+  "unlocked_branches": ["dungeon", "dungeon_dark", "mines", "lair", "forest", "orc", "temple"],
+  "bosses_killed": {"dungeon": 2, "dungeon_dark": 2},
+  "bot_upgrades": {"conditioning": 2},
+  "branch_modifiers": {},
+  "equipped": {
+    "weapon": {"base_id": "iron_dagger", "affixes": [["of_might", 2], ["of_crit", 2]]},
+    "armor":  {"base_id": "iron_brigandine", "affixes": [["of_the_bear", 2], ["of_vitality", 2]]},
+    "helm":   {"base_id": "jesters_cap", "affixes": [["of_vitality", 2]]},
+    "shield": {"base_id": "kite_shield", "affixes": [["of_the_bear", 2]]},
+    "boots":  {"base_id": "studded_boots", "affixes": [["of_haste", 2]]},
+    "gloves": {"base_id": "riveted_gloves", "affixes": [["of_might", 2]]},
+    "cloak":  {"base_id": "wool_cloak", "affixes": [["of_vitality", 2]]},
+    "ring":   {"base_id": "brass_ring", "affixes": [["of_might", 2]]},
+    "amulet": {"base_id": "blue_cameo", "affixes": [["of_vitality", 2]]}
+  },
+  "inventory": []
+}

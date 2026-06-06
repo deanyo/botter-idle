@@ -98,8 +98,18 @@ def _affix_from_tier(afx_id, tier, affixes):
         raise ValueError(f"unknown affix id: {afx_id!r} (valid: {sorted(affixes)})")
     if not (1 <= tier <= 5):
         raise ValueError(f"affix tier must be 1..5, got {tier}")
-    tiers = affixes[afx_id]["tiers"]
-    return {"id": afx_id, "value": int(tiers[tier - 1])}
+    af_def = affixes[afx_id]
+    tier_entry = af_def["tiers"][tier - 1]
+    # Range affixes (kind=range, e.g. of_embers, of_sharpness) store
+    # [lo, hi]; combat re-rolls per-hit so the instance carries
+    # value_min / value_max plus a midpoint `value` for legacy summing.
+    if isinstance(tier_entry, list) and len(tier_entry) >= 2:
+        lo, hi = int(tier_entry[0]), int(tier_entry[1])
+        if af_def.get("kind") == "range":
+            return {"id": afx_id, "value_min": lo, "value_max": hi, "value": round((lo + hi) / 2)}
+        # Non-range affix authored with [lo, hi] = treat as midpoint.
+        return {"id": afx_id, "value": round((lo + hi) / 2)}
+    return {"id": afx_id, "value": int(tier_entry)}
 
 
 def normalize_item(spec, items, affixes):

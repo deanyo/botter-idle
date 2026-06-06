@@ -1,0 +1,24 @@
+{
+  "_comment": "Tier-5 baseline — Lv 50, legendary gear with 4-5 affixes. Endgame power level, attempting T5 (Forge / Glacier / Slime / Labyrinth / Abyss / Pandemonium / Zot).",
+  "level": 50,
+  "xp": 0,
+  "gold": 10000,
+  "loot_filter": "legendary",
+  "inventory_cap": 50,
+  "unlocked_branches": ["dungeon", "dungeon_dark", "mines", "lair", "forest", "orc", "temple", "swamp", "snake", "shoals", "spider", "hive", "vaults", "crypt", "tomb", "elf", "depths", "forge", "glacier", "slime", "labyrinth", "abyss", "pandemonium", "zot"],
+  "bosses_killed": {"dungeon": 2, "mines": 2, "lair": 2, "orc": 2, "swamp": 2, "snake": 2, "shoals": 2, "vaults": 2, "crypt": 2, "tomb": 2, "elf": 2},
+  "bot_upgrades": {"conditioning": 8, "quick_reflexes": 6, "loot_sense": 4, "pouch": 2},
+  "branch_modifiers": {},
+  "equipped": {
+    "weapon": {"base_id": "demon_blade", "affixes": [["of_might", 5], ["of_crit", 5], ["of_haste", 5], ["of_lifesteal", 5], ["of_finesse", 5]]},
+    "armor":  {"base_id": "green_dragon", "affixes": [["of_the_bear", 5], ["of_vitality", 5], ["of_fire_resist", 5], ["of_dark_resist", 5]]},
+    "helm":   {"base_id": "halo_of_ascension", "affixes": [["of_vitality", 5], ["of_finesse", 5], ["of_devotion", 5], ["of_resonance", 5]]},
+    "shield": {"base_id": "phantom_aegis", "affixes": [["of_the_bear", 5], ["of_holy_resist", 5], ["of_dark_resist", 5], ["of_lightning_resist", 5]]},
+    "boots":  {"base_id": "worn_sandals", "affixes": [["of_haste", 5], ["of_quickcast", 5], ["of_lingering", 5]]},
+    "gloves": {"base_id": "storm_gauntlets", "affixes": [["of_might", 5], ["of_crit", 5], ["of_finesse", 5], ["of_lightning_resist", 5]]},
+    "cloak":  {"base_id": "silken_cloak", "affixes": [["of_vitality", 5], ["of_dark_resist", 5], ["of_resonance", 5], ["of_channeling", 5]]},
+    "ring":   {"base_id": "ruby_ring", "affixes": [["of_might", 5], ["of_devotion", 5], ["of_lightning_resist", 5]]},
+    "amulet": {"base_id": "crystal_white", "affixes": [["of_vitality", 5], ["of_resonance", 5], ["of_channeling", 5], ["of_lingering", 5]]}
+  },
+  "inventory": []
+}

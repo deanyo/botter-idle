@@ -1,0 +1,24 @@
+{
+  "_comment": "Tier-1 baseline — Lv 5, full common gear with single-affix rolls. What a player should look like clearing a few D:1 runs.",
+  "level": 5,
+  "xp": 0,
+  "gold": 50,
+  "loot_filter": "common",
+  "inventory_cap": 50,
+  "unlocked_branches": ["dungeon", "dungeon_dark"],
+  "bosses_killed": {},
+  "bot_upgrades": {},
+  "branch_modifiers": {},
+  "equipped": {
+    "weapon": {"base_id": "bone_knife", "affixes": [["of_might", 1]]},
+    "armor":  {"base_id": "leather_jerkin", "affixes": [["of_the_bear", 1]]},
+    "helm":   {"base_id": "battered_skullcap", "affixes": [["of_vitality", 1]]},
+    "shield": {"base_id": "iron_buckler", "affixes": [["of_the_bear", 1]]},
+    "boots":  {"base_id": "leather_boots", "affixes": [["of_haste", 1]]},
+    "gloves": {"base_id": "leather_gloves", "affixes": [["of_might", 1]]},
+    "cloak":  {"base_id": "leather_cloak", "affixes": [["of_vitality", 1]]},
+    "ring":   {"base_id": "clay_ring", "affixes": [["of_might", 1]]},
+    "amulet": {"base_id": "bone_pendant", "affixes": [["of_vitality", 1]]}
+  },
+  "inventory": []
+}

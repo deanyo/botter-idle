@@ -1,0 +1,24 @@
+{
+  "_comment": "Tier-3 baseline — Lv 22, rare gear with 3 affixes. What a player should look like clearing T2, attempting T3.",
+  "level": 22,
+  "xp": 0,
+  "gold": 800,
+  "loot_filter": "rare",
+  "inventory_cap": 50,
+  "unlocked_branches": ["dungeon", "dungeon_dark", "mines", "lair", "forest", "orc", "temple", "swamp", "snake", "shoals", "spider", "hive"],
+  "bosses_killed": {"dungeon": 2, "mines": 2, "lair": 2, "orc": 2},
+  "bot_upgrades": {"conditioning": 4, "quick_reflexes": 2},
+  "branch_modifiers": {},
+  "equipped": {
+    "weapon": {"base_id": "quick_blade", "affixes": [["of_might", 3], ["of_crit", 3], ["of_haste", 3]]},
+    "armor":  {"base_id": "elven_leather", "affixes": [["of_the_bear", 3], ["of_vitality", 3], ["of_fire_resist", 3]]},
+    "helm":   {"base_id": "elven_helm", "affixes": [["of_vitality", 3], ["of_finesse", 3]]},
+    "shield": {"base_id": "elven_buckler", "affixes": [["of_the_bear", 3], ["of_holy_resist", 3]]},
+    "boots":  {"base_id": "ranger_boots", "affixes": [["of_haste", 3], ["of_quickcast", 3]]},
+    "gloves": {"base_id": "dwarven_gloves", "affixes": [["of_might", 3], ["of_crit", 3]]},
+    "cloak":  {"base_id": "woven_cloak", "affixes": [["of_vitality", 3], ["of_dark_resist", 3]]},
+    "ring":   {"base_id": "agate_ring", "affixes": [["of_might", 3], ["of_devotion", 3]]},
+    "amulet": {"base_id": "celtic_red", "affixes": [["of_vitality", 3], ["of_resonance", 3]]}
+  },
+  "inventory": []
+}

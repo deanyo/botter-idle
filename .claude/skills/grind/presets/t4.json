@@ -1,0 +1,24 @@
+{
+  "_comment": "Tier-4 baseline — Lv 35, epic gear with 4 affixes. Mid-late game power level, attempting T4 (Vaults / Crypt / Tomb / Elf / Depths).",
+  "level": 35,
+  "xp": 0,
+  "gold": 3000,
+  "loot_filter": "epic",
+  "inventory_cap": 50,
+  "unlocked_branches": ["dungeon", "dungeon_dark", "mines", "lair", "forest", "orc", "temple", "swamp", "snake", "shoals", "spider", "hive", "vaults", "crypt", "tomb", "elf", "depths"],
+  "bosses_killed": {"dungeon": 2, "mines": 2, "lair": 2, "orc": 2, "swamp": 2, "snake": 2, "shoals": 2},
+  "bot_upgrades": {"conditioning": 6, "quick_reflexes": 4, "loot_sense": 2},
+  "branch_modifiers": {},
+  "equipped": {
+    "weapon": {"base_id": "elven_broadsword", "affixes": [["of_might", 4], ["of_crit", 4], ["of_haste", 4], ["of_lifesteal", 4]]},
+    "armor":  {"base_id": "troll_leather", "affixes": [["of_the_bear", 4], ["of_vitality", 4], ["of_fire_resist", 4], ["of_dark_resist", 4]]},
+    "helm":   {"base_id": "champion_helm", "affixes": [["of_vitality", 4], ["of_finesse", 4], ["of_devotion", 4]]},
+    "shield": {"base_id": "dd_scion_shield", "affixes": [["of_the_bear", 4], ["of_holy_resist", 4], ["of_dark_resist", 4]]},
+    "boots":  {"base_id": "earthshaker_treads", "affixes": [["of_haste", 4], ["of_quickcast", 4]]},
+    "gloves": {"base_id": "ring_inlaid_gloves", "affixes": [["of_might", 4], ["of_crit", 4], ["of_finesse", 4]]},
+    "cloak":  {"base_id": "silken_cloak", "affixes": [["of_vitality", 4], ["of_dark_resist", 4], ["of_resonance", 4]]},
+    "ring":   {"base_id": "emerald_ring", "affixes": [["of_might", 4], ["of_devotion", 4], ["of_lightning_resist", 4]]},
+    "amulet": {"base_id": "crystal_red", "affixes": [["of_vitality", 4], ["of_resonance", 4], ["of_channeling", 4]]}
+  },
+  "inventory": []
+}
