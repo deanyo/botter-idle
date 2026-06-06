@@ -1982,13 +1982,18 @@ func _maybe_drop_item(e: Enemy) -> void:
 			if t == "fortune":
 				fortune_mult += 0.20
 	var roll: float = rng.randf() / fortune_mult
+	# Drop thresholds — pre-2026-06-06 rare/miniboss were 100% which
+	# combined with the long tier-1 stay flooded inventory with affixed
+	# gear. Tightened to leave bosses at 100% (the actual scoreboard
+	# moment) while making rare/miniboss drops a "good chance, not
+	# guaranteed."
 	var threshold: float = 0.05
 	if e.pack_tier == Enemy.PACK_MAGIC:
 		threshold = 0.30
 	elif e.pack_tier == Enemy.PACK_RARE:
-		threshold = 1.0
+		threshold = 0.60
 	if e.is_miniboss:
-		threshold = 1.0
+		threshold = 0.70
 	elif e.is_boss:
 		threshold = 1.0
 	if roll > threshold:

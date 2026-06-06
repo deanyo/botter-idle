@@ -847,4 +847,9 @@ func gain_xp(amount: int) -> void:
 		_update_hp_bar()
 
 func xp_to_next() -> int:
-	return 20 + (level - 1) * 15
+	# Doubled 2026-06-06 (was `20 + (level-1) * 15`). Audit found a
+	# 4-run save reaching Lv 57 — ~6,055 XP/run, ~1,009 XP/floor — so
+	# floor mobs at avg 6 XP × 100 mobs × pack-multipliers were level-
+	# flooding hard. Doubling the curve targets ~Lv 25-30 at the same
+	# 4-run pace, which is what the gear curve is designed for.
+	return 30 + (level - 1) * 30

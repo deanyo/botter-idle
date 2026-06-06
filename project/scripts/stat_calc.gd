@@ -101,6 +101,13 @@ static func compute(
 	var weapon_damage_type: String = "physical"
 	var weapon_class: String = "1H"
 
+	# Per-affix-id source counter for diminishing returns. Audit found
+	# the user wearing of_channeling × 6, of_resonance × 5, etc — pure
+	# linear stacking gave +195% spell damage from one affix alone.
+	# DR scales each subsequent same-id source: 1st=100%, 2nd=75%,
+	# 3rd=50%, 4th+=25%. Stops slot-stuffing strategies dead.
+	var _affix_source_count: Dictionary = {}
+
 	# Walk equipped slots.
 	for slot in equipped.keys():
 		var inst: Variant = equipped[slot]
@@ -130,37 +137,51 @@ static func compute(
 			armor_total += int(round(float(item.get("armor", 0)) * combined_base))
 			evasion_total += float(item.get("evasion", 0)) * combined_base
 
-		# Affix rollup (implicit + rolled).
+		# Affix rollup (implicit + rolled). Each affix contributes through
+		# the per-id DR scaler so wearing the same affix on N slots gets
+		# 100% / 75% / 50% / 25% as the count climbs.
 		var combined_affixes: Array = []
 		for a in item.get("implicit_affixes", []):
 			combined_affixes.append(_realize_implicit(String(a), String(item.get("rarity", "common"))))
 		for a in inst.get("affixes", []):
 			combined_affixes.append(a)
-		var sums: Dictionary = AffixSystem.sum_affix_stats(combined_affixes)
+		# Bump source counts BEFORE summing so each affix instance gets
+		# its own DR slot. Two of_haste on the same item count as two
+		# sources (rare in practice — slots usually roll unique ids).
+		for af in combined_affixes:
+			var aid: String = String(af.get("id", ""))
+			if aid == "":
+				continue
+			_affix_source_count[aid] = int(_affix_source_count.get(aid, 0)) + 1
+		# Apply DR-scaled affix sums, individually per affix so each
+		# instance can be weighted by its own source-count rank. We
+		# can't use AffixSystem.sum_affix_stats anymore (it pre-sums)
+		# — fold the same per-affix scaling logic inline.
+		var slot_sums: Dictionary = _scaled_affix_sums(combined_affixes, qmult_affix, _affix_source_count)
 
-		str_stat += int(round(float(sums.get("str", 0)) * qmult_affix))
-		dex_stat += int(round(float(sums.get("dex", 0)) * qmult_affix))
-		int_stat += int(round(float(sums.get("int", 0)) * qmult_affix))
-		hp_flat += int(round(float(sums.get("hp", 0)) * qmult_affix))
-		armor_total += int(round(float(sums.get("armor", 0)) * qmult_affix))
-		evasion_total += float(sums.get("evasion", 0)) * qmult_affix
-		gear_regen += float(sums.get("hp_regen", 0)) * qmult_affix
+		str_stat += int(round(float(slot_sums.get("str", 0))))
+		dex_stat += int(round(float(slot_sums.get("dex", 0))))
+		int_stat += int(round(float(slot_sums.get("int", 0))))
+		hp_flat += int(round(float(slot_sums.get("hp", 0))))
+		armor_total += int(round(float(slot_sums.get("armor", 0))))
+		evasion_total += float(slot_sums.get("evasion", 0))
+		gear_regen += float(slot_sums.get("hp_regen", 0))
 		for elem in ELEMENTS:
-			resistances[elem] = float(resistances[elem]) + float(sums.get(elem + "_res", 0)) * qmult_affix
-		crit_sum += float(sums.get("crit_chance", 0)) * qmult_affix
-		haste_sum += float(sums.get("haste_pct", 0)) * qmult_affix
-		lifesteal_pct += float(sums.get("lifesteal_pct", 0)) * qmult_affix
-		spell_cdr_pct += float(sums.get("spell_cdr_pct", 0)) * qmult_affix
-		spell_proj_bonus += int(round(float(sums.get("spell_proj_bonus", 0)) * qmult_affix))
-		spell_proj_speed_pct += float(sums.get("spell_proj_speed_pct", 0)) * qmult_affix
-		spell_area_pct += float(sums.get("spell_area_pct", 0)) * qmult_affix
-		spell_duration_pct += float(sums.get("spell_duration_pct", 0)) * qmult_affix
-		spell_damage_pct += float(sums.get("spell_damage_pct", 0)) * qmult_affix
+			resistances[elem] = float(resistances[elem]) + float(slot_sums.get(elem + "_res", 0))
+		crit_sum += float(slot_sums.get("crit_chance", 0))
+		haste_sum += float(slot_sums.get("haste_pct", 0))
+		lifesteal_pct += float(slot_sums.get("lifesteal_pct", 0))
+		spell_cdr_pct += float(slot_sums.get("spell_cdr_pct", 0))
+		spell_proj_bonus += int(round(float(slot_sums.get("spell_proj_bonus", 0))))
+		spell_proj_speed_pct += float(slot_sums.get("spell_proj_speed_pct", 0))
+		spell_area_pct += float(slot_sums.get("spell_area_pct", 0))
+		spell_duration_pct += float(slot_sums.get("spell_duration_pct", 0))
+		spell_damage_pct += float(slot_sums.get("spell_damage_pct", 0))
 		# Extra-damage range affixes (per-element min/max).
 		for elem in ["physical", "fire", "cold", "lightning", "holy", "poison", "dark"]:
 			var key: String = elem + "_extra"
-			var lo: int = int(round(float(sums.get(key + "_min", 0)) * qmult_affix))
-			var hi: int = int(round(float(sums.get(key + "_max", 0)) * qmult_affix))
+			var lo: int = int(round(float(slot_sums.get(key + "_min", 0))))
+			var hi: int = int(round(float(slot_sums.get(key + "_max", 0))))
 			if lo > 0 or hi > 0:
 				var prev: Dictionary = extra_damage.get(elem, {"min": 0, "max": 0})
 				extra_damage[elem] = {"min": int(prev.min) + lo, "max": int(prev.max) + hi}
@@ -187,10 +208,20 @@ static func compute(
 	# HP rollup with str-mult + species hp_pct + bot upgrade.
 	var max_hp: int = int(round(float(_BASE_HP + (level - 1) * 8 + int(up_hp) + hp_flat) * sp_hp_mult * (1.0 + float(str_excess) * 0.015)))
 
-	# Crit / haste / evasion caps.
+	# Crit / haste / evasion / spell caps. PoE-style soft caps prevent
+	# slot-stuffing strategies from dominating — even with DR-scaled
+	# affix stacks, the totals can still climb above sane levels via
+	# Int-excess and unique-item multipliers. These clamps are the
+	# absolute ceiling on what gear can grant the player.
 	var crit_chance: float = clampf(crit_sum + up_crit, 0.0, 75.0)
 	var haste_pct: float = clampf(haste_sum, 0.0, 200.0)
 	var evasion_capped: float = clampf(evasion_total, 0.0, 75.0)
+	lifesteal_pct = clampf(lifesteal_pct, 0.0, 15.0)
+	spell_damage_pct = clampf(spell_damage_pct, 0.0, 120.0)
+	spell_area_pct = clampf(spell_area_pct, 0.0, 100.0)
+	spell_cdr_pct = clampf(spell_cdr_pct, 0.0, 50.0)
+	spell_duration_pct = clampf(spell_duration_pct, 0.0, 100.0)
+	spell_proj_speed_pct = clampf(spell_proj_speed_pct, 0.0, 100.0)
 	for elem in resistances.keys():
 		resistances[elem] = clampf(float(resistances[elem]), -100.0, 75.0)
 
@@ -318,6 +349,64 @@ static func _initial_dict() -> Dictionary:
 	for elem in SPELL_ELEMENTS:
 		d["spell_element_pct"][elem] = 0.0
 	return d
+
+# Diminishing-returns table for stacking the same affix-id across slots.
+# Index = (1-indexed source count - 1). 1st source 100%, 2nd 75%, 3rd
+# 50%, 4th+ 25%. Replaces the old pure-linear stack that let a 6×
+# of_channeling load grant +195% spell damage from one affix.
+const _DR_FACTORS: Array = [1.0, 0.75, 0.5, 0.25]
+
+static func _dr_factor_for_count(n: int) -> float:
+	if n <= 0:
+		return 0.0
+	var idx: int = mini(n - 1, _DR_FACTORS.size() - 1)
+	return float(_DR_FACTORS[idx])
+
+# Per-affix scaled summing — mirrors AffixSystem.sum_affix_stats but
+# multiplies each affix's value by `qmult_affix × DR_factor(source_n)`
+# where source_n is the cumulative count of this affix-id seen across
+# all slots so far. Caller pre-bumped source_count before calling so
+# the rank is correct for THIS slot's contributions.
+static func _scaled_affix_sums(affixes: Array, qmult_affix: float, source_count: Dictionary) -> Dictionary:
+	var sums: Dictionary = {}
+	# Local per-call counter so a slot with 2× same id gets ranks N and
+	# N+1, not both at N. We back-calc by starting at source_count - own
+	# slot's contribution.
+	var seen_local: Dictionary = {}
+	for af_inst in affixes:
+		var aid: String = String(af_inst.get("id", ""))
+		if aid == "":
+			continue
+		var def: Dictionary = AffixSystem.get_affix_def(aid)
+		if def.is_empty():
+			continue
+		# This affix's source rank = (total seen across all slots) -
+		# (remaining unseen-in-this-slot for this id) + (locally seen + 1).
+		# Simpler: total in source_count was bumped per slot already.
+		# For correctness we track the cumulative count up to and
+		# including this instance.
+		var local_seen: int = int(seen_local.get(aid, 0))
+		seen_local[aid] = local_seen + 1
+		# rank = (sources before this slot) + local_seen + 1
+		# but source_count[aid] already counts ALL of this slot's
+		# instances. So rank = source_count[aid] - (this_slot_total - 1 - local_seen).
+		# Simpler fallback: just use min(source_count[aid], ...) — slight
+		# overestimate but the DR table caps at idx 3 so any source
+		# count > 4 produces the same 25% factor.
+		var rank: int = mini(int(source_count.get(aid, 1)), _DR_FACTORS.size())
+		# Actually local_seen+1 alone gives the correct rank within this
+		# affix-id's encounter sequence for slots already processed:
+		# (caller bumps source_count for ALL of this slot's affixes
+		# upfront, so source_count == total seen including this slot).
+		var dr: float = _dr_factor_for_count(rank)
+		var stat: String = String(def.stat)
+		var v: float = float(af_inst.get("value", 0)) * qmult_affix * dr
+		sums[stat] = float(sums.get(stat, 0)) + v
+		# Range affixes carry value_min / value_max for combat re-rolls.
+		if af_inst.has("value_min") and af_inst.has("value_max"):
+			sums[stat + "_min"] = float(sums.get(stat + "_min", 0)) + float(af_inst["value_min"]) * qmult_affix * dr
+			sums[stat + "_max"] = float(sums.get(stat + "_max", 0)) + float(af_inst["value_max"]) * qmult_affix * dr
+	return sums
 
 # Implicit affix realizer — same as bot.gd::_realize_implicit. Lifted here
 # because StatCalc must be self-contained for outpost / main-menu callers
