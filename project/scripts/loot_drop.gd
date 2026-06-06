@@ -143,7 +143,15 @@ func should_skip(_bot: Bot) -> bool:
 	var item_rarity: String = String(item.get("rarity", "common"))
 	return RARITY_RANK.get(item_rarity, 0) < loot_filter_min_rank
 
+# Glow texture is identity (no per-call inputs) — cache the single
+# result on a static var. Pre-2026-06-06 every equip allocated 1024
+# pixels via set_pixel + an ImageTexture upload; with caching it's
+# one alloc total for the session.
+static var _cached_glow_tex: Texture2D = null
+
 static func _make_glow_texture() -> Texture2D:
+	if _cached_glow_tex != null:
+		return _cached_glow_tex
 	var img := Image.create(C.TILE_SIZE, C.TILE_SIZE, false, Image.FORMAT_RGBA8)
 	var center := Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5)
 	var max_dist: float = C.TILE_SIZE * 0.5
@@ -153,4 +161,5 @@ static func _make_glow_texture() -> Texture2D:
 			var t: float = clampf(1.0 - d / max_dist, 0.0, 1.0)
 			var alpha: float = t * t
 			img.set_pixel(x, y, Color(1, 1, 1, alpha))
-	return ImageTexture.create_from_image(img)
+	_cached_glow_tex = ImageTexture.create_from_image(img)
+	return _cached_glow_tex

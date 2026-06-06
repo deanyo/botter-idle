@@ -67,6 +67,10 @@ var resistances: Dictionary = {
 	"holy": 0.0, "poison": 0.0, "dark": 0.0, "physical": 0.0,
 }
 var lifesteal_pct: float = 0.0
+# Haste accumulator after caps (0..200). Surfaced as a field so UI
+# layers can show "Haste +24%" without recomputing the inverse-of-
+# attack_interval formula. 2026-06-06 stat-calc unification.
+var haste_pct: float = 0.0
 var base_max_hp: int = 80
 
 var blessings: Array = []
@@ -197,15 +201,15 @@ func apply_gear(items_db: Dictionary, equipped_instances: Dictionary, save_state
 	equipped = equipped_instances.duplicate(true)
 	upgrade_state = save_state
 	species_id = String(save_state.get("species", "spriggan")) if not save_state.is_empty() else "spriggan"
-	# Run-stable upgrade contributions to "blessing-style" stats. recompute
-	# doesn't touch these (blessings can keep adding mid-run), so we apply
-	# them once here at run start and let the rest of the run's flow stack
-	# on top.
+	# Reset loot_rarity_bonus + xp_gain_pct before stacking — pre-2026-06-06
+	# they were added on top of whatever was already there, so a double-
+	# apply (from a buggy caller) would double-count species bonuses.
+	# StatCalc.compute now folds species + bot-upgrade values in directly;
+	# blessings still accumulate via grant_blessing.
+	loot_rarity_bonus = 0.0
+	xp_gain_pct = 0.0
 	if not upgrade_state.is_empty():
 		loot_rarity_bonus = BotUpgrades.total_for_stat(upgrade_state, "loot_rarity_bonus")
-	# Species loot_pct is a passive contribution — apply once at run
-	# start so it stacks with bot upgrades / blessings instead of being
-	# wiped each recompute.
 	var sp: Dictionary = SpeciesData.get_def(species_id)
 	if not sp.is_empty():
 		loot_rarity_bonus += float(sp.get("loot_pct", 0))
@@ -375,252 +379,45 @@ func _realize_implicit(affix_id: String, item_rarity: String) -> Dictionary:
 	return out
 
 func recompute_stats() -> void:
-	# Item-overhaul v2 (2026-06-04). New stat shape:
-	#   damage_min/max + weapon_speed + weapon_damage_type   ← from weapon
-	#   armor + evasion + resistances                        ← from gear+affixes
-	#   str_stat / dex_stat / int_stat                       ← species + level + alloc + affixes
-	#   spell_*_pct accumulators                             ← from gear affixes
-	#   max_hp + crit_chance + haste                         ← derived from above
-	#
-	# Old atk/defense/base_atk/base_def fields are gone. The Actor base
-	# class still has `atk` + `defense` for compatibility with combat
-	# logging — set them at the end from damage_max + armor as
-	# representative values.
-
-	# --- Primary stats (str/dex/int) ---------------------------------
-	var sp: Dictionary = SpeciesData.get_def(species_id)
-	var lvl_bonus: int = max(0, level - 1)
-	# Allocated stat points (Phase B). Default 0 if not yet set.
-	var alloc_str: int = int(upgrade_state.get("stat_alloc_str", 0)) if not upgrade_state.is_empty() else 0
-	var alloc_dex: int = int(upgrade_state.get("stat_alloc_dex", 0)) if not upgrade_state.is_empty() else 0
-	var alloc_int: int = int(upgrade_state.get("stat_alloc_int", 0)) if not upgrade_state.is_empty() else 0
-	str_stat = 5 + int(sp.get("str_flat", 0)) + lvl_bonus + alloc_str
-	dex_stat = 5 + int(sp.get("dex_flat", 0)) + lvl_bonus + alloc_dex
-	int_stat = 5 + int(sp.get("int_flat", 0)) + lvl_bonus + alloc_int
-	aggro_bonus = int(sp.get("aggro_flat", 0))
-
-	# --- Defenses + accumulators reset --------------------------------
-	# Empty-hand baseline. Filled by weapon below.
-	damage_min = 1
-	damage_max = 2
-	weapon_speed = 1.0
-	weapon_damage_type = "physical"
-	weapon_class = "1H"
-	extra_damage = {}
-	armor = 0
-	evasion = 0.0
-	for elem in resistances.keys():
-		resistances[elem] = 0.0
-	lifesteal_pct = 0.0
-	spell_cdr_pct = 0.0
-	spell_proj_bonus = 0
-	spell_proj_speed_pct = 0.0
-	spell_area_pct = 0.0
-	spell_duration_pct = 0.0
-	spell_damage_pct = 0.0
-	for elem in spell_element_pct.keys():
-		spell_element_pct[elem] = 0.0
-
-	# Crit/Haste/Regen accumulators (start with species seeds).
-	var crit_sum: float = float(sp.get("crit_flat", 0))
-	var haste_sum: float = float(sp.get("haste_pct", 0))
-	var gear_regen: float = float(sp.get("regen_flat", 0))
-	var hp_flat: int = 0
-	var sp_hp_mult: float = 1.0 + float(sp.get("hp_pct", 0)) / 100.0
-	# Permanent gold-sink upgrades. We map old "max_hp" / "crit_chance"
-	# upgrade hooks onto the new model verbatim.
-	var up_hp: float = BotUpgrades.total_for_stat(upgrade_state, "max_hp") if not upgrade_state.is_empty() else 0.0
-	var up_crit: float = BotUpgrades.total_for_stat(upgrade_state, "crit_chance") if not upgrade_state.is_empty() else 0.0
-
-	# --- Walk equipped ------------------------------------------------
-	for slot in equipped.keys():
-		var inst: Variant = equipped[slot]
-		if inst == null or typeof(inst) != TYPE_DICTIONARY:
-			continue
-		var base_id: String = String(inst.get("base_id", ""))
-		if base_id == "" or not _items_db_cache.has(base_id):
-			continue
-		var item: Dictionary = _items_db_cache[base_id]
-		# Meta-rarity multiplier scales BASE stats (damage range / armor /
-		# evasion). Affixes get a separate multiplier that's half-strength.
-		var meta: String = String(inst.get("meta_rarity", ""))
-		var meta_mult: float = 1.0
-		if meta == "ancient":
-			meta_mult = 1.20
-		elif meta == "primal":
-			meta_mult = 1.50
-		# Quality multiplier — stacks on top of meta_mult. Full strength
-		# on baseline stats; half strength on affix values (see the
-		# affix loop below). 0.80x Rusted → 1.20x Masterwork.
-		var qmult: float = Quality.multiplier_for(inst)
-		var qmult_affix: float = Quality.affix_multiplier_for(inst)
-		var combined_base: float = meta_mult * qmult
-		# Slot-shape branching:
-		#   weapon → set damage range + speed + damage_type
-		#   body slots → add to armor / evasion
-		#   spell tomes → handled by SpellSystem; recompute only reads
-		#                 affixes for spell-modifier rollup
-		#   jewelry → no baseline, just affixes
-		if slot == "weapon":
-			damage_min = int(round(float(item.get("damage_min", 1)) * combined_base))
-			damage_max = int(round(float(item.get("damage_max", 2)) * combined_base))
-			weapon_speed = float(item.get("speed", 1.0))
-			weapon_damage_type = String(item.get("damage_type", "physical"))
-			weapon_class = String(item.get("weapon_class", "1H"))
-		else:
-			armor += int(round(float(item.get("armor", 0)) * combined_base))
-			evasion += float(item.get("evasion", 0)) * combined_base
-
-		# Combine implicit + rolled affixes — both go through the same
-		# rollup. Implicit affixes are stamped on uniques at item-roll
-		# time and never displaced.
-		var combined_affixes: Array = []
-		for a in item.get("implicit_affixes", []):
-			# Implicit entries are just affix ids; roll mid-tier values
-			# at the item's rarity for display purposes (combat reads the
-			# rolled values, not the implicit defs directly).
-			combined_affixes.append(_realize_implicit(String(a), String(item.get("rarity", "common"))))
-		for a in inst.get("affixes", []):
-			combined_affixes.append(a)
-		var sums: Dictionary = AffixSystem.sum_affix_stats(combined_affixes)
-		# Primary stats from affixes. Quality affix-mult applies at HALF
-		# strength (qmult_affix = 1.0 + (qmult - 1.0) * 0.5) so a 1.20x
-		# Masterwork only adds +10% to affix values, keeping affixes
-		# feeling rolled rather than dominated by the quality tier.
-		str_stat += int(round(float(sums.get("str", 0)) * qmult_affix))
-		dex_stat += int(round(float(sums.get("dex", 0)) * qmult_affix))
-		int_stat += int(round(float(sums.get("int", 0)) * qmult_affix))
-		# Defensive affixes.
-		hp_flat += int(round(float(sums.get("hp", 0)) * qmult_affix))
-		armor += int(round(float(sums.get("armor", 0)) * qmult_affix))
-		evasion += float(sums.get("evasion", 0)) * qmult_affix
-		gear_regen += float(sums.get("hp_regen", 0)) * qmult_affix
-		# Resistances (cap applied after the loop).
-		for elem in ["fire", "cold", "lightning", "holy", "poison", "dark"]:
-			resistances[elem] += float(sums.get(elem + "_res", 0)) * qmult_affix
-		# Crit / Haste / Lifesteal (universal).
-		crit_sum += float(sums.get("crit_chance", 0)) * qmult_affix
-		haste_sum += float(sums.get("haste_pct", 0)) * qmult_affix
-		lifesteal_pct += float(sums.get("lifesteal_pct", 0)) * qmult_affix
-		# Spell-modifier affixes.
-		spell_cdr_pct += float(sums.get("spell_cdr_pct", 0)) * qmult_affix
-		spell_proj_bonus += int(round(float(sums.get("spell_proj_bonus", 0)) * qmult_affix))
-		spell_proj_speed_pct += float(sums.get("spell_proj_speed_pct", 0)) * qmult_affix
-		spell_area_pct += float(sums.get("spell_area_pct", 0)) * qmult_affix
-		spell_duration_pct += float(sums.get("spell_duration_pct", 0)) * qmult_affix
-		spell_damage_pct += float(sums.get("spell_damage_pct", 0)) * qmult_affix
-		# Range affixes contribute extra_damage to autoattacks. Apply the
-		# half-strength quality multiplier to the bounds so a Pristine
-		# weapon's extra-fire damage gets a small bump.
-		for elem in ["physical", "fire", "cold", "lightning", "holy", "poison", "dark"]:
-			var key: String = elem + "_extra"
-			var lo: int = int(round(float(sums.get(key + "_min", 0)) * qmult_affix))
-			var hi: int = int(round(float(sums.get(key + "_max", 0)) * qmult_affix))
-			if lo > 0 or hi > 0:
-				var prev: Dictionary = extra_damage.get(elem, {"min": 0, "max": 0})
-				extra_damage[elem] = {"min": int(prev.min) + lo, "max": int(prev.max) + hi}
-
-	# --- Final derived contributions ----------------------------------
+	# Single source of truth lives in StatCalc.compute. The bot's job
+	# here is to feed inputs in and copy the result dict back onto its
+	# own fields so combat code that reads `bot.damage_max`,
+	# `bot.armor`, etc. keeps working unchanged. 2026-06-06 unification.
+	var d: Dictionary = StatCalc.compute(
+		equipped, _items_db_cache, upgrade_state, species_id,
+		level, xp, gold, blessings,
+	)
+	str_stat = int(d.str)
+	dex_stat = int(d.dex)
+	int_stat = int(d.int)
+	max_hp = int(d.max_hp)
+	hp_regen_per_sec = float(d.hp_regen)
+	armor = int(d.armor)
+	evasion = float(d.evasion)
+	resistances = d.resistances
+	crit_chance = float(d.crit_chance)
+	haste_pct = float(d.haste_pct)
+	lifesteal_pct = float(d.lifesteal_pct)
+	damage_min = int(d.damage_min)
+	damage_max = int(d.damage_max)
+	weapon_speed = float(d.weapon_speed)
+	weapon_damage_type = String(d.weapon_damage_type)
+	weapon_class = String(d.weapon_class)
+	attack_interval = float(d.attack_interval)
+	extra_damage = d.extra_damage
+	spell_cdr_pct = float(d.spell_cdr_pct)
+	spell_proj_bonus = int(d.spell_proj_bonus)
+	spell_proj_speed_pct = float(d.spell_proj_speed_pct)
+	spell_area_pct = float(d.spell_area_pct)
+	spell_duration_pct = float(d.spell_duration_pct)
+	spell_damage_pct = float(d.spell_damage_pct)
+	spell_element_pct = d.spell_element_pct
+	move_speed = float(d.move_speed)
+	aggro_bonus = int(d.aggro_bonus)
+	# Legacy Actor fields combat-log paths read.
 	var str_excess: int = str_stat - 5
-	var dex_excess: int = dex_stat - 5
-	var int_excess: int = int_stat - 5
-	# Str feeds melee damage post-roll (in actor.gd). Here we just feed
-	# HP. Each Str above baseline = +1.5% HP.
-	# Dex feeds crit + haste universally (used for spells AND melee).
-	# Int feeds spell damage / area / duration.
-	crit_sum += float(dex_excess) * 0.5
-	haste_sum += float(dex_excess) * 1.0
-	spell_damage_pct += float(int_excess) * 1.0
-	spell_area_pct += float(int_excess) * 0.5
-	spell_duration_pct += float(int_excess) * 0.5
-	# HP rollup.
-	max_hp = int(round(float(base_max_hp + (level - 1) * 8 + int(up_hp) + hp_flat) * sp_hp_mult * (1.0 + float(str_excess) * 0.015)))
-	# Caps: crit ≤ 75, haste ≤ 200 (interval floor 0.2s), evasion ≤ 75.
-	crit_chance = clampf(crit_sum + up_crit, 0.0, 75.0)
-	var haste_pct: float = clampf(haste_sum, 0.0, 200.0)
-	# Attack interval = weapon_speed / haste-mult. Empty hand falls back
-	# to 1.0s. Floor 0.15s for degenerate-flicker safety.
-	attack_interval = max(0.15, weapon_speed / (1.0 + haste_pct / 100.0))
-	evasion = clampf(evasion, 0.0, 75.0)
-	for elem in resistances.keys():
-		resistances[elem] = clampf(float(resistances[elem]), -100.0, 75.0)
-	# Legacy fields for combat-log paths that read bot.atk / bot.defense.
-	# atk = average swing damage; defense = armor (rough surrogate).
 	atk = int(round(float(damage_min + damage_max) * 0.5 * (1.0 + float(str_excess) * 0.02)))
 	defense = armor
-	# Gear regen + blessing regen + flavor-tag regen. Blessings already
-	# added to hp_regen_per_sec via grant_blessing, so we re-derive from
-	# scratch: count gear here + blessing array + tag stacks.
-	hp_regen_per_sec = gear_regen
-	for b in blessings:
-		if String(b.get("kind", "")) == "hp_regen":
-			hp_regen_per_sec += float(b.get("value", 0))
-	# Per-tag passive bonuses applied here so they're visible in the
-	# stats UI right after an equip change. All defender-side; iterate
-	# the worn slots once to collect the bag of tags, then apply each.
-	var worn_tags: Array = []
-	for slot in _DEF_SLOTS:
-		var inst: Variant = equipped.get(slot, null)
-		if inst == null or typeof(inst) != TYPE_DICTIONARY:
-			continue
-		var bid: String = String(inst.get("base_id", ""))
-		if bid == "" or not _items_db_cache.has(bid):
-			continue
-		# Combined static + per-instance enchant. Enchants count too —
-		# a vitality-enchanted helm grants +1 regen the same as a
-		# vitality-static amulet does.
-		var combined: Array = UITheme.combined_flavor_tags(_items_db_cache[bid], inst)
-		for t in combined:
-			worn_tags.append(t)
-	# `vitality`: +1 HP/sec per source. Stacks linearly.
-	for t in worn_tags:
-		if t == "vitality":
-			hp_regen_per_sec += 1.0
-		elif t == "regen":
-			# Defender-worn `regen` flavor = +0.5 HP/sec (cheaper than
-			# vitality so it can show up on more items without bloating).
-			hp_regen_per_sec += 0.5
-		elif t == "faith":
-			# Faith = +0.5 HP/sec like regen. We also boost fountain
-			# heal by 50% in dungeon._on_fountain_drank reading the
-			# same tag.
-			hp_regen_per_sec += 0.5
-	# `swiftness`: +10% move speed per source, capped at +30% so a
-	# 3-source bot doesn't walk through walls.
-	var swift_count: int = 0
-	for t in worn_tags:
-		if t == "swiftness":
-			swift_count += 1
-	if swift_count > 0:
-		var bonus: float = clampf(float(swift_count) * 0.10, 0.0, 0.30)
-		# Bot's base move_speed is 4.0; multiply.
-		move_speed = 4.0 * (1.0 + bonus)
-	else:
-		move_speed = 4.0
-	# `fortified`: +20% defense per source, additive cap +50%.
-	var fortified_count: int = 0
-	for t in worn_tags:
-		if t == "fortified":
-			fortified_count += 1
-	if fortified_count > 0:
-		var fbonus: float = clampf(float(fortified_count) * 0.20, 0.0, 0.50)
-		defense = int(round(float(defense) * (1.0 + fbonus)))
-	# `ponderous`: -10% attack speed per source. Trade-off — ponderous
-	# weapons hit harder (the +10% damage is in actor.gd) but slower.
-	var ponderous_count: int = 0
-	for t in combat_weapon_tags():
-		if t == "ponderous":
-			ponderous_count += 1
-	if ponderous_count > 0:
-		# attack_interval is "seconds between swings"; bigger = slower.
-		attack_interval = attack_interval * (1.0 + 0.10 * float(ponderous_count))
-	# `vision`: +1 aggro range per source so the bot engages enemies
-	# from further away. Read by dungeon AI via bot.aggro_bonus.
-	var vision_count: int = 0
-	for t in worn_tags:
-		if t == "vision":
-			vision_count += 1
-	aggro_bonus = vision_count
 
 var _gear_sprites: Dictionary = {}  # slot_id → Sprite2D, for swing/light hooks
 

@@ -4,10 +4,190 @@ Point-in-time snapshot of what's actually shipping. Updated as we go. The
 durable rules and process live in `CLAUDE.md`; the roadmap and open work
 items live in `TODO.md`.
 
-Last refresh: 2026-06-04 (perf + spell visuals + portal theme beat).
+Last refresh: 2026-06-06 (stat system unification). Single source of
+truth for stat math: new `StatCalc.compute()` static function takes
+`(equipped, items_db, save_state, species_id, level, xp, gold,
+blessings)` and returns a flat dict with every stat (vitals / combat /
+spell modifiers / primary / misc). `bot.gd::recompute_stats` is a thin
+wrapper that calls it and copies fields back. Outpost calls it
+identically. **No more outpost-vs-HUD divergence** — pre-fix outpost
+ignored meta_mult / Quality / bot upgrades / species seeds / worn-tag
+passives, so a Pristine Ancient Iron Dagger read different numbers on
+the deploy screen vs in-run. Two previously-dead bot upgrades wired
+(`combat_training` → atk on damage_min/max, `toughening` → armor).
+`fortified` flavor now applies to `armor` (was `defense`, never
+showed in UI). `loot_rarity_bonus` and `xp_gain_pct` reset before
+species/upgrade stacking in apply_gear (no double-count on
+re-apply). New shared `StatPanel` widget renders every stat row
+(including 0 values) at uniform font sizes in a ScrollContainer;
+both HUD Stats tab and Outpost Stats tab use it. Haste shown as
+"+24%" (the affix-sum value, capped 0..200, always non-negative)
+instead of the inverse-formula "-50%" that confused players.
+**Offline item generation REMOVED** per user direction — was
+dumping ~16 fully-rolled items per session boot.
+
+Earlier: 2026-06-06 (perf hotfix). HUD's per-frame work
+(`update_buffs` + buffs-tab mirror) was rebuilding labels every
+frame, and a freshly-added `subscribe_resize` on the HUD was
+rebuilding 100+ Controls on any viewport size_changed signal —
+together those caused 1-second freezes during play (120fps→3fps).
+Both diffed/cached now. HUD resize subscription dropped (outpost
+keeps it). Layout flipped: paperdoll now anchors to the bottom
+(just above the bag), stats panel fills everything above. No
+black dead-space below paperdoll on tall sidebars (M3 MBP 1.539
+aspect).
+
+Earlier today: 2026-06-06 (UI consistency beat). Big follow-up to
+the spatial overhaul — Weapon-tab shows the same widget the hover
+tooltip uses (`ItemTooltip`), HUD Stats tab matches outpost layout
+(sections + UITheme.affix_stat_color rows), outpost stats fits in
+a ScrollContainer + str/dex/int alloc buttons in proper HBox grid,
+Bot Instructions promoted to its own outpost tab, font sizes pulled
+from `UITheme.FS_*` tiers everywhere, paperdoll slot floor lowered
+30px and BAG_H trimmed 340 → 240 so all paperdoll slots actually
+fit, bag dead-space at bottom eliminated, main-menu vignette no
+longer shows nonsense pre-deploy combat numbers (just Lv / Floor /
+runs / gold).
+
+Earlier today: 2026-06-06 (HUD spatial overhaul). Minimap relocated
+out of the sidebar to a top-left WoW-style 160×160 overlay. Sidebar
+gains the freed real estate for a roomier paperdoll + bigger Stats/
+Weapon/Buffs tab pane. In-game inventory flattened — single grid,
+newest-at-bottom, with rarity filter chips (Common/Uncommon+/Rare+/
+Epic+/Legendary) sharing `state.loot_filter` with the auto-pickup
+filter so chip changes also affect what the bot picks up next.
+Outpost run-in-progress banner no longer clips under deploy panels.
+
+Earlier: 2026-06-04 (perf + spell visuals + portal theme beat).
 Autocast spells + Str/Dex/Int + density bump + base-attack weapon
 procs + run-survives-death. Bot is now a VS-style autobattler with 5
 autocast spell slots on top of the existing melee + gear loop.
+
+## Capsule — UI consistency beat (2026-06-06, third beat)
+
+Fixes from playtest of the spatial overhaul (capsule below): outpost
+stats column was clipping its bottom rows + str/dex/int alloc buttons
+overlapped the labels, HUD stats looked nothing like outpost stats,
+paperdoll slot floor was bottoming out (spell row clipped off-bottom),
+bag had ~36px black dead-space, main menu showed pre-deploy combat
+stats that were always wrong.
+
+* **`ItemTooltip` is the canonical "describe an item" widget.** Both
+  the outpost Weapon tab and the HUD Weapon tab now embed an
+  `ItemTooltip` and call `render_for(item, inst, db)` on the equipped
+  weapon. Same widget the inventory hover tooltip uses, so the tab
+  reads identical to the hover popup. Drops ~120 lines of bespoke
+  weapon-tab rendering across `outpost.gd` + `hud_chrome.gd`.
+* **`UITheme.FS_*` font tiers used everywhere.** New `FS_SECTION = 11`
+  + `FS_TINY = 10` added to round out TITLE/HEADER/STAT/BODY/SMALL.
+  New helpers `UITheme.label(text, size, color)` and
+  `UITheme.section_label(text)` cut the boilerplate-per-Label from
+  ~5 lines to one call. Audits HUD/outpost/main_menu — replaces
+  literal 11/12/13/14/16/22 throughout.
+* **Outpost Character pane reflowed.**
+  * Stats tab wrapped in a ScrollContainer (no more bottom clip).
+  * Str/Dex/Int rows now use real `HBoxContainer`s — label
+    EXPAND_FILL on the left, − value + on the right, no overlap.
+  * Dropped Dmg/Atk readout (Weapon tab covers it now — was double-
+    displayed).
+  * Bot Instructions promoted to its own tab (was a section at the
+    bottom of Stats). Pickup filter dropdown + inventory cap readout
+    + a hint about Pouch upgrade.
+* **HUD Stats tab matches outpost layout** — section headers
+  (Vitals / Combat / Resources / Location), section underline
+  rule, UITheme.affix_stat_color() per row, drops Dmg readout
+  (Weapon tab covers it).
+* **Paperdoll size fix.** `paperdoll_h` budget recomputed: BAG_H
+  trimmed 340 → 240 (frees 100px upward), stats_h tab area trimmed
+  320 → 240 (frees 80px), slot floor lowered 36 → 30. All 5 right-
+  column slots + bottom row + spell row now fit on the panel; spell
+  row no longer clips off-bottom on a 1600×900 viewport.
+* **Bag dead-space killed.** `_build_bag` used to floor `visible_rows`
+  to a whole-row multiple, leaving up to ~42px black at the bottom.
+  Scroll now uses the full available bag height; the last visible row
+  partial-renders into the panel as a "more below" cue.
+* **Main menu vignette simplified.** Drops the HP/ATK/DEF/Crit/
+  Haste/Regen line — those numbers were derived from save-state
+  before recompute_stats, so they were always slightly wrong relative
+  to the deploy bot. Keeps Lv / Floor reached / runs / gold (durable
+  progression numbers). `_derive_stats` deleted.
+
+Validated: 2× headless grind at 16× (~470s total, 12 floors,
+1.95k kills, 178 loot, 1 portal entered). Zero errors. Filter chip
+persistence still works.
+
+## Capsule — HUD spatial overhaul (2026-06-06, second beat)
+
+After the morning's tab refactor (capsule below), the sidebar still
+felt cramped: minimap ate ~380px which pinched the paperdoll, and
+inventory segmentation by floor produced a noisy header-grid-header-
+grid wall.
+
+Three changes ship together:
+
+* **Minimap → top-left overlay** (`_build_minimap_overlay`).
+  Fixed 160×160, pinned to (6, 6), translucent dark backdrop +
+  amber border. Out of the sidebar entirely. The freed sidebar
+  height goes to the Stats panel (header + tabs ~ 376px now,
+  was 286) and the paperdoll (now ~140px+ minimum, slot-shrink
+  math handles the variance). Debug HUD shifts down to clear the
+  minimap (`_build_debug` parks `debug_lbl` at y = minimap-bottom + 4).
+* **Sidebar reflow** — drops the minimap panel; stats panel
+  starts at y=0; paperdoll panel sits below tabs and above the
+  bag. Both panels still wrap their children in clipping
+  Controls (the no-element-escapes rule from earlier today).
+* **Flat inventory** — one `GridContainer` for every loot item
+  ever picked up, newest at the bottom of the scroll. Per-floor
+  segment headers gone. Data model in `dungeon.gd` is unchanged
+  (`_loot_segments` still keys by floor); only the render is
+  flat. Filter chip row at the top of the bag (Common / Uncommon+
+  / Rare+ / Epic+ / Legendary) drives both `cell.visible` AND
+  the auto-pickup filter via shared `state.loot_filter`.
+* **Bag panel clipped** — `_build_bag` now wraps everything in
+  a `_bag_panel: Control` with `clip_contents = true`, finishing
+  off the per-section clipping rule for the in-game HUD.
+* **Outpost banner fix** — the "Run in progress: <branch> — Floor
+  N" banner sat at y=48..72 but panels started at y=60. Bumped
+  `top_y` to 80 when the banner is showing so it reads cleanly.
+
+Validated: 2 grind runs at 16× (~250s each, 12 floors, 2.4k kills,
+236 loot pickups). No errors. Filter chip clicks persist to save
+state and round-trip cleanly.
+
+## Capsule — HUD sidebar tabs + section clipping (2026-06-06)
+
+Lost-session deferred work — applies the outpost.gd Character-pane
+TabContainer pattern to `hud_chrome.gd`'s in-game sidebar.
+
+Layout (top→bottom, `_build_sidebar`):
+
+* **Minimap panel** (clipped Control)
+* **Stats panel** (clipped Control) — always-visible header
+  (`lbl_name` "Adventurer Lv X" + `lbl_hp` text + HP bar) +
+  TabContainer with three pages:
+  * **Stats**: Place / Dmg / Armor / Crit / Haste / Regen / Gold,
+    two-column with per-Label `clip_text = true` so a "Dmg: 999-9999
+    Lightning · 9.99s" line can't escape its column.
+  * **Weapon**: equipped-weapon detail (rarity-colored name, dmg
+    range, swing, DPS, traits, implicits, rolled affixes, iLvl).
+    Rebuilt by `_rebuild_weapon_tab` whenever `update_equipped`
+    fires. Wrapped in a `ScrollContainer` so >panel-height affix
+    lists scroll instead of bleeding.
+  * **Buffs**: pooled list of `BUFF_TAB_MAX` rows (icon + name +
+    countdown). Driven by `_update_buffs_tab` from the same data
+    that feeds the existing top-of-screen buff bar.
+* **Paperdoll panel** (clipped Control) — equipment header +
+  paperdoll rig + L-shape slot grid + spell row. Slot-shrink math
+  preserved.
+* **Bag panel** (still raw HUD root for now — clipping audit in
+  TODO follow-up).
+
+Every panel is built via `_make_clip_panel(x, y, w, h, parent)`
+which sets `clip_contents = true` and `MOUSE_FILTER_PASS`. Labels
+that take dynamic strings get `clip_text = true` and a fixed
+`size`. Outline contract: **no text or element ever escapes its
+section** (saved as a feedback memory; durable rule for future UI
+work).
 
 ## Capsule — bespoke per-branch bosses (2026-06-04)
 

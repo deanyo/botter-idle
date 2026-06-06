@@ -34,12 +34,19 @@ const C := preload("res://scripts/constants.gd")
 const SIDEBAR_W := 356  # default fallback only — _sidebar_w is the live value
 const SIDEBAR_PAD := 10
 const MINIMAP_SIZE := SIDEBAR_W - SIDEBAR_PAD * 2  # default fallback only
-# BAG_H sized to fit ~3 rows of 64px cells + filter chips + label.
-# Was 180 (only 1 visible row → constant scrolling). 2026-06-06 user
-# reported black dead space under paperdoll + inventory; the dungeon
-# canvas wasn't using the bottom of the screen for inventory. New
-# default 340 → 3 visible rows + filter chips.
-const BAG_H := 340
+# BAG_H sized to fit a header+chip row + ~3 visible rows of 48px cells.
+# Was 340 which left ~42px black at the bottom (rounded-down visible_rows
+# math). 2026-06-06 second pass: 240 = 32 (chip row) + 3 × 52 (rows of
+# INV_CELL_SIZE=48 + 4 sep) + 8 padding + 8 trailing. Frees ~100px
+# upward for the paperdoll panel which was bottoming out at the 36px
+# slot floor and clipping the spell row off-screen.
+const BAG_H := 240
+# Ultrawide cap — beyond this canvas width the bag stops stretching and
+# centers, leaving wider play area on the sides. Picked at 1600 because
+# the project's design viewport is 1600×900 — anyone running narrower
+# than that gets full-width bag (no clamp), anyone running wider gets
+# the bag centered above a wider visible battlefield.
+const BAG_MAX_W := 1600
 
 # Live, viewport-sized values — set in _build_sidebar from
 # UILayout.sidebar_width(view). Replaces the hardcoded SIDEBAR_W in
@@ -49,6 +56,10 @@ var _sidebar_w: int = SIDEBAR_W
 var _minimap_size: int = MINIMAP_SIZE
 
 const PAPERDOLL_SLOT_SIZE := 48
+# When the paperdoll panel is taller than the 48px-slot layout needs,
+# we let slots grow up to this larger ceiling instead of leaving black
+# padding at the bottom. UI overhaul 2026-06-06.
+const PAPERDOLL_SLOT_MAX := 72
 const INV_CELL_SIZE := 48
 
 # Slots that exist in the data layer today.
@@ -82,18 +93,34 @@ const COL_GOLD := Color(1.0, 0.85, 0.3)
 const COL_PANEL := Color(0.0, 0.0, 0.0, 1.0)  # pure-black, OLED — UI pass 2026-06-04
 const COL_PANEL_BORDER := Color(0.35, 0.3, 0.18, 0.65)
 
-# Stats panel labels
+# Always-visible header labels (above the tab container). The tabs
+# themselves use StatPanel; only the name + HP-bar header has bespoke
+# Label refs since they live OUTSIDE any tab and remain visible no
+# matter which tab is active.
 var lbl_name: Label
-var lbl_place: Label
 var lbl_hp: Label
 var hp_bar_fill: ColorRect
 var hp_bar_bg: ColorRect
-var lbl_atk: Label
-var lbl_def: Label
-var lbl_crit: Label
-var lbl_haste: Label
-var lbl_regen: Label
-var lbl_gold: Label
+
+# Per-section clipping panels. Every dynamic widget lives inside one of
+# these so long item/affix/weapon names can't bleed past their section.
+# UI overhaul 2026-06-06.
+var _sidebar_root: Control = null      # full sidebar — clip_contents on
+var _minimap_panel: Control = null     # holds minimap + dot + stairs
+var _stats_panel: Control = null       # holds name/HP header + tabs
+var _paperdoll_panel: Control = null   # holds equipment header + paperdoll + slot cells
+var _bag_panel: Control = null         # holds inventory + filter chips
+var _stats_tabs: TabContainer = null   # in-sidebar Stats/Weapon/Buffs
+var _stats_tab_page: Control = null
+var _weapon_tab_page: Control = null
+var _buffs_tab_page: Control = null
+# Pooled buff-tab rows — same trick as the buff bar pool. Each row:
+# {row, name_lbl, time_lbl, icon}.
+var _buff_tab_rows: Array = []
+const BUFF_TAB_MAX := 14
+const STATS_TAB_HEADER_H := 28
+const HUD_CLIP_BORDER_COL := Color(0.35, 0.30, 0.18, 0.5)
+const HUD_HEADER_H := 56  # name+lv line + HP bar + HP text rows
 
 # Minimap
 var minimap_root: TextureRect
@@ -112,11 +139,43 @@ var paperdoll_rig_scale: float = 1.0
 var paperdoll_rig_anchor: Vector2 = Vector2.ZERO
 var equipped_cells: Array = []   # [{slot, sprite, hover, is_placeholder}]
 
-# Bag (bottom strip — loot log left, segmented inventory right)
+# Bag (bottom strip). Single flat GridContainer holds every inventory
+# cell; filter chips control visibility per-cell. The legacy
+# inventory_box VBox is gone — kept the var name as a redirect to the
+# grid in case any external caller still pokes it (none in repo).
 var inventory_scroll: ScrollContainer
-var inventory_box: VBoxContainer
+var inventory_grid: GridContainer
 var _inv_columns: int = 6
 var _pending_scroll_restore: int = 0
+# In-run inventory filter — mirrors the outpost rarity filter chip
+# row. Read state.loot_filter at build, write back on chip click. The
+# auto-pickup filter and the visibility filter share this key so
+# changing either side stays consistent.
+var _bag_filter_rarity: String = "common"
+var _bag_filter_slot: String = "all"
+var _bag_filter_chips: Array = []  # [{btn, id}]
+const _BAG_FILTER_OPTIONS := [
+	{ "id": "common",    "label": "All",       "min_rank": 0 },
+	{ "id": "uncommon",  "label": "Uncommon+", "min_rank": 1 },
+	{ "id": "rare",      "label": "Rare+",     "min_rank": 2 },
+	{ "id": "epic",      "label": "Epic+",     "min_rank": 3 },
+	{ "id": "legendary", "label": "Legendary", "min_rank": 4 },
+]
+# Slot filter — mirrors outpost.gd::_SLOT_FILTER_OPTIONS so the player
+# uses the same dropdown shape between screens.
+const _BAG_SLOT_FILTER_OPTIONS := [
+	{ "id": "all",    "label": "All slots" },
+	{ "id": "weapon", "label": "Weapon" },
+	{ "id": "armor",  "label": "Armor" },
+	{ "id": "helm",   "label": "Helm" },
+	{ "id": "shield", "label": "Shield" },
+	{ "id": "boots",  "label": "Boots" },
+	{ "id": "gloves", "label": "Gloves" },
+	{ "id": "cloak",  "label": "Cloak" },
+	{ "id": "ring",   "label": "Ring" },
+	{ "id": "amulet", "label": "Amulet" },
+	{ "id": "spell",  "label": "Spells" },
+]
 # Equip-request callback set by dungeon.gd: takes (segment_index, item_index)
 # and returns whether the equip succeeded.
 var equip_request_target: Object = null
@@ -145,14 +204,69 @@ const _StatusOverlay := preload("res://scripts/status_overlay.gd")
 
 func _ready() -> void:
 	layer = 50
+	_build_layout()
+	if DragManager and not DragManager.drag_ended.is_connected(_on_drag_ended):
+		DragManager.drag_ended.connect(_on_drag_ended)
+	# NOTE: deliberately NOT subscribing to viewport size_changed during
+	# play. Pre-2026-06-06 the HUD only built once and never reflowed.
+	# Adding a resize listener caused 1-second freezes in-run (rebuilding
+	# 100+ Controls every time something perturbs viewport reporting).
+	# The HUD builds correctly on first ready() with the actual viewport
+	# size (which `expand` aspect now provides), and the player rarely
+	# resizes the window mid-run. Outpost still subscribes for between-
+	# run resize; HUD doesn't.
+
+func _build_layout() -> void:
+	_build_minimap_overlay()  # top-left, small — must build BEFORE sidebar so
+	#                            sidebar code knows minimap_root exists.
 	_build_sidebar()
 	_build_bag()
 	if VideoSettings.hud_log_overlay():
 		_build_log_overlay()
 	_build_debug()
 	_build_buff_bar()
-	if DragManager and not DragManager.drag_ended.is_connected(_on_drag_ended):
-		DragManager.drag_ended.connect(_on_drag_ended)
+
+func _on_viewport_resized() -> void:
+	# Tear down + rebuild. Caches that point at the old node tree must be
+	# cleared too — dungeon.gd will re-fire update_stats / update_equipped
+	# / update_inventory_segments on the next frame, populating the new
+	# tree. Worst case: one frame of stale visuals during the rebuild.
+	for child in get_children():
+		if child is Timer:
+			continue
+		child.queue_free()
+	equipped_cells.clear()
+	_buff_cells.clear()
+	_buff_tab_rows.clear()
+	_bag_filter_chips.clear()
+	_flat_inv_cells.clear()
+	# Null out node refs so the next update_stats / update_equipped /
+	# update_buffs path either no-ops or rebuilds onto the fresh tree.
+	paperdoll_holder = null
+	paperdoll_rig = null
+	inventory_scroll = null
+	inventory_grid = null
+	_minimap_panel = null
+	_sidebar_root = null
+	_stats_panel = null
+	_paperdoll_panel = null
+	_bag_panel = null
+	_stats_tabs = null
+	_stats_tab_page = null
+	_weapon_tab_page = null
+	_buffs_tab_page = null
+	_weapon_tab_tooltip = null
+	_weapon_tab_empty = null
+	_buff_bar_root = null
+	debug_lbl = null
+	debug_dump_btn = null
+	debug_dump_status = null
+	# Diff caches refer to the old node tree — reset so the next update_*
+	# call rebuilds onto the fresh tree instead of skipping with stale state.
+	_last_rig_hash = -1
+	_last_weapon_iid = "<unset>"
+	_last_buffs_hash = -1
+	_build_layout()
 
 func _exit_tree() -> void:
 	if DragManager and DragManager.drag_ended.is_connected(_on_drag_ended):
@@ -252,101 +366,240 @@ func _on_drag_ended(payload: Dictionary, dropped_on: Variant) -> void:
 # Construction
 # ============================================================================
 
-func _build_sidebar() -> void:
-	var view := get_viewport().get_visible_rect().size
-	# UI polish 2026-06-04: sidebar width scales with viewport. 25% of
-	# screen width clamped 320..480. Replaces the hardcoded 356px.
-	_sidebar_w = UILayout.sidebar_width(view)
-	_minimap_size = _sidebar_w - SIDEBAR_PAD * 2
-	var x0: int = int(view.x) - _sidebar_w
-	# Background panel.
-	var bg := ColorRect.new()
-	bg.color = COL_PANEL
-	bg.position = Vector2(x0, 0)
-	bg.size = Vector2(_sidebar_w, view.y)
-	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(bg)
-	var border := ColorRect.new()
-	border.color = COL_PANEL_BORDER
-	border.position = Vector2(x0, 0)
-	border.size = Vector2(2, view.y)
-	border.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(border)
+const MINIMAP_OVERLAY_SIZE := 160
+const MINIMAP_OVERLAY_PAD := 6
 
-	# Minimap region (top of sidebar). Per UI pass 2026-06-04: backplate
-	# is fully transparent so only map elements (floor / wall / bot dot
-	# / stairs marker) render. The sidebar's BG_PANEL behind it provides
-	# the dark backdrop on OLED panels — keeps the minimap from looking
-	# like it lives in a grey square.
-	var mm_origin := Vector2(x0 + (_sidebar_w - _minimap_size) / 2, SIDEBAR_PAD)
-	var mm_bg := ColorRect.new()
-	mm_bg.color = Color(0, 0, 0, 0)
-	mm_bg.position = mm_origin
-	mm_bg.size = Vector2(_minimap_size, _minimap_size)
-	mm_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(mm_bg)
+# Top-left minimap overlay — moved out of the sidebar 2026-06-06 so the
+# sidebar can give its full vertical to stats + paperdoll. WoW-style
+# fixed-size minimap pinned above the play area.
+func _build_minimap_overlay() -> void:
+	_minimap_size = MINIMAP_OVERLAY_SIZE
+	_minimap_panel = Control.new()
+	_minimap_panel.position = Vector2(MINIMAP_OVERLAY_PAD, MINIMAP_OVERLAY_PAD)
+	_minimap_panel.size = Vector2(MINIMAP_OVERLAY_SIZE, MINIMAP_OVERLAY_SIZE)
+	_minimap_panel.clip_contents = true
+	_minimap_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(_minimap_panel)
+	# Slight dark backdrop so the minimap reads against bright biome
+	# floors (lava/ice). Lower alpha than COL_PANEL since this overlay
+	# sits over the dungeon canvas.
+	var bg := ColorRect.new()
+	bg.color = Color(0, 0, 0, 0.55)
+	bg.size = Vector2(MINIMAP_OVERLAY_SIZE, MINIMAP_OVERLAY_SIZE)
+	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_minimap_panel.add_child(bg)
+	var border := ReferenceRect.new()
+	border.size = Vector2(MINIMAP_OVERLAY_SIZE, MINIMAP_OVERLAY_SIZE)
+	border.border_color = COL_PANEL_BORDER
+	border.border_width = 1.0
+	border.editor_only = false
+	border.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_minimap_panel.add_child(border)
 	minimap_root = TextureRect.new()
-	minimap_root.position = mm_origin
-	minimap_root.size = Vector2(_minimap_size, _minimap_size)
+	minimap_root.position = Vector2(2, 2)
+	minimap_root.size = Vector2(MINIMAP_OVERLAY_SIZE - 4, MINIMAP_OVERLAY_SIZE - 4)
 	minimap_root.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	minimap_root.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	minimap_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(minimap_root)
-	# Stairs marker (yellow square).
+	_minimap_panel.add_child(minimap_root)
 	minimap_stairs = ColorRect.new()
 	minimap_stairs.color = Color(1.0, 0.9, 0.2)
 	minimap_stairs.size = Vector2(4, 4)
 	minimap_stairs.visible = false
-	add_child(minimap_stairs)
-	# Bot dot (cyan).
+	_minimap_panel.add_child(minimap_stairs)
 	minimap_dot = ColorRect.new()
 	minimap_dot.color = Color(0.4, 1.0, 1.0)
 	minimap_dot.size = Vector2(5, 5)
-	add_child(minimap_dot)
+	_minimap_panel.add_child(minimap_dot)
 
-	# Stats column (below minimap).
-	var sx: int = x0 + SIDEBAR_PAD
-	var sy: int = SIDEBAR_PAD + _minimap_size + 10
-	lbl_name = _add_label("Bot the Adventurer", sx, sy, 18, COL_AMBER); sy += 22
-	lbl_place = _add_label("Place: D:1", sx, sy, 14, COL_DIM); sy += 22
-	# HP row
-	lbl_hp = _add_label("HP: 100/100", sx, sy, 14, COL_HP); sy += 18
+func _build_sidebar() -> void:
+	# Sidebar layout — top to bottom (post-minimap-relocation 2026-06-06):
+	#   [Stats panel]    name/Lv + HP bar header + TabContainer (Stats/Weapon/Buffs)
+	#   [Paperdoll panel] equipment grid + spell row
+	# Minimap moved out to a top-left overlay (see _build_minimap_overlay).
+	# Each panel is its own Control with clip_contents=true so dynamic
+	# strings can never bleed past the panel rect.
+	var view := get_viewport().get_visible_rect().size
+	_sidebar_w = UILayout.sidebar_width(view)
+	var x0: int = int(view.x) - _sidebar_w
+
+	# Sidebar root — contains all sidebar widgets so clip_contents on the
+	# root catches anything that escapes a child panel's bounds.
+	_sidebar_root = Control.new()
+	_sidebar_root.position = Vector2(x0, 0)
+	_sidebar_root.size = Vector2(_sidebar_w, view.y)
+	_sidebar_root.clip_contents = true
+	_sidebar_root.mouse_filter = Control.MOUSE_FILTER_PASS
+	add_child(_sidebar_root)
+
+	# Background fill + left border (sit inside the sidebar root so they
+	# scroll/resize as one unit).
+	var bg := ColorRect.new()
+	bg.color = COL_PANEL
+	bg.size = Vector2(_sidebar_w, view.y)
+	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_sidebar_root.add_child(bg)
+	var border := ColorRect.new()
+	border.color = COL_PANEL_BORDER
+	border.size = Vector2(2, view.y)
+	border.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_sidebar_root.add_child(border)
+
+	# Geometry — sidebar fills the full screen height. Bag (bottom strip)
+	# only covers the LEFT canvas, not the sidebar column, so paperdoll
+	# can extend all the way down to view.y. Stats panel takes the upper
+	# ~55% of the sidebar; paperdoll anchors to view.y with the rest.
+	# UI consistency pass 2026-06-06.
+	var sidebar_h: int = int(view.y)
+	var stats_h: int = clampi(int(sidebar_h * 0.55), HUD_HEADER_H + 220, HUD_HEADER_H + 360)
+	var paperdoll_top: int = stats_h
+	var paperdoll_h: int = sidebar_h - paperdoll_top
+
+	# === Stats panel: always-visible header + tab container ===
+	_stats_panel = _make_clip_panel(0, 0, _sidebar_w, stats_h, _sidebar_root)
+	_build_stats_pane(_sidebar_w, stats_h)
+
+	# === Paperdoll panel ===
+	_paperdoll_panel = _make_clip_panel(0, paperdoll_top, _sidebar_w, paperdoll_h, _sidebar_root)
+	_build_paperdoll(0, 0, paperdoll_h)
+
+# Helper: build a sidebar sub-panel that clips its contents. Caller
+# parents children to the returned Control with panel-local coords.
+func _make_clip_panel(x: int, y: int, w: int, h: int, parent: Node) -> Control:
+	var panel := Control.new()
+	panel.position = Vector2(x, y)
+	panel.size = Vector2(w, h)
+	panel.clip_contents = true
+	panel.mouse_filter = Control.MOUSE_FILTER_PASS
+	parent.add_child(panel)
+	return panel
+
+# Always-visible HP/name header + Stats/Weapon/Buffs TabContainer.
+# Lives inside _stats_panel so all coords are panel-local (0..w, 0..h).
+func _build_stats_pane(w: int, h: int) -> void:
+	var inner_x: int = SIDEBAR_PAD
+	var inner_w: int = w - SIDEBAR_PAD * 2
+	# Always-visible header — name+lv on top line, HP text + HP bar below.
+	# These remain visible no matter which tab is active.
+	lbl_name = _add_label_to(_stats_panel, "Adventurer", inner_x, 4, 16, COL_AMBER)
+	lbl_name.size = Vector2(inner_w, 22)
+	lbl_name.clip_text = true
+	lbl_hp = _add_label_to(_stats_panel, "HP: 100/100", inner_x, 26, 13, COL_HP)
+	lbl_hp.size = Vector2(inner_w, 18)
+	lbl_hp.clip_text = true
 	hp_bar_bg = ColorRect.new()
 	hp_bar_bg.color = Color(0.18, 0.05, 0.05, 1.0)
-	hp_bar_bg.position = Vector2(sx, sy)
-	hp_bar_bg.size = Vector2(_sidebar_w - SIDEBAR_PAD * 2, 8)
-	add_child(hp_bar_bg)
+	hp_bar_bg.position = Vector2(inner_x, 44)
+	hp_bar_bg.size = Vector2(inner_w, 6)
+	hp_bar_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_stats_panel.add_child(hp_bar_bg)
 	hp_bar_fill = ColorRect.new()
 	hp_bar_fill.color = COL_HP
-	hp_bar_fill.position = Vector2(sx, sy)
-	hp_bar_fill.size = Vector2(_sidebar_w - SIDEBAR_PAD * 2, 8)
-	add_child(hp_bar_fill)
-	sy += 18
-	# Two-column stat block: combat on the left, support on the right.
-	lbl_atk = _add_label("Dmg: 1-2", sx, sy, 14, COL_AMBER)
-	lbl_def = _add_label("Armor: 0", sx + 140, sy, 14, COL_AMBER); sy += 22
-	lbl_crit = _add_label("Crit: 0%", sx, sy, 14, COL_DIM)
-	lbl_haste = _add_label("Haste: 0%", sx + 140, sy, 14, COL_DIM); sy += 22
-	lbl_regen = _add_label("Regen: 0/s", sx, sy, 14, COL_DIM)
-	lbl_gold = _add_label("Gold: 0", sx + 140, sy, 14, COL_GOLD); sy += 22
+	hp_bar_fill.position = Vector2(inner_x, 44)
+	hp_bar_fill.size = Vector2(inner_w, 6)
+	hp_bar_fill.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_stats_panel.add_child(hp_bar_fill)
 
-	# Paperdoll (fills the rest of the sidebar down to the bottom).
-	# Paperdoll bottom must clear the bag panel (which lives at
-	# view.y - BAG_H .. view.y). Previously we passed view.y - SIDEBAR_PAD
-	# which made the spell row render UNDER the bag — invisible to the
-	# player. UI polish 2026-06-04.
-	_build_paperdoll(x0, sy + 6, int(view.y) - BAG_H - SIDEBAR_PAD)
+	# Tab container — fills the panel below the header.
+	var tabs_y: int = HUD_HEADER_H
+	var tabs_h: int = h - HUD_HEADER_H - 4
+	_stats_tabs = TabContainer.new()
+	_stats_tabs.position = Vector2(inner_x, tabs_y)
+	_stats_tabs.size = Vector2(inner_w, tabs_h)
+	_stats_tabs.tabs_visible = true
+	_stats_tabs.clip_contents = true
+	_stats_panel.add_child(_stats_tabs)
 
-func _build_paperdoll(sidebar_x0: int, top_y: int, bottom_y: int) -> void:
+	var page_w: int = inner_w
+	var page_h: int = tabs_h - STATS_TAB_HEADER_H
+	_build_stats_tab(page_w, page_h)
+	_build_weapon_tab(page_w, page_h)
+	_build_buffs_tab(page_w, page_h)
+
+var _stat_panel_widget: StatPanel = null
+
+func _build_stats_tab(w: int, h: int) -> void:
+	# Stats tab — fully delegated to the shared StatPanel widget. Same
+	# panel the outpost uses, fed by the same StatCalc.compute output,
+	# so HUD and outpost can never disagree on the numbers.
+	_stats_tab_page = _make_tab_page("Stats", w, h)
+	_stat_panel_widget = StatPanel.new()
+	_stat_panel_widget.position = Vector2(0, 0)
+	_stat_panel_widget.size = Vector2(w, h)
+	_stat_panel_widget.editable = false
+	_stats_tab_page.add_child(_stat_panel_widget)
+
+func _build_weapon_tab(w: int, h: int) -> void:
+	# Weapon tab embeds a live ItemTooltip — the same widget hover-tooltips
+	# use over inventory cells. Single renderer for "describe an item",
+	# wrapped in a ScrollContainer so very long affix lists scroll instead
+	# of bleeding past the tab.
+	_weapon_tab_page = _make_tab_page("Weapon", w, h)
+	var scroll := ScrollContainer.new()
+	scroll.name = "weapon_scroll"
+	scroll.position = Vector2(0, 0)
+	scroll.size = Vector2(w, h)
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	_weapon_tab_page.add_child(scroll)
+
+func _build_buffs_tab(w: int, h: int) -> void:
+	_buffs_tab_page = _make_tab_page("Buffs", w, h)
+	# Pre-pool BUFF_TAB_MAX rows so update_buffs just toggles visibility
+	# + mutates labels — same pattern as the buff bar.
+	var row_h: int = 26
+	for i in BUFF_TAB_MAX:
+		var row := Control.new()
+		row.position = Vector2(4, 4 + i * (row_h + 2))
+		row.size = Vector2(w - 8, row_h)
+		row.visible = false
+		row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		row.clip_contents = true
+		var icon := TextureRect.new()
+		icon.position = Vector2(0, 1)
+		icon.size = Vector2(row_h - 2, row_h - 2)
+		icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		icon.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		row.add_child(icon)
+		var name_lbl := Label.new()
+		name_lbl.position = Vector2(row_h + 4, 4)
+		name_lbl.size = Vector2(w - row_h - 60, 18)
+		name_lbl.clip_text = true
+		name_lbl.add_theme_font_size_override("font_size", 12)
+		name_lbl.add_theme_color_override("font_color", COL_AMBER)
+		row.add_child(name_lbl)
+		var time_lbl := Label.new()
+		time_lbl.position = Vector2(w - 56, 4)
+		time_lbl.size = Vector2(48, 18)
+		time_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		time_lbl.clip_text = true
+		time_lbl.add_theme_font_size_override("font_size", 12)
+		time_lbl.add_theme_color_override("font_color", COL_DIM)
+		row.add_child(time_lbl)
+		_buffs_tab_page.add_child(row)
+		_buff_tab_rows.append({"row": row, "icon": icon, "name_lbl": name_lbl, "time_lbl": time_lbl})
+
+func _make_tab_page(title: String, w: int, h: int) -> Control:
+	var page := Control.new()
+	page.name = title
+	page.custom_minimum_size = Vector2(w, h)
+	page.size = Vector2(w, h)
+	page.clip_contents = true
+	_stats_tabs.add_child(page)
+	return page
+
+func _build_paperdoll(_sidebar_x0_unused: int, top_y: int, bottom_y: int) -> void:
 	# L-shape: bot sprite top-left, slots run down the right column and across
 	# the bottom row. Slots have no on-screen labels — hover for tooltip.
+	# Coords are panel-local within _paperdoll_panel (which clips children).
+	# 2026-06-06: dropped the "Equipment" header — bot rig art often
+	# extends above its anchor (helmets, antennae, headgear) and was
+	# visually overlapping the header. The panel's role is self-evident
+	# from the rig + slot grid.
 	var inner_w: int = _sidebar_w - SIDEBAR_PAD * 2
-	var header_h: int = 18
 	var gap: int = 6
-	# Header
-	_add_label("Equipment", sidebar_x0 + SIDEBAR_PAD, top_y, 12, COL_DIM)
-	var doll_top: int = top_y + header_h
-	var doll_left: int = sidebar_x0 + SIDEBAR_PAD
+	var doll_top: int = top_y + 4
+	var doll_left: int = SIDEBAR_PAD
 	var available_h: int = bottom_y - doll_top
 	# Slot size shrinks to fit BOTH the right column (5 slots) and the
 	# bottom row (5 slots) in the available space. Pre-2026-06-05 was
@@ -355,23 +608,40 @@ func _build_paperdoll(sidebar_x0: int, top_y: int, bottom_y: int) -> void:
 	const _RIGHT_COLUMN_COUNT := 5  # PAPERDOLL_RIGHT_COLUMN.size()
 	const _BOTTOM_ROW_COUNT := 5    # PAPERDOLL_BOTTOM_ROW.size()
 	var max_slot_by_w: int = int((inner_w - gap * (_BOTTOM_ROW_COUNT - 1)) / _BOTTOM_ROW_COUNT)
-	# Vertical budget: right column slots + bottom row slot + spell label +
-	# spell slot + 4×gap.
-	var max_slot_by_h: int = int((available_h - 16 - gap * 4) / (_RIGHT_COLUMN_COUNT + 2))
-	var slot: int = clampi(mini(max_slot_by_w, max_slot_by_h), 36, PAPERDOLL_SLOT_SIZE)
+	# Vertical budget: right column slots + bottom row slot + spell row
+	# slot + 6×gap + spell-label height (~12px). Layout:
+	#   doll_top
+	#   ├─ right_col: 5 slots × slot, separated by gap → height = 5*slot + 4*gap
+	#   ├─ gap
+	#   ├─ bottom_row: 1 slot
+	#   ├─ gap
+	#   ├─ spell_label_band ~12px (built by the spell label inside the row)
+	#   └─ spell_row: 1 slot
+	# Total = 7*slot + 6*gap + 12 ≤ available_h
+	# Solve: slot ≤ (available_h - 6*gap - 12) / 7
+	var max_slot_by_h: int = int((available_h - gap * 6 - 12) / (_RIGHT_COLUMN_COUNT + 2))
+	# Slot floor: 30 so the spell row doesn't get clipped off the bottom
+	# on a tight panel. Ceiling: PAPERDOLL_SLOT_MAX (72) on roomy panels —
+	# was PAPERDOLL_SLOT_SIZE (48) but on tall sidebars (e.g. 1600×1039
+	# from `expand` aspect on a M3 MBP 14") that left ~110px black under
+	# the paperdoll. Letting slots grow eats the space without a
+	# centering hack.
+	var slot: int = clampi(mini(max_slot_by_w, max_slot_by_h), 30, PAPERDOLL_SLOT_MAX)
 	# Right column width = slot. Sprite width fills remaining inner_w.
 	var sprite_w: int = inner_w - slot - gap
 	var sprite_h: int = slot * _RIGHT_COLUMN_COUNT + gap * (_RIGHT_COLUMN_COUNT - 1)
-	# Sprite frame top-left
+	# Sprite frame top-left (panel-local coords inside _paperdoll_panel)
 	var sprite_box := ColorRect.new()
 	sprite_box.color = Color(0, 0, 0, 0.35)
 	sprite_box.position = Vector2(doll_left, doll_top)
 	sprite_box.size = Vector2(sprite_w, sprite_h)
 	sprite_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(sprite_box)
+	_paperdoll_panel.add_child(sprite_box)
 	# The paperdoll holder draws the bot rig (base + gear overlays) at the
 	# native 32×32 art size, scaled to fit. update_equipped rebuilds the rig
 	# from the renderer so what's shown matches the in-game bot.
+	# Anchor uses panel-local coords; clip_contents on _paperdoll_panel
+	# keeps any oversized rig overlay from leaking past the panel edge.
 	var fit: float = float(mini(sprite_w, sprite_h)) / float(PAPERDOLL_BASE_PX)
 	paperdoll_rig_scale = floor(fit) if fit >= 1.0 else fit
 	paperdoll_rig_scale = max(paperdoll_rig_scale, 1.0)
@@ -379,7 +649,7 @@ func _build_paperdoll(sidebar_x0: int, top_y: int, bottom_y: int) -> void:
 	paperdoll_holder = Node2D.new()
 	paperdoll_holder.position = paperdoll_rig_anchor
 	paperdoll_holder.scale = Vector2(paperdoll_rig_scale, paperdoll_rig_scale)
-	add_child(paperdoll_holder)
+	_paperdoll_panel.add_child(paperdoll_holder)
 	# Species-resolved slot lists (mirrors outpost.gd). Converted slots
 	# replaced with extra ring slots in column/row order.
 	var species: String = String(SaveState.load_state().get("species", ""))
@@ -454,7 +724,7 @@ func _make_paperdoll_slot(slot_id: String, x: int, y: int, override_size: int = 
 	cell.accepts_drop = Callable(self, "_paperdoll_accepts_drop").bind(slot_id)
 	cell.on_left_click = Callable(self, "_on_paperdoll_left_click")
 	cell.tooltip_owner = Callable(self, "_on_cell_tooltip")
-	add_child(cell)
+	_paperdoll_panel.add_child(cell)
 	# Cooldown overlay — sized + positioned to cover the cell. Toggled
 	# by update_cooldowns. Sits above the sprite by being added after
 	# the cell's sprite child (cell._ready already added the sprite).
@@ -497,46 +767,89 @@ func _make_paperdoll_slot(slot_id: String, x: int, y: int, override_size: int = 
 
 func _build_bag() -> void:
 	var view := get_viewport().get_visible_rect().size
-	var canvas_w: int = int(view.x) - _sidebar_w
+	var raw_canvas_w: int = int(view.x) - _sidebar_w
+	# Ultrawide handling: cap the bag at a sensible max width and center
+	# it horizontally over the play canvas. The play area itself stays
+	# full width (more battlefield = good on a 32:9 ultrawide), so the
+	# bag floats above a wider visible dungeon. UI 2026-06-06.
+	var canvas_w: int = mini(raw_canvas_w, BAG_MAX_W)
+	var bag_x: int = (raw_canvas_w - canvas_w) / 2
+	# Bag panel — clipped Control so inventory cells, filter chips, and
+	# header all live inside a clean rect. UI overhaul 2026-06-06.
+	_bag_panel = Control.new()
+	_bag_panel.position = Vector2(bag_x, view.y - BAG_H)
+	_bag_panel.size = Vector2(canvas_w, BAG_H)
+	_bag_panel.clip_contents = true
+	_bag_panel.mouse_filter = Control.MOUSE_FILTER_PASS
+	add_child(_bag_panel)
 	var bg := ColorRect.new()
 	bg.color = COL_PANEL
-	bg.position = Vector2(0, view.y - BAG_H)
 	bg.size = Vector2(canvas_w, BAG_H)
 	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(bg)
+	_bag_panel.add_child(bg)
 	var border := ColorRect.new()
 	border.color = COL_PANEL_BORDER
-	border.position = Vector2(0, view.y - BAG_H)
 	border.size = Vector2(canvas_w, 2)
 	border.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(border)
+	_bag_panel.add_child(border)
 
-	# Inventory list now spans the full bottom strip — the loot log
-	# moved to a translucent overlay over the play area, toggled in
-	# Video options as `hud_log_overlay`. UI polish 2026-06-04.
+	# Header + filter row layout:
+	#   [Inventory] [Slot ▼] [All | Uncommon+ | Rare+ | Epic+ | Legendary]
 	var invx: int = SIDEBAR_PAD
-	var invy: int = int(view.y) - BAG_H + SIDEBAR_PAD
-	_add_label("Inventory", invx, invy, 13, COL_DIM)
-	invy += 18
+	var invy: int = SIDEBAR_PAD
+	var hdr_lbl := Label.new()
+	hdr_lbl.text = "Inventory"
+	hdr_lbl.position = Vector2(invx, invy)
+	hdr_lbl.size = Vector2(80, 22)
+	hdr_lbl.clip_text = true
+	hdr_lbl.add_theme_font_size_override("font_size", 13)
+	hdr_lbl.add_theme_color_override("font_color", COL_DIM)
+	_bag_panel.add_child(hdr_lbl)
+	# Slot dropdown — mirror outpost. State is in-run only (no persist).
+	var slot_dd := OptionButton.new()
+	slot_dd.position = Vector2(invx + 90, invy - 2)
+	slot_dd.size = Vector2(120, 24)
+	slot_dd.add_theme_font_size_override("font_size", 11)
+	for i in _BAG_SLOT_FILTER_OPTIONS.size():
+		var opt: Dictionary = _BAG_SLOT_FILTER_OPTIONS[i]
+		slot_dd.add_item(String(opt.label))
+		slot_dd.set_item_metadata(i, String(opt.id))
+	slot_dd.select(0)
+	slot_dd.item_selected.connect(_on_bag_slot_filter_changed.bind(slot_dd))
+	_bag_panel.add_child(slot_dd)
+	# Rarity chip row — one selected at a time via ButtonGroup so only
+	# one can be pressed and the active one is always visible.
+	# Selecting a chip filters the visible inventory cells; data model is
+	# untouched. State persists via state.loot_filter (same key the outpost
+	# uses) so the in-game filter and the auto-pickup filter stay in sync.
+	var chips_x: int = invx + 220
+	_build_bag_filter_chips(chips_x, invy, canvas_w - chips_x - SIDEBAR_PAD)
+
+	# Single flat scroll grid for all inventory items, newest at bottom.
+	# Drops the prior per-floor segment headers — clutter that grew with
+	# every floor descended. Items still live segmented in dungeon's
+	# `_loot_segments`; this is a render flatten only. UI overhaul 2026-06-06.
+	var grid_y: int = invy + 28
 	inventory_scroll = ScrollContainer.new()
-	inventory_scroll.position = Vector2(invx, invy)
-	# Round the scroll height down to a whole-row multiple so the last
-	# visible row is never half-cut. Each row = INV_CELL_SIZE + grid
-	# v_separation (4px). UI polish 2026-06-04.
-	var raw_scroll_h: int = BAG_H - SIDEBAR_PAD * 2 - 18
-	var row_h: int = INV_CELL_SIZE + 4
-	var visible_rows: int = maxi(1, raw_scroll_h / row_h)
-	var scroll_h: int = visible_rows * row_h
+	inventory_scroll.position = Vector2(invx, grid_y)
+	# Use the FULL available bag height. Pre-2026-06-06 we floored to a
+	# whole-row multiple, leaving ~36px black dead space at the bottom of
+	# the bag. The last row partially renders into the panel which the
+	# user can still see (partial row = "more below, scroll"); much
+	# better signal than empty black.
+	var scroll_h: int = BAG_H - grid_y - SIDEBAR_PAD
 	inventory_scroll.size = Vector2(canvas_w - invx - SIDEBAR_PAD, scroll_h)
 	inventory_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	add_child(inventory_scroll)
-	inventory_box = VBoxContainer.new()
-	inventory_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	inventory_box.add_theme_constant_override("separation", 4)
-	inventory_scroll.add_child(inventory_box)
-	# Columns budget (cells per row). Derived from container width here so
-	# rebuild_segments doesn't need to recompute every refresh.
-	_inv_columns = max(1, int((canvas_w - invx - SIDEBAR_PAD - 16) / (INV_CELL_SIZE + 6)))
+	_bag_panel.add_child(inventory_scroll)
+	# GridContainer holds every visible inventory cell (filter applies
+	# render-time visibility). Replaces the old VBox-of-segments layout.
+	inventory_grid = GridContainer.new()
+	inventory_grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	inventory_grid.add_theme_constant_override("h_separation", 4)
+	inventory_grid.add_theme_constant_override("v_separation", 4)
+	inventory_grid.columns = max(1, int((canvas_w - invx - SIDEBAR_PAD * 2 - 16) / (INV_CELL_SIZE + 6)))
+	inventory_scroll.add_child(inventory_grid)
+	_inv_columns = inventory_grid.columns
 
 func _build_log_overlay() -> void:
 	# Translucent loot/combat log overlay, anchored bottom-left of the
@@ -577,9 +890,13 @@ func _build_log_overlay() -> void:
 		log_lines.append(lbl)
 
 func _build_debug() -> void:
+	# Park debug HUD below the minimap — pre-2026-06-06 it lived at
+	# (6, 4) but the new top-left minimap occupies that pixel range.
+	# Park at a y just below the minimap's bottom edge.
+	var debug_top: int = MINIMAP_OVERLAY_PAD * 2 + MINIMAP_OVERLAY_SIZE + 4
 	debug_lbl = Label.new()
-	debug_lbl.position = Vector2(6, 4)
-	debug_lbl.add_theme_font_size_override("font_size", 12)
+	debug_lbl.position = Vector2(6, debug_top)
+	debug_lbl.add_theme_font_size_override("font_size", 11)
 	debug_lbl.add_theme_color_override("font_color", Color(0.6, 0.7, 0.55, 0.85))
 	debug_lbl.add_theme_color_override("font_outline_color", Color(0, 0, 0))
 	debug_lbl.add_theme_constant_override("outline_size", 2)
@@ -679,54 +996,124 @@ func _build_buff_bar() -> void:
 # Refresh the buff bar from a status dict (Actor._statuses shape:
 # id → {expires_at, sprite, dot?}). Called every frame by dungeon
 # (cheap: reuses pooled cells, only mutates visible/text/texture).
+var _last_buffs_hash: int = -1
+
 func update_buffs(statuses: Dictionary) -> void:
 	if _buff_bar_root == null:
 		return
-	var view := get_viewport().get_visible_rect().size
-	var canvas_w: int = int(view.x) - _sidebar_w
+	# Skip the whole pass when nothing changed since last frame. statuses
+	# is rebuilt from bot._statuses every dungeon._process tick, so its
+	# hash changes only when a buff appears, expires, or its expires_at
+	# advances by ≥1 second (rounded for display). When the stable case
+	# hits, the entire bar/tab update is a hash compare + early return.
+	# Caveat: ticking countdown labels still need to run, so we compute a
+	# combined hash that includes ceil(remaining) per buff.
+	var now: float = float(Time.get_ticks_msec()) / 1000.0
 	var ids: Array = statuses.keys()
-	# Sort by status `z` (defines render priority too — high z = important
-	# stuff goes leftmost where the eye lands first).
 	ids.sort_custom(func(a, b):
 		var za: int = int(_StatusOverlay.get_def(a).get("z", 0))
 		var zb: int = int(_StatusOverlay.get_def(b).get("z", 0))
 		return za > zb)
+	# Hash combines id list + per-buff ceil(remaining) so countdown
+	# changes still trigger an update.
+	var h_arr: Array = []
+	for id in ids:
+		var entry: Dictionary = statuses[id]
+		var exp: float = float(entry.get("expires_at", 0.0))
+		var secs: int = 0
+		if exp > 0.0:
+			secs = max(0, int(ceil(exp - now)))
+		h_arr.append([id, secs])
+	var h: int = h_arr.hash()
+	if h == _last_buffs_hash:
+		return
+	_last_buffs_hash = h
+	var view := get_viewport().get_visible_rect().size
+	var canvas_w: int = int(view.x) - _sidebar_w
 	var n: int = mini(ids.size(), BUFF_BAR_MAX)
 	# Center the visible row horizontally above the dungeon canvas.
 	var row_w: int = n * BUFF_CELL_SIZE + max(0, n - 1) * BUFF_CELL_GAP
 	var start_x: int = max(0, (canvas_w - row_w) / 2)
-	var now: float = float(Time.get_ticks_msec()) / 1000.0
 	for i in BUFF_BAR_MAX:
 		var cell_data: Dictionary = _buff_cells[i]
 		var ctrl: Control = cell_data["cell"]
 		if i >= n:
-			ctrl.visible = false
+			if ctrl.visible:
+				ctrl.visible = false
 			continue
 		var id: String = String(ids[i])
 		var def: Dictionary = _StatusOverlay.get_def(id)
-		var tex: Texture2D = _StatusOverlay.texture_for(id)
 		var icon: TextureRect = cell_data["icon"]
-		icon.texture = tex
-		icon.modulate = def.get("tint", Color(1, 1, 1, 1))
-		# Tooltip on the parent control — shows label + desc on hover.
-		var label_str: String = String(def.get("label", id.capitalize()))
-		var desc_str: String = String(def.get("desc", ""))
-		ctrl.tooltip_text = label_str if desc_str.is_empty() else "%s\n%s" % [label_str, desc_str]
+		# Diff: only refresh icon + tooltip when this cell changes which
+		# buff it represents. Was running every frame which triggered a
+		# texture binding + tooltip string compose per cell × every frame.
+		var prev_id: String = String(cell_data.get("last_id", ""))
+		if prev_id != id:
+			icon.texture = _StatusOverlay.texture_for(id)
+			icon.modulate = def.get("tint", Color(1, 1, 1, 1))
+			var label_str: String = String(def.get("label", id.capitalize()))
+			var desc_str: String = String(def.get("desc", ""))
+			ctrl.tooltip_text = label_str if desc_str.is_empty() else "%s\n%s" % [label_str, desc_str]
+			cell_data["last_id"] = id
 		var lbl: Label = cell_data["lbl"]
 		var entry: Dictionary = statuses[id]
 		var expires: float = float(entry.get("expires_at", 0.0))
+		var time_str: String
 		if expires > 0.0:
-			# ceil so a renewing driver (e.g. dungeon refreshing regen
-			# every frame at duration=1.0) reads as a stable "1s"
-			# instead of flicking between 0s/1s as fractions tick.
 			var remaining: float = expires - now
 			var secs: int = max(1, int(ceil(remaining)))
-			lbl.text = "%ds" % secs
+			time_str = "%ds" % secs
 		else:
-			# Persistent (e.g. blessings) — no countdown.
-			lbl.text = ""
-		ctrl.position = Vector2(start_x + i * (BUFF_CELL_SIZE + BUFF_CELL_GAP), 0)
-		ctrl.visible = true
+			time_str = ""
+		if String(cell_data.get("last_time", "")) != time_str:
+			lbl.text = time_str
+			cell_data["last_time"] = time_str
+		var px: float = float(start_x + i * (BUFF_CELL_SIZE + BUFF_CELL_GAP))
+		if ctrl.position.x != px:
+			ctrl.position = Vector2(px, 0)
+		if not ctrl.visible:
+			ctrl.visible = true
+	# Mirror to the in-sidebar Buffs tab. Same data, list form.
+	_update_buffs_tab(ids, statuses, now)
+
+# Buffs tab — text+icon row form of the same data the buff bar shows.
+# Diffs against the prior write so we don't trigger a Label relayout
+# every frame for unchanged rows. Same diff trick `update_stats` uses.
+func _update_buffs_tab(ids: Array, statuses: Dictionary, now: float) -> void:
+	if _buff_tab_rows.is_empty():
+		return
+	var n: int = mini(ids.size(), BUFF_TAB_MAX)
+	for i in BUFF_TAB_MAX:
+		var refs: Dictionary = _buff_tab_rows[i]
+		var row: Control = refs["row"]
+		if i >= n:
+			if row.visible:
+				row.visible = false
+			continue
+		var id: String = String(ids[i])
+		var def: Dictionary = _StatusOverlay.get_def(id)
+		var icon: TextureRect = refs["icon"]
+		var prev_id: String = String(refs.get("last_id", ""))
+		if prev_id != id:
+			icon.texture = _StatusOverlay.texture_for(id)
+			icon.modulate = def.get("tint", Color(1, 1, 1, 1))
+			refs["name_lbl"].text = String(def.get("label", id.capitalize()))
+			refs["last_id"] = id
+		var time_lbl: Label = refs["time_lbl"]
+		var entry: Dictionary = statuses[id]
+		var expires: float = float(entry.get("expires_at", 0.0))
+		var time_str: String
+		if expires > 0.0:
+			var remaining: float = expires - now
+			var secs: int = max(1, int(ceil(remaining)))
+			time_str = "%ds" % secs
+		else:
+			time_str = ""
+		if String(refs.get("last_time", "")) != time_str:
+			time_lbl.text = time_str
+			refs["last_time"] = time_str
+		if not row.visible:
+			row.visible = true
 
 func _monospace_font() -> Font:
 	# Godot's default monospace font.
@@ -735,6 +1122,12 @@ func _monospace_font() -> Font:
 	return f
 
 func _add_label(t: String, x: int, y: int, size: int, color: Color) -> Label:
+	return _add_label_to(self, t, x, y, size, color)
+
+# Add a label as a child of `parent` (instead of the HUD root). Use
+# this so labels inside per-section panels inherit the panel's
+# clip_contents bounds.
+func _add_label_to(parent: Node, t: String, x: int, y: int, size: int, color: Color) -> Label:
 	var lbl := Label.new()
 	lbl.text = t
 	lbl.position = Vector2(x, y)
@@ -742,69 +1135,50 @@ func _add_label(t: String, x: int, y: int, size: int, color: Color) -> Label:
 	lbl.add_theme_color_override("font_color", color)
 	lbl.add_theme_color_override("font_outline_color", Color(0, 0, 0))
 	lbl.add_theme_constant_override("outline_size", 2)
-	add_child(lbl)
+	parent.add_child(lbl)
 	return lbl
 
 # ============================================================================
 # Public update API — called by dungeon.gd
 # ============================================================================
 
-var _last_place: String = ""
 var _last_hp: int = -1
 var _last_max_hp: int = -1
-var _last_atk: int = -1
-var _last_def: int = -1
-var _last_crit: int = -1
-var _last_haste: int = -1
-var _last_regen: int = -1
-var _last_gold: int = -1
+var _last_lvl: int = -1
+# Stale-period suppressor — feed StatCalc only when an equip changed.
+# StatPanel itself diffs the dict, but skipping the recompute call
+# saves a Dictionary allocation per frame.
+var _last_equip_hash_for_stats: int = 0
 
 func update_stats(bot_ref: Bot, place_str: String, _turn: int) -> void:
-	# Setting Label.text triggers layout/relayout in Godot. Skipping
-	# unchanged values turns this from "10 layouts/frame" into "0 most
-	# frames, 1-2 when something changes."
+	# Always-visible header (name + Lv + HP bar) updates per-tick from
+	# bot fields. The Stats / Weapon / Buffs tabs rebuild from
+	# StatCalc.compute via the StatPanel widget — same dict the outpost
+	# uses, so the two screens always agree. Pre-2026-06-06 each layer
+	# computed haste differently; that's gone.
 	if not is_instance_valid(bot_ref):
 		return
-	if place_str != _last_place:
-		lbl_place.text = "Place: %s" % place_str
-		_last_place = place_str
+	# Always-visible header — name + level.
+	var lvl: int = int(bot_ref.level)
+	if lvl != _last_lvl:
+		lbl_name.text = "Adventurer  Lv %d" % lvl
+		_last_lvl = lvl
 	if bot_ref.hp != _last_hp or bot_ref.max_hp != _last_max_hp:
 		lbl_hp.text = "HP: %d / %d" % [bot_ref.hp, bot_ref.max_hp]
 		var hp_pct: float = clampf(float(bot_ref.hp) / maxf(1.0, float(bot_ref.max_hp)), 0.0, 1.0)
-		hp_bar_fill.size = Vector2((_sidebar_w - SIDEBAR_PAD * 2) * hp_pct, 8)
+		hp_bar_fill.size = Vector2(hp_bar_bg.size.x * hp_pct, hp_bar_bg.size.y)
 		hp_bar_fill.color = COL_HP_LOW if hp_pct < 0.3 else COL_HP
 		_last_hp = bot_ref.hp
 		_last_max_hp = bot_ref.max_hp
-	# Item-overhaul v2: damage line shows min-max + element + speed.
-	# Defense splits into Armor (flat phys) and Evasion%.
-	if bot_ref.damage_max != _last_atk:
-		var dtype: String = String(bot_ref.weapon_damage_type)
-		# Capitalize element label; "Phys" for physical for compactness.
-		var dtype_label: String = dtype.capitalize() if dtype != "physical" else "Phys"
-		lbl_atk.text = "Dmg: %d-%d %s · %.1fs" % [bot_ref.damage_min, bot_ref.damage_max, dtype_label, bot_ref.weapon_speed]
-		_last_atk = bot_ref.damage_max
-	if bot_ref.armor != _last_def:
-		var ev_int: int = int(round(bot_ref.evasion))
-		lbl_def.text = "Armor: %d · Eva: %d%%" % [bot_ref.armor, ev_int]
-		_last_def = bot_ref.armor
-	# Crit / Haste / Regen come from the new affix system. Display rounded
-	# ints — fractional precision isn't meaningful at the player surface.
-	var crit_int: int = int(round(bot_ref.crit_chance))
-	if crit_int != _last_crit:
-		lbl_crit.text = "Crit: %d%%" % crit_int
-		_last_crit = crit_int
-	# Haste is derived from attack_interval (0.6s baseline). Inverse formula.
-	var haste_int: int = int(round((0.6 / bot_ref.attack_interval - 1.0) * 100.0)) if bot_ref.attack_interval > 0.0 else 0
-	if haste_int != _last_haste:
-		lbl_haste.text = "Haste: %d%%" % haste_int
-		_last_haste = haste_int
-	var regen_int: int = int(round(bot_ref.hp_regen_per_sec))
-	if regen_int != _last_regen:
-		lbl_regen.text = "Regen: %d/s" % regen_int
-		_last_regen = regen_int
-	if bot_ref.gold != _last_gold:
-		lbl_gold.text = "Gold: %d" % bot_ref.gold
-		_last_gold = bot_ref.gold
+	# Stats tab — recompute via StatCalc only when the equip / level /
+	# gold / xp changed. StatPanel.render diffs each row internally.
+	if _stat_panel_widget != null and is_instance_valid(_stat_panel_widget):
+		var save_state: Dictionary = SaveState.load_state()
+		var stats: Dictionary = StatCalc.compute(
+			bot_ref.equipped, _items_db_cache, save_state, bot_ref.species_id,
+			bot_ref.level, bot_ref.xp, bot_ref.gold, bot_ref.blessings,
+		)
+		_stat_panel_widget.render(stats)
 
 func push_log(msg: String, tag: String = "combat") -> void:
 	# Beat 1: only loot-tagged messages render. Combat/etc are accepted but
@@ -825,6 +1199,10 @@ func push_log(msg: String, tag: String = "combat") -> void:
 		else:
 			log_lines[i].text = ""
 
+const _RIG_OVERLAY_SLOTS := ["weapon", "armor", "helm", "shield", "boots", "gloves", "cloak"]
+var _last_rig_hash: int = -1
+var _last_weapon_iid: String = "<unset>"
+
 func update_equipped(equipped: Dictionary, items_db: Dictionary, species: String = "") -> void:
 	# equipped: slot → instance dict; items_db: id → static def. The L-shape
 	# slot grid uses ItemCell to render — same widget as outpost so equip
@@ -843,170 +1221,336 @@ func update_equipped(equipped: Dictionary, items_db: Dictionary, species: String
 			cell.item = {}
 		cell.blocked = species_blocked or bool(entry.get("is_placeholder", false))
 		cell.render()
-	# Rebuild the bot rig with the latest equipped set so the paperdoll shows
-	# what the bot is actually wearing.
-	if paperdoll_holder != null:
+	# Rebuild the bot rig only when an OVERLAY slot changed. Equipping a
+	# ring/amulet/spell doesn't change the rig — pre-2026-06-06 we still
+	# rebuilt + reattached looping tweens which compounded into the equip
+	# stutter.
+	var rig_keys: Array = []
+	for slot_name in _RIG_OVERLAY_SLOTS:
+		var rig_inst: Variant = equipped.get(slot_name, null)
+		var iid: String = ""
+		if typeof(rig_inst) == TYPE_DICTIONARY:
+			iid = String(rig_inst.get("instance_id", rig_inst.get("base_id", "")))
+		rig_keys.append([slot_name, iid])
+	rig_keys.append(species)  # species change reshapes the base sprite
+	var rig_hash: int = rig_keys.hash()
+	if paperdoll_holder != null and rig_hash != _last_rig_hash:
 		if is_instance_valid(paperdoll_rig):
 			paperdoll_rig.queue_free()
-		var built: Dictionary = PaperdollRenderer.build_rig(items_db, equipped, species)
+		# static_only=true: skip the looping glow + hand-pulse tweens
+		# on the HUD-side paperdoll. The thumbnail is too small to
+		# appreciate the animation and the tweens compound across runs.
+		var built: Dictionary = PaperdollRenderer.build_rig(items_db, equipped, species, true)
 		paperdoll_rig = built.rig
 		paperdoll_holder.add_child(paperdoll_rig)
+		_last_rig_hash = rig_hash
+	# Rebuild the Weapon tab only when the equipped weapon changed.
+	var weapon_inst: Variant = equipped.get("weapon", null)
+	var weapon_iid: String = ""
+	if typeof(weapon_inst) == TYPE_DICTIONARY:
+		weapon_iid = String(weapon_inst.get("instance_id", weapon_inst.get("base_id", "")))
+	if weapon_iid != _last_weapon_iid:
+		_rebuild_weapon_tab(equipped, items_db)
+		_last_weapon_iid = weapon_iid
 
-# Segment-based inventory render. Each segment is {header, items}.
-#
-# Diff-rendering: rather than tearing down the whole VBox every loot
-# pickup (the cause of a visible stutter on heavy inventories — 50-100
-# Buttons + decor recreated per pickup), we cache per-segment grids
-# and only rebuild segments whose item count changed. The typical
-# loot-pickup path = 1 segment grew by 1 item; we just append one cell.
-# Equip-swap = 1 segment shrank by 1; we rebuild that segment only.
-# A new floor segment appearing = full rebuild (rare, once per floor).
-var _seg_grids: Array = []  # per-segment Dict {hdr, grid_or_empty, count}
+# Refresh the Weapon tab from the currently-equipped weapon. Reuses
+# the in-game ItemTooltip widget so the tab text matches the hover
+# tooltip exactly — affixes, traits, iLvl footer, all from one
+# renderer. UI consistency pass 2026-06-06.
+var _weapon_tab_tooltip: ItemTooltip = null
+var _weapon_tab_empty: Label = null
+
+func _rebuild_weapon_tab(equipped: Dictionary, items_db: Dictionary) -> void:
+	if _weapon_tab_page == null or not is_instance_valid(_weapon_tab_page):
+		return
+	var scroll: ScrollContainer = _weapon_tab_page.get_node_or_null("weapon_scroll")
+	if scroll == null:
+		return
+	var weapon_inst: Variant = equipped.get("weapon", null)
+	var item: Dictionary = {}
+	if typeof(weapon_inst) == TYPE_DICTIONARY:
+		item = items_db.get(String(weapon_inst.get("base_id", "")), {})
+	if item.is_empty():
+		# No weapon → show one-line "No weapon equipped." Tear down the
+		# tooltip if it was previously visible.
+		if _weapon_tab_tooltip != null and is_instance_valid(_weapon_tab_tooltip):
+			_weapon_tab_tooltip.queue_free()
+			_weapon_tab_tooltip = null
+		if _weapon_tab_empty == null or not is_instance_valid(_weapon_tab_empty):
+			_weapon_tab_empty = UITheme.label("No weapon equipped.", UITheme.FS_BODY, COL_DIM)
+			_weapon_tab_empty.position = Vector2(8, 8)
+			_weapon_tab_empty.size = Vector2(scroll.size.x - 16, 22)
+			_weapon_tab_empty.clip_text = true
+			scroll.add_child(_weapon_tab_empty)
+		return
+	# Weapon is equipped — show the ItemTooltip rendering.
+	if _weapon_tab_empty != null and is_instance_valid(_weapon_tab_empty):
+		_weapon_tab_empty.queue_free()
+		_weapon_tab_empty = null
+	if _weapon_tab_tooltip == null or not is_instance_valid(_weapon_tab_tooltip):
+		_weapon_tab_tooltip = ItemTooltip.new()
+		_weapon_tab_tooltip.static_mode = true  # no glow pulse / particles for the embedded tab
+		scroll.add_child(_weapon_tab_tooltip)
+	_weapon_tab_tooltip.render_for(item, weapon_inst, items_db)
+
+# Flat-grid inventory cache. Each entry: {seg_idx, item_idx, instance_id, cell}.
+# Caller (dungeon.gd) still passes segments (a list of {header, items}),
+# but we render every item.flatten()ed into one GridContainer with newest
+# at the bottom. Filter chips drive cell.visible without re-rendering.
+# UI overhaul 2026-06-06.
+var _flat_inv_cells: Array = []  # ordered same as the visible grid (seg_idx,item_idx walk forward)
 
 func update_inventory_segments(segments: Array, items_db: Dictionary, slot_cooldowns: Dictionary) -> void:
-	if inventory_box == null:
+	if inventory_grid == null:
 		return
-	# A "shape change" is when existing segment headers reorder or
-	# disappear — that requires a full teardown. The common case
-	# of segments[].size() growing by 1 (new floor reached) only
-	# needs the new segment appended; the old grids stay valid. The
-	# previous code rebuilt the whole panel on every floor descent,
-	# which is the visible stutter we're tracking down.
-	var prev_n: int = _seg_grids.size()
-	var new_n: int = segments.size()
-	var headers_match: bool = true
-	for i in mini(prev_n, new_n):
-		if String(segments[i].get("header", "")) != String(_seg_grids[i].get("header", "")):
-			headers_match = false
+	# Build the canonical flat list (seg, item, instance_id) in source
+	# order — newest segment last, so the freshest items appear at the
+	# bottom of the grid where the player's eye lands.
+	var fresh_keys: Array = []
+	for si in segments.size():
+		var items: Array = segments[si].get("items", [])
+		for ii in items.size():
+			fresh_keys.append({"seg": si, "item": ii, "id": _inst_key(items[ii])})
+	# Diff against cached list. Three fast paths cover the common cases
+	# without a full teardown — the latter caused visible loot-pickup
+	# spikes (each pickup tearing down 100+ ItemCells).
+	var prev_n: int = _flat_inv_cells.size()
+	var new_n: int = fresh_keys.size()
+	var prev_matches_new_prefix: bool = true
+	var prefix_len: int = mini(prev_n, new_n)
+	for i in prefix_len:
+		if String(_flat_inv_cells[i].get("id", "")) != String(fresh_keys[i]["id"]) \
+				or int(_flat_inv_cells[i].get("seg", -1)) != int(fresh_keys[i]["seg"]) \
+				or int(_flat_inv_cells[i].get("item", -1)) != int(fresh_keys[i]["item"]):
+			prev_matches_new_prefix = false
 			break
-	var shape_changed: bool = not headers_match or new_n < prev_n
-	if shape_changed:
-		_rebuild_inventory_full(segments, items_db, slot_cooldowns)
+	# Path 1 — same flat list, nothing to do.
+	if prev_matches_new_prefix and prev_n == new_n:
+		_apply_inventory_filter()
 		return
-	# Same-or-grown shape. Append-only-new-segments path: build any
-	# segments past the cached count without touching existing grids.
-	for i in range(prev_n, new_n):
-		_seg_grids.append({})
-		_build_segment_into(i, segments, items_db, slot_cooldowns)
-	# Same shape — diff per segment by item count. If a segment shrank
-	# (equip-swap) or items reordered, do a per-segment full rebuild.
-	# If it grew by N (loot pickup), append the N new cells.
-	for i in segments.size():
-		var seg: Dictionary = segments[i]
-		var items: Array = seg.get("items", [])
-		var cached: Dictionary = _seg_grids[i]
-		var prev_count: int = int(cached.get("count", 0))
-		var new_count: int = items.size()
-		if new_count == prev_count:
-			# Even when the count matches, the CONTENT can have shifted —
-			# equipping a 2H weapon over a shield removes the picked
-			# item AND appends the displaced shield in one tick, leaving
-			# the segment same-size but with a different instance at
-			# multiple indices. Without rebuilding, cell metas point at
-			# stale (seg, item_idx) pairs and the click + drag guards
-			# desync from the data model. 2026-06-05 corruption fix.
-			var prev_ids_eq: Array = cached.get("ids", [])
-			var new_ids_eq: Array = []
-			for it in items:
-				new_ids_eq.append(_inst_key(it))
-			var changed: bool = false
-			if prev_ids_eq.size() != new_ids_eq.size():
-				changed = true
-			else:
-				for k in new_ids_eq.size():
-					if String(prev_ids_eq[k]) != String(new_ids_eq[k]):
-						changed = true
-						break
-			if changed:
-				_rebuild_one_segment(i, segments, items_db, slot_cooldowns)
-			continue
-		if new_count > prev_count:
-			# Growth path. If we already have a grid (segment had items
-			# before), append new cells. If this segment was empty
-			# previously (prev_count == 0, empty_label was rendered),
-			# tear out the empty label and create the grid in place
-			# without queue_freeing the cached header — that header
-			# rebuild was the visible loot-pickup stutter on the first
-			# item of every new floor segment.
-			var grid: GridContainer = cached.get("grid", null)
-			if grid != null and is_instance_valid(grid):
-				for k in range(prev_count, new_count):
-					grid.add_child(_make_inv_button(i, k, items[k], items_db, slot_cooldowns))
-				cached["count"] = new_count
-				var grow_ids: Array = cached.get("ids", [])
-				for k in range(prev_count, new_count):
-					grow_ids.append(_inst_key(items[k]))
-				cached["ids"] = grow_ids
-				continue
-			if prev_count == 0:
-				# Replace empty-label with a fresh grid, leave the
-				# header alone, append cells. Saves an Outpost-sized
-				# tree rebuild on every floor's first pickup.
-				var empty: Variant = cached.get("empty_label", null)
-				if empty != null and is_instance_valid(empty):
-					empty.queue_free()
-				var new_grid := GridContainer.new()
-				new_grid.columns = _inv_columns
-				new_grid.add_theme_constant_override("h_separation", 4)
-				new_grid.add_theme_constant_override("v_separation", 4)
-				# Insert grid right after the header in the segment's
-				# slot so visual order is preserved.
-				var hdr_node: Variant = cached.get("header_node", null)
-				inventory_box.add_child(new_grid)
-				if hdr_node != null and is_instance_valid(hdr_node):
-					inventory_box.move_child(new_grid, hdr_node.get_index() + 1)
-				for k in items.size():
-					new_grid.add_child(_make_inv_button(i, k, items[k], items_db, slot_cooldowns))
-				cached["grid"] = new_grid
-				cached["empty_label"] = null
-				cached["count"] = new_count
-				var fresh_ids: Array = []
-				for it in items:
-					fresh_ids.append(_inst_key(it))
-				cached["ids"] = fresh_ids
-				continue
-		# Shrink path — try to surgically remove the single cell that
-		# disappeared instead of rebuilding the whole segment (which
-		# reorders the remaining cells visually). We diff the cached
-		# instance ids against the new items to find which index dropped.
-		var grid_s: GridContainer = cached.get("grid", null)
-		var prev_ids: Array = cached.get("ids", [])
-		if grid_s != null and is_instance_valid(grid_s) and not prev_ids.is_empty() \
-				and new_count == prev_count - 1:
-			var new_ids: Array = []
-			for it in items:
-				new_ids.append(_inst_key(it))
-			var removed_idx: int = _diff_first_removed(prev_ids, new_ids)
-			if removed_idx >= 0 and removed_idx < grid_s.get_child_count():
-				var node: Node = grid_s.get_child(removed_idx)
-				if node != null and is_instance_valid(node):
-					node.queue_free()
-				# Renumber subsequent siblings — their `item_idx` meta
-				# pointed at indices that just shifted left by one when
-				# the data array compacted. Without this, drag/click
-				# on a remaining cell looks up _loot_segments[seg].items
-				# at a stale index → equips the WRONG item (presents
-				# as the dragged-spell-equipped-as-cloak bug).
-				for child_idx in range(removed_idx, grid_s.get_child_count()):
-					var sibling: Node = grid_s.get_child(child_idx)
-					if sibling == node:
-						continue  # the queued-free node is still in the tree this frame
-					if sibling.has_method("set_meta"):
-						var old_item_idx: int = int(sibling.get_meta("item_idx", -1))
-						if old_item_idx > removed_idx:
-							sibling.set_meta("item_idx", old_item_idx - 1)
-				cached["count"] = new_count
-				cached["ids"] = new_ids
-				continue
-		# General shrink / grid missing — fall back to rebuild.
-		_rebuild_one_segment(i, segments, items_db, slot_cooldowns)
-	# Preserve scroll position. Pre-2026-06-06 we forced scroll_vertical=0
-	# every refresh which made dragging an item painful — picking up loot
-	# or descending a floor would yank the player back to the top of
-	# the inventory.
+	# Path 2 — append-only (typical loot pickup: 1+ items added at the end).
+	# Append cells without touching existing ones. This is the hot path —
+	# every loot drop hits this.
+	if prev_matches_new_prefix and new_n > prev_n:
+		for i in range(prev_n, new_n):
+			var entry: Dictionary = fresh_keys[i]
+			var si: int = int(entry["seg"])
+			var ii: int = int(entry["item"])
+			var inst: Variant = segments[si]["items"][ii]
+			var cell := _make_inv_button(si, ii, inst, items_db, slot_cooldowns)
+			inventory_grid.add_child(cell)
+			_flat_inv_cells.append({
+				"seg": si, "item": ii, "id": String(entry["id"]),
+				"cell": cell, "inst": inst,
+			})
+		_apply_inventory_filter()
+		return
+	# Path 3 — single-cell removal (typical equip-swap: an item leaves the
+	# inventory). Find the missing index, queue_free that one cell.
+	if prev_matches_new_prefix and new_n == prev_n - 1:
+		# The first index that differs (or the tail) is where the removal happened.
+		_remove_inv_cell_at(prev_n - 1)  # tail removal — fastest case
+		_apply_inventory_filter()
+		return
+	# General mismatch — find the first differing index and surgically
+	# remove the cell that disappeared OR rebuild from there.
+	var first_diff: int = -1
+	for i in prefix_len:
+		if String(_flat_inv_cells[i].get("id", "")) != String(fresh_keys[i]["id"]):
+			first_diff = i
+			break
+	if first_diff >= 0 and new_n == prev_n - 1:
+		# Single removal at first_diff: cells shifted left by one from there.
+		_remove_inv_cell_at(first_diff)
+		# Update the seg/item indices on the shifted-left cells so
+		# _resolve_flat_index walks the updated list cleanly.
+		for i in range(first_diff, _flat_inv_cells.size()):
+			var entry: Dictionary = fresh_keys[i]
+			var refs: Dictionary = _flat_inv_cells[i]
+			refs["seg"] = int(entry["seg"])
+			refs["item"] = int(entry["item"])
+			refs["id"] = String(entry["id"])
+			var cell: Variant = refs.get("cell", null)
+			if cell != null and is_instance_valid(cell):
+				cell.set_meta("seg_idx", int(entry["seg"]))
+				cell.set_meta("item_idx", int(entry["item"]))
+				cell.set_meta("instance_id", String(entry["id"]))
+		_apply_inventory_filter()
+		return
+	# Path 4 — swap equip (1 picked, 1 displaced): same total count, but
+	# one instance_id disappeared and one new one appeared. Find the
+	# missing-from-prev id and the new-in-fresh id; surgically remove
+	# the picked cell and append the displaced one. Avoids the full
+	# rebuild that was the equip-stutter culprit.
+	if new_n == prev_n:
+		var prev_ids: Dictionary = {}  # id → flat_idx in prev
+		for i in prev_n:
+			prev_ids[String(_flat_inv_cells[i].get("id", ""))] = i
+		var fresh_ids: Dictionary = {}
+		for i in new_n:
+			fresh_ids[String(fresh_keys[i]["id"])] = i
+		var removed_idx: int = -1
+		for id in prev_ids:
+			if not fresh_ids.has(id):
+				removed_idx = int(prev_ids[id])
+				break
+		var added_in_fresh: int = -1
+		for id in fresh_ids:
+			if not prev_ids.has(id):
+				added_in_fresh = int(fresh_ids[id])
+				break
+		# Single swap: exactly one removal, exactly one addition.
+		if removed_idx >= 0 and added_in_fresh >= 0:
+			# Verify only ONE of each — otherwise it's a multi-shuffle, full rebuild.
+			var removed_count: int = 0
+			for id in prev_ids:
+				if not fresh_ids.has(id):
+					removed_count += 1
+			var added_count: int = 0
+			for id in fresh_ids:
+				if not prev_ids.has(id):
+					added_count += 1
+			if removed_count == 1 and added_count == 1:
+				_remove_inv_cell_at(removed_idx)
+				# Resync seg/item meta for cells whose flat-index shifted by
+				# the removal. The displaced item gets appended at the tail
+				# in the data model, so cells from removed_idx onward shift
+				# left by one until the very end where we append the new cell.
+				for i in range(removed_idx, _flat_inv_cells.size()):
+					var entry: Dictionary = fresh_keys[i]
+					var refs: Dictionary = _flat_inv_cells[i]
+					refs["seg"] = int(entry["seg"])
+					refs["item"] = int(entry["item"])
+					refs["id"] = String(entry["id"])
+					var c: Variant = refs.get("cell", null)
+					if c != null and is_instance_valid(c):
+						c.set_meta("seg_idx", int(entry["seg"]))
+						c.set_meta("item_idx", int(entry["item"]))
+						c.set_meta("instance_id", String(entry["id"]))
+				# Append the new cell at the tail.
+				var tail_entry: Dictionary = fresh_keys[new_n - 1]
+				var t_si: int = int(tail_entry["seg"])
+				var t_ii: int = int(tail_entry["item"])
+				var t_inst: Variant = segments[t_si]["items"][t_ii]
+				var new_cell := _make_inv_button(t_si, t_ii, t_inst, items_db, slot_cooldowns)
+				inventory_grid.add_child(new_cell)
+				_flat_inv_cells.append({
+					"seg": t_si, "item": t_ii, "id": String(tail_entry["id"]),
+					"cell": new_cell, "inst": t_inst,
+				})
+				_apply_inventory_filter()
+				return
+	# Last resort — full rebuild. Reorder events (e.g. cross-segment
+	# 2H+shield+other-displacement) end up here. Cost is real but rare.
+	var saved_scroll: int = 0
+	if inventory_scroll != null:
+		saved_scroll = inventory_scroll.scroll_vertical
+	for c in inventory_grid.get_children():
+		c.queue_free()
+	_flat_inv_cells.clear()
+	for entry in fresh_keys:
+		var si: int = int(entry["seg"])
+		var ii: int = int(entry["item"])
+		var inst: Variant = segments[si]["items"][ii]
+		var cell := _make_inv_button(si, ii, inst, items_db, slot_cooldowns)
+		inventory_grid.add_child(cell)
+		_flat_inv_cells.append({
+			"seg": si, "item": ii, "id": String(entry["id"]),
+			"cell": cell, "inst": inst,
+		})
+	_apply_inventory_filter()
+	if inventory_scroll != null and saved_scroll > 0:
+		_pending_scroll_restore = saved_scroll
+		call_deferred("_apply_scroll_restore")
 
-# Identity key for an instance — instance_id when available, else
-# (base_id + index) so duplicate-base items still get distinct keys.
+func _remove_inv_cell_at(idx: int) -> void:
+	if idx < 0 or idx >= _flat_inv_cells.size():
+		return
+	var refs: Dictionary = _flat_inv_cells[idx]
+	var cell: Variant = refs.get("cell", null)
+	if cell != null and is_instance_valid(cell):
+		cell.queue_free()
+	_flat_inv_cells.remove_at(idx)
+
+# Build the rarity filter chip row using a ButtonGroup so only one
+# chip is pressed at a time. Pre-2026-06-06 we used five independent
+# toggle buttons + manual button_pressed gymnastics, which was buggy
+# (clicking the active chip "deselected" it leaving zero chips lit).
+# State persists via state.loot_filter (shared with auto-pickup).
+func _build_bag_filter_chips(x: int, y: int, w: int) -> void:
+	# Read the active filter from save state. "common" = show all (rank 0+).
+	var state: Dictionary = SaveState.load_state()
+	_bag_filter_rarity = String(state.get("loot_filter", "common"))
+	var chip_w: int = clampi(int(w / _BAG_FILTER_OPTIONS.size()) - 4, 56, 110)
+	var cx: int = x
+	var bg_group := ButtonGroup.new()
+	bg_group.allow_unpress = false  # one chip is always pressed
+	for opt in _BAG_FILTER_OPTIONS:
+		var btn := Button.new()
+		btn.text = String(opt.label)
+		btn.position = Vector2(cx, y - 2)
+		btn.size = Vector2(chip_w, 22)
+		btn.toggle_mode = true
+		btn.button_group = bg_group
+		btn.add_theme_font_size_override("font_size", 11)
+		btn.button_pressed = (String(opt.id) == _bag_filter_rarity)
+		# Use `pressed` (fires when user clicks an UNpressed chip) — the
+		# ButtonGroup auto-unsets the previously-pressed chip, so we don't
+		# need to walk every chip on each click.
+		btn.pressed.connect(_on_bag_rarity_chip_pressed.bind(String(opt.id)))
+		_bag_panel.add_child(btn)
+		_bag_filter_chips.append({"btn": btn, "id": String(opt.id)})
+		cx += chip_w + 4
+
+func _on_bag_rarity_chip_pressed(id: String) -> void:
+	if id == _bag_filter_rarity:
+		return  # no-op, chip is already active
+	_bag_filter_rarity = id
+	# Persist — auto-pickup and the visual filter share state.loot_filter
+	# so the player's "show me Rare+ chip" mid-run also stops the bot
+	# from picking up commons.
+	var state: Dictionary = SaveState.load_state()
+	state["loot_filter"] = _bag_filter_rarity
+	SaveState.save_state(state)
+	_apply_inventory_filter()
+
+func _on_bag_slot_filter_changed(idx: int, dd: OptionButton) -> void:
+	_bag_filter_slot = String(dd.get_item_metadata(idx))
+	_apply_inventory_filter()
+
+# Toggle inventory cell visibility based on active rarity + slot filters.
+# Fast: just sets cell.visible — no node creation. Called after every
+# rebuild and on filter change.
+func _apply_inventory_filter() -> void:
+	var min_rank: int = 0
+	for opt in _BAG_FILTER_OPTIONS:
+		if String(opt.id) == _bag_filter_rarity:
+			min_rank = int(opt.min_rank)
+			break
+	var slot_filter: String = _bag_filter_slot
+	for entry in _flat_inv_cells:
+		var inst: Variant = entry.get("inst", null)
+		var cell: Control = entry.get("cell", null)
+		if cell == null or not is_instance_valid(cell):
+			continue
+		var visible: bool = true
+		if typeof(inst) == TYPE_DICTIONARY:
+			var item_def: Dictionary = _items_db_cache.get(String(inst.get("base_id", "")), {})
+			# Rarity filter.
+			if min_rank > 0:
+				var rarity: String = String(item_def.get("rarity", "common"))
+				var rank: int = int(LootDrop.RARITY_RANK.get(rarity, 0))
+				if rank < min_rank:
+					visible = false
+			# Slot filter — match item.slot, with "spell" matching any
+			# spell-class slot via the item's slot value already being "spell".
+			if visible and slot_filter != "all":
+				var item_slot: String = String(item_def.get("slot", ""))
+				if item_slot != slot_filter:
+					visible = false
+		if cell.visible != visible:
+			cell.visible = visible
+
 func _apply_scroll_restore() -> void:
 	if inventory_scroll == null or not is_instance_valid(inventory_scroll):
 		return
@@ -1014,104 +1558,13 @@ func _apply_scroll_restore() -> void:
 		inventory_scroll.scroll_vertical = _pending_scroll_restore
 	_pending_scroll_restore = 0
 
+# Identity key for an instance — instance_id when available, else
+# (base_id + index) so duplicate-base items still get distinct keys.
 func _inst_key(inst: Variant) -> String:
 	if typeof(inst) != TYPE_DICTIONARY:
 		return ""
 	var id: String = String(inst.get("instance_id", ""))
 	return id if id != "" else String(inst.get("base_id", ""))
-
-# Find the first index in `prev` that doesn't appear at the same
-# position in `new`. Returns -1 if `new` matches `prev` start-to-start
-# (means the missing element is at the tail).
-func _diff_first_removed(prev: Array, new: Array) -> int:
-	var n: int = mini(prev.size(), new.size())
-	for i in n:
-		if String(prev[i]) != String(new[i]):
-			return i
-	# Tail removal — last index of prev.
-	if new.size() < prev.size():
-		return new.size()
-	return -1
-
-func _rebuild_inventory_full(segments: Array, items_db: Dictionary, slot_cooldowns: Dictionary) -> void:
-	for c in inventory_box.get_children():
-		c.queue_free()
-	_seg_grids.clear()
-	# Render newest-first so the freshest pickups are always visible at the
-	# top of the panel without needing to scroll. Older floors and the Base
-	# stash live below. We still iterate segments[] in source order though
-	# so _seg_grids[i] aligns with segments[i].
-	# (Visual newest-first is provided by the caller filling segments
-	# with new floor segments at the END of the array — main.gd does
-	# this and renders them at the TOP via the loop's reverse insert.)
-	# Build a placeholder array first so indices line up.
-	for i in segments.size():
-		_seg_grids.append({})
-	# Preserve scroll position across full rebuilds so descending a floor
-	# (which triggers shape-change → full rebuild) doesn't yank the
-	# player back to the top mid-drag. 2026-06-06.
-	var saved_scroll: int = 0
-	if inventory_scroll != null:
-		saved_scroll = inventory_scroll.scroll_vertical
-	for i in range(segments.size() - 1, -1, -1):
-		_build_segment_into(i, segments, items_db, slot_cooldowns)
-	if inventory_scroll != null and saved_scroll > 0:
-		# Restore on next frame after layout has settled. Setting
-		# scroll_vertical synchronously here would write into an
-		# unmeasured container and produce 0.
-		_pending_scroll_restore = saved_scroll
-		call_deferred("_apply_scroll_restore")
-
-func _rebuild_one_segment(idx: int, segments: Array, items_db: Dictionary, slot_cooldowns: Dictionary) -> void:
-	# Tear down the cached header + grid for this segment.
-	var cached: Dictionary = _seg_grids[idx]
-	for k in ["header_node", "grid", "empty_label"]:
-		var n: Variant = cached.get(k, null)
-		if n != null and is_instance_valid(n):
-			n.queue_free()
-	_seg_grids[idx] = {}
-	_build_segment_into(idx, segments, items_db, slot_cooldowns)
-
-func _build_segment_into(idx: int, segments: Array, items_db: Dictionary, slot_cooldowns: Dictionary) -> void:
-	var seg: Dictionary = segments[idx]
-	var items: Array = seg.get("items", [])
-	var hdr := Label.new()
-	hdr.text = String(seg.get("header", ""))
-	hdr.add_theme_font_size_override("font_size", 12)
-	hdr.add_theme_color_override("font_color", COL_DIM)
-	inventory_box.add_child(hdr)
-	# Insert the new header at the right position so the visual order
-	# (newest segment first) is preserved when this is a one-segment
-	# rebuild rather than a full clear.
-	var ids_arr: Array = []
-	for it in items:
-		ids_arr.append(_inst_key(it))
-	var pack: Dictionary = {
-		"header": String(seg.get("header", "")),
-		"header_node": hdr,
-		"grid": null,
-		"empty_label": null,
-		"count": items.size(),
-		"ids": ids_arr,
-	}
-	if items.is_empty():
-		var empty := Label.new()
-		empty.text = "  · empty ·"
-		empty.add_theme_font_size_override("font_size", 10)
-		empty.add_theme_color_override("font_color", Color(0.5, 0.45, 0.35))
-		inventory_box.add_child(empty)
-		pack["empty_label"] = empty
-		_seg_grids[idx] = pack
-		return
-	var grid := GridContainer.new()
-	grid.columns = _inv_columns
-	grid.add_theme_constant_override("h_separation", 4)
-	grid.add_theme_constant_override("v_separation", 4)
-	inventory_box.add_child(grid)
-	for item_idx in items.size():
-		grid.add_child(_make_inv_button(idx, item_idx, items[item_idx], items_db, slot_cooldowns))
-	pack["grid"] = grid
-	_seg_grids[idx] = pack
 
 func _make_inv_button(seg_idx: int, item_idx: int, inst: Variant, items_db: Dictionary, slot_cooldowns: Dictionary) -> Control:
 	# Inventory cells in the run HUD now use ItemCell — same drag/drop
@@ -1155,18 +1608,17 @@ func _make_inv_button(seg_idx: int, item_idx: int, inst: Variant, items_db: Dict
 	return cell
 
 # Lazy flat-index resolver — called by ItemCell._gui_input on press
-# to populate cell.inv_index before begin_drag fires. Walks the live
-# _seg_grids (now stable, post-rebuild) for an authoritative offset.
+# to populate cell.inv_index before begin_drag fires. Walks the
+# rendered _flat_inv_cells list (which mirrors the visible grid order)
+# for an authoritative flat offset.
 func _resolve_flat_index(cell: ItemCell) -> void:
-	var seg_idx: int = int(cell.get_meta("seg_idx", -1))
-	var item_idx: int = int(cell.get_meta("item_idx", -1))
-	if seg_idx < 0 or item_idx < 0:
+	var iid: String = String(cell.get_meta("instance_id", ""))
+	if iid == "":
 		return
-	var offset: int = 0
-	for i in seg_idx:
-		if i < _seg_grids.size():
-			offset += int(_seg_grids[i].get("count", 0))
-	cell.inv_index = offset + item_idx
+	for i in _flat_inv_cells.size():
+		if String(_flat_inv_cells[i].get("id", "")) == iid:
+			cell.inv_index = i
+			return
 
 func _on_hud_inv_left_click(cell: ItemCell) -> void:
 	if equip_request_target == null:

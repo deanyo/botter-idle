@@ -42,13 +42,42 @@ const COL_RARITY := {
 	"legendary": Color(1.0, 0.3, 0.3),
 }
 
-# Type sizes
+# Type sizes — semantic tiers, used everywhere. Avoid hard-coding
+# numbers; pull from these instead. UI consistency pass 2026-06-06.
+#
+# When picking a tier:
+#   FS_TITLE   28  Screen title ("Outpost", "Run Report")
+#   FS_HEADER  18  Big in-screen heading ("Adventurer Lv 5")
+#   FS_STAT    16  Primary stat readouts (HP value, dmg numbers)
+#   FS_BODY    14  Standard label / button text
+#   FS_SMALL   12  Stats column rows, secondary info, dim labels
+#   FS_SECTION 11  Section headers ("Vitals", "Combat", etc.)
+#   FS_TINY    10  Cooldown numbers, corner badges, fine-print
 const FS_TITLE := 28
 const FS_HEADER := 18
 const FS_STAT := 16
 const FS_BODY := 14
 const FS_SMALL := 12
-const FS_DEBUG := 12
+const FS_SECTION := 11
+const FS_TINY := 10
+const FS_DEBUG := 12  # alias of FS_SMALL — top-left debug log
+
+# Build a Label with consistent font + color overrides applied. Most
+# code paths in HUD/outpost/main-menu re-do the same five lines for
+# every label; this reduces them to one call.
+static func label(text: String, font_size: int, color: Color) -> Label:
+	var lbl := Label.new()
+	lbl.text = text
+	lbl.add_theme_font_size_override("font_size", font_size)
+	lbl.add_theme_color_override("font_color", color)
+	lbl.add_theme_color_override("font_outline_color", Color(0, 0, 0))
+	lbl.add_theme_constant_override("outline_size", 2)
+	return lbl
+
+# Section header — used in Stats / Weapon panes. Tied to the
+# `_add_section`-style amber-dim underline rule.
+static func section_label(text: String) -> Label:
+	return label(text, FS_SECTION, Color(0.55, 0.50, 0.36))
 
 static func rarity_color(rarity: String) -> Color:
 	return COL_RARITY.get(rarity, Color(0.5, 0.5, 0.5))

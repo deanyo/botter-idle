@@ -30,6 +30,13 @@ const COLOR_HOTKEY := Color(0.5, 0.5, 0.45)
 var item: Dictionary = {}
 var inst: Variant = null
 var items_db: Dictionary = {}
+# When `static_mode` is true, the tooltip skips its idle animations:
+# no glow pulse, no shimmer, no drift particles, and `_process` early-
+# returns. Use this for tooltips embedded in long-lived screens (the
+# in-game Weapon tab, the outpost Weapon tab) where the per-frame
+# animation cost compounds. Hover-spawned tooltips leave it false so
+# rare+ items still glow/pulse on inspection. UI perf 2026-06-06.
+var static_mode: bool = false
 
 var _vbox: VBoxContainer = null
 var _bg: ColorRect = null
@@ -97,6 +104,8 @@ func _draw() -> void:
 			draw_circle(p, 2.5, dot_col)
 
 func _process(delta: float) -> void:
+	if static_mode:
+		return
 	if _glow_alpha > 0.0:
 		_glow_pulse_t += delta
 		_shimmer_t += delta
@@ -152,7 +161,9 @@ func render_for(item_def: Dictionary, instance: Variant, db: Dictionary) -> void
 	}.get(rarity, 0.0)
 	if _is_meta_rarity:
 		rarity_alpha = max(rarity_alpha, 0.55)
-	_glow_alpha = rarity_alpha
+	# Static mode (embedded weapon tab) skips the animated glow halo.
+	# The static border-width escalation below still differentiates rarity.
+	_glow_alpha = 0.0 if static_mode else rarity_alpha
 	_glow_pulse_t = 0.0
 	_shimmer_t = 0.0
 	queue_redraw()
@@ -192,7 +203,10 @@ func render_for(item_def: Dictionary, instance: Variant, db: Dictionary) -> void
 	# Pulse the title color on legendary / meta-rarity / high-quality.
 	# Tween between rarity_col and glow_color over ~1.4s so the name
 	# "shines." Quality pulse fires on Pristine (1.10x) + above.
-	var should_pulse: bool = _is_legendary or _is_meta_rarity or Quality.has_pulse(inst)
+	# Skipped in static_mode (embedded tabs) — looping tweens are the
+	# 20fps drop culprit when a legendary equip embeds the tooltip
+	# permanently.
+	var should_pulse: bool = (_is_legendary or _is_meta_rarity or Quality.has_pulse(inst)) and not static_mode
 	if should_pulse:
 		var t := title.create_tween().set_loops()
 		t.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
@@ -200,7 +214,7 @@ func render_for(item_def: Dictionary, instance: Variant, db: Dictionary) -> void
 		t.tween_property(title, "modulate", Color(1.0, 1.0, 1.0), 0.7)
 	# Shimmer effect on the title for Exceptional+ quality (1.16x+):
 	# rapid color cycle between gold and warm white.
-	if Quality.has_shimmer(inst):
+	if Quality.has_shimmer(inst) and not static_mode:
 		var shimmer := title.create_tween().set_loops()
 		shimmer.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 		var shimmer_a: Color = Quality.color_for(quality_tier)
@@ -208,8 +222,10 @@ func render_for(item_def: Dictionary, instance: Variant, db: Dictionary) -> void
 		shimmer.tween_property(title, "self_modulate", Color(1.0, 1.0, 1.0), 0.45)
 	# Drift particles on Mastercrafted/Masterwork. Spawn motes that
 	# float upward + fade out, looping. Heaviest layer of eye candy —
-	# only the top ~0.05% of drops should fire this.
-	if Quality.has_particles(inst):
+	# only the top ~0.05% of drops should fire this. Skipped in
+	# static_mode (embedded weapon tab) — looping tweens compound
+	# per-frame cost over a long-lived screen.
+	if Quality.has_particles(inst) and not static_mode:
 		_start_drift_particles(quality_tier)
 	# Subtitle: rarity · slot · weapon class (if weapon)
 	var slot: String = String(item.get("slot", ""))

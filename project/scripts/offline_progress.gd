@@ -1,24 +1,35 @@
 class_name OfflineProgress
 extends RefCounted
 
-# Simulates floors-while-away: estimates how many floors the bot would
-# have cleared on the last deployed branch during the time the game was
-# closed, rolls loot proportional to expected drop rate, and returns a
-# summary the launch path can show before the main menu loads.
+# Offline item generation REMOVED 2026-06-06 per user direction. The
+# previous behavior — simulating floors-while-away and dumping a fully-
+# affixed inventory + gold on every relaunch — let players reach Lv 57
+# in 4 runs because every session boot pumped ~16 fully-rolled items
+# (audit found offline_* prefixed gear in 10/14 equipped slots of a
+# 4-run save). User said "i never liked it." Stripped to a no-op so
+# launch flow stays unchanged but no items/gold materialize.
+#
+# `apply()` is kept (callers in main.gd / main_menu.gd reference it)
+# but always returns an empty summary. The banner UI early-returns
+# when summary.is_empty() / summary.floors == 0, so no UI thread to
+# untangle.
+static func apply(_state: Dictionary, _items_db: Dictionary) -> Dictionary:
+	return {}
 
-# Capped at 1h so AFK-checking has a daily-rhythm feel — going beyond
-# that should be a meta-feature (offline-tax upgrade) not a flat bonus.
+# Legacy stubs kept so nothing else in the codebase breaks if it
+# imports OfflineProgress.foo. Not called from anywhere in-tree but
+# leaving the symbols cheap-ish.
 const MAX_OFFLINE_SECONDS := 3600
-# Below this, treat "offline_seconds" as just a relaunch — no loot.
 const MIN_OFFLINE_SECONDS := 60
-# Baseline at CR == cr_recommended. Scales linearly with CR overage.
 const BASELINE_FLOOR_SECONDS := 90.0
-const FLOOR_LOOT_AVG := 4.0  # average loot drops per floor
+const FLOOR_LOOT_AVG := 0.0  # was 4.0 — neutered.
 
-# Compute and apply offline progress to the state. Returns a summary
-# dict the launch UI can render: {seconds, floors, loot_count, gold}.
-# Mutates state.inventory + state.gold + state.last_seen_timestamp.
-static func apply(state: Dictionary, items_db: Dictionary) -> Dictionary:
+# The old body is preserved below as static dead code so the file
+# documents what was removed and the math is recoverable if we ever
+# reintroduce a smaller offline reward (e.g. just gold). The compiler
+# parses but never executes it because the public entry above shadows
+# the call. UI consistency / balance pass 2026-06-06.
+static func _legacy_apply(state: Dictionary, items_db: Dictionary) -> Dictionary:
 	var summary: Dictionary = {
 		"seconds": 0, "floors": 0, "loot_count": 0, "gold": 0, "branch": "",
 	}

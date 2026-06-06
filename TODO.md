@@ -5,6 +5,129 @@ the durable rules in `CLAUDE.md`. Update this file when committing.
 
 ---
 
+## Balance pass (HIGHEST priority — surfaced 2026-06-06 after stat audit)
+
+The stat-system unification (StatCalc.compute) now correctly applies
+meta_mult + Quality + worn-tag passives + bot upgrades — which made
+visible just how overpowered the existing affix stacking is. Audit on
+a real save (Lv 57 / 4 runs / floor 6 / spriggan / 16 inventory
+items) found the bot doing **1500+ damage per swing on tier-1 mobs**.
+Root causes:
+
+- ⬜ **XP curve too flat** — `bot.gd::xp_to_next() = 20 + (level-1) * 15`
+  Level 57 cumulative cost ≈ 24,220 XP = ~6,055 XP/run on 4 runs =
+  ~1,009 XP per floor. Floor mobs avg 6 XP × 100 mobs × 1.5–3.0×
+  pack mult = 600–1500 XP/floor, exactly the level-flooding rate.
+  Suggested: `30 + (level-1) * 30` (2× cost at every level).
+
+- ⬜ **Affix stacking is purely linear, no soft caps.** Save's stack:
+  `of_channeling × 6 = +195% spell dmg`, `of_resonance × 5 = +162%
+  area`, `of_quickcast × 3 = +43% CDR`, `of_str_mastery × 3 = +73%`,
+  `of_might × 3 = +24 str (= +38% atk + ~28% HP)`, `of_vitality × 2 =
+  +245 flat HP (4× base!)`, `of_haste × 2 = +39%`. Tier-5 single-roll
+  caps in `affixes.json`: channeling=65, vitality=160, haste=32, str=12.
+  **Stacked totals exceed legendary single rolls by 3-5× because every
+  slot carries the same affix.** Add diminishing returns in
+  `stat_calc.gd::compute` after the per-slot loop:
+  - Spell damage / area / CDR / duration: clamp 0..120 / 0..100 / 0..50
+    / 0..100 (PoE-style soft caps)
+  - Lifesteal: clamp 0..15
+  - Track per-affix-id source count, scale 1.0 / 0.75 / 0.50 / 0.25
+    for 1st / 2nd / 3rd / 4th+ source
+
+- ⬜ **Pack-tier loot thresholds too generous** — `dungeon.gd:1985`:
+  rare-pack 100% drop, miniboss 100%, magic 30%. Suggested: rare 60%,
+  miniboss 70%.
+
+- ⬜ **Shop scales high-rarity at level 30 cap** — `shop.gd:384`
+  `eff_lvl = mini(lvl, 30)` already clamps but at Lv 30+ a 4-run player
+  has access to fairly common epic/legendary stock. Audit if cap should
+  drop to 20 or rarity weights should scale per-run instead of per-level.
+
+- ⬜ **Per-mob gold rates** — `dungeon.gd:1932`: `1-3 + floor/2` per
+  mob = ~450g/floor at floor 6 with 100 mobs. With shop gold sinks
+  starting at 30g (common) up to 3000g (legendary), this is roughly
+  in proportion. Watch this once the affix caps land and items become
+  rarer.
+
+- ✅ **Offline item generation REMOVED 2026-06-06** — was generating
+  ~16 fully-affixed items per session boot, the single biggest power
+  injection. `offline_progress.gd::apply` now returns empty summary;
+  legacy body preserved for reference.
+
+The diminishing-returns + XP-curve fix is the highest-leverage pair —
+together they take a 4-run player from L57 with 14 stuffed slots to
+roughly L25-30 with 6 affixed slots, which is the intended pace.
+
+---
+
+## UI follow-ups (HIGH priority — ongoing)
+
+Landed 2026-06-06 (HUD sidebar tabs):
+- HUD right sidebar → always-visible name+Lv+HP header + TabContainer
+  with Stats / Weapon / Buffs tabs (`hud_chrome.gd::_build_stats_pane`).
+  Mirrors outpost Character pane structure.
+- Per-section clipping panels: every sidebar widget now lives inside
+  a `Control` with `clip_contents = true`. Long item / weapon / affix
+  names can no longer bleed past the panel rect.
+- `_add_label_to(parent, ...)` helper added so labels can land
+  inside any panel, not just the HUD root.
+
+Landed 2026-06-06 (second beat — HUD spatial overhaul):
+- Minimap relocated out of sidebar to a 160×160 top-left overlay
+  (`hud_chrome.gd::_build_minimap_overlay`). Sidebar gains the freed
+  height for paperdoll + tabs.
+- Bag panel wrapped in `_bag_panel: Control` (`clip_contents = true`).
+- HUD inventory: flat single grid, newest-at-bottom, drops the
+  per-floor segment headers. Data model in `dungeon.gd` (`_loot_segments`)
+  unchanged.
+- HUD inventory rarity filter chips ported from outpost (Common /
+  Uncommon+ / Rare+ / Epic+ / Legendary). Shares `state.loot_filter`
+  with auto-pickup so chip selection ALSO governs what the bot picks up.
+- Debug HUD relocated below the minimap so the minimap doesn't paint
+  over the debug text.
+- Outpost run-in-progress banner top_y bump (60 → 80) so the banner
+  doesn't clip under deploy panels.
+
+Landed 2026-06-06 (third beat — UI consistency):
+- ItemTooltip is the canonical "describe an item" widget; both outpost
+  Weapon tab and HUD Weapon tab embed it. Drops ~120 lines of bespoke
+  rendering.
+- UITheme font tiers (FS_TITLE/HEADER/STAT/BODY/SMALL/SECTION/TINY)
+  used across HUD/outpost/main_menu. UITheme.label() helper.
+- Outpost: Stats tab wrapped in ScrollContainer, Str/Dex/Int alloc
+  buttons in HBox grid (no more overlap), Dmg readout dropped,
+  Bot Instructions promoted to its own tab.
+- HUD Stats tab matches outpost layout (sections + colored rows).
+- Paperdoll fits all slots: BAG_H 340→240, stats_h tab area 320→240,
+  slot floor 36→30. Spell row no longer clipped off-bottom.
+- Bag dead-space at bottom killed (scroll uses full bag height).
+- Main menu vignette simplified — drops HP/ATK/DEF combat line.
+
+Still deferred from this UI beat:
+- ⬜ **AI perf cost** — separate from the HUD perf hotfix landed
+  2026-06-06. Latest grind logs show `ai_us=47484` (47ms/frame at
+  16x speed) on f=2 and similar on f=1. Per-tick AI is ~3ms which
+  is fine at 1x but worth keeping an eye on. Not regressed by today's
+  UI work — long-standing. Run `/benchmark` against an older commit
+  if it ever feels worse than baseline.
+- ⬜ **Outpost clipping audit** — outpost.gd panels not yet wrapped
+  in `clip_contents` Controls (Stats tab page now clips, but other
+  panes don't). Long item names in equipped-slot tooltips, paperdoll
+  picker rows, upgrades desc text can still bleed past panel rects.
+- ⬜ **Camera-offset reconsider** — `dungeon.gd::_center_camera_on_bot`
+  shifts the camera by half-sidebar-width and half-bag-height to
+  keep the bot centred in the visible-dungeon rectangle. The minimap
+  overlay (top-left, 160×160) introduces a third occluded zone but
+  is small + translucent enough to not justify another shift today.
+  Revisit if the bot frequently runs into the minimap zone unseen.
+- ⬜ **Inventory cell highlight on filter** — when a filter chip
+  hides cells, the surviving cells reflow but there's no visual
+  callout that "11 of 47 hidden". A subtle row counter under the
+  chips would help.
+
+---
+
 ## UI follow-ups (HIGH priority — 2026-06-04)
 
 The Phase A+B+C-min UI pass landed: OLED-pure-black panels (was

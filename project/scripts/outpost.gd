@@ -72,21 +72,15 @@ var equipped_cells: Array = []
 var paperdoll_holder: Node2D
 var paperdoll_rig: Node2D = null
 # Stats labels.
+# Header labels — name + Lv + XP + highest floor live ABOVE the
+# StatPanel widget since they're durable progression numbers, not
+# stats. The Stats tab itself is fully delegated to StatPanel which
+# owns its own row labels.
 var lbl_name: Label
 var lbl_level: Label
 var lbl_xp: Label
-var lbl_hp: Label
-var lbl_atk: Label
-var lbl_def: Label
-var lbl_str: Label
-var lbl_dex: Label
-var lbl_int: Label
-var lbl_unspent: Label
-var lbl_crit: Label
-var lbl_haste: Label
-var lbl_regen: Label
-var lbl_gold: Label
 var lbl_floor: Label
+var _stat_panel_widget: StatPanel = null
 # Inventory grid.
 var inventory_grid: GridContainer
 
@@ -120,6 +114,7 @@ func _on_viewport_resized() -> void:
 	paperdoll_holder = null
 	paperdoll_rig = null
 	inventory_grid = null
+	_stat_panel_widget = null
 	_build_layout()
 	_render()
 
@@ -323,8 +318,11 @@ func _build_layout() -> void:
 	# it doesn't feel cramped at the bottom of the screen.
 	var picker_h := 220
 	_build_branch_picker(0, int(view.y) - picker_h - 8, int(view.x), picker_h)
-	# Three panes between title (y≈56) and the picker.
-	var top_y: int = 60
+	# Three panes between title (y≈56) and the picker. When the
+	# run-in-progress banner is showing it spans y=48..72, so push the
+	# pane top down to y=80 to avoid clipping it under the panels.
+	# 2026-06-06.
+	var top_y: int = 80 if bool(state.get("run_active", false)) else 60
 	var bottom_y: int = int(view.y) - picker_h - 24
 	var pane_h: int = bottom_y - top_y
 	# Pane widths: 32% left, 30% center, 38% right.
@@ -677,64 +675,57 @@ func _build_stats_pane(x: int, y: int, w: int, h: int) -> void:
 	tabs.position = Vector2(inner_x, inner_y)
 	tabs.size = Vector2(inner_w, inner_h)
 	tabs.tabs_visible = true
+	tabs.clip_contents = true
 	add_child(tabs)
 	_build_stats_tab(tabs, inner_w, inner_h)
 	_build_weapon_tab(tabs, inner_w, inner_h)
 	_build_upgrades_tab(tabs, inner_w, inner_h)
+	_build_instructions_tab(tabs, inner_w, inner_h)
 
 func _build_stats_tab(tabs: TabContainer, w: int, h: int) -> void:
+	# Stats tab — fully delegated to StatPanel. Same widget the HUD
+	# uses, fed by the same StatCalc.compute() output, so the two
+	# screens always show identical numbers. The header (name / Lv /
+	# XP / highest floor) lives ABOVE the panel since it's durable
+	# progression info, not stats. UI consistency pass 2026-06-06.
 	var page := Control.new()
 	page.name = "Stats"
 	page.custom_minimum_size = Vector2(w, h - 36)
+	page.clip_contents = true
 	tabs.add_child(page)
 	var sx: int = 8
 	var sy: int = 8
-	lbl_name = _add_stat_to(page, sx, sy, 22, COL_AMBER, "Bot the Adventurer"); sy += 30
-	lbl_level = _add_stat_to(page, sx, sy, 14, COL_DIM, "Level —"); sy += 20
-	lbl_xp = _add_stat_to(page, sx, sy, 12, COL_DIM, "XP —"); sy += 18
-	lbl_floor = _add_stat_to(page, sx, sy, 12, COL_DIM, "Highest floor: —"); sy += 24
-	# Primary attributes — color-coded per spell class.
-	_add_section(page, sx, sy, "Attributes"); sy += 22
-	lbl_str = _add_stat_to(page, sx, sy, 15, UITheme.spell_class_color("str"), "Str —")
-	_add_stat_alloc_buttons_to(page, sx + 140, sy, "str")
-	sy += 22
-	lbl_dex = _add_stat_to(page, sx, sy, 15, UITheme.spell_class_color("dex"), "Dex —")
-	_add_stat_alloc_buttons_to(page, sx + 140, sy, "dex")
-	sy += 22
-	lbl_int = _add_stat_to(page, sx, sy, 15, UITheme.spell_class_color("int"), "Int —")
-	_add_stat_alloc_buttons_to(page, sx + 140, sy, "int")
-	sy += 22
-	lbl_unspent = _add_stat_to(page, sx, sy, 12, COL_AMBER, "Unspent —")
-	var reset_btn := Button.new()
-	reset_btn.text = "Reset"
-	reset_btn.position = Vector2(sx + 140, sy - 2)
-	reset_btn.size = Vector2(60, 22)
-	reset_btn.add_theme_font_size_override("font_size", 11)
-	reset_btn.tooltip_text = "Refund all spent stat points"
-	reset_btn.pressed.connect(_on_stat_reset_pressed)
-	page.add_child(reset_btn)
-	sy += 28
-	# Vitals.
-	_add_section(page, sx, sy, "Vitals"); sy += 22
-	lbl_hp = _add_stat_to(page, sx, sy, 16, UITheme.affix_stat_color("hp"), "HP —"); sy += 22
-	lbl_regen = _add_stat_to(page, sx, sy, 14, UITheme.affix_stat_color("hp_regen"), "Regen —"); sy += 22
-	lbl_def = _add_stat_to(page, sx, sy, 14, UITheme.affix_stat_color("armor"), "Armor —"); sy += 22
-	# Combat.
-	_add_section(page, sx, sy, "Combat"); sy += 22
-	lbl_atk = _add_stat_to(page, sx, sy, 16, UITheme.damage_type_color("physical"), "Dmg —"); sy += 22
-	lbl_crit = _add_stat_to(page, sx, sy, 14, UITheme.affix_stat_color("crit_chance"), "Crit —"); sy += 22
-	lbl_haste = _add_stat_to(page, sx, sy, 14, UITheme.affix_stat_color("haste_pct"), "Haste —"); sy += 28
-	# Resources.
-	_add_section(page, sx, sy, "Resources"); sy += 22
-	lbl_gold = _add_stat_to(page, sx, sy, 14, COL_GOLD, "Gold —"); sy += 28
-	# Instructions.
-	_add_section(page, sx, sy, "Bot Instructions"); sy += 22
-	var pickup_lbl := Label.new()
-	pickup_lbl.text = "Pick up:"
+	lbl_name = _add_stat_to(page, sx, sy, UITheme.FS_HEADER, COL_AMBER, "Adventurer"); sy += 28
+	lbl_level = _add_stat_to(page, sx, sy, UITheme.FS_BODY, COL_DIM, "Level —"); sy += 20
+	lbl_xp = _add_stat_to(page, sx, sy, UITheme.FS_SMALL, COL_DIM, "XP —"); sy += 18
+	lbl_floor = _add_stat_to(page, sx, sy, UITheme.FS_SMALL, COL_DIM, "Highest floor: —"); sy += 24
+	_stat_panel_widget = StatPanel.new()
+	_stat_panel_widget.position = Vector2(0, sy)
+	_stat_panel_widget.size = Vector2(w, h - 36 - sy)
+	_stat_panel_widget.editable = true
+	_stat_panel_widget.alloc_plus_cb = Callable(self, "_on_stat_plus_pressed")
+	_stat_panel_widget.alloc_minus_cb = Callable(self, "_on_stat_minus_pressed")
+	_stat_panel_widget.alloc_reset_cb = Callable(self, "_on_stat_reset_pressed")
+	page.add_child(_stat_panel_widget)
+
+# Tab 4 (new): Bot Instructions — pickup filter + inventory cap readout.
+# Was a "Bot Instructions" section at the bottom of the Stats tab; moved
+# to its own tab so the Stats tab is purely numbers + attributes.
+# UI consistency pass 2026-06-06.
+func _build_instructions_tab(tabs: TabContainer, w: int, h: int) -> void:
+	var page := Control.new()
+	page.name = "Instructions"
+	page.custom_minimum_size = Vector2(w, h - 36)
+	page.clip_contents = true
+	tabs.add_child(page)
+	var sx: int = 8
+	var sy: int = 8
+	_add_section(page, sx, sy, "Loot Pickup"); sy += 22
+	var pickup_lbl := UITheme.label("Auto-pickup rarity threshold", UITheme.FS_SMALL, COL_DIM)
 	pickup_lbl.position = Vector2(sx, sy)
-	pickup_lbl.add_theme_font_size_override("font_size", 12)
-	pickup_lbl.add_theme_color_override("font_color", COL_DIM)
-	page.add_child(pickup_lbl); sy += 18
+	pickup_lbl.size = Vector2(w - 16, 18)
+	pickup_lbl.clip_text = true
+	page.add_child(pickup_lbl); sy += 22
 	var filter_btn := OptionButton.new()
 	filter_btn.position = Vector2(sx, sy)
 	filter_btn.size = Vector2(w - 16, 28)
@@ -743,86 +734,49 @@ func _build_stats_tab(tabs: TabContainer, w: int, h: int) -> void:
 	var filter_idx: int = LootDrop.RARITY_RANK.get(String(state.get("loot_filter", "common")), 0)
 	filter_btn.selected = filter_idx
 	filter_btn.item_selected.connect(_on_loot_filter_changed)
-	page.add_child(filter_btn); sy += 32
-	# Inventory cap readout (folds in Pouch upgrade contribution).
+	page.add_child(filter_btn); sy += 36
+	_add_section(page, sx, sy, "Inventory"); sy += 22
 	var inv_count: int = int(state.get("inventory", []).size())
 	var cap: int = int(state.get("inventory_cap", 50)) + int(BotUpgrades.total_for_stat(state, "inventory_cap"))
-	var inv_lbl := _add_stat_to(page, sx, sy, 12, COL_DIM, "Inventory: %d / %d" % [inv_count, cap]); sy += 22
+	var inv_lbl := _add_stat_to(page, sx, sy, UITheme.FS_BODY, COL_DIM, "Carrying %d / %d" % [inv_count, cap])
+	inv_lbl.size = Vector2(w - 16, 20)
+	inv_lbl.clip_text = true; sy += 22
+	var inv_hint := UITheme.label("Pouch upgrade increases the cap.", UITheme.FS_SMALL, Color(0.5, 0.45, 0.35))
+	inv_hint.position = Vector2(sx, sy)
+	inv_hint.size = Vector2(w - 16, 18)
+	inv_hint.clip_text = true
+	page.add_child(inv_hint)
 
-# Tab 2: Weapon — equipped weapon stats with damage type, traits.
+# Tab 2: Weapon — embeds an ItemTooltip rendered for the equipped
+# weapon. Single renderer for "describe an item" — same widget the
+# hover tooltip uses, so the tab matches what the player sees on
+# inventory hover. UI consistency pass 2026-06-06.
 func _build_weapon_tab(tabs: TabContainer, w: int, h: int) -> void:
 	var page := Control.new()
 	page.name = "Weapon"
 	page.custom_minimum_size = Vector2(w, h - 36)
+	page.clip_contents = true
 	tabs.add_child(page)
-	var sx: int = 8
-	var sy: int = 8
+	var scroll := ScrollContainer.new()
+	scroll.position = Vector2(0, 0)
+	scroll.size = Vector2(w, h - 36)
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	page.add_child(scroll)
 	var weapon_inst: Variant = state.get("equipped", {}).get("weapon", null)
-	if typeof(weapon_inst) != TYPE_DICTIONARY:
-		var none_lbl := _add_stat_to(page, sx, sy, 14, COL_DIM, "No weapon equipped.")
-		none_lbl.size = Vector2(w - 16, 22)
-		return
-	var item: Dictionary = items_db.get(String(weapon_inst.get("base_id", "")), {})
+	var item: Dictionary = {}
+	if typeof(weapon_inst) == TYPE_DICTIONARY:
+		item = items_db.get(String(weapon_inst.get("base_id", "")), {})
 	if item.is_empty():
-		var none_lbl2 := _add_stat_to(page, sx, sy, 14, COL_DIM, "Weapon data missing.")
-		none_lbl2.size = Vector2(w - 16, 22)
+		var none_lbl := UITheme.label("No weapon equipped.", UITheme.FS_BODY, COL_DIM)
+		none_lbl.position = Vector2(8, 8)
+		none_lbl.size = Vector2(w - 16, 22)
+		none_lbl.clip_text = true
+		scroll.add_child(none_lbl)
 		return
-	# Name in rarity color.
-	var rarity: String = String(item.get("rarity", "common"))
-	var disp: String = String(item.get("name", item.get("id", "?")))
-	var meta: String = String(weapon_inst.get("meta_rarity", ""))
-	if meta == "primal": disp = "Primal " + disp
-	elif meta == "ancient": disp = "Ancient " + disp
-	var name_lbl := _add_stat_to(page, sx, sy, 18, UITheme.rarity_color(rarity), disp); sy += 26
-	name_lbl.size = Vector2(w - 16, 22)
-	var subtitle: String = "%s · %s" % [rarity.capitalize(), String(item.get("weapon_class", "1H"))]
-	_add_stat_to(page, sx, sy, 12, COL_DIM, subtitle); sy += 24
-	# Damage block.
-	_add_section(page, sx, sy, "Damage"); sy += 22
-	var dmin: int = int(item.get("damage_min", 0))
-	var dmax: int = int(item.get("damage_max", 0))
-	var dtype: String = String(item.get("damage_type", "physical"))
-	var dtype_col: Color = UITheme.damage_type_color(dtype)
-	_add_stat_to(page, sx, sy, 16, dtype_col, "%d-%d %s" % [dmin, dmax, dtype.capitalize()]); sy += 22
-	var sp: float = float(item.get("speed", 1.0))
-	_add_stat_to(page, sx, sy, 13, COL_DIM, "Swing time: %.2fs" % sp); sy += 20
-	var dps: float = (float(dmin + dmax) * 0.5) / max(0.3, sp)
-	_add_stat_to(page, sx, sy, 13, COL_AMBER, "Avg DPS: %.1f" % dps); sy += 26
-	# Combat traits — flavor tags drive auto-attack procs.
-	var tags: Array = UITheme.combined_flavor_tags(item, weapon_inst)
-	if not tags.is_empty():
-		_add_section(page, sx, sy, "Traits"); sy += 22
-		for t in tags:
-			var tag_col: Color = UITheme.flavor_color_for([String(t)])
-			if tag_col.a <= 0.0:
-				tag_col = COL_DIM
-			_add_stat_to(page, sx, sy, 12, tag_col, "  ✦ " + String(t).capitalize()); sy += 18
-		sy += 8
-	# Implicit affixes.
-	var implicits: Array = item.get("implicit_affixes", [])
-	if not implicits.is_empty():
-		_add_section(page, sx, sy, "Implicits"); sy += 22
-		for af_id in implicits:
-			var af_def: Dictionary = AffixSystem.get_affix_def(String(af_id))
-			if af_def.is_empty(): continue
-			var af_name: String = String(af_def.get("name", af_id))
-			var af_col: Color = UITheme.affix_stat_color(String(af_def.get("stat", "")))
-			_add_stat_to(page, sx, sy, 12, af_col, "  ◆ " + af_name); sy += 18
-		sy += 8
-	# Rolled affixes from instance.
-	var rolled: Array = weapon_inst.get("affixes", [])
-	if not rolled.is_empty():
-		_add_section(page, sx, sy, "Affixes"); sy += 22
-		for af in rolled:
-			var af_def2: Dictionary = AffixSystem.get_affix_def(String(af.get("id", "")))
-			if af_def2.is_empty(): continue
-			var af_name2: String = String(af_def2.get("name", af.get("id", "")))
-			var af_col2: Color = UITheme.affix_stat_color(String(af_def2.get("stat", "")))
-			_add_stat_to(page, sx, sy, 12, af_col2, "  ◇ " + af_name2); sy += 18
-	# Item Level footer.
-	sy += 8
-	var ilvl: Dictionary = ItemLevel.compute(item, weapon_inst)
-	_add_stat_to(page, sx, sy, 13, UITheme.rarity_color(rarity), "iLvl %d" % int(ilvl.get("level", 0))); sy += 22
+	var tt := ItemTooltip.new()
+	tt.static_mode = true  # no glow pulse / particles for the embedded tab
+	scroll.add_child(tt)
+	tt.render_for(item, weapon_inst, items_db)
 
 # Tab 3: Upgrades — full panel height for the upgrade list.
 func _build_upgrades_tab(tabs: TabContainer, w: int, h: int) -> void:
@@ -856,24 +810,6 @@ func _add_section(parent: Node, x: int, y: int, text: String) -> void:
 	line.position = Vector2(x, y + 16)
 	line.size = Vector2(120, 1)
 	parent.add_child(line)
-
-func _add_stat_alloc_buttons_to(parent: Node, x: int, y: int, stat: String) -> void:
-	var minus := Button.new()
-	minus.text = "−"
-	minus.position = Vector2(x, y - 2)
-	minus.size = Vector2(22, 22)
-	minus.add_theme_font_size_override("font_size", 13)
-	minus.tooltip_text = "Refund 1 point"
-	minus.pressed.connect(_on_stat_minus_pressed.bind(stat))
-	parent.add_child(minus)
-	var plus := Button.new()
-	plus.text = "+"
-	plus.position = Vector2(x + 26, y - 2)
-	plus.size = Vector2(22, 22)
-	plus.add_theme_font_size_override("font_size", 13)
-	plus.tooltip_text = "Allocate 1 point"
-	plus.pressed.connect(_on_stat_plus_pressed.bind(stat))
-	parent.add_child(plus)
 
 func _build_upgrades_section_in(parent: Node, x: int, y: int, w: int, h: int) -> void:
 	var scroll := ScrollContainer.new()
@@ -974,14 +910,14 @@ func _on_upgrade_buy(id: String) -> void:
 	if not BotUpgrades.try_buy(state, id):
 		return
 	SaveState.save_state(state)
-	# Refresh the bought row + the gold readout + every other row's button
-	# (gold may have crossed below another upgrade's threshold).
+	# Refresh the bought row + every other row's button (gold may have
+	# crossed below another upgrade's threshold) + re-render stats so
+	# the Gold row + any upgrade-affected stats (HP / Crit / etc) tick.
 	_refresh_upgrade_row(id)
 	for other_id in _upgrade_rows.keys():
 		if other_id != id:
 			_refresh_upgrade_row(other_id)
-	if lbl_gold:
-		lbl_gold.text = "Gold %d" % int(state.gold)
+	_render_stats()
 
 const _FILTER_IDS := ["common", "uncommon", "rare", "epic", "legendary"]
 func _on_loot_filter_changed(idx: int) -> void:
@@ -1214,84 +1150,26 @@ func _render() -> void:
 	UITheme.style_all_buttons(self)
 
 func _render_stats() -> void:
-	# Mirror Bot.recompute_stats v2 for the equipped set so the Outpost
-	# shows what the bot will actually have on deploy.
-	var max_hp := 80 + (int(state.level) - 1) * 8
-	var armor: int = 0
-	var evasion: float = 0.0
-	var crit_sum: float = 0.0
-	var haste_sum: float = 0.0
-	var regen_sum: float = 0.0
-	# Weapon-derived display values default to bare-handed.
-	var dmin: int = 1
-	var dmax: int = 2
-	var w_speed: float = 1.0
-	var w_dtype: String = "physical"
-	# Primary stats — base 5/5/5 + species + level + alloc + gear affixes.
-	var sp_def: Dictionary = SpeciesData.get_def(String(state.get("species", "")))
-	var lvl_bonus: int = max(0, int(state.level) - 1)
-	var alloc_str: int = int(state.get("stat_alloc_str", 0))
-	var alloc_dex: int = int(state.get("stat_alloc_dex", 0))
-	var alloc_int: int = int(state.get("stat_alloc_int", 0))
-	var str_v: int = 5 + int(sp_def.get("str_flat", 0)) + lvl_bonus + alloc_str
-	var dex_v: int = 5 + int(sp_def.get("dex_flat", 0)) + lvl_bonus + alloc_dex
-	var int_v: int = 5 + int(sp_def.get("int_flat", 0)) + lvl_bonus + alloc_int
-	for slot in SLOTS:
-		var inst: Variant = state.equipped.get(slot, null)
-		if inst == null or typeof(inst) != TYPE_DICTIONARY:
-			continue
-		var base_id: String = String(inst.get("base_id", ""))
-		if not items_db.has(base_id):
-			continue
-		var item: Dictionary = items_db[base_id]
-		if slot == "weapon":
-			dmin = int(item.get("damage_min", 1))
-			dmax = int(item.get("damage_max", 2))
-			w_speed = float(item.get("speed", 1.0))
-			w_dtype = String(item.get("damage_type", "physical"))
-		else:
-			armor += int(item.get("armor", 0))
-			evasion += float(item.get("evasion", 0))
-		var sums: Dictionary = AffixSystem.sum_affix_stats(inst.get("affixes", []))
-		max_hp += int(sums.get("hp", 0))
-		armor += int(sums.get("armor", 0))
-		evasion += float(sums.get("evasion", 0))
-		crit_sum += float(sums.get("crit_chance", 0))
-		haste_sum += float(sums.get("haste_pct", 0))
-		regen_sum += float(sums.get("hp_regen", 0))
-		str_v += int(sums.get("str", 0))
-		dex_v += int(sums.get("dex", 0))
-		int_v += int(sums.get("int", 0))
-	# Mirror Bot.recompute_stats derived contributions.
-	var str_excess: int = str_v - 5
-	var dex_excess: int = dex_v - 5
-	max_hp = int(round(float(max_hp) * (1.0 + float(str_excess) * 0.015)))
-	crit_sum += float(dex_excess) * 0.5
-	haste_sum += float(dex_excess) * 1.0
-	# Caps to match in-game values exactly.
-	crit_sum = clampf(crit_sum, 0.0, 75.0)
-	haste_sum = clampf(haste_sum, 0.0, 200.0)
-	evasion = clampf(evasion, 0.0, 75.0)
-	# Effective attack interval: weapon speed / haste mult.
-	var interval: float = max(0.15, w_speed / (1.0 + haste_sum / 100.0))
-	var dtype_label: String = w_dtype.capitalize() if w_dtype != "physical" else "Phys"
-	lbl_level.text = "Level %d" % int(state.level)
-	lbl_xp.text = "XP %d" % int(state.xp)
-	lbl_floor.text = "Highest floor: %d" % int(state.highest_floor)
-	lbl_hp.text = "HP  %d" % max_hp
-	lbl_atk.text = "Dmg %d-%d %s · %.1fs" % [dmin, dmax, dtype_label, interval]
-	lbl_def.text = "Armor %d · Eva %d%%" % [armor, int(round(evasion))]
-	lbl_str.text = "Str %d" % str_v
-	lbl_dex.text = "Dex %d" % dex_v
-	lbl_int.text = "Int %d" % int_v
-	if lbl_unspent != null:
-		var unspent: int = int(state.get("stat_points_unspent", 0))
-		lbl_unspent.text = "Unspent: %d" % unspent
-		lbl_unspent.modulate = Color(1.0, 0.9, 0.4, 1.0) if unspent > 0 else Color(0.5, 0.5, 0.5, 1.0)
-	lbl_crit.text = "Crit %d%%" % int(round(crit_sum))
-	lbl_haste.text = "Haste %d%%" % int(round(haste_sum))
-	lbl_regen.text = "Regen %d/s" % int(round(regen_sum))
-	lbl_gold.text = "Gold %d" % int(state.gold)
+	# Single-source-of-truth path: feed StatCalc.compute the same
+	# inputs the bot uses; pass the result dict to StatPanel.render.
+	# Pre-2026-06-06 outpost ignored meta_mult, Quality, BotUpgrades,
+	# species seeds, and worn-tag passives — so a Pristine Ancient Iron
+	# Dagger read different stats here vs in-run. Now both screens
+	# pull from the same canonical formula.
+	if lbl_level != null and is_instance_valid(lbl_level):
+		lbl_level.text = "Level %d" % int(state.level)
+	if lbl_xp != null and is_instance_valid(lbl_xp):
+		lbl_xp.text = "XP %d" % int(state.xp)
+	if lbl_floor != null and is_instance_valid(lbl_floor):
+		lbl_floor.text = "Highest floor: %d" % int(state.highest_floor)
+	if _stat_panel_widget == null or not is_instance_valid(_stat_panel_widget):
+		return
+	var stats: Dictionary = StatCalc.compute(
+		state.get("equipped", {}), items_db, state, String(state.get("species", "")),
+		int(state.get("level", 1)), int(state.get("xp", 0)), int(state.get("gold", 0)),
+		[],  # outpost is between-runs — no live blessings
+	)
+	_stat_panel_widget.render(stats)
 
 func _render_equipped() -> void:
 	for entry in equipped_cells:

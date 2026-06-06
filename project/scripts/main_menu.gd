@@ -94,24 +94,22 @@ func _build_vignette(x: int, y: int, w: int, h: int) -> void:
 	add_child(holder)
 	var built: Dictionary = PaperdollRenderer.build_rig(items_db, state.equipped, String(state.get("species", "")))
 	holder.add_child(built.rig)
-	# Stat strip beneath the frame.
+	# Stat strip beneath the frame. Main menu shows only the durable
+	# progression numbers (level, floor reached, runs, gold) — combat
+	# stats live in the outpost / in-game HUD where the player is
+	# actually preparing for or running a deploy. UI cleanup 2026-06-06.
 	var strip_y: int = frame_y + frame_h + 18
-	var name_lbl := _label("Bot the Adventurer", x + pad, strip_y, 22, COL_AMBER); name_lbl.size = Vector2(frame_w, 28)
-	strip_y += 32
+	var name_lbl := _label("Adventurer", x + pad, strip_y, UITheme.FS_HEADER, COL_AMBER)
+	name_lbl.size = Vector2(frame_w, 24)
+	name_lbl.clip_text = true
+	strip_y += 28
 	var meta_line := "Lv %d  ·  Floor %d reached  ·  %d runs  ·  %d gold" % [
 		int(state.level), int(state.highest_floor),
 		int(state.get("runs_completed", 0)), int(state.gold),
 	]
-	var meta_lbl := _label(meta_line, x + pad, strip_y, 14, COL_DIM); meta_lbl.size = Vector2(frame_w, 20)
-	strip_y += 28
-	# Computed combat stats (mirrors Outpost / Bot.recompute_stats so the
-	# same numbers show on launch as on deploy).
-	var derived: Dictionary = _derive_stats(state, items_db)
-	var combat_line := "HP %d  ATK %d  DEF %d  Crit %d%%  Haste %d%%  Regen %d/s" % [
-		int(derived.hp), int(derived.atk), int(derived.def),
-		int(derived.crit), int(derived.haste), int(derived.regen),
-	]
-	var combat_lbl := _label(combat_line, x + pad, strip_y, 13, COL_AMBER); combat_lbl.size = Vector2(frame_w, 20)
+	var meta_lbl := _label(meta_line, x + pad, strip_y, UITheme.FS_BODY, COL_DIM)
+	meta_lbl.size = Vector2(frame_w, 20)
+	meta_lbl.clip_text = true
 	strip_y += 32
 	# Multi-character picker. Lists all bots; click any non-active one
 	# to switch to it. Scrollable so 10+ bots stay usable.
@@ -344,38 +342,3 @@ func _load_items() -> Dictionary:
 		by_id[it.id] = it
 	return by_id
 
-# Mirrors Bot.recompute_stats — same base + gear + affix sums and same caps —
-# so the menu vignette shows the exact stats the bot will deploy with.
-const _DERIVE_SLOTS := ["weapon", "armor", "helm", "boots", "shield"]
-func _derive_stats(s: Dictionary, db: Dictionary) -> Dictionary:
-	var lv: int = int(s.get("level", 1))
-	var hp: int = 50 + (lv - 1) * 8
-	var atk: int = 5 + (lv - 1)
-	var defense: int = 1 + int(lv / 3.0)
-	var crit_sum: float = 0.0
-	var haste_sum: float = 0.0
-	var regen_sum: float = 0.0
-	for slot in _DERIVE_SLOTS:
-		var inst: Variant = s.get("equipped", {}).get(slot, null)
-		if inst == null or typeof(inst) != TYPE_DICTIONARY:
-			continue
-		var base_id: String = String(inst.get("base_id", ""))
-		if not db.has(base_id):
-			continue
-		var item: Dictionary = db[base_id]
-		hp += int(item.get("hp", 0))
-		atk += int(item.get("atk", 0))
-		defense += int(item.get("def", 0))
-		var sums: Dictionary = AffixSystem.sum_affix_stats(inst.get("affixes", []))
-		hp += int(sums.get("hp", 0))
-		atk += int(sums.get("atk", 0))
-		defense += int(sums.get("def", 0))
-		crit_sum += float(sums.get("crit_chance", 0))
-		haste_sum += float(sums.get("atk_speed_pct", 0))
-		regen_sum += float(sums.get("hp_regen", 0))
-	return {
-		"hp": hp, "atk": atk, "def": defense,
-		"crit": clampf(crit_sum, 0.0, 75.0),
-		"haste": clampf(haste_sum, 0.0, 200.0),
-		"regen": regen_sum,
-	}

@@ -811,16 +811,12 @@ func _collect_render_manifest(img: Image, png_path: String, ts: int) -> Dictiona
 			"wall_alternates": wall_alt_summary,
 			"edge_overlay": overlay_summary,
 		},
+		# HUD label-text dump — pre-2026-06-06 we surfaced each Stats-tab
+		# row's text. Stats now live in the StatPanel widget which exposes
+		# a dict; bot fields are the canonical numbers, dumped below.
 		"hud": {
 			"name": chrome.lbl_name.text if (chrome and is_instance_valid(chrome.lbl_name)) else "",
-			"place": chrome.lbl_place.text if (chrome and is_instance_valid(chrome.lbl_place)) else "",
 			"hp": chrome.lbl_hp.text if (chrome and is_instance_valid(chrome.lbl_hp)) else "",
-			"atk": chrome.lbl_atk.text if (chrome and is_instance_valid(chrome.lbl_atk)) else "",
-			"def": chrome.lbl_def.text if (chrome and is_instance_valid(chrome.lbl_def)) else "",
-			"crit": chrome.lbl_crit.text if (chrome and is_instance_valid(chrome.lbl_crit)) else "",
-			"haste": chrome.lbl_haste.text if (chrome and is_instance_valid(chrome.lbl_haste)) else "",
-			"regen": chrome.lbl_regen.text if (chrome and is_instance_valid(chrome.lbl_regen)) else "",
-			"gold": chrome.lbl_gold.text if (chrome and is_instance_valid(chrome.lbl_gold)) else "",
 		},
 		"bot": {
 			"cell": [int(bot.cell.x), int(bot.cell.y)] if is_instance_valid(bot) else [],
@@ -992,12 +988,12 @@ func _build_floor_report() -> Dictionary:
 			"species": String(bot.species_id) if "species_id" in bot else "",
 			"equipped": equipped_summary,
 		}
-	# HUD strings as visible to the player right now.
+	# HUD strings as visible to the player right now. Place dropped from
+	# HUD header 2026-06-06 (lives in StatPanel Misc section now).
 	var hud_strings: Dictionary = {}
 	if chrome != null and is_instance_valid(chrome):
 		hud_strings = {
 			"name": chrome.lbl_name.text if is_instance_valid(chrome.lbl_name) else "",
-			"place": chrome.lbl_place.text if is_instance_valid(chrome.lbl_place) else "",
 			"hp": chrome.lbl_hp.text if is_instance_valid(chrome.lbl_hp) else "",
 		}
 	# ASCII map — first chars of each tile across the whole floor so I
@@ -1223,8 +1219,10 @@ func _on_hud_drag_drop(payload: Dictionary, dst_slot: String) -> void:
 			_hud_drag_equip_from_inv(int(payload.get("inv_index", -1)), dst_slot)
 	elif src_role == "paperdoll":
 		_hud_drag_swap_slots(String(payload.get("slot_id", "")), dst_slot)
-	if chrome:
-		chrome.update_equipped(bot.equipped, items_db, bot.species_id)
+	# Don't double-rebuild: the next _update_biome_hud tick will see
+	# bot.equipped's hash change and call update_equipped exactly once.
+	# Calling it here AND resetting the hash caused two full paperdoll
+	# rebuilds back-to-back. 2026-06-06 perf fix.
 	_push_inventory_to_hud()
 	_last_equipped_hash = 0
 
@@ -1242,8 +1240,7 @@ func _on_hud_unequip_requested(slot_id: String) -> void:
 	bot._refresh_gear_overlays()
 	_append_to_active_segment(current)
 	_rebuild_inv_cache()
-	if chrome:
-		chrome.update_equipped(bot.equipped, items_db, bot.species_id)
+	# Single-rebuild: let _update_biome_hud's hash detect the change.
 	_push_inventory_to_hud()
 	_last_equipped_hash = 0
 
