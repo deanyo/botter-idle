@@ -64,10 +64,14 @@
       "layouts": [
         {
           "id": "basic",
-          "weight": 5
+          "weight": 3
         },
         {
           "id": "caves",
+          "weight": 2
+        },
+        {
+          "id": "caves_tight",
           "weight": 1
         }
       ],
@@ -169,10 +173,14 @@
       "layouts": [
         {
           "id": "basic",
-          "weight": 4
+          "weight": 3
         },
         {
           "id": "caves_tight",
+          "weight": 2
+        },
+        {
+          "id": "caves",
           "weight": 1
         }
       ],
@@ -196,7 +204,8 @@
       "sigil_set": [],
       "tier": 1,
       "cr_recommended": 20,
-      "boss_id": "boss_eustachio"
+      "boss_id": "boss_eustachio",
+      "liquid_type": "water"
     },
     "mines": {
       "display_name": "the Orcish Mines",
@@ -262,7 +271,7 @@
       "layouts": [
         {
           "id": "caves",
-          "weight": 4
+          "weight": 3
         },
         {
           "id": "basic",
@@ -270,7 +279,7 @@
         },
         {
           "id": "caves_open",
-          "weight": 1
+          "weight": 2
         }
       ],
       "floor_secondary": [
@@ -892,7 +901,7 @@
       "layouts": [
         {
           "id": "basic",
-          "weight": 4
+          "weight": 3
         },
         {
           "id": "caves",
@@ -917,7 +926,8 @@
       "sigil_set": [],
       "tier": 2,
       "cr_recommended": 120,
-      "boss_id": "boss_grum"
+      "boss_id": "boss_grum",
+      "liquid_type": "water"
     },
     "vaults": {
       "display_name": "the Vaults",
@@ -989,10 +999,14 @@
       "layouts": [
         {
           "id": "basic",
-          "weight": 5
+          "weight": 3
         },
         {
           "id": "caves_open",
+          "weight": 2
+        },
+        {
+          "id": "caves_tight",
           "weight": 1
         }
       ],
@@ -1098,11 +1112,15 @@
       "layouts": [
         {
           "id": "basic",
-          "weight": 5
+          "weight": 3
         },
         {
           "id": "caves_tight",
           "weight": 2
+        },
+        {
+          "id": "caves",
+          "weight": 1
         }
       ],
       "sigil_set": [
@@ -1198,11 +1216,11 @@
       "layouts": [
         {
           "id": "basic",
-          "weight": 5
+          "weight": 3
         },
         {
           "id": "caves_tight",
-          "weight": 1
+          "weight": 2
         }
       ],
       "sigil_set": [
@@ -1691,11 +1709,11 @@
       "layouts": [
         {
           "id": "basic",
-          "weight": 6
+          "weight": 4
         },
         {
           "id": "caves_tight",
-          "weight": 2
+          "weight": 3
         }
       ],
       "sigil_set": [
@@ -2004,10 +2022,14 @@
       "layouts": [
         {
           "id": "basic",
-          "weight": 5
+          "weight": 3
         },
         {
           "id": "caves_open",
+          "weight": 2
+        },
+        {
+          "id": "caves_tight",
           "weight": 1
         }
       ],
@@ -2091,11 +2113,11 @@
       "layouts": [
         {
           "id": "basic",
-          "weight": 5
+          "weight": 3
         },
         {
           "id": "caves_open",
-          "weight": 1
+          "weight": 2
         }
       ],
       "sigil_set": [
@@ -2197,7 +2219,7 @@
         "patch_density": 0.04,
         "patches": []
       },
-      "liquid_type": "",
+      "liquid_type": "water",
       "floor_secondary": [],
       "sigil_set": [],
       "tier": 3,
@@ -2257,10 +2279,14 @@
       "layouts": [
         {
           "id": "basic",
-          "weight": 5
+          "weight": 3
         },
         {
           "id": "caves_open",
+          "weight": 2
+        },
+        {
+          "id": "caves",
           "weight": 1
         }
       ],
@@ -2355,10 +2381,14 @@
       "layouts": [
         {
           "id": "basic",
-          "weight": 4
+          "weight": 3
         },
         {
           "id": "caves",
+          "weight": 2
+        },
+        {
+          "id": "caves_tight",
           "weight": 1
         }
       ],
