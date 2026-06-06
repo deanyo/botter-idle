@@ -36,6 +36,7 @@ func _ready() -> void:
 	title.position = Vector2(0, 16)
 	title.size = Vector2(view.x, 40)
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.clip_text = true
 	title.add_theme_font_size_override("font_size", 32)
 	title.add_theme_color_override("font_color", COL_AMBER)
 	add_child(title)
@@ -100,11 +101,15 @@ func _make_list_row(sp: Dictionary) -> Control:
 		spr.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 		spr.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		btn.add_child(spr)
+	# Card-bound clipping so long species names + 8-stat summary lines
+	# can never bleed past the row rect on narrow panes.
+	btn.clip_contents = true
 	# Name + 1-line stat summary
 	var name_lbl := Label.new()
 	name_lbl.text = String(sp.name)
 	name_lbl.position = Vector2(72, 8)
 	name_lbl.size = Vector2(400, 22)
+	name_lbl.clip_text = true
 	name_lbl.add_theme_font_size_override("font_size", 16)
 	name_lbl.add_theme_color_override("font_color", COL_AMBER)
 	name_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -113,6 +118,7 @@ func _make_list_row(sp: Dictionary) -> Control:
 	summary_lbl.text = _stat_summary(sp)
 	summary_lbl.position = Vector2(72, 32)
 	summary_lbl.size = Vector2(400, 24)
+	summary_lbl.clip_text = true
 	summary_lbl.add_theme_font_size_override("font_size", 11)
 	summary_lbl.add_theme_color_override("font_color", COL_DIM)
 	summary_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -157,6 +163,7 @@ func _build_preview_pane(x: int, y: int, w: int, h: int) -> void:
 	preview_name = Label.new()
 	preview_name.position = Vector2(x + 160, y + 50)
 	preview_name.size = Vector2(w - 180, 32)
+	preview_name.clip_text = true
 	preview_name.add_theme_font_size_override("font_size", 22)
 	preview_name.add_theme_color_override("font_color", COL_AMBER)
 	add_child(preview_name)
@@ -192,6 +199,7 @@ func _panel(x: int, y: int, w: int, h: int, header: String) -> void:
 	hdr.text = header
 	hdr.position = Vector2(x + 12, y + 8)
 	hdr.size = Vector2(w - 24, 22)
+	hdr.clip_text = true
 	hdr.add_theme_font_size_override("font_size", 14)
 	hdr.add_theme_color_override("font_color", COL_AMBER)
 	add_child(hdr)
