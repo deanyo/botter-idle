@@ -34,7 +34,12 @@ const C := preload("res://scripts/constants.gd")
 const SIDEBAR_W := 356  # default fallback only — _sidebar_w is the live value
 const SIDEBAR_PAD := 10
 const MINIMAP_SIZE := SIDEBAR_W - SIDEBAR_PAD * 2  # default fallback only
-const BAG_H := 180
+# BAG_H sized to fit ~3 rows of 64px cells + filter chips + label.
+# Was 180 (only 1 visible row → constant scrolling). 2026-06-06 user
+# reported black dead space under paperdoll + inventory; the dungeon
+# canvas wasn't using the bottom of the screen for inventory. New
+# default 340 → 3 visible rows + filter chips.
+const BAG_H := 340
 
 # Live, viewport-sized values — set in _build_sidebar from
 # UILayout.sidebar_width(view). Replaces the hardcoded SIDEBAR_W in
@@ -111,6 +116,7 @@ var equipped_cells: Array = []   # [{slot, sprite, hover, is_placeholder}]
 var inventory_scroll: ScrollContainer
 var inventory_box: VBoxContainer
 var _inv_columns: int = 6
+var _pending_scroll_restore: int = 0
 # Equip-request callback set by dungeon.gd: takes (segment_index, item_index)
 # and returns whether the equip succeeded.
 var equip_request_target: Object = null
@@ -994,11 +1000,20 @@ func update_inventory_segments(segments: Array, items_db: Dictionary, slot_coold
 				continue
 		# General shrink / grid missing — fall back to rebuild.
 		_rebuild_one_segment(i, segments, items_db, slot_cooldowns)
-	if inventory_scroll != null:
-		inventory_scroll.scroll_vertical = 0
+	# Preserve scroll position. Pre-2026-06-06 we forced scroll_vertical=0
+	# every refresh which made dragging an item painful — picking up loot
+	# or descending a floor would yank the player back to the top of
+	# the inventory.
 
 # Identity key for an instance — instance_id when available, else
 # (base_id + index) so duplicate-base items still get distinct keys.
+func _apply_scroll_restore() -> void:
+	if inventory_scroll == null or not is_instance_valid(inventory_scroll):
+		return
+	if _pending_scroll_restore > 0:
+		inventory_scroll.scroll_vertical = _pending_scroll_restore
+	_pending_scroll_restore = 0
+
 func _inst_key(inst: Variant) -> String:
 	if typeof(inst) != TYPE_DICTIONARY:
 		return ""
@@ -1032,10 +1047,20 @@ func _rebuild_inventory_full(segments: Array, items_db: Dictionary, slot_cooldow
 	# Build a placeholder array first so indices line up.
 	for i in segments.size():
 		_seg_grids.append({})
+	# Preserve scroll position across full rebuilds so descending a floor
+	# (which triggers shape-change → full rebuild) doesn't yank the
+	# player back to the top mid-drag. 2026-06-06.
+	var saved_scroll: int = 0
+	if inventory_scroll != null:
+		saved_scroll = inventory_scroll.scroll_vertical
 	for i in range(segments.size() - 1, -1, -1):
 		_build_segment_into(i, segments, items_db, slot_cooldowns)
-	if inventory_scroll != null:
-		inventory_scroll.scroll_vertical = 0
+	if inventory_scroll != null and saved_scroll > 0:
+		# Restore on next frame after layout has settled. Setting
+		# scroll_vertical synchronously here would write into an
+		# unmeasured container and produce 0.
+		_pending_scroll_restore = saved_scroll
+		call_deferred("_apply_scroll_restore")
 
 func _rebuild_one_segment(idx: int, segments: Array, items_db: Dictionary, slot_cooldowns: Dictionary) -> void:
 	# Tear down the cached header + grid for this segment.

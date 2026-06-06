@@ -10,9 +10,9 @@ extends CanvasLayer
 #
 # Visual stack:
 #   - full-viewport pure-black ColorRect
-#   - faint amber radial gradient pulse (custom _draw)
-#   - centered arc spinner (custom _draw)
-#   - centered "Loading…" label below the spinner
+#   - centered paperdoll rig (the player's bot, scaled up large)
+#   - "Loading…" label
+#   - thin progress bar that animates left → right over the load duration
 #
 # Behavior:
 #   - layer = 200 (above DragManager 100, above pause_menu 100)
@@ -29,10 +29,14 @@ const FADE_OUT_SEC: float = 0.30
 
 var _root: Control = null
 var _bg: ColorRect = null
-var _spinner: Node2D = null
+var _paperdoll_holder: Node2D = null
+var _paperdoll_rig: Node2D = null
 var _label: Label = null
+var _bar_bg: ColorRect = null
+var _bar_fill: ColorRect = null
+var _bar_max_w: int = 320
 var _tween: Tween = null
-var _spinner_t: float = 0.0
+var _bar_tween: Tween = null
 var _pulse_t: float = 0.0
 var _was_paused: bool = false
 var _active: bool = false
@@ -57,21 +61,31 @@ func _ready() -> void:
 	_bg.size = _root.size
 	_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_root.add_child(_bg)
-	# Spinner — Node2D with custom _draw painting an arc + the radial
-	# pulse halo behind it. Centered each frame.
-	_spinner = Node2D.new()
-	_spinner.draw.connect(_draw_spinner)
-	_root.add_child(_spinner)
-	# Label below the spinner.
+	# Paperdoll holder — the player's bot rig is rebuilt on each show
+	# so it reflects the current equipped state. 2026-06-06.
+	_paperdoll_holder = Node2D.new()
+	_root.add_child(_paperdoll_holder)
+	# Label above the bar.
 	_label = Label.new()
 	_label.text = "Loading…"
-	_label.add_theme_font_size_override("font_size", 18)
+	_label.add_theme_font_size_override("font_size", 20)
 	_label.add_theme_color_override("font_color", Color(0.92, 0.78, 0.45))
 	_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_label.anchor_left = 0.5
-	_label.anchor_right = 0.5
 	_root.add_child(_label)
+	# Progress bar — thin amber bar that fills left → right over the
+	# load duration. Synced to a tween in show_curtain so it visually
+	# tracks the FADE_IN_SEC + SWAP_HOLD_SEC window.
+	_bar_bg = ColorRect.new()
+	_bar_bg.color = Color(0.18, 0.15, 0.10, 1.0)
+	_bar_bg.size = Vector2(_bar_max_w, 6)
+	_bar_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_root.add_child(_bar_bg)
+	_bar_fill = ColorRect.new()
+	_bar_fill.color = Color(0.92, 0.78, 0.45, 1.0)
+	_bar_fill.size = Vector2(0, 6)
+	_bar_fill.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_root.add_child(_bar_fill)
 
 # Modifier-key tracker — the loading curtain is an autoload that
 # always exists and ticks via PROCESS_MODE_ALWAYS, so it's the right
@@ -115,8 +129,7 @@ func _input(event: InputEvent) -> void:
 func _process(delta: float) -> void:
 	if not _active:
 		return
-	_spinner_t += delta * 4.0  # arc rotation speed
-	_pulse_t += delta * 1.5    # halo pulse speed
+	_pulse_t += delta * 1.5
 	# Resize the root + bg to match the viewport every frame so the
 	# curtain always covers the full window even after a resize.
 	# CanvasLayer parents don't drive anchor layout for Controls.
@@ -125,34 +138,57 @@ func _process(delta: float) -> void:
 		_root.size = view
 	if is_instance_valid(_bg):
 		_bg.size = view
-	if is_instance_valid(_spinner):
-		_spinner.position = view * 0.5
-		_spinner.queue_redraw()
+	# Paperdoll centered, scaled large.
+	if is_instance_valid(_paperdoll_holder):
+		_paperdoll_holder.position = Vector2(view.x * 0.5, view.y * 0.5 - 30)
+	# Label above the bar.
 	if is_instance_valid(_label):
-		_label.size = Vector2(280, 24)
-		_label.position = view * 0.5 + Vector2(-140, 56)
+		_label.size = Vector2(280, 28)
+		_label.position = Vector2(view.x * 0.5 - 140, view.y * 0.5 + 110)
+	# Progress bar centered below the label.
+	if is_instance_valid(_bar_bg):
+		_bar_bg.position = Vector2(view.x * 0.5 - _bar_max_w * 0.5, view.y * 0.5 + 144)
+	if is_instance_valid(_bar_fill):
+		_bar_fill.position = _bar_bg.position
 
-func _draw_spinner() -> void:
-	# Radial halo pulse — soft amber glow under the spinner. Sine wave
-	# 0.40 → 0.70 alpha breathing.
-	var halo_alpha: float = 0.55 + sin(_pulse_t) * 0.15
-	var halo_color: Color = Color(0.92, 0.78, 0.45, halo_alpha * 0.35)
-	for i in range(6, 0, -1):
-		var r: float = 60.0 + float(i) * 8.0
-		var a: float = halo_color.a * pow(1.0 - float(i) / 7.0, 1.6)
-		_spinner.draw_circle(Vector2.ZERO, r, Color(halo_color.r, halo_color.g, halo_color.b, a))
-	# Arc spinner — sweeps a 0.6 rad arc that rotates around the center.
-	var arc_color: Color = Color(0.92, 0.78, 0.45, 0.95)
-	var arc_dim: Color = Color(0.92, 0.78, 0.45, 0.30)
-	# Background ring (full circle, dim).
-	_spinner.draw_arc(Vector2.ZERO, 32.0, 0.0, TAU, 64, arc_dim, 3.0, true)
-	# Foreground sweep.
-	var start: float = _spinner_t
-	var sweep: float = PI * 0.6
-	_spinner.draw_arc(Vector2.ZERO, 32.0, start, start + sweep, 24, arc_color, 3.5, true)
-	# Inner dot pulses.
-	var dot_alpha: float = 0.6 + sin(_pulse_t * 2.0) * 0.3
-	_spinner.draw_circle(Vector2.ZERO, 4.0, Color(1.0, 0.92, 0.55, dot_alpha))
+# Build the paperdoll rig from the active save and stash it under
+# _paperdoll_holder. Called on each show_curtain so the rig reflects
+# the player's current loadout — they see the bot they'll deploy.
+# Falls back silently if SaveState / PaperdollRenderer / ItemsDb
+# aren't reachable from this autoload context.
+const _PAPERDOLL_RIG_SCALE: float = 6.0
+const _ITEMS_PATH: String = "res://data/items.json"
+func _rebuild_paperdoll() -> void:
+	if _paperdoll_holder == null or not is_instance_valid(_paperdoll_holder):
+		return
+	# Wipe previous rig so re-shows reflect equip changes.
+	for c in _paperdoll_holder.get_children():
+		c.queue_free()
+	_paperdoll_rig = null
+	if SaveState == null:
+		return
+	var save: Dictionary = SaveState.load_state()
+	if save.is_empty():
+		return
+	# Items DB — small JSON load; happens once per show so it's cheap.
+	var items_db: Dictionary = {}
+	var f := FileAccess.open(_ITEMS_PATH, FileAccess.READ)
+	if f != null:
+		var parsed: Variant = JSON.parse_string(f.get_as_text())
+		if typeof(parsed) == TYPE_DICTIONARY:
+			for it in parsed.get("items", []):
+				items_db[it.id] = it
+	var equipped: Dictionary = save.get("equipped", {})
+	var species: String = String(save.get("species", ""))
+	# static_only=true skips infinite-loop tweens — the curtain is
+	# already moving via the load bar; we don't need orbit/glow on the
+	# rig too.
+	var built: Dictionary = PaperdollRenderer.build_rig(items_db, equipped, species, true)
+	var rig: Node2D = built.get("rig", null)
+	if rig != null:
+		rig.scale = Vector2(_PAPERDOLL_RIG_SCALE, _PAPERDOLL_RIG_SCALE)
+		_paperdoll_holder.add_child(rig)
+		_paperdoll_rig = rig
 
 # Public API ──────────────────────────────────────────────────────────
 
@@ -246,12 +282,19 @@ func show_curtain(label: String = "Loading…") -> void:
 		_root.visible = true
 		_root.mouse_filter = Control.MOUSE_FILTER_STOP  # eat clicks while up
 	# Force arrow cursor so the macOS spinner doesn't peek through.
-	# Note: we deliberately do NOT pause the tree here — pausing was
-	# blocking await get_tree().process_frame which deadlocked the
-	# scene swap (player click did nothing visible). The curtain is
-	# only up for ~one frame each direction so dungeon ticks during
-	# the brief overlap don't matter.
 	Input.set_default_cursor_shape(Input.CURSOR_ARROW)
+	# Build the paperdoll rig from the player's current save.
+	_rebuild_paperdoll()
+	# Animate the load bar from 0 → full over the expected hold window.
+	# Visual progress cue, even though we don't have a real percent value.
+	if is_instance_valid(_bar_fill):
+		_bar_fill.size = Vector2(0, 6)
+		if _bar_tween != null and _bar_tween.is_valid():
+			_bar_tween.kill()
+		_bar_tween = create_tween()
+		_bar_tween.tween_property(_bar_fill, "size:x",
+			float(_bar_max_w), FADE_IN_SEC + SWAP_HOLD_SEC) \
+			.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	# Fade in.
 	if _tween != null and _tween.is_valid():
 		_tween.kill()

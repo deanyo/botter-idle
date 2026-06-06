@@ -660,38 +660,51 @@ func _make_paperdoll_slot(slot_id: String, x: int, y: int, override_size: int = 
 	})
 
 func _build_stats_pane(x: int, y: int, w: int, h: int) -> void:
-	_make_panel(x, y, w, h, "Bot")
-	var sx: int = x + 16
-	var sy: int = y + 40
-	lbl_name = _add_stat(sx, sy, 22, COL_AMBER, "Bot the Adventurer"); sy += 30
-	lbl_level = _add_stat(sx, sy, 16, COL_DIM, "Level —"); sy += 22
-	lbl_xp = _add_stat(sx, sy, 14, COL_DIM, "XP —"); sy += 22
-	lbl_floor = _add_stat(sx, sy, 14, COL_DIM, "Highest floor: —"); sy += 30
-	# Stat block.
-	var hdr := Label.new()
-	hdr.text = "Stats"
-	hdr.position = Vector2(sx, sy)
-	hdr.add_theme_font_size_override("font_size", 13)
-	hdr.add_theme_color_override("font_color", COL_DIM)
-	add_child(hdr); sy += 22
-	lbl_hp = _add_stat(sx, sy, 18, COL_AMBER, "HP —"); sy += 24
-	lbl_atk = _add_stat(sx, sy, 18, COL_AMBER, "Dmg —"); sy += 24
-	lbl_def = _add_stat(sx, sy, 18, COL_AMBER, "Armor —"); sy += 24
-	# Primary axis trio. Drawn in their class colors so the player sees
-	# Str/Dex/Int as the same red/green/blue scheme as the spell cells.
-	# +/- buttons next to each row let the player allocate unspent
-	# stat points (3 per level granted on level-up).
-	lbl_str = _add_stat(sx, sy, 16, UITheme.spell_class_color("str"), "Str —")
-	_add_stat_alloc_buttons(sx + 130, sy, "str")
+	# 2026-06-06 redesign: was a single jammed column with "Bot" / "Bot
+	# the Adventurer" repeated in the panel header, name label, and
+	# tooltip. Now split into TabContainer with three tabs:
+	#   Stats — name (one place), level/xp/floor, primary stats, derived
+	#           combat stats, instructions
+	#   Weapon — equipped weapon stats, damage type, weapon flavor
+	#   Upgrades — gold-sink permanent purchases (was a tiny sub-scroll;
+	#              now gets the full panel height)
+	_make_panel(x, y, w, h, "Character")
+	var inner_x: int = x + 12
+	var inner_y: int = y + 36
+	var inner_w: int = w - 24
+	var inner_h: int = h - 48
+	var tabs := TabContainer.new()
+	tabs.position = Vector2(inner_x, inner_y)
+	tabs.size = Vector2(inner_w, inner_h)
+	tabs.tabs_visible = true
+	add_child(tabs)
+	_build_stats_tab(tabs, inner_w, inner_h)
+	_build_weapon_tab(tabs, inner_w, inner_h)
+	_build_upgrades_tab(tabs, inner_w, inner_h)
+
+func _build_stats_tab(tabs: TabContainer, w: int, h: int) -> void:
+	var page := Control.new()
+	page.name = "Stats"
+	page.custom_minimum_size = Vector2(w, h - 36)
+	tabs.add_child(page)
+	var sx: int = 8
+	var sy: int = 8
+	lbl_name = _add_stat_to(page, sx, sy, 22, COL_AMBER, "Bot the Adventurer"); sy += 30
+	lbl_level = _add_stat_to(page, sx, sy, 14, COL_DIM, "Level —"); sy += 20
+	lbl_xp = _add_stat_to(page, sx, sy, 12, COL_DIM, "XP —"); sy += 18
+	lbl_floor = _add_stat_to(page, sx, sy, 12, COL_DIM, "Highest floor: —"); sy += 24
+	# Primary attributes — color-coded per spell class.
+	_add_section(page, sx, sy, "Attributes"); sy += 22
+	lbl_str = _add_stat_to(page, sx, sy, 15, UITheme.spell_class_color("str"), "Str —")
+	_add_stat_alloc_buttons_to(page, sx + 140, sy, "str")
 	sy += 22
-	lbl_dex = _add_stat(sx, sy, 16, UITheme.spell_class_color("dex"), "Dex —")
-	_add_stat_alloc_buttons(sx + 130, sy, "dex")
+	lbl_dex = _add_stat_to(page, sx, sy, 15, UITheme.spell_class_color("dex"), "Dex —")
+	_add_stat_alloc_buttons_to(page, sx + 140, sy, "dex")
 	sy += 22
-	lbl_int = _add_stat(sx, sy, 16, UITheme.spell_class_color("int"), "Int —")
-	_add_stat_alloc_buttons(sx + 130, sy, "int")
+	lbl_int = _add_stat_to(page, sx, sy, 15, UITheme.spell_class_color("int"), "Int —")
+	_add_stat_alloc_buttons_to(page, sx + 140, sy, "int")
 	sy += 22
-	# Unspent counter + Reset button.
-	lbl_unspent = _add_stat(sx, sy, 13, COL_AMBER, "Unspent —")
+	lbl_unspent = _add_stat_to(page, sx, sy, 12, COL_AMBER, "Unspent —")
 	var reset_btn := Button.new()
 	reset_btn.text = "Reset"
 	reset_btn.position = Vector2(sx + 140, sy - 2)
@@ -699,40 +712,174 @@ func _build_stats_pane(x: int, y: int, w: int, h: int) -> void:
 	reset_btn.add_theme_font_size_override("font_size", 11)
 	reset_btn.tooltip_text = "Refund all spent stat points"
 	reset_btn.pressed.connect(_on_stat_reset_pressed)
-	add_child(reset_btn)
-	sy += 24
-	lbl_crit = _add_stat(sx, sy, 16, COL_DIM, "Crit —"); sy += 22
-	lbl_haste = _add_stat(sx, sy, 16, COL_DIM, "Haste —"); sy += 22
-	lbl_regen = _add_stat(sx, sy, 16, COL_DIM, "Regen —"); sy += 22
-	lbl_gold = _add_stat(sx, sy, 16, COL_GOLD, "Gold —"); sy += 30
-	# Bot instructions — loot filter dictates what the bot bothers picking
-	# up during a run. Auto-salvage uses the same threshold to convert
-	# overflow loot to gold when the inventory cap is hit.
-	var instr_hdr := Label.new()
-	instr_hdr.text = "Bot Instructions"
-	instr_hdr.position = Vector2(sx, sy)
-	instr_hdr.add_theme_font_size_override("font_size", 13)
-	instr_hdr.add_theme_color_override("font_color", COL_DIM)
-	add_child(instr_hdr); sy += 22
-	var filter_lbl := _add_stat(sx, sy, 13, COL_DIM, "Pick up:"); sy += 18
-	filter_lbl.size = Vector2(w - 32, 18)
-	var filter_btn := OptionButton.new()
-	filter_btn.position = Vector2(sx, sy)
-	filter_btn.size = Vector2(w - 32, 28)
+	page.add_child(reset_btn)
+	sy += 28
+	# Vitals.
+	_add_section(page, sx, sy, "Vitals"); sy += 22
+	lbl_hp = _add_stat_to(page, sx, sy, 16, UITheme.affix_stat_color("hp"), "HP —"); sy += 22
+	lbl_regen = _add_stat_to(page, sx, sy, 14, UITheme.affix_stat_color("hp_regen"), "Regen —"); sy += 22
+	lbl_def = _add_stat_to(page, sx, sy, 14, UITheme.affix_stat_color("armor"), "Armor —"); sy += 22
+	# Combat.
+	_add_section(page, sx, sy, "Combat"); sy += 22
+	lbl_atk = _add_stat_to(page, sx, sy, 16, UITheme.damage_type_color("physical"), "Dmg —"); sy += 22
+	lbl_crit = _add_stat_to(page, sx, sy, 14, UITheme.affix_stat_color("crit_chance"), "Crit —"); sy += 22
+	lbl_haste = _add_stat_to(page, sx, sy, 14, UITheme.affix_stat_color("haste_pct"), "Haste —"); sy += 28
+	# Resources.
+	_add_section(page, sx, sy, "Resources"); sy += 22
+	lbl_gold = _add_stat_to(page, sx, sy, 14, COL_GOLD, "Gold —"); sy += 28
+	# Instructions.
+	_add_section(page, sx, sy, "Bot Instructions"); sy += 22
+	var pickup_lbl := Label.new()
+	pickup_lbl.text = "Pick up:"
 	for filter_name in ["Common+ (everything)", "Uncommon+", "Rare+", "Epic+", "Legendary only"]:
 		filter_btn.add_item(filter_name)
 	var filter_idx: int = LootDrop.RARITY_RANK.get(String(state.get("loot_filter", "common")), 0)
 	filter_btn.selected = filter_idx
 	filter_btn.item_selected.connect(_on_loot_filter_changed)
-	add_child(filter_btn); sy += 32
+	page.add_child(filter_btn); sy += 32
 	# Inventory cap readout (folds in Pouch upgrade contribution).
 	var inv_count: int = int(state.get("inventory", []).size())
 	var cap: int = int(state.get("inventory_cap", 50)) + int(BotUpgrades.total_for_stat(state, "inventory_cap"))
-	var inv_lbl := _add_stat(sx, sy, 13, COL_DIM, "Inventory: %d / %d" % [inv_count, cap]); sy += 28
-	inv_lbl.size = Vector2(w - 32, 18)
-	# Upgrades panel — gold-sink permanent purchases. Lives in the rest
-	# of the stats column; scrolls if it overflows.
-	_build_upgrades_section(sx, sy, w - 32, y + h - sy - 16)
+	var inv_lbl := _add_stat_to(page, sx, sy, 12, COL_DIM, "Inventory: %d / %d" % [inv_count, cap]); sy += 22
+
+# Tab 2: Weapon — equipped weapon stats with damage type, traits.
+func _build_weapon_tab(tabs: TabContainer, w: int, h: int) -> void:
+	var page := Control.new()
+	page.name = "Weapon"
+	page.custom_minimum_size = Vector2(w, h - 36)
+	tabs.add_child(page)
+	var sx: int = 8
+	var sy: int = 8
+	var weapon_inst: Variant = state.get("equipped", {}).get("weapon", null)
+	if typeof(weapon_inst) != TYPE_DICTIONARY:
+		var none_lbl := _add_stat_to(page, sx, sy, 14, COL_DIM, "No weapon equipped.")
+		none_lbl.size = Vector2(w - 16, 22)
+		return
+	var item: Dictionary = items_db.get(String(weapon_inst.get("base_id", "")), {})
+	if item.is_empty():
+		var none_lbl2 := _add_stat_to(page, sx, sy, 14, COL_DIM, "Weapon data missing.")
+		none_lbl2.size = Vector2(w - 16, 22)
+		return
+	# Name in rarity color.
+	var rarity: String = String(item.get("rarity", "common"))
+	var disp: String = String(item.get("name", item.get("id", "?")))
+	var meta: String = String(weapon_inst.get("meta_rarity", ""))
+	if meta == "primal": disp = "Primal " + disp
+	elif meta == "ancient": disp = "Ancient " + disp
+	var name_lbl := _add_stat_to(page, sx, sy, 18, UITheme.rarity_color(rarity), disp); sy += 26
+	name_lbl.size = Vector2(w - 16, 22)
+	var subtitle: String = "%s · %s" % [rarity.capitalize(), String(item.get("weapon_class", "1H"))]
+	_add_stat_to(page, sx, sy, 12, COL_DIM, subtitle); sy += 24
+	# Damage block.
+	_add_section(page, sx, sy, "Damage"); sy += 22
+	var dmin: int = int(item.get("damage_min", 0))
+	var dmax: int = int(item.get("damage_max", 0))
+	var dtype: String = String(item.get("damage_type", "physical"))
+	var dtype_col: Color = UITheme.damage_type_color(dtype)
+	_add_stat_to(page, sx, sy, 16, dtype_col, "%d-%d %s" % [dmin, dmax, dtype.capitalize()]); sy += 22
+	var sp: float = float(item.get("speed", 1.0))
+	_add_stat_to(page, sx, sy, 13, COL_DIM, "Swing time: %.2fs" % sp); sy += 20
+	var dps: float = (float(dmin + dmax) * 0.5) / max(0.3, sp)
+	_add_stat_to(page, sx, sy, 13, COL_AMBER, "Avg DPS: %.1f" % dps); sy += 26
+	# Combat traits — flavor tags drive auto-attack procs.
+	var tags: Array = UITheme.combined_flavor_tags(item, weapon_inst)
+	if not tags.is_empty():
+		_add_section(page, sx, sy, "Traits"); sy += 22
+		for t in tags:
+			var tag_col: Color = UITheme.flavor_color_for([String(t)])
+			if tag_col.a <= 0.0:
+				tag_col = COL_DIM
+			_add_stat_to(page, sx, sy, 12, tag_col, "  ✦ " + String(t).capitalize()); sy += 18
+		sy += 8
+	# Implicit affixes.
+	var implicits: Array = item.get("implicit_affixes", [])
+	if not implicits.is_empty():
+		_add_section(page, sx, sy, "Implicits"); sy += 22
+		for af_id in implicits:
+			var af_def: Dictionary = AffixSystem.get_affix_def(String(af_id))
+			if af_def.is_empty(): continue
+			var af_name: String = String(af_def.get("name", af_id))
+			var af_col: Color = UITheme.affix_stat_color(String(af_def.get("stat", "")))
+			_add_stat_to(page, sx, sy, 12, af_col, "  ◆ " + af_name); sy += 18
+		sy += 8
+	# Rolled affixes from instance.
+	var rolled: Array = weapon_inst.get("affixes", [])
+	if not rolled.is_empty():
+		_add_section(page, sx, sy, "Affixes"); sy += 22
+		for af in rolled:
+			var af_def2: Dictionary = AffixSystem.get_affix_def(String(af.get("id", "")))
+			if af_def2.is_empty(): continue
+			var af_name2: String = String(af_def2.get("name", af.get("id", "")))
+			var af_col2: Color = UITheme.affix_stat_color(String(af_def2.get("stat", "")))
+			_add_stat_to(page, sx, sy, 12, af_col2, "  ◇ " + af_name2); sy += 18
+	# Item Level footer.
+	sy += 8
+	var ilvl: Dictionary = ItemLevel.compute(item, weapon_inst)
+	_add_stat_to(page, sx, sy, 13, UITheme.rarity_color(rarity), "iLvl %d" % int(ilvl.get("level", 0))); sy += 22
+
+# Tab 3: Upgrades — full panel height for the upgrade list.
+func _build_upgrades_tab(tabs: TabContainer, w: int, h: int) -> void:
+	var page := Control.new()
+	page.name = "Upgrades"
+	page.custom_minimum_size = Vector2(w, h - 36)
+	tabs.add_child(page)
+	# 8px inset, scroll fills the rest of the page.
+	_build_upgrades_section_in(page, 8, 8, w - 16, h - 52)
+
+# Helpers used by the tabbed stats pane.
+func _add_stat_to(parent: Node, x: int, y: int, font_size: int, color: Color, text: String) -> Label:
+	var lbl := Label.new()
+	lbl.text = text
+	lbl.position = Vector2(x, y)
+	lbl.add_theme_font_size_override("font_size", font_size)
+	lbl.add_theme_color_override("font_color", color)
+	parent.add_child(lbl)
+	return lbl
+
+func _add_section(parent: Node, x: int, y: int, text: String) -> void:
+	var hdr := Label.new()
+	hdr.text = text
+	hdr.position = Vector2(x, y)
+	hdr.add_theme_font_size_override("font_size", 12)
+	hdr.add_theme_color_override("font_color", Color(0.55, 0.50, 0.36))
+	parent.add_child(hdr)
+	# Underline.
+	var line := ColorRect.new()
+	line.color = Color(0.35, 0.30, 0.18, 0.45)
+	line.position = Vector2(x, y + 16)
+	line.size = Vector2(120, 1)
+	parent.add_child(line)
+
+func _add_stat_alloc_buttons_to(parent: Node, x: int, y: int, stat: String) -> void:
+	var minus := Button.new()
+	minus.text = "−"
+	minus.position = Vector2(x, y - 2)
+	minus.size = Vector2(22, 22)
+	minus.add_theme_font_size_override("font_size", 13)
+	minus.tooltip_text = "Refund 1 point"
+	minus.pressed.connect(_on_stat_alloc.bind(stat, -1))
+	parent.add_child(minus)
+	var plus := Button.new()
+	plus.text = "+"
+	plus.position = Vector2(x + 26, y - 2)
+	plus.size = Vector2(22, 22)
+	plus.add_theme_font_size_override("font_size", 13)
+	plus.tooltip_text = "Allocate 1 point"
+	plus.pressed.connect(_on_stat_alloc.bind(stat, 1))
+	parent.add_child(plus)
+
+func _build_upgrades_section_in(parent: Node, x: int, y: int, w: int, h: int) -> void:
+	var scroll := ScrollContainer.new()
+	scroll.position = Vector2(x, y)
+	scroll.size = Vector2(w, h)
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	parent.add_child(scroll)
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", 6)
+	box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll.add_child(box)
+	for def in BotUpgrades.all():
+		box.add_child(_make_upgrade_row(def))
 
 # Tracks the upgrade rows so refresh can update them in-place after a buy
 # without rebuilding the whole pane. Keyed by upgrade id.
