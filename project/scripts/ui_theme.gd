@@ -441,14 +441,17 @@ static func badges_for_item(item: Dictionary, inst: Variant) -> Array:
 				"icon": _BADGE_BASE + String(entry[0]) + ".png",
 				"tint": entry[1],
 			})
-	# Flavor badges suppressed on commons. The flavor TAG is still on
-	# the item def for combat math (a "fire" common dagger still procs
-	# fire) but the corner badge is reserved for items where the
-	# flavor actually carries a payload (≥1 rolled affix, an implicit,
-	# or a meaningful default_tint).
+	# Flavor badges only render when stat-backed — i.e. an enchant or
+	# a rolled/implicit affix whose stat aligns with the flavor.
+	# Pre-2026-06-07 a "mossy" common boot (poison flavor_tag, 0
+	# stats) got a poison badge from the cosmetic tag alone. Now
+	# the badge appears only when the item actually does poison
+	# things. Plus: still suppressed on commons regardless (commons
+	# now roll 1 affix but their badge would still be misleading
+	# on items where the rolled affix doesn't match the flavor).
 	var rarity: String = String(item.get("rarity", "common"))
 	if rarity != "common":
-		var tags: Array = combined_flavor_tags(item, inst)
+		var tags: Array = stat_backed_flavor_tags(item, inst)
 		for tag in _FLAVOR_PRIORITY:
 			if tag in tags and _FLAVOR_BADGE.has(tag):
 				out.append({
@@ -463,6 +466,64 @@ static func badges_for_item(item: Dictionary, inst: Variant) -> Array:
 static func badge_for_item(item: Dictionary, inst: Variant) -> Dictionary:
 	var arr: Array = badges_for_item(item, inst)
 	return arr[0] if not arr.is_empty() else {}
+
+# Affix id → flavor tag mapping. Used by `stat_backed_flavor_tags` to
+# decide whether a flavor badge has stat backing (a rolled or implicit
+# affix whose stat aligns with the flavor). Pre-2026-06-07 a "mossy"
+# (poison-flavor) common boot got a poison badge from the cosmetic
+# flavor_tag alone, even with 0 stats. Now the badge appears only
+# when the item carries an enchant matching the flavor OR a rolled
+# affix in this map.
+const _AFFIX_FLAVOR_MAP := {
+	"of_lifesteal":      "vampiric",
+	"of_fire_resist":    "fire",
+	"of_cold_resist":    "cold",
+	"of_lightning_resist": "lightning",
+	"of_holy_resist":    "holy",
+	"of_poison_resist":  "poison",
+	"of_dark_resist":    "dark",
+	"of_embers":         "fire",
+	"of_frost":          "cold",
+	"of_static":         "lightning",
+	"of_radiance":       "holy",
+	"of_venom":          "poison",
+	"of_shadow":         "dark",
+}
+
+# Tags whose payload comes from item enchants OR rolled affixes that
+# carry a matching stat. Decorative `item.flavor_tags` entries don't
+# count. Used by badges_for_item to suppress cosmetic badges.
+static func stat_backed_flavor_tags(item: Dictionary, inst: Variant) -> Array:
+	var out: Array = []
+	if typeof(inst) != TYPE_DICTIONARY:
+		return out
+	# Per-instance enchant always counts (it's a real payload).
+	var enchant: String = String(inst.get("enchant", ""))
+	if enchant != "" and not (enchant in out):
+		out.append(enchant)
+	# Compound enchants split into their components.
+	var combo_id: String = String(inst.get("enchant_combo", ""))
+	if combo_id != "":
+		for ct in EnchantCombos.components_for(combo_id):
+			var s: String = String(ct)
+			if not (s in out):
+				out.append(s)
+	# Implicit affixes — these ARE the item's mechanical identity
+	# (uniques like Vampire's Tooth always lifesteal regardless of
+	# rolls), so they count as stat-backed.
+	for aid in item.get("implicit_affixes", []):
+		var flavor: String = String(_AFFIX_FLAVOR_MAP.get(String(aid), ""))
+		if flavor != "" and not (flavor in out):
+			out.append(flavor)
+	# Rolled affixes — map by id to flavor where applicable.
+	for entry in inst.get("affixes", []):
+		if typeof(entry) != TYPE_DICTIONARY:
+			continue
+		var aid2: String = String(entry.get("id", ""))
+		var flavor2: String = String(_AFFIX_FLAVOR_MAP.get(aid2, ""))
+		if flavor2 != "" and not (flavor2 in out):
+			out.append(flavor2)
+	return out
 
 # Resolve the *effective* color for an item: meta-rarity > flavor tag
 # > rarity. Lerp at the rarity strength so a common vampiric ring

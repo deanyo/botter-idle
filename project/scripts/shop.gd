@@ -460,9 +460,14 @@ func _buy_price(item: Dictionary) -> int:
 	# gold sink, not a casual purchase. SALVAGE_VALUES = 2/6/18/60/200,
 	# multiplied by 15 → 30/90/270/900/3000g. 2026-06-05: was 10×, the
 	# user reported gold flowed too easily into top-tier shop items.
+	# 2026-06-07: spells × 5 on top — they fire forever and a 30g common
+	# spell let the user fill all 5 slots from a 300g failed-run kitty.
+	# Spells are big gear-changers, priced accordingly.
 	# Modifier buy_mult multiplies (less-than-1 = discount).
 	var rarity: String = String(item.get("rarity", "common"))
 	var base: int = int(SALVAGE_VALUES.get(rarity, 1)) * 15
+	if String(item.get("slot", "")) == "spell":
+		base *= 5
 	var mult: float = 1.0
 	var mod_def: Dictionary = _modifier_def(String(state["shop"].get("modifier_id", "")))
 	if _modifier_applies(mod_def, item):

@@ -3,11 +3,11 @@
   "_format_version": 3,
 
   "rarity_affix_count": {
-    "common": 0,
-    "uncommon": 1,
-    "rare": 2,
-    "epic": 3,
-    "legendary": 4
+    "common": 1,
+    "uncommon": 2,
+    "rare": 3,
+    "epic": 4,
+    "legendary": 5
   },
 
   "rarity_tier_index": {
@@ -71,19 +71,19 @@
       "id": "of_lingering",   "family": "generic", "kind": "pct",
       "name": "of Lingering", "stat": "spell_duration_pct",
       "applies_to": ["amulet","ring","cloak","spell"],
-      "tiers": [[8,15],[15,25],[25,40],[40,55],[55,75]]
+      "tiers": [[8,15],[15,25],[25,35],[35,50],[50,65]]
     },
     {
       "id": "of_velocity",    "family": "generic", "kind": "pct",
       "name": "of Velocity",  "stat": "spell_proj_speed_pct",
       "applies_to": ["gloves","ring","amulet","spell"],
-      "tiers": [[8,15],[15,25],[25,40],[40,55],[55,80]]
+      "tiers": [[8,15],[15,25],[25,35],[35,50],[50,65]]
     },
     {
       "id": "of_multicast",   "family": "generic", "kind": "flat",
       "name": "of Multicast", "stat": "spell_proj_bonus",
       "applies_to": ["amulet","ring","spell"],
-      "tiers": [[0,0],[0,1],[1,1],[1,2],[2,3]]
+      "tiers": [[0,0],[0,0],[0,1],[1,1],[1,2]]
     },
     {
       "id": "of_channeling",  "family": "generic", "kind": "pct",

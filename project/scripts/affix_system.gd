@@ -86,6 +86,19 @@ static func roll_affixes_for(item: Dictionary, rng: RandomNumberGenerator) -> Ar
 				var applies: Array = af.applies_to
 				if applies.has(slot) or applies.has("any"):
 					pool.append({"def": af, "weight": 1.0})
+	# Archetype gating on spells: flag-kind affixes (forked /
+	# rending / comet_trail / etc) are spell-defining. They should
+	# be rare gear-changers, not common-rarity name decoration.
+	# Pre-2026-06-07 a Common Magic Dart could roll "Forked +
+	# Rending" prefixes that did nothing visible. Now common +
+	# uncommon spells skip flag-kind affixes entirely; rolls land
+	# on plain stat affixes (channeling/resonance/etc).
+	if slot == "spell" and (rarity == "common" or rarity == "uncommon"):
+		var filtered: Array = []
+		for entry in pool:
+			if String(entry.def.get("kind", "flat")) != "flag":
+				filtered.append(entry)
+		pool = filtered
 	var rolled: Array = []
 	var used_ids: Dictionary = {}
 	_roll_from_weighted(pool, n, used_ids, rolled, tier_idx, rng)
