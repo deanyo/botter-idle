@@ -314,11 +314,20 @@ func render_for(item_def: Dictionary, instance: Variant, db: Dictionary) -> void
 					_vbox.add_child(_make_label(detail, 9, Color(0.55, 0.55, 0.5), false))
 				_vbox.add_child(_make_separator())
 		elif single_enchant != "":
-			# Single-enchant line — color matches the flavor.
+			# Single-enchant line — color matches the flavor + a blurb
+			# describing what the enchant actually does (was just the
+			# name pre-2026-06-07; user couldn't tell what e.g.
+			# "vampiric" did from the tooltip).
 			var ec: Color = UITheme.flavor_color_for([single_enchant])
 			if ec.a <= 0.0:
 				ec = COLOR_BODY
-			_vbox.add_child(_make_label("✦ Enchant: %s" % single_enchant.capitalize(), 12, ec, false))
+			_vbox.add_child(_make_label("✦ " + single_enchant.capitalize(), 12, ec, true))
+			var blurb: String = String(AffixSystem.ENCHANT_BLURBS.get(single_enchant, ""))
+			if blurb != "":
+				var blurb_lbl := _make_label(blurb, 10, COLOR_FLAVOR, false)
+				blurb_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+				blurb_lbl.custom_minimum_size = Vector2(TOOLTIP_W - PADDING * 2, 0)
+				_vbox.add_child(blurb_lbl)
 			_vbox.add_child(_make_separator())
 	# Item Level — single integer summarising base stats + expected
 	# affix budget + implicits + flavor procs. Lets players spot

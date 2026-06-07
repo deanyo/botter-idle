@@ -28,6 +28,12 @@ var inst: Variant = null
 var item: Dictionary = {}
 var role: String = "inventory"
 var slot_id: String = ""
+# Friendly slot name for empty-cell tooltips. Set by paperdoll
+# builders (HudChrome / Outpost) via _tooltip_for_slot(). When the
+# cell has no item, render() pipes this into Control.tooltip_text
+# so the engine tooltip shows on hover. Occupied cells use the
+# custom ItemTooltip widget instead. 2026-06-07.
+var slot_label: String = ""
 var inv_index: int = -1
 var shop_index: int = -1
 var accepts_drop: Callable = Callable()
@@ -149,16 +155,24 @@ func render() -> void:
 			_sprite.texture = load(icon)
 		else:
 			_sprite.texture = null
-	# Modulate (rarity + flavor + meta tints).
+	# Modulate (rarity + flavor + meta tints). Blocked items get the
+	# desaturate shader instead of a recolor so the sprite stays fully
+	# visible (just greyscale). User: "items the user's class can't
+	# equip are hard to even see — completely greyed out with the
+	# no-entry emoji." Now the shape reads at a glance.
 	if has_item:
 		var tags: Array = UITheme.combined_flavor_tags(item, inst)
 		var meta: String = String(inst.get("meta_rarity", ""))
 		_sprite.modulate = UITheme.item_modulate(rarity, tags, meta)
-		var recolor: ShaderMaterial = UITheme.recolor_material_for(inst)
-		_sprite.material = recolor
+		if blocked:
+			_sprite.material = _get_desaturate_material()
+		else:
+			var recolor: ShaderMaterial = UITheme.recolor_material_for(inst)
+			_sprite.material = recolor
 	else:
 		_sprite.modulate = Color(1, 1, 1, 1)
-		_sprite.material = null
+		# Empty paperdoll slot icons also greyscale when species-blocked.
+		_sprite.material = _get_desaturate_material() if blocked else null
 	# Border color: rarity if equipped, spell-class color for spell
 	# cells with content, otherwise neutral.
 	if has_item and rarity != "":
@@ -173,16 +187,23 @@ func render() -> void:
 	if has_item:
 		fav = bool(inst.get("favorite", false))
 	_star.modulate = Color(1, 1, 1, 1.0 if fav else 0.0)
-	# Blocked overlay.
-	_block_label.modulate = Color(1, 1, 1, 0.95 if blocked else 0.0)
-	if blocked:
-		_sprite.modulate.a = 0.45
+	# Blocked overlay — 🚫 at half alpha so it signals "blocked" without
+	# dominating the cell. The desaturate shader (above) handles the
+	# sprite-greyscaling so we don't also alpha-fade the sprite. UX
+	# fix 2026-06-07.
+	_block_label.modulate = Color(1, 1, 1, 0.45 if blocked else 0.0)
 	# Tooltip.
 	# Item-overhaul v2: native tooltip_text replaced by the custom
 	# ItemTooltip widget — managed by HudChrome / Outpost. Empty
 	# tooltip_text suppresses the engine's default popup so we don't
-	# get two tooltips at once.
-	tooltip_text = ""
+	# get two tooltips at once. EXCEPT for empty paperdoll cells —
+	# those use the engine tooltip to surface the slot name (Helm,
+	# Boots, etc) so the player can identify what's missing.
+	# 2026-06-07 user catch.
+	if not has_item and role == "paperdoll" and slot_label != "":
+		tooltip_text = slot_label
+	else:
+		tooltip_text = ""
 	# Flavor badge — refresh list, start/stop the cycle.
 	if has_item:
 		_badge_list = UITheme.badges_for_item(item, inst)
@@ -313,3 +334,16 @@ func _advance_badge_cycle() -> void:
 		_badge_idx = (_badge_idx + 1) % _badge_list.size()
 		_refresh_badge()
 	)
+
+# Shared desaturate material for blocked cells. Cached on the class
+# so all blocked cells reuse one ShaderMaterial instance (cheap).
+const _DESATURATE_SHADER := preload("res://assets/desaturate.gdshader")
+static var _desaturate_mat: ShaderMaterial = null
+
+func _get_desaturate_material() -> ShaderMaterial:
+	if _desaturate_mat == null:
+		_desaturate_mat = ShaderMaterial.new()
+		_desaturate_mat.shader = _DESATURATE_SHADER
+		_desaturate_mat.set_shader_parameter("saturation", 0.0)
+		_desaturate_mat.set_shader_parameter("dim_alpha", 0.7)
+	return _desaturate_mat

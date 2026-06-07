@@ -855,6 +855,18 @@ const C = preload("res://scripts/constants.gd")
 
 # Helper: get the remaining cooldown fraction (0..1) for HUD overlay.
 # 1.0 = just fired; 0.0 = ready to fire.
+#
+# Two fixes 2026-06-07:
+#   1. Half-moon: divide by effective_cd (CDR-adjusted) instead of
+#      base_cd. With CDR active, base_cd > effective_cd, so the
+#      ratio capped at effective_cd / base_cd < 1.0 → only a partial
+#      arc per cast. Now the radial sweeps a full revolution every
+#      cycle regardless of CDR.
+#   2. Wiggle: target-gated long-CD spells (added 2026-06-06) hold
+#      remaining at ~0.5s while waiting for an enemy in range. That
+#      frac (0.5/30 = ~1.7%) is enough to show a sliver of arc that
+#      flickers as the rescan timer ticks. Treat any frac under 5%
+#      as visually-ready (returns 0).
 static func cooldown_fraction(bot: Node, slot: String, items_db: Dictionary) -> float:
 	if bot == null or not "spell_cooldowns" in bot:
 		return 0.0
@@ -864,8 +876,15 @@ static func cooldown_fraction(bot: Node, slot: String, items_db: Dictionary) -> 
 	var base_id: String = String(inst.get("base_id", ""))
 	if not items_db.has(base_id):
 		return 0.0
-	var base_cd: float = _base_cooldown_for(items_db[base_id])
-	if base_cd <= 0.001:
+	var effective_cd: float = SpellData.compute_cooldown(bot, items_db[base_id])
+	if effective_cd <= 0.001:
 		return 0.0
 	var remaining: float = float(bot.spell_cooldowns.get(slot, 0.0))
-	return clampf(remaining / base_cd, 0.0, 1.0)
+	var frac: float = clampf(remaining / effective_cd, 0.0, 1.0)
+	# "Practically ready" — < 5% of effective_cd remaining reads as 0.
+	# Stops the target-gated rescan timer (~0.5s ticking against e.g.
+	# 30s base) from flickering a sliver of arc. Real cooldowns count
+	# down past this threshold quickly during normal play.
+	if frac < 0.05:
+		return 0.0
+	return frac

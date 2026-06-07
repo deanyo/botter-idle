@@ -657,6 +657,7 @@ func _make_paperdoll_slot(slot_id: String, x: int, y: int, override_size: int = 
 	cell.cell_size = slot
 	cell.role = "paperdoll"
 	cell.slot_id = slot_id
+	cell.slot_label = _tooltip_for_slot(slot_id)
 	cell.blocked = species_blocked or is_placeholder
 	cell.position = Vector2(x, y)
 	cell.accepts_drop = Callable(self, "_paperdoll_accepts_drop").bind(slot_id)
