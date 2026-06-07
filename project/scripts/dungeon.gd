@@ -4336,12 +4336,24 @@ func _spawn_packs(pool: Array) -> void:
 	# 2026-06-05 retune (v2): sharper density decay 0.85 → 0.78 because
 	# T4 runs at v3 averaged 23.5min ingame (the bot's high HP pool meant
 	# it survived 270-mob floors all the way to the boss). New curve:
-	# T1 ×1.00, T2 ×0.78, T3 ×0.61, T4 ×0.47, T5 ×0.37. Combined with
-	# the boosted TIER_SCALE per-mob HP/ATK, high-tier floors stay
-	# challenging but finish in the 5-8min ingame target window.
+	# T1 ×1.00, T2 ×0.78, T3 ×0.61, T4 ×0.47, T5 ×0.37.
+	#
+	# 2026-06-07 floor-1-2 ramp: user reported a fresh Lv1 bot getting
+	# manhandled by 120 mobs in a single chamber on floor 1. Player can
+	# survive a few hard runs but 120 mobs is unwinnable without spells.
+	# Now floors 1-2 use a softened formula: floor 1 = 60, floor 2 = 90,
+	# floors 3+ unchanged. The autocast bot still gets plenty of targets
+	# from floor 3 on (where common spells should start to drop).
 	var src_t: int = int(current_biome.get("tier", 1))
 	var density_decay: float = pow(0.78, float(maxi(src_t - 1, 0)))
-	var target_total: int = int(round((90.0 + float(current_floor) * 30.0) * count_mult * density_decay))
+	var floor_term: float
+	if current_floor <= 1:
+		floor_term = 60.0
+	elif current_floor == 2:
+		floor_term = 90.0
+	else:
+		floor_term = 90.0 + float(current_floor) * 30.0
+	var target_total: int = int(round(floor_term * count_mult * density_decay))
 	target_total = mini(target_total, 350)
 	if target_total <= 0:
 		return
