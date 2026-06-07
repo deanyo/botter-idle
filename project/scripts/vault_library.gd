@@ -10,24 +10,43 @@ static func _ensure_loaded() -> void:
 	if _loaded:
 		return
 	_loaded = true
+	var names: Array = _list_vault_files()
+	for name in names:
+		var f := FileAccess.open(VAULT_DIR + String(name), FileAccess.READ)
+		if f == null:
+			continue
+		var parsed: Variant = JSON.parse_string(f.get_as_text())
+		if typeof(parsed) == TYPE_DICTIONARY:
+			_annotate_vault(parsed)
+			_vaults.append(parsed)
+		else:
+			push_error("Failed to parse vault: %s" % name)
+
+# Enumerate vault filenames. HTML5 web exports can't list res://
+# directories via DirAccess (virtualized FS in the .pck), so we read
+# from the baked manifest first and fall back to DirAccess for desktop
+# / cases where new vaults haven't been baked yet.
+static func _list_vault_files() -> Array:
+	# Try manifest first.
+	var f := FileAccess.open("res://data/tile_dir_manifest.json", FileAccess.READ)
+	if f != null:
+		var parsed: Variant = JSON.parse_string(f.get_as_text())
+		if typeof(parsed) == TYPE_DICTIONARY and parsed.has(VAULT_DIR):
+			return parsed[VAULT_DIR]
+	# DirAccess fallback (desktop only).
+	var arr: Array = []
 	var dir := DirAccess.open(VAULT_DIR)
 	if dir == null:
 		push_error("Vault dir not found: %s" % VAULT_DIR)
-		return
+		return arr
 	dir.list_dir_begin()
-	var name := dir.get_next()
-	while name != "":
-		if not dir.current_is_dir() and name.ends_with(".json"):
-			var f := FileAccess.open(VAULT_DIR + name, FileAccess.READ)
-			if f != null:
-				var parsed: Variant = JSON.parse_string(f.get_as_text())
-				if typeof(parsed) == TYPE_DICTIONARY:
-					_annotate_vault(parsed)
-					_vaults.append(parsed)
-				else:
-					push_error("Failed to parse vault: %s" % name)
-		name = dir.get_next()
+	var n := dir.get_next()
+	while n != "":
+		if not dir.current_is_dir() and n.ends_with(".json"):
+			arr.append(n)
+		n = dir.get_next()
 	dir.list_dir_end()
+	return arr
 
 static func all_vaults() -> Array:
 	_ensure_loaded()

@@ -1,0 +1,50 @@
+#!/usr/bin/env python3
+"""Build the directory manifest read by biome_data, vault_library,
+and artefact_pool when they need to enumerate res:// directories.
+
+HTML5 / web exports can't enumerate res:// directories via DirAccess
+because the FS is virtualized inside the .pck. We pre-build a listing
+at design time and load it via FileAccess (which IS supported in web).
+
+Run from the repo root:
+    python3 tools/build_tile_dir_manifest.py
+
+Run after adding/removing files in any of the listed dirs. The
+output is checked in (project/data/tile_dir_manifest.json) so the
+HTML5 export ships with the right list.
+"""
+import json
+import os
+import sys
+
+REPO_ROOT = os.path.dirname(os.path.abspath(os.path.dirname(__file__)))
+PROJECT_ROOT = os.path.join(REPO_ROOT, 'project')
+
+# (path, extension) — directories to enumerate + the file extension to
+# include. Add new entries when scripts add new enumerate-at-runtime
+# code.
+DIRS = [
+    ('assets/tiles/floor',           '.png'),
+    ('assets/tiles/wall',            '.png'),
+    ('assets/tiles/overlays',        '.png'),
+    ('assets/tiles/sigils',          '.png'),
+    ('assets/tiles/items/artefacts', '.png'),
+    ('data/vaults',                  '.json'),
+]
+
+manifest = {}
+for d, ext in DIRS:
+    full = os.path.join(PROJECT_ROOT, d)
+    files = []
+    if os.path.isdir(full):
+        for f in sorted(os.listdir(full)):
+            if f.endswith(ext):
+                files.append(f)
+    manifest[f"res://{d}/"] = files
+    print(f"  {d}: {len(files)} files")
+
+out_path = os.path.join(PROJECT_ROOT, 'data', 'tile_dir_manifest.json')
+os.makedirs(os.path.dirname(out_path), exist_ok=True)
+with open(out_path, 'w') as f:
+    json.dump(manifest, f, indent=2)
+print(f"\nWrote {out_path}")

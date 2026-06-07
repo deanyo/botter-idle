@@ -179,9 +179,39 @@ static func _expand_prefixes(prefixes: Array, dir_path: String) -> Array:
 				arr.append(tex)
 	return arr
 
+# Baked tile-dir manifest — populated by data/tile_dir_manifest.json at
+# first call. HTML5 / web exports can't enumerate res:// directories at
+# runtime via DirAccess (the FS is virtualized inside the pck), so we
+# pre-build the listing at design time. Generate the manifest with the
+# python snippet at the top of biome_data.gd in CLAUDE.md (or run the
+# `tools/build_tile_dir_manifest.py` one-liner).
+const _TILE_MANIFEST_PATH := "res://data/tile_dir_manifest.json"
+static var _manifest_loaded: bool = false
+static var _manifest: Dictionary = {}
+
+static func _ensure_manifest() -> void:
+	if _manifest_loaded:
+		return
+	_manifest_loaded = true
+	var f := FileAccess.open(_TILE_MANIFEST_PATH, FileAccess.READ)
+	if f == null:
+		return
+	var parsed: Variant = JSON.parse_string(f.get_as_text())
+	if typeof(parsed) == TYPE_DICTIONARY:
+		_manifest = parsed
+
 static func _list_dir(dir_path: String) -> Array:
 	if _file_index.has(dir_path):
 		return _file_index[dir_path]
+	# Manifest first — works on both desktop and HTML5.
+	_ensure_manifest()
+	if _manifest.has(dir_path):
+		var arr_m: Array = _manifest[dir_path]
+		_file_index[dir_path] = arr_m
+		return arr_m
+	# DirAccess fallback for paths the manifest doesn't cover (e.g. new
+	# tile dirs added after the manifest was last regenerated). Only
+	# works on desktop; on web returns an empty list.
 	var arr: Array = []
 	var dir := DirAccess.open(dir_path)
 	if dir == null:

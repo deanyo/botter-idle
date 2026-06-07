@@ -146,6 +146,7 @@ func _rebuild_buttons() -> void:
 	_panel_root.add_child(_button_holder)
 
 	_button_holder.add_child(_make_button("Resume", _resume))
+	_button_holder.add_child(_make_button("Toggle Fullscreen", _toggle_fullscreen))
 	_button_holder.add_child(_make_button("Video Settings", _open_video_settings))
 	_button_holder.add_child(_make_button("FX Tuner", _open_fx_tuner))
 	if in_dungeon:
@@ -166,6 +167,19 @@ func _make_button(text: String, on_pressed: Callable, fg: Color = COL_AMBER) -> 
 	btn.add_theme_color_override("font_color", fg)
 	btn.add_theme_color_override("font_hover_color", COL_AMBER)
 	return btn
+
+func _toggle_fullscreen() -> void:
+	# Works for both desktop (DisplayServer fullscreen) and the HTML5
+	# build (the canvas swaps to the browser's fullscreen API). The
+	# pause menu itself rebuilds with the new viewport size, so no
+	# manual layout work needed here. 2026-06-07 itch.io polish.
+	var win := get_window()
+	if win == null:
+		return
+	if win.mode == Window.MODE_FULLSCREEN or win.mode == Window.MODE_EXCLUSIVE_FULLSCREEN:
+		win.mode = Window.MODE_WINDOWED
+	else:
+		win.mode = Window.MODE_FULLSCREEN
 
 func _open_video_settings() -> void:
 	_open_overlay(VIDEO_OPTIONS_SCENE)
