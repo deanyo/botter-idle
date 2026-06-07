@@ -370,30 +370,69 @@ func _maybe_refresh_stock(force: bool = false) -> void:
 	state["shop"]["last_refresh_ts"] = now
 	SaveState.save_state(state)
 
+# Find the highest tier the player has actually cleared (any boss
+# kill in a tier counts the tier as "reached"). Returns 0 if nothing
+# cleared yet. Used by _roll_stock to gate shop rarity by progression
+# rather than by the freely-grindable bot.level. 2026-06-07.
+func _max_tier_cleared() -> int:
+	var bosses: Dictionary = state.get("bosses_killed", {})
+	if bosses.is_empty():
+		return 0
+	var max_tier: int = 0
+	for branch_id in bosses.keys():
+		if int(bosses[branch_id]) <= 0:
+			continue
+		var biome: Dictionary = BiomeData.get_biome(String(branch_id))
+		var t: int = int(biome.get("tier", 1))
+		if t > max_tier:
+			max_tier = t
+	return max_tier
+
 func _roll_stock(rng: RandomNumberGenerator, mod_def: Dictionary) -> Array:
-	# Pick a level-appropriate rarity for each slot. Higher player
-	# level shifts the rarity floor up (similar to Diablo vendor
-	# scaling). Scarcity modifier bumps rarity by one tier.
+	# Pick a tier-appropriate rarity for each slot. Pre-2026-06-07 the
+	# shop scaled by player.level (eff_lvl × 0.006) which let a fresh
+	# Lv5 bot xp-grinding D:1 see rare-tier items at Lv12. User
+	# reported seeing "Sword of Jihad" / 1500g spells in T1 shop — way
+	# above expected progression. New gate: highest tier of bosses
+	# killed. Players who haven't cleared T1 see common/uncommon only;
+	# T1 cleared → uncommon/rare; T3 cleared → rare/epic; T4+ → all
+	# rarities. Plus a softened level kicker so deep T-grind still
+	# pushes shop quality slightly.
 	var quality_bonus: int = int(mod_def.get("stock_quality_bonus", 0))
 	var stock: Array = []
 	var ids_pool: Array = items_db.keys()
 	if ids_pool.is_empty():
 		return stock
-	# Bias rarity by player level: level 5 ≈ uncommon mostly, level 15
-	# rare, level 25 epic. Shop should NOT be the source of legendaries
-	# — those should mostly come from boss / rare-pack drops. 2026-06-05
-	# tightened: legendary base 2% → 0.5%, level scaling 1.5%/lvl → 0.6%/lvl,
-	# capped at level 30 effective so endgame doesn't trivialise.
+	var max_tier_cleared: int = _max_tier_cleared()
 	var lvl: int = int(state.get("level", 1))
 	var eff_lvl: int = mini(lvl, 30)
+	# Per-tier rarity ceiling: don't roll above this rarity.
+	# t0 (no clears): cap at uncommon
+	# t1 cleared: cap at rare
+	# t2 cleared: cap at rare
+	# t3 cleared: cap at epic
+	# t4 cleared: cap at legendary
+	# t5 cleared: cap at legendary
+	var ceiling_rank: int = mini(max_tier_cleared + 1, 4)
 	for i in SHOP_STOCK_SIZE:
-		var r_floor: float = rng.randf() - float(eff_lvl) * 0.006 - float(quality_bonus) * 0.10
+		var r_floor: float = rng.randf() - float(eff_lvl) * 0.003 - float(quality_bonus) * 0.10
 		var rarity: String
 		if r_floor < 0.005: rarity = "legendary"
 		elif r_floor < 0.05: rarity = "epic"
 		elif r_floor < 0.20: rarity = "rare"
 		elif r_floor < 0.55: rarity = "uncommon"
 		else: rarity = "common"
+		# Clamp to the tier-cleared ceiling: a player who hasn't cleared
+		# any boss should never see rare+ items in the shop, regardless
+		# of bot level. Steps the rolled rarity DOWN one tier at a time
+		# until it's at or below the ceiling.
+		while LootDrop.RARITY_RANK.get(rarity, 0) > ceiling_rank:
+			match rarity:
+				"legendary": rarity = "epic"
+				"epic": rarity = "rare"
+				"rare": rarity = "uncommon"
+				"uncommon": rarity = "common"
+				_: break
 		var pool: Array = []
 		for id in ids_pool:
 			if String(items_db[id].get("rarity", "")) == rarity:
@@ -447,8 +486,13 @@ func _modifier_applies(mod_def: Dictionary, item: Dictionary) -> bool:
 	return true
 
 func _sell_price(inst: Dictionary, item: Dictionary) -> int:
+	# Sell price = SALVAGE_VALUES (2/6/18/60/200) at face. Pre-2026-06-07
+	# was × 2 — user reported 1700g in 5min of T1 from gear sales alone,
+	# enough to buy "insanely good" rare-tier shop items. Halving the
+	# sell ratio gates the gold-flow tap to a reasonable rate while
+	# keeping selling worthwhile.
 	var rarity: String = String(item.get("rarity", "common"))
-	var base: int = int(SALVAGE_VALUES.get(rarity, 1)) * 2
+	var base: int = int(SALVAGE_VALUES.get(rarity, 1))
 	var mult: float = 1.0
 	var mod_def: Dictionary = _modifier_def(String(state["shop"].get("modifier_id", "")))
 	if _modifier_applies(mod_def, item):
