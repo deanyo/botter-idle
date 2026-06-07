@@ -362,12 +362,16 @@ func render_for(item_def: Dictionary, instance: Variant, db: Dictionary) -> void
 		_vbox.add_child(_make_separator())
 	# Hotkey hint. Compare-on-Shift only for gear (spells skip per
 	# design); Alt-extended affix detail works for everything.
-	var hotkey_text: String = ""
-	if slot != "spell" and slot != "":
-		hotkey_text = "[Shift] compare · [Alt] affix detail"
-	else:
-		hotkey_text = "[Alt] affix detail"
-	_vbox.add_child(_make_label(hotkey_text, 10, COLOR_HOTKEY, false))
+	# Skipped in static_mode (embedded weapon-tab tooltips) — there's
+	# no comparison context inside a stats panel and the hint just
+	# adds noise. 2026-06-07.
+	if not static_mode:
+		var hotkey_text: String = ""
+		if slot != "spell" and slot != "":
+			hotkey_text = "[Shift] compare · [Alt] affix detail"
+		else:
+			hotkey_text = "[Alt] affix detail"
+		_vbox.add_child(_make_label(hotkey_text, 10, COLOR_HOTKEY, false))
 	# Resize the tooltip's height to fit the vbox.
 	# Wait one frame for the vbox to lay out, then size ourselves.
 	await get_tree().process_frame

@@ -276,6 +276,11 @@ func _exit_tree() -> void:
 # an outpost-level ritual). Item-overhaul v2 2026-06-04.
 var _hud_tooltip: ItemTooltip = null
 var _hud_hover_cell: ItemCell = null
+# Shift-compare panels — sibling tooltips spawned when Shift is held
+# while hovering an inventory cell, mirroring the outpost pattern.
+# 2026-06-07 user catch: was missing on HUD, only worked in outpost.
+var _hud_compare_tooltips: Array = []
+var _hud_shift_was_held: bool = false
 var _hud_alt_was_held: bool = false
 
 func _on_cell_tooltip(cell: ItemCell, show: bool) -> void:
@@ -284,6 +289,7 @@ func _on_cell_tooltip(cell: ItemCell, show: bool) -> void:
 		if _hud_tooltip != null and is_instance_valid(_hud_tooltip):
 			_hud_tooltip.queue_free()
 			_hud_tooltip = null
+		_hud_destroy_compare_tooltips()
 		return
 	_hud_hover_cell = cell
 	if _hud_tooltip != null and is_instance_valid(_hud_tooltip):
@@ -292,6 +298,9 @@ func _on_cell_tooltip(cell: ItemCell, show: bool) -> void:
 	add_child(_hud_tooltip)
 	_hud_tooltip.render_for(cell.item, cell.inst, _items_db_cache)
 	_hud_tooltip.position = _hud_clamp_tooltip(get_viewport().get_mouse_position() + Vector2(16, 16))
+	if UILayout.shift_held():
+		_hud_show_compare_tooltips(cell)
+		_hud_shift_was_held = true
 
 # Per-frame poll for Alt-key state so the extended-affix view toggles
 # live while the tooltip is up. CanvasLayer doesn't tick by default —
@@ -306,6 +315,69 @@ func _process(_delta: float) -> void:
 	if alt_now != _hud_alt_was_held:
 		_hud_tooltip.render_for(_hud_hover_cell.item, _hud_hover_cell.inst, _items_db_cache)
 		_hud_alt_was_held = alt_now
+	# Shift-compare: spawn / dismiss compare panels live as Shift is
+	# pressed / released. Mirrors outpost behavior. 2026-06-07.
+	var shift_now: bool = UILayout.shift_held()
+	if shift_now and not _hud_shift_was_held:
+		_hud_show_compare_tooltips(_hud_hover_cell)
+	elif not shift_now and _hud_shift_was_held:
+		_hud_destroy_compare_tooltips()
+	_hud_shift_was_held = shift_now
+
+func _hud_show_compare_tooltips(cell: ItemCell) -> void:
+	_hud_destroy_compare_tooltips()
+	# Only compare gear from inventory; paperdoll-on-paperdoll compare
+	# is redundant. Spells skip per design.
+	if cell == null or not is_instance_valid(cell):
+		return
+	if cell.role != "inventory":
+		return
+	var item_slot: String = String(cell.item.get("slot", ""))
+	if item_slot == "" or item_slot == "spell":
+		return
+	# Resolve equipped instance for the same slot. Bot is the source
+	# of truth — equip_request_target points at the dungeon which
+	# owns bot. Fall back to nothing if we can't reach it.
+	if equip_request_target == null or not is_instance_valid(equip_request_target):
+		return
+	if not "bot" in equip_request_target:
+		return
+	var bot_ref = equip_request_target.bot
+	if bot_ref == null or not is_instance_valid(bot_ref):
+		return
+	var slot_ids: Array = []
+	if item_slot == "ring":
+		slot_ids = SpeciesData.ring_slot_ids(_active_species)
+	else:
+		slot_ids = [item_slot]
+	# Decide left/right placement based on screen real estate.
+	var view: Vector2 = get_viewport().get_visible_rect().size
+	var t_right_edge: float = _hud_tooltip.position.x + ItemTooltip.TOOLTIP_W
+	var place_right: bool = t_right_edge + 8.0 + ItemTooltip.TOOLTIP_W <= view.x - 4.0
+	var x_offset: float = ItemTooltip.TOOLTIP_W + 8.0 if place_right else -(ItemTooltip.TOOLTIP_W + 8.0)
+	var y_offset: float = 0.0
+	for sid in slot_ids:
+		var equipped_inst: Variant = bot_ref.equipped.get(sid, null)
+		if equipped_inst == null or typeof(equipped_inst) != TYPE_DICTIONARY:
+			continue
+		var equipped_id: String = String(equipped_inst.get("base_id", ""))
+		if not _items_db_cache.has(equipped_id):
+			continue
+		var cmp := ItemTooltip.new()
+		add_child(cmp)
+		cmp.render_for(_items_db_cache[equipped_id], equipped_inst, _items_db_cache)
+		var pos: Vector2 = _hud_tooltip.position + Vector2(x_offset, y_offset)
+		pos.x = clampf(pos.x, 4.0, max(4.0, view.x - ItemTooltip.TOOLTIP_W - 4.0))
+		pos.y = clampf(pos.y, 4.0, max(4.0, view.y - 220.0))
+		cmp.position = pos
+		_hud_compare_tooltips.append(cmp)
+		y_offset += 220.0
+
+func _hud_destroy_compare_tooltips() -> void:
+	for t in _hud_compare_tooltips:
+		if t != null and is_instance_valid(t):
+			t.queue_free()
+	_hud_compare_tooltips.clear()
 
 func _hud_clamp_tooltip(anchor: Vector2) -> Vector2:
 	var view: Vector2 = get_viewport().get_visible_rect().size

@@ -72,10 +72,14 @@ func _exit_tree() -> void:
 	if DragManager and DragManager.drag_ended.is_connected(_on_drag_ended):
 		DragManager.drag_ended.disconnect(_on_drag_ended)
 
-# WoW-style tooltip in shop. Same shape as HUD — main panel only.
+# WoW-style tooltip in shop. Same shape as HUD — main panel + optional
+# shift-compare panels. 2026-06-07 user catch: shift-compare wasn't
+# wired in shop.
 var _shop_tooltip: ItemTooltip = null
 var _shop_hover_cell: ItemCell = null
 var _shop_alt_was_held: bool = false
+var _shop_shift_was_held: bool = false
+var _shop_compare_tooltips: Array = []
 
 func _on_cell_tooltip(cell: ItemCell, show: bool) -> void:
 	if not show:
@@ -83,6 +87,7 @@ func _on_cell_tooltip(cell: ItemCell, show: bool) -> void:
 		if _shop_tooltip != null and is_instance_valid(_shop_tooltip):
 			_shop_tooltip.queue_free()
 			_shop_tooltip = null
+		_shop_destroy_compare_tooltips()
 		return
 	_shop_hover_cell = cell
 	if _shop_tooltip != null and is_instance_valid(_shop_tooltip):
@@ -96,6 +101,52 @@ func _on_cell_tooltip(cell: ItemCell, show: bool) -> void:
 	anchor.x = clampf(anchor.x, 4.0, max(4.0, view.x - sz_w - 4.0))
 	anchor.y = clampf(anchor.y, 4.0, max(4.0, view.y - 240.0 - 4.0))
 	_shop_tooltip.position = anchor
+	if UILayout.shift_held():
+		_shop_show_compare_tooltips(cell)
+		_shop_shift_was_held = true
+
+func _shop_show_compare_tooltips(cell: ItemCell) -> void:
+	_shop_destroy_compare_tooltips()
+	# Compare-vs-equipped works for both inventory side (player gear)
+	# and stock side (shop items) — buy decisions need to compare to
+	# what the player is wearing.
+	if cell == null or not is_instance_valid(cell):
+		return
+	var item_slot: String = String(cell.item.get("slot", ""))
+	if item_slot == "" or item_slot == "spell":
+		return
+	var slot_ids: Array = []
+	if item_slot == "ring":
+		slot_ids = SpeciesData.ring_slot_ids(String(state.get("species", "")))
+	else:
+		slot_ids = [item_slot]
+	var view: Vector2 = get_viewport().get_visible_rect().size
+	var t_right_edge: float = _shop_tooltip.position.x + ItemTooltip.TOOLTIP_W
+	var place_right: bool = t_right_edge + 8.0 + ItemTooltip.TOOLTIP_W <= view.x - 4.0
+	var x_offset: float = ItemTooltip.TOOLTIP_W + 8.0 if place_right else -(ItemTooltip.TOOLTIP_W + 8.0)
+	var y_offset: float = 0.0
+	for sid in slot_ids:
+		var equipped_inst: Variant = state.equipped.get(sid, null)
+		if equipped_inst == null or typeof(equipped_inst) != TYPE_DICTIONARY:
+			continue
+		var equipped_id: String = String(equipped_inst.get("base_id", ""))
+		if not items_db.has(equipped_id):
+			continue
+		var cmp := ItemTooltip.new()
+		add_child(cmp)
+		cmp.render_for(items_db[equipped_id], equipped_inst, items_db)
+		var pos: Vector2 = _shop_tooltip.position + Vector2(x_offset, y_offset)
+		pos.x = clampf(pos.x, 4.0, max(4.0, view.x - ItemTooltip.TOOLTIP_W - 4.0))
+		pos.y = clampf(pos.y, 4.0, max(4.0, view.y - 220.0))
+		cmp.position = pos
+		_shop_compare_tooltips.append(cmp)
+		y_offset += 220.0
+
+func _shop_destroy_compare_tooltips() -> void:
+	for t in _shop_compare_tooltips:
+		if t != null and is_instance_valid(t):
+			t.queue_free()
+	_shop_compare_tooltips.clear()
 
 # Sell drop zone — a Control that accepts dragged inventory items and
 # sells them on drop. Wired up by _build_stock_pane in the lower-right
@@ -136,6 +187,13 @@ func _process(_delta: float) -> void:
 		if alt_now != _shop_alt_was_held:
 			_shop_tooltip.render_for(_shop_hover_cell.item, _shop_hover_cell.inst, items_db)
 			_shop_alt_was_held = alt_now
+		# Shift-compare: spawn / dismiss compare panels live.
+		var shift_now: bool = UILayout.shift_held()
+		if shift_now and not _shop_shift_was_held:
+			_shop_show_compare_tooltips(_shop_hover_cell)
+		elif not shift_now and _shop_shift_was_held:
+			_shop_destroy_compare_tooltips()
+		_shop_shift_was_held = shift_now
 
 func _build_layout() -> void:
 	var view := get_viewport().get_visible_rect().size
