@@ -5,7 +5,49 @@ the durable rules in `CLAUDE.md`. Update this file when committing.
 
 ---
 
-## Balance validation snapshot (2026-06-07)
+## Balance validation 10-run snapshot (2026-06-07)
+
+After the floor-1-2 density softening + shop rarity gate. NB: grind
+elapsed at 16× = real-time ÷ 16; multiply for player time.
+
+### `naked` × 10 (D:1, mortal)
+
+10/10 die floor 1. Bot levels 1→2 by run 5+ from accumulated XP.
+Elapsed 1.5-14.6s grind = 24s-234s real time. Bare hands vs 60 mobs
+at Lv1. Pessimistic baseline working as designed.
+
+### `t1` × 10 (D:1, mortal)
+
+Floor reached: 1,1,1,3,2,2,2,3,3,2 (mean 2.0 — was f1 in 3-run).
+Level: 7→27 (gained 20 across 10 runs, decent curve).
+Gold: 275→5706 cumulative.
+**Working as intended** — real progression curve, varied outcomes,
+levels-up across runs feel real.
+
+### `t2` × 10 (lair, mortal)
+
+Floor reached: 1,3,1,1,1,1,1,2,1 + 1 (mean ~1.3, mostly floor-1
+deaths). Level: 12→28, Gold: 307→3364.
+**Worth investigating** — t2 lair specifically is harder than t1
+dungeon for an equipped t2-preset bot. Possibly:
+- Lair mob CR (wolves/cougars) outpaces uncommon-affix gear
+- 90 mobs on floor 2 is still a war of attrition
+- t2 preset gear is sized to T2 entry, not full clear
+
+### `t3` × 10 (snake, mortal)
+
+Floor reached: 3,2,6,6,2,6,6,6,6,6 (mean ~4.9, hits the boss
+floor by run 3 onward). Level: 22→121 (huge growth). Gold:
+3513→70734 (cumulative ~70k).
+
+0/10 victories — bot reaches the boss floor but doesn't kill the
+boss. Boss = real progression gate, working as intended. After
+~5 runs the bot is comfortably reaching f6 and chipping at the
+boss; would expect a victory in ~15-20 runs of mortal progression.
+
+---
+
+## Balance validation snapshot (2026-06-07, earlier)
 
 After landing the affix DR, soft caps, XP doubling, slot-weighted
 drops, spell gating, and longer spell CDs, ran mortal preset grinds
