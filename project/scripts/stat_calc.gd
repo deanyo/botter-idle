@@ -281,6 +281,11 @@ static func compute(
 	spell_cdr_pct = clampf(spell_cdr_pct, 0.0, 50.0)
 	spell_duration_pct = clampf(spell_duration_pct, 0.0, 100.0)
 	spell_proj_speed_pct = clampf(spell_proj_speed_pct, 0.0, 100.0)
+	# of_multicast can roll on spell/amulet/ring (10 possible slots) up
+	# to [1,2] at legendary; with DR-stacked totals reach +4..+6 endgame,
+	# multiplying chain-jump count and projectile-spawning spells with no
+	# ceiling. Cap at +5 alongside the other spell-stat clamps.
+	spell_proj_bonus = clampi(spell_proj_bonus, 0, 5)
 	for elem in resistances.keys():
 		resistances[elem] = clampf(float(resistances[elem]), -100.0, 75.0)
 	# Per-element spell damage cap. PoE-style soft ceiling on element
