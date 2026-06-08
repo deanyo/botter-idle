@@ -3613,6 +3613,28 @@ func _try_death_retreat(reason: String) -> bool:
 	_build_floor()
 	return true
 
+# Bank any in-flight LootDrops into the inventory cache. Chests, vault
+# loot marks and enemy drops all spawn `LootDrop` Interactables that
+# only enter `_hud_inv_cache` when the bot finishes walking onto them
+# (`_complete_loot_pickup` after `interact_duration` seconds). If the
+# scene tears down before the bot reaches a drop, the item is lost.
+# Called from `flush_to_save` so menu-exit mid-pickup banks the items.
+func _fold_pending_loot_drops_into_inventory() -> void:
+	for drop in loot_drops:
+		if not is_instance_valid(drop):
+			continue
+		if drop.consumed:
+			continue
+		if drop.instance.is_empty():
+			continue
+		floor_loot_picked += 1
+		dropped_items.append(drop.instance)
+		_ensure_current_floor_segment()
+		(_loot_segments[_current_floor_segment_index].items as Array).append(drop.instance)
+		drop.consumed = true
+	_rebuild_inv_cache()
+	_push_inventory_to_hud()
+
 # Public: persist mid-run state to disk WITHOUT ending the run. Called
 # by main.gd when the player goes back to the main menu mid-run so
 # loot/gold/xp earned this run isn't lost when the dungeon scene
@@ -3621,6 +3643,13 @@ func _try_death_retreat(reason: String) -> bool:
 func flush_to_save() -> void:
 	if not is_instance_valid(bot):
 		return
+	# Fold any live LootDrops the bot hadn't finished walking to into the
+	# inventory before we serialize. Pre-fix, chests rolled their loot at
+	# OPEN time + spawned drops, but items only entered _hud_inv_cache when
+	# _complete_loot_pickup ran (after the bot stood on each drop for
+	# ~0.4-0.8s). Esc → Main Menu mid-pickup discarded everything. Audit
+	# fix 2026-06-08.
+	_fold_pending_loot_drops_into_inventory()
 	if _pending_salvage_check or _hud_inv_cache.size() > _inventory_cap:
 		_pending_salvage_check = false
 		_maybe_auto_salvage()
