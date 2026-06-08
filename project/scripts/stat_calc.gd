@@ -322,7 +322,7 @@ static func compute(
 	out["alloc_str"] = alloc_str
 	out["alloc_dex"] = alloc_dex
 	out["alloc_int"] = alloc_int
-	out["unspent_points"] = int(save_state.get("unspent_points", 0))
+	out["unspent_points"] = int(save_state.get("stat_points_unspent", 0))
 	return out
 
 # Default-shaped stat dict so callers always see every key.
