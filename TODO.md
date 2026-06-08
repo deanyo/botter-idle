@@ -35,12 +35,10 @@ Shipped. Three audit-flagged exposures closed before public release:
 
 - Tier 1: ~~`unspent_points` typo~~, ~~ring-collapse migration gate~~,
   ~~chest loot persistence~~, ~~StatCalc unification residue cluster
-  (blessings + species + elements + lifesteal + per-god buff icons)~~
-  all shipped 2026-06-08 (`cd69e55`, `256ccc0`, `f80376b`, this
-  commit). Combat correctness passes (single avoidance roll per
-  swing, spell `damage_type` piping, item `damage_min/max` reads,
-  `spell_proj_bonus` clamp) still pending — see
-  `~/claude/game-audit/findings/AUDIT_TODO.md` Tier 1.
+  (blessings + species + elements + lifesteal + per-god buff icons)~~,
+  ~~combat correctness passes (single avoidance roll per swing, spell
+  `damage_type` piping, item `damage_min/max` reads, `spell_proj_bonus`
+  clamp)~~ all shipped 2026-06-08. Tier 1 audit cluster complete.
 - Tier 1 follow-up (noticed during chest-loot fix, out of scope for
   that audit task): `dungeon.gd::_end_run` has the same in-flight
   LootDrop vulnerability that `flush_to_save` had pre-`f80376b`. If

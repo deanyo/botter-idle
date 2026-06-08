@@ -4,7 +4,74 @@ Point-in-time snapshot of what's actually shipping. Updated as we go. The
 durable rules and process live in `CLAUDE.md`; the roadmap and open work
 items live in `TODO.md`.
 
-Last refresh: 2026-06-08 (Tier 1 StatCalc residue cluster).
+Last refresh: 2026-06-08 (Tier 1 combat-correctness cluster).
+Four audit-flagged combat path bugs in the spell + hybrid-weapon
+damage pipeline:
+
+- **Single avoidance roll per swing.** `actor.gd::attempt_attack`
+  splits hybrid weapons (physical+fire+cold) into per-damage-type
+  components and called `take_damage` once per type. Each call
+  independently rolled evasion, footwork, reflective full-negate AND
+  fired thorns/crystal returns to the attacker. A 3-element hybrid
+  swing got 3 dodge rolls (P(land) = 1 - 0.5³ = 87.5% at 50% evasion
+  vs 50% post-fix) and 3 attacker-bound thorn chunks — which could
+  multi-emit `died` if the first chunk killed. New
+  `Actor.resolve_swing(typed: Dictionary, attacker)` rolls avoidance
+  once for the whole swing, walks each component through pure
+  mitigation, aggregates dealt damage, fires thorns/crystal once at
+  the end. Single-hit `take_damage` callers (spells, projectiles,
+  splash, DoT-bypass) wrap a 1-entry typed dict and route through
+  resolve_swing for the same semantics.
+- **Element + attacker piped into spell `take_damage`.** Every spell
+  hit pre-fix called `take_damage(amount)` with no attacker, no
+  damage_type. Default damage_type was "physical", so a fireball
+  routed through armor not fire resistance, and defender flavor tags
+  that depend on attacker tags (fire_res, cold_res, willpower, earth,
+  harm) evaluated against an empty `atk_tags` array. Wired through 8
+  call sites in `spell_system.gd` + `projectile.gd` + `orbit_controller.gd`
+  via `SpellData.damage_type_for_element` (fire/cold/holy/poison/dark
+  pass through, `thunderous` → `lightning` for the resistance lookup).
+  `Projectile` gained a `caster` field carrying the bot reference;
+  spawn_fireball plumbs it through; pierce hits + lifesteal-Drain
+  share the same caster.
+- **Spell-item `damage_min`/`damage_max` rolled per cast.**
+  `spell_data.gd::compute_damage` read `item.get("damage", arch.damage)`.
+  No spell item declares `damage` (175/175 declare damage_min/max);
+  every cast fell through to the archetype default. Per-tome rarity
+  / quality / meta-rarity scaling was purely cosmetic. Now rolls
+  `randi_range(damage_min, damage_max)` when present, applies
+  `meta_mult × Quality.multiplier_for(inst)` mirroring the StatCalc
+  weapon path. Inst is plumbed through via a `_inst` stash on the
+  dispatch view dict.
+- **`spell_proj_bonus` clamped at +5.** `stat_calc.gd:286-289` clamps
+  every spell stat except spell_proj_bonus. `of_multicast` on 10
+  possible slots × DR-stacked totals could reach +6 endgame,
+  multiplying chain-jump count and projectile-spawning spells with
+  no ceiling. One-line `clampi(0, 5)` alongside the others.
+
+**Test harness expanded.** New `project/tests/actor_combat_tests.gd`
+SceneTree script — 17 assertions covering typed mitigation (armor,
+fire_res, harm), avoidance gates (single-roll evasion), thorns +
+crystal aggregation, the multi-emit `died` regression, spell element
+piping (fire vs fire_res tag + resistance dict, lightning resistance
+halving thunderous spells), and the SpellData element→damage_type
+mapping. Two stub helpers (`_stub_attacker.gd` / `_stub_defender.gd`)
+override Actor.combat_weapon_tags / combat_defense_tags / evasion so
+tests don't need a Bot instance. Wired into
+`tools/check_before_commit.sh` as step 3/5 alongside the existing
+StatCalc harness. 39/39 tests passing.
+
+**Mortal grind smoke.** T3 2-run mortal (no save baseline): runs
+floor=5/floor=6 reaching the boss in run 2 (1 victory), 1143+1221
+kills, 0 errors, 0 stalls. T1 3-run mortal: floors 1/2/1, mean
+1.3 — within the pre-fix variance band documented for t1. Hybrid
+weapons are now squishier vs evasive enemies (single roll); spells
+genuinely scale through resists. Further tuning likely needed once
+players actually run resist-heavy builds.
+
+---
+
+Earlier 2026-06-08 (Tier 1 StatCalc residue cluster).
 StatCalc-unification residue swept — 4 audit-flagged "advertised
 mechanic does not work" issues + 1 user-reported buff-bar bug:
 

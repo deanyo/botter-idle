@@ -232,38 +232,34 @@ func step_movement(delta: float) -> void:
 	else:
 		position += dir.normalized() * step
 
-func take_damage(raw: int, attacker: Actor = null, damage_type: String = "") -> int:
-	# Item-overhaul v2 (2026-06-04). damage_type is the new typed-damage
-	# hint — physical / fire / cold / lightning / holy / poison / dark.
-	# Empty string falls through to the legacy flavor-tag-based path so
-	# enemy attacks (which don't yet pass damage_type) still mitigate via
-	# fire_res / cold_res / earth / etc.
-	#
-	# New PoE-style defenses:
-	#   - evasion (% chance to fully dodge any incoming hit) → 0 damage
-	#   - armor (flat) subtracts from PHYSICAL damage only
-	#   - resistances[damage_type] subtract a percentage from typed damage
-	# Old `defense` field is kept (mirrors armor for log compat).
-	if damage_type == "":
-		damage_type = "physical"  # default for legacy callers
-	# Evasion roll first — applies to any damage type. Resolves the hit
-	# entirely (no subsequent armor / resist math).
+# Resolve a swing: avoidance gates ONCE, each typed component goes through
+# mitigation, returns (thorns/crystal) fire ONCE against the aggregated
+# damage. The hybrid-weapon split (physical+fire+cold) used to call
+# take_damage per type and gave each component its own evasion / footwork /
+# reflective roll AND its own thorns/crystal return — a 3-element swing
+# was multiplicatively easier to dodge and triggered three independent
+# attacker-bound returns. Now: one roll, one return.
+#
+# Single-hit callers (spells, projectiles, splash, DoT-bypass paths) call
+# take_damage instead, which builds a 1-entry typed dict and routes here
+# so they pick up the same avoidance + return semantics for free.
+func resolve_swing(typed: Dictionary, attacker: Actor = null) -> int:
+	if not is_alive or typed.is_empty():
+		return 0
+	# Pull tag arrays once for the whole swing — used by every typed
+	# component AND by the avoidance gates.
+	var def_tags: Array = combat_defense_tags()
+	var atk_tags: Array = []
+	if attacker != null and is_instance_valid(attacker):
+		atk_tags = attacker.combat_weapon_tags()
+	# Avoidance gates — ONCE per swing. Order matches the legacy
+	# take_damage gate order (evasion → footwork → reflective).
 	if "evasion" in self:
 		var eva: float = float(self.evasion)
 		if eva > 0.0 and randf() * 100.0 < eva:
 			if fx and is_alive:
 				fx.hit_squish()
 			return 0
-	# Defender-side flavor tag pre-checks. Order matters: full-negate
-	# rolls beat any multiplier; resistances apply before harm; element
-	# resists (fire_res/cold_res/poison_res) check the attacker's
-	# weapon tags so a fire dragon hitting a fire_res-armored bot does
-	# half damage.
-	var def_tags: Array = combat_defense_tags()
-	# Atk-side tags (read so resists know what type of attack this is).
-	var atk_tags: Array = []
-	if attacker != null and is_instance_valid(attacker):
-		atk_tags = attacker.combat_weapon_tags()
 	if not def_tags.is_empty():
 		# `footwork` — 8% chance to fully evade. Same shape as reflective
 		# but more common and explicitly tied to dexterity / boots.
@@ -275,15 +271,61 @@ func take_damage(raw: int, attacker: Actor = null, damage_type: String = "") -> 
 			if fx and is_alive:
 				fx.hit_squish()
 			return 0
-		# Element resists (defender-worn). 50% reduction matches DCSS
-		# rF+ / rC+ pattern. Also grants immunity to the matching DoT
-		# status (handled in _apply_dot_status).
+	# Apply each typed component through mitigation + HP drop. Death
+	# check is deferred until after the loop so a fatal first component
+	# doesn't double-emit `died` from later components.
+	var dealt_total: int = 0
+	for k in typed.keys():
+		var part: int = int(typed[k])
+		if part <= 0:
+			continue
+		dealt_total += _apply_typed_damage(part, String(k), attacker, def_tags, atk_tags)
+		if hp <= 0:
+			break
+	# Returns — ONCE per swing, against aggregated damage. Skip if the
+	# attacker is gone (was dead before this swing landed, etc).
+	if dealt_total > 0 and attacker != null and is_instance_valid(attacker) and attacker.is_alive and not def_tags.is_empty():
+		# `thorns` returns 15% of total dealt damage to the attacker.
+		if "thorns" in def_tags:
+			var thorn_dmg: int = maxi(1, int(round(float(dealt_total) * 0.15)))
+			attacker.hp = maxi(0, attacker.hp - thorn_dmg)
+			attacker.damaged.emit(attacker, thorn_dmg)
+			attacker._update_hp_bar()
+			if attacker.hp <= 0 and attacker.is_alive:
+				attacker.is_alive = false
+				attacker._play_death_then_emit()
+		# `crystal`: smaller always-on passive thorn — 5% of dealt to the
+		# attacker. Stacks with thorns (lore: crystal armor splinters
+		# inward AND outward).
+		if "crystal" in def_tags and is_instance_valid(attacker) and attacker.is_alive:
+			var c_dmg: int = maxi(1, int(round(float(dealt_total) * 0.05)))
+			attacker.hp = maxi(0, attacker.hp - c_dmg)
+			attacker.damaged.emit(attacker, c_dmg)
+			attacker._update_hp_bar()
+			if attacker.hp <= 0:
+				attacker.is_alive = false
+				attacker._play_death_then_emit()
+	if hp <= 0 and is_alive:
+		is_alive = false
+		_play_death_then_emit()
+	return dealt_total
+
+# Apply ONE typed component after avoidance has already passed. Pure
+# mitigation (resists / harm / armor / resistances) + HP drop. Does NOT
+# trigger evasion, returns, or death — those are handled by resolve_swing.
+# Returns the actually-dealt damage so resolve_swing can aggregate.
+func _apply_typed_damage(raw: int, damage_type: String, attacker: Actor, def_tags: Array, atk_tags: Array) -> int:
+	if damage_type == "":
+		damage_type = "physical"
+	# Defender-side mitigation tags — element resists (50% if attacker
+	# carries the matching tag), then -% multipliers from earth /
+	# willpower / warding / acrobat / guardian, then +% from harm.
+	if not def_tags.is_empty():
 		if "fire_res" in def_tags and "fire" in atk_tags:
 			raw = int(round(float(raw) * 0.5))
 		if "cold_res" in def_tags and "cold" in atk_tags:
 			raw = int(round(float(raw) * 0.5))
 		# `earth`: -15% from any non-elemental, non-magical attack.
-		# "Physical" = anything without elemental/arcane/holy/dark tags.
 		if "earth" in def_tags:
 			var is_physical: bool = true
 			for t in ["fire", "cold", "elemental", "arcane", "holy", "dark", "thunderous"]:
@@ -298,17 +340,15 @@ func take_damage(raw: int, attacker: Actor = null, damage_type: String = "") -> 
 				if t in atk_tags:
 					raw = int(round(float(raw) * 0.75))
 					break
-		# `warding`: -20% from boss / miniboss attackers (anti-elite armor).
+		# `warding`: -20% from boss / miniboss attackers.
 		if "warding" in def_tags and attacker is Enemy:
 			var e: Enemy = attacker as Enemy
 			if e.is_boss or e.is_miniboss:
 				raw = int(round(float(raw) * 0.8))
-		# `acrobat`: when below 30% HP, +20% def. Translates to ~17%
-		# damage reduction at the take_damage layer.
+		# `acrobat`: -17% when below 30% HP.
 		if "acrobat" in def_tags and max_hp > 0 and float(hp) / float(max_hp) <= 0.30:
 			raw = int(round(float(raw) * 0.83))
-		# `guardian`: flat -10% damage taken. Smaller than other resists
-		# but always-on so it stacks well as a backup armor.
+		# `guardian`: flat -10% damage taken — backup armor.
 		if "guardian" in def_tags:
 			raw = int(round(float(raw) * 0.9))
 		if "harm" in def_tags:
@@ -316,8 +356,7 @@ func take_damage(raw: int, attacker: Actor = null, damage_type: String = "") -> 
 	# Type-aware mitigation. Physical → flat armor subtraction. Elemental
 	# → percent resistance from the defender's resistances dict (defaults
 	# to 0 when the actor doesn't declare one — enemies with no resistances
-	# field eat full damage). Floor of 1 so a 100%-resisted hit still pings
-	# (gameplay-feel; nobody should ignore a hit completely except evasion).
+	# field eat full damage). Floor of 1 so a 100%-resisted hit still pings.
 	var dmg: int
 	if damage_type == "physical":
 		dmg = maxi(1, raw - defense)
@@ -331,33 +370,17 @@ func take_damage(raw: int, attacker: Actor = null, damage_type: String = "") -> 
 	_update_hp_bar()
 	if fx and is_alive:
 		fx.hit_squish()
-	# `thorns` returns 15% of (post-defense) damage to the attacker. Done
-	# AFTER our HP update so the attacker can't kill us with their own
-	# thorns response. Skip if thorns kills us — the attacker still takes
-	# the return chunk regardless.
-	if attacker != null and is_instance_valid(attacker) and attacker.is_alive and not def_tags.is_empty():
-		if "thorns" in def_tags:
-			var thorn_dmg: int = maxi(1, int(round(float(dmg) * 0.15)))
-			attacker.hp = maxi(0, attacker.hp - thorn_dmg)
-			attacker.damaged.emit(attacker, thorn_dmg)
-			attacker._update_hp_bar()
-			if attacker.hp <= 0:
-				attacker.is_alive = false
-				attacker._play_death_then_emit()
-		# `crystal`: smaller passive thorn that fires regardless. 5% of
-		# raw is a gentle constant bleed when an attacker keeps poking.
-		if "crystal" in def_tags:
-			var c_dmg: int = maxi(1, int(round(float(dmg) * 0.05)))
-			attacker.hp = maxi(0, attacker.hp - c_dmg)
-			attacker.damaged.emit(attacker, c_dmg)
-			attacker._update_hp_bar()
-			if attacker.hp <= 0 and attacker.is_alive:
-				attacker.is_alive = false
-				attacker._play_death_then_emit()
-	if hp <= 0:
-		is_alive = false
-		_play_death_then_emit()
 	return dmg
+
+func take_damage(raw: int, attacker: Actor = null, damage_type: String = "") -> int:
+	# Single-hit entry point — every non-attempt_attack call site (spells,
+	# projectiles, splash, DoT-bypass paths) routes through here. Builds a
+	# 1-entry typed dict and feeds resolve_swing so single-hit callers get
+	# the same evasion / footwork / reflective / thorns / crystal semantics
+	# as a regular weapon swing.
+	if damage_type == "":
+		damage_type = "physical"
+	return resolve_swing({damage_type: raw}, attacker)
 
 # Bot overrides to expose flavor_tags from worn ARMOR/SHIELD/AMULET (as
 # opposed to weapon, which is `combat_weapon_tags`). Rationale:
@@ -539,21 +562,19 @@ func attempt_attack(other: Actor, delta: float) -> int:
 	# Update precision streak — reset on crit, grow on miss-of-crit.
 	if "precision" in tags:
 		_precision_streak = 0 if crit else _precision_streak + 1
-	# Apply each typed component as a separate take_damage call. The
-	# defender's evasion fires once on the first call (full miss); the
-	# subsequent components also evasion-roll fresh — that's fine because
-	# defender state mutates between calls (HP drops, evasion stays).
-	# `raw` retained as the top-line value for downstream tag procs that
-	# need a single number (thunderous chain splash, etc).
+	# Resolve the whole swing in one call so avoidance gates (evasion,
+	# footwork, reflective) and post-mitigation returns (thorns, crystal)
+	# fire ONCE per swing, not once per typed component. Pre-fix: a
+	# 3-element hybrid swing got 3 independent dodge rolls and sent 3
+	# independent thorns/crystal returns to the attacker, which could
+	# multi-emit `died` if the first return chunk killed.
+	# `raw` retained as the top-line aggregate for downstream tag procs
+	# that need a single number (thunderous chain splash, death splash,
+	# etc).
 	var raw: int = 0
 	for k in typed.keys():
 		raw += int(typed[k])
-	var dealt: int = 0
-	for k in typed.keys():
-		var part: int = int(typed[k])
-		if part <= 0:
-			continue
-		dealt += other.take_damage(part, self, k)
+	var dealt: int = other.resolve_swing(typed, self)
 	var killed: bool = is_instance_valid(other) and not other.is_alive
 	# Post-attack tag mechanics. `vampiric` heals 8% of damage dealt
 	# back to the attacker — capped at max_hp. Defended/dodged hits
