@@ -4,7 +4,25 @@ Point-in-time snapshot of what's actually shipping. Updated as we go. The
 durable rules and process live in `CLAUDE.md`; the roadmap and open work
 items live in `TODO.md`.
 
-Last refresh: 2026-06-08 (HTML5 web build + itch.io playtest). Botter
+Last refresh: 2026-06-08 (Tier 1 save/progression bug cluster).
+Three audit-flagged save/progression bugs shipped:
+- `cd69e55` `stat_calc.gd` was reading `save["unspent_points"]` while
+  every writer used `stat_points_unspent`. Outpost stats panel was
+  pinned to "Unspent: 0" forever post level-up.
+- `256ccc0` Octopode (4 rings) + naga (2 rings) lost ring2 every save
+  load: legacy ring1/ring2 → ring collapse migration ran on every load
+  instead of once, and species init recreated ring2 just before the
+  legacy block treated it as a stale legacy key. Now gated on a
+  one-time `migration_v_ring_collapse` flag and skipped entirely for
+  species whose ring_slot_ids include ring2.
+- `f80376b` Chests rolled their loot at OPEN time + spawned LootDrop
+  nodes; items only entered `_hud_inv_cache` when `_complete_loot_pickup`
+  ran (after the bot stood on each drop ~0.4-0.8s). Esc → Main Menu
+  mid-pickup discarded everything in `loot_drops`. `flush_to_save` now
+  folds live unconsumed drops into the current floor segment before
+  serializing.
+
+Earlier 2026-06-08: HTML5 web build + itch.io playtest. Botter
 is now publicly playable in a browser at
 **https://deanyo-gh.itch.io/botter-idle**. itch project is set to
 "restricted" visibility — link-only sharing for friends-feedback. Build

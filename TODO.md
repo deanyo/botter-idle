@@ -33,9 +33,11 @@ Shipped. Three audit-flagged exposures closed before public release:
 
 ### Still TBD (Tier 1 / Tier 2)
 
-- Tier 1: `unspent_points` typo, ring-collapse migration gate, chest
-  loot persistence, StatCalc unification residue, combat correctness
-  passes — see `~/claude/game-audit/findings/AUDIT_TODO.md` Tier 1.
+- Tier 1: ~~`unspent_points` typo~~, ~~ring-collapse migration gate~~,
+  ~~chest loot persistence~~ all shipped 2026-06-08
+  (`cd69e55`, `256ccc0`, `f80376b`). StatCalc unification residue,
+  combat correctness passes still pending — see
+  `~/claude/game-audit/findings/AUDIT_TODO.md` Tier 1.
 - Tier 2: NOTICE.md / CREDITS surface enumerating CC0 tile attribution
   + Godot MIT — pre-req before final license grant.
 - Tier 2 (CRITICAL): clean-room rewrite of `dcss_layouts.gd` (currently
