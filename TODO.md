@@ -38,6 +38,16 @@ Shipped. Three audit-flagged exposures closed before public release:
   (`cd69e55`, `256ccc0`, `f80376b`). StatCalc unification residue,
   combat correctness passes still pending — see
   `~/claude/game-audit/findings/AUDIT_TODO.md` Tier 1.
+- Tier 1 follow-up (noticed during chest-loot fix, out of scope for
+  that audit task): `dungeon.gd::_end_run` has the same in-flight
+  LootDrop vulnerability that `flush_to_save` had pre-`f80376b`. If
+  the bot dies while drops are mid-air (chest opened the same tick
+  combat ended in defeat), those drops are discarded with the
+  dungeon scene. Fix is a one-liner — call
+  `_fold_pending_loot_drops_into_inventory()` at the top of
+  `_end_run`, same as `flush_to_save` now does. Low-priority
+  because it requires precisely-timed death + open-chest, but
+  trivial to ship.
 - Tier 2: NOTICE.md / CREDITS surface enumerating CC0 tile attribution
   + Godot MIT — pre-req before final license grant.
 - Tier 2 (CRITICAL): clean-room rewrite of `dcss_layouts.gd` (currently
