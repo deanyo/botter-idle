@@ -51,12 +51,20 @@ Shipped. Three audit-flagged exposures closed before public release:
   trivial to ship.
 - Tier 2: NOTICE.md / CREDITS surface enumerating CC0 tile attribution
   + Godot MIT — pre-req before final license grant.
-- Tier 2 (CRITICAL): clean-room rewrite of `dcss_layouts.gd` (currently
-  structural line-translation of GPLv2+ DCSS C++ — same magic constants,
-  same control flow, same `denom_table`). Must happen in a fresh
-  session that doesn't have the `.cc` source open. Until resolved,
-  `README.md`'s "all rights reserved, public preview" stance and
-  the password-gated itch build are the only legal cover.
+- ~~Tier 2 (CRITICAL): clean-room rewrite of `dcss_layouts.gd`~~
+  Shipped 2026-06-08. Fresh-session rewrite from
+  `~/claude/game-audit/findings/dcss_layouts_descriptions.md` —
+  rewriter session never opened `dcss-source/` or the prior
+  `dcss_layouts.gd`. New names, new control-flow shape, new
+  closed-form density divisor (replaces the 12-entry
+  `denom_table`). 666 insertions / 798 deletions vs prior file.
+  Top-of-file provenance comment in place. Validation: `/grind 5`
+  produces playable runs (variable victory rate, within historical
+  fresh-save variance).
+- Tier 2 follow-up: NOTICE.md / CREDITS surface should call out that
+  dungeon-layout algorithms are now original GDScript implementations
+  inspired by standard dungeon-gen patterns (drunkard-walk, cellular
+  excavation), not derived from DCSS source.
 
 ---
 

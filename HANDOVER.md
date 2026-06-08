@@ -4,7 +4,28 @@ Point-in-time snapshot of what's actually shipping. Updated as we go. The
 durable rules and process live in `CLAUDE.md`; the roadmap and open work
 items live in `TODO.md`.
 
-Last refresh: 2026-06-08 (Tier 1 combat-correctness cluster).
+Last refresh: 2026-06-08 (clean-room rewrite of `dcss_layouts.gd`).
+Tier 2 audit item shipped: the dungeon-layout algorithms (`basic_level`,
+`make_trail`, `delve`) were a structural line-translation of GPLv2+
+DCSS C++ — same magic constants, same `denom_table`, same control
+flow. Replaced via a clean-room workflow: a behavior-only description
+(`~/claude/game-audit/findings/dcss_layouts_descriptions.md`) drove
+a fresh session that never opened `dcss-source/` or the prior
+`dcss_layouts.gd`. New file uses original variable names, an original
+flat-loop control structure, and a closed-form density divisor in
+place of the 12-entry table. Top-of-file provenance comment in place.
+666 insertions / 798 deletions vs prior. Caves and basic levels
+generate playably; bot completes runs at the historical fresh-save
+variance band. Diff vs prior is a structural rewrite, not a rename pass.
+
+NOTICE.md / CREDITS still need a one-line update calling out that the
+layout algorithms are original GDScript implementations of standard
+dungeon-gen patterns, not ported from DCSS source — that's the
+Tier 2 follow-up item in TODO.md.
+
+---
+
+Prior refresh: 2026-06-08 (Tier 1 combat-correctness cluster).
 Four audit-flagged combat path bugs in the spell + hybrid-weapon
 damage pipeline:
 
