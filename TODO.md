@@ -5,6 +5,48 @@ the durable rules in `CLAUDE.md`. Update this file when committing.
 
 ---
 
+## Tier 0 legal hygiene (2026-06-08)
+
+Shipped. Three audit-flagged exposures closed before public release:
+
+- ✅ **Vault bundle excluded from web .pck.** `export_presets.cfg`
+  exclude_filter now matches `data/vaults/*.json,data/vaults_bundle.json`.
+  Re-exported v15 build verified: 0 occurrences of `des_minmay`,
+  `des_hangedman`, `des_nicolae`, `vaults_bundle.json`, or DES content
+  fields (`NAME`, `ORIENT`, `KFEAT`).
+- ✅ **GitHub Pages allowlist.** `.github/workflows/pages.yml` no
+  longer does `cp -R project/data`. Now copies only the 6 JSONs
+  browser tools fetch (items, affixes, enchant_combos, biomes,
+  tile_atlas, drop_tuning). On next push to `main`, the live
+  `dnyo.co.uk/botter-idle/project/data/vaults/` paths will start
+  returning 404.
+- ✅ **Tile dir manifest scrubbed.** `tools/build_tile_dir_manifest.py`
+  no longer enumerates `data/vaults/`. Without this, the manifest
+  was leaking 1320 contributor-stamped vault filenames into the
+  web .pck even with the bundle excluded.
+- ✅ **README honesty.** Stripped false "Offline progress (capped 1h)"
+  claim (offline progression is a no-op since 2026-06-06). Replaced
+  "TBD likely permissive" license stub with explicit
+  "all rights reserved, public preview only" pending Tier 2
+  resolution. Removed false "vault format is data, free to use"
+  claim.
+
+### Still TBD (Tier 1 / Tier 2)
+
+- Tier 1: `unspent_points` typo, ring-collapse migration gate, chest
+  loot persistence, StatCalc unification residue, combat correctness
+  passes — see `~/claude/game-audit/findings/AUDIT_TODO.md` Tier 1.
+- Tier 2: NOTICE.md / CREDITS surface enumerating CC0 tile attribution
+  + Godot MIT — pre-req before final license grant.
+- Tier 2 (CRITICAL): clean-room rewrite of `dcss_layouts.gd` (currently
+  structural line-translation of GPLv2+ DCSS C++ — same magic constants,
+  same control flow, same `denom_table`). Must happen in a fresh
+  session that doesn't have the `.cc` source open. Until resolved,
+  `README.md`'s "all rights reserved, public preview" stance and
+  the password-gated itch build are the only legal cover.
+
+---
+
 ## HTML5 / itch.io shipping (2026-06-08)
 
 **Status:** Shipped. Friend playtesting in Safari confirms smooth

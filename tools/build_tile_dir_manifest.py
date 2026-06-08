@@ -23,13 +23,20 @@ PROJECT_ROOT = os.path.join(REPO_ROOT, 'project')
 # (path, extension) — directories to enumerate + the file extension to
 # include. Add new entries when scripts add new enumerate-at-runtime
 # code.
+#
+# data/vaults/ is intentionally NOT listed: the 1320 ported DCSS vault
+# filenames carry contributor handles (des_<author>_*.json) and the
+# vault contents are GPLv2+. The web .pck excludes both vaults/*.json
+# and vaults_bundle.json (export_presets.cfg), so web has no vaults
+# regardless of this manifest. Desktop loads vaults via the DirAccess
+# fallback in vault_library.gd::_list_vault_files. Re-add only if the
+# vault corpus is replaced with original content.
 DIRS = [
     ('assets/tiles/floor',           '.png'),
     ('assets/tiles/wall',            '.png'),
     ('assets/tiles/overlays',        '.png'),
     ('assets/tiles/sigils',          '.png'),
     ('assets/tiles/items/artefacts', '.png'),
-    ('data/vaults',                  '.json'),
 ]
 
 manifest = {}

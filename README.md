@@ -33,8 +33,7 @@ Mobile port deferred.
   Endless, Bloodlust, Boss Hunt, etc.) re-rolled each Outpost visit.
 - **Death retreat.** HP=0 spends a revive (3/run by default) and
   respawns at floor 1 of the same branch.
-- **Idle loop.** Offline progress (capped 1h), auto-salvage, loot
-  filters, gold-sink upgrades, "While You Were Away" summary.
+- **Idle loop.** Auto-salvage, loot filters, gold-sink upgrades.
 - **Shop.** Real-time-rotating stock with daily modifiers (Weapon Day,
   Fire Sale, Legendary Seeker…) refreshing every 15 minutes.
 - **Visual systems.** Sprite-localised glow shader, flavor-tinted
@@ -150,9 +149,17 @@ the project stays free of GPLv2+ obligations on its game logic.
 
 ## License
 
-Game logic: TBD (likely a permissive license for the GDScript code).
-Tile sprites: CC0 (RLTiles / DCSS contributors). Vault `.des` data
-ports: format is data, not code (free to use).
+Game logic and assets: **All rights reserved.** This repo is a public
+preview for playtesting and authoring contributions. No license is
+granted to redistribute, modify, or use the GDScript source or shipped
+game data outside of those workflows.
+
+Bundled tile sprites (`project/assets/tiles/`) are CC0 (RLTiles / DCSS
+contributors) and remain CC0 if extracted.
+
+Pending: a final license grant for the game logic, plus a NOTICE.md
+enumerating third-party content sources, will land once the
+`dcss_layouts.gd` clean-room status is resolved.
 
 ## Status & roadmap
 

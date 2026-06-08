@@ -32,18 +32,30 @@ real-world impact):
    builds a TileSet with one source per texture; ~50 sources
    instead of 1, but no `get_image()` calls. Cut dungeon-load
    from 60s → 15s.
-2. **Vault bundle.** `tools/build_vault_bundle.py` packs all 1335
-   `.json` vault files into one `vaults_bundle.json` (0.8 MB).
-   `VaultLibrary._ensure_loaded` reads the bundle first, falls
-   back to per-file enumeration on desktop dev. Web load dropped
-   another ~10s; per-file vaults excluded from the web pck via
-   `exclude_filter` so the pck is also smaller.
+2. **Vault bundle (desktop only).** `tools/build_vault_bundle.py`
+   packs all 1335 `.json` vault files into one `vaults_bundle.json`
+   (0.8 MB). `VaultLibrary._ensure_loaded` reads the bundle first,
+   falls back to per-file enumeration on desktop dev. Web load
+   dropped another ~10s on desktop. **The bundle and per-file
+   vaults are both excluded from the web pck** via `exclude_filter`
+   in `export_presets.cfg` (`data/vaults/*.json,data/vaults_bundle.json`).
+   Web builds therefore ship with no vault content — a deliberate
+   legal-hygiene choice (vaults are ports of GPLv2+ DCSS source).
+   Re-add to web only after the corpus is replaced with original
+   content. 2026-06-08.
 3. **Tile dir manifest.** `tools/build_tile_dir_manifest.py`
    pre-bakes directory listings for `floor/`, `wall/`, `overlays/`,
-   `sigils/`, `items/artefacts/`, `data/vaults/`. HTML5 can't
-   enumerate `res://` directories via DirAccess (virtualized FS in
-   the .pck), so `BiomeData._list_dir`, `VaultLibrary`, and
-   `ArtefactPool` read from `data/tile_dir_manifest.json` first.
+   `sigils/`, `items/artefacts/`. HTML5 can't enumerate `res://`
+   directories via DirAccess (virtualized FS in the .pck), so
+   `BiomeData._list_dir` and `ArtefactPool` read from
+   `data/tile_dir_manifest.json` first. **`data/vaults/` is
+   intentionally NOT in the manifest** (was previously, removed
+   2026-06-08): the 1320 ported vault filenames carry contributor
+   handles (`des_<author>_*.json`), and shipping them in the manifest
+   would leak attribution into the web .pck even when the vaults
+   themselves are excluded. `VaultLibrary` only ever runs the
+   DirAccess fallback on desktop and shouldn't be called on web
+   anyway (no vaults to load).
 4. **Wave-spawn stagger.** `dungeon.gd::_tick_wave_spawns` queues
    spawn IDs into `_pending_wave_spawns` instead of spawning
    N enemies in a single frame. `_drain_pending_spawns` pulls

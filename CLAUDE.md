@@ -64,6 +64,39 @@ Background-friendly. Mobile-first.
 to match what just shipped or got deferred.** They're the source of truth
 for "what's done, what's next" and they rot fast if not maintained per beat.
 
+## Audit artifacts (2026-06-08, multi-agent review)
+
+A multi-agent audit produced 100 verified findings across architecture,
+performance, idle integrity, content pipeline, technical debt, DCSS legal,
+dual-platform, and pivot-residue. Every finding was confirmed by 2-of-3
+adversarial skeptics (so when one cites a file:line, it existed at audit
+time — but re-verify before acting; the code may have changed). Artifacts
+live at `~/claude/game-audit/`, deliberately outside the repo:
+
+- **`findings/AUDIT_REPORT.md`** — 628-line structured report. Executive
+  summary, 78 individual findings grouped by category, Top-5 prioritization
+  at the end. Each finding has file:line evidence, severity, recommendation,
+  player impact.
+- **`findings/AUDIT_TODO.md`** — 47-item triaged backlog with effort
+  estimates (L/M/H) and tier sequencing. Tier 0 = legal/credibility fires;
+  Tier 1 = cheap visible fixes; Tier 2 = legal hygiene + tests + save
+  durability; Tier 3 = architectural splits guarded by the test foundation.
+- **`prompts/`** — ready-to-paste session openers. `_session_template.md`
+  is the reusable context preamble; `tier0_*.md` / `tier1_*.md` /
+  `tier2_*.md` / `tier3_*.md` are tier-specific task briefs that drop in
+  where the template ends. `prompts/README.md` explains how to use them
+  and the sequencing constraints.
+
+**Sessions touching audit-flagged systems should:** (1) skim
+`AUDIT_REPORT.md`'s relevant category section before editing; (2) re-verify
+the cited file:line still matches reality; (3) cross-reference `AUDIT_TODO.md`
+for tier ordering — do NOT start a Tier 3 architectural extraction without
+the Tier 2 test foundation in place. The full sequencing rule lives in
+`prompts/README.md`.
+
+**Sessions NOT touching audit-flagged systems** can ignore these files —
+they're orientation, not background reading for every change.
+
 ## Skills (project-scoped — already wired)
 
 The project ships with skills under `.claude/skills/`. Use them — don't
