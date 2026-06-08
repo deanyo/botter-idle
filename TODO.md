@@ -49,6 +49,15 @@ Shipped. Three audit-flagged exposures closed before public release:
   `_end_run`, same as `flush_to_save` now does. Low-priority
   because it requires precisely-timed death + open-chest, but
   trivial to ship.
+- Tier 1 follow-up (noticed during combat-correctness session,
+  out of scope for that task): `dungeon.gd:2613` lava/water terrain
+  damage calls `bot.take_damage(dmg)` with no attacker and no
+  damage_type. Now that the spell path pipes element + attacker
+  into `resolve_swing`, lava is the last hold-out routing through
+  armor instead of fire resistance. One-line fix: pass
+  `damage_type="fire"` for lava cells (and `"physical"` for water
+  if/when water deals damage — currently it only slows). Low-priority
+  because lava chip damage is small, but trivially correct.
 - Tier 2: NOTICE.md / CREDITS surface enumerating CC0 tile attribution
   + Godot MIT — pre-req before final license grant.
 - ~~Tier 2 (CRITICAL): clean-room rewrite of `dcss_layouts.gd`~~
@@ -65,6 +74,11 @@ Shipped. Three audit-flagged exposures closed before public release:
   dungeon-layout algorithms are now original GDScript implementations
   inspired by standard dungeon-gen patterns (drunkard-walk, cellular
   excavation), not derived from DCSS source.
+- Tier 2 follow-up: itch redeploy. v17 on itch is still the
+  pre-rewrite derived `dcss_layouts.gd`. Next `/deploy-web` will pick
+  up the clean-room rewrite — do that once the dungeon feel is
+  confirmed locally and (ideally) the NOTICE.md update has landed so
+  the public build's attribution matches the source.
 
 ---
 
