@@ -24,14 +24,26 @@ SAMPLE_BIOMES=(dungeon lair vaults crypt forge glacier slime spider zot)
 FAIL=0
 
 # 1. Refresh class cache (catches "class not declared" for any new class_name)
-echo "1/3  Refreshing class cache..."
+echo "1/4  Refreshing class cache..."
 if ! "$GODOT" --path "$PROJECT" --headless --import >"$LOG" 2>&1; then
     echo "FAIL: --import failed (see $LOG)" >&2
     tail -10 "$LOG" >&2
     exit 1
 fi
 
-# 2. Per-biome 1-floor smoke build via debug-jump (no screenshot — just gen)
+# 2. StatCalc.compute golden-master tests. Locks the post-2026-06-08
+# unification residue cluster (blessing kinds, species atk_pct/def_pct/
+# aggro_flat, spell_element_pct, lifesteal_pct clamp) against silent
+# regressions. Runs in <2s.
+echo "2/4  Running StatCalc tests..."
+STAT_LOG="$LOG_DIR/${TS}_stat_calc.log"
+if ! "$GODOT" --path "$PROJECT" --headless --script tests/stat_calc_tests.gd >"$STAT_LOG" 2>&1; then
+    echo "FAIL: StatCalc tests failed (see $STAT_LOG)" >&2
+    grep -E '^  (PASS|FAIL)' "$STAT_LOG" | tail -25 >&2
+    FAIL=1
+fi
+
+# 3. Per-biome 1-floor smoke build via debug-jump (no screenshot — just gen)
 USER_DIR="$HOME/Library/Application Support/Godot/app_userdata/Botter"
 mkdir -p "$USER_DIR"
 DEBUG_MARKER="$USER_DIR/DEBUG_FLOOR.txt"
@@ -41,7 +53,7 @@ GRIND_MARKER="$USER_DIR/AUTO_GRIND.txt"
 [[ -f "$DEBUG_MARKER" ]] && mv "$DEBUG_MARKER" "$DEBUG_MARKER.precommit_parked"
 [[ -f "$GRIND_MARKER" ]] && mv "$GRIND_MARKER" "$GRIND_MARKER.precommit_parked"
 
-echo "2/3  Smoke-building 1 floor each across ${#SAMPLE_BIOMES[@]} biomes..."
+echo "3/4  Smoke-building 1 floor each across ${#SAMPLE_BIOMES[@]} biomes..."
 for biome in "${SAMPLE_BIOMES[@]}"; do
     # Floor 1, no vault, no screenshot mode (4th field unset)
     echo "${biome},_,1" > "$DEBUG_MARKER"
@@ -86,8 +98,8 @@ if [[ ! -f "$USER_DIR/DEBUG_FLOOR.txt.precommit_parked" ]]; then
     rm -f "$USER_DIR/DEBUG_FLOOR.txt"
 fi
 
-# 3. Summary
-echo "3/3  Summary"
+# 4. Summary
+echo "4/4  Summary"
 if [[ $FAIL -eq 0 ]]; then
     echo "PASS — ${#SAMPLE_BIOMES[@]} biomes built without errors."
     echo "logs: $LOG_DIR/${TS}_*.log"

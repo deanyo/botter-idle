@@ -177,6 +177,15 @@ static func compute(
 		spell_area_pct += float(slot_sums.get("spell_area_pct", 0))
 		spell_duration_pct += float(slot_sums.get("spell_duration_pct", 0))
 		spell_damage_pct += float(slot_sums.get("spell_damage_pct", 0))
+		# Per-element spell-damage affixes (of_pyromancer / of_cryomancer
+		# / of_storm / of_zealot / of_venom / of_shadow). Each writes to
+		# `<elem>_dmg_pct`; we accumulate into spell_element_pct keyed by
+		# element so spell_data.gd:181 can read elem_mult per spell.
+		for elem in SPELL_ELEMENTS:
+			var key: String = elem + "_dmg_pct"
+			var add: float = float(slot_sums.get(key, 0))
+			if add != 0.0:
+				spell_element_pct[elem] = float(spell_element_pct[elem]) + add
 		# Extra-damage range affixes (per-element min/max).
 		for elem in ["physical", "fire", "cold", "lightning", "holy", "poison", "dark"]:
 			var key: String = elem + "_extra"
@@ -194,6 +203,56 @@ static func compute(
 		damage_max += int(round(up_atk))
 	if up_def > 0.0:
 		armor_total += int(round(up_def))
+
+	# Species atk_pct / def_pct / aggro_flat — pre-2026-06-08 these were
+	# shown in the character_create preview but never read by StatCalc,
+	# so a Minotaur's "+20% ATK" was decoration and a Spriggan's "+10%
+	# DEF" did nothing. Now folded in alongside the blessing rollup.
+	# atk_pct multiplies damage_min/max (after flat upgrade), def_pct
+	# multiplies armor (after flat upgrade), aggro_flat surfaces in the
+	# aggro_bonus output dict so the AI's engagement range respects it.
+	var sp_atk_pct: float = float(sp.get("atk_pct", 0))
+	var sp_def_pct: float = float(sp.get("def_pct", 0))
+	var sp_aggro_flat: int = int(sp.get("aggro_flat", 0))
+	if sp_atk_pct != 0.0:
+		damage_min = int(round(float(damage_min) * (1.0 + sp_atk_pct / 100.0)))
+		damage_max = int(round(float(damage_max) * (1.0 + sp_atk_pct / 100.0)))
+	if sp_def_pct != 0.0:
+		armor_total = int(round(float(armor_total) * (1.0 + sp_def_pct / 100.0)))
+
+	# Altar blessing kinds. atk_pct / atk_flat / def_flat / hp_pct were
+	# silently dead pre-2026-06-08 — the corresponding god (Trog, Zin,
+	# Beogh, Yred, TSO, Lugonu, Xom, Qazlal, Ru, Cheibriados, Dithmenos,
+	# Okawaru, Fedhas) granted nothing because StatCalc didn't read the
+	# bot.bonus_* fields that grant_blessing wrote into. Now folded
+	# directly into the StatCalc rollup — atk_pct/atk_flat hit damage_min
+	# /max, def_flat hits armor, hp_pct multiplies max_hp at the same
+	# layer as species hp_pct. lifesteal/loot_rarity/xp_gain/hp_regen
+	# blessings already worked through other channels and stay there.
+	var bless_atk_pct: float = 0.0
+	var bless_atk_flat: int = 0
+	var bless_def_flat: int = 0
+	var bless_hp_pct: float = 0.0
+	for b in blessings:
+		match String(b.get("kind", "")):
+			"atk_pct":  bless_atk_pct  += float(b.get("value", 0))
+			"atk_flat": bless_atk_flat += int(b.get("value", 0))
+			"def_flat": bless_def_flat += int(b.get("value", 0))
+			"hp_pct":   bless_hp_pct   += float(b.get("value", 0))
+	if bless_atk_flat != 0:
+		damage_min += bless_atk_flat
+		damage_max += bless_atk_flat
+	if bless_atk_pct != 0.0:
+		damage_min = int(round(float(damage_min) * (1.0 + bless_atk_pct / 100.0)))
+		damage_max = int(round(float(damage_max) * (1.0 + bless_atk_pct / 100.0)))
+	if bless_def_flat != 0:
+		armor_total += bless_def_flat
+	# bless_hp_pct folds into sp_hp_mult so it stacks multiplicatively
+	# with species hp_pct (Fedhas's +40% on a Naga's +20% = ×1.40 × 1.20
+	# = +68% — same composition rule the player sees on every other %
+	# stat).
+	if bless_hp_pct != 0.0:
+		sp_hp_mult *= 1.0 + bless_hp_pct / 100.0
 
 	# Primary excess feeds derived stats.
 	var str_excess: int = str_stat - 5
@@ -224,6 +283,11 @@ static func compute(
 	spell_proj_speed_pct = clampf(spell_proj_speed_pct, 0.0, 100.0)
 	for elem in resistances.keys():
 		resistances[elem] = clampf(float(resistances[elem]), -100.0, 75.0)
+	# Per-element spell damage cap. PoE-style soft ceiling on element
+	# stacking — single-element builds can still climb but can't
+	# trivially eclipse `of_channeling`'s generic boost.
+	for elem in spell_element_pct.keys():
+		spell_element_pct[elem] = clampf(float(spell_element_pct[elem]), 0.0, 100.0)
 
 	var attack_interval: float = max(0.15, weapon_speed / (1.0 + haste_pct / 100.0))
 
@@ -315,7 +379,7 @@ static func compute(
 	out["spell_damage_pct"] = spell_damage_pct
 	out["spell_element_pct"] = spell_element_pct
 	out["move_speed"] = move_speed
-	out["aggro_bonus"] = vision_count
+	out["aggro_bonus"] = vision_count + sp_aggro_flat
 	out["loot_rarity_bonus"] = loot_rarity_bonus
 	out["xp_gain_pct"] = xp_gain_pct
 	# Allocation-related fields surfaced for the outpost +/- buttons.

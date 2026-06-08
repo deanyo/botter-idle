@@ -4,8 +4,75 @@ Point-in-time snapshot of what's actually shipping. Updated as we go. The
 durable rules and process live in `CLAUDE.md`; the roadmap and open work
 items live in `TODO.md`.
 
-Last refresh: 2026-06-08 (Tier 1 save/progression bug cluster).
-Three audit-flagged save/progression bugs shipped:
+Last refresh: 2026-06-08 (Tier 1 StatCalc residue cluster).
+StatCalc-unification residue swept — 4 audit-flagged "advertised
+mechanic does not work" issues + 1 user-reported buff-bar bug:
+
+- **15 of 22 god altars now real.** `bot.grant_blessing` was writing
+  `atk_pct/atk_flat/def_flat/hp_pct` blessings into private `bot.bonus_*`
+  fields, but `StatCalc.compute()` overwrote `damage_min/max/armor/max_hp`
+  from its own dict-based rollup and never read those fields. Effect:
+  Trog/Zin/Beogh/Yred/TSO/Lugonu/Xom/Qazlal/Ru/Cheibriados/Dithmenos/
+  Okawaru/Fedhas blessings did literally nothing (only Elyvilon, Vehumet,
+  Sif Muna, Ashenzari, Gozag, Kiku, Makhleb, Jiyva, Nemelex worked
+  through other channels). StatCalc now reads `blessings[].kind` directly
+  for atk_pct (×damage_min/max), atk_flat (+damage_min/max), def_flat
+  (+armor), hp_pct (×sp_hp_mult — stacks multiplicatively with species).
+  Dead `bot.bonus_atk_pct/atk_flat/def_flat/max_hp_pct/base_max_hp`
+  fields removed.
+- **Species atk_pct / def_pct / aggro_flat now real.** Minotaur's "+20%
+  ATK", Naga's "+10% DEF", Demonspawn's "+10% ATK" etc. were shown in
+  the character_create preview but never read by StatCalc. Now folded
+  in alongside the blessing rollup. atk_pct multiplies damage_min/max
+  after flat upgrade, def_pct multiplies armor after flat upgrade,
+  aggro_flat surfaces in the aggro_bonus output.
+- **Element-damage builds buildable.** Six new affix entries —
+  `of_pyromancer` (fire), `of_cryomancer` (cold), `of_storm`
+  (thunderous), `of_zealot` (holy), `of_venom` (poison), `of_shadow`
+  (dark) — each rolling 4-45% on amulet/ring/helm/gloves/cloak/spell.
+  StatCalc folds the per-element sums into `spell_element_pct[<elem>]`
+  with a 100% per-element soft cap. `spell_data.gd:181-182` was
+  already reading `bot.spell_element_pct[arch.element]` to scale
+  element-tagged spells — the dict was just never populated.
+- **Gear `of_lifesteal` heals.** `bot.lifesteal_pct` was clamped at
+  15% in StatCalc and assigned to the bot field, but melee never
+  read it — only `lifesteal_per_hit` (flat blessings) and the 8%
+  `vampiric` flavor tag fired. `Bot.attempt_attack` now adds a
+  `dealt × lifesteal_pct / 100` heal alongside the existing flat
+  channel. vampiric still fires from `actor.gd::attempt_attack` so
+  vampiric weapons don't double-dip.
+- **Per-god buff icons.** Pre-fix every blessing collapsed to a
+  single generic "blessed" status row, so a player who'd visited
+  Trog + Zin + Sif Muna saw one icon. `StatusOverlay.STATUSES` now
+  has 22 `blessed_<god>` entries (Trog, Okawaru, Zin, Elyvilon,
+  Vehumet, Kikubaaqudgha, Sif Muna, Beogh, Makhleb, Yredelemnul,
+  TSO, Lugonu, Jiyva, Fedhas, Cheibriados, Xom, Ashenzari, Dithmenos,
+  Gozag, Qazlal, Nemelex, Ru) each using the existing
+  `assets/tiles/features/altar_<god>.png` as its buff-bar icon
+  with the per-god halo tint. `bot.grant_blessing` adds
+  `blessed_<god>` instead of generic `blessed`. `clear_blessings`
+  sweeps every `blessed_*` status. Run-scoped (cleared at run
+  start, not floor descent — preserves prior mental model).
+
+**StatCalc.compute test harness.** New `project/tests/stat_calc_tests.gd`
+SceneTree script — 22 golden-master assertions covering bare bot,
+species mods (Minotaur/Naga/Octopode), each blessing kind,
+multiplicative HP stacking, lifesteal clamp, the audit-flagged
+`stat_points_unspent` key, and `of_pyromancer → spell_element_pct.fire`.
+Runs in <2s via
+`Godot --path project --headless --script tests/stat_calc_tests.gd`,
+exits non-zero on any failure. Wired into
+`tools/check_before_commit.sh` as step 2/4. First unit test in the
+project — Tier 2 audit task "Zero unit tests across 27,808 LOC"
+starts to recede.
+
+**Balance smoke** (3-run t1 mortal): floors 2/1/2, level 6→10, no
+errors / stalls / bad-floors. Within run-to-run variance vs the
+pre-fix 10-run snapshot mean of 2.0. The newly-real altar power
+swing isn't dominating tier-1; further tuning probably needed at
+T3+ once players actually stack 3-4 god blessings deep into a run.
+
+Earlier 2026-06-08 (Tier 1 save/progression bug cluster):
 - `cd69e55` `stat_calc.gd` was reading `save["unspent_points"]` while
   every writer used `stat_points_unspent`. Outpost stats panel was
   pinned to "Unspent: 0" forever post level-up.

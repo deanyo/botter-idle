@@ -71,13 +71,12 @@ var lifesteal_pct: float = 0.0
 # layers can show "Haste +24%" without recomputing the inverse-of-
 # attack_interval formula. 2026-06-06 stat-calc unification.
 var haste_pct: float = 0.0
-var base_max_hp: int = 80
-
 var blessings: Array = []
-var bonus_max_hp_pct: float = 0.0
-var bonus_atk_pct: float = 0.0
-var bonus_atk_flat: int = 0
-var bonus_def_flat: int = 0
+# Legacy run-only altar blessings persisted on these fields pre-2026-06-08.
+# atk_pct/atk_flat/def_flat/hp_pct now flow through StatCalc.compute()'s
+# blessing rollup directly (see stat_calc.gd). lifesteal_per_hit and
+# hp_regen_per_sec stay live on the bot — combat reads them in the melee
+# tick path (lifesteal at actor.gd:839, regen in Bot._process).
 var hp_regen_per_sec: float = 0.0
 var lifesteal_per_hit: int = 0
 var loot_rarity_bonus: float = 0.0
@@ -91,10 +90,6 @@ var _weapon_swing_tween: Tween
 
 func clear_blessings() -> void:
 	blessings.clear()
-	bonus_max_hp_pct = 0.0
-	bonus_atk_pct = 0.0
-	bonus_atk_flat = 0
-	bonus_def_flat = 0
 	hp_regen_per_sec = 0.0
 	lifesteal_per_hit = 0
 	loot_rarity_bonus = 0.0
@@ -102,19 +97,24 @@ func clear_blessings() -> void:
 	if _halo_sprite != null and is_instance_valid(_halo_sprite):
 		_halo_sprite.queue_free()
 	_halo_sprite = null
-	remove_status("blessed")
+	# Drop every per-god status. Pre-2026-06-08 we only carried a single
+	# generic "blessed" — now multiple gods stack one row each in the
+	# buff bar, so we sweep all 22 + the legacy id for back-compat with
+	# older save states / mid-flight transitions.
+	for sid in StatusOverlay.STATUSES.keys():
+		var sk: String = String(sid)
+		if sk == "blessed" or sk.begins_with("blessed_"):
+			remove_status(sk)
 
 func grant_blessing(b: Dictionary) -> void:
 	blessings.append(b)
 	var k: String = String(b.get("kind", ""))
 	var v: float = float(b.get("value", 0))
 	match k:
-		"atk_pct": bonus_atk_pct += v
-		"atk_flat": bonus_atk_flat += int(v)
-		"def_flat": bonus_def_flat += int(v)
-		"hp_pct": bonus_max_hp_pct += v
-		# hp_regen is re-derived from blessings array inside recompute_stats
-		# so we don't write it here directly (avoids double-counting).
+		# atk_pct/atk_flat/def_flat/hp_pct/hp_regen are read directly out
+		# of `blessings` by StatCalc.compute on the next recompute_stats —
+		# no per-kind field write needed here. lifesteal_per_hit / loot /
+		# xp_gain are still bot fields read by combat / drops / xp paths.
 		"lifesteal": lifesteal_per_hit += int(v)
 		"loot_rarity": loot_rarity_bonus += v
 		"xp_gain": xp_gain_pct += v
@@ -132,7 +132,18 @@ func grant_blessing(b: Dictionary) -> void:
 		_apply_halo(god)
 	# Mark the bot as blessed for the duration of the run. duration<=0
 	# = persistent until cleared (clear_blessings re-fires this path).
-	add_status("blessed", 0.0)
+	# Per-god status: each altar contributes its own row to the buff
+	# bar with its altar tile as the icon, so a player who blessed at
+	# Trog + Zin + Sif Muna sees three deities stacked. Pre-2026-06-08
+	# we collapsed every blessing to a single generic "blessed" icon.
+	if god != "":
+		var sid: String = "blessed_" + god
+		if StatusOverlay.STATUSES.has(sid):
+			add_status(sid, 0.0)
+		else:
+			add_status("blessed", 0.0)
+	else:
+		add_status("blessed", 0.0)
 
 const _HALO_COLORS := {
 	"trog":            Color(1.0, 0.30, 0.20, 0.55),
@@ -836,8 +847,18 @@ func attempt_attack(other: Actor, delta: float) -> int:
 		# Swing the equipped weapon overlay toward the target.
 		var toward: Vector2 = (other.position - position) if is_instance_valid(other) else Vector2.RIGHT
 		swing_weapon(toward)
-		if lifesteal_per_hit > 0:
-			hp = mini(max_hp, hp + lifesteal_per_hit)
+		# Two lifesteal channels stack:
+		#  - `lifesteal_per_hit` (flat HP from Kiku/Makhleb altar +
+		#    legacy 4-6 HP/hit blessings). Adds even on a 1-damage swing.
+		#  - `lifesteal_pct` (% from `of_lifesteal` gear, clamped to 15%
+		#    in StatCalc). Was rolled but never read pre-2026-06-08.
+		# vampiric flavor tag's fixed 8% fires separately from
+		# actor.gd::attempt_attack so vampiric weapons don't double-dip.
+		var heal: int = lifesteal_per_hit
+		if lifesteal_pct > 0.0:
+			heal += int(round(float(dealt) * lifesteal_pct / 100.0))
+		if heal > 0:
+			hp = mini(max_hp, hp + heal)
 			_update_hp_bar()
 	return dealt
 

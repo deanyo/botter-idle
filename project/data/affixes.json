@@ -272,6 +272,42 @@
       "name": "Aftershock",  "stat": "spell_shatter_aftershock",
       "applies_to": ["spell"],
       "tiers": [[1,1],[1,1],[1,1],[1,1],[1,1]]
+    },
+    {
+      "id": "of_pyromancer", "family": "generic", "kind": "pct",
+      "name": "of Pyromancer", "stat": "fire_dmg_pct",
+      "applies_to": ["amulet","ring","helm","gloves","cloak","spell"],
+      "tiers": [[4,8],[8,14],[14,22],[22,32],[32,45]]
+    },
+    {
+      "id": "of_cryomancer", "family": "generic", "kind": "pct",
+      "name": "of Cryomancer", "stat": "cold_dmg_pct",
+      "applies_to": ["amulet","ring","helm","gloves","cloak","spell"],
+      "tiers": [[4,8],[8,14],[14,22],[22,32],[32,45]]
+    },
+    {
+      "id": "of_storm",      "family": "generic", "kind": "pct",
+      "name": "of Storm",    "stat": "thunderous_dmg_pct",
+      "applies_to": ["amulet","ring","helm","gloves","cloak","spell"],
+      "tiers": [[4,8],[8,14],[14,22],[22,32],[32,45]]
+    },
+    {
+      "id": "of_zealot",     "family": "generic", "kind": "pct",
+      "name": "of Zealot",   "stat": "holy_dmg_pct",
+      "applies_to": ["amulet","ring","helm","gloves","cloak","spell"],
+      "tiers": [[4,8],[8,14],[14,22],[22,32],[32,45]]
+    },
+    {
+      "id": "of_venom",      "family": "generic", "kind": "pct",
+      "name": "of Venom",    "stat": "poison_dmg_pct",
+      "applies_to": ["amulet","ring","helm","gloves","cloak","spell"],
+      "tiers": [[4,8],[8,14],[14,22],[22,32],[32,45]]
+    },
+    {
+      "id": "of_shadow",     "family": "generic", "kind": "pct",
+      "name": "of Shadow",   "stat": "dark_dmg_pct",
+      "applies_to": ["amulet","ring","helm","gloves","cloak","spell"],
+      "tiers": [[4,8],[8,14],[14,22],[22,32],[32,45]]
     }
   ]
 }

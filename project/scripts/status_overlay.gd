@@ -17,6 +17,7 @@ extends RefCounted
 # remove_status(id) is called explicitly (used for blessings).
 
 const PLAYER_DIR := "res://assets/tiles/player/status/"
+const FEATURES_DIR := "res://assets/tiles/features/"
 
 # Status definitions. Each:
 #   icon  — sprite path under PLAYER_DIR
@@ -51,6 +52,34 @@ const STATUSES := {
 	# alongside dodge math; 30% miss while up.
 	"blinded":  { "icon": "ward.png",   "tint": Color(0.85, 0.75, 0.30, 0.85), "pulse": true, "z": 9,
 		"label": "Blinded", "desc": "30% chance to miss attacks." },
+	# Per-god blessing statuses (2026-06-08). Replaces the single
+	# generic "blessed" icon — each altar emits its own status with
+	# its altar tile as the buff-bar icon, so the player sees a row
+	# of distinct deities in the buff bar when they've blessed at
+	# multiple altars in a run. Run-scoped: cleared at run start by
+	# Bot.clear_blessings, never on floor descent.
+	"blessed_trog":            { "icon": "res://assets/tiles/features/altar_trog.png",            "tint": Color(1.0, 0.30, 0.20),  "pulse": false, "z": 1, "label": "Trog's Rage",         "desc": "+20% ATK (run)" },
+	"blessed_okawaru":         { "icon": "res://assets/tiles/features/altar_okawaru.png",         "tint": Color(0.85, 0.75, 0.40), "pulse": false, "z": 1, "label": "Okawaru's Boon",      "desc": "+15 ATK +5 DEF (run)" },
+	"blessed_zin":             { "icon": "res://assets/tiles/features/altar_zin.png",             "tint": Color(1.0, 1.0, 0.70),   "pulse": false, "z": 1, "label": "Zin's Light",         "desc": "+30% Max HP (run)" },
+	"blessed_elyvilon":        { "icon": "res://assets/tiles/features/altar_elyvilon.png",        "tint": Color(0.60, 1.0, 0.70),  "pulse": false, "z": 1, "label": "Elyvilon's Mercy",    "desc": "Regen 3 HP/sec (run)" },
+	"blessed_vehumet":         { "icon": "res://assets/tiles/features/altar_vehumet.png",         "tint": Color(0.70, 0.40, 1.0),  "pulse": false, "z": 1, "label": "Vehumet's Power",     "desc": "+25% loot rarity (run)" },
+	"blessed_kikubaaqudgha":   { "icon": "res://assets/tiles/features/altar_kikubaaqudgha.png",   "tint": Color(0.40, 0.20, 0.60), "pulse": false, "z": 1, "label": "Kiku's Hunger",       "desc": "Lifesteal 4 HP/hit (run)" },
+	"blessed_sif_muna":        { "icon": "res://assets/tiles/features/altar_sif_muna.png",        "tint": Color(0.40, 0.70, 1.0),  "pulse": false, "z": 1, "label": "Sif Muna's Wisdom",   "desc": "+50% XP gain (run)" },
+	"blessed_beogh":           { "icon": "res://assets/tiles/features/altar_beogh.png",           "tint": Color(0.90, 0.50, 0.20), "pulse": false, "z": 1, "label": "Beogh's Warband",     "desc": "+25% ATK (run)" },
+	"blessed_makhleb":         { "icon": "res://assets/tiles/features/altar_makhleb.png",         "tint": Color(1.0, 0.40, 0.10),  "pulse": false, "z": 1, "label": "Makhleb's Frenzy",    "desc": "Lifesteal 6 HP/hit (run)" },
+	"blessed_yredelemnul":     { "icon": "res://assets/tiles/features/altar_yredelemnul.png",     "tint": Color(0.50, 0.10, 0.40), "pulse": false, "z": 1, "label": "Yred's Reaping",      "desc": "+25 ATK (run)" },
+	"blessed_the_shining_one": { "icon": "res://assets/tiles/features/altar_the_shining_one.png", "tint": Color(1.0, 0.95, 0.50),  "pulse": false, "z": 1, "label": "TSO's Halo",          "desc": "+15 DEF +20% Max HP (run)" },
+	"blessed_lugonu":          { "icon": "res://assets/tiles/features/altar_lugonu.png",          "tint": Color(0.30, 0.10, 0.30), "pulse": false, "z": 1, "label": "Lugonu's Corruption", "desc": "+35% ATK (run)" },
+	"blessed_jiyva":           { "icon": "res://assets/tiles/features/altar_jiyva.png",           "tint": Color(0.40, 0.85, 0.30), "pulse": false, "z": 1, "label": "Jiyva's Slime",       "desc": "Regen 5 HP/sec (run)" },
+	"blessed_fedhas":          { "icon": "res://assets/tiles/features/altar_fedhas.png",          "tint": Color(0.30, 0.85, 0.40), "pulse": false, "z": 1, "label": "Fedhas's Garden",     "desc": "+40% Max HP (run)" },
+	"blessed_cheibriados":     { "icon": "res://assets/tiles/features/altar_cheibriados.png",     "tint": Color(0.50, 0.50, 0.40), "pulse": false, "z": 1, "label": "Cheibriados's Patience", "desc": "+30 DEF (run)" },
+	"blessed_xom":             { "icon": "res://assets/tiles/features/altar_xom.png",             "tint": Color(1.0, 0.40, 0.80),  "pulse": false, "z": 1, "label": "Xom's Whim",          "desc": "+50% ATK (run)" },
+	"blessed_ashenzari":       { "icon": "res://assets/tiles/features/altar_ashenzari.png",       "tint": Color(0.70, 0.65, 0.45), "pulse": false, "z": 1, "label": "Ashenzari's Sight",   "desc": "+40% loot rarity (run)" },
+	"blessed_dithmenos":       { "icon": "res://assets/tiles/features/altar_dithmenos.png",       "tint": Color(0.20, 0.20, 0.30), "pulse": false, "z": 1, "label": "Dithmenos's Shadow",  "desc": "+20 ATK +10 DEF (run)" },
+	"blessed_gozag":           { "icon": "res://assets/tiles/features/altar_gozag.png",           "tint": Color(1.0, 0.85, 0.30),  "pulse": false, "z": 1, "label": "Gozag's Gold",        "desc": "+60% loot rarity (run)" },
+	"blessed_qazlal":          { "icon": "res://assets/tiles/features/altar_qazlal.png",          "tint": Color(0.60, 0.70, 0.95), "pulse": false, "z": 1, "label": "Qazlal's Storm",      "desc": "+30% ATK (run)" },
+	"blessed_nemelex":         { "icon": "res://assets/tiles/features/altar_nemelex.png",         "tint": Color(0.90, 0.40, 0.80), "pulse": false, "z": 1, "label": "Nemelex's Deck",      "desc": "+50% loot rarity (run)" },
+	"blessed_ru":              { "icon": "res://assets/tiles/features/altar_ru.png",              "tint": Color(0.90, 0.85, 0.70), "pulse": false, "z": 1, "label": "Ru's Sacrifice",      "desc": "+75% ATK -25% Max HP (run)" },
 }
 
 # Enemy-id substrings that classify each holy/bane category. The
@@ -90,7 +119,9 @@ static func texture_for(id: String) -> Texture2D:
 	if icon == "":
 		_tex_cache[id] = null
 		return null
-	var path: String = PLAYER_DIR + icon
+	# Absolute paths (e.g. "res://assets/tiles/features/altar_trog.png")
+	# pass through; bare filenames default to the player/status/ dir.
+	var path: String = icon if icon.begins_with("res://") else PLAYER_DIR + icon
 	if not ResourceLoader.exists(path):
 		_tex_cache[id] = null
 		return null
