@@ -252,7 +252,7 @@ static func _fire_fireball(bot: Node, dungeon: Node, item: Dictionary) -> bool:
 	var scale_mult: float = _scale_mult_for(item)
 	for i in proj_count:
 		var target: Node = candidates[i % candidates.size()].e
-		Projectile.spawn_fireball(dungeon.actor_layer, origin, target, damage, speed, sprite_path, element, dungeon, tint, scale_mult)
+		Projectile.spawn_fireball(dungeon.actor_layer, origin, target, damage, speed, sprite_path, element, dungeon, tint, scale_mult, bot)
 	return true
 
 # Frost Nova — radial AoE pulse around the bot. Hits all enemies in
@@ -271,10 +271,11 @@ static func _fire_frost_nova(bot: Node, dungeon: Node, item: Dictionary) -> bool
 		return false
 	var damage: int = SpellData.compute_damage(bot, item, item.get("_inst", null))
 	var slow_dur: float = 2.0 * (1.0 + float(bot.spell_duration_pct) / 100.0)
+	var dt: String = SpellData.damage_type_for_element(String(arch.get("element", "")))
 	for entry in enemies:
 		var e: Node = entry.e
 		if is_instance_valid(e) and e.has_method("take_damage"):
-			e.take_damage(damage)
+			e.take_damage(damage, bot, dt)
 			if e.has_method("add_status"):
 				e.add_status("slowed", slow_dur)
 	# Visual: expanding ring centered on bot. Color follows the EQUIPPED
@@ -303,10 +304,11 @@ static func _fire_chain_lightning(bot: Node, dungeon: Node, item: Dictionary) ->
 	var chain_points: Array = [bot.position + Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5)]
 	var current: Node = initial[0].e
 	var dmg: float = float(damage)
+	var chain_dt: String = SpellData.damage_type_for_element(String(arch.get("element", "")))
 	for jump_i in jump_count:
 		if not is_instance_valid(current) or not current.is_alive:
 			break
-		current.take_damage(int(round(dmg)))
+		current.take_damage(int(round(dmg)), bot, chain_dt)
 		hit_set[current.get_instance_id()] = true
 		chain_points.append(current.position + Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5))
 		# Next target — closest live enemy not yet hit, within ~4 cells of current.
@@ -365,6 +367,7 @@ static func _fire_holy_beam(bot: Node, dungeon: Node, item: Dictionary) -> bool:
 	var cone_half_angle: float = deg_to_rad(60.0) * (1.0 + float(bot.spell_area_pct) / 100.0)
 	var max_dist: float = float(range_cells) * float(C.TILE_SIZE)
 	var damage: int = SpellData.compute_damage(bot, item, item.get("_inst", null))
+	var beam_dt: String = SpellData.damage_type_for_element(String(arch.get("element", "")))
 	var hits: int = 0
 	for e in dungeon.enemies:
 		if not is_instance_valid(e) or not e.is_alive:
@@ -375,7 +378,7 @@ static func _fire_holy_beam(bot: Node, dungeon: Node, item: Dictionary) -> bool:
 			continue
 		var ang: float = abs(to_e.angle_to(facing))
 		if ang <= cone_half_angle:
-			e.take_damage(damage)
+			e.take_damage(damage, bot, beam_dt)
 			hits += 1
 	if hits == 0:
 		return false
@@ -442,15 +445,15 @@ static func _fire_magic_dart(bot: Node, dungeon: Node, item: Dictionary) -> bool
 	var scale_mult: float = _scale_mult_for(item)
 	for i in proj_count:
 		var target: Node = candidates[i % candidates.size()].e
-		Projectile.spawn_fireball(dungeon.actor_layer, origin, target, damage, speed, sprite_path, element, dungeon, tint, scale_mult)
+		Projectile.spawn_fireball(dungeon.actor_layer, origin, target, damage, speed, sprite_path, element, dungeon, tint, scale_mult, bot)
 		if split and is_instance_valid(target):
 			# Side darts target enemies at ±1 in the candidate list when
 			# they exist; otherwise fall back to the same target so the
 			# sprites at least visualise the splinter.
 			var alt_a: Node = candidates[(i + 1) % candidates.size()].e
 			var alt_b: Node = candidates[(i + candidates.size() - 1) % candidates.size()].e
-			Projectile.spawn_fireball(dungeon.actor_layer, origin, alt_a, int(damage * 0.5), speed, sprite_path, element, dungeon, tint, scale_mult)
-			Projectile.spawn_fireball(dungeon.actor_layer, origin, alt_b, int(damage * 0.5), speed, sprite_path, element, dungeon, tint, scale_mult)
+			Projectile.spawn_fireball(dungeon.actor_layer, origin, alt_a, int(damage * 0.5), speed, sprite_path, element, dungeon, tint, scale_mult, bot)
+			Projectile.spawn_fireball(dungeon.actor_layer, origin, alt_b, int(damage * 0.5), speed, sprite_path, element, dungeon, tint, scale_mult, bot)
 	return true
 
 # Iron Shot — slow heavy projectile that hits every enemy along its
@@ -478,7 +481,7 @@ static func _fire_iron_shot(bot: Node, dungeon: Node, item: Dictionary) -> bool:
 	var tint: Color = _visual_color_for_item(item, "earth")
 	var origin: Vector2 = bot.position + Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5)
 	var target: Node = candidates[0].e
-	var p: Projectile = Projectile.spawn_fireball(dungeon.actor_layer, origin, target, damage, speed, sprite_path, element, dungeon, tint, _scale_mult_for(item))
+	var p: Projectile = Projectile.spawn_fireball(dungeon.actor_layer, origin, target, damage, speed, sprite_path, element, dungeon, tint, _scale_mult_for(item), bot)
 	if p != null:
 		p.piercing = true
 		p.pierce_falloff = 0.75
@@ -519,6 +522,7 @@ static func _fire_sandblast(bot: Node, dungeon: Node, item: Dictionary) -> bool:
 	var cone_half_angle: float = deg_to_rad(45.0) * (1.0 + float(bot.spell_area_pct) / 100.0)
 	var max_dist: float = float(range_cells) * float(C.TILE_SIZE)
 	var damage: int = SpellData.compute_damage(bot, item, item.get("_inst", null))
+	var sand_dt: String = SpellData.damage_type_for_element(String(arch.get("element", "")))
 	# Blinding Grit affix flag — apply blinded debuff (miss chance) on hit.
 	var blind: bool = bool(item.get("spell_sandblast_blind", false))
 	var hits: int = 0
@@ -531,7 +535,7 @@ static func _fire_sandblast(bot: Node, dungeon: Node, item: Dictionary) -> bool:
 			continue
 		var ang: float = abs(to_e.angle_to(facing))
 		if ang <= cone_half_angle:
-			e.take_damage(damage)
+			e.take_damage(damage, bot, sand_dt)
 			if blind and e.has_method("add_status"):
 				e.add_status("blinded", 2.0)
 			hits += 1
@@ -567,7 +571,7 @@ static func _fire_drain(bot: Node, dungeon: Node, item: Dictionary) -> bool:
 	var scale_mult: float = _scale_mult_for(item)
 	for i in proj_count:
 		var target: Node = candidates[i % candidates.size()].e
-		var p: Projectile = Projectile.spawn_fireball(dungeon.actor_layer, origin, target, damage, speed, sprite_path, element, dungeon, tint, scale_mult)
+		var p: Projectile = Projectile.spawn_fireball(dungeon.actor_layer, origin, target, damage, speed, sprite_path, element, dungeon, tint, scale_mult, bot)
 		if p != null:
 			p.lifesteal_pct = 35.0
 			p.lifesteal_target = bot
@@ -589,10 +593,11 @@ static func _fire_shatter(bot: Node, dungeon: Node, item: Dictionary) -> bool:
 	if enemies.is_empty():
 		return false
 	var damage: int = SpellData.compute_damage(bot, item, item.get("_inst", null))
+	var shatter_dt: String = SpellData.damage_type_for_element(String(arch.get("element", "")))
 	for entry in enemies:
 		var e: Node = entry.e
 		if is_instance_valid(e) and e.has_method("take_damage"):
-			e.take_damage(damage)
+			e.take_damage(damage, bot, shatter_dt)
 			if e.has_method("add_status"):
 				e.add_status("stunned", 0.6)
 	var origin: Vector2 = bot.position + Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5)
@@ -615,7 +620,7 @@ static func _fire_shatter(bot: Node, dungeon: Node, item: Dictionary) -> bool:
 			for entry2 in enemies2:
 				var e2: Node = entry2.e
 				if is_instance_valid(e2) and e2.has_method("take_damage"):
-					e2.take_damage(int(damage * 0.5))
+					e2.take_damage(int(damage * 0.5), bot, shatter_dt)
 			SpellAoe.spawn_ring(dungeon.actor_layer, late_origin, float(radius2_cells) * float(C.TILE_SIZE), _visual_color_for_item(item, "earth"))
 			t.queue_free()
 		)

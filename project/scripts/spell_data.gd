@@ -140,6 +140,17 @@ const ARCHETYPES := {
 static func archetype_def(base_type: String) -> Dictionary:
 	return ARCHETYPES.get(base_type, {})
 
+# Map an archetype `element` key to the `damage_type` key used by
+# Actor.take_damage / resolve_swing. Spells with no element (axes,
+# magic_dart, iron_shot, sandblast, shatter) read as physical so they
+# route through armor mitigation. `thunderous` is the spell-element /
+# affix-name, but `lightning` is the resistance / damage_type key.
+static func damage_type_for_element(element: String) -> String:
+	match element:
+		"fire", "cold", "holy", "poison", "dark": return element
+		"thunderous": return "lightning"
+		_: return "physical"
+
 static func is_spell_archetype(base_type: String) -> bool:
 	return ARCHETYPES.has(base_type)
 

@@ -136,5 +136,9 @@ func _process(delta: float) -> void:
 					continue
 				if world_pos.distance_squared_to(e.position) < HIT_RADIUS_PX * HIT_RADIUS_PX:
 					if e.has_method("take_damage"):
-						e.take_damage(damage)
+						# Spinning Axes archetype has no element — physical.
+						# Pass bot_ref as the attacker so the defender's
+						# tag-driven mitigation (harm/willpower/thorns/etc)
+						# evaluates against the bot's weapon tags.
+						e.take_damage(damage, bot_ref, "physical")
 					hits[e.get_instance_id()] = elapsed + HIT_INVULN_SEC

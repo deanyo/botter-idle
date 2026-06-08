@@ -25,6 +25,12 @@ var target: Node = null
 var dungeon_ref: Node = null
 var lifetime: float = 0.0
 var dead: bool = false
+# Caster — passed as the `attacker` arg to take_damage so the defender's
+# resist / willpower / harm / earth / thorns / crystal tag-rolls evaluate
+# against the bot's weapon tags (atk_tags inside actor.resolve_swing).
+# Set by spawn_fireball; falls back to lifesteal_target on Drain
+# projectiles that omit it for back-compat.
+var caster: Node = null
 
 # 2026-06-04 spell expansion — pierce + lifesteal + buff hooks. Iron
 # Shot sets piercing=true so the projectile keeps flying after impact;
@@ -42,7 +48,7 @@ var lifesteal_buff_bot: bool = false  # Ravenous affix — apply hasted on hit
 
 @onready var sprite: Sprite2D = $Sprite
 
-static func spawn_fireball(parent: Node, world_pos: Vector2, target_enemy: Node, dmg: int, speed: float, sprite_path: String, element_key: String, dungeon: Node, tint: Color = Color(0, 0, 0, 0), scale_mult: float = 1.0) -> Projectile:
+static func spawn_fireball(parent: Node, world_pos: Vector2, target_enemy: Node, dmg: int, speed: float, sprite_path: String, element_key: String, dungeon: Node, tint: Color = Color(0, 0, 0, 0), scale_mult: float = 1.0, caster: Node = null) -> Projectile:
 	var p := Projectile.new()
 	p.position = world_pos
 	p.damage = dmg
@@ -50,6 +56,7 @@ static func spawn_fireball(parent: Node, world_pos: Vector2, target_enemy: Node,
 	p.speed_px = speed
 	p.target = target_enemy
 	p.dungeon_ref = dungeon
+	p.caster = caster
 	# Initial heading toward target so the first frame already moves.
 	if is_instance_valid(target_enemy):
 		var to_target: Vector2 = target_enemy.position - world_pos
@@ -121,8 +128,15 @@ func _impact_on(enemy: Node) -> void:
 	dead = true
 	var dealt: int = 0
 	if is_instance_valid(enemy) and enemy.has_method("take_damage"):
-		enemy.take_damage(damage)
-		dealt = damage
+		# Pipe element + attacker so resists/willpower/harm/thorns evaluate
+		# correctly. SpellData maps element keys (fire/cold/thunderous/holy
+		# /poison/dark) to damage_type keys; thunderous→lightning so the
+		# resistance lookup hits the right bucket. caster falls back to
+		# lifesteal_target on Drain projectiles that don't set caster
+		# explicitly (back-compat).
+		var dt: String = SpellData.damage_type_for_element(element)
+		var src: Node = caster if caster != null else lifesteal_target
+		dealt = enemy.take_damage(damage, src, dt)
 	# Lifesteal — heal the bot (lifesteal_target) by a % of dealt damage
 	# regardless of the bot's gear lifesteal_pct. Drain spell wires this.
 	if lifesteal_pct > 0.0 and is_instance_valid(lifesteal_target) and dealt > 0:
@@ -150,7 +164,11 @@ func _pierce_hit(enemy: Node) -> void:
 	if not is_instance_valid(enemy) or not enemy.has_method("take_damage"):
 		return
 	var dmg_now: float = float(damage) * pow(pierce_falloff, float(pierce_count))
-	enemy.take_damage(maxi(1, int(round(dmg_now))))
+	# Pierce hits also need to evaluate resists and route thorns/crystal
+	# back to the caster — pass element + attacker like _impact_on does.
+	var dt: String = SpellData.damage_type_for_element(element)
+	var src: Node = caster if caster != null else lifesteal_target
+	enemy.take_damage(maxi(1, int(round(dmg_now))), src, dt)
 	pierce_count += 1
 	if pierce_apply_status != "" and pierce_apply_duration > 0.0 and enemy.has_method("add_status"):
 		enemy.add_status(pierce_apply_status, pierce_apply_duration)
