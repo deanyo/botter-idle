@@ -30,7 +30,10 @@ uniform float bot_radius_px = 256.0;
 // March step count — tradeoff between LoS sharpness and per-pixel cost.
 // 24 steps × ~10px each at the bot's full radius keeps walls airtight
 // while giving us enough samples to soft-occlude rather than hard-cut.
-const int MARCH_STEPS = 24;
+// Web GL Compatibility runs the fragment shader on every screen pixel
+// every frame; 24 steps × 24 lights produced multi-second GPU stalls.
+// Halved to 12 — still airtight, ~half the per-pixel cost.
+const int MARCH_STEPS = 12;
 
 float hash(vec2 p) {
 	return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);

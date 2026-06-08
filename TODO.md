@@ -5,6 +5,61 @@ the durable rules in `CLAUDE.md`. Update this file when committing.
 
 ---
 
+## HTML5 / itch.io shipping (2026-06-08)
+
+**Status:** Shipped. Friend playtesting in Safari confirms smooth
+gameplay (other than Safari's 60fps cap, which is browser policy
+and not a build issue). Live at
+https://deanyo-gh.itch.io/botter-idle, restricted visibility.
+
+### Done
+
+- HTML5 export working with single-threaded WASM + Compatibility
+  renderer (no SharedArrayBuffer dependency, runs in any browser)
+- itch.io project page set up + cover/description/credits, profile
+  pad copy in `itch/profile.md`, devlog draft in `itch/devlog_001_first_build.md`
+- butler push pipeline + `/deploy-web` skill + `tools/deploy_web.sh`
+- Manual zip fallback path documented (itch CDN occasionally lags)
+- Per-deploy version stamp visible in HUD + browser tab title
+- Vault bundle, tile dir manifest, multi-source TileSet — see
+  `HANDOVER.md` web-perf section
+- Wave-spawn stagger + RenderingServer GPU prewarm
+- Shared shader materials across map/particle/recolor surfaces
+- Web-specific shader skips (threat outline, item recolor, light
+  shadows, weapon-glow pulse)
+- Fog overlay shader halved march steps + lights capped at 8 on web
+- `[perf-spike]` diagnostic with browser-throttle filtering
+- `[perf]` rolling stats line (frame_ms / fps / draws / per-system µs)
+- Always-visible fullscreen button in HUD top-right
+- Pause-menu fullscreen toggle (uses `JavaScriptBridge.eval` to
+  call `canvas.requestFullscreen()` on web — Godot's
+  `DisplayServer.window_set_mode` no-ops in browsers)
+
+### Web-perf follow-ups (deferred — current state is good enough)
+
+- **First-floor cold-load is still ~5-15s** on a never-loaded biome.
+  RenderingServer prewarm helps subsequent floors but the first
+  visible frame still pays a one-time pipeline-state compile per
+  unique (texture × shader) combination. To drive it lower we'd
+  need to render every prewarmed texture through the SAME shader
+  the dungeon uses (visibility shader on TileMapLayer) — that's a
+  bigger refactor.
+- **Compatibility renderer** is the only one we ship to web. Forward+
+  on web is supported in Godot 4.6 and might have totally different
+  perf characteristics. Worth a one-day spike if web becomes a real
+  target later, but Steam + mobile are the actual end-game so don't
+  invest more here.
+- **wasm size** is 36 MB (~12 MB gzipped). Stripping unused engine
+  modules via a custom export template would shrink first-load,
+  but it's a multi-hour build pipeline change for a target we're
+  not committing to long-term.
+- **itch.io CDN propagation lag.** butler push reports success but
+  Chrome/Firefox can serve stale wasm/pck for several minutes.
+  Workaround: manual zip upload via the itch edit page. No code
+  fix possible — itch infrastructure issue.
+
+---
+
 ## Balance validation 10-run snapshot (2026-06-07)
 
 After the floor-1-2 density softening + shop rarity gate. NB: grind

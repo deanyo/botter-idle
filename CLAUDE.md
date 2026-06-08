@@ -95,6 +95,11 @@ reinvent these rituals each session.
   — simulate full game start-to-end. Three configurable policies decide
   what the simulated player does between runs. Outputs per-tier playtime
   + win-rate table. Use to calibrate the difficulty curve.
+- **`/deploy-web`** — build the HTML5 export and push it to itch.io
+  (`deanyo-gh/botter-idle:html5`) via butler. Wraps
+  `tools/deploy_web.sh`. First push uploads ~12MB; subsequent pushes
+  diff (typically <1MB). Prereq: `~/bin/butler` installed +
+  `butler login` once.
 
 **Long experiments** — when running anything that takes >5 min, wrap with
 `tools/run_experiment.sh <name> <command>`. Detaches from parent shell
@@ -271,6 +276,99 @@ When porting a DCSS algorithm:
 - **Attribution:** credits screen must read: *"Part of the graphic tiles
   used in this program are from the public domain roguelike tileset
   RLTiles. http://rltiles.sf.net"* and credit DCSS contributors (CC0).
+
+## HTML5 / Web export — Compatibility-renderer perf playbook
+
+Botter ships to itch.io via `/deploy-web` (see Skills section above).
+The export uses **Compatibility renderer + single-threaded WASM** so
+it runs without SharedArrayBuffer headers. That choice constrains
+the visual stack — Web GL Compatibility on macOS browsers has
+specific failure modes that Forward+ desktop doesn't.
+
+When adding a visual feature that involves a `ShaderMaterial`,
+`ParticleProcessMaterial`, `PointLight2D`, or per-instance shader
+allocation, design with these rules baked in:
+
+1. **Shared materials, not per-instance.** A fresh `ShaderMaterial.new()`
+   per sprite triggers a synchronous shader pipeline compile/link
+   on Web GL the first time the (texture × shader) combination
+   draws — multi-second main-thread stall. **Cache by parameter
+   tuple** the way `UITheme._recolor_mat_cache` does:
+   ```gdscript
+   static var _mat_cache: Dictionary = {}
+   func material_for(spec: Dictionary) -> ShaderMaterial:
+       var key: String = "%.4f|%.4f|%d" % [spec.a, spec.b, spec.mode]
+       var cached: Variant = _mat_cache.get(key, null)
+       if cached != null and is_instance_valid(cached):
+           return cached
+       var mat := ShaderMaterial.new()
+       # ... configure ...
+       _mat_cache[key] = mat
+       return mat
+   ```
+   Per-instance Tweens that mutate shader uniforms are fine; the
+   uniform writes are cheap, only the program compile is expensive.
+2. **Skip on web when the visual is dispensable.** Use
+   `if OS.has_feature("web"): return` early-out for shader effects
+   that aren't load-bearing for gameplay readability — threat
+   outlines, item-recolor tints, weapon-glow pulse tweens,
+   `PointLight2D` shadow casting. Modulate-based fallbacks
+   (`sprite.modulate = ...`) cost nothing extra. See
+   `enemy.gd::_ensure_outline_material` and
+   `light_spec.gd::attach` for examples.
+3. **Pre-warm any texture that will appear mid-run.** A loot drop
+   or wave-spawned enemy with a never-before-drawn texture stalls
+   for 1-3s the first time it draws. `BiomeData.prewarm_biome`
+   walks every floor / wall / overlay / sigil / enemy / item
+   texture and forces an actual GPU upload via
+   `RenderingServer.canvas_item_add_texture_rect` against the
+   root canvas (1×1 rect, full alpha — alpha=0 gets culled). It's
+   throttled at 8 textures per frame so the prewarm itself stays
+   smooth. Outpost calls `prewarm_biome` for every unlocked branch
+   on `_ready`.
+4. **Stagger spawns across frames.** N enemies materializing on
+   the same frame multiplies texture-upload + node-add cost into
+   one synchronous stall. `dungeon.gd` queues spawns in
+   `_pending_wave_spawns` and drains one per frame from `_process`.
+   Same pattern any time you'd burst-spawn N visual nodes.
+5. **Multi-source TileSet > packed atlas.** `MapRenderer` builds
+   one `TileSetAtlasSource` per texture instead of compositing
+   them into a packed image. The packed-atlas approach calls
+   `tex.get_image()` per tile (forces GPU→CPU readback —
+   catastrophic on Web GL). Multi-source costs more draw calls
+   (~50 instead of 1) but those are GPU-side and trivial at our
+   80×80 grid scale.
+6. **Browser tab throttling produces phantom spikes.** When the
+   tab is backgrounded or inactive, the browser pauses RAF and
+   resumes it with exponential backoff (1s → 2s → 4s → 8s).
+   Naively measuring `Time.get_ticks_usec()` between `_process`
+   calls flags those pauses as "5-second freezes." `PerfMon.spike_tick`
+   filters with `dt_ms > 15000` discard + `not DisplayServer.window_is_focused()`
+   discard. When debugging real perf, **keep the browser tab
+   focused**, or work around the false signal.
+
+**Diagnostic stamps.** When investigating a real spike, add
+`PerfMon.note_spike_context("<event-id> <key=val>")` calls at
+suspect entry points. The next `[perf-spike]` printout carries
+that context. We've stamped chest-open, wave-spawn, loot-pickup,
+descend, drain-spawn, floor-built — extend as needed.
+
+**Manual zip upload fallback.** itch.io's CDN occasionally serves
+stale wasm/pck for several minutes after a butler push (verified
+2026-06-08 — Chrome served v3 while butler dashboard reported
+v13). When testing a deploy and the in-game build stamp doesn't
+match what was pushed, drop `dist/botter_web.zip` on
+https://deanyo-gh.itch.io/botter-idle/edit → Replace file. Bypasses
+butler/CDN entirely.
+
+**Build version visibility.** `tools/deploy_web.sh` writes
+`project/data/build_version.json` with an auto-incrementing counter
+(`dist/.build_counter`) + a deploy timestamp. The game prints
+`[build] version=vN ts=...` on boot, sets the browser tab title
+to "Botter — build vN" via `JavaScriptBridge.eval`, and shows it
+as the first line of the in-game debug HUD (`dungeon.gd::_build_stamp`).
+Triple redundancy because verifying which build the user is
+actually running matters when CDN caching is unreliable.
 
 ## Visual-tuning UIs — the FX Tuner pattern
 

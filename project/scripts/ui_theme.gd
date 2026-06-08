@@ -165,7 +165,18 @@ const _MODE_INDEX := {
 	"colorize":  4,  # 2026-06-05 — forces hue onto white/grey art
 }
 
+static var _recolor_mat_cache: Dictionary = {}
+
 static func recolor_material_for(inst: Variant) -> ShaderMaterial:
+	# Web GL Compatibility compiles a shader pipeline per (texture ×
+	# shader) combination synchronously on the main thread. Recolor
+	# materials applied to dozens of unique item textures (each
+	# inventory cell, paperdoll slot, floor loot drop, bot rig overlay)
+	# triggered multi-second hangs whenever a new item appeared. Skip
+	# the recolor entirely on web — items lose their per-roll tint
+	# variation but the base art reads cleanly.
+	if OS.has_feature("web"):
+		return null
 	if typeof(inst) != TYPE_DICTIONARY:
 		return null
 	var tint: Variant = inst.get("tint", null)
@@ -182,15 +193,30 @@ static func recolor_material_for(inst: Variant) -> ShaderMaterial:
 				tint = dt
 	if typeof(tint) != TYPE_DICTIONARY:
 		return null
+	# Cache by (hue, sat, mode, colorize_strength) — a 100-cell rebuild
+	# was creating 100 fresh ShaderMaterials and on HTML5 / GL
+	# compatibility every new ShaderMaterial triggers a synchronous
+	# shader program compile, freezing the main thread for seconds when
+	# the rarity filter chip rebuilt the inventory grid. Cache hits
+	# return the same compiled material — no compile, no freeze.
+	var hue: float = float(tint.get("hue", 0.0))
+	var sat: float = float(tint.get("sat", 1.0))
+	var mode: int = int(_MODE_INDEX.get(String(tint.get("mode", "normal")), 0))
+	var col_str: float = float(tint.get("colorize_strength", 0.7))
+	var key: String = "%.4f|%.4f|%d|%.4f" % [hue, sat, mode, col_str]
+	var cached: Variant = _recolor_mat_cache.get(key, null)
+	if cached != null and is_instance_valid(cached):
+		return cached
 	var mat := ShaderMaterial.new()
 	mat.shader = _ITEM_RECOLOR_SHADER
-	mat.set_shader_parameter("hue", float(tint.get("hue", 0.0)))
-	mat.set_shader_parameter("saturation", float(tint.get("sat", 1.0)))
-	mat.set_shader_parameter("mode", int(_MODE_INDEX.get(String(tint.get("mode", "normal")), 0)))
+	mat.set_shader_parameter("hue", hue)
+	mat.set_shader_parameter("saturation", sat)
+	mat.set_shader_parameter("mode", mode)
 	# Per-instance colorize strength (only read by mode 4). Default
 	# 0.7 — heavy enough to read on white plate, light enough that
 	# luma variation still survives.
-	mat.set_shader_parameter("colorize_strength", float(tint.get("colorize_strength", 0.7)))
+	mat.set_shader_parameter("colorize_strength", col_str)
+	_recolor_mat_cache[key] = mat
 	return mat
 
 # Subtle rarity wash applied to item icons (paperdoll slots, inventory

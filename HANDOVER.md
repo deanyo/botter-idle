@@ -4,7 +4,117 @@ Point-in-time snapshot of what's actually shipping. Updated as we go. The
 durable rules and process live in `CLAUDE.md`; the roadmap and open work
 items live in `TODO.md`.
 
-Last refresh: 2026-06-06 (stat system unification). Single source of
+Last refresh: 2026-06-08 (HTML5 web build + itch.io playtest). Botter
+is now publicly playable in a browser at
+**https://deanyo-gh.itch.io/botter-idle**. itch project is set to
+"restricted" visibility — link-only sharing for friends-feedback. Build
+shipped in **Compatibility renderer + single-threaded WASM** so it runs
+on every browser without needing the SharedArrayBuffer header dance.
+
+**Deploy pipeline.** `tools/deploy_web.sh` runs Godot's HTML5 export →
+zips for archive → pushes via butler to `deanyo-gh/botter-idle:html5`.
+Wrapped as the `/deploy-web` skill so future sessions invoke it
+naturally. Each deploy auto-bumps a counter in `dist/.build_counter`,
+stamps `project/data/build_version.json`, and the game prints
+`[build] version=vN ts=...` on boot + bakes "Botter — build vN" into
+the browser tab title + shows it in the in-game debug HUD. Triple
+redundancy because itch's CDN occasionally serves stale wasm/pck for
+several minutes after a butler push — manual zip upload via the itch
+edit page is the reliable fallback when butler's CDN is lagging.
+
+**Web perf optimizations shipped today** (in priority order of
+real-world impact):
+
+1. **`MapRenderer` atlas-bake → multi-source TileSet.** Pre-fix,
+   every floor build called `tex.get_image()` per tile (forces
+   GPU→CPU readback) and uploaded a packed atlas — that's the
+   single biggest cost in Godot Web GL Compatibility. New path
+   builds a TileSet with one source per texture; ~50 sources
+   instead of 1, but no `get_image()` calls. Cut dungeon-load
+   from 60s → 15s.
+2. **Vault bundle.** `tools/build_vault_bundle.py` packs all 1335
+   `.json` vault files into one `vaults_bundle.json` (0.8 MB).
+   `VaultLibrary._ensure_loaded` reads the bundle first, falls
+   back to per-file enumeration on desktop dev. Web load dropped
+   another ~10s; per-file vaults excluded from the web pck via
+   `exclude_filter` so the pck is also smaller.
+3. **Tile dir manifest.** `tools/build_tile_dir_manifest.py`
+   pre-bakes directory listings for `floor/`, `wall/`, `overlays/`,
+   `sigils/`, `items/artefacts/`, `data/vaults/`. HTML5 can't
+   enumerate `res://` directories via DirAccess (virtualized FS in
+   the .pck), so `BiomeData._list_dir`, `VaultLibrary`, and
+   `ArtefactPool` read from `data/tile_dir_manifest.json` first.
+4. **Wave-spawn stagger.** `dungeon.gd::_tick_wave_spawns` queues
+   spawn IDs into `_pending_wave_spawns` instead of spawning
+   N enemies in a single frame. `_drain_pending_spawns` pulls
+   one per frame from `_process`. Pre-fix: 4-8 enemies materializing
+   on the same frame triggered a synchronous GPU pipeline compile
+   stall (6+ second hang). Now spread across 4-8 frames so each
+   frame's pipeline cost is invisible.
+5. **GPU upload pre-warm via RenderingServer.** `BiomeData.prewarm_biome`
+   walks every floor / wall / overlay / sigil / enemy / item
+   texture for the chosen biome and forces an actual GPU upload
+   by drawing 1×1 rects via `RenderingServer.canvas_item_add_texture_rect`
+   on the root canvas. Earlier attempts using off-screen
+   `TextureRect`s got frustum-culled by the browser; going through
+   RS bypasses scene-tree culling entirely. Throttled to 8
+   textures per frame so the pre-warm itself doesn't stall outpost
+   startup. Outpost calls `prewarm_biome` for every unlocked branch
+   on `_ready`.
+6. **Shared shader materials.** `ShaderMaterial.new()` per sprite
+   was producing pipeline-state thrash on Web GL. Now shared:
+   - `MapRenderer._shared_heat_haze_mat` / `_shared_water_shimmer_mat`
+     — one material across all lava/water sprites in a floor.
+   - `LightSpec._ember_mat_cache` — `ParticleProcessMaterial`
+     cached by particle color (was a fresh shader compile per
+     fire-tagged enemy spawn).
+   - `UITheme._recolor_mat_cache` — recolor materials cached by
+     `(hue, sat, mode, colorize_strength)` tuple. Filter chips
+     used to alloc N fresh `ShaderMaterial`s per inventory rebuild.
+   - `ItemCell._desaturate_mat` — singleton across every blocked
+     cell.
+7. **Web-specific renderer toggles.** Threat-outline shader
+   skipped on web (`enemy.gd::_ensure_outline_material` early-out).
+   Item recolor shader skipped on web (`UITheme.recolor_material_for`
+   returns null). PointLight2D shadows force-disabled on web
+   (`light_spec.gd`). Bot weapon-glow pulse tween skipped on web
+   (`bot.gd::_apply_rarity_decor`). Each one was a real spike
+   source on Compatibility renderer; visual fidelity loss is
+   minimal (modulate tints still carry rarity / flavor).
+8. **Fog-overlay shader cost cut.** `MARCH_STEPS` 24 → 12, web
+   light cap 24 → 8 in `fog_overlay.gd::update_lights`. Full-screen
+   fragment shader was running 24 lights × 24 march steps × every
+   pixel; halved both for web.
+
+**Diagnostic tooling.** `PerfMon.spike_tick()` measures wall-time
+between `_process` calls and logs `[perf-spike] <ms>ms ctx=<context>`
+when a frame exceeds 50ms. Filters:
+- `> 15s` discarded (browser RAF-throttle on backgrounded tab,
+  scene-transition pauses)
+- `not DisplayServer.window_is_focused()` discarded (skipped
+  when the tab is inactive — RAF backoff on inactive tabs
+  produced ~6s "phantom" spikes that turned out to be browser
+  throttling, not real stutters)
+
+Stamping context: `dungeon.gd` calls
+`PerfMon.note_spike_context(<event>)` at chest-open, wave-spawn,
+loot-pickup, descend, drain-spawn, floor-built. The most-recent
+context is the label on the next spike line, so a 6s spike with
+`ctx="loot_pickup base=wooden_buckler"` tells us a never-before-seen
+item texture caused the stall — directly traceable to a fix path.
+
+**Manual zip upload.** Path of last resort when butler's CDN doesn't
+propagate: `dist/botter_web.zip` (~12 MB) gets dropped on
+https://deanyo-gh.itch.io/botter-idle/edit → Replace file. Worked
+when butler-pushed builds were stuck serving v3 to Chrome despite
+the dashboard showing v13.
+
+**Earlier today: 2026-06-07 (HUD overhaul follow-up + clip_text
+audit + outpost tabs).** [unchanged below]
+
+---
+
+Earlier: 2026-06-06 (stat system unification). Single source of
 truth for stat math: new `StatCalc.compute()` static function takes
 `(equipped, items_db, save_state, species_id, level, xp, gold,
 blessings)` and returns a flat dict with every stat (vitals / combat /

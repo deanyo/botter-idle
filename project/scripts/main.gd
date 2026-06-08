@@ -23,6 +23,22 @@ var auto_grind_floors: Dictionary = {}
 var auto_grind_start_time: int = 0
 
 func _ready() -> void:
+	# Print the build version stamp + bake it into the window title
+	# so users can verify which build they're running across browser
+	# cache layers, even when the in-game debug HUD is occluded.
+	var bf := FileAccess.open("res://data/build_version.json", FileAccess.READ)
+	if bf != null:
+		var bv: Variant = JSON.parse_string(bf.get_as_text())
+		if typeof(bv) == TYPE_DICTIONARY:
+			var ver: String = String(bv.get("version", "?"))
+			var ts: String = String(bv.get("ts", "?"))
+			print("[build] version=%s ts=%s" % [ver, ts])
+			DisplayServer.window_set_title("Botter — build %s" % ver)
+			# On HTML5 the window title becomes the browser tab label.
+			if OS.has_feature("web"):
+				JavaScriptBridge.eval(
+					"document.title = 'Botter — build " + ver + "';",
+					true)
 	# Apply persisted video settings (window mode, resolution, vsync) before
 	# anything paints, so the user's choice carries over launch-to-launch.
 	# Skipped for grind/screenshot modes — those need a deterministic window.

@@ -117,7 +117,14 @@ func update_lights(world_lights: Array, delta: float, bot_world: Vector2 = Vecto
 		if not is_equal_approx(bot_radius_px, _last_bot_radius_px):
 			mat.set_shader_parameter("bot_radius_px", bot_radius_px)
 			_last_bot_radius_px = bot_radius_px
-	var n: int = mini(world_lights.size(), MAX_LIGHTS)
+	# Web GL Compatibility runs the LoS march × per-light loop in the
+	# fragment shader for every screen pixel every frame. Capping the
+	# active count at 8 (vs 24) is a ~3x reduction in fragment cost and
+	# cured the recurring 5-6 second GPU stalls when waves added new
+	# lights mid-floor. The cap is closest-to-bot first, applied by the
+	# caller — `_world_light_sources()` already sorts by distance.
+	var max_active: int = 8 if OS.has_feature("web") else MAX_LIGHTS
+	var n: int = mini(world_lights.size(), max_active)
 	# Detect content change. Light list size + per-slot position/radius/
 	# intensity/color comparison. Cheap because n <= 24 and we early-exit
 	# on the first mismatch.

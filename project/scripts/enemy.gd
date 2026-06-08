@@ -82,6 +82,15 @@ func apply_persistent_outline() -> void:
 func _ensure_outline_material() -> void:
 	if sprite == null:
 		return
+	# Web GL Compatibility compiles/links a fresh shader pipeline per
+	# (texture × shader) combination, on the main thread, the first time
+	# the pair is drawn. Wave spawns dropping 4 fresh enemy textures all
+	# sharing the threat_outline shader was producing 6+ second hangs
+	# (logged via PerfMon spike detector 2026-06-08). Skip the outline
+	# shader entirely on web — bosses/champions still get a modulate
+	# wash from apply_pack_visuals() so they remain readable.
+	if OS.has_feature("web"):
+		return
 	if sprite.material == null or not (sprite.material is ShaderMaterial) \
 			or (sprite.material as ShaderMaterial).shader != THREAT_OUTLINE_SHADER:
 		var mat := ShaderMaterial.new()

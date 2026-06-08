@@ -96,6 +96,166 @@ static func _branch_short_name(biome_id: String) -> String:
 		return "D"
 	return biome_id.capitalize()
 
+# Pre-warm cache: pull every texture the biome could plausibly use
+# into the resource cache so dungeon entry doesn't pay PNG decode +
+# GPU upload costs. Called from the outpost before the player clicks
+# Deploy. Idempotent — repeated calls are cheap once textures are
+# cached. Returns true on first warm, false if already warmed.
+static var _prewarmed_biomes: Dictionary = {}
+const _ENEMY_TILE_DIR := "res://assets/tiles/enemies/"
+static func prewarm_biome(biome_id: String) -> bool:
+	_ensure_loaded()
+	if _prewarmed_biomes.has(biome_id):
+		return false
+	_prewarmed_biomes[biome_id] = true
+	var biome: Dictionary = _biomes.get(biome_id, {})
+	if biome.is_empty():
+		return false
+	# Trigger the same load paths the dungeon will hit. Each load() warms
+	# Godot's resource cache so MapRenderer.render() finds them in-memory.
+	# Collect everything for the GPU-upload step too.
+	var all_textures: Array = []
+	var arrays: Array = [
+		load_floor_primary(biome),
+		load_floor_secondary(biome),
+		load_floor_accent(biome),
+		load_wall_primary(biome),
+		load_wall_accent(biome),
+	]
+	for arr in arrays:
+		for t in arr:
+			if t is Texture2D:
+				all_textures.append(t)
+	for alt in load_wall_alternates(biome):
+		for t in alt.get("textures", []):
+			if t is Texture2D:
+				all_textures.append(t)
+	var edge: Dictionary = load_edge_overlay(biome)
+	for k in edge.keys():
+		var v: Variant = edge[k]
+		if v is Texture2D:
+			all_textures.append(v)
+		elif v is Array:
+			for t in v:
+				if t is Texture2D:
+					all_textures.append(t)
+	for t in load_sigil_set(biome):
+		if t is Texture2D:
+			all_textures.append(t)
+	# Enemy tiles — `dungeon.gd::_spawn_specific` calls load() per
+	# enemy tile, and on web the first batch decodes were the worst
+	# part of the post-deploy hang. Walk this biome's enemy pool and
+	# warm them now.
+	var enemy_textures: Array = []
+	var enemies: Dictionary = ItemsDb.enemies()
+	var raw_pool: Variant = biome.get("enemy_pool", null)
+	if raw_pool is Array:
+		for entry in raw_pool:
+			var eid: String = ""
+			if entry is String:
+				eid = String(entry)
+			elif entry is Dictionary and entry.has("id"):
+				eid = String(entry["id"])
+			if eid == "" or not enemies.has(eid):
+				continue
+			var def: Dictionary = enemies[eid]
+			var tile: String = String(def.get("tile", ""))
+			if tile != "":
+				var t: Texture2D = load(_ENEMY_TILE_DIR + tile)
+				if t != null:
+					enemy_textures.append(t)
+	all_textures.append_array(enemy_textures)
+	# Item tiles — every loot drop / inventory cell loads a fresh
+	# item texture. First on-screen draw of a never-before-seen item
+	# stalls the GPU pipeline 5-6 seconds on Web GL Compatibility
+	# (logged context "loot_pickup base=<item_id>"). Items are global
+	# (not per-biome), so warm once across all biome calls via a
+	# separate flag.
+	if not _items_prewarmed:
+		_items_prewarmed = true
+		for item_id in ItemsDb.items().keys():
+			var item: Dictionary = ItemsDb.items()[item_id]
+			var tile_name: String = String(item.get("tile", ""))
+			if tile_name == "":
+				continue
+			var t: Texture2D = load("res://assets/tiles/items/" + tile_name)
+			if t != null:
+				all_textures.append(t)
+	# Force GPU upload via RenderingServer.canvas_item_add_texture_rect.
+	# The earlier attempt added TextureRects to the scene tree but the
+	# browser frustum-culled them. RenderingServer queues draws
+	# directly without going through scene-tree visibility, so we get
+	# a real GPU upload regardless. We attach to the root viewport's
+	# canvas so the draw is part of the next frame's render pass.
+	if OS.has_feature("web"):
+		_force_gpu_upload_rs(all_textures)
+	return true
+
+static var _items_prewarmed: bool = false
+
+# RenderingServer-based GPU upload prewarm. Allocates one canvas_item
+# per texture, draws it 1×1 at the origin, then queue_frees both the
+# canvas_item and the timing tween. Pre-2026-06-08 we tried scene-tree
+# TextureRects with visibility tricks; browser culling defeated them.
+# Going through RS directly bypasses culling — the texture is bound,
+# the GPU uploads, and our cost moves from "first draw at dungeon
+# entry" to "during outpost time."
+static func _force_gpu_upload_rs(textures: Array) -> void:
+	if textures.is_empty():
+		return
+	var tree: SceneTree = Engine.get_main_loop() as SceneTree
+	if tree == null or tree.root == null:
+		return
+	# Append to the global queue and let _gpu_upload_pump drain it
+	# across frames. Pumping all N textures on the same frame would
+	# itself produce a startup stall. The pump is safe to start
+	# multiple times — it's idempotent via the `_pump_running` flag.
+	for t in textures:
+		if t is Texture2D:
+			_gpu_upload_queue.append(t)
+	if not _pump_running:
+		_pump_running = true
+		_gpu_upload_pump()
+
+static var _gpu_upload_queue: Array = []
+static var _pump_running: bool = false
+
+static func _gpu_upload_pump() -> void:
+	var tree: SceneTree = Engine.get_main_loop() as SceneTree
+	if tree == null or tree.root == null:
+		_pump_running = false
+		return
+	var canvas: RID = tree.root.get_canvas()
+	# Drain ~8 textures per frame — small enough not to spike, large
+	# enough that 200 items finish within ~25 frames.
+	var per_frame: int = 8
+	while _gpu_upload_queue.size() > 0 and per_frame > 0:
+		var t: Texture2D = _gpu_upload_queue.pop_front()
+		per_frame -= 1
+		if t == null:
+			continue
+		var ci: RID = RenderingServer.canvas_item_create()
+		RenderingServer.canvas_item_set_parent(ci, canvas)
+		# Modulate 1.0 — earlier 0.01 may have been optimized away
+		# by the renderer's alpha-zero short-circuit, defeating the
+		# upload. Visible 1×1 pixel at (0,0) is imperceptible.
+		RenderingServer.canvas_item_add_texture_rect(
+			ci,
+			Rect2(0, 0, 1, 1),
+			t.get_rid(),
+			false,
+			Color(1, 1, 1, 1.0),
+		)
+		# Hold the RID for one frame so the draw lands, then free.
+		var timer: SceneTreeTimer = tree.create_timer(0.5)
+		timer.timeout.connect(func():
+			RenderingServer.free_rid(ci))
+	if _gpu_upload_queue.size() > 0:
+		await tree.process_frame
+		_gpu_upload_pump()
+	else:
+		_pump_running = false
+
 static func load_floor_primary(biome: Dictionary) -> Array:
 	return _expand_prefixes(biome.get("floor_primary", []), FLOOR_DIR)
 

@@ -512,6 +512,8 @@ func _async_build_floor() -> void:
 		bot.add_status("stealthy", 0.0)  # persistent until first hit
 	t_total = Time.get_ticks_usec() - t_total
 	_floor_ready = true
+	PerfMon.arm_spike(50.0)
+	PerfMon.note_spike_context("floor_built f=%d biome=%s enemies=%d" % [current_floor, String(current_biome.get("id", "?")), enemies.size()])
 	# Wave/burst pacing — fresh on each floor build. Jitter the next
 	# fire by ±25% so the rhythm doesn't feel metronomic.
 	_wave_accum = 0.0
@@ -1497,6 +1499,9 @@ func _update_biome_hud() -> void:
 			chrome.update_minimap(grid, bot_cell, stairs_cell, visible_cells)
 	# Debug HUD (top-left): biome / vaults / cell counts / FPS.
 	var dbg: Array = []
+	# Build stamp first so the user can verify (especially across web
+	# cache layers) which build their browser is actually running.
+	dbg.append("build: %s" % _build_stamp())
 	dbg.append("biome: %s" % biome_id)
 	dbg.append("floor: %d  layout: %s" % [current_floor, String(current_biome.get("layout", "?"))])
 	if not run_vaults_stamped.is_empty():
@@ -2479,6 +2484,7 @@ func _roll_rarity(is_boss: bool) -> String:
 var _turn_accum: float = 0.0
 
 func _process(delta: float) -> void:
+	PerfMon.spike_tick()
 	if not _floor_ready or not is_instance_valid(bot) or not bot.is_alive:
 		return
 	PerfMon.begin(PerfMon.TAG_FRAME)
@@ -2495,6 +2501,7 @@ func _process(delta: float) -> void:
 	SpellSystem.process_tick(bot, self, delta, items_db)
 	_tick_wave_spawns(delta)
 	_tick_burst_events(delta)
+	_drain_pending_spawns()
 	_update_biome_hud()
 	PerfMon.end(PerfMon.TAG_FRAME)
 	if PerfMon.tick_frame():
@@ -2515,6 +2522,42 @@ var _wave_accum: float = 0.0
 var _wave_interval: float = 8.0  # seconds; jittered between casts
 var _burst_accum: float = 0.0
 var _burst_interval: float = 35.0
+var _pending_wave_spawns: Array = []  # spawn IDs queued for staggered spawn
+
+# Cached at first read — the JSON file is small but no need to
+# re-parse it every frame for the debug HUD.
+var _cached_build_stamp: String = ""
+func _build_stamp() -> String:
+	if _cached_build_stamp != "":
+		return _cached_build_stamp
+	var f := FileAccess.open("res://data/build_version.json", FileAccess.READ)
+	if f == null:
+		_cached_build_stamp = "?"
+		return _cached_build_stamp
+	var parsed: Variant = JSON.parse_string(f.get_as_text())
+	if typeof(parsed) != TYPE_DICTIONARY:
+		_cached_build_stamp = "?"
+		return _cached_build_stamp
+	_cached_build_stamp = "%s @ %s" % [
+		String(parsed.get("version", "?")),
+		String(parsed.get("ts", "?")),
+	]
+	return _cached_build_stamp
+
+func _drain_pending_spawns() -> void:
+	# Spawn at most one queued wave/burst enemy per frame so the GPU
+	# texture-upload + node-add cost spreads across frames. See
+	# `_tick_wave_spawns` for the rationale.
+	if _pending_wave_spawns.is_empty():
+		return
+	var pick: String = String(_pending_wave_spawns.pop_front())
+	# Stamp context BEFORE spawn so a spike during this spawn carries
+	# the enemy id — narrows down which texture / shader is the
+	# culprit when the spike detector fires.
+	PerfMon.note_spike_context("drain_spawn id=%s queue=%d" % [pick, _pending_wave_spawns.size()])
+	var cell: Vector2i = _random_walkable_cell_far_from_bot()
+	_spawn_specific(pick, cell, Enemy.PACK_NORMAL)
+	_warp_in_last_spawn()
 const _WAVE_MIN_MOBS := 4
 const _WAVE_MAX_MOBS := 8
 const _BURST_MIN_MOBS := 12
@@ -3075,6 +3118,7 @@ func _complete_loot_pickup(drop: LootDrop) -> void:
 	var inst: Dictionary = drop.instance
 	var item: Dictionary = drop.item
 	var display_name: String = AffixSystem.format_item_name(String(item.name), inst.get("affixes", []), inst)
+	PerfMon.note_spike_context("loot_pickup rarity=%s base=%s" % [String(item.get("rarity", "?")), String(item.get("base_id", inst.get("base_id", "?")))])
 	floor_loot_picked += 1
 	dropped_items.append(inst)
 	# Append into this floor's segment (lazy-create on first pickup).
@@ -3328,6 +3372,7 @@ func _tick_equip_cooldowns(delta: float) -> void:
 
 func _on_chest_opened(chest: Chest, n: int, bias: int) -> void:
 	floor_chests_opened += 1
+	PerfMon.note_spike_context("chest_open n=%d bias=%d" % [n, bias])
 	var chest_world: Vector2 = chest.position + Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5)
 	for i in n:
 		var rarity: String = _roll_rarity_with_bias(bias)
@@ -3491,6 +3536,7 @@ func _room_center(r: Rect2i) -> Vector2i:
 	return Vector2i(r.position.x + int(r.size.x / 2.0), r.position.y + int(r.size.y / 2.0))
 
 func _descend() -> void:
+	PerfMon.note_spike_context("descend f=%d" % current_floor)
 	# Flush any deferred auto-salvage now that the floor is over —
 	# the HUD rebuild happens during the load screen, not mid-combat.
 	if _pending_salvage_check:
@@ -4236,11 +4282,16 @@ func _tick_wave_spawns(delta: float) -> void:
 		return
 	var n: int = rng.randi_range(_WAVE_MIN_MOBS, _WAVE_MAX_MOBS)
 	n = mini(n, target - alive)
+	PerfMon.note_spike_context("wave_spawn n=%d alive=%d" % [n, alive])
+	# Stagger wave spawns across frames. Spawning N enemies on the same
+	# frame triggers a synchronous GPU sync on Web GL Compatibility
+	# (texture uploads + scene-tree updates flushed together), reading
+	# as a 1-2s freeze per enemy. Push them onto a queue and drain one
+	# per frame; the player perceives a streaming wave instead of a
+	# synchronized clump.
 	for _i in n:
 		var pick: String = String(pool[rng.randi_range(0, pool.size() - 1)])
-		var cell: Vector2i = _random_walkable_cell_far_from_bot()
-		_spawn_specific(pick, cell, Enemy.PACK_NORMAL)
-		_warp_in_last_spawn()
+		_pending_wave_spawns.append(pick)
 
 # Burst event — every 30-50s, spawn a 12-18 mob MAGIC pack from one
 # direction relative to the bot. No telegraph yet (Phase 4 polish);
@@ -4274,10 +4325,11 @@ func _tick_burst_events(delta: float) -> void:
 	# Leader rolls MAGIC tier so the burst has a visible elite.
 	_spawn_specific(pack_id, center, Enemy.PACK_MAGIC)
 	_warp_in_last_spawn()
+	# Packmates queued for staggered spawn (one per frame) — same reason
+	# as wave spawns: synchronous GPU stalls on Web GL when N enemies
+	# spawn in the same frame.
 	for i in range(n - 1):
-		var member_cell: Vector2i = _walkable_cell_near(center, _PACK_RADIUS)
-		_spawn_specific(pack_id, member_cell, Enemy.PACK_NORMAL)
-		_warp_in_last_spawn()
+		_pending_wave_spawns.append(pack_id)
 	GrindLog.log_line("[burst] f=%d id=%s n=%d" % [current_floor, pack_id, n])
 
 # Brief warp-in tween on the most recently spawned enemy. Scale 0.4 → 1

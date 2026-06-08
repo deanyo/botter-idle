@@ -67,10 +67,8 @@ var _water_shimmer_layer: Node2D = null
 # blitted into one big Image, then registered as one TileSetAtlasSource
 # with per-tile atlas_coords. Result: TileMapLayer draws each layer in
 # 1-2 batched calls instead of one per texture.
-var _packed_atlas_source_id: int = 0
-var _packed_atlas_cols: int = 1
 # Texture2D -> Vector2i atlas_coords in the packed atlas.
-var _atlas_coords_for: Dictionary = {}
+var _current_biome_id: String = ""
 # Pending texture queue, populated in pass 1; baked in _bake_atlas.
 var _pending_textures: Array = []
 
@@ -81,10 +79,11 @@ func render(g: Array, rs: Array, biome: Dictionary, rng: RandomNumberGenerator, 
 	wall_cells.clear()
 	sigil_marks.clear()
 	decor_marks.clear()
-	_atlas_coords_for.clear()
+	_source_id_for.clear()
 	_pending_textures.clear()
 	grid = g
 	rooms = rs
+	_current_biome_id = String(biome.get("id", ""))
 	if OS.has_environment("BOTTER_NO_TILES"):
 		return
 	var protected_cells: Dictionary = vault_results.get("protected_cells", {})
@@ -227,54 +226,59 @@ func render(g: Array, rs: Array, biome: Dictionary, rng: RandomNumberGenerator, 
 func _register_texture(tex: Texture2D) -> void:
 	if tex == null:
 		return
-	if _atlas_coords_for.has(tex):
+	if tex in _pending_textures:
 		return
-	# Coords assigned in registration order; computed in _build_tileset.
 	_pending_textures.append(tex)
 
+# Per-biome tileset cache. Pre-2026-06-08 we packed every tile into a
+# single Image atlas so the TileMapLayer batched into 1 draw call.
+# On Web GL Compatibility, building the atlas calls Texture.get_image()
+# per tile — each is a synchronous GPU→CPU readback — and then a
+# single big-image upload. That was the dominant dungeon-load cost
+# (60+ seconds on cold cache).
+#
+# We now build a TileSet with one source per texture (~50-100 sources
+# per biome). The TileMapLayer issues more draw calls (~50 instead
+# of 1), but those are GPU-side and trivial at 80×80 grid scale on
+# anything from a Pixel 4 up. Avoiding get_image()/blit_rect/
+# create_from_image entirely is the win.
+static var _tileset_cache: Dictionary = {}
+
+# Per-tex source-id lookup populated alongside _tileset for the
+# current biome. _set_base / _set_overlay use this instead of the
+# old _atlas_coords_for.
+var _source_id_for: Dictionary = {}
+
 func _build_tileset_and_layers(w: int, h: int) -> void:
-	# Compose every registered texture into one packed Image so the
-	# TileSet has exactly ONE source — TileMapLayer can then batch the
-	# whole layer into ~1 draw call instead of one per source.
 	var n: int = _pending_textures.size()
 	if n == 0:
 		return
 	var ts: int = C.TILE_SIZE
-	# Square-ish layout: ceil(sqrt(n)) columns.
-	var cols: int = int(ceil(sqrt(float(n))))
-	var rows: int = int(ceil(float(n) / float(cols)))
-	_packed_atlas_cols = cols
-	var atlas_img := Image.create(cols * ts, rows * ts, false, Image.FORMAT_RGBA8)
-	atlas_img.fill(Color(0, 0, 0, 0))
-	for i in n:
-		var tex: Texture2D = _pending_textures[i]
-		var src_img: Image = tex.get_image()
-		if src_img == null:
-			continue
-		# Some imported textures arrive in non-RGBA8; convert in place.
-		if src_img.get_format() != Image.FORMAT_RGBA8:
-			src_img = src_img.duplicate()
-			src_img.convert(Image.FORMAT_RGBA8)
-		var ax: int = i % cols
-		var ay: int = i / cols
-		atlas_img.blit_rect(
-			src_img,
-			Rect2i(0, 0, src_img.get_width(), src_img.get_height()),
-			Vector2i(ax * ts, ay * ts),
-		)
-		_atlas_coords_for[tex] = Vector2i(ax, ay)
-	var atlas_tex := ImageTexture.create_from_image(atlas_img)
-	var src := TileSetAtlasSource.new()
-	src.texture = atlas_tex
-	src.texture_region_size = Vector2i(ts, ts)
-	for i in n:
-		var ax: int = i % cols
-		var ay: int = i / cols
-		src.create_tile(Vector2i(ax, ay))
-	_tileset = TileSet.new()
-	_tileset.tile_size = Vector2i(ts, ts)
-	_packed_atlas_source_id = 0
-	_tileset.add_source(src, _packed_atlas_source_id)
+	var biome_key: String = String(_current_biome_id)
+	var cached: Variant = _tileset_cache.get(biome_key, null)
+	if typeof(cached) == TYPE_DICTIONARY \
+			and int(cached.get("count", -1)) == n:
+		_tileset = cached["tileset"]
+		_source_id_for = (cached["source_id_for"] as Dictionary).duplicate()
+	else:
+		_tileset = TileSet.new()
+		_tileset.tile_size = Vector2i(ts, ts)
+		_source_id_for.clear()
+		for i in n:
+			var tex: Texture2D = _pending_textures[i]
+			if tex == null:
+				continue
+			var src := TileSetAtlasSource.new()
+			src.texture = tex
+			src.texture_region_size = Vector2i(ts, ts)
+			src.create_tile(Vector2i(0, 0))
+			_tileset.add_source(src, i)
+			_source_id_for[tex] = i
+		_tileset_cache[biome_key] = {
+			"tileset": _tileset,
+			"source_id_for": _source_id_for.duplicate(),
+			"count": n,
+		}
 	# Visibility material shared by both layers.
 	_vis_material = ShaderMaterial.new()
 	_vis_material.shader = VIS_SHADER
@@ -300,23 +304,20 @@ func _build_tileset_and_layers(w: int, h: int) -> void:
 func _set_base(x: int, y: int, tex: Texture2D) -> void:
 	if tex == null:
 		return
-	var coords: Variant = _atlas_coords_for.get(tex, null)
-	if coords == null:
-		# Texture wasn't pre-registered — fall back: register, but the
-		# atlas is already baked, so this tile won't render. Log so
-		# we can fix the registration list.
+	var sid: Variant = _source_id_for.get(tex, null)
+	if sid == null:
 		push_warning("MapRenderer: tile texture not pre-registered: %s" % str(tex.resource_path))
 		return
-	_base_layer.set_cell(Vector2i(x, y), _packed_atlas_source_id, coords)
+	_base_layer.set_cell(Vector2i(x, y), int(sid), Vector2i(0, 0))
 
 func _set_overlay(x: int, y: int, tex: Texture2D) -> void:
 	if tex == null:
 		return
-	var coords: Variant = _atlas_coords_for.get(tex, null)
-	if coords == null:
+	var sid: Variant = _source_id_for.get(tex, null)
+	if sid == null:
 		push_warning("MapRenderer: overlay tex not pre-registered: %s" % str(tex.resource_path))
 		return
-	_overlay_layer.set_cell(Vector2i(x, y), _packed_atlas_source_id, coords)
+	_overlay_layer.set_cell(Vector2i(x, y), int(sid), Vector2i(0, 0))
 
 func _door_texture_for(biome: Dictionary) -> Texture2D:
 	var biome_id: String = String(biome.get("id", ""))
@@ -578,6 +579,27 @@ func reveal_all() -> void:
 # us into Control hierarchy which complicates positioning.
 static var _heat_haze_tex: Texture2D = null
 
+# Shared materials across all haze/water sprites in a floor. Each has
+# no per-instance parameters, so one ShaderMaterial can drive every
+# sprite. Pre-2026-06-07 we allocated one ShaderMaterial per cell —
+# 200 water tiles = 200 shader-program compiles on Web GL Compatibility,
+# which presented as a 30+ second freeze when first entering the
+# dungeon. One material = one compile.
+static var _shared_heat_haze_mat: ShaderMaterial = null
+static var _shared_water_shimmer_mat: ShaderMaterial = null
+
+static func _get_heat_haze_mat() -> ShaderMaterial:
+	if _shared_heat_haze_mat == null:
+		_shared_heat_haze_mat = ShaderMaterial.new()
+		_shared_heat_haze_mat.shader = HEAT_HAZE_SHADER
+	return _shared_heat_haze_mat
+
+static func _get_water_shimmer_mat() -> ShaderMaterial:
+	if _shared_water_shimmer_mat == null:
+		_shared_water_shimmer_mat = ShaderMaterial.new()
+		_shared_water_shimmer_mat.shader = WATER_SHIMMER_SHADER
+	return _shared_water_shimmer_mat
+
 func _attach_heat_haze(lava_cells: Array[Vector2i]) -> void:
 	if _heat_haze_layer != null and _heat_haze_layer.is_inside_tree():
 		_heat_haze_layer.queue_free()
@@ -595,6 +617,7 @@ func _attach_heat_haze(lava_cells: Array[Vector2i]) -> void:
 		img.fill(Color(1, 1, 1, 1))
 		_heat_haze_tex = ImageTexture.create_from_image(img)
 	var px := float(C.TILE_SIZE)
+	var shared_mat: ShaderMaterial = _get_heat_haze_mat()
 	for cell in lava_cells:
 		var spr := Sprite2D.new()
 		spr.texture = _heat_haze_tex
@@ -603,9 +626,7 @@ func _attach_heat_haze(lava_cells: Array[Vector2i]) -> void:
 		spr.scale = Vector2(px, px * 3.0)
 		# Top-left of the affected zone = 2 rows above the lava cell.
 		spr.position = Vector2(cell.x * px, (cell.y - 2) * px)
-		var mat := ShaderMaterial.new()
-		mat.shader = HEAT_HAZE_SHADER
-		spr.material = mat
+		spr.material = shared_mat
 		_heat_haze_layer.add_child(spr)
 
 # Water shimmer per T_WATER cell. Mirrors _attach_heat_haze but the
@@ -624,13 +645,12 @@ func _attach_water_shimmer(water_cells: Array[Vector2i]) -> void:
 		img.fill(Color(1, 1, 1, 1))
 		_heat_haze_tex = ImageTexture.create_from_image(img)
 	var px := float(C.TILE_SIZE)
+	var shared_mat: ShaderMaterial = _get_water_shimmer_mat()
 	for cell in water_cells:
 		var spr := Sprite2D.new()
 		spr.texture = _heat_haze_tex
 		spr.centered = false
 		spr.scale = Vector2(px, px)
 		spr.position = Vector2(cell.x * px, cell.y * px)
-		var mat := ShaderMaterial.new()
-		mat.shader = WATER_SHIMMER_SHADER
-		spr.material = mat
+		spr.material = shared_mat
 		_water_shimmer_layer.add_child(spr)

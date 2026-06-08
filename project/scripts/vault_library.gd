@@ -2,6 +2,7 @@ class_name VaultLibrary
 extends RefCounted
 
 const VAULT_DIR := "res://data/vaults/"
+const BUNDLE_PATH := "res://data/vaults_bundle.json"
 
 static var _vaults: Array = []
 static var _loaded: bool = false
@@ -10,6 +11,21 @@ static func _ensure_loaded() -> void:
 	if _loaded:
 		return
 	_loaded = true
+	# Bundle path: single 0.8 MB JSON with all vaults keyed by filename.
+	# 1000x faster than 1335 per-file opens on HTML5 where the
+	# virtualized FS makes each FileAccess.open expensive. Built by
+	# `tools/build_vault_bundle.py` — re-run after adding new vaults.
+	var bundle_f := FileAccess.open(BUNDLE_PATH, FileAccess.READ)
+	if bundle_f != null:
+		var bundle: Variant = JSON.parse_string(bundle_f.get_as_text())
+		if typeof(bundle) == TYPE_DICTIONARY:
+			for key in bundle.keys():
+				var v: Variant = bundle[key]
+				if typeof(v) == TYPE_DICTIONARY:
+					_annotate_vault(v)
+					_vaults.append(v)
+			return
+	# Per-file fallback (desktop dev when bundle hasn't been built yet).
 	var names: Array = _list_vault_files()
 	for name in names:
 		var f := FileAccess.open(VAULT_DIR + String(name), FileAccess.READ)

@@ -307,6 +307,13 @@ func _on_cell_tooltip(cell: ItemCell, show: bool) -> void:
 # the existing _process call in dungeon.gd handles game logic, so we
 # add a lightweight _process here just for tooltip state.
 func _process(_delta: float) -> void:
+	# Keep the fullscreen button anchored to the viewport's right edge.
+	# CanvasLayer doesn't auto-reflow on browser-window resize.
+	if _fullscreen_btn != null and is_instance_valid(_fullscreen_btn):
+		var vp: Vector2 = get_viewport().get_visible_rect().size
+		var target_x: float = vp.x - 40
+		if absf(_fullscreen_btn.position.x - target_x) > 1.0:
+			_fullscreen_btn.position.x = target_x
 	if _hud_hover_cell == null or not is_instance_valid(_hud_hover_cell):
 		return
 	if _hud_tooltip == null or not is_instance_valid(_hud_tooltip):
@@ -998,6 +1005,51 @@ func _build_debug() -> void:
 	debug_dump_status.add_theme_font_override("font", _monospace_font())
 	debug_dump_status.visible = false
 	add_child(debug_dump_status)
+	_build_fullscreen_button()
+
+func _build_fullscreen_button() -> void:
+	# Always-visible fullscreen toggle. CanvasLayer ignores Control
+	# anchor presets, so position by viewport size directly. We re-place
+	# on viewport resize via the existing resize hook.
+	var btn := Button.new()
+	btn.name = "FullscreenBtn"
+	btn.text = "⛶"
+	btn.tooltip_text = "Toggle fullscreen"
+	btn.add_theme_font_size_override("font_size", 18)
+	btn.size = Vector2(32, 32)
+	var vp_size: Vector2 = get_viewport().get_visible_rect().size
+	btn.position = Vector2(vp_size.x - 40, 6)
+	btn.pressed.connect(_toggle_fullscreen)
+	add_child(btn)
+	UITheme.style_button(btn)
+	_fullscreen_btn = btn
+
+var _fullscreen_btn: Button = null
+
+func _toggle_fullscreen() -> void:
+	# In HTML5 the browser requires a user-gesture-initiated JS
+	# Element.requestFullscreen() — Godot's DisplayServer call won't
+	# actually expand the canvas. Use JavaScriptBridge to call the
+	# real DOM API directly. Other platforms fall through to the
+	# DisplayServer path.
+	if OS.has_feature("web"):
+		JavaScriptBridge.eval("""
+			(function() {
+				var canvas = document.querySelector('canvas');
+				if (document.fullscreenElement) {
+					document.exitFullscreen();
+				} else if (canvas) {
+					if (canvas.requestFullscreen) canvas.requestFullscreen();
+					else if (canvas.webkitRequestFullscreen) canvas.webkitRequestFullscreen();
+				}
+			})();
+		""", true)
+		return
+	var mode: int = DisplayServer.window_get_mode()
+	if mode == DisplayServer.WINDOW_MODE_FULLSCREEN or mode == DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN:
+		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
+	else:
+		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
 
 # Public: dungeon calls this with the save path / chars-copied summary
 # so the HUD can flash a confirmation under the dump button. Auto-hides
@@ -1685,7 +1737,9 @@ func _make_inv_button(seg_idx: int, item_idx: int, inst: Variant, items_db: Dict
 # rendered _flat_inv_cells list (which mirrors the visible grid order)
 # for an authoritative flat offset.
 func _resolve_flat_index(cell: ItemCell) -> void:
-	var iid: String = String(cell.get_meta("instance_id", ""))
+	if not cell.has_meta("instance_id"):
+		return
+	var iid: String = String(cell.get_meta("instance_id"))
 	if iid == "":
 		return
 	for i in _flat_inv_cells.size():
@@ -1696,14 +1750,20 @@ func _resolve_flat_index(cell: ItemCell) -> void:
 func _on_hud_inv_left_click(cell: ItemCell) -> void:
 	if equip_request_target == null:
 		return
-	var seg_idx: int = int(cell.get_meta("seg_idx", -1))
-	var item_idx: int = int(cell.get_meta("item_idx", -1))
+	# Guard the meta lookups — paperdoll cells route through the same
+	# Callable but only inventory cells set seg_idx/item_idx/instance_id.
+	# get_meta on a missing key spams stderr in Godot 4.6 even with a
+	# default param.
+	if not cell.has_meta("seg_idx") or not cell.has_meta("item_idx"):
+		return
+	var seg_idx: int = int(cell.get_meta("seg_idx"))
+	var item_idx: int = int(cell.get_meta("item_idx"))
 	# Verify the (seg_idx, item_idx) still points at the SAME item
 	# instance_id the cell was built with. A queue_freed-but-not-yet-
 	# deleted cell can fire a second click after equip; without this
 	# guard we'd equip whatever slid into that index — feels like
 	# item duplication. UI polish 2026-06-04.
-	var iid: String = String(cell.get_meta("instance_id", ""))
+	var iid: String = String(cell.get_meta("instance_id")) if cell.has_meta("instance_id") else ""
 	if iid != "" and equip_request_target.has_method("instance_at_segment_idx"):
 		var live_iid: String = String(equip_request_target.call("instance_at_segment_idx", seg_idx, item_idx))
 		if live_iid != iid:
@@ -1786,6 +1846,12 @@ var _minimap_image: Image
 var _minimap_tex: ImageTexture
 var _last_grid_dims := Vector2i(-1, -1)
 
+# Cached signature of the last minimap repaint inputs. Skip the 6400
+# set_pixel + dict-lookup loop when fog hasn't advanced — biggest
+# stutter cost on HTML5 where set_pixel is JS-bound. Native it was
+# fine; web at 4× per second adds up.
+var _last_minimap_sig: int = 0
+
 func update_minimap(grid: Array, bot_cell: Vector2i, stairs: Vector2i, fog_visible_cells: Dictionary = {}) -> void:
 	var h := grid.size()
 	var w: int = grid[0].size() if h > 0 else 0
@@ -1795,10 +1861,19 @@ func update_minimap(grid: Array, bot_cell: Vector2i, stairs: Vector2i, fog_visib
 	if _minimap_image == null or dims != _last_grid_dims:
 		_minimap_image = Image.create(w, h, false, Image.FORMAT_RGBA8)
 		_last_grid_dims = dims
+		_last_minimap_sig = 0  # force first paint after dim change
+	# Cheap signature: grid hash + fog-revealed cell count is enough
+	# to detect "anything visible changed" without comparing pixel-by-
+	# pixel. Grid changes on floor descent (rare); fog grows as the
+	# bot walks. New cells revealed → count goes up → repaint.
+	var sig: int = grid.hash() * 31 + fog_visible_cells.size()
+	if sig == _last_minimap_sig:
+		# Still repaint dot/stairs positions below — those shift each
+		# tick — but skip the per-pixel base layer.
+		_paint_minimap_markers(bot_cell, stairs, w, h)
+		return
+	_last_minimap_sig = sig
 	# Re-paint each frame is cheap at 80x80.
-	# Pure transparent backdrop so OLED panels don't burn the minimap
-	# rectangle's background; the surrounding chrome's own COL_PANEL
-	# (also pure black now) gives the minimap visual containment.
 	_minimap_image.fill(Color(0, 0, 0, 0))
 	var has_fog: bool = not fog_visible_cells.is_empty()
 	for y in h:
@@ -1822,7 +1897,13 @@ func update_minimap(grid: Array, bot_cell: Vector2i, stairs: Vector2i, fog_visib
 	else:
 		_minimap_tex.update(_minimap_image)
 	minimap_root.texture = _minimap_tex
-	# Position dot/stairs in screen-space within the minimap rect.
+	_paint_minimap_markers(bot_cell, stairs, w, h)
+	return
+
+# Move the bot dot + stairs marker each tick without re-running the
+# full pixel paint. Pulled out so the cached-signature path can still
+# update positions.
+func _paint_minimap_markers(bot_cell: Vector2i, stairs: Vector2i, w: int, h: int) -> void:
 	var mm_origin := minimap_root.position
 	var mm_size := minimap_root.size
 	# Maintain aspect: figure out the actual rect the texture renders into.

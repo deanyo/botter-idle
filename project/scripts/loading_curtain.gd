@@ -248,14 +248,23 @@ func hold_until_signal(signal_obj: Object, signal_name: String, label: String = 
 	# `var hidden_yet: bool = false` would let both the signal AND
 	# the safety timer fire hide_curtain().
 	var hidden_flag: Array = [false]
-	var hide_once = func():
+	# Accept up to two arbitrary signal args — Godot signals can pass
+	# extra arguments (e.g. dungeon's floor_started emits the floor
+	# number). Without these placeholders, the emit raises "Method
+	# expected 0 argument(s), but called with 1". GDScript lambdas
+	# don't have a varargs syntax; over-providing arity covers every
+	# signal we connect today.
+	var hide_once = func(_a = null, _b = null):
 		if hidden_flag[0]:
 			return
 		hidden_flag[0] = true
 		hide_curtain()
 	# Connect ONESHOT so we don't keep an active reference past the
-	# first fire.
-	signal_obj.connect(signal_name, hide_once, CONNECT_ONE_SHOT)
+	# first fire. `unbind(8)` discards up to 8 args the signal might
+	# emit — Godot 4.6 doesn't always honor optional-arg lambda
+	# signatures, so explicit unbind is the reliable way to absorb
+	# whatever the signal sends (floor_started emits the floor int).
+	signal_obj.connect(signal_name, hide_once.unbind(8), CONNECT_ONE_SHOT)
 	# Safety-net timer — caps the curtain duration even if the signal
 	# never fires.
 	var safety := Timer.new()

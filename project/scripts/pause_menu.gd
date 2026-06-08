@@ -169,10 +169,21 @@ func _make_button(text: String, on_pressed: Callable, fg: Color = COL_AMBER) -> 
 	return btn
 
 func _toggle_fullscreen() -> void:
-	# Works for both desktop (DisplayServer fullscreen) and the HTML5
-	# build (the canvas swaps to the browser's fullscreen API). The
-	# pause menu itself rebuilds with the new viewport size, so no
-	# manual layout work needed here. 2026-06-07 itch.io polish.
+	# HTML5: browsers require canvas.requestFullscreen() called from
+	# a user gesture; Godot's window-mode API silently no-ops there.
+	if OS.has_feature("web"):
+		JavaScriptBridge.eval("""
+			(function() {
+				var canvas = document.querySelector('canvas');
+				if (document.fullscreenElement) {
+					document.exitFullscreen();
+				} else if (canvas) {
+					if (canvas.requestFullscreen) canvas.requestFullscreen();
+					else if (canvas.webkitRequestFullscreen) canvas.webkitRequestFullscreen();
+				}
+			})();
+		""", true)
+		return
 	var win := get_window()
 	if win == null:
 		return

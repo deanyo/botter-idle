@@ -103,6 +103,66 @@ static func floor_begin(label: String) -> void:
 	_floor_frames = 0
 	_floor_label = label
 
+# Frame-spike detector. Call once per frame BEFORE doing any work.
+# Reports any frame longer than `threshold_ms` to GrindLog AND
+# (on web) the browser console. Useful for tracking down "random
+# 1s freezes" — the printout includes the previous-frame state so
+# you can correlate with what just happened (chest open, new enemy,
+# spell cast, etc.).
+static var _spike_last_tick_us: int = 0
+static var _spike_armed: bool = false
+static var _spike_context: String = ""
+static var _spike_threshold_ms: float = 50.0
+
+static func arm_spike(threshold_ms: float = 50.0) -> void:
+	_spike_armed = true
+	_spike_threshold_ms = threshold_ms
+	_spike_last_tick_us = Time.get_ticks_usec()
+
+static func note_spike_context(s: String) -> void:
+	# Caller stamps a one-line description of "what just happened" so
+	# the next spike printout has context. Last writer wins —
+	# overwrite is fine since we only care about the most recent
+	# event when a spike fires.
+	_spike_context = s
+
+static func spike_tick() -> void:
+	if not _spike_armed:
+		return
+	var now: int = Time.get_ticks_usec()
+	if _spike_last_tick_us == 0:
+		_spike_last_tick_us = now
+		return
+	var dt_us: int = now - _spike_last_tick_us
+	_spike_last_tick_us = now
+	var dt_ms: float = float(dt_us) / 1000.0
+	if dt_ms < _spike_threshold_ms:
+		return
+	# Browsers throttle inactive-tab RAF, and scene transitions pause
+	# _process. Anything > 15s is almost certainly the user tabbing
+	# away or hitting the loading curtain — not a real stutter.
+	if dt_ms > 15000.0:
+		_spike_context = ""
+		return
+	# The whole "spike" series in the user's logs turned out to be
+	# Firefox's RAF throttling on a backgrounded tab — every spike
+	# was logged AFTER the user tabbed back. Skip when the window
+	# isn't focused so we only flag genuine in-frame stutters.
+	if not DisplayServer.window_is_focused():
+		_spike_context = ""
+		return
+	var msg: String = "[perf-spike] %.1fms ctx=\"%s\" nodes=%d draws=%d objs=%d" % [
+		float(dt_us) / 1000.0,
+		_spike_context,
+		int(Performance.get_monitor(Performance.OBJECT_NODE_COUNT)),
+		int(Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME)),
+		int(Performance.get_monitor(Performance.RENDER_TOTAL_OBJECTS_IN_FRAME)),
+	]
+	GrindLog.log_line(msg)
+	# Always print so the browser DevTools console catches it on web.
+	print(msg)
+	_spike_context = ""
+
 static func floor_end_summary() -> String:
 	if _floor_frames <= 0:
 		return ""

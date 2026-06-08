@@ -99,6 +99,11 @@ func _ready() -> void:
 	# on aspect-ratio crossings. UI polish 2026-06-04.
 	UILayout.subscribe_resize(self, _on_viewport_resized)
 	set_process(true)
+	# Pre-warm tile textures while the player browses. Dungeon entry
+	# would otherwise pay 15-25s of PNG decode + GPU upload at click
+	# time on Web GL Compatibility. Spread across multiple deferred
+	# frames so the outpost UI stays responsive.
+	call_deferred("_prewarm_tiles_async")
 
 func _on_viewport_resized() -> void:
 	# Tear down everything and rebuild from scratch. State (state,
@@ -121,6 +126,22 @@ func _on_viewport_resized() -> void:
 func _exit_tree() -> void:
 	if DragManager and DragManager.drag_ended.is_connected(_on_drag_ended):
 		DragManager.drag_ended.disconnect(_on_drag_ended)
+
+# Walk every unlocked branch and pre-warm its tile textures into the
+# resource cache. One biome per frame keeps the outpost responsive
+# while the heavy PNG decode + GPU upload work happens off the
+# critical path. By the time the player clicks Deploy, the textures
+# the dungeon needs are already resident.
+func _prewarm_tiles_async() -> void:
+	var unlocked: Array = state.get("unlocked_branches", ["dungeon"])
+	for branch_id in unlocked:
+		if not is_inside_tree():
+			return
+		var t0: int = Time.get_ticks_msec()
+		var did: bool = BiomeData.prewarm_biome(String(branch_id))
+		if did:
+			print("[prewarm] biome=%s ms=%d" % [String(branch_id), Time.get_ticks_msec() - t0])
+		await get_tree().process_frame
 
 # WoW-style tooltip manager — owns one ItemTooltip widget plus an
 # optional comparison tooltip rendered when Shift is held. Shown by

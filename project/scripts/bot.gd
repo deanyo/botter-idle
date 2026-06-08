@@ -521,6 +521,12 @@ func _apply_rarity_decor(sprite: Sprite2D, inst: Variant, slot_id: String) -> vo
 	var thickness: float = slider_thickness * (1.20 if rarity == "legendary" or _has_priority_flavor(flavor_tags) else 1.0)
 	mat.set_shader_parameter("thickness", thickness)
 	sprite.material = mat
+	# Skip the pulse tween on web — every equip swap was building a new
+	# Tween + binding 2 method callbacks, contributing to the equip lag
+	# spike on Firefox HTML5. The pulse is barely perceptible on the
+	# small in-game bot sprite anyway.
+	if OS.has_feature("web"):
+		return
 	var pulse_amt: float = VideoSettings.tunable("glow_pulse_amount", 0.30)
 	# Soft pulse via glow_strength uniform — shader-side, so we don't
 	# replace the modulate (which already carries flavor tint).

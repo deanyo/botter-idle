@@ -114,6 +114,13 @@ static func attach(parent: Node2D, spec_id: String, offset_px: Vector2 = Vector2
 	#   BOTTER_NO_SHADOWS=1       — disable shadows on every LightSpec light
 	#   BOTTER_SHADOW_FILTER=none|hard|pcf3|pcf5  — override filter quality
 	var no_shadows: bool = OS.has_environment("BOTTER_NO_SHADOWS")
+	# Web GL compatibility compiles a fresh shadow shader per shadow-casting
+	# Light2D allocation. Wave spawns (4-8 fire enemies in <1 frame) caused
+	# 5-second freezes. Disable shadows on actor-tier lights for web; the
+	# decorative lighting still fires from the static-decor path which
+	# already skips PointLight2D nodes anyway.
+	if OS.has_feature("web"):
+		no_shadows = true
 	var filter_env: String = OS.get_environment("BOTTER_SHADOW_FILTER") if OS.has_environment("BOTTER_SHADOW_FILTER") else "pcf5"
 	if no_shadows:
 		light.shadow_enabled = false
@@ -154,6 +161,8 @@ static func attach(parent: Node2D, spec_id: String, offset_px: Vector2 = Vector2
 
 	return light
 
+static var _ember_mat_cache: Dictionary = {}
+
 static func _attach_fire_particles(parent: Node2D, offset_px: Vector2, spec: Dictionary) -> GPUParticles2D:
 	var p := GPUParticles2D.new()
 	p.position = offset_px
@@ -164,24 +173,36 @@ static func _attach_fire_particles(parent: Node2D, offset_px: Vector2, spec: Dic
 	p.local_coords = true
 	p.z_index = 4
 
-	var mat := ParticleProcessMaterial.new()
-	# Drift upward
-	mat.gravity = Vector3(0, -25, 0)
-	mat.initial_velocity_min = 4.0
-	mat.initial_velocity_max = 16.0
-	mat.angle_min = -180
-	mat.angle_max = 180
-	mat.scale_min = 0.6
-	mat.scale_max = 1.4
-	mat.scale_curve = _ember_scale_curve()
-	# Random spawn within a small disc
-	mat.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_SPHERE
-	mat.emission_sphere_radius = 4.0
-	mat.spread = 35.0
-	# Color: hot core fading to ash
+	# Cache ParticleProcessMaterial by color — each ParticleProcessMaterial.new()
+	# triggers a particle-shader compile on Web GL Compatibility, which is
+	# the dominant cost during enemy waves. Multiple emitters can share
+	# one material; only the spawn position differs (which is on the
+	# parent node, not the material).
 	var col: Color = spec.get("color", Color(1, 0.6, 0.2))
-	mat.color = col
-	mat.color_ramp = _ember_gradient(col)
+	var key: String = "%d_%d_%d" % [int(col.r * 255), int(col.g * 255), int(col.b * 255)]
+	var cached: Variant = _ember_mat_cache.get(key, null)
+	var mat: ParticleProcessMaterial = null
+	if cached != null and is_instance_valid(cached):
+		mat = cached
+	else:
+		mat = ParticleProcessMaterial.new()
+		# Drift upward
+		mat.gravity = Vector3(0, -25, 0)
+		mat.initial_velocity_min = 4.0
+		mat.initial_velocity_max = 16.0
+		mat.angle_min = -180
+		mat.angle_max = 180
+		mat.scale_min = 0.6
+		mat.scale_max = 1.4
+		mat.scale_curve = _ember_scale_curve()
+		# Random spawn within a small disc
+		mat.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_SPHERE
+		mat.emission_sphere_radius = 4.0
+		mat.spread = 35.0
+		# Color: hot core fading to ash
+		mat.color = col
+		mat.color_ramp = _ember_gradient(col)
+		_ember_mat_cache[key] = mat
 	p.process_material = mat
 
 	# Tiny ember dot texture
