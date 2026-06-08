@@ -164,14 +164,44 @@ static func primary_stat_value(bot: Node, primary_stat: String) -> int:
 	return 5
 
 # Compute final spell damage:
-#   base × (1 + (primary - 5) × 0.02)         primary stat scaling
+#   roll [damage_min..damage_max] × (meta_mult × quality_mult)  base
+#       × (1 + (primary - 5) × 0.02)         primary stat scaling
 #       × (1 + spell_damage_pct/100)          gear "+spell damage"
 #       × (1 + element_dmg_pct/100)           gear element-specific
-static func compute_damage(bot: Node, item: Dictionary) -> int:
+#
+# Pre-2026-06-08 we read item.get("damage", arch.damage) — but every
+# spell item declares damage_min/damage_max with no `damage` key, so
+# every cast fell through to the archetype default and per-tome rarity
+# / quality / meta_rarity scaling was purely cosmetic. Now: roll over
+# the item's range when present, scale by meta-rarity (Ancient ×1.20,
+# Primal ×1.50) and Quality multiplier (Sublime ×1.20 etc.) the same
+# way StatCalc does for weapons, fall back to arch.damage only when
+# the item declares no range.
+static func compute_damage(bot: Node, item: Dictionary, inst: Variant = null) -> int:
 	var arch: Dictionary = archetype_def(String(item.get("base_type", "")))
 	if arch.is_empty():
 		return 0
-	var base_dmg: float = float(item.get("damage", arch.get("damage", 10)))
+	var base_dmg: float
+	if item.has("damage_min") or item.has("damage_max"):
+		var dmin: int = int(item.get("damage_min", item.get("damage_max", 1)))
+		var dmax: int = int(item.get("damage_max", dmin))
+		base_dmg = float(randi_range(min(dmin, dmax), max(dmin, dmax)))
+	else:
+		base_dmg = float(item.get("damage", arch.get("damage", 10)))
+	# Meta-rarity + quality multipliers off the per-instance dict.
+	# Ancient = 20% stat boost, Primal = 50% (matches StatCalc weapon path).
+	# Quality.multiplier_for handles missing inst gracefully (returns 1.0).
+	if inst != null:
+		var meta: String = ""
+		if typeof(inst) == TYPE_DICTIONARY:
+			meta = String(inst.get("meta_rarity", ""))
+		var meta_mult: float = 1.0
+		if meta == "ancient":
+			meta_mult = 1.20
+		elif meta == "primal":
+			meta_mult = 1.50
+		var qmult: float = Quality.multiplier_for(inst)
+		base_dmg *= meta_mult * qmult
 	var pstat: String = primary_stat_for_item(item)
 	var pval: int = primary_stat_value(bot, pstat)
 	var stat_mult: float = 1.0 + float(pval - 5) * 0.02

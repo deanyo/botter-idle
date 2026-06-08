@@ -85,8 +85,15 @@ static func process_tick(bot: Node, dungeon: Node, delta: float, items_db: Dicti
 				# so dispatch can read e.g. spell_dart_split / spell_drain_buff
 				# off the same dict regardless of whether the flag came from
 				# implicit_affixes or a rolled affix. 2026-06-04 spell expansion.
+				#
+				# Stash the per-instance dict under `_inst` so the fire
+				# functions / SpellData.compute_damage can pull meta_rarity
+				# + quality off the actual instance — pre-2026-06-08 we
+				# threw the inst away here, so a Pristine Ancient Tome read
+				# identical to a Mouldering Common Tome.
 				var view: Dictionary = item.duplicate()
 				_fold_inst_affixes_into(view, inst)
+				view["_inst"] = inst
 				_dispatch_fire(bot, dungeon, view)
 				t = SpellData.compute_cooldown(bot, item)
 			else:
@@ -232,7 +239,7 @@ static func _fire_fireball(bot: Node, dungeon: Node, item: Dictionary) -> bool:
 	# enemies so they all do something instead of fizzling).
 	candidates.sort_custom(func(a, b): return a.d < b.d)
 	var proj_count: int = SpellData.compute_proj_count(bot, item)
-	var damage: int = SpellData.compute_damage(bot, item)
+	var damage: int = SpellData.compute_damage(bot, item, item.get("_inst", null))
 	# Per-flavor sprite picker — fire flavor gets a real flame sprite,
 	# cold gets iceblast, holy gets holy_flame, etc. 2026-06-05.
 	var sprite_path: String = _resolve_sprite_path(item, "spell_fireball", String(arch.get("projectile", "")))
@@ -262,7 +269,7 @@ static func _fire_frost_nova(bot: Node, dungeon: Node, item: Dictionary) -> bool
 	var enemies: Array = _enemies_in_range(bot, dungeon, radius_cells)
 	if enemies.is_empty():
 		return false
-	var damage: int = SpellData.compute_damage(bot, item)
+	var damage: int = SpellData.compute_damage(bot, item, item.get("_inst", null))
 	var slow_dur: float = 2.0 * (1.0 + float(bot.spell_duration_pct) / 100.0)
 	for entry in enemies:
 		var e: Node = entry.e
@@ -290,7 +297,7 @@ static func _fire_chain_lightning(bot: Node, dungeon: Node, item: Dictionary) ->
 	if initial.is_empty():
 		return false
 	initial.sort_custom(func(a, b): return a.d < b.d)
-	var damage: int = SpellData.compute_damage(bot, item)
+	var damage: int = SpellData.compute_damage(bot, item, item.get("_inst", null))
 	var jump_count: int = 2 + int(bot.spell_proj_bonus)  # base 3 hits (1 + 2 jumps)
 	var hit_set: Dictionary = {}
 	var chain_points: Array = [bot.position + Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5)]
@@ -357,7 +364,7 @@ static func _fire_holy_beam(bot: Node, dungeon: Node, item: Dictionary) -> bool:
 			facing = dir.normalized()
 	var cone_half_angle: float = deg_to_rad(60.0) * (1.0 + float(bot.spell_area_pct) / 100.0)
 	var max_dist: float = float(range_cells) * float(C.TILE_SIZE)
-	var damage: int = SpellData.compute_damage(bot, item)
+	var damage: int = SpellData.compute_damage(bot, item, item.get("_inst", null))
 	var hits: int = 0
 	for e in dungeon.enemies:
 		if not is_instance_valid(e) or not e.is_alive:
@@ -386,7 +393,7 @@ static func _fire_axes(bot: Node, dungeon: Node, item: Dictionary) -> bool:
 	if arch.is_empty() or not is_instance_valid(bot) or dungeon == null:
 		return false
 	var n: int = SpellData.compute_proj_count(bot, item) + 1  # base 2 axes (proj_count=1 + base 1)
-	var damage: int = SpellData.compute_damage(bot, item)
+	var damage: int = SpellData.compute_damage(bot, item, item.get("_inst", null))
 	var duration: float = 2.5 * (1.0 + float(bot.spell_duration_pct) / 100.0)
 	var radius_px: float = 48.0 * (1.0 + float(bot.spell_area_pct) / 100.0)
 	# Resolve a real visible axe sprite — the previous fallback at
@@ -418,7 +425,7 @@ static func _fire_magic_dart(bot: Node, dungeon: Node, item: Dictionary) -> bool
 	if candidates.is_empty():
 		return false
 	candidates.sort_custom(func(a, b): return a.d < b.d)
-	var damage: int = SpellData.compute_damage(bot, item)
+	var damage: int = SpellData.compute_damage(bot, item, item.get("_inst", null))
 	# Per-flavor sprite — fire dart shows a fire bolt, cold dart an
 	# ice bolt, etc. 2026-06-05.
 	var sprite_path: String = _resolve_sprite_path(item, "spell_magic_dart", String(arch.get("projectile", "")))
@@ -463,7 +470,7 @@ static func _fire_iron_shot(bot: Node, dungeon: Node, item: Dictionary) -> bool:
 	if candidates.is_empty():
 		return false
 	candidates.sort_custom(func(a, b): return a.d < b.d)
-	var damage: int = SpellData.compute_damage(bot, item)
+	var damage: int = SpellData.compute_damage(bot, item, item.get("_inst", null))
 	var sprite_path: String = _resolve_sprite_path(item, "spell_iron_shot", String(arch.get("projectile", "")))
 	var element: String = String(arch.get("element", ""))
 	var base_speed: float = float(arch.get("projectile_speed", 220.0))
@@ -511,7 +518,7 @@ static func _fire_sandblast(bot: Node, dungeon: Node, item: Dictionary) -> bool:
 			facing = dir.normalized()
 	var cone_half_angle: float = deg_to_rad(45.0) * (1.0 + float(bot.spell_area_pct) / 100.0)
 	var max_dist: float = float(range_cells) * float(C.TILE_SIZE)
-	var damage: int = SpellData.compute_damage(bot, item)
+	var damage: int = SpellData.compute_damage(bot, item, item.get("_inst", null))
 	# Blinding Grit affix flag — apply blinded debuff (miss chance) on hit.
 	var blind: bool = bool(item.get("spell_sandblast_blind", false))
 	var hits: int = 0
@@ -548,7 +555,7 @@ static func _fire_drain(bot: Node, dungeon: Node, item: Dictionary) -> bool:
 	if candidates.is_empty():
 		return false
 	candidates.sort_custom(func(a, b): return a.d < b.d)
-	var damage: int = SpellData.compute_damage(bot, item)
+	var damage: int = SpellData.compute_damage(bot, item, item.get("_inst", null))
 	var sprite_path: String = _resolve_sprite_path(item, "spell_drain", String(arch.get("projectile", "")))
 	var element: String = String(arch.get("element", ""))
 	var base_speed: float = float(arch.get("projectile_speed", 280.0))
@@ -581,7 +588,7 @@ static func _fire_shatter(bot: Node, dungeon: Node, item: Dictionary) -> bool:
 	var enemies: Array = _enemies_in_range(bot, dungeon, radius_cells)
 	if enemies.is_empty():
 		return false
-	var damage: int = SpellData.compute_damage(bot, item)
+	var damage: int = SpellData.compute_damage(bot, item, item.get("_inst", null))
 	for entry in enemies:
 		var e: Node = entry.e
 		if is_instance_valid(e) and e.has_method("take_damage"):
