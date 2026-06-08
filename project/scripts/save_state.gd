@@ -108,6 +108,11 @@ static func create_character(species: String) -> int:
 	var w: Dictionary = _load_wrapper()
 	var ch: Dictionary = _default()
 	ch["species"] = species
+	# New characters never had legacy ring1/ring2 slots, so the one-time
+	# ring-collapse migration is implicitly already done. Stamping this
+	# prevents _migrate from running the cleanup that would otherwise wipe
+	# octopode/naga's ring2 every load.
+	ch["migration_v_ring_collapse"] = true
 	var equipped: Dictionary = ch.get("equipped", {})
 	# Strip starter gear in disallowed slots.
 	var disallowed: Array = SpeciesData.disallowed_slots(species)
@@ -232,24 +237,39 @@ static func _migrate(state: Dictionary) -> void:
 		if not equipped.has(ring_id):
 			equipped[ring_id] = null
 	state["equipped"] = equipped
-	if not equipped.has("ring") or equipped.get("ring", null) == null:
-		var promote: Variant = equipped.get("ring1", null)
-		if promote == null:
-			promote = equipped.get("ring2", null)
-			equipped["ring2"] = null
-		if promote != null:
-			equipped["ring"] = promote
-	# If both old slots were full, ring1 went into the new `ring` slot above
-	# and ring2's item still lives at equipped.ring2 — push it to inventory
-	# rather than silently drop it.
-	var leftover: Variant = equipped.get("ring2", null)
-	if leftover != null and typeof(leftover) == TYPE_DICTIONARY:
-		var inv: Array = state.get("inventory", [])
-		inv.append(leftover)
-		state["inventory"] = inv
-	equipped.erase("ring1")
-	equipped.erase("ring2")
-	state["equipped"] = equipped
+	# Legacy ring1/ring2 → ring collapse (2026-06-02). Pre-collapse saves had
+	# ring1 + ring2 slots; new layout has a single `ring` slot. Promote ring1
+	# (or ring2 if ring1 was empty) into `ring`; push any displaced ring2
+	# item to inventory rather than dropping it.
+	#
+	# ONE-TIME ONLY: gated on migration_v_ring_collapse. Pre-fix this ran on
+	# every load — for octopode (4 rings) and naga (2 rings) it was wiping
+	# ring2 every restart because their species init recreates ring2 as a
+	# real slot, and the legacy block then promoted/inv-pushed it as if it
+	# were a stale legacy key. Audit fix 2026-06-08.
+	#
+	# Skip entirely for species that legitimately use ring2 — the legacy
+	# block has nothing to do for them; ring2 is part of their slot set,
+	# never a key from the pre-collapse era.
+	if not state.get("migration_v_ring_collapse", false):
+		var ring_ids: Array = SpeciesData.ring_slot_ids(String(state["species"]))
+		if not ("ring2" in ring_ids):
+			if not equipped.has("ring") or equipped.get("ring", null) == null:
+				var promote: Variant = equipped.get("ring1", null)
+				if promote == null:
+					promote = equipped.get("ring2", null)
+					equipped["ring2"] = null
+				if promote != null:
+					equipped["ring"] = promote
+			var leftover: Variant = equipped.get("ring2", null)
+			if leftover != null and typeof(leftover) == TYPE_DICTIONARY:
+				var inv: Array = state.get("inventory", [])
+				inv.append(leftover)
+				state["inventory"] = inv
+			equipped.erase("ring1")
+			equipped.erase("ring2")
+			state["equipped"] = equipped
+		state["migration_v_ring_collapse"] = true
 
 static func save_state(state: Dictionary) -> void:
 	# Stamp the active character with wall time + persist to disk.
