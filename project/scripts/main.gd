@@ -22,6 +22,25 @@ var auto_grind_runs: int = 0
 var auto_grind_floors: Dictionary = {}
 var auto_grind_start_time: int = 0
 
+# Last-ditch save flush on window close. On desktop/Steam this fires
+# from the OS-level WM close (cmd-Q, X button); on web it fires from
+# the engine's pagehide hook. Pairs with the JS-side pagehide listener
+# we install via _install_web_close_handler — both paths converge on
+# SaveState.flush_to_disk so an unsaved boss-kill / shop-purchase /
+# run-end can't be lost to a tab close. Audit fix 2026-06-09.
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_WM_CLOSE_REQUEST:
+		# Persist whatever the active screen has in memory — dungeon's
+		# flush_to_save folds in-flight loot drops into the segment
+		# array before the wrapper write.
+		if current_screen and current_screen.has_method("flush_to_save"):
+			current_screen.flush_to_save()
+		# Re-write the current state through the atomic-rotate path,
+		# then ask the underlying FS to durably commit.
+		var save: Dictionary = SaveState.load_state()
+		SaveState.save_state(save)
+		SaveState.flush_to_disk()
+
 func _ready() -> void:
 	# Print the build version stamp + bake it into the window title
 	# so users can verify which build they're running across browser
@@ -152,6 +171,16 @@ func _ready() -> void:
 		# Skip the garage; jump straight into the dungeon.
 		_on_deploy()
 	else:
+		# Web-only: install a JS pagehide listener that fires
+		# FS.syncfs the moment the browser detects the tab is closing
+		# / navigating away / hiding. NOTIFICATION_WM_CLOSE_REQUEST is
+		# unreliable on web (Chrome doesn't fire it for X-button close;
+		# Safari fires it inconsistently); pagehide does. Modern
+		# browsers run a small synchronous-ish window during pagehide
+		# so an IDBFS commit started here typically completes before
+		# the page unloads. Audit fix 2026-06-09.
+		if OS.has_feature("web"):
+			_install_web_close_handler()
 		# Apply offline progress before the menu loads so the player sees
 		# the loot in their inventory + a "While You Were Away" banner.
 		# Skipped in grind/debug-jump because those use the debug save and
@@ -167,6 +196,29 @@ func _ready() -> void:
 		# capture the dimmed pause overlay over the dungeon.
 		_install_pause_menu()
 		_show_main_menu()
+
+func _install_web_close_handler() -> void:
+	# Install a JS pagehide listener that runs FS.syncfs unconditionally
+	# whenever the tab is hidden, closed, or navigated away from. The
+	# bytes were already committed to IDBFS at save_state time; this
+	# call promotes them from indexed-db's in-memory cache to durable
+	# storage. visibilitychange covers mobile browser background-tab
+	# transitions which don't always fire pagehide.
+	JavaScriptBridge.eval("""
+		(function() {
+			if (typeof FS === 'undefined' || !FS.syncfs) return;
+			if (window.__botter_close_handler_installed) return;
+			window.__botter_close_handler_installed = true;
+			var flush = function() {
+				try { FS.syncfs(false, function(err) {}); } catch (e) {}
+			};
+			window.addEventListener('pagehide', flush);
+			window.addEventListener('beforeunload', flush);
+			document.addEventListener('visibilitychange', function() {
+				if (document.visibilityState === 'hidden') flush();
+			});
+		})();
+	""", true)
 
 func _install_pause_menu() -> void:
 	pause_menu = _PauseMenu.new()
@@ -400,6 +452,12 @@ func _on_boss_killed(branch_id: String) -> void:
 	save.unlocked_branches = unlocked
 	save.bosses_killed = bosses_killed
 	SaveState.save_state(save)
+	# Boss kill is the single most-impactful save in the game — losing
+	# an unlock to a celebratory tab close was the audit's headline web
+	# failure mode. Force the IDBFS commit immediately so the unlock is
+	# durable before the player even sees the run report. Steam path
+	# is no-op (FileAccess writes are already synchronous). 2026-06-09.
+	SaveState.flush_to_disk()
 	var tier_complete: bool = false
 	for sib in _TIER_BRANCHES.get(tier, []):
 		if int(bosses_killed.get(sib, 0)) <= 0:
@@ -546,6 +604,17 @@ func _on_run_ended(victory: bool, report: Dictionary) -> void:
 	rpt.show_report(victory, report)
 	rpt.deploy_again.connect(_on_deploy)
 	rpt.back_to_garage.connect(_show_outpost)
+	# Block run-report dismissal until the run-end save is durably
+	# flushed to IDBFS. On Steam the flush callback fires synchronously,
+	# so the buttons never appear disabled. On web the typical syncfs
+	# round-trip is <100ms — short enough that the player won't notice
+	# the brief "Saving…" hint, but long enough that a fast tab close
+	# could otherwise drop the unlock. Audit fix 2026-06-09.
+	if not auto_grind:
+		rpt.mark_durable_save_pending()
+		SaveState.flush_to_disk(func() -> void:
+			if is_instance_valid(rpt):
+				rpt.mark_durable_save_complete())
 
 func _swap(scene: Node, skip_curtain: bool = false) -> void:
 	# UI polish 2026-06-04 — fire the loading curtain over every scene

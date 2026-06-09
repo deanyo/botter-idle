@@ -25,12 +25,51 @@ var _unlock_banner: Label = null
 # Inserted dynamically as a thin horizontal underline below the title
 # in a victory/defeat color. UI polish 2026-06-04.
 var _title_underline: ColorRect = null
+# Inserted dynamically as a small "Saving…" hint while the run-end
+# save is awaiting the IDBFS flush callback on web. Idempotent. Audit
+# 2026-06-09 — boss-kill unlocks were getting lost across tab close
+# because the report dismissal didn't wait for syncfs.
+var _saving_label: Label = null
 
 func _ready() -> void:
 	deploy_btn.pressed.connect(func(): deploy_again.emit())
 	garage_btn.pressed.connect(func(): back_to_garage.emit())
 	UITheme.style_button(deploy_btn)
 	UITheme.style_button(garage_btn)
+
+# Disable the action buttons + show a "Saving…" hint until the caller
+# calls mark_durable_save_complete(). main.gd ties this to the
+# SaveState.flush_to_disk() callback so a tab close immediately after
+# the report appears can't lose the run's gold/loot/unlocks.
+#
+# No-op on Steam — caller invokes mark_durable_save_complete()
+# synchronously.
+func mark_durable_save_pending() -> void:
+	if deploy_btn != null: deploy_btn.disabled = true
+	if garage_btn != null: garage_btn.disabled = true
+	_show_saving_hint(true)
+
+func mark_durable_save_complete() -> void:
+	if deploy_btn != null: deploy_btn.disabled = false
+	if garage_btn != null: garage_btn.disabled = false
+	_show_saving_hint(false)
+
+func _show_saving_hint(show: bool) -> void:
+	if not show:
+		if _saving_label != null and is_instance_valid(_saving_label):
+			_saving_label.visible = false
+		return
+	if _saving_label == null or not is_instance_valid(_saving_label):
+		_saving_label = Label.new()
+		_saving_label.text = "Saving…"
+		_saving_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		_saving_label.add_theme_font_size_override("font_size", 14)
+		_saving_label.add_theme_color_override("font_color", Color(0.85, 0.75, 0.4))
+		var parent: Node = deploy_btn.get_parent() if deploy_btn != null else null
+		if parent != null:
+			parent.add_child(_saving_label)
+			parent.move_child(_saving_label, 0)
+	_saving_label.visible = true
 
 func show_report(victory: bool, report: Dictionary) -> void:
 	# Death is no longer permadeath — the run-active flag survives, gear/

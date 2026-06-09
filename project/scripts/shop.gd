@@ -726,6 +726,10 @@ func _sell_all_junk() -> void:
 	if sold > 0:
 		state.gold = int(state.get("gold", 0)) + earned
 		SaveState.save_state(state)
+		# Bulk gold change deserves a durable commit — losing N×price of
+		# gold + the items they replaced to a tab close is the audit's
+		# "most visible loss case." 2026-06-09.
+		SaveState.flush_to_disk()
 		_render()
 
 func _buy_one(stock_index: int) -> void:
@@ -747,6 +751,9 @@ func _buy_one(stock_index: int) -> void:
 	stock.remove_at(stock_index)
 	state["shop"]["stock"] = stock
 	SaveState.save_state(state)
+	# Gold spend → item received: durable-commit so the buy can't be
+	# lost to a tab close in the moments after purchase. 2026-06-09.
+	SaveState.flush_to_disk()
 	_render()
 
 # ---- Helpers ----

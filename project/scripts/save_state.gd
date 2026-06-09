@@ -518,6 +518,70 @@ static func _migrate_to_v7(state: Dictionary) -> void:
 			state["equipped"] = equipped
 		state["migration_v_ring_collapse"] = true
 
+# Flush the underlying user:// filesystem to durable storage. No-op on
+# Steam / desktop / mobile (Godot's FileAccess.flush + close already
+# committed the bytes synchronously). On HTML5 the engine writes to
+# IDBFS, an in-memory virtualization of indexed-db; bytes only persist
+# across sessions when FS.syncfs(false, ...) flushes them.
+#
+# Callers should run this AFTER any save_state() call whose data must
+# survive an immediate tab close — boss kills, run-report writes,
+# shop purchases. The browser allows a partial async window during
+# pagehide for the IDBFS commit to complete; without an explicit
+# flush, "I tabbed away and lost my unlock" is a recurring class of
+# web-only data loss.
+#
+# `on_done` (optional Callable taking no args) is invoked once the
+# syncfs callback fires on web. Run-report dismissal gates on this so
+# the "Continue" button can't be clicked before the unlock is durable.
+# On non-web platforms `on_done` runs synchronously before return.
+static func flush_to_disk(on_done: Callable = Callable()) -> void:
+	if not OS.has_feature("web"):
+		if on_done.is_valid():
+			on_done.call()
+		return
+	# Wire a one-shot global callback so JS can call back into GDScript
+	# when syncfs settles. JavaScriptBridge.create_callback keeps a strong
+	# reference until the JS side drops it; we explicitly drop after
+	# firing to avoid leaking a callback per flush.
+	if on_done.is_valid():
+		var cb_ref: Array = [null]
+		var cb := JavaScriptBridge.create_callback(func(_args: Array) -> void:
+			on_done.call()
+			cb_ref[0] = null  # drop reference after firing
+		)
+		cb_ref[0] = cb
+		var window: JavaScriptObject = JavaScriptBridge.get_interface("window")
+		window["__botter_syncfs_cb"] = cb
+		JavaScriptBridge.eval("""
+			(function() {
+				if (typeof FS !== 'undefined' && FS.syncfs) {
+					FS.syncfs(false, function(err) {
+						if (window.__botter_syncfs_cb) {
+							window.__botter_syncfs_cb();
+							delete window.__botter_syncfs_cb;
+						}
+					});
+				} else if (window.__botter_syncfs_cb) {
+					// IDBFS not present (running outside emscripten harness?)
+					// — fire callback synchronously so the caller never hangs.
+					window.__botter_syncfs_cb();
+					delete window.__botter_syncfs_cb;
+				}
+			})();
+		""", true)
+		return
+	# Fire-and-forget — no callback wiring, just kick off the syncfs
+	# (used by tab-close handlers where we can't wait for a callback
+	# anyway).
+	JavaScriptBridge.eval("""
+		(function() {
+			if (typeof FS !== 'undefined' && FS.syncfs) {
+				FS.syncfs(false, function(err) {});
+			}
+		})();
+	""", true)
+
 static func save_state(state: Dictionary) -> void:
 	# Stamp the active character with wall time + persist to disk.
 	# Existing callers pass a single-character dict (from load_state);
