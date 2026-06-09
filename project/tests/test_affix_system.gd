@@ -168,3 +168,42 @@ func test_no_duplicate_affix_in_single_roll() -> void:
 			assert_false(ids.has(id),
 				"duplicate %s in single roll at seed=%d" % [id, s])
 			ids[id] = true
+
+# ---------------------------------------------------------------------
+# format_item_tooltip — items v2 schema (damage_min/max + armor + evasion)
+# ---------------------------------------------------------------------
+
+func test_tooltip_renders_v2_weapon_damage_range() -> void:
+	# v2 weapons declare damage_min/damage_max, not legacy `atk`. The
+	# tooltip's base-parts block must read the v2 keys.
+	var item := {
+		"name": "Test Sword", "rarity": "common", "slot": "weapon",
+		"damage_min": 4, "damage_max": 9,
+	}
+	var tip: String = AffixSystem.format_item_tooltip(item, {"affixes": []})
+	assert_true(tip.contains("4-9 Dmg"), "v2 weapon shows damage range, got: %s" % tip)
+	assert_false(tip.contains("ATK"), "tooltip should not surface legacy ATK label, got: %s" % tip)
+
+func test_tooltip_renders_v2_armor_and_evasion() -> void:
+	var item := {
+		"name": "Test Plate", "rarity": "common", "slot": "armor",
+		"armor": 12, "evasion": 5,
+	}
+	var tip: String = AffixSystem.format_item_tooltip(item, {"affixes": []})
+	assert_true(tip.contains("+12 Armor"), "v2 body shows armor, got: %s" % tip)
+	assert_true(tip.contains("+5% Evasion"), "v2 body shows evasion, got: %s" % tip)
+	assert_false(tip.contains("DEF"), "tooltip should not surface legacy DEF label, got: %s" % tip)
+
+func test_format_stat_line_drops_legacy_atk_def_cases() -> void:
+	# atk/def were the v1 affix stat keys. Nothing in affixes.json uses
+	# them now, but the formatter previously had cases for them — those
+	# went away with the v2 cleanup. A future re-add of an "atk" or
+	# "def" affix will fall through to the +%d <stat> default, which
+	# this test asserts so we notice if it sneaks back.
+	assert_eq(AffixSystem._format_stat_line("atk", 5), "+5 atk",
+		"removed legacy atk case must fall through to default")
+	assert_eq(AffixSystem._format_stat_line("def", 7), "+7 def",
+		"removed legacy def case must fall through to default")
+	# hp stays — `of_vitality` rolls stat=hp.
+	assert_eq(AffixSystem._format_stat_line("hp", 30), "+30 HP",
+		"hp stays on the formatter — of_vitality is alive")

@@ -223,13 +223,13 @@ static func format_affix_lines(affixes: Array) -> Array:
 	return lines
 
 static func _format_stat_line(stat: String, v: int) -> String:
+	# Items v2 (2026-06-04) replaced atk/def with damage_min/max + armor +
+	# evasion. No live affix uses "atk" or "def" any more — those cases
+	# were dead pattern-matches kept around from v1.
 	match stat:
-		"atk": return "+%d ATK" % v
 		"hp": return "+%d HP" % v
-		"def": return "+%d DEF" % v
 		"hp_regen": return "+%d HP/sec" % v
 		"crit_chance": return "+%d%% Crit" % v
-		"atk_speed_pct": return "+%d%% Haste" % v
 		"str": return "+%d Str" % v
 		"dex": return "+%d Dex" % v
 		"int": return "+%d Int" % v
@@ -296,13 +296,18 @@ static func format_item_tooltip(item_def: Dictionary, inst: Variant) -> String:
 			}
 			var mode_label: String = String(mode_labels.get(mode, "Tinted"))
 			lines.append("[%s]  +%.0f%% %s" % [mode_label, lean_pct, lean])
+	# Items v2 schema (2026-06-04): weapons carry damage_min/damage_max,
+	# body slots carry armor + evasion. Pre-v2 atk/def/hp were the
+	# baseline keys; those are gone everywhere in items.json now.
 	var base_parts: Array = []
-	var atk_v: int = int(item_def.get("atk", 0))
-	var def_v: int = int(item_def.get("def", 0))
-	var hp_v: int = int(item_def.get("hp", 0))
-	if atk_v > 0: base_parts.append("+%d ATK" % atk_v)
-	if def_v > 0: base_parts.append("+%d DEF" % def_v)
-	if hp_v > 0: base_parts.append("+%d HP" % hp_v)
+	var dmin: int = int(item_def.get("damage_min", 0))
+	var dmax: int = int(item_def.get("damage_max", 0))
+	var armor_v: int = int(item_def.get("armor", 0))
+	var evasion_v: int = int(item_def.get("evasion", 0))
+	if dmin > 0 or dmax > 0:
+		base_parts.append("%d-%d Dmg" % [dmin, dmax])
+	if armor_v > 0: base_parts.append("+%d Armor" % armor_v)
+	if evasion_v > 0: base_parts.append("+%d%% Evasion" % evasion_v)
 	# Item secondary stats — direct contributions distinct from
 	# rolled affixes. Hidden when zero so most items stay clean.
 	var crit_v: float = float(item_def.get("crit_chance", 0))

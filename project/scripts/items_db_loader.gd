@@ -31,6 +31,8 @@ static var _mods_loaded: bool = false
 static func items() -> Dictionary:
 	if not _items_loaded:
 		var raw: Dictionary = _read_json(ITEMS_PATH)
+		var fmt: int = int(raw.get("_format_version", 0))
+		assert(fmt == 2, "items.json _format_version must be 2 (v2 schema: damage_min/max + armor + evasion); got %d" % fmt)
 		var by_id: Dictionary = {}
 		for it in raw.get("items", []):
 			by_id[it.id] = it
