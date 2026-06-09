@@ -201,7 +201,7 @@ func _make_bot_card(bot: Dictionary) -> Control:
 		del.add_theme_font_size_override("font_size", 12)
 		del.add_theme_color_override("font_color", Color(1, 0.5, 0.5))
 		del.tooltip_text = "Delete this bot."
-		del.pressed.connect(_on_delete_bot.bind(int(bot.idx)))
+		del.pressed.connect(_on_delete_bot.bind(bot))
 		card.add_child(del)
 	return card
 
@@ -214,16 +214,22 @@ func _on_switch_bot(idx: int) -> void:
 	# reloading the same scene.
 	get_tree().reload_current_scene()
 
-func _on_delete_bot(idx: int) -> void:
+func _on_delete_bot(bot: Dictionary) -> void:
+	var idx: int = int(bot.get("idx", 0))
+	var sp_id: String = String(bot.get("species", "spriggan"))
+	var sp_name: String = String(SpeciesData.get_def(sp_id).get("name", sp_id.capitalize()))
 	var dlg := ConfirmationDialog.new()
 	dlg.title = "Delete bot"
-	dlg.dialog_text = "Permanently delete this character? This cannot be undone."
+	dlg.dialog_text = "Permanently delete %s · Lv %d  ·  %d runs  ·  %d gold?\n\nThis cannot be undone." % [
+		sp_name, int(bot.get("level", 1)),
+		int(bot.get("runs_completed", 0)), int(bot.get("gold", 0)),
+	]
 	add_child(dlg)
 	dlg.confirmed.connect(func():
 		SaveState.delete_character(idx)
 		get_tree().reload_current_scene()
 	)
-	dlg.popup_centered(Vector2i(360, 160))
+	dlg.popup_centered(Vector2i(420, 180))
 
 func _build_buttons(x: int, y: int, w: int, h: int) -> void:
 	var pad := 64
