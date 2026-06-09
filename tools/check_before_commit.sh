@@ -24,14 +24,28 @@ SAMPLE_BIOMES=(dungeon lair vaults crypt forge glacier slime spider zot)
 FAIL=0
 
 # 1. Refresh class cache (catches "class not declared" for any new class_name)
-echo "1/4  Refreshing class cache..."
+echo "1/5  Refreshing class cache..."
 if ! "$GODOT" --path "$PROJECT" --headless --import >"$LOG" 2>&1; then
     echo "FAIL: --import failed (see $LOG)" >&2
     tail -10 "$LOG" >&2
     exit 1
 fi
 
-# 2. GUT test suite. Discovers project/tests/test_*.gd and runs every
+# 2. Flavor coverage gate. Every flavor tag used in items.json or
+# enchant_combos.json must exist in BOTH UITheme.FLAVOR_COLORS and
+# AffixSystem.ENCHANT_BLURBS — without that, the UI shows un-colored
+# tooltips and missing blurbs. Audit 2026-06-09 found "lightning" in 3
+# items + 6 combos clashing with "thunderous" everywhere else; this
+# step catches that drift the day it lands.
+echo "2/5  Checking flavor-tag coverage..."
+COV_LOG="$LOG_DIR/${TS}_flavor_coverage.log"
+if ! python3 "$REPO/tools/check_flavor_coverage.py" >"$COV_LOG" 2>&1; then
+    echo "FAIL: flavor coverage gap (see $COV_LOG)" >&2
+    cat "$COV_LOG" >&2
+    FAIL=1
+fi
+
+# 3. GUT test suite. Discovers project/tests/test_*.gd and runs every
 # test_* function. Locks: StatCalc unification (blessing kinds,
 # species mods, lifesteal clamp, spell_element_pct), Actor combat
 # correctness (single avoidance roll per swing, thorns/crystal
@@ -45,7 +59,7 @@ fi
 # test to the relevant test_*.gd file before the fix is committed.
 # Tests are cheap (~3s for the full suite as of 2026-06-09) — there's
 # no excuse to skip them.
-echo "2/4  Running GUT test suite..."
+echo "3/5  Running GUT test suite..."
 TEST_LOG="$LOG_DIR/${TS}_gut.log"
 if ! "$GODOT" --path "$PROJECT" --headless \
         -s addons/gut/gut_cmdln.gd -gdir=res://tests -gexit \
@@ -55,7 +69,7 @@ if ! "$GODOT" --path "$PROJECT" --headless \
     FAIL=1
 fi
 
-# 3. Per-biome 1-floor smoke build via debug-jump (no screenshot — just gen)
+# 4. Per-biome 1-floor smoke build via debug-jump (no screenshot — just gen)
 USER_DIR="$HOME/Library/Application Support/Godot/app_userdata/Botter"
 mkdir -p "$USER_DIR"
 DEBUG_MARKER="$USER_DIR/DEBUG_FLOOR.txt"
@@ -65,7 +79,7 @@ GRIND_MARKER="$USER_DIR/AUTO_GRIND.txt"
 [[ -f "$DEBUG_MARKER" ]] && mv "$DEBUG_MARKER" "$DEBUG_MARKER.precommit_parked"
 [[ -f "$GRIND_MARKER" ]] && mv "$GRIND_MARKER" "$GRIND_MARKER.precommit_parked"
 
-echo "3/4  Smoke-building 1 floor each across ${#SAMPLE_BIOMES[@]} biomes..."
+echo "4/5  Smoke-building 1 floor each across ${#SAMPLE_BIOMES[@]} biomes..."
 for biome in "${SAMPLE_BIOMES[@]}"; do
     # Floor 1, no vault, no screenshot mode (4th field unset)
     echo "${biome},_,1" > "$DEBUG_MARKER"
@@ -110,8 +124,8 @@ if [[ ! -f "$USER_DIR/DEBUG_FLOOR.txt.precommit_parked" ]]; then
     rm -f "$USER_DIR/DEBUG_FLOOR.txt"
 fi
 
-# 4. Summary
-echo "4/4  Summary"
+# 5. Summary
+echo "5/5  Summary"
 if [[ $FAIL -eq 0 ]]; then
     echo "PASS — ${#SAMPLE_BIOMES[@]} biomes built without errors."
     echo "logs: $LOG_DIR/${TS}_*.log"

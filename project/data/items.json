@@ -14606,7 +14606,7 @@
       "spell_cooldown": 7.7,
       "item_tier": 5,
       "flavor_tags": [
-        "lightning"
+        "thunderous"
       ],
       "lore": "The arc forks again and again, hungry for ground.",
       "drop_weights": [
@@ -16395,7 +16395,7 @@
       "enchant_chance": 0.05,
       "evasion": 6,
       "flavor_tags": [
-        "lightning"
+        "thunderous"
       ],
       "id": "travelers_cloak_stormtouched",
       "implicit_affixes": [],
@@ -19339,7 +19339,7 @@
       "enchant_chance": 0.05,
       "evasion": 6,
       "flavor_tags": [
-        "lightning"
+        "thunderous"
       ],
       "id": "travelers_cloak_stormtouched_ironclad",
       "implicit_affixes": [],

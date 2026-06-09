@@ -379,6 +379,8 @@ const ENCHANT_BLURBS := {
 	"ponderous":   "+10% damage but -10% attack speed.",
 	"slaying":     "Stat-flavor (already on base atk).",
 	"psychic":     "Mind-shielded. (decorative for now)",
+	"agility":     "Stat-flavor (already on base evasion).",
+	"shadow":      "Umbral. (decorative for now)",
 }
 
 static func sum_affix_stats(affixes: Array) -> Dictionary:

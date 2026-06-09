@@ -349,6 +349,17 @@ const FLAVOR_COLORS := {
 	"ponderous":   Color(0.55, 0.55, 0.65),   # heavy slate
 	"slaying":     Color(1.00, 0.50, 0.35),   # bloody coral
 	"psychic":     Color(0.90, 0.55, 1.00),   # psi pink
+	# Wired flavor mechanics that previously lacked a color entry — see
+	# actor.gd: thorns/reflective return paths, harm dmg in/out,
+	# rage on-kill atk_pct, precision anti-streak crit, vitality regen.
+	"thorns":      Color(0.85, 0.55, 0.55),   # blood briar
+	"reflective":  Color(0.70, 0.85, 1.00),   # mirror cyan
+	"harm":        Color(1.00, 0.35, 0.25),   # crimson
+	"rage":        Color(1.00, 0.40, 0.20),   # fury red-orange
+	"precision":   Color(1.00, 0.85, 0.50),   # marksman gold
+	"vitality":    Color(0.55, 1.00, 0.55),   # vital green
+	"agility":     Color(0.70, 1.00, 0.65),   # nimble lime
+	"shadow":      Color(0.40, 0.30, 0.55),   # umbra purple
 }
 # Priority order — wired-mechanic flavors first because their COLOR
 # carries the most meaning. Decorative-but-wired ones below. Anything
