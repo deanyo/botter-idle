@@ -37,11 +37,20 @@ fi
 # tooltips and missing blurbs. Audit 2026-06-09 found "lightning" in 3
 # items + 6 combos clashing with "thunderous" everywhere else; this
 # step catches that drift the day it lands.
-echo "2/5  Checking flavor-tag coverage..."
+echo "2/5  Checking flavor-tag coverage + credits sync..."
 COV_LOG="$LOG_DIR/${TS}_flavor_coverage.log"
 if ! python3 "$REPO/tools/check_flavor_coverage.py" >"$COV_LOG" 2>&1; then
     echo "FAIL: flavor coverage gap (see $COV_LOG)" >&2
     cat "$COV_LOG" >&2
+    FAIL=1
+fi
+# Credits / notice sync — repo-root .md is authoritative; project/data/
+# *.txt is the shipped copy the in-game credits screen reads. Drift
+# would silently let the in-game attribution lag the canonical one.
+SYNC_LOG="$LOG_DIR/${TS}_credits_sync.log"
+if ! python3 "$REPO/tools/sync_credits.py" --check >"$SYNC_LOG" 2>&1; then
+    echo "FAIL: credits/notice drift (see $SYNC_LOG)" >&2
+    cat "$SYNC_LOG" >&2
     FAIL=1
 fi
 

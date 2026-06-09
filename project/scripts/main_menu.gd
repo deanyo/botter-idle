@@ -11,6 +11,7 @@ signal paperdoll_audit_pressed
 signal spell_showcase_pressed
 signal item_generator_pressed
 signal create_character_pressed
+signal credits_pressed
 
 # Colors mirror UITheme — see hud_chrome.gd note for why these are inline.
 const COL_AMBER := Color(0.92, 0.78, 0.45)
@@ -258,6 +259,7 @@ func _build_buttons(x: int, y: int, w: int, h: int) -> void:
 		_make_button("Paperdoll Audit", col_x, by, col_w, 44, 16, false, _on_paperdoll_audit); by += 44 + gap
 		_make_button("Spell Showcase", col_x, by, col_w, 44, 16, false, _on_spell_showcase); by += 44 + gap
 		_make_button("Item Generator", col_x, by, col_w, 44, 16, false, _on_item_generator); by += 44 + gap
+	_make_button("Credits", col_x, by, col_w, 44, 16, false, _on_credits); by += 44 + gap
 	_make_button("Reset Save", col_x, by, col_w, 44, 16, false, _on_reset); by += 44 + gap
 	_make_button("Quit", col_x, by, col_w, 44, 16, false, _on_quit)
 
@@ -303,6 +305,9 @@ func _on_item_generator() -> void:
 
 func _on_create_character() -> void:
 	create_character_pressed.emit()
+
+func _on_credits() -> void:
+	credits_pressed.emit()
 
 func _on_quit() -> void:
 	get_tree().quit()

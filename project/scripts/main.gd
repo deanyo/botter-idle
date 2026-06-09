@@ -286,6 +286,8 @@ func _show_main_menu() -> void:
 		menu.spell_showcase_pressed.connect(_show_spell_showcase)
 	if menu.has_signal("item_generator_pressed"):
 		menu.item_generator_pressed.connect(_show_item_generator)
+	if menu.has_signal("credits_pressed"):
+		menu.credits_pressed.connect(_show_credits)
 
 func _show_video_options() -> void:
 	var opts: Node = VIDEO_OPTIONS_SCENE.instantiate()
@@ -317,6 +319,12 @@ func _show_item_generator() -> void:
 	# random instances, lets the user select + export favorites.
 	# 2026-06-05.
 	var script := load("res://scripts/item_generator.gd")
+	var screen: Control = script.new()
+	_swap(screen)
+	screen.back_pressed.connect(_show_main_menu)
+
+func _show_credits() -> void:
+	var script := load("res://scripts/credits.gd")
 	var screen: Control = script.new()
 	_swap(screen)
 	screen.back_pressed.connect(_show_main_menu)
