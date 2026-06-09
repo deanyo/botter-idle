@@ -4,7 +4,84 @@ Point-in-time snapshot of what's actually shipping. Updated as we go. The
 durable rules and process live in `CLAUDE.md`; the roadmap and open work
 items live in `TODO.md`.
 
-Last refresh: 2026-06-09 (Tier 3 dungeon.gd split — third extraction
+Last refresh: 2026-06-09 (Tier 3 dungeon.gd split — fourth extraction
+shipped: RunState pulled out of the 3413-LOC dungeon).
+
+`project/scripts/run_state.gd` is a RefCounted helper the dungeon owns
+as the `run` field. It carries the run + floor lifecycle state:
+`current_floor`, `branch_id`, `run_plan`, every `floor_*` per-floor
+counter, every `run_*` per-run accumulator, the four `portal_*` overlay
+fields, the boss-floor lethality snapshot (`boss_floor_entry_hp/_ms/
+_branch`, `boss_initial_hp`), the `kills` tally, `dropped_items`,
+`loot_log`, `journal`, `active_modifiers`, `floors_per_run`,
+`boss_floor`, `revives_remaining`, `retreats_this_run`, `run_turn` +
+the per-frame `_turn_accum`, `run_vaults_stamped`, `run_biomes_visited`,
+`run_dropped_uniques`, `floor_placed_vaults`, `floor_starting_hp`,
+`floor_start_tick`. The methods that mutate it: `init_run`,
+`_resolve_active_modifiers` (private), `begin_floor`,
+`record_floor_vaults`, every `note_*` per-event helper, `enter_portal`/
+`exit_portal`, `record_descend_summary`, `advance_to_next_floor`,
+`is_final_boss_floor`/`is_miniboss_floor`, `capture_boss_floor_entry`,
+`tick_run_turn`, `journal_floor_entry`/`journal_event`,
+`note_dropped_unique`/`is_unique_dropped`, `try_death_retreat`,
+`flush_to_save(bot, inv)`, `end_run(victory, bot, inv, items_db)`.
+Behavior is a strict copy — no tuning rides the extraction.
+
+`dungeon.gd` shrank 3413 → 3314 (-99 lines). Smaller drop than the
+prior extractions because the external API surface is wide:
+`current_floor`, `run_plan`, all `floor_*` and `run_*` counters,
+`portal_active`, `journal`, `kills`, `dropped_items`, `active_modifiers`,
+etc. are read by name from main.gd / chrome / debug_dump / outpost,
+so the dungeon keeps property forwarders (~150 lines) that get/set
+through the helper. The win is that the LOC moved out is more
+load-bearing than the count suggests: every state mutation now goes
+through a method on RunState, not a scatter of `+= 1` writes across
+3700 lines.
+
+External API preserved by name:
+* `dungeon.flush_to_save()` — main.gd's pause-to-main-menu, web pagehide
+  hook, and `_notification(WM_CLOSE_REQUEST)` all call this. Body is
+  now `run.flush_to_save(bot, inv)`.
+* `dungeon._end_run(victory)` — pause-menu Abandon-Run + every internal
+  victory/defeat path. Body is `run.end_run(victory, bot, inv, items_db)`,
+  spell-system summary log, `run_ended.emit(victory, report)`.
+* `dungeon._try_death_retreat(reason)` — bookkeeping (counter decrements,
+  log line, current_floor reset to 1) lives on RunState; the bot revive
+  (HP reset, tween kill, rig transform, bot.is_alive flip) stays on
+  dungeon because it touches the bot's tween + rig.
+* `dungeon.run_kills` etc — main.gd's `_on_run_ended` reads the per-run
+  accumulators by name through the dungeon node. Property forwarders
+  preserve those reads.
+
+Test foundation extended: `test_run_state.gd` 22 tests / 75 asserts.
+Covers init_run resetting every per-run counter + rolling the run
+plan + consuming the branch_modifiers entry, every `note_*` per-event
+helper, begin_floor isolating per-floor vs run-wide state,
+record_floor_vaults dedup against the run set, portal enter/exit
+state lifecycle, is_final_boss_floor probe, capture_boss_floor_entry
+stamping all three fields, record_descend_summary aggregating into
+run-wide totals + biome list + run_done flip at floor cap,
+try_death_retreat returning false at zero revives + decrementing +
+floor reset when allowed, tick_run_turn 0.25s cadence, journal entry
++ event-append guard, unique-drop tracking. GUT 91 → 113 tests,
+2599 → 2674 asserts. Suite still ~3.3s headless.
+
+Validation: GUT 113/113 pass post-extraction.
+`tools/check_before_commit.sh` all 5 steps pass. Manual mortal T1
+3-run grind: 248 kills, 24 loot pickups, 0 errors, 0 stalls, 0 script
+errors. Run report fields (kills, loot, gold, level, floor) match
+pre-extraction shape. Save-state shape unchanged across both
+flush_to_save (mid-run menu exit) and end_run (victory + defeat)
+paths.
+
+Next dungeon.gd extraction: WaveSpawner (combat-shaped — pull the
+wave/burst tick, _pending_wave_spawns queue, _drain_pending_spawns,
+_warp_in_last_spawn). After that: Showcase (dead-code move). Each
+session shrinks dungeon.gd and doesn't touch anything else.
+
+---
+
+Earlier 2026-06-09 (Tier 3 dungeon.gd split — third extraction
 shipped: DebugDump pulled out of the 3735-LOC dungeon).
 
 `project/scripts/debug_dump.gd` is a pure static utility class
@@ -33,18 +110,7 @@ prints `[floor-dump] saved=...`, logs `[floor-dump]` via
 `flash_debug_dump_status`. No GUT regression test was added — the
 dev-tool is too prone to false-positive failures on shape drift,
 and locking field-by-field equality would discourage adding new
-fields. The existing test count holds at 91/91.
-
-Validation: GUT 91/91 / 2599 asserts post-extraction (matches the
-pre-extraction baseline). `tools/check_before_commit.sh` all 5
-steps pass. Mortal 3-run grind: 0 errors, 0 stalls, 0 script
-errors. Class cache regenerated cleanly with the new
-`DebugDump` global.
-
-Next dungeon.gd extraction: RunState — touches save state, so
-prerequisite (Tier 2 save_durability shipped 2026-06-09) is
-satisfied. After that: WaveSpawner (combat), Showcase (dead-code
-move).
+fields.
 
 ---
 

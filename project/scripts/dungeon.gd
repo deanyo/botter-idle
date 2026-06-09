@@ -29,14 +29,9 @@ var grid: Array
 var rooms: Array
 var bot: Bot
 var enemies: Array[Enemy] = []
-var current_floor: int = 1
 var rng := RandomNumberGenerator.new()
-var loot_log: Array[String] = []
-var kills: Dictionary = {}
-var dropped_items: Array = []
 var visited_rooms: Array[bool] = []
 var stairs_cell: Vector2i = Vector2i.ZERO
-var journal: Array = []
 var loot_drops: Array[LootDrop] = []
 var interactables: Array[Interactable] = []
 var bot_interacting: bool = false
@@ -51,9 +46,9 @@ var vault_spawn_overrides: Dictionary = {}
 # in a single north cluster on lots of floors.
 var _spawn_used_cells: Dictionary = {}
 var vault_decor_sprites: Array[Node2D] = []
-var run_plan: Array = []
-# Branch the player picked in the Outpost. Empty = legacy random-roll.
-# Set by main.gd before the dungeon is added to the tree.
+# Branch the player picked in the Outpost. Set by main.gd before the
+# dungeon is added to the tree, then routed through RunState.init_run
+# at run start. Empty = legacy random-roll.
 var branch_id: String = ""
 var current_biome: Dictionary = {}
 var ambient_modulate: CanvasModulate = null
@@ -64,26 +59,10 @@ var bot_light: PointLight2D = null
 var world_env: WorldEnvironment = null
 var fog_overlay: FogOverlay = null
 var ambient_decor_nodes: Array = []
-var portal_active: bool = false
-var portal_kind: String = ""
-var portal_biome_override: Dictionary = {}
-var portal_loot_bias: int = 0
 var bot_target_cell: Vector2i = Vector2i(-1, -1)
 var bot_target_kind: String = ""
 var dist_to_stairs: Array = []
 var ticks_without_move: int = 0
-# Per-floor accumulating counters, reset on _build_floor, emitted on floor_cleared.
-var floor_start_tick: int = 0
-var floor_kills: int = 0
-var floor_loot_picked: int = 0
-var floor_chests_opened: int = 0
-var floor_altars_used: int = 0
-var floor_fountains_used: int = 0
-var floor_portals_entered: int = 0
-var floor_stalls: int = 0
-var floor_hard_recoveries: int = 0
-var floor_starting_hp: int = 0
-var floor_placed_vaults: Array = []
 var _last_fog_cell: Vector2i = Vector2i(-99, -99)
 var _fog_dirty: bool = true
 var _cached_world_lights: Array = []
@@ -95,38 +74,15 @@ var _floor_ready: bool = false
 # bail if their captured generation no longer matches, so a new build
 # (or scene teardown) can preempt a half-finished one.
 var _build_generation: int = 0
-# Run-wide counters for run-end summary.
-var run_kills: int = 0
-var run_loot_picked: int = 0
-var run_portals_entered: int = 0
-var run_stalls: int = 0
-var run_vaults_stamped: Array = []
-var run_biomes_visited: Array = []
-# IDs of `unique: true` items already dropped this run. Each unique drops
-# at most once per run; subsequent rolls excluding it. Reset on run start.
-var run_dropped_uniques: Array[String] = []
-# Death retreat: revives_remaining starts at save.max_revives at run start
-# and decrements on each retreat. When it hits zero, the next death is a
-# real run-end. Scales later via bot upgrades / gear affixes.
-var revives_remaining: int = 0
-var retreats_this_run: int = 0
-
-# Per-boss-floor lethality state. Captured on entry to the boss floor;
-# read on boss death (bot won) or bot death (bot lost). Logged as
-# [boss-killed] or [boss-died] for balance analysis. 2026-06-05.
-var _boss_floor_entry_hp: int = 0
-var _boss_floor_entry_ms: int = 0
-var _boss_floor_branch: String = ""
-var _boss_initial_hp: int = 0
-# Active run modifiers (Crowded, Endless, etc). Set at run start from
-# save.branch_modifiers[branch_id]; cached here so spawn-time code paths
-# don't reload the save. Effects fold into enemy count, floor count,
-# rarity, gold, and chest counts.
-var active_modifiers: Array = []
-# Per-run resolved floor counts. Default to constants but Endless extends
-# them. _boss_floor always equals _floors_per_run (boss is final floor).
-var _floors_per_run: int = 6
-var _boss_floor: int = 6
+# Run + floor lifecycle state. Owns current_floor, run_plan, all
+# floor_*/run_* counters, portal overlay, journal, kills tally,
+# dropped_items, modifiers, retreats. Methods that touch this state
+# live on RunState; dungeon.gd holds thin forwarders for the
+# external API names main.gd / chrome read by name (current_floor,
+# run_kills etc). Extracted from dungeon.gd 2026-06-09 (Tier 3
+# god-class split, follow-up to DebugDump).
+const _RunStateScript := preload("res://scripts/run_state.gd")
+var run: RefCounted = _RunStateScript.new()
 # Live HUD inventory + auto-salvage + drag-drop equip surface. Owns
 # loot_segments / hud_inv_cache / slot_cooldowns / inventory_cap /
 # run_salvaged_* state. Extracted from dungeon.gd 2026-06-09 (Tier 3
@@ -139,7 +95,109 @@ const _HUDInventoryControllerScript := preload("res://scripts/hud_inventory_cont
 var inv: RefCounted = null
 const MAX_TICKS_WITHOUT_MOVE := 30
 var chrome: HudChrome = null
-var run_turn: int = 0
+
+
+# Forwarders into RunState. The chrome reads `current_floor` /
+# `run_plan` / `current_biome` etc by name through the dungeon node
+# (set as `equip_request_target`); main.gd reads `run_kills` etc on
+# the active screen. Keep these as plain properties so the external
+# API doesn't change.
+var current_floor: int:
+	get: return run.current_floor
+	set(v): run.current_floor = v
+var run_plan: Array:
+	get: return run.run_plan
+	set(v): run.run_plan = v
+var loot_log: Array[String]:
+	get: return run.loot_log
+	set(v): run.loot_log = v
+var kills: Dictionary:
+	get: return run.kills
+	set(v): run.kills = v
+var dropped_items: Array:
+	get: return run.dropped_items
+	set(v): run.dropped_items = v
+var journal: Array:
+	get: return run.journal
+	set(v): run.journal = v
+var portal_active: bool:
+	get: return run.portal_active
+	set(v): run.portal_active = v
+var portal_kind: String:
+	get: return run.portal_kind
+	set(v): run.portal_kind = v
+var portal_biome_override: Dictionary:
+	get: return run.portal_biome_override
+	set(v): run.portal_biome_override = v
+var portal_loot_bias: int:
+	get: return run.portal_loot_bias
+	set(v): run.portal_loot_bias = v
+var floor_start_tick: int:
+	get: return run.floor_start_tick
+	set(v): run.floor_start_tick = v
+var floor_kills: int:
+	get: return run.floor_kills
+	set(v): run.floor_kills = v
+var floor_loot_picked: int:
+	get: return run.floor_loot_picked
+	set(v): run.floor_loot_picked = v
+var floor_chests_opened: int:
+	get: return run.floor_chests_opened
+	set(v): run.floor_chests_opened = v
+var floor_altars_used: int:
+	get: return run.floor_altars_used
+	set(v): run.floor_altars_used = v
+var floor_fountains_used: int:
+	get: return run.floor_fountains_used
+	set(v): run.floor_fountains_used = v
+var floor_portals_entered: int:
+	get: return run.floor_portals_entered
+	set(v): run.floor_portals_entered = v
+var floor_stalls: int:
+	get: return run.floor_stalls
+	set(v): run.floor_stalls = v
+var floor_hard_recoveries: int:
+	get: return run.floor_hard_recoveries
+	set(v): run.floor_hard_recoveries = v
+var floor_starting_hp: int:
+	get: return run.floor_starting_hp
+	set(v): run.floor_starting_hp = v
+var floor_placed_vaults: Array:
+	get: return run.floor_placed_vaults
+	set(v): run.floor_placed_vaults = v
+var run_kills: int:
+	get: return run.run_kills
+	set(v): run.run_kills = v
+var run_loot_picked: int:
+	get: return run.run_loot_picked
+	set(v): run.run_loot_picked = v
+var run_portals_entered: int:
+	get: return run.run_portals_entered
+	set(v): run.run_portals_entered = v
+var run_stalls: int:
+	get: return run.run_stalls
+	set(v): run.run_stalls = v
+var run_vaults_stamped: Array:
+	get: return run.run_vaults_stamped
+	set(v): run.run_vaults_stamped = v
+var run_biomes_visited: Array:
+	get: return run.run_biomes_visited
+	set(v): run.run_biomes_visited = v
+var run_dropped_uniques: Array[String]:
+	get: return run.run_dropped_uniques
+	set(v): run.run_dropped_uniques = v
+var revives_remaining: int:
+	get: return run.revives_remaining
+	set(v): run.revives_remaining = v
+var retreats_this_run: int:
+	get: return run.retreats_this_run
+	set(v): run.retreats_this_run = v
+var active_modifiers: Array:
+	get: return run.active_modifiers
+	set(v): run.active_modifiers = v
+var run_turn: int:
+	get: return run.run_turn
+	set(v): run.run_turn = v
 
 @onready var map_layer: Node2D = $MapLayer
 @onready var actor_layer: Node2D = $ActorLayer
@@ -208,14 +266,9 @@ func _start_run_deferred() -> void:
 		print("[perf] dungeon ready→run start: %.1fms" % dt_ms)
 
 func _start_run() -> void:
-	current_floor = 1
-	loot_log.clear()
-	kills.clear()
-	journal.clear()
-	# Resolve modifiers up front so floor count + plan size reflect Endless
-	# and any future floor-shaping mods.
-	_resolve_active_modifiers()
-	run_plan = BiomeData.roll_run_plan(rng, branch_id, _floors_per_run)
+	# Run + floor lifecycle state lives on RunState — init_run resolves
+	# modifiers, rolls the run plan, resets every per-run accumulator.
+	run.init_run(branch_id, SaveState.load_state(), rng)
 	if ambient_modulate == null:
 		ambient_modulate = CanvasModulate.new()
 		add_child(ambient_modulate)
@@ -257,19 +310,8 @@ func _start_run() -> void:
 	bot.apply_gear(items_db, save.get("equipped", {}), save)
 	# Spell autocast bookkeeping — fresh per run.
 	SpellSystem.init_run(bot, items_db)
-	# Reset run-wide counters at run start
-	run_kills = 0
-	run_loot_picked = 0
-	run_portals_entered = 0
-	run_stalls = 0
-	run_vaults_stamped = []
-	run_biomes_visited = []
-	run_dropped_uniques.clear()
-	# Revives removed 2026-06-05 — death = run over. Save may still
-	# carry max_revives=3 from older versions; force to 0 here so old
-	# saves don't get the legacy 3-retreat behaviour.
-	revives_remaining = 0
-	retreats_this_run = 0
+	# Run-wide counters / modifiers / run plan / portal state were all
+	# reset by run.init_run above; nothing else to do here.
 	# Cache loot filter rank for the run — LootDrop.should_skip reads it
 	# in the AI hot path so we don't want a disk hit there.
 	LootDrop.loot_filter_min_rank = LootDrop.RARITY_RANK.get(String(save.get("loot_filter", "common")), 0)
@@ -334,7 +376,7 @@ func _async_build_floor() -> void:
 	bot_interacting = false
 	interact_target = null
 	interact_timer = 0.0
-	floor_start_tick = Engine.get_process_frames()
+	run.begin_floor()
 	_last_fog_cell = Vector2i(-99, -99)
 	_fog_dirty = true
 	_cached_world_lights_valid = false
@@ -342,14 +384,6 @@ func _async_build_floor() -> void:
 	if inv != null:
 		inv.clear_current_floor_segment()
 	_last_equipped_hash = 0
-	floor_kills = 0
-	floor_loot_picked = 0
-	floor_chests_opened = 0
-	floor_altars_used = 0
-	floor_fountains_used = 0
-	floor_portals_entered = 0
-	floor_stalls = 0
-	floor_hard_recoveries = 0
 
 	if DebugJump.active and DebugJump.biome_id != "":
 		# Replace the run plan with a 10-floor stretch of the debug biome so
@@ -411,11 +445,7 @@ func _async_build_floor() -> void:
 	dist_to_stairs = data.get("dist_to_stairs", [])
 	var vr: Dictionary = data.get("vault_results", {})
 	_apply_vault_results(vr)
-	floor_placed_vaults = []
-	for vname in vr.get("placed_vaults", []):
-		floor_placed_vaults.append(String(vname))
-		if not run_vaults_stamped.has(String(vname)):
-			run_vaults_stamped.append(String(vname))
+	run.record_floor_vaults(vr.get("placed_vaults", []))
 
 	visited_rooms = []
 	visited_rooms.resize(rooms.size())
@@ -473,11 +503,11 @@ func _async_build_floor() -> void:
 	var floor_label: String = "%s (%s)" % [branch_label, biome_name]
 	if portal_active:
 		floor_label = "%s Portal" % Portal.PORTAL_KINDS.get(portal_kind, {}).get("name", "Portal")
-	elif _is_final_boss_floor():
+	elif run.is_final_boss_floor():
 		floor_label = "%s — Boss" % floor_label
-	elif _is_miniboss_floor(current_floor):
+	elif run.is_miniboss_floor(current_floor):
 		floor_label = "%s — Elite" % floor_label
-	journal.append({
+	run.journal_floor_entry({
 		"floor": current_floor,
 		"biome": floor_label,
 		"events": [],
@@ -489,10 +519,10 @@ func _async_build_floor() -> void:
 	if my_gen != _build_generation: return
 	var t_spawn: int = Time.get_ticks_usec()
 	# Boss-floor lethality snapshot reset — must run BEFORE _spawn_enemies()
-	# so the spawn-time write to _boss_initial_hp survives. Pre-2026-06-05
+	# so the spawn-time write to run.boss_initial_hp survives. Pre-2026-06-05
 	# this was below floor_started.emit, AFTER spawn, so spawn's write was
 	# clobbered to 0 immediately.
-	_boss_initial_hp = 0
+	run.boss_initial_hp = 0
 	if not DebugJump.showcase:
 		_spawn_enemies()
 	# Threat-tier auras: classify each spawned enemy by power-vs-bot.
@@ -501,7 +531,7 @@ func _async_build_floor() -> void:
 		_apply_threat_auras()
 	t_spawn = Time.get_ticks_usec() - t_spawn
 	_update_biome_hud()
-	floor_starting_hp = bot.hp
+	run.floor_starting_hp = bot.hp
 	# `stealth` flavor on worn gear grants the bot a one-shot "stealthy"
 	# status at floor start — the next attack lands +25% damage. Per-
 	# floor refresh keeps it as a strong-opener bonus rather than a
@@ -530,13 +560,11 @@ func _async_build_floor() -> void:
 	PerfMon.floor_begin(perf_label)
 	# Boss-floor lethality snapshot — captures the bot's entry HP and
 	# wall-clock so the [boss-killed] / [boss-died] log lines can report
-	# how lethal the boss was relative to bot capacity. _boss_initial_hp
+	# how lethal the boss was relative to bot capacity. run.boss_initial_hp
 	# was already reset before _spawn_enemies() and populated by the
 	# boss-spawn paths. 2026-06-05.
-	if current_floor >= _boss_floor and is_instance_valid(bot):
-		_boss_floor_entry_hp = int(bot.hp)
-		_boss_floor_entry_ms = Time.get_ticks_msec()
-		_boss_floor_branch = String(current_biome.get("id", ""))
+	if run.is_final_boss_floor() and is_instance_valid(bot):
+		run.capture_boss_floor_entry(int(bot.hp), String(current_biome.get("id", "")))
 	floor_started.emit(current_floor)
 
 	# Debug-jump screenshot mode: after a short settle delay, save the
@@ -961,7 +989,7 @@ func _update_biome_hud() -> void:
 
 func _spawn_enemies() -> void:
 	var pool: Array = []
-	var is_boss_floor: bool = current_floor >= _boss_floor
+	var is_boss_floor: bool = run.is_final_boss_floor()
 	var biome_pool: Array = current_biome.get("enemy_pool", [])
 	for id in enemy_data.keys():
 		var def: Dictionary = enemy_data[id]
@@ -1067,20 +1095,19 @@ func _spawn_enemies() -> void:
 
 	# Portals: stepping on one swaps the floor to a themed mini-floor with
 	# bumped loot. Skip on portal floors themselves and on the boss/floor 1.
-	if not is_boss_floor and not portal_active and current_floor >= 2 and current_floor <= _floors_per_run - 1:
+	if not is_boss_floor and not portal_active and current_floor >= 2 and current_floor <= run.floors_per_run - 1:
 		if rng.randf() < 0.15:
 			var portal_cell: Vector2i = _random_walkable_cell_far_from_bot()
 			_spawn_portal(portal_cell)
 
 func _is_miniboss_floor(f: int) -> bool:
-	return f != _boss_floor and f in C.MINIBOSS_FLOORS
+	return run.is_miniboss_floor(f)
 
 func _is_final_boss_floor() -> bool:
-	return current_floor >= _boss_floor
+	return run.is_final_boss_floor()
 
 func _log(msg: String, tag: String = "combat") -> void:
-	if not journal.is_empty():
-		journal.back().events.append(msg)
+	run.journal_event(msg)
 	if chrome != null:
 		chrome.push_log(msg, tag)
 
@@ -1169,7 +1196,7 @@ func _spawn_branch_boss(id: String, at_cell: Vector2i) -> void:
 	e.hp = e.max_hp
 	# Stash the boss's max HP for the [boss-died] log line so we can
 	# report how close the bot got. 2026-06-05.
-	_boss_initial_hp = e.max_hp
+	run.boss_initial_hp = e.max_hp
 	e.move_speed = float(def.speed) * 4.0
 	var tex: Texture2D = load(ENEMY_TILE_DIR + def.tile)
 	if tex:
@@ -1307,7 +1334,7 @@ func _spawn_specific(id: String, at_cell: Vector2i, force_pack_tier: int = -1) -
 	# this is the vault-stamped boss path (def.boss=true). The other
 	# spawn path at ~line 1716 has its own snapshot.
 	if e.is_boss:
-		_boss_initial_hp = e.max_hp
+		run.boss_initial_hp = e.max_hp
 	e.move_speed = float(def.speed) * 4.0
 	var tex: Texture2D = load(ENEMY_TILE_DIR + def.tile)
 	if tex:
@@ -1359,7 +1386,6 @@ func _on_enemy_died(actor: Actor) -> void:
 	var e := actor as Enemy
 	if e == null or not is_instance_valid(e):
 		return
-	floor_kills += 1
 	# Combat effect: biome-themed kill flash. Forge → fire, Glacier → ice,
 	# others → blood splat.
 	var biome_id: String = String(current_biome.get("id", ""))
@@ -1377,8 +1403,8 @@ func _on_enemy_died(actor: Actor) -> void:
 	# Bosses + rare-tier packs still drop their own bigger pools below.
 	var gold_drop: int = int(round(float(rng.randi_range(1, 3) + current_floor / 2) * gold_mult))
 	bot.gold += gold_drop
-	kills[e.enemy_id] = kills.get(e.enemy_id, 0) + 1
-	loot_log.append("%s slain (+%d gold, +%d xp)" % [e.display_name, gold_drop, e.xp_reward])
+	run.note_kill(e.enemy_id)
+	run.append_loot_log("%s slain (+%d gold, +%d xp)" % [e.display_name, gold_drop, e.xp_reward])
 	if e.is_boss:
 		_log("Slew %s. (+%d gold, +%d xp)" % [e.display_name, gold_drop, e.xp_reward])
 		# Boss-lethality log: how lethal was this boss? Reports bot HP
@@ -1386,12 +1412,12 @@ func _on_enemy_died(actor: Actor) -> void:
 		# the floor, boss max-HP-vs-bot-max-HP, and which branch.
 		# Reads on a per-tier table to identify which bosses are too
 		# hard / too soft. 2026-06-05.
-		if current_floor >= _boss_floor and is_instance_valid(bot):
-			var dt_ms: int = Time.get_ticks_msec() - _boss_floor_entry_ms
-			var hp_lost: int = max(0, _boss_floor_entry_hp - int(bot.hp))
+		if run.is_final_boss_floor() and is_instance_valid(bot):
+			var dt_ms: int = Time.get_ticks_msec() - run.boss_floor_entry_ms
+			var hp_lost: int = max(0, run.boss_floor_entry_hp - int(bot.hp))
 			GrindLog.log_line("[boss-killed] branch=%s boss=%s boss_hp=%d bot_entry_hp=%d bot_now_hp=%d hp_lost=%d hp_pct=%.1f time_ms=%d" % [
-				_boss_floor_branch, e.display_name, _boss_initial_hp,
-				_boss_floor_entry_hp, int(bot.hp), hp_lost,
+				run.boss_floor_branch, e.display_name, run.boss_initial_hp,
+				run.boss_floor_entry_hp, int(bot.hp), hp_lost,
 				100.0 * float(hp_lost) / float(max(1, bot.max_hp)),
 				dt_ms,
 			])
@@ -1411,7 +1437,7 @@ func _on_enemy_died(actor: Actor) -> void:
 	# A boss-flagged enemy only ends the run if we're actually on the
 	# final-boss floor. Vault-stamped bosses on earlier floors are just
 	# strong elites — they shouldn't auto-win the run.
-	if e.is_boss and current_floor >= _boss_floor:
+	if e.is_boss and run.is_final_boss_floor():
 		_end_run(true)
 		return
 
@@ -1494,7 +1520,7 @@ func _spawn_fountain(at_cell: Vector2i, kind: String) -> void:
 	fountain.drank.connect(_on_fountain_drank)
 
 func _on_fountain_drank(_fountain: Fountain, heal: int, kind: String) -> void:
-	floor_fountains_used += 1
+	run.note_fountain_used()
 	_log("Drank from a %s fountain (+%d HP)." % [kind, heal])
 
 func _apply_vault_results(results: Dictionary) -> void:
@@ -1559,7 +1585,7 @@ func _spawn_altar(at_cell: Vector2i) -> void:
 	altar.blessed.connect(_on_altar_blessed)
 
 func _on_altar_blessed(altar: Altar, blessing: Dictionary) -> void:
-	floor_altars_used += 1
+	run.note_altar_used()
 	var bname: String = String(blessing.get("name", "blessing"))
 	var bdesc: String = String(blessing.get("desc", ""))
 	_log("Received %s — %s" % [bname, bdesc], "loot")
@@ -1587,11 +1613,8 @@ func _on_portal_entered(_portal: Portal, kind: String, biome_id: String, loot_bi
 	var portal_name: String = String(def.get("name", "Portal"))
 	_log("Stepped through a %s portal." % portal_name)
 	GrindLog.log_line("[portal] entered=%s -> biome=%s bias=%d on_floor=%d" % [kind, biome_id, loot_bias, current_floor])
-	floor_portals_entered += 1
-	portal_active = true
-	portal_kind = kind
-	portal_biome_override = override
-	portal_loot_bias = loot_bias
+	run.note_portal_entered()
+	run.enter_portal(kind, override, loot_bias)
 	# Rebuild the floor in-place using the portal biome. Floor counter does
 	# not advance — descending the portal's stairs continues the run normally.
 	_build_floor()
@@ -1615,8 +1638,6 @@ func _roll_drop_rarity(is_boss: bool) -> String:
 	var mod_bonus: float = RunModifiers.sum_effect(active_modifiers, "rarity_bonus", 0.0)
 	return LootFactory.roll_rarity(rng, _source_tier(), current_floor, is_boss, blessing_bonus, mod_bonus)
 
-var _turn_accum: float = 0.0
-
 func _process(delta: float) -> void:
 	PerfMon.spike_tick()
 	if not _floor_ready or not is_instance_valid(bot) or not bot.is_alive:
@@ -1627,10 +1648,7 @@ func _process(delta: float) -> void:
 	_tick_enemies(delta)
 	PerfMon.end(PerfMon.TAG_AI)
 	_center_camera_on_bot()
-	_turn_accum += delta
-	if _turn_accum >= 0.25:
-		_turn_accum -= 0.25
-		run_turn += 1
+	run.tick_run_turn(delta)
 	_tick_equip_cooldowns(delta)
 	SpellSystem.process_tick(bot, self, delta, items_db)
 	_tick_wave_spawns(delta)
@@ -2020,7 +2038,7 @@ func _check_stuck(delta: float) -> void:
 	_stuck_seconds += delta
 	if not _stall_warned and _stuck_seconds >= STALL_WARN_SECONDS:
 		_stall_warned = true
-		floor_stalls += 1
+		run.note_stall()
 		GrindLog.log_line("[stall] f=%d secs=%.1f bot=%s target=%s kind=%s stairs=%s enemies=%d interactables=%d unvisited_rooms=%d" % [
 			current_floor, _stuck_seconds, str(bot.cell), str(bot_target_cell), bot_target_kind,
 			str(stairs_cell), enemies.size(), interactables.size(),
@@ -2056,7 +2074,7 @@ func _check_stuck(delta: float) -> void:
 	# should be exceptionally rare — every trigger of this branch is a
 	# generator/AI bug worth investigating.
 	if _stuck_seconds >= STALL_TELEPORT_SECONDS:
-		floor_hard_recoveries += 1
+		run.note_hard_recovery()
 		GrindLog.log_line("[stall] TELEPORT f=%d last-resort from=%s to=%s" % [
 			current_floor, str(bot.cell), str(stairs_cell),
 		])
@@ -2253,12 +2271,11 @@ func _complete_loot_pickup(drop: LootDrop) -> void:
 	var item: Dictionary = drop.item
 	var display_name: String = AffixSystem.format_item_name(String(item.name), inst.get("affixes", []), inst)
 	PerfMon.note_spike_context("loot_pickup rarity=%s base=%s" % [String(item.get("rarity", "?")), String(item.get("base_id", inst.get("base_id", "?")))])
-	floor_loot_picked += 1
-	dropped_items.append(inst)
+	run.note_loot_picked(inst)
 	# Segment append + cache rebuild + HUD push live in HUDInventoryController.
 	if inv != null:
 		inv.complete_loot_pickup(inst, current_floor)
-	loot_log.append("Looted: [%s] %s" % [item.rarity, display_name])
+	run.append_loot_log("Looted: [%s] %s" % [item.rarity, display_name])
 	_log("Found: %s [%s]" % [display_name, item.rarity], "loot")
 	loot_drops.erase(drop)
 	interactables.erase(drop)
@@ -2274,24 +2291,6 @@ func _complete_loot_pickup(drop: LootDrop) -> void:
 	if bot.fx:
 		bot.fx.loot_pop()
 	drop.play_pickup_then_free()
-
-# Pull this branch's rolled modifiers from save, clear them so the next
-# Outpost visit re-rolls fresh, and resolve floor count from any
-# Endless-style modifiers. Called from _start_run before roll_run_plan
-# so the plan is sized correctly.
-func _resolve_active_modifiers() -> void:
-	var save: Dictionary = SaveState.load_state()
-	var all_mods: Dictionary = save.get("branch_modifiers", {})
-	active_modifiers = (all_mods.get(branch_id, []) as Array).duplicate() if branch_id != "" else []
-	if branch_id != "" and all_mods.has(branch_id):
-		all_mods.erase(branch_id)
-		save["branch_modifiers"] = all_mods
-		SaveState.save_state(save)
-	if not active_modifiers.is_empty():
-		GrindLog.log_line("[run] modifiers=%s" % str(active_modifiers))
-	var extra_floors: int = int(RunModifiers.sum_effect(active_modifiers, "extra_floors", 0.0))
-	_floors_per_run = C.FLOORS_PER_RUN + extra_floors
-	_boss_floor = _floors_per_run
 
 # Identity probe used by the HUD chrome (still calls
 # `equip_request_target.instance_at_segment_idx` by name) — forwarder
@@ -2318,7 +2317,7 @@ func _tick_equip_cooldowns(delta: float) -> void:
 		inv.tick_cooldowns(delta)
 
 func _on_chest_opened(chest: Chest, n: int, bias: int) -> void:
-	floor_chests_opened += 1
+	run.note_chest_opened()
 	PerfMon.note_spike_context("chest_open n=%d bias=%d" % [n, bias])
 	var chest_world: Vector2 = chest.position + Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5)
 	for i in n:
@@ -2401,8 +2400,8 @@ func _tick_enemies(delta: float) -> void:
 				# Boss-lethality log on death: identify the killer +
 				# how much damage the bot did to the boss before dying.
 				# 2026-06-05.
-				if current_floor >= _boss_floor:
-					var dt_ms: int = Time.get_ticks_msec() - _boss_floor_entry_ms
+				if run.is_final_boss_floor():
+					var dt_ms: int = Time.get_ticks_msec() - run.boss_floor_entry_ms
 					# Find a still-living boss to report its remaining HP.
 					var boss_hp_left: int = 0
 					var boss_name: String = "?"
@@ -2411,11 +2410,11 @@ func _tick_enemies(delta: float) -> void:
 							boss_hp_left = int(be.hp)
 							boss_name = be.display_name
 							break
-					var dmg_to_boss: int = max(0, _boss_initial_hp - boss_hp_left)
-					var pct_killed: float = 100.0 * float(dmg_to_boss) / float(max(1, _boss_initial_hp))
+					var dmg_to_boss: int = max(0, run.boss_initial_hp - boss_hp_left)
+					var pct_killed: float = 100.0 * float(dmg_to_boss) / float(max(1, run.boss_initial_hp))
 					GrindLog.log_line("[boss-died] branch=%s killer=%s boss=%s boss_hp=%d boss_hp_left=%d dmg_dealt=%d pct=%.1f time_ms=%d" % [
-						_boss_floor_branch, e.display_name, boss_name,
-						_boss_initial_hp, boss_hp_left, dmg_to_boss, pct_killed, dt_ms,
+						run.boss_floor_branch, e.display_name, boss_name,
+						run.boss_initial_hp, boss_hp_left, dmg_to_boss, pct_killed, dt_ms,
 					])
 				if _try_death_retreat("slain by %s on f%d" % [e.display_name, current_floor]):
 					return
@@ -2470,15 +2469,14 @@ func _room_center(r: Rect2i) -> Vector2i:
 # HUDInventoryController-side callbacks.
 # Provider: returns the live loot_drops array (filtered by the controller
 # for invalid/consumed/empty). Drops the controller folds into the
-# inventory get _on_inv_drop_folded called per drop so dungeon-side
-# counters (floor_loot_picked, dropped_items) stay in sync — these
-# live on the dungeon, not the controller.
+# inventory get _on_inv_drop_folded called per drop so the run-scoped
+# counters (floor_loot_picked, dropped_items) on RunState stay in sync —
+# loot_drops is a per-floor node list, the counters live on RunState.
 func _pending_drops_for_inv() -> Array:
 	return loot_drops
 
 func _on_inv_drop_folded(drop: LootDrop) -> void:
-	floor_loot_picked += 1
-	dropped_items.append(drop.instance)
+	run.note_loot_picked(drop.instance)
 
 func _descend() -> void:
 	PerfMon.note_spike_context("descend f=%d" % current_floor)
@@ -2488,38 +2486,21 @@ func _descend() -> void:
 		inv.maybe_auto_salvage_if_pending()
 	# Per-floor summary line — one structured row per cleared floor. Emitted
 	# before floor_cleared so consumers see the data first.
-	var ticks: int = Engine.get_process_frames() - floor_start_tick
 	var biome_id: String = String(current_biome.get("id", "?"))
-	var floor_label: String = "%s%s" % [biome_id, ".portal" if portal_active else ""]
-	var hp_lost: int = max(0, floor_starting_hp - bot.hp)
-	GrindLog.log_line("[floor] f=%d biome=%s ticks=%d kills=%d loot=%d chests=%d altars=%d fountains=%d portals=%d stalls=%d hp_lost=%d" % [
-		current_floor, floor_label, ticks, floor_kills, floor_loot_picked,
-		floor_chests_opened, floor_altars_used, floor_fountains_used,
-		floor_portals_entered, floor_stalls, hp_lost,
-	])
+	var summary: Dictionary = run.record_descend_summary(biome_id, bot.hp)
 	var perf_floor: String = PerfMon.floor_end_summary()
 	if perf_floor != "":
 		GrindLog.log_line("[perf-floor] " + perf_floor)
-	# Run-wide accumulators
-	run_kills += floor_kills
-	run_loot_picked += floor_loot_picked
-	run_portals_entered += floor_portals_entered
-	run_stalls += floor_stalls
-	if not run_biomes_visited.has(biome_id):
-		run_biomes_visited.append(biome_id)
 	floor_cleared.emit(current_floor)
 	if portal_active:
 		# Portal stairs return to the run's main progression on the NEXT floor.
 		_log("Returned from %s portal." % portal_kind)
-		portal_active = false
-		portal_kind = ""
-		portal_biome_override = {}
-		portal_loot_bias = 0
+		run.exit_portal()
 	_log("Descended to floor %d." % (current_floor + 1))
-	if current_floor >= _floors_per_run:
+	if summary["run_done"]:
 		_end_run(true)
 		return
-	current_floor += 1
+	run.advance_to_next_floor()
 	_build_floor()
 
 # Bot just hit HP=0. If the player has a revive left, retreat to floor 1
@@ -2527,15 +2508,14 @@ func _descend() -> void:
 # accrues loot even on a too-hard branch. When revives are exhausted, the
 # next death is a real game-over and we _end_run(false). Returns true if
 # the death was absorbed into a retreat (caller should NOT also _end_run).
+#
+# Bookkeeping (counter decrements, log line, current_floor reset to 1)
+# lives on RunState; the bot revive (HP reset, tween kill, rig transform)
+# stays here because it touches the bot's tween + rig.
 func _try_death_retreat(reason: String) -> bool:
-	if revives_remaining <= 0:
+	if not run.try_death_retreat(reason):
 		return false
-	revives_remaining -= 1
-	retreats_this_run += 1
 	_log("Bot retreats — %d revives left." % revives_remaining, "loot")
-	GrindLog.log_line("[retreat] reason=\"%s\" revives_left=%d retreats_this_run=%d" % [
-		reason, revives_remaining, retreats_this_run,
-	])
 	# Revive the bot at full HP. Actor.take_damage already started the
 	# death-spin tween + queued an _on_death_tween_done callback that
 	# would queue_free the bot. Kill the tween, reset the rig transform,
@@ -2551,10 +2531,7 @@ func _try_death_retreat(reason: String) -> bool:
 	bot.is_alive = true
 	bot.hp = bot.max_hp
 	bot._update_hp_bar()
-	# Reset to floor 1 of the same branch. Loot accumulated so far stays
-	# in the controller's segments and cache; new floor opens its own
-	# segment.
-	current_floor = 1
+	# RunState reset current_floor to 1; build the new floor.
 	_build_floor()
 	return true
 
@@ -2562,69 +2539,13 @@ func _try_death_retreat(reason: String) -> bool:
 # by main.gd when the player goes back to the main menu mid-run so
 # loot/gold/xp earned this run isn't lost when the dungeon scene
 # discards. Pre-2026-06-07 the back-to-menu path bypassed any save
-# and items vanished — user catch.
+# and items vanished — user catch. Forwarder kept by name so main.gd /
+# pause_menu / web pagehide hook still call dungeon.flush_to_save().
 func flush_to_save() -> void:
-	if not is_instance_valid(bot):
-		return
-	# Fold any live LootDrops the bot hadn't finished walking to into the
-	# inventory before we serialize. Pre-fix, chests rolled their loot at
-	# OPEN time + spawned drops, but items only entered the inventory
-	# cache when complete_loot_pickup ran (after the bot stood on each
-	# drop for ~0.4-0.8s). Esc → Main Menu mid-pickup discarded
-	# everything. Audit fix 2026-06-08 (commit f80376b).
-	if inv != null:
-		inv.flush_pending_drops(current_floor)
-		inv.maybe_auto_salvage_if_pending()
-	var save: Dictionary = SaveState.load_state()
-	save.gold = bot.gold
-	save.level = bot.level
-	save.xp = bot.xp
-	save.inventory = inv.hud_inv_cache.duplicate(true) if inv != null else []
-	save.equipped = bot.equipped.duplicate(true)
-	save.highest_floor = maxi(int(save.get("highest_floor", 0)), current_floor)
-	save.stat_points_unspent = int(bot.upgrade_state.get("stat_points_unspent", 0))
-	save.stat_alloc_str = int(bot.upgrade_state.get("stat_alloc_str", 0))
-	save.stat_alloc_dex = int(bot.upgrade_state.get("stat_alloc_dex", 0))
-	save.stat_alloc_int = int(bot.upgrade_state.get("stat_alloc_int", 0))
-	# Mark the run as still-active so the outpost shows the "Run in
-	# progress: <branch> — Floor N" banner when the player returns.
-	# Same flag _end_run sets on defeat (so they can redeploy).
-	save.run_active = true
-	save.run_branch = String(run_plan[0]) if run_plan.size() > 0 else ""
-	save.run_floor_reached = current_floor
-	SaveState.save_state(save)
+	run.flush_to_save(bot, inv)
 
 func _end_run(victory: bool) -> void:
-	# Final salvage pass before we serialize. Done unconditionally so
-	# the saved inventory respects the cap even if the run ended on a
-	# pickup that overflowed without a chance to flush.
-	if inv != null:
-		inv.maybe_auto_salvage_if_pending()
-	# Loot is loot — banked on victory or death. The idle-game loop is "watch
-	# the bot fill your stash"; a 50% death tax punishes idle play.
-	var save: Dictionary = SaveState.load_state()
-	save.gold = bot.gold
-	save.level = bot.level
-	save.xp = bot.xp
-	# Persist whatever is currently in the live HUD inventory cache. That's
-	# the source of truth — it includes base inventory + everything looted
-	# this run, minus anything that got equipped mid-run (those moved to
-	# bot.equipped, also persisted below).
-	save.inventory = inv.hud_inv_cache.duplicate(true) if inv != null else []
-	save.equipped = bot.equipped.duplicate(true) if is_instance_valid(bot) else save.get("equipped", {})
-	save.runs_completed = int(save.get("runs_completed", 0)) + 1
-	save.highest_floor = maxi(int(save.get("highest_floor", 0)), current_floor)
-	# Stat-point allocation: bot.upgrade_state IS the save dict during a
-	# run (set by reference in apply_gear), so any in-run mutations
-	# (level-up adds 3 unspent) are already reflected when we re-load
-	# save above. Pull them across explicitly so they survive even if
-	# something rebinds bot.upgrade_state.
-	if is_instance_valid(bot):
-		save.stat_points_unspent = int(bot.upgrade_state.get("stat_points_unspent", 0))
-		save.stat_alloc_str = int(bot.upgrade_state.get("stat_alloc_str", 0))
-		save.stat_alloc_dex = int(bot.upgrade_state.get("stat_alloc_dex", 0))
-		save.stat_alloc_int = int(bot.upgrade_state.get("stat_alloc_int", 0))
-	SaveState.save_state(save)
+	var report: Dictionary = run.end_run(victory, bot, inv, items_db)
 	# Surface spell fire count to the grind log so headless smoke runs
 	# can verify the autocast layer is alive without an editor session.
 	var by_arch: Dictionary = SpellSystem.get_fire_by_arch()
@@ -2632,26 +2553,6 @@ func _end_run(victory: bool) -> void:
 	for k in by_arch.keys():
 		arch_summary += " %s=%d" % [k, int(by_arch[k])]
 	GrindLog.log_line("[spells] fire_count=%d%s" % [SpellSystem.get_fire_count(), arch_summary])
-	var kept: Array = dropped_items.duplicate(true)
-
-	var report: Dictionary = {
-		"victory": victory,
-		"floor": current_floor,
-		"level": bot.level,
-		"xp": bot.xp,
-		"gold": bot.gold,
-		"hp": bot.hp,
-		"max_hp": bot.max_hp,
-		"retreats": retreats_this_run,
-		"salvaged_count": inv.run_salvaged_count if inv != null else 0,
-		"salvaged_gold": inv.run_salvaged_gold if inv != null else 0,
-		"kills": kills.duplicate(),
-		"loot_log": loot_log.duplicate(),
-		"dropped": dropped_items.duplicate(),
-		"kept": kept,
-		"journal": journal.duplicate(true),
-		"items_db": items_db,
-	}
 	run_ended.emit(victory, report)
 
 func _nearest_enemy() -> Enemy:
