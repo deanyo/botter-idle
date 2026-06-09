@@ -127,6 +127,63 @@ design unlock and almost certainly wants its own multi-beat session
 chain. Worth a dedicated prompt file (`playtest_bot_behaviour.md`)
 that captures the full instruction surface before any code lands.
 
+### 7. Spell scaling stat (STR / DEX / INT) isn't legible
+**Status:** `untriaged`
+
+Player can't tell which spell scales off which primary stat. Per
+HANDOVER.md the assignments exist (Spinning Axes / Holy Beam = Str,
+Chain Lightning = Dex, Fireball / Frost Nova = Int) and there's a
+class-color story (Red=Str, Green=Dex, Blue=Int) wired into species
+preview + spell cell borders, but it's not landing in-game. Likely
+needs: scaling stat shown on the spell tooltip + (probably) a
+visible hint on the spell cell in the HUD spell row, not just on
+character creation. Pairs with note #2 (STR/DEX/INT need to be the
+"core" stats, currently buried).
+
+### 8. Race selection feels low-stakes; slot limitations not visible
+**Status:** `untriaged`
+
+Player observation: **picking a race seems like a boring decision.**
+The current shape is stat tweaks (atk_pct / def_pct / hp_pct), some
+flavor tags (vampire→vampiric), and slot conversions
+(octopode → 4 rings, naga → 2 rings) — but the slot limitations
+aren't surfaced on the character-create UI, and the stat differences
+read as numbers rather than identity.
+
+Two sub-questions:
+- **Surfacing**: the UI should make slot limitations explicit
+  (octopode "no body armor / boots / helm — gains 3 extra ring
+  slots", naga "no boots — gains 1 extra ring slot",
+  felid/spriggan etc). Currently the player has to discover these
+  by trying to equip and being silently blocked.
+- **Design**: race choice needs more *identity* than stat tweaks.
+  DCSS races each play distinctly (felid attacks unarmed and
+  forbids weapons; deep dwarf can't regenerate naturally; vampire
+  has hunger states). What's our equivalent? Per-race signature
+  mechanics (passives that change combat shape, not just numbers)
+  would make the choice feel like a build decision rather than a
+  cosmetic one.
+
+Worth pairing the surfacing fix with a design pass on
+per-race mechanics — character_create currently shows a stats row
++ starter spell + class color; could also show a "Racial:
+&lt;mechanic&gt;" line under the species name.
+
+### 9. Items show `+0` stat lines (e.g. "+0 projectiles" on spells)
+**Status:** `untriaged`
+
+Some items render stat lines that read `+0` — visible example was a
+spell item showing "+0 projectiles." Either the item genuinely rolled
+a 0 on that stat (in which case the line should be hidden, not
+rendered as +0 noise), or there's a tooltip-rendering bug where a
+stat key exists with value 0 and the formatter doesn't filter it.
+Quick search through `affix_system._format_stat_line` /
+`format_item_tooltip` for unconditional renders should turn it up.
+
+Cosmetic at first glance but it's the kind of polish gap that makes
+the game feel unfinished — every "+0" line implies "we forgot to
+filter this" to a player.
+
 ---
 
 <!-- New playtest sessions append below. Keep this comment as the
