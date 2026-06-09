@@ -46,6 +46,19 @@ Background-friendly. Mobile-first.
   (gameplay loop, generation pipeline, biome roster, vault library, FX
   state, logging tags). Read on session start.
 - **`TODO.md`** — roadmap, deferred items, asset gaps, open questions.
+  This is the **engineering backlog** — entries are triaged, scoped, and
+  often have file:line references.
+- **`PLAYTEST.md`** — raw observation log from live playtests.
+  Append-only, dated, untriaged. This is the **inbox**, not the
+  backlog. The user dumps notes here verbatim post-playtest; the
+  next session's job is to triage `Status: untriaged` items
+  (re-verify against code, classify as bug / UX / design, promote
+  to TODO.md or a new session brief, mark status). Same trust-but-
+  verify rule as the audit findings — re-read the code before
+  patching, since playtest evidence is unverified. Cross-link to
+  audit findings in `~/claude/game-audit/findings/AUDIT_REPORT.md`
+  where they overlap. Don't delete resolved items — the trail of
+  what changed in response to play-feel feedback is durable memory.
 - **`docs/`** — biome audit, branch research dossier, vault audit
   (long-form references).
 - **`project/`** — the Godot project. Open this in the editor.
