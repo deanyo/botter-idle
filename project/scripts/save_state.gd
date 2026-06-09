@@ -8,8 +8,18 @@ const DEBUG_PATH := "user://botter_save_debug.json"
 # and screenshot runs don't pollute the live playtest save.
 static var debug_mode: bool = false
 
+# Warnings the most recent _load_wrapper produced. Cleared on every load.
+# main.gd / main_menu.gd surface these to the user (e.g. "save recovered
+# from backup", "3 items from your save no longer exist"). Saved to disk
+# via state.last_load_warnings so the run-report-side UI can pick them up
+# even if main reads on a different frame than where they were generated.
+static var last_load_warnings: Array = []
+
 static func _path() -> String:
 	return DEBUG_PATH if debug_mode else LIVE_PATH
+
+static func _tmp_path() -> String: return _path() + ".tmp"
+static func _bak_path() -> String: return _path() + ".bak"
 
 # Top-level save shape (multi-character):
 #   {
@@ -23,27 +33,74 @@ static func _path() -> String:
 # set_active / delete_character.
 
 static func _load_wrapper() -> Dictionary:
+	last_load_warnings = []
 	var path: String = _path()
+	var primary_existed: bool = FileAccess.file_exists(path)
+	# Try the primary file. If it parses, use it. If it exists but fails to
+	# parse (truncated mid-write, JSON corruption), preserve the corrupted
+	# bytes for forensic recovery and fall through to the .bak. Only after
+	# both the primary and the .bak are exhausted do we hand back defaults.
+	var primary: Variant = _try_load_file(path)
+	if typeof(primary) == TYPE_DICTIONARY:
+		return _finalize_loaded_wrapper(primary)
+	if primary_existed:
+		_quarantine_corrupted(path)
+		last_load_warnings.append("save_recovered_from_backup")
+	# Fall back to the .bak written before the most recent atomic rotate.
+	var bak_path: String = _bak_path()
+	if FileAccess.file_exists(bak_path):
+		var fallback: Variant = _try_load_file(bak_path)
+		if typeof(fallback) == TYPE_DICTIONARY:
+			return _finalize_loaded_wrapper(fallback)
+		# Backup is also unreadable — preserve it too so a human can
+		# recover later, then hand back defaults.
+		_quarantine_corrupted(bak_path)
+		last_load_warnings.append("save_could_not_be_loaded")
+	elif primary_existed:
+		# Primary was corrupted and there was no .bak (first-ever save, or
+		# rotate hadn't happened yet). Bump the warning from "recovered"
+		# to "could not be loaded" — there was no recovery available.
+		last_load_warnings.erase("save_recovered_from_backup")
+		last_load_warnings.append("save_could_not_be_loaded")
+	return {"characters": [_default()], "active": 0}
+
+# Read + parse one file. Returns the parsed dict, or null on any failure
+# (file missing, open failed, JSON parse failed, top-level not a dict).
+# Uses JSON.new().parse() rather than JSON.parse_string() so a corrupted
+# file routes through the JSON instance's error channel instead of
+# emitting an engine-level push_error — the loader handles "is this
+# corrupted" itself and a noisy engine error during recovery would be
+# misleading (the recovery is working as designed).
+static func _try_load_file(path: String) -> Variant:
 	if not FileAccess.file_exists(path):
-		return {"characters": [_default()], "active": 0}
+		return null
 	var f := FileAccess.open(path, FileAccess.READ)
 	if f == null:
-		return {"characters": [_default()], "active": 0}
-	var parsed: Variant = JSON.parse_string(f.get_as_text())
+		return null
+	var text: String = f.get_as_text()
+	f.close()
+	var json := JSON.new()
+	var err: int = json.parse(text)
+	if err != OK:
+		return null
+	var parsed: Variant = json.data
 	if typeof(parsed) != TYPE_DICTIONARY:
-		return {"characters": [_default()], "active": 0}
-	var raw: Dictionary = parsed
-	# Detect legacy single-character shape — top-level had `species`,
-	# `equipped`, `inventory` etc. Wrap into characters[0].
+		return null
+	return parsed
+
+# Wrap a parsed top-level dict in the canonical {"characters", "active"}
+# shape, run migrations on each character, and validate equipped/inventory
+# against the items_db so orphaned base_ids don't crash the equip pipeline.
+static func _finalize_loaded_wrapper(raw: Dictionary) -> Dictionary:
 	if not raw.has("characters") or typeof(raw.get("characters", [])) != TYPE_ARRAY:
+		# Legacy single-character shape — top-level had `species`, `equipped`,
+		# `inventory` etc. Wrap into characters[0].
 		var legacy: Dictionary = raw
-		# Fill missing defaults + run migrations.
 		for k in _default().keys():
 			if not legacy.has(k):
 				legacy[k] = _default()[k]
 		_migrate(legacy)
 		return {"characters": [legacy], "active": 0}
-	# Multi-character shape — fill defaults + migrate per character.
 	var chars: Array = raw.get("characters", [])
 	for ch in chars:
 		if typeof(ch) != TYPE_DICTIONARY:
@@ -57,11 +114,54 @@ static func _load_wrapper() -> Dictionary:
 	var active: int = clampi(int(raw.get("active", 0)), 0, chars.size() - 1)
 	return {"characters": chars, "active": active}
 
+# Move a corrupted file to .corrupted-<unix_ts> so the next write doesn't
+# clobber it. Best-effort — failure to rename does NOT abort the load
+# (we still want to fall through to .bak).
+static func _quarantine_corrupted(path: String) -> void:
+	var ts: int = int(Time.get_unix_time_from_system())
+	var quarantine: String = "%s.corrupted-%d" % [path, ts]
+	var d := DirAccess.open("user://")
+	if d == null:
+		return
+	# DirAccess.rename_absolute takes os-level paths; in Godot the user://
+	# scheme resolves transparently for files in user_data. Use rename
+	# (relative) when both are user:// paths.
+	d.rename(path, quarantine)
+	push_error("[save] corrupted file quarantined: %s" % quarantine)
+
+# Atomic write: write-to-tmp, rotate-old-to-bak, rename-tmp-to-final.
+# A torn write leaves either the previous .bak intact (rename failed
+# mid-flight) or the new .tmp on disk to be cleaned up next boot. The
+# previous final never gets clobbered until the new tmp is fully flushed
+# to disk.
 static func _save_wrapper(wrapper: Dictionary) -> void:
-	var f := FileAccess.open(_path(), FileAccess.WRITE)
+	var path: String = _path()
+	var tmp: String = _tmp_path()
+	var bak: String = _bak_path()
+	var f := FileAccess.open(tmp, FileAccess.WRITE)
 	if f == null:
+		push_error("[save] could not open %s for write" % tmp)
 		return
 	f.store_string(JSON.stringify(wrapper, "  "))
+	# Force the bytes to disk before the rename so the final-name pointer
+	# never moves to a half-flushed file.
+	f.flush()
+	f.close()
+	var d := DirAccess.open("user://")
+	if d == null:
+		push_error("[save] could not open user:// for rename")
+		return
+	# Rotate previous final → .bak (if there is a previous final). Drop
+	# the older .bak in the process — we keep at most one generation.
+	if FileAccess.file_exists(path):
+		if FileAccess.file_exists(bak):
+			d.remove(bak)
+		d.rename(path, bak)
+	# Move .tmp into place. If this fails the previous .bak still has the
+	# last-known-good save and the next load will find it.
+	var err: int = d.rename(tmp, path)
+	if err != OK:
+		push_error("[save] rename %s -> %s failed (err=%d)" % [tmp, path, err])
 
 static func load_state() -> Dictionary:
 	# Returns the active character's dict so existing callers don't need
@@ -70,7 +170,16 @@ static func load_state() -> Dictionary:
 	var w: Dictionary = _load_wrapper()
 	var chars: Array = w["characters"]
 	var active: int = int(w["active"])
-	return chars[active]
+	var ch: Dictionary = chars[active]
+	# Stamp warnings the loader collected so UI surfaces (main menu,
+	# run report) can read them without poking at module-level state.
+	# Runtime-only — not persisted; on the next save the field is
+	# unconditionally cleared so warnings don't haunt future loads.
+	if not last_load_warnings.is_empty():
+		ch["last_load_warnings"] = last_load_warnings.duplicate()
+	else:
+		ch.erase("last_load_warnings")
+	return ch
 
 # Per-character utility helpers ------------------------------------------
 
@@ -276,6 +385,11 @@ static func save_state(state: Dictionary) -> void:
 	# Existing callers pass a single-character dict (from load_state);
 	# we slot it back into the wrapper at the active index.
 	state["last_seen_timestamp"] = int(Time.get_unix_time_from_system())
+	# last_load_warnings is a runtime-only field (set by load_state from
+	# the loader's warning array). Don't bake it into disk state — that
+	# would make a one-time recovery warning sticky across every future
+	# load until something else cleared it.
+	state.erase("last_load_warnings")
 	var w: Dictionary = _load_wrapper()
 	var active: int = int(w.get("active", 0))
 	if active < 0 or active >= w.characters.size():

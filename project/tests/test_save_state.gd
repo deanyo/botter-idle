@@ -167,6 +167,129 @@ func test_pre_ring_collapse_save_promotes_ring1() -> void:
 	assert_false(save["equipped"].has("ring2"), "ring2 legacy key erased")
 
 # ---------------------------------------------------------------------
+# Atomic save writes — torn-write recovery via .bak
+# ---------------------------------------------------------------------
+#
+# Every test in this section runs against the DEBUG save path so the
+# live playtest save is never touched. before_each / after_each scrub
+# the test files so each case starts from a known-empty state.
+
+func before_each() -> void:
+	SaveState.debug_mode = true
+	_scrub_test_files()
+
+func after_each() -> void:
+	_scrub_test_files()
+	SaveState.debug_mode = false
+
+func _scrub_test_files() -> void:
+	var d := DirAccess.open("user://")
+	if d == null:
+		return
+	for ext: String in ["", ".tmp", ".bak"]:
+		var p: String = SaveState.DEBUG_PATH + ext
+		if FileAccess.file_exists(p):
+			d.remove(p)
+	# Quarantine residue from prior runs.
+	for fname: String in d.get_files():
+		if fname.begins_with("botter_save_debug.json.corrupted-"):
+			d.remove(fname)
+
+func test_atomic_write_creates_final_and_no_tmp_after_save() -> void:
+	# Happy path: a successful save leaves <path> on disk and no <path>.tmp
+	# residue. .bak appears only after the SECOND save (rotation moves the
+	# previous final into .bak).
+	var save := SaveState._default()
+	save["gold"] = 42
+	SaveState.save_state(save)
+	assert_true(FileAccess.file_exists(SaveState.DEBUG_PATH),
+		"primary file written")
+	assert_false(FileAccess.file_exists(SaveState.DEBUG_PATH + ".tmp"),
+		"tmp residue cleaned up after rename")
+	# First save: no prior final to rotate, so no .bak yet.
+	assert_false(FileAccess.file_exists(SaveState.DEBUG_PATH + ".bak"),
+		"no .bak after first save (nothing to rotate)")
+	# Second save rotates the first final → .bak.
+	save["gold"] = 100
+	SaveState.save_state(save)
+	assert_true(FileAccess.file_exists(SaveState.DEBUG_PATH + ".bak"),
+		".bak written on second save (rotation)")
+	# .bak holds the prior generation.
+	var bak_text: String = FileAccess.open(
+		SaveState.DEBUG_PATH + ".bak", FileAccess.READ).get_as_text()
+	var bak_parsed: Dictionary = JSON.parse_string(bak_text)
+	assert_eq(int(bak_parsed["characters"][0]["gold"]), 42,
+		".bak preserves the prior generation's gold=42")
+
+func test_load_falls_back_to_bak_when_primary_corrupted() -> void:
+	# Write twice so .bak exists.
+	var save := SaveState._default()
+	save["gold"] = 1234
+	SaveState.save_state(save)
+	save["gold"] = 5678
+	SaveState.save_state(save)
+	# Corrupt the primary (truncate mid-JSON — invalid syntax).
+	var f := FileAccess.open(SaveState.DEBUG_PATH, FileAccess.WRITE)
+	f.store_string('{"characters": [{"gold": 5')  # truncated
+	f.close()
+	# Loader should detect the parse failure, quarantine the corrupted
+	# primary, and fall through to the .bak (which holds gold=1234).
+	var loaded := SaveState.load_state()
+	# Quarantine path emits one push_error — claim it so it doesn't fail
+	# the test as an "unexpected error."
+	assert_push_error("corrupted file quarantined")
+	assert_eq(int(loaded["gold"]), 1234,
+		"loader recovered gold=1234 from .bak")
+	# Warning surfaced.
+	assert_true("save_recovered_from_backup" in loaded.get("last_load_warnings", []),
+		"save_recovered_from_backup warning surfaced")
+	# Corrupted file quarantined (renamed, not deleted).
+	var d := DirAccess.open("user://")
+	var found_quarantine := false
+	for fname: String in d.get_files():
+		if fname.begins_with("botter_save_debug.json.corrupted-"):
+			found_quarantine = true
+			break
+	assert_true(found_quarantine, "corrupted primary preserved as .corrupted-<ts>")
+
+func test_load_returns_defaults_when_both_primary_and_bak_corrupted() -> void:
+	# Both files exist but neither parses. Loader returns defaults and
+	# surfaces the harder warning.
+	var f1 := FileAccess.open(SaveState.DEBUG_PATH, FileAccess.WRITE)
+	f1.store_string("not json")
+	f1.close()
+	var f2 := FileAccess.open(SaveState.DEBUG_PATH + ".bak", FileAccess.WRITE)
+	f2.store_string("also not json")
+	f2.close()
+	var loaded := SaveState.load_state()
+	# Both files quarantined → 2 push_error calls.
+	assert_push_error_count(2)
+	# Default save shape — gold=0, level=1, etc.
+	assert_eq(int(loaded["gold"]), 0, "loader returned defaults")
+	assert_eq(int(loaded["level"]), 1, "loader returned defaults level")
+	assert_true("save_could_not_be_loaded" in loaded.get("last_load_warnings", []),
+		"save_could_not_be_loaded warning surfaced")
+
+func test_warnings_not_persisted_through_save_cycle() -> void:
+	# A fresh load with no corruption surfaces no warnings, AND a save
+	# cycle does not bake last_load_warnings into the on-disk state.
+	var save := SaveState._default()
+	save["gold"] = 7
+	# Manually plant a (stale) warning to confirm it gets stripped on save.
+	save["last_load_warnings"] = ["save_recovered_from_backup"]
+	SaveState.save_state(save)
+	# Read the on-disk file directly.
+	var raw_text := FileAccess.open(SaveState.DEBUG_PATH, FileAccess.READ).get_as_text()
+	var raw: Dictionary = JSON.parse_string(raw_text)
+	var ch: Dictionary = raw["characters"][0]
+	assert_false(ch.has("last_load_warnings"),
+		"last_load_warnings not persisted to disk")
+	# A fresh load (no corruption) returns no warnings on the loaded dict.
+	var reloaded := SaveState.load_state()
+	assert_false(reloaded.has("last_load_warnings"),
+		"clean load surfaces no warnings")
+
+# ---------------------------------------------------------------------
 # Forward-compat: unknown keys preserved
 # ---------------------------------------------------------------------
 
