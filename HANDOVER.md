@@ -4,7 +4,74 @@ Point-in-time snapshot of what's actually shipping. Updated as we go. The
 durable rules and process live in `CLAUDE.md`; the roadmap and open work
 items live in `TODO.md`.
 
-Last refresh: 2026-06-09 (Tier 3 dungeon.gd split — fifth extraction
+Last refresh: 2026-06-09 (Tier 3 dungeon.gd split — sixth and final
+extraction shipped: ShowcaseRunner pulled out of the 3179-LOC
+dungeon. **The dungeon.gd Tier 3 split is COMPLETE** — what remains
+is the irreducible orchestrator).
+
+`project/scripts/showcase_runner.gd` is a RefCounted helper the
+dungeon owns as the `show` field. It carries the showcase-mode
+integration glue: the `patrol` + `patrol_idx` runtime bookkeeping,
+plus `is_active()` (wraps `DebugJump.showcase`), `build_floor_data()`
+(curated 80×80 floor + patrol seed + spawn cell), `spawn_stations()`
+(walks `Showcase.STATIONS` and dispatches into the dungeon's spawn
+helpers — actor_layer / interactables / ambient_decor_nodes / loot
+factory / chest / fountain / portal / specific-enemy), and
+`tick_patrol(delta)` (advances the bot one cell along the loop,
+wraps at the end). The static visual-audit content (STATIONS roster,
+patrol_path, build_grid, lava/water/ice stamping) stays in
+`scripts/showcase.gd` where it lives as data — only the runtime
+bookkeeping + integration callbacks moved.
+
+`dungeon.gd` shrank 3179 → 3064 (-115 lines). The seven `if
+DebugJump.showcase: ...` integration branches in `_async_build_floor`
+(3 sites — floor data, station spawn, enemy-spawn skip), `_tick_bot`
+(descend gate + patrol tick), `_check_stuck`, and `_tick_enemies`
+collapse to `if show.is_active(): ...` calls with one-liner forwarders.
+The five showcase functions on the dungeon (~125 lines) and the two
+patrol fields are gone. Run-init constructs the runner lazily next
+to the WaveSpawner so the bound dungeon ref is stable for the run.
+
+Test foundation extended: `test_showcase_runner.gd` 6 tests / 21
+asserts covering `is_active()` reading through to `DebugJump.showcase`,
+`build_floor_data()` resetting `patrol_idx` + returning the dict
+shape downstream code reads by name (`grid` / `rooms` / `spawn` /
+`stairs_down` / `dist_to_stairs` / `vault_results`) + the spawn cell
+matching `patrol[0]`, `tick_patrol` empty-patrol no-op, mid-path
+step (no idx advance), arrival advancing idx + requesting a path +
+setting `bot_target_kind`, and loop-end wrap. Visual-audit content
+(STATIONS roster, patrol_path) intentionally NOT pinned — locking
+it would discourage adding new stations. New
+`_stub_showcase_dungeon.gd` records spawn-helper calls + stubs
+`bot.path` / `bot.set_path` / `pathing.path` so the runner's patrol
+math is testable without a real grid. GUT 126 → 132 tests,
+2724 → 2745 asserts. Suite still ~3.4s headless.
+
+Validation: GUT 132/132 pass post-extraction.
+`tools/check_before_commit.sh` all 5 steps pass. Manual mortal T1
+3-run grind: floors 2/1/2, 85+0+136 kills, 0 errors / 0 stalls /
+0 script errors, no `[showcase]` log lines (confirms the showcase
+glue doesn't fire in normal play). Headless `/showcase` smoke
+before AND after the extraction shows identical shape — same
+`[debug-jump] showcase mode` boot, same `[render] biome=dungeon
+floor_tiles=12 wall_tiles=8`, same `[build-floor] enemies=4` (4 of
+5 enemy stations spawn — `firefly` is missing from
+`data/enemies.json`, a pre-existing data gap unrelated to this
+extraction). The pre-existing `floor_started callable unbinds 8
+arguments` chrome-signal error reproduces on both baseline and
+post-extraction smokes — also not from this change.
+
+**Tier 3 dungeon.gd split: COMPLETE.** The remaining 3064 LOC is
+the irreducible orchestrator — node graph build/teardown,
+`_process` driver, signal emit/connect glue, thin forwarders into
+the helpers (`LootFactory`, `HUDInventoryController`, `DebugDump`,
+`RunState`, `WaveSpawner`, `ShowcaseRunner`). Future Tier 3
+candidates (drop_tuning.json, biome data, etc) should be triaged
+before the next session opens.
+
+---
+
+Earlier 2026-06-09 (Tier 3 dungeon.gd split — fifth extraction
 shipped: WaveSpawner pulled out of the 3314-LOC dungeon).
 
 `project/scripts/wave_spawner.gd` is a RefCounted helper the dungeon

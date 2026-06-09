@@ -102,6 +102,16 @@ var inv: RefCounted = null
 # stay readable.
 const _WaveSpawnerScript := preload("res://scripts/wave_spawner.gd")
 var wave: RefCounted = null
+# Showcase-mode integration glue. Owns the curated visual-audit floor
+# build / station spawn / bot patrol tick. Activated by the /showcase
+# skill writing "showcase" to user://DEBUG_FLOOR.txt — main.gd flips
+# DebugJump.showcase=true; the integration branches in
+# _async_build_floor / _tick_bot / _check_stuck / _tick_enemies all
+# route through `show.is_active()` so the dungeon's hot path doesn't
+# carry the visual-audit code. Extracted from dungeon.gd 2026-06-09
+# (Tier 3 god-class split, sixth and final sub-system).
+const _ShowcaseRunnerScript := preload("res://scripts/showcase_runner.gd")
+var show: RefCounted = null
 const MAX_TICKS_WITHOUT_MOVE := 30
 var chrome: HudChrome = null
 
@@ -338,6 +348,12 @@ func _start_run() -> void:
 	# ref is stable for the run; subsequent runs reuse the same helper.
 	if wave == null:
 		wave = _WaveSpawnerScript.new(self)
+	# Showcase-mode integration runner. Constructed lazily for the same
+	# reason — the bound dungeon ref needs to be stable across all
+	# is_active() / build_floor_data() / spawn_stations() / tick_patrol()
+	# entry points.
+	if show == null:
+		show = _ShowcaseRunnerScript.new(self)
 	# Push once so the HUD shows the base inventory before any loot drops.
 	# (chrome may not exist yet on the first frame; the HUD's _ensure path
 	# will pick this up on its next update_biome_hud tick.)
@@ -447,8 +463,8 @@ func _async_build_floor() -> void:
 	if my_gen != _build_generation: return
 	var t_gen: int = Time.get_ticks_usec()
 	var data: Dictionary
-	if DebugJump.showcase:
-		data = _build_showcase_floor_data()
+	if show.is_active():
+		data = show.build_floor_data()
 	else:
 		data = gen.generate_themed(map_w, map_h, vault_themes, current_floor, layout_id, String(current_biome.get("id", "")))
 	t_gen = Time.get_ticks_usec() - t_gen
@@ -505,8 +521,8 @@ func _async_build_floor() -> void:
 	await get_tree().process_frame
 	if my_gen != _build_generation: return
 	var t_decor: int = Time.get_ticks_usec()
-	if DebugJump.showcase:
-		_spawn_showcase_stations()
+	if show.is_active():
+		show.spawn_stations()
 	else:
 		_scatter_ambient_decor()
 	t_decor = Time.get_ticks_usec() - t_decor
@@ -527,7 +543,7 @@ func _async_build_floor() -> void:
 	})
 
 	# Phase 4: enemy spawn (3-8ms). Skipped in showcase mode — enemies
-	# there are spawned by _spawn_showcase_stations() in phase 3.
+	# there are spawned by show.spawn_stations() in phase 3.
 	await get_tree().process_frame
 	if my_gen != _build_generation: return
 	var t_spawn: int = Time.get_ticks_usec()
@@ -536,7 +552,7 @@ func _async_build_floor() -> void:
 	# this was below floor_started.emit, AFTER spawn, so spawn's write was
 	# clobbered to 0 immediately.
 	run.boss_initial_hp = 0
-	if not DebugJump.showcase:
+	if not show.is_active():
 		_spawn_enemies()
 	# Threat-tier auras: classify each spawned enemy by power-vs-bot.
 	# Trivial / even / dangerous / lethal.
@@ -1756,7 +1772,7 @@ func _tick_bot(delta: float) -> void:
 	# Showcase mode pins the floor — never descend, even if the patrol
 	# happens to cross the stairs cell (it doesn't, by design, but guard
 	# against accidental rebuilds).
-	if bot.cell == stairs_cell and _nearest_enemy() == null and not DebugJump.showcase:
+	if bot.cell == stairs_cell and _nearest_enemy() == null and not show.is_active():
 		_descend()
 		return
 	if fog_overlay:
@@ -1799,8 +1815,8 @@ func _tick_bot(delta: float) -> void:
 	# Showcase mode: bot patrols a fixed path, ignoring enemies and
 	# interactables. The bot's light reveals each station as it passes.
 	# When the current path segment finishes, advance to the next station.
-	if DebugJump.showcase:
-		_showcase_tick_patrol(delta)
+	if show.is_active():
+		show.tick_patrol(delta)
 		return
 
 	for inter in interactables:
@@ -1991,7 +2007,7 @@ var _stall_hard_attempted: bool = false
 func _check_stuck(delta: float) -> void:
 	# Showcase mode pins the floor on purpose; the bot patrols a fixed loop
 	# and "cell unchanged" is the steady state — never trigger here.
-	if DebugJump.showcase:
+	if show.is_active():
 		return
 	if not is_instance_valid(bot) or not bot.is_alive:
 		_reset_stuck_timer()
@@ -2348,7 +2364,7 @@ func _tick_enemies(delta: float) -> void:
 	# no path. Their light_spec / sprite / flicker still update, since
 	# those are driven elsewhere (FlickerDriver per-frame, sprites are
 	# CanvasItems that paint regardless).
-	if DebugJump.showcase:
+	if show.is_active():
 		return
 	# Cap A* paths per frame so a horde repath doesn't burn 24*1ms in one
 	# tick. Enemies that miss this frame's slot keep their old path
@@ -2854,137 +2870,6 @@ func _make_radial_light(size_px: int) -> Texture2D:
 			var a: float = t * t
 			img.set_pixel(x, y, Color(1, 1, 1, a))
 	return ImageTexture.create_from_image(img)
-
-# --- Showcase mode ---------------------------------------------------------
-# Hand-curated visual audit floor. See scripts/showcase.gd. Activated by the
-# /showcase skill writing "showcase" to user://DEBUG_FLOOR.txt.
-
-var _showcase_patrol: Array = []
-var _showcase_patrol_idx: int = 0
-
-func _build_showcase_floor_data() -> Dictionary:
-	var grid_arr: Array = Showcase.build_grid()
-	# Bot spawns at the first patrol cell. Stairs cell is parked far away
-	# (corner) — we never want the bot to descend in showcase mode, but the
-	# field is required by downstream code.
-	_showcase_patrol = Showcase.patrol_path()
-	_showcase_patrol_idx = 0
-	var spawn: Vector2i = _showcase_patrol[0] if not _showcase_patrol.is_empty() else Vector2i(2, 2)
-	return {
-		"grid": grid_arr,
-		"rooms": [],
-		"spawn": spawn,
-		"stairs_down": Vector2i(Showcase.MAP_W - 2, Showcase.MAP_H - 2),
-		"dist_to_stairs": [],
-		"vault_results": {},
-	}
-
-func _spawn_showcase_stations() -> void:
-	for s in Showcase.STATIONS:
-		var cell: Vector2i = s.anchor
-		var kind: String = s.kind
-		match kind:
-			"fire_decor":
-				for d in ["flame_0", "flame_1", "flame_2"]:
-					var c: Vector2i = cell + Vector2i(["flame_0","flame_1","flame_2"].find(d) - 1, 0)
-					_showcase_spawn_decor(d, c)
-			"magic_decor":
-				_showcase_spawn_decor("lantern", cell + Vector2i(-1, 0))
-				_showcase_spawn_decor("magic_lamp", cell)
-				_showcase_spawn_decor("orb", cell + Vector2i(1, 0))
-			"crystal_decor":
-				_showcase_spawn_decor("orb_glow_0", cell + Vector2i(-1, 0))
-				_showcase_spawn_decor("orb_glow_1", cell)
-				_showcase_spawn_decor("crystal_orb", cell + Vector2i(1, 0))
-			"mushroom_decor":
-				_showcase_spawn_decor("mold_1", cell + Vector2i(-1, 0))
-				_showcase_spawn_decor("mold_2", cell)
-				_showcase_spawn_decor("zot_pillar", cell + Vector2i(1, 0))
-			"campfire":
-				# Actor-tier flicker — full PointLight2D + embers. Lets us
-				# compare the decor-tier (fog-only) flicker side by side.
-				_showcase_spawn_decor("campfire", cell)
-			"lava_pool", "water_pool", "ice_patch":
-				pass # Terrain stamped at grid-build time; no entity needed.
-			"fountain_blue":
-				_spawn_fountain(cell, "blue")
-			"fountain_blood":
-				_spawn_fountain(cell, "blood")
-			"altar_trog", "altar_zin", "altar_vehumet", "altar_kikubaaqudgha", "altar_xom":
-				var god_id: String = kind.substr(6)
-				var altar := Altar.new()
-				altar.setup(cell, god_id)
-				actor_layer.add_child(altar)
-				interactables.append(altar)
-			"loot_common", "loot_uncommon", "loot_rare", "loot_epic", "loot_legendary":
-				var rarity: String = kind.substr(5)
-				_showcase_spawn_loot_at(cell, rarity)
-			"chest_normal":
-				_spawn_chest(cell, 2, 0)
-			"chest_rich":
-				_spawn_chest(cell, 3, 2)
-			"portal":
-				_spawn_portal(cell)
-			"enemy_fire_dragon":
-				_showcase_spawn_enemy("fire_dragon", cell)
-			"enemy_ice_dragon":
-				_showcase_spawn_enemy("ice_dragon", cell)
-			"enemy_salamander":
-				_showcase_spawn_enemy("salamander", cell)
-			"enemy_blizzard_demon":
-				_showcase_spawn_enemy("blizzard_demon", cell)
-			"enemy_firefly":
-				_showcase_spawn_enemy("firefly", cell)
-
-func _showcase_spawn_decor(decor_id: String, cell: Vector2i) -> void:
-	var decor := AmbientDecor.new()
-	decor.setup(decor_id, cell)
-	actor_layer.add_child(decor)
-	ambient_decor_nodes.append(decor)
-
-func _showcase_spawn_loot_at(cell: Vector2i, rarity: String) -> void:
-	var pool: Array = []
-	for id in items_db.keys():
-		if items_db[id].rarity == rarity:
-			pool.append(id)
-	if pool.is_empty():
-		return
-	var picked: String = pool[0]
-	var inst: Dictionary = LootFactory.create_item_instance(rng, picked, items_db)
-	_spawn_loot_drop(inst, cell)
-
-func _showcase_spawn_enemy(id: String, cell: Vector2i) -> void:
-	# Same path as _spawn_specific so creature lights / scaling are honoured.
-	# Frozen-in-place is enforced by _tick_enemies skipping all movement when
-	# DebugJump.showcase is set.
-	_spawn_specific(id, cell)
-
-func _showcase_tick_patrol(delta: float) -> void:
-	# Walk to the next patrol cell. When the bot reaches it, advance the
-	# index and emit a path to the next one. Loops forever.
-	# step_movement is the per-frame mover — Bot._process doesn't move on
-	# its own; the dungeon's tick is what advances the bot along its path.
-	if _showcase_patrol.is_empty():
-		return
-	var has_path: bool = bot.path.size() > 0 and bot.path_index < bot.path.size()
-	if has_path:
-		bot.step_movement(delta)
-		return
-	# Arrived (or no path yet) — pick next station.
-	_showcase_patrol_idx = (_showcase_patrol_idx + 1) % _showcase_patrol.size()
-	var target: Vector2i = _showcase_patrol[_showcase_patrol_idx]
-	# If our spawn cell already matches the first station, skip ahead by
-	# rolling once more — otherwise we'd ask pathing for an empty path and
-	# get stuck.
-	if target == bot.cell:
-		_showcase_patrol_idx = (_showcase_patrol_idx + 1) % _showcase_patrol.size()
-		target = _showcase_patrol[_showcase_patrol_idx]
-	var p: PackedVector2Array = pathing.path(bot.cell, target)
-	if p.size() > 1:
-		bot.set_path(p.slice(1))
-		bot_target_cell = target
-		bot_target_kind = "showcase_patrol"
-		bot.step_movement(delta)
 
 func _load_json(path: String) -> Dictionary:
 	var f := FileAccess.open(path, FileAccess.READ)
