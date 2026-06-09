@@ -245,10 +245,13 @@ func _build_buttons(x: int, y: int, w: int, h: int) -> void:
 	_make_button("PLAY", col_x, by, col_w, btn_h, 24, false, _on_play); by += btn_h + gap
 	_make_button("Create Character", col_x, by, col_w, 44, 16, false, _on_create_character); by += 44 + gap
 	_make_button("Video Options", col_x, by, col_w, 44, 16, false, _on_options); by += 44 + gap
-	_make_button("FX Tuner", col_x, by, col_w, 44, 16, false, _on_fx_tuner); by += 44 + gap
-	_make_button("Paperdoll Audit", col_x, by, col_w, 44, 16, false, _on_paperdoll_audit); by += 44 + gap
-	_make_button("Spell Showcase", col_x, by, col_w, 44, 16, false, _on_spell_showcase); by += 44 + gap
-	_make_button("Item Generator", col_x, by, col_w, 44, 16, false, _on_item_generator); by += 44 + gap
+	# Dev-only authoring tools — hidden in release builds. Set
+	# BOTTER_DEV=1 to surface them in a release export.
+	if OS.is_debug_build() or OS.has_environment("BOTTER_DEV"):
+		_make_button("FX Tuner", col_x, by, col_w, 44, 16, false, _on_fx_tuner); by += 44 + gap
+		_make_button("Paperdoll Audit", col_x, by, col_w, 44, 16, false, _on_paperdoll_audit); by += 44 + gap
+		_make_button("Spell Showcase", col_x, by, col_w, 44, 16, false, _on_spell_showcase); by += 44 + gap
+		_make_button("Item Generator", col_x, by, col_w, 44, 16, false, _on_item_generator); by += 44 + gap
 	_make_button("Reset Save", col_x, by, col_w, 44, 16, false, _on_reset); by += 44 + gap
 	_make_button("Quit", col_x, by, col_w, 44, 16, false, _on_quit)
 
