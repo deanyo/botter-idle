@@ -4,7 +4,51 @@ Point-in-time snapshot of what's actually shipping. Updated as we go. The
 durable rules and process live in `CLAUDE.md`; the roadmap and open work
 items live in `TODO.md`.
 
-Last refresh: 2026-06-09 (Tier 3 dungeon.gd split — second extraction
+Last refresh: 2026-06-09 (Tier 3 dungeon.gd split — third extraction
+shipped: DebugDump pulled out of the 3735-LOC dungeon).
+
+`project/scripts/debug_dump.gd` is a pure static utility class
+(`class_name DebugDump`, extends RefCounted) that owns the entire
+floor-dump dev-tool surface: `serialize_marks(marks)`,
+`analyze_floor_regions(grid, w, h)`, `build_floor_report(dungeon)`,
+and `dump_and_save(dungeon)`. Caller passes the dungeon node;
+methods read its fields directly. No per-instance state, no node
+graph. Behavior is a strict copy of the dungeon.gd functions it
+replaces — no JSON shape changes, no tuning.
+
+`dungeon.gd` shrank 3735 → 3413 (-322 lines). The chrome signal
+connect in `_ensure_hud` (`chrome.debug_dump_requested.connect`)
+still targets `_on_debug_dump_requested` on the dungeon — that
+function is now a one-liner forwarder calling
+`DebugDump.dump_and_save(self)`. The screenshot manifest's two
+`_serialize_marks` calls (`_collect_render_manifest` lines 840-841)
+route through `DebugDump.serialize_marks` so the helper has a
+single source of truth across both dev-tool dumps.
+
+The dump itself is unchanged: triggered from the in-game debug HUD
+"Dump floor" button, builds the full JSON report, writes
+`user://floor_dump_<unix>.json`, copies the JSON to the clipboard,
+prints `[floor-dump] saved=...`, logs `[floor-dump]` via
+`GrindLog.log_line`, and flashes the chrome status with
+`flash_debug_dump_status`. No GUT regression test was added — the
+dev-tool is too prone to false-positive failures on shape drift,
+and locking field-by-field equality would discourage adding new
+fields. The existing test count holds at 91/91.
+
+Validation: GUT 91/91 / 2599 asserts post-extraction (matches the
+pre-extraction baseline). `tools/check_before_commit.sh` all 5
+steps pass. Mortal 3-run grind: 0 errors, 0 stalls, 0 script
+errors. Class cache regenerated cleanly with the new
+`DebugDump` global.
+
+Next dungeon.gd extraction: RunState — touches save state, so
+prerequisite (Tier 2 save_durability shipped 2026-06-09) is
+satisfied. After that: WaveSpawner (combat), Showcase (dead-code
+move).
+
+---
+
+Earlier 2026-06-09 (Tier 3 dungeon.gd split — second extraction
 shipped: HUDInventoryController pulled out of the 4167-LOC dungeon).
 
 `project/scripts/hud_inventory_controller.gd` is a RefCounted helper
