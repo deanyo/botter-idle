@@ -10,9 +10,9 @@ extends RefCounted
 #   name        string — display name
 #   sprite      string — filename under assets/tiles/player/species/
 #   lore        string — flavor text shown on character-create
-#   hp_pct      float  — multiplicative on base_max_hp
-#   atk_pct     float  — multiplicative on base_atk
-#   def_pct     float  — multiplicative on base_def
+#   hp_pct      float  — multiplicative on the StatCalc max_hp roll-up
+#   atk_pct     float  — multiplicative on damage_min/max after flat upgrades
+#   def_pct     float  — multiplicative on armor after flat upgrades
 #   haste_pct   float  — additive on Haste % (caps at 200 like everything else)
 #   crit_flat   float  — additive on crit_chance
 #   regen_flat  float  — additive on hp_regen_per_sec
