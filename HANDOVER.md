@@ -4,7 +4,61 @@ Point-in-time snapshot of what's actually shipping. Updated as we go. The
 durable rules and process live in `CLAUDE.md`; the roadmap and open work
 items live in `TODO.md`.
 
-Last refresh: 2026-06-09 (Tier 3 dungeon.gd split — fourth extraction
+Last refresh: 2026-06-09 (Tier 3 dungeon.gd split — fifth extraction
+shipped: WaveSpawner pulled out of the 3314-LOC dungeon).
+
+`project/scripts/wave_spawner.gd` is a RefCounted helper the dungeon
+owns as the `wave` field. It carries the VS-style density layer:
+`wave_accum`, `wave_interval`, `burst_accum`, `burst_interval`, and
+the `pending_wave_spawns` queue, plus the WAVE_MIN/MAX_MOBS,
+BURST_MIN/MAX_MOBS, DENSITY_HARD_CAP constants. Methods that mutate
+it: `begin_floor(rng)` (reset accumulators + jitter the next-fire
+intervals into 6-10s / 30-50s bands), `tick_wave(delta)` (top-up
+spawns when alive < ~70% of target density), `tick_burst(delta)`
+(every 30-50s, spawn a 12-18 mob MAGIC pack with leader spawned
+immediately and packmates queued), `drain_one()` (pop one ID per
+frame and call back into dungeon to spawn it), and `warp_in_last_spawn()`
+(the alpha+scale tween on the most-recently-spawned enemy). Behavior
+is a strict copy — no tuning rides the extraction. Callbacks into
+the dungeon: `_floor_ready` / `bot` / `rng` / `current_floor` /
+`current_biome` / `enemies` reads, `_random_walkable_cell_far_from_bot`
+and `_spawn_specific` calls.
+
+`dungeon.gd` shrank 3314 → 3179 (-135 lines). The per-frame `_process`
+driver replaces the three bare calls (`_tick_wave_spawns(delta)`,
+`_tick_burst_events(delta)`, `_drain_pending_spawns()`) with three
+forwarders into `wave`. The accumulator-reset block at the bottom of
+`_async_build_floor` collapsed to a single `wave.begin_floor(rng)`.
+`_warp_in_last_spawn` and `_build_enemy_pool` moved with WaveSpawner
+since the wave/burst/drain paths were their only callers.
+
+Test foundation extended: `test_wave_spawner.gd` 13 tests / 50
+asserts covering begin_floor reset + interval jitter into the
+expected bands, tick_wave gating (sub-interval no-op, fire +
+re-jitter, target-density gate, DENSITY_HARD_CAP gate, _floor_ready
+gate, bot-dead gate, queue-cap-at-remaining-target), tick_burst
+gating + leader spawn at PACK_MAGIC tier + packmate-queue id parity,
+and drain_one FIFO + empty-queue no-op. New `_stub_dungeon.gd`
+records `_spawn_specific` calls without instantiating a real grid /
+node graph, so the spawner's accumulator + queue math is testable
+in isolation. GUT 113 → 126 tests, 2674 → 2724 asserts. Suite still
+~3.4s headless.
+
+Validation: GUT 126/126 pass post-extraction.
+`tools/check_before_commit.sh` all 5 steps pass. Manual mortal T1
+3-run grind: floors 3/2/2, 179+58+152 kills, 1 hive portal entered,
+0 errors / 0 stalls / 0 script errors. 4 `[burst]` log lines fired
+across the 3 runs (matching the pre-extraction baseline of 4 in the
+same configuration). drain_spawn perf-context stamps still arriving
+as expected.
+
+Next dungeon.gd extraction: Showcase (dead-code move — the curated
+visual-audit floor builder). After that the dungeon split per
+`AUDIT_TODO.md` Tier 3 is complete.
+
+---
+
+Earlier 2026-06-09 (Tier 3 dungeon.gd split — fourth extraction
 shipped: RunState pulled out of the 3413-LOC dungeon).
 
 `project/scripts/run_state.gd` is a RefCounted helper the dungeon owns

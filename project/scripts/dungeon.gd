@@ -93,6 +93,15 @@ var run: RefCounted = _RunStateScript.new()
 # launch before the global script class cache catches up.
 const _HUDInventoryControllerScript := preload("res://scripts/hud_inventory_controller.gd")
 var inv: RefCounted = null
+# VS-style wave + burst density layer. Owns the wave/burst pacing
+# accumulators + intervals, the pending_wave_spawns queue, and the
+# warp-in tween. Extracted from dungeon.gd 2026-06-09 (Tier 3 god-class
+# split, follow-up to RunState). Held as a RefCounted helper bound to
+# this dungeon node — accessed via thin forwarders below so per-frame
+# call sites (_process) and the floor-build site (_async_build_floor)
+# stay readable.
+const _WaveSpawnerScript := preload("res://scripts/wave_spawner.gd")
+var wave: RefCounted = null
 const MAX_TICKS_WITHOUT_MOVE := 30
 var chrome: HudChrome = null
 
@@ -325,6 +334,10 @@ func _start_run() -> void:
 	else:
 		inv.bind(bot, items_db, chrome)
 	inv.init_run(save)
+	# Wave/burst density layer. Constructed lazily so the bound dungeon
+	# ref is stable for the run; subsequent runs reuse the same helper.
+	if wave == null:
+		wave = _WaveSpawnerScript.new(self)
 	# Push once so the HUD shows the base inventory before any loot drops.
 	# (chrome may not exist yet on the first frame; the HUD's _ensure path
 	# will pick this up on its next update_biome_hud tick.)
@@ -544,10 +557,7 @@ func _async_build_floor() -> void:
 	PerfMon.note_spike_context("floor_built f=%d biome=%s enemies=%d" % [current_floor, String(current_biome.get("id", "?")), enemies.size()])
 	# Wave/burst pacing — fresh on each floor build. Jitter the next
 	# fire by ±25% so the rhythm doesn't feel metronomic.
-	_wave_accum = 0.0
-	_burst_accum = 0.0
-	_wave_interval = 6.0 + rng.randf() * 4.0  # 6-10s
-	_burst_interval = 30.0 + rng.randf() * 20.0  # 30-50s
+	wave.begin_floor(rng)
 	GrindLog.log_line("[build-floor] f=%d total_ms=%.1f gen_ms=%.1f render_ms=%.1f decor_ms=%.1f spawn_ms=%.1f enemies=%d" % [
 		current_floor, t_total / 1000.0, t_gen / 1000.0, t_render / 1000.0,
 		t_decor / 1000.0, t_spawn / 1000.0, enemies.size(),
@@ -1651,9 +1661,9 @@ func _process(delta: float) -> void:
 	run.tick_run_turn(delta)
 	_tick_equip_cooldowns(delta)
 	SpellSystem.process_tick(bot, self, delta, items_db)
-	_tick_wave_spawns(delta)
-	_tick_burst_events(delta)
-	_drain_pending_spawns()
+	wave.tick_wave(delta)
+	wave.tick_burst(delta)
+	wave.drain_one()
 	_update_biome_hud()
 	PerfMon.end(PerfMon.TAG_FRAME)
 	if PerfMon.tick_frame():
@@ -1664,17 +1674,6 @@ func _process(delta: float) -> void:
 const AGGRO_ENGAGE_RANGE := 5
 
 var _lava_tick_accum: float = 0.0
-
-# Wave + burst spawn accumulators for the VS-style density layer.
-# wave: small periodic mob trickle from off-bot-POV cells. burst:
-# rare large pack of MAGIC-tier mobs from one direction, telegraphed
-# briefly. Both gate on `_floor_ready` so they can't fire mid-build.
-# Combat-pivot 2026-06-04.
-var _wave_accum: float = 0.0
-var _wave_interval: float = 8.0  # seconds; jittered between casts
-var _burst_accum: float = 0.0
-var _burst_interval: float = 35.0
-var _pending_wave_spawns: Array = []  # spawn IDs queued for staggered spawn
 
 # Cached at first read — the JSON file is small but no need to
 # re-parse it every frame for the debug HUD.
@@ -1695,26 +1694,6 @@ func _build_stamp() -> String:
 		String(parsed.get("ts", "?")),
 	]
 	return _cached_build_stamp
-
-func _drain_pending_spawns() -> void:
-	# Spawn at most one queued wave/burst enemy per frame so the GPU
-	# texture-upload + node-add cost spreads across frames. See
-	# `_tick_wave_spawns` for the rationale.
-	if _pending_wave_spawns.is_empty():
-		return
-	var pick: String = String(_pending_wave_spawns.pop_front())
-	# Stamp context BEFORE spawn so a spike during this spawn carries
-	# the enemy id — narrows down which texture / shader is the
-	# culprit when the spike detector fires.
-	PerfMon.note_spike_context("drain_spawn id=%s queue=%d" % [pick, _pending_wave_spawns.size()])
-	var cell: Vector2i = _random_walkable_cell_far_from_bot()
-	_spawn_specific(pick, cell, Enemy.PACK_NORMAL)
-	_warp_in_last_spawn()
-const _WAVE_MIN_MOBS := 4
-const _WAVE_MAX_MOBS := 8
-const _BURST_MIN_MOBS := 12
-const _BURST_MAX_MOBS := 18
-const _DENSITY_HARD_CAP := 400  # never exceed this active mob count
 
 # Bot AI tuning constants. AGGRO_DISTANCE caps how far the bot will actively
 # pursue an enemy. Beyond this, the bot ignores them and keeps exploring;
@@ -3102,120 +3081,6 @@ func _apply_pack_mod(e: Enemy, mod: Dictionary) -> void:
 	# but functionally a no-op until an enemy regen ticker lands. TODO.
 	for tag in mod.get("flavor_tags", []):
 		e.add_pack_defense_tag(String(tag))
-
-# Periodic wave spawn — every 6-10s, top up the floor's mob count
-# back toward the floor's target density. Designed as a TOP-UP: only
-# fires if the alive count has dropped meaningfully below the floor's
-# initial density target. Prevents invincible-bot grinds from running
-# forever (waves used to pile on top, so the floor never emptied).
-# Combat pivot 2026-06-04.
-func _tick_wave_spawns(delta: float) -> void:
-	if not _floor_ready or not is_instance_valid(bot) or not bot.is_alive:
-		return
-	_wave_accum += delta
-	if _wave_accum < _wave_interval:
-		return
-	_wave_accum = 0.0
-	_wave_interval = 6.0 + rng.randf() * 4.0
-	var alive: int = 0
-	for e in enemies:
-		if is_instance_valid(e) and e.is_alive:
-			alive += 1
-	# Don't refill above ~70% of the floor's target density — the
-	# bot needs to be able to clear enough to reach the stairs. Without
-	# this gate, an invincible/over-geared bot literally cannot finish
-	# floors because waves spawn faster than they kill.
-	var target: int = int(round(70.0 + float(current_floor) * 25.0))  # ~75% of target_total
-	if alive >= target or alive >= _DENSITY_HARD_CAP:
-		return
-	var pool: Array = _build_enemy_pool()
-	if pool.is_empty():
-		return
-	var n: int = rng.randi_range(_WAVE_MIN_MOBS, _WAVE_MAX_MOBS)
-	n = mini(n, target - alive)
-	PerfMon.note_spike_context("wave_spawn n=%d alive=%d" % [n, alive])
-	# Stagger wave spawns across frames. Spawning N enemies on the same
-	# frame triggers a synchronous GPU sync on Web GL Compatibility
-	# (texture uploads + scene-tree updates flushed together), reading
-	# as a 1-2s freeze per enemy. Push them onto a queue and drain one
-	# per frame; the player perceives a streaming wave instead of a
-	# synchronized clump.
-	for _i in n:
-		var pick: String = String(pool[rng.randi_range(0, pool.size() - 1)])
-		_pending_wave_spawns.append(pick)
-
-# Burst event — every 30-50s, spawn a 12-18 mob MAGIC pack from one
-# direction relative to the bot. No telegraph yet (Phase 4 polish);
-# the cluster shape itself is the telegraph (mobs visibly stream in).
-func _tick_burst_events(delta: float) -> void:
-	if not _floor_ready or not is_instance_valid(bot) or not bot.is_alive:
-		return
-	_burst_accum += delta
-	if _burst_accum < _burst_interval:
-		return
-	_burst_accum = 0.0
-	_burst_interval = 30.0 + rng.randf() * 20.0
-	var alive: int = 0
-	for e in enemies:
-		if is_instance_valid(e) and e.is_alive:
-			alive += 1
-	# Bursts skip if the floor's already populated — they're dramatic
-	# events for a thinned floor, not an "even more mobs" multiplier.
-	var burst_threshold: int = int(round(50.0 + float(current_floor) * 20.0))  # ~half of target
-	if alive >= burst_threshold or alive >= _DENSITY_HARD_CAP:
-		return
-	var pool: Array = _build_enemy_pool()
-	if pool.is_empty():
-		return
-	# Pick one cluster center far from the bot — packmates spawn within
-	# _PACK_RADIUS so they read as a coherent burst.
-	var pack_id: String = String(pool[rng.randi_range(0, pool.size() - 1)])
-	var center: Vector2i = _random_walkable_cell_far_from_bot()
-	var n: int = rng.randi_range(_BURST_MIN_MOBS, _BURST_MAX_MOBS)
-	n = mini(n, _DENSITY_HARD_CAP - alive)
-	# Leader rolls MAGIC tier so the burst has a visible elite.
-	_spawn_specific(pack_id, center, Enemy.PACK_MAGIC)
-	_warp_in_last_spawn()
-	# Packmates queued for staggered spawn (one per frame) — same reason
-	# as wave spawns: synchronous GPU stalls on Web GL when N enemies
-	# spawn in the same frame.
-	for i in range(n - 1):
-		_pending_wave_spawns.append(pack_id)
-	GrindLog.log_line("[burst] f=%d id=%s n=%d" % [current_floor, pack_id, n])
-
-# Brief warp-in tween on the most recently spawned enemy. Scale 0.4 → 1
-# + alpha 0 → 1 over 250ms so wave / burst arrivals don't look like
-# they were always there. Initial-floor `_spawn_packs` skips this — the
-# floor builds before the player sees anything anyway.
-func _warp_in_last_spawn() -> void:
-	if enemies.is_empty():
-		return
-	var e: Enemy = enemies[enemies.size() - 1]
-	if not is_instance_valid(e) or e.rig == null:
-		return
-	var rig: Node2D = e.rig
-	var target_scale: Vector2 = rig.scale
-	rig.scale = target_scale * 0.4
-	rig.modulate.a = 0.0
-	var tw := rig.create_tween().set_parallel(true)
-	tw.tween_property(rig, "scale", target_scale, 0.25).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-	tw.tween_property(rig, "modulate:a", 1.0, 0.20).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-
-# Helper to rebuild the per-floor enemy pool — same logic as
-# _spawn_enemies pool construction. Extracted so wave/burst can pull
-# from the live biome roster without duplicating code.
-func _build_enemy_pool() -> Array:
-	var pool: Array = []
-	if current_biome.is_empty():
-		return pool
-	var raw_pool: Variant = current_biome.get("enemy_pool", null)
-	if raw_pool is Array:
-		for entry in raw_pool:
-			if entry is String:
-				pool.append(entry)
-			elif entry is Dictionary and entry.has("id"):
-				pool.append(String(entry["id"]))
-	return pool
 
 # PoE-style pack-clustered spawn. Replaces uniform-random N-spawn so
 # the floor reads as "groups of monsters" rather than thinly scattered
