@@ -1,0 +1,32 @@
+{
+  "name": "vault_tomb_0001",
+  "size": [
+    17,
+    7
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "tomb"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    ".................",
+    "...........1...1.",
+    "........1........",
+    "+.........11...1.",
+    "......1..........",
+    "...........1...1.",
+    "................."
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_tomb_entry_rubble_hallway"
+}

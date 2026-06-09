@@ -70,7 +70,7 @@ static func all_vaults() -> Array:
 
 # Count "C" chest glyphs once per vault and cache. Vaults with 4+ chests get
 # weight-divided to ~1/20 their original — they're "treasure room" novelties,
-# not the everyday stamp. Without this, the 28×22 chest-grid `des_vaults_vault`
+# not the everyday stamp. Without this, the 28×22 chest-grid vault
 # stamps almost as often as a normal vault and floods the map.
 static func _annotate_vault(vault: Dictionary) -> void:
 	var grid_arr: Array = vault.get("grid", [])

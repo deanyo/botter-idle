@@ -1,0 +1,44 @@
+{
+  "name": "vault_swamp_0082",
+  "size": [
+    7,
+    17
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "swamp"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    " ..... ",
+    " .xxx. ",
+    " .x.x. ",
+    " .x.x. ",
+    ".......",
+    ". ... .",
+    ". ... .",
+    ". ... .",
+    ". ... .",
+    ". S.. .",
+    ".......",
+    ".......",
+    ".......",
+    ".......",
+    ".......",
+    ".......",
+    " ..... "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_swamp_small_spring"
+}

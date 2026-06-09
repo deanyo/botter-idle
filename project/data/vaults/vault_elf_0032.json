@@ -1,0 +1,42 @@
+{
+  "name": "vault_elf_0032",
+  "size": [
+    9,
+    16
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "elf",
+    "vaults"
+  ],
+  "floor_range": [
+    2,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "xxxxxxxxx",
+    "x.3.3.3.x",
+    "x.......x",
+    "x.......x",
+    "x.......x",
+    "x.......x",
+    "x.......x",
+    "x.......x",
+    "x.1.....x",
+    "x.....1.x",
+    "x..1....x",
+    "x1.....1x",
+    "x....1..x",
+    "x.1.....x",
+    "+...2.1.+",
+    "xxx...xxx"
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_minmay_elf_archery"
+}

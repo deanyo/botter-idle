@@ -1,0 +1,59 @@
+{
+  "name": "vault_lair_0050",
+  "size": [
+    26,
+    25
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "lair",
+    "forge"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "no_monster_gen"
+  ],
+  "grid": [
+    ".........xxxxxxxxxxxxxxxxx",
+    "x......xxxx..........xxxxx",
+    "x.....................xxxx",
+    "x...................1..xxx",
+    "x...................1...xx",
+    "x..1....1................x",
+    "x........................x",
+    "xx......1...............xx",
+    "x..1....................xx",
+    "xx.......................x",
+    "x.......................xx",
+    "x........................x",
+    "xx......................xx",
+    "xx...........4.........xxx",
+    "xx..........***........xxx",
+    "x............5.........xxx",
+    "xxxx....................xx",
+    "xxxxx...................xx",
+    "xxxxxx.................xxx",
+    "xxxxxxx...1...........xxxx",
+    "xxxxxxxx...1.........xxxxx",
+    "xxxxxxxxx.............xxxx",
+    "xxxxxxxxx...........xxxxxx",
+    "xxxxxxxxxx.........xxxxxxx",
+    "xxxxxxxxxxxxxxxxxxxxxxxxxx"
+  ],
+  "spawns": {
+    "1": {
+      "enemy_pool": [
+        "steam_dragon"
+      ]
+    }
+  },
+  "_original_dcss_id": "des_guppyfry_lair_end_dragon"
+}

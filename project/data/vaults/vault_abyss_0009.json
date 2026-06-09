@@ -1,0 +1,37 @@
+{
+  "name": "vault_abyss_0009",
+  "size": [
+    11,
+    10
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "abyss",
+    "dungeon"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "allow_dup"
+  ],
+  "grid": [
+    "           ",
+    "          .",
+    "  .  .   .x",
+    " .x....  xx",
+    ".xxx.....xx",
+    "xxxxx.xxxxx",
+    "xx.....xxx.",
+    "xx  ....x. ",
+    "x.   .  .  ",
+    ".          "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_bh_abyss_exit_spiral"
+}

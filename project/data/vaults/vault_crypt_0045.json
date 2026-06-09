@@ -1,0 +1,40 @@
+{
+  "name": "vault_crypt_0045",
+  "size": [
+    22,
+    13
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "crypt",
+    "dungeon"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "xxxxxxxxxxxxxxxxxxxxxx",
+    "xxxx*x.x.x.xxxxxxxxxxx",
+    "xxx*..1.1.1.xxxxxxxxxx",
+    "xx*x.x.x.x.x.x.xxxxxxx",
+    "x*..1.1.1.1.1.1.xxxxxx",
+    "xx.x.....x.x.x.x.x.x.x",
+    "x*..1.2.1.1.1.1......+",
+    "xx.x.....x.x.x.x.x.x.x",
+    "x*..1.1.1.1.1.1.xxxxxx",
+    "xx*x.x.x.x.x.x.xxxxxxx",
+    "xxx*..1.1.1.xxxxxxxxxx",
+    "xxxx*x.x.x.xxxxxxxxxxx",
+    "xxxxxxxxxxxxxxxxxxxxxx"
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_crypt_grand_chamber"
+}

@@ -1,0 +1,36 @@
+{
+  "name": "vault_shoals_0009",
+  "size": [
+    9,
+    9
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "shoals"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    ".........",
+    "xxx....x.",
+    ".x....xx.",
+    "......x..",
+    ".........",
+    ".x....x..",
+    "xx..x.xx.",
+    "x.....x..",
+    "........."
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_elwin_shoals_entry_rocks"
+}

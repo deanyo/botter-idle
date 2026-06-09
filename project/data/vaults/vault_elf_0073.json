@@ -1,0 +1,41 @@
+{
+  "name": "vault_elf_0073",
+  "size": [
+    14,
+    13
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "elf",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    " xxxxxxxxxxxxx",
+    " xxxxxxxxxxx.x",
+    " xxxxxx.....2.",
+    " xxxxx..xxxx.x",
+    " xxxxx.xxxxxxx",
+    " ......xxxxx.x",
+    "...3..2.....2.",
+    " ......xxxxx.x",
+    " xxxxx.xxxxxxx",
+    " xxxxx..xxxx.x",
+    " xxxxxx.....2.",
+    " xxxxxxxxxxx.x",
+    " xxxxxxxxxxxxx"
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_blade_tridents"
+}

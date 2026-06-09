@@ -1,0 +1,47 @@
+{
+  "name": "vault_zot_0033",
+  "size": [
+    21,
+    20
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "zot"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "         xxxxxx      ",
+    "        xx....xx     ",
+    "        x......x     ",
+    " .... xxx......xxx   ",
+    "......x..........xx  ",
+    "......x...........x  ",
+    "......x...........xxx",
+    "....................x",
+    "....................x",
+    "....................x",
+    "x....................",
+    "x....................",
+    "x....................",
+    "xxx...........x......",
+    "  x...........x......",
+    "  xx..........x......",
+    "   xxx......xxx .... ",
+    "     x......x        ",
+    "     xx....xx        ",
+    "      xxxxxx         "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_hangedman_zot_decor_unnerving_road"
+}

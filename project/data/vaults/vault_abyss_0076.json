@@ -1,0 +1,51 @@
+{
+  "name": "vault_abyss_0076",
+  "size": [
+    17,
+    17
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "abyss",
+    "dungeon"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent",
+    "no_monster_gen"
+  ],
+  "grid": [
+    "       .         ",
+    "       ..        ",
+    "       ...       ",
+    "      ..x..      ",
+    "     x..x2..     ",
+    "    xx. xx...    ",
+    "   ... .x11...   ",
+    "..... .x.x.x1..  ",
+    " ..xxxx.>.xxxx.. ",
+    "  ..1x.x.x. .....",
+    "   ...11x. ...   ",
+    "    ...xx .xx    ",
+    "     ..2x..x     ",
+    "      ..x..      ",
+    "       ...       ",
+    "        ..       ",
+    "         .       "
+  ],
+  "spawns": {
+    "2": {
+      "enemy_pool": [
+        "lich"
+      ]
+    }
+  },
+  "_original_dcss_id": "des_hangedman_classic_abyss_death"
+}

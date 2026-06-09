@@ -1,0 +1,47 @@
+{
+  "name": "vault_abyss_0059",
+  "size": [
+    24,
+    9
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "abyss",
+    "dungeon"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "no_monster_gen"
+  ],
+  "grid": [
+    " CCCC  CCCCCCCCCC  CCCC ",
+    "CC 1....+2....5+....4 CC",
+    "C 11..32...++...56..44 C",
+    "C 11.3.3.1....4.6.6.44 C",
+    "C 11.....11..44.....44 C",
+    "C  11111111..44444444  C",
+    "C   111111 .. 444444   C",
+    ".C                   .C.",
+    " .CC .C. CCCCCC .C. CC. "
+  ],
+  "spawns": {
+    "1": {
+      "enemy_pool": [
+        "bat"
+      ]
+    },
+    "2": {
+      "enemy_pool": [
+        "vampire_knight"
+      ]
+    }
+  },
+  "_original_dcss_id": "des_hangedman_abyss_monster_moat"
+}

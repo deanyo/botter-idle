@@ -1,0 +1,36 @@
+{
+  "name": "vault_snake_0024",
+  "size": [
+    8,
+    8
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "snake"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent",
+    "no_monster_gen"
+  ],
+  "grid": [
+    "  ....  ",
+    " ...... ",
+    "........",
+    "........",
+    "........",
+    "........",
+    " ...... ",
+    "  ....  "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_minmay_snake_pond"
+}

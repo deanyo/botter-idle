@@ -1,0 +1,39 @@
+{
+  "name": "vault_elf_0067",
+  "size": [
+    14,
+    13
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "elf",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "     xxx    . ",
+    " xxxxxxxxxxx. ",
+    " ..........x. ",
+    " .....+....x. ",
+    " ...xxx....x. ",
+    " ...xxxT...x..",
+    "......+....+..",
+    " ...xxxT...x..",
+    " ...xxx....x. ",
+    " .....+....x. ",
+    " ..........x. ",
+    " xxxxxxxxxxx. ",
+    "     xxx    . "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_blade_entry_hurt_lockers"
+}

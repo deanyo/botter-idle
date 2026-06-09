@@ -1,0 +1,45 @@
+{
+  "name": "vault_spider_0013",
+  "size": [
+    17,
+    17
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "spider"
+  ],
+  "floor_range": [
+    1,
+    2
+  ],
+  "weight": 10,
+  "tags": [
+    "no_monster_gen",
+    "allow_dup"
+  ],
+  "grid": [
+    "    .........    ",
+    "   ..xxxxxxx..   ",
+    "  ..xx.....xx..  ",
+    " ..xx.......xx.. ",
+    "..xx.........xx..",
+    ".xx3...xxx....xx.",
+    ".x....x.4x.....x.",
+    ".x*..x..x.xx.....",
+    ".x...x2x.x1x.....",
+    ".x*..x..x.xx.....",
+    ".x....x.4x.....x.",
+    ".xx3...xxx....xx.",
+    "..xx.........xx..",
+    " ..xx.......xx.. ",
+    "  ..xx.....xx..  ",
+    "   ..xxxxxxx..   ",
+    "    .........    "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_hangedman_spider_trapstep"
+}

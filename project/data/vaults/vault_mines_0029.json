@@ -1,0 +1,46 @@
+{
+  "name": "vault_mines_0029",
+  "size": [
+    7,
+    9
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "mines",
+    "orc"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "xxxxxxx",
+    "x.131.x",
+    "x11111x",
+    "x11.11x",
+    "x11111x",
+    "x.111.x",
+    "xxx+xxx",
+    ".......",
+    "xxxxxxx"
+  ],
+  "spawns": {
+    "1": {
+      "enemy_pool": [
+        "orc"
+      ]
+    },
+    "3": {
+      "enemy_pool": [
+        "troll"
+      ]
+    }
+  },
+  "_original_dcss_id": "des_kennysheep_orc_monster_closet_entryway"
+}

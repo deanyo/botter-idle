@@ -1,0 +1,52 @@
+{
+  "name": "vault_vaults_0041",
+  "size": [
+    23,
+    27
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "  xxxxxxxxxxxxxxxxx.x  ",
+    " ..xxxxxx............. ",
+    "x...xx.......x......x.x",
+    "xx...........x......x..",
+    "xxx.........9x.....9x.x",
+    "xxx.........xx.....xx..",
+    "xx.........9x.....9x..x",
+    "xx........9xx....9xx..x",
+    "xx......9xxx...9xxx...x",
+    "x.....xxxx*.*xxxx.....x",
+    "x...xxx9.*.xxx......x.x",
+    "x..xx9...*xxxx......x.x",
+    "x..x9....*xxxx.....9x.x",
+    "x.xx.....xxxxx.....xx.x",
+    "x.x9.....xxxx*....9x..x",
+    "x.x......xxxx*...9xx..x",
+    "x.x......xxx.*.9xxx...x",
+    "x.....xxxx*.*xxxx.....x",
+    "x...xxx9...xxx9......xx",
+    "x..xx9....xx9........xx",
+    "x..x9.....x9.........xx",
+    "..xx.....xx.........xxx",
+    "x.x9.....x9.........xxx",
+    "..x......x...........xx",
+    "x.x......x.......xx...x",
+    " .............xxxxxx.  ",
+    "  x.xxxxxxxxxxxxxxxxx  "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_vaults_end_minmay_curved1"
+}

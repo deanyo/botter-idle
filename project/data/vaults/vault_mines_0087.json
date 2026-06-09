@@ -1,0 +1,60 @@
+{
+  "name": "vault_mines_0087",
+  "size": [
+    19,
+    23
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "mines",
+    "orc"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 5,
+  "tags": [],
+  "grid": [
+    "xxxx.xxxxxxxxxxxxxx",
+    "xxx..xxxxx.x.xxxxxx",
+    "xxx........x.x..x..",
+    "x.1.x..xxx1.xx....x",
+    "xx1x.1xx...1..1..xx",
+    "xx.xxx...xx.x.x.x.x",
+    "x..1..xx.x11x.....x",
+    "x..21x..x....x2x.xx",
+    "xx....1...xx..xxxxx",
+    "xxxx...x.x...x.xxxx",
+    "xxx.2x13x..xxx.xx.x",
+    "x.xx..3.4........xx",
+    "xx.xxxx.3..x2x1.xxx",
+    "xx11x....x..xx.x..x",
+    "x..xx.xx..x.x.xx1.x",
+    "xx....2..x.....x1.x",
+    "x.xx..1...xx.xx..xx",
+    "xxx.x..xx.xx.x.x.xx",
+    "x.x........x..1..xx",
+    "...x.x...xx.2....xx",
+    "xx.....x..x..x.x..x",
+    "xxxxxxxx.x.x.xx.x.x",
+    "xxxxxxxxxxxxxxx.xxx"
+  ],
+  "spawns": {
+    "3": {
+      "enemy_pool": [
+        "wraith"
+      ]
+    },
+    "4": {
+      "enemy_pool": [
+        "orc_priest"
+      ]
+    }
+  },
+  "_original_dcss_id": "des_zombieorc1_lemuel"
+}

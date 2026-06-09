@@ -1,0 +1,44 @@
+{
+  "name": "vault_slime_0019",
+  "size": [
+    33,
+    17
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "slime"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "    ...........   ...........    ",
+    "  ..xxxxxxxxxxx...xxxxxxxxxxx..  ",
+    " .xxx.........xxxxx.........xxx. ",
+    ".xx..x.......x..x..x.......x..xx.",
+    ".x.x...........xxx...........x.x.",
+    "..x.............x.............x..",
+    "........x.x...........x.x........",
+    "......x..x..x.......x..x..x......",
+    ".....xxxxxxxxx.....xxxxxxxxx.....",
+    "......x..x..x.......x..x..x......",
+    "........x.x...........x.x........",
+    "..x.............x.............x..",
+    ".x.x...........x.x...........x.x.",
+    ".xx..x.......x..x..x.......x..xx.",
+    " .xxx.........xxxxx..S.S.S..xxx. ",
+    "  ..xxxxxxxxxxx...xxxxxxxxxxx..  ",
+    "    ...........   ...........    "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_slime_infinislime"
+}

@@ -1,0 +1,48 @@
+{
+  "name": "vault_vaults_0013",
+  "size": [
+    27,
+    23
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "  xxxxxxxxxxxxxxxxxxxxxxx  ",
+    " ......................... ",
+    "x.....9............9......x",
+    "x..xx...xxx...xxxx...xxx..x",
+    "x..x...xxx...xxxxx...xxx..x",
+    "x.....xxx...xxxxxx...xx...x",
+    "x.9..xxx...xxxxxx9..xx..9.x",
+    "x...xxx...xxxxx*99*xx.....x",
+    "x..xxx...xxxxx.99.xx...x..x",
+    "x..xx...xxxxx....xx...xx..x",
+    "x..x...xxxxx9*9xxx...xx...x",
+    "x.....9*9..99.9..9*9......x",
+    "x..x...xxxx9.9xxxx...xx...x",
+    "x..xx...xxx..xxxxx...xxx..x",
+    "x..xx...xx.99.xxxxx...xx..x",
+    "x..x...xx*9999*xxxxx...x..x",
+    "x.....xxx..xx...xxxxx.....x",
+    "x.9..xxx...xxx...xxxxx..9.x",
+    "x...xxx...xxxxx...xxxxx...x",
+    "x..xxx...xxxxxxx...xxxxx..x",
+    "x......9.........9........x",
+    "  ........................ ",
+    "  xxxxxxxxxxxxxxxxxxxxxxx  "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_johnstein_vaults_end_asymmetric"
+}

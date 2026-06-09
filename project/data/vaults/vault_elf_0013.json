@@ -1,0 +1,51 @@
+{
+  "name": "vault_elf_0013",
+  "size": [
+    40,
+    25
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "elf",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "xxxxxxxxxxxxxxxxxxx.....xxxxxxxxxxxxxxxx",
+    "xxxxxxxxxxxxxxxxxx..2.3..xxxxxxxxxxxxxxx",
+    "xxxxxxxxxxxxxxxxx.........xxxxxxxxxxxxxx",
+    "xxxxxxxx.....xxx....4.2....xxx.....xxxxx",
+    "xxxxxxx...*...x.............x...5...xxxx",
+    "xxxxxx...*.*........5.3........2.....xxx",
+    "xxxxx...*.*.*.....6..1..7.............xx",
+    "xxxx.....*.*...3.2.......2...3.....2...x",
+    "xxx...*...*.............................",
+    "xxx..*.*.....25.4.........5.4...5.......",
+    "xxx.*.*.*........1.......1.....2.4......",
+    "xxx..*.*.....34.5.........4.5.CC3.......",
+    "xxx...*...*...................CCC.......",
+    "xxxx.....*.*...2.3.......3...2.CCC.3...x",
+    "xxxxx...*.*.*.....7..1..6.......CCC...xx",
+    "xxxxxx...*.*........4.2........3.CC..xxx",
+    "xxxxxxx...*...x.............x...4...xxxx",
+    "xxxxxxxx.....xxx....5.3....xxx.....xxxxx",
+    "xxxxxxxxxxxxxxxxx.........xxxxxxxxxxxxxx",
+    "xxxxxxxxxxxxxxxxxx..3.2..xxxxxxxxxxxxxxx",
+    "xxxxxxxxxxxxxxxxxxx.....xxxxxxxxxxxxxxxx",
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_grunt_elf_hall_asides"
+}

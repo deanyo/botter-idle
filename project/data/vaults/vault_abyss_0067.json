@@ -1,0 +1,36 @@
+{
+  "name": "vault_abyss_0067",
+  "size": [
+    8,
+    8
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "abyss",
+    "dungeon"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "no_item_gen",
+    "no_monster_gen"
+  ],
+  "grid": [
+    "........",
+    ".xxxxxx.",
+    ".x....x.",
+    ".x.C..x.",
+    ".x....x.",
+    ".x....x.",
+    ".xxxxxx.",
+    "........"
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_hangedman_abyss_overflow_altar"
+}

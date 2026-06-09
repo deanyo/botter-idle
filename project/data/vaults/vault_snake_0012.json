@@ -1,0 +1,36 @@
+{
+  "name": "vault_snake_0012",
+  "size": [
+    38,
+    9
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "snake"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "   xx.xxxxxxxCxxxxxxx.xxxxxxxx.xxxxxx ",
+    "  xx...xx.........xx...xx.........xx  ",
+    " xx.....xx.......xx.....xx.......xx   ",
+    ".....x...xx..........x...xx.......    ",
+    " .........++.....++.......++.......   ",
+    "  xx...........x..xx...........x..xx  ",
+    "   xx.....xx.......xx.....xx.......xx ",
+    "    xx...xx.........xx...xx.........xx",
+    "     xx.xxxxxx.xxxxxxxxCxxxxxx.xxxxxxx"
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_hangedman_snake_pattern"
+}

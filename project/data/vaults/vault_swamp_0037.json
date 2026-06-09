@@ -1,0 +1,36 @@
+{
+  "name": "vault_swamp_0037",
+  "size": [
+    10,
+    10
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "swamp",
+    "forest"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "..........",
+    "..........",
+    "..........",
+    "..........",
+    "....**....",
+    "..........",
+    "..........",
+    "..........",
+    "..........",
+    ".........."
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_lightli_tree_ring"
+}

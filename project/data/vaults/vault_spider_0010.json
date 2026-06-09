@@ -1,0 +1,72 @@
+{
+  "name": "vault_spider_0010",
+  "size": [
+    46,
+    26
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "spider"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "xxxxxxxx............................xxxxxxxxxx",
+    "xxxxxxxx............................xxxxxxxxxx",
+    "xxxxxxxx.66....4CCC......CCC4....66.xxxxxxxxxx",
+    "xxxxxxxx........452.7..7.*54........xxxxxxxxxx",
+    "xxxxxxxx........55C.x..x.C55........xxxxxxxxxx",
+    "xxxxxxxx........CCC.4.4..CCC........xxxxxxxxxx",
+    "xxxxxxxx............x..x............xxxxxxxxxx",
+    "xxxxxxxx....x....8........8....x....xxxxxxxxxx",
+    "xxxxxxxx.......xx..x.xx.x..xx.......xxxxxxxxxx",
+    "xxxxxxxx.....3.x.....55.....x.3.....xxxxxxxxxx",
+    "xxxxxxxx....333.....5445.....333....xxxxxxxxxx",
+    "xxxxxxxx.....3.x.....55.....x.3.....xxxxxxxxxx",
+    "xxxxxxxx.......xx..x.xx.x..xx.......xxxxxxxxxx",
+    "xxxxxxxx....x....8........8....x....xxxxxxxxxx",
+    "xxxxxxxx............x..x............xxxxxxxxxx",
+    "xxxxxxxx........CCC......CCC........xxxxxxxxxx",
+    "xxxxxxxx........55C.x..x.C55........xxxxxxxxxx",
+    "xxxxxxxx........451.6..6..54........xxxxxxxxxx",
+    "xxxxxxxx.66....4CCC.x..x.CCC4....66.xxxxxxxxxx",
+    "xxxxxxxx..............x.............xxxxxxxxxx",
+    " xxxxxxx............................xxxxxxxxxx",
+    "  xxxxxx............................xxxxxxxxxx",
+    "   xxxxxxxxxxxxxxxxx....xxxxxxxxxxxxxxxxxxxxxx",
+    "    xxxxxxxxxxxxxxx......xxxxxxxxxxxxxxxxxxxxx",
+    "     xxxxxxxxxxxx..........xxxxxxxxxxxxxxxxxxx"
+  ],
+  "spawns": {
+    "6": {
+      "enemy_pool": [
+        "orb_spider"
+      ]
+    },
+    "4": {
+      "enemy_pool": [
+        "giant_spider"
+      ]
+    },
+    "5": {
+      "enemy_pool": [
+        "redback"
+      ]
+    },
+    "2": {
+      "enemy_pool": [
+        "wolf_spider"
+      ]
+    }
+  },
+  "_original_dcss_id": "des_guppyfry_spider_rune"
+}

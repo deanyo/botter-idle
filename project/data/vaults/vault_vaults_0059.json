@@ -1,0 +1,48 @@
+{
+  "name": "vault_vaults_0059",
+  "size": [
+    27,
+    23
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "  xxxxxxxxxxxxxxxxxxxxxxx  ",
+    " ..x9xxx9xxx9xxx9xxx9xxx.. ",
+    "x.....x...x...x...x...x...x",
+    "xx.....................9.xx",
+    "x9....x.................xxx",
+    "xx...xxx.................xx",
+    "xxx.xxxxx..x......x......9x",
+    "xx...xxx..xxx....xxx.....xx",
+    "x9....x..xx.xx..xxxxx...xxx",
+    "xx......xx.**99..xxx.....xx",
+    "xxx......xx***99..x......9x",
+    "xx........xx*.*9x........xx",
+    "x9......x..xx***xx......xxx",
+    "xx.....xxx..xx**.xx......xx",
+    "xxx...xxxxx..xx.xx..x....9x",
+    "xx.....xxx....xxx..xxx...xx",
+    "x9......x......x..xxxxx.xxx",
+    "xx.................xxx...xx",
+    "xxx.................x....9x",
+    "xx.......................xx",
+    "x...x...x...x...x...x.....x",
+    "  .xxx9xxx9xxx9xxx9xxx9x.. ",
+    "  xxxxxxxxxxxxxxxxxxxxxxx  "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_vaults_end_minmay_sharp_edges"
+}

@@ -1,0 +1,60 @@
+{
+  "name": "vault_crypt_0037",
+  "size": [
+    11,
+    33
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "crypt",
+    "dungeon"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "   xx.     ",
+    "   x..     ",
+    "   x..     ",
+    "   x..     ",
+    "  xxx.     ",
+    "  x...     ",
+    "  x...     ",
+    "  x...     ",
+    " xxxx.     ",
+    " x....     ",
+    " x....     ",
+    " x....     ",
+    "xxxxx.     ",
+    "x.....     ",
+    "x.*9..     ",
+    "x.....     ",
+    "xxxxx.xxxxx",
+    "     .....x",
+    "     ..9*.x",
+    "     .....x",
+    "     .xxxxx",
+    "     ....x ",
+    "     ....x ",
+    "     ....x ",
+    "     .xxxx ",
+    "     ...x  ",
+    "     ...x  ",
+    "     ...x  ",
+    "     .xxx  ",
+    "     ..x   ",
+    "     ..x   ",
+    "     ..x   ",
+    "     .xx   "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_crypt_deepening_niches"
+}

@@ -1,0 +1,37 @@
+{
+  "name": "vault_swamp_0010",
+  "size": [
+    12,
+    12
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "swamp"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "  ........  ",
+    " .......... ",
+    "...xx.xxx...",
+    "..x......x..",
+    "..x......x..",
+    ".........x..",
+    "..x.........",
+    "..x......x..",
+    "..x......x..",
+    "...xx.xxx...",
+    " .......... ",
+    "  ........  "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_evilmike_swamp_ruin_house_1"
+}

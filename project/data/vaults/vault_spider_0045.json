@@ -1,0 +1,44 @@
+{
+  "name": "vault_spider_0045",
+  "size": [
+    17,
+    17
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "spider"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "              ...",
+    "            ...x.",
+    "          ...xxx.",
+    "        ...x...x.",
+    "      ...xxx.S...",
+    "    ...x...x...x.",
+    "  ...xxx.S...xxx.",
+    "...x...x.......x.",
+    ".xxx.S.......S...",
+    "...x...x.......x.",
+    "  ...xxx.S...xxx.",
+    "    ...x...x...x.",
+    "      ...xxx.S...",
+    "        ...x...x.",
+    "          ...xxx.",
+    "            ...x.",
+    "              ..."
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_spider_entry_lesser_pyramids"
+}

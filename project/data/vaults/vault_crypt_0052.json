@@ -1,0 +1,40 @@
+{
+  "name": "vault_crypt_0052",
+  "size": [
+    13,
+    13
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "crypt",
+    "dungeon"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "   xxxxxxx   ",
+    " ........... ",
+    " ........... ",
+    "x....x.x....x",
+    "x....x+x....x",
+    "x..xxx.xxx..x",
+    "x...........x",
+    "x..xxx.xxx..x",
+    "x....x.x....x",
+    "x....x.x....x",
+    " ........... ",
+    " ........... ",
+    "   xxxxxxx   "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_crypt_knight_watch"
+}

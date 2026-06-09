@@ -1,0 +1,48 @@
+{
+  "name": "vault_zot_0124",
+  "size": [
+    15,
+    21
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "zot"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    " xxxxxxxxxxxxx ",
+    "xx...........xx",
+    "x..xxxxxxxxx..x",
+    "x.xx.......x..x",
+    "x.x....<......x",
+    "x.x...........x",
+    "x.xx..........x",
+    "x.xxxxx...x.xxx",
+    "x.xxxx.......  ",
+    "x.xx.........  ",
+    "  ...........  ",
+    "  .........xx.x",
+    "  .......xxxx.x",
+    "xxx.x...xxxxx.x",
+    "x..........xx.x",
+    "x...........x.x",
+    "x......>....x.x",
+    "x..x.......xx.x",
+    "x..xxxxxxxxx..x",
+    "xx...........xx",
+    " xxxxxxxxxxxxx "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_zot_minivault_6"
+}

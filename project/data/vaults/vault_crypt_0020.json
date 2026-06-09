@@ -1,0 +1,45 @@
+{
+  "name": "vault_crypt_0020",
+  "size": [
+    9,
+    12
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "crypt",
+    "dungeon"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    ".........",
+    ".........",
+    ".........",
+    "....1....",
+    ".........",
+    ".........",
+    ".........",
+    ".........",
+    ".........",
+    ".........",
+    ".........",
+    "........."
+  ],
+  "spawns": {
+    "1": {
+      "enemy_pool": [
+        "lich"
+      ]
+    }
+  },
+  "_original_dcss_id": "des_minmay_crypt_entry_nasty_monster"
+}

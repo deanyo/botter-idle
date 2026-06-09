@@ -1,0 +1,40 @@
+{
+  "name": "vault_abyss_0054",
+  "size": [
+    17,
+    13
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "abyss",
+    "dungeon"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "        xx..     ",
+    "        x...     ",
+    "        xx..     ",
+    "        x.C......",
+    "        x........",
+    "      xxx...x.x.x",
+    "xxxxxxx...xxxxxxx",
+    "x.x.x...xxx      ",
+    "........x        ",
+    "......C.x        ",
+    "     ..xx        ",
+    "     ...x        ",
+    "     ..xx        "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_hangedman_abyss_entry_splay"
+}

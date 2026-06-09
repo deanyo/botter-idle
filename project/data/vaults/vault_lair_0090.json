@@ -1,0 +1,44 @@
+{
+  "name": "vault_lair_0090",
+  "size": [
+    17,
+    17
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "lair"
+  ],
+  "floor_range": [
+    2,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "      xxxxx      ",
+    "      x...x      ",
+    "      x...x      ",
+    "   x..x...x..x   ",
+    "   ...........   ",
+    "   ...........   ",
+    "xxxx.........xxxx",
+    "x......xxx......x",
+    "x......x.x......x",
+    "x......xxx......x",
+    "xxxx.........xxxx",
+    "   ...........   ",
+    "   ...........   ",
+    "   x..x...x..x   ",
+    "      x...x      ",
+    "      x...x      ",
+    "      xxxxx      "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_lair_crumbling_lobby"
+}

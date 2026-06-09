@@ -1,0 +1,38 @@
+{
+  "name": "vault_slime_0006",
+  "size": [
+    13,
+    13
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "slime"
+  ],
+  "floor_range": [
+    2,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    ".............",
+    ".x.x.x.x.x.x.",
+    "..x.x.x.x.x..",
+    ".x.........x.",
+    "..x.......x..",
+    ".x.........x.",
+    "..x...1...x..",
+    ".x.........x.",
+    "..x.......x..",
+    ".x.........x.",
+    "..x.x.x.x.x..",
+    ".x.x.x.x.x.x.",
+    "............."
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_cheibrodos_slime_lost_civilization_6"
+}

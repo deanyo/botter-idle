@@ -1,0 +1,35 @@
+{
+  "name": "vault_lair_0133",
+  "size": [
+    9,
+    7
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "lair",
+    "forest"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    ".........",
+    ".x.....x.",
+    ".........",
+    ".........",
+    ".....S...",
+    ".xx...xx.",
+    "........."
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_lair_treehouse"
+}

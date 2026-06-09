@@ -1,0 +1,37 @@
+{
+  "name": "vault_vaults_0002",
+  "size": [
+    12,
+    10
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "............",
+    "....1131....",
+    "...1....1...",
+    "..1......1..",
+    "..2......1..",
+    "..1......4..",
+    "..1......1..",
+    "...1....1...",
+    "....1911....",
+    "............"
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_david_vaults_3"
+}

@@ -1,0 +1,39 @@
+{
+  "name": "vault_shoals_0046",
+  "size": [
+    12,
+    12
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "shoals"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    " ..xx..xx.. ",
+    "..xx....xx..",
+    ".xx......xx.",
+    "xx........xx",
+    "x..........x",
+    "......1.....",
+    "............",
+    "x..........x",
+    "xx........xx",
+    ".xx......xx.",
+    "..xx....xx..",
+    " ..xx..xx.. "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_shoals_kraken_intersection"
+}

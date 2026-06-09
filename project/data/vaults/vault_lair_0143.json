@@ -1,0 +1,32 @@
+{
+  "name": "vault_lair_0143",
+  "size": [
+    5,
+    5
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "lair"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "allow_dup"
+  ],
+  "grid": [
+    " .   ",
+    ". .  ",
+    " . . ",
+    "  . .",
+    "   . "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_sub_lair_graze_edge"
+}

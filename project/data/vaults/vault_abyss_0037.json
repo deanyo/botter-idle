@@ -1,0 +1,34 @@
+{
+  "name": "vault_abyss_0037",
+  "size": [
+    9,
+    9
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "abyss",
+    "dungeon"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    " ....... ",
+    ".........",
+    "..11111..",
+    "..12221..",
+    "..12.21..",
+    "..12221..",
+    "..11111..",
+    ".........",
+    " ....... "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_evilmike_abyss_exit_plants"
+}

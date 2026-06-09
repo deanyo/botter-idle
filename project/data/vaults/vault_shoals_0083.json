@@ -1,0 +1,39 @@
+{
+  "name": "vault_shoals_0083",
+  "size": [
+    11,
+    12
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "shoals"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 1,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "  .......  ",
+    " ......... ",
+    "...........",
+    "...........",
+    "...........",
+    "...........",
+    "...........",
+    "...........",
+    "...........",
+    "...........",
+    " ......... ",
+    "  .......  "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_overgrown_statue"
+}

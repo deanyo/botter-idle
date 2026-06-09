@@ -1,0 +1,46 @@
+{
+  "name": "vault_swamp_0095",
+  "size": [
+    13,
+    18
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "swamp",
+    "forest"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    " .           ",
+    "..T          ",
+    "....   .     ",
+    " T.T....     ",
+    " ....T.TT    ",
+    " .T.T.TTT    ",
+    " .........   ",
+    " T...TTTTT.T ",
+    "..T..........",
+    " TT..TTTTTT. ",
+    " ..T.T....   ",
+    " .T....T.    ",
+    " ......      ",
+    " ..T.T       ",
+    " ...T        ",
+    " .T.         ",
+    "..           ",
+    ".            "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_swamp_treefoil"
+}

@@ -1,0 +1,52 @@
+{
+  "name": "vault_vaults_0032",
+  "size": [
+    23,
+    27
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "  xxxxxxxxxxxxxxxxxxx  ",
+    " .......9x.***9x9..... ",
+    "x......9.x...9.x.9....x",
+    "x..xxxx..x..x..x..xxx9x",
+    "x..x**...x..x..x..x...x",
+    "x..x**...x..x..x..x...x",
+    "x..x..x..x..x..x..x...x",
+    "x.9.....9...x..x..x...x",
+    "x9.....9....x..x..x...x",
+    "xxxxxxx..xxxx..x..xxxxx",
+    "x........x....9x..x***x",
+    "x........x...9.x..x***x",
+    "x..xxxxxxx..x..x..x...x",
+    "x.9........9.....9x...x",
+    "x9........9.....9.x...x",
+    "xxxxxxxxxxxxx..xxxxxx9x",
+    "x9.............x9.....x",
+    "x*9............x.9....x",
+    "x*.xxxxxxxxxxxxx..x...x",
+    "x*9..............*x...x",
+    "x9..............**x...x",
+    "xxxxxxxxxxxxxxxxxxx...x",
+    "x....x9............9..x",
+    "x....x.9............9.x",
+    "x....x..9..........9.9x",
+    " ....9................ ",
+    "  xxxxxxxxxxxxxxxxxxx  "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_vaults_end_minmay_bends"
+}

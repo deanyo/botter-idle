@@ -1,0 +1,38 @@
+{
+  "name": "vault_lair_0097",
+  "size": [
+    9,
+    11
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "lair"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "........ ",
+    ".......xx",
+    "........x",
+    ".........",
+    ".........",
+    ".........",
+    ".........",
+    ".........",
+    ".........",
+    " xS.....x",
+    " xx....xx"
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_lair_flooded_remnant"
+}

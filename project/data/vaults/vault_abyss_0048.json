@@ -1,0 +1,44 @@
+{
+  "name": "vault_abyss_0048",
+  "size": [
+    19,
+    15
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "abyss",
+    "dungeon",
+    "forest"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "no_monster_gen",
+    "transparent"
+  ],
+  "grid": [
+    "         ......    ",
+    "      ....xxx....  ",
+    "     ..x.......x2. ",
+    " .....x1T.....T.x. ",
+    ".xxxxxxx..xCx..T...",
+    ".x.....xxxx.......1",
+    ".x.......6x.2.x..x.",
+    "1x.4..+...+......x.",
+    ".x...6....x.3.x..x.",
+    ".x.....xxxx.......1",
+    ".xxxxxxx..x.x..T...",
+    " .....x1T.....T.x. ",
+    "     ..x.......x2. ",
+    "      ....xxx....  ",
+    "         ......    "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_grunt_abyss_rune_forest_and_sorcery"
+}

@@ -1,0 +1,39 @@
+{
+  "name": "vault_snake_0083",
+  "size": [
+    7,
+    12
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "snake"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "no_monster_gen"
+  ],
+  "grid": [
+    " ..... ",
+    "x.....x",
+    "x.....x",
+    "x.....x",
+    "x.....x",
+    "x.....x",
+    "x22222x",
+    "x22222x",
+    "x22.22x",
+    "x2...2x",
+    "xx...xx",
+    " xxxxx "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_snake_salamander_stairs"
+}

@@ -1,0 +1,43 @@
+{
+  "name": "vault_vaults_0003",
+  "size": [
+    12,
+    10
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "............",
+    "............",
+    "...11111....",
+    "............",
+    "....***.....",
+    "...+**......",
+    "............",
+    "...666......",
+    "............",
+    "............"
+  ],
+  "spawns": {
+    "1": {
+      "enemy_pool": [
+        "fire_dragon"
+      ]
+    }
+  },
+  "_original_dcss_id": "des_david_vaults_4"
+}

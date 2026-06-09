@@ -1,0 +1,45 @@
+{
+  "name": "vault_crypt_0013",
+  "size": [
+    15,
+    17
+  ],
+  "orient": "south",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "crypt",
+    "dungeon"
+  ],
+  "floor_range": [
+    1,
+    1
+  ],
+  "weight": 30,
+  "tags": [
+    "no_monster_gen",
+    "no_item_gen"
+  ],
+  "grid": [
+    "xxxxxxxxxxxxxxx",
+    "xxxx.......xxxx",
+    "xx...........xx",
+    "xx...........xx",
+    "x.............x",
+    "x.............x",
+    "x.............x",
+    "x.............x",
+    "x.............x",
+    "x.............x",
+    "x.............x",
+    "xx...........xx",
+    "xx...........xx",
+    "xxxx.......xxxx",
+    "xxxxx.....xxxxx",
+    "xxxxx.+++.xxxxx",
+    "      ...      "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_grunt_crypt_arrival_webbed"
+}

@@ -1,0 +1,31 @@
+{
+  "name": "vault_abyss_0001",
+  "size": [
+    4,
+    5
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "abyss",
+    "dungeon",
+    "forge"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    " .. ",
+    "... ",
+    "....",
+    "... ",
+    " .. "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_abyss_entry_flame_altar"
+}

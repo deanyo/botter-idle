@@ -1,0 +1,50 @@
+{
+  "name": "vault_spider_0054",
+  "size": [
+    10,
+    17
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "spider"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "  xxxxxx  ",
+    " xx....xx ",
+    "xx......xx",
+    "x3...2..3x",
+    "x........x",
+    "xx.....Cxx",
+    "xx.3..3.xx",
+    "....CC....",
+    "....CC....",
+    "....CC....",
+    "xx.3..3.xx",
+    "xxC.....xx",
+    "x........x",
+    "x3..1...3x",
+    "xx......xx",
+    " xx....xx ",
+    "  xxxxxx  "
+  ],
+  "spawns": {
+    "2": {
+      "enemy_pool": [
+        "wolf_spider"
+      ]
+    }
+  },
+  "_original_dcss_id": "des_nicolae_spider_moth_buddies"
+}

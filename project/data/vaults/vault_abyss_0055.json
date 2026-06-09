@@ -1,0 +1,58 @@
+{
+  "name": "vault_abyss_0055",
+  "size": [
+    9,
+    19
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "abyss",
+    "dungeon",
+    "glacier"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "no_monster_gen"
+  ],
+  "grid": [
+    ". ..... .",
+    " ....... ",
+    ".x. . .x.",
+    " x.+.+.x ",
+    ". ...C. .",
+    " x.+.+.x ",
+    ". . . . .",
+    " x.+.+.x ",
+    ". .2.9. .",
+    " x.+.+.x ",
+    ". . . . .",
+    " x.+.+.x ",
+    ". .6.5. .",
+    " x.+.+.x ",
+    ". . . . .",
+    " x.+.+.x ",
+    ". .2.1. .",
+    " ..+.+.. ",
+    ". ..... ."
+  ],
+  "spawns": {
+    "1": {
+      "enemy_pool": [
+        "hell_hound"
+      ]
+    },
+    "2": {
+      "enemy_pool": [
+        "anaconda"
+      ]
+    }
+  },
+  "_original_dcss_id": "des_hangedman_abyss_exit_choices"
+}

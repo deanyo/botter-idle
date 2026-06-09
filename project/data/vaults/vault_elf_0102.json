@@ -1,0 +1,44 @@
+{
+  "name": "vault_elf_0102",
+  "size": [
+    9,
+    15
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "elf",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent",
+    "allow_dup"
+  ],
+  "grid": [
+    "xxxxxxxxx",
+    "..xxxxx..",
+    "...xxx...",
+    "....x....",
+    ".........",
+    ".........",
+    ".........",
+    ".........",
+    ".........",
+    ".........",
+    ".........",
+    "....x....",
+    "...xxx...",
+    "..xxxxx..",
+    "xxxxxxxxx"
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_elf_v_pinch"
+}

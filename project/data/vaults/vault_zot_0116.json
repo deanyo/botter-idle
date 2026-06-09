@@ -1,0 +1,44 @@
+{
+  "name": "vault_zot_0116",
+  "size": [
+    9,
+    18
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "zot",
+    "forge"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "xxxxxxxxx",
+    "xx*x.xxxx",
+    "xx*.*..xx",
+    "x*.....xx",
+    "x.....x.x",
+    "xx.....xx",
+    "x......xx",
+    "x*...x..x",
+    "x.x..xx.x",
+    "xx.*xxx.x",
+    "xxxxxx..x",
+    "xxxxxx.xx",
+    "xxxx...xx",
+    "xxx..xxxx",
+    ".xx.xxxxx",
+    ".x..xxxxx",
+    "x.xx.xxxx",
+    "xx.x.xxxx"
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_st_small_dragon_hoard_5"
+}

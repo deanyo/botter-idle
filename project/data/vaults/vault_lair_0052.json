@@ -1,0 +1,44 @@
+{
+  "name": "vault_lair_0052",
+  "size": [
+    13,
+    17
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "lair"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "no_monster_gen"
+  ],
+  "grid": [
+    " ..xxxxxxxxxx",
+    "..xx..9.xxx.x",
+    ".xxxx9..x..xx",
+    "xx..xxxx...xx",
+    ".x....x...xxx",
+    ".........x..x",
+    "........xx.9x",
+    "....xx...x9.x",
+    "....xxx..xx.x",
+    "....xxx...xxx",
+    "....xxx...xxx",
+    ".....xx...xx.",
+    "..........xx.",
+    "..........xx.",
+    "..........xx.",
+    "........xxx..",
+    ".........x.. "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_hangedman_lair_generics_rect"
+}

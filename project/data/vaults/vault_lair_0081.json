@@ -1,0 +1,45 @@
+{
+  "name": "vault_lair_0081",
+  "size": [
+    13,
+    13
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "lair",
+    "slime"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 5,
+  "tags": [],
+  "grid": [
+    ".............",
+    ".xxxxx.xxxxx.",
+    ".xxxxx.xxxxx.",
+    ".x111x.x11xx.",
+    ".x1xx..x.1xx.",
+    ".xxx....xxxx.",
+    ".........xx..",
+    ".xxx....x..x.",
+    ".x11xx.x.xxx.",
+    ".xx11x.x111x.",
+    ".xxxxx.xx1xx.",
+    ".xxxxx.xxxxx.",
+    "............."
+  ],
+  "spawns": {
+    "1": {
+      "enemy_pool": [
+        "jelly"
+      ]
+    }
+  },
+  "_original_dcss_id": "des_minmay_slime_entry_jelly_boxes"
+}

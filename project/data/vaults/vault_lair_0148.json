@@ -1,0 +1,36 @@
+{
+  "name": "vault_lair_0148",
+  "size": [
+    10,
+    8
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "lair"
+  ],
+  "floor_range": [
+    3,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "no_monster_gen",
+    "no_item_gen"
+  ],
+  "grid": [
+    "x xx  x   ",
+    " xxxxxx x ",
+    "xx.2..xxx ",
+    "x..x1...xx",
+    "x......x.x",
+    "xx..x.xx  ",
+    " xxxxxx   ",
+    "   x  x   "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_pf_torpor_hydra"
+}

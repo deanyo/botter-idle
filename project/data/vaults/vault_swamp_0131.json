@@ -1,0 +1,37 @@
+{
+  "name": "vault_swamp_0131",
+  "size": [
+    10,
+    10
+  ],
+  "orient": "centre",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "swamp"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "no_item_gen"
+  ],
+  "grid": [
+    "xxxx..xxxx",
+    "xxx......x",
+    "xx.......x",
+    "x........x",
+    "..........",
+    "..........",
+    "x........x",
+    "x......xxx",
+    "xx.....xxx",
+    "xxxx..xxxx"
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_tekkud_swamp_unearthing_site"
+}

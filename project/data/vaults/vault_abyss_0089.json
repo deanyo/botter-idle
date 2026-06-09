@@ -1,0 +1,42 @@
+{
+  "name": "vault_abyss_0089",
+  "size": [
+    21,
+    15
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "abyss",
+    "dungeon"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    " .       .x.       . ",
+    " ...    xx.xx    ... ",
+    "    .  xx.x.xx  .    ",
+    "     .xxx...xxx.     ",
+    "    xxxx..C..xxxx    ",
+    "...xxxx.......xxxx...",
+    "    xxxx..C..xxxx    ",
+    "     .xxx...xxx.     ",
+    "    .  xxx.xxx  .    ",
+    " ...    xxxxx    ... ",
+    " .      . x .      . ",
+    "       .  .  .       ",
+    "      .   .   .      ",
+    "      .   .   .      ",
+    "     ..   .   ..     "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_regret_index_abyss_entry_lash"
+}

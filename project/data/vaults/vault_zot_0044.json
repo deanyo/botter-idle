@@ -1,0 +1,36 @@
+{
+  "name": "vault_zot_0044",
+  "size": [
+    17,
+    9
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "zot"
+  ],
+  "floor_range": [
+    2,
+    4
+  ],
+  "weight": 5,
+  "tags": [
+    "no_monster_gen"
+  ],
+  "grid": [
+    "  .............  ",
+    " ........111.... ",
+    "......2...2..2...",
+    ".........111.....",
+    "..>.....T.....<..",
+    ".................",
+    "......2...2..2...",
+    " ............... ",
+    "  .............  "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_hellmonk_zupermarket"
+}

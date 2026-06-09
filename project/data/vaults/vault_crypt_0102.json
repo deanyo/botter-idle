@@ -1,0 +1,39 @@
+{
+  "name": "vault_crypt_0102",
+  "size": [
+    23,
+    6
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "crypt",
+    "dungeon"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    ".......................",
+    "...1.1.1.1.1.1.1.1.1...",
+    "....++..+..+..+..++....",
+    ".......................",
+    ".......................",
+    "......................."
+  ],
+  "spawns": {
+    "1": {
+      "enemy_pool": [
+        "zombie"
+      ]
+    }
+  },
+  "_original_dcss_id": "des_tombwall_bobbens"
+}

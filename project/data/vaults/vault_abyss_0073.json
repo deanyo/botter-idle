@@ -1,0 +1,42 @@
+{
+  "name": "vault_abyss_0073",
+  "size": [
+    25,
+    14
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "abyss",
+    "dungeon"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent",
+    "no_monster_gen"
+  ],
+  "grid": [
+    "            xxxxxxxxxxx  ",
+    "            x.1..x....x  ",
+    "           xx.........xxx",
+    "         xxx.............",
+    "         x...............",
+    "         x2...x..1..x....",
+    "         x.1...xxxxxxx   ",
+    "   xxxxxxx...1.x         ",
+    "....x..1..x...2x         ",
+    "...............x         ",
+    ".............xxx         ",
+    "xxx.........xx           ",
+    "  x.1..x..1.x            ",
+    "  xxxxxxxxxxx            "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_hangedman_abyss_stitches_cave"
+}

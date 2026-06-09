@@ -1,0 +1,42 @@
+{
+  "name": "vault_shoals_0095",
+  "size": [
+    13,
+    13
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "shoals",
+    "glacier"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "allow_dup",
+    "transparent"
+  ],
+  "grid": [
+    "   .......   ",
+    "  .........  ",
+    " ..xxxxxxx.. ",
+    "..x.......x..",
+    "..x.......x..",
+    "..x..x.x..x..",
+    "..x.......x..",
+    "..x..x.x..x..",
+    "..x.......x..",
+    "..x.......x..",
+    " ..xxxxxxx.. ",
+    "  .........  ",
+    "   .......   "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_shoals_iceberg"
+}

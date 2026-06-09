@@ -1,0 +1,30 @@
+{
+  "name": "vault_abyss_0017",
+  "size": [
+    3,
+    3
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "abyss",
+    "dungeon"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "allow_dup"
+  ],
+  "grid": [
+    "x+x",
+    "+.+",
+    "x+x"
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_evilmike_abyss_exit_1"
+}

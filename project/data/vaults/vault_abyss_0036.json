@@ -1,0 +1,28 @@
+{
+  "name": "vault_abyss_0036",
+  "size": [
+    3,
+    3
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "abyss",
+    "dungeon"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "...",
+    "...",
+    "..."
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_evilmike_abyss_exit_mutagenic"
+}

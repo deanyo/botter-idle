@@ -1,0 +1,40 @@
+{
+  "name": "vault_abyss_0038",
+  "size": [
+    15,
+    15
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "abyss",
+    "dungeon"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "     xxxxx     ",
+    "     x111x     ",
+    "     x1.1x     ",
+    "     x111x     ",
+    "    .x+++x.    ",
+    "xxxxx.....xxxxx",
+    "x111+.....+111x",
+    "x1.1+.....+1.1x",
+    "x111+.....+111x",
+    "xxxxx.....xxxxx",
+    "    .x+++x.    ",
+    "     x111x     ",
+    "     x1.1x     ",
+    "     x111x     ",
+    "     xxxxx     "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_evilmike_abyss_exit_vortex"
+}

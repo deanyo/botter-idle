@@ -1,0 +1,39 @@
+{
+  "name": "vault_elf_0097",
+  "size": [
+    10,
+    11
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "elf",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "  xx++xx  ",
+    " xxT...xx ",
+    " x......x ",
+    "xx.....Txx",
+    "x........x",
+    "xT.1..1..x",
+    "x........x",
+    "xx.....Txx",
+    " x......x ",
+    " xxT...xx ",
+    "  xx++xx  "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_elf_martial_mastery"
+}

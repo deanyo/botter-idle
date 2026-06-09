@@ -1,0 +1,31 @@
+{
+  "name": "vault_abyss_0004",
+  "size": [
+    3,
+    3
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "abyss",
+    "dungeon",
+    "forge"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "allow_dup"
+  ],
+  "grid": [
+    "...",
+    "...",
+    "..."
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_abyss_exit_lava"
+}

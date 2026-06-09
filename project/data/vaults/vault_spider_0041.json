@@ -1,0 +1,48 @@
+{
+  "name": "vault_spider_0041",
+  "size": [
+    21,
+    21
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "spider"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "       ......x       ",
+    "     ...xxxxxx..     ",
+    "    ..xx.....xx..    ",
+    "   .xx......x..xx.   ",
+    "  .x....xxxxx....x.  ",
+    " ..x...x....xx...x.. ",
+    " .x...x....x..x...x. ",
+    "xxx..x...xxx...x..x..",
+    ".x.xxx..x..xx...x..x.",
+    ".x..x.xxx.x..x..x..x.",
+    ".x..x..x.xxx.x..x..x.",
+    ".x..x..x..x.xxx.x..x.",
+    ".x..x...xx..x..xxx.x.",
+    "..x..x...xxx...x..xxx",
+    " .x...x..x....x...x. ",
+    " ..x...xx....x...x.. ",
+    "  .x....xxxxx....x.  ",
+    "   .xx..x......xx.   ",
+    "    ..xx.....xx..    ",
+    "     ..xxxxxx...     ",
+    "       x......       "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_spider_circle_web"
+}

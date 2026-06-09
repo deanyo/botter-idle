@@ -1,0 +1,41 @@
+{
+  "name": "vault_depths_0000",
+  "size": [
+    13,
+    13
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "depths",
+    "dungeon",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "  .........  ",
+    " ........... ",
+    ".............",
+    ".............",
+    ".............",
+    ".............",
+    ".............",
+    ".............",
+    ".............",
+    ".............",
+    ".............",
+    " ........... ",
+    "  .........  "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_gammafunk_depths_entry_grave"
+}

@@ -1,0 +1,41 @@
+{
+  "name": "vault_lair_0028",
+  "size": [
+    11,
+    13
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "lair"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "no_monster_gen",
+    "transparent"
+  ],
+  "grid": [
+    "...........",
+    "....xxx....",
+    ".x.......x.",
+    "x..x...x..x",
+    "x.xx...xx.x",
+    "x.........x",
+    "x.........x",
+    "x.........x",
+    "x.xx...xx.x",
+    "x..x...x..x",
+    ".x.......x.",
+    "....xxx....",
+    "..........."
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_dpeg_oklobed_lair"
+}

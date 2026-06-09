@@ -1,0 +1,42 @@
+{
+  "name": "vault_elf_0059",
+  "size": [
+    13,
+    14
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "elf",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "no_item_gen"
+  ],
+  "grid": [
+    "      .      ",
+    "xx.1.x.x.1.xx",
+    "x.....x.....x",
+    ".............",
+    ".............",
+    ".............",
+    "x...........x",
+    ".x.........x.",
+    "x...........x",
+    ".............",
+    ".............",
+    ".............",
+    "x.....x.....x",
+    "xx...x.x...xx"
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_mumra_blade_entry_bloodbath"
+}

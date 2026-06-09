@@ -1,0 +1,35 @@
+{
+  "name": "vault_swamp_0007",
+  "size": [
+    7,
+    8
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "swamp"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "no_monster_gen"
+  ],
+  "grid": [
+    " ..... ",
+    ".......",
+    ".xx+xx.",
+    ".x.1.x.",
+    "..2.2..",
+    ".x...x.",
+    ".xx+xx.",
+    " ..... "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_cheibrodos_swamp_pet_leeches"
+}

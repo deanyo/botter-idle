@@ -1,0 +1,39 @@
+{
+  "name": "vault_elf_0005",
+  "size": [
+    11,
+    13
+  ],
+  "orient": "south",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "elf",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "x.........x",
+    "...........",
+    "x....1....x",
+    "x...1.1...x",
+    "x....1....x",
+    "x.........x",
+    "xxx+++++xxx",
+    "xxx.....xxx",
+    "xxx.....xxx",
+    "xxx.....xxx",
+    "xxx.....xxx",
+    "xxxx...xxxx",
+    "xxxxxxxxxxx"
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_eino_elf_arrival_the_gate"
+}

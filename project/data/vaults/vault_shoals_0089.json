@@ -1,0 +1,34 @@
+{
+  "name": "vault_shoals_0089",
+  "size": [
+    7,
+    7
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "shoals"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    " xx.xx ",
+    "xx...xx",
+    "x.1.1.x",
+    ".......",
+    "x.1.1.x",
+    "xx...xx",
+    " xx.xx "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_shoalhut_rune"
+}

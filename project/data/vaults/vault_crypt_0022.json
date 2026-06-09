@@ -1,0 +1,34 @@
+{
+  "name": "vault_crypt_0022",
+  "size": [
+    7,
+    7
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "crypt",
+    "dungeon"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    ".......",
+    ".......",
+    ".......",
+    ".......",
+    ".......",
+    ".......",
+    "......."
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_minmay_crypt_entry_simple_box"
+}

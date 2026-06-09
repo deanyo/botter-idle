@@ -1,0 +1,36 @@
+{
+  "name": "vault_lair_0067",
+  "size": [
+    8,
+    9
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "lair"
+  ],
+  "floor_range": [
+    3,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "    .   ",
+    "   .... ",
+    " .......",
+    " .......",
+    " ....1..",
+    "....... ",
+    "........",
+    " .......",
+    "  ..    "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_lookout_lair_type"
+}

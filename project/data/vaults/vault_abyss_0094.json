@@ -1,0 +1,28 @@
+{
+  "name": "vault_abyss_0094",
+  "size": [
+    5,
+    3
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "abyss",
+    "dungeon"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    ".....",
+    ".....",
+    "....."
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_spicy_abyss_rude_harpoons"
+}

@@ -1,0 +1,44 @@
+{
+  "name": "vault_snake_0060",
+  "size": [
+    22,
+    17
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "snake"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "    xxxxxxxxxxxxxx    ",
+    "  xxx.....xxx....xxx  ",
+    " xx.........+x.....xx ",
+    "xx...xxxxx...xxxx...xx",
+    "....xxxx.+xx..xxxx....",
+    "...xxxxx..xx..xxxxx...",
+    "xxxxxxx..xxxx..xxxxxxx",
+    "xxxxxxx..xxxx..xxxxxxx",
+    "xxxxxxx..xxxx..xxxxxxx",
+    "xxxxxxx..xxxx..xxxxxxx",
+    "xxxxxxx..xxxx..xxxxxxx",
+    "...xxxxx..xx..xxxxx...",
+    "....xxxx...x+.xxxx....",
+    "xx...xxxx...xxxxx...xx",
+    " xx.....x+.........xx ",
+    "  xxx....xxx.....xxx  ",
+    "    xxxxxxxxxxxxxx    "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_snake_linked_coils"
+}

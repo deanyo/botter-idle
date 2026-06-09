@@ -1,0 +1,37 @@
+{
+  "name": "vault_elf_0091",
+  "size": [
+    8,
+    8
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "elf",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent",
+    "allow_dup"
+  ],
+  "grid": [
+    "........",
+    "........",
+    "........",
+    "........",
+    "........",
+    "........",
+    "........",
+    "........"
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_elf_glass_and_crystal_pillar_1"
+}

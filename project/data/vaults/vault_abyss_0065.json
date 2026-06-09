@@ -1,0 +1,36 @@
+{
+  "name": "vault_abyss_0065",
+  "size": [
+    11,
+    11
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "abyss",
+    "dungeon"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    ".....      ",
+    "..xx.      ",
+    ".x.....    ",
+    ".x..xx.    ",
+    "...x.....  ",
+    "  .x..xx.  ",
+    "  ...x.....",
+    "    .x..xx.",
+    "    ...x...",
+    "      .x.  ",
+    "      ...  "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_hangedman_abyss_or_decor_stabs"
+}

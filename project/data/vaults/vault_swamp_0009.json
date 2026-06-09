@@ -1,0 +1,39 @@
+{
+  "name": "vault_swamp_0009",
+  "size": [
+    13,
+    12
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "swamp"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "no_monster_gen"
+  ],
+  "grid": [
+    "        ...  ",
+    "      ..xxx. ",
+    "    ...xx.xx.",
+    "   ......1.x.",
+    "  .....x+.xx.",
+    " .......xxx. ",
+    " .x.x......  ",
+    ".xx.+x...    ",
+    ".x.1.x.      ",
+    ".xx.xx.      ",
+    " .xxx.       ",
+    "  ...        "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_cheibrodos_swamp_witchery"
+}

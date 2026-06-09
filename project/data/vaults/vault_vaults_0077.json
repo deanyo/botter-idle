@@ -1,0 +1,48 @@
+{
+  "name": "vault_vaults_0077",
+  "size": [
+    27,
+    23
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "  xxxxxxxxxxxxxxxxxxxxxxx  ",
+    "  ..xx.................... ",
+    "x....xx................x..x",
+    "x.....xx.9....9....9..xx..x",
+    "xx..9..xx............xx...x",
+    "xxx.....xx.9.....9..xx....x",
+    "x.xx..9..xx........xx..9..x",
+    "x..xx.....xx.9.9..xx......x",
+    "x.9.xx..9..xx....xx..9....x",
+    "x....xx.....xx..xx........x",
+    "x...9.xx..9...xxx..9......x",
+    "x......xx.....xx.*.....9..x",
+    "x.....9.x...9...x..9......x",
+    "x.9......xx.....xx........x",
+    "x.....9.xxx...9..xx..9....x",
+    "x......xx**xx.....xx......x",
+    "x...9.xx****xx..9..xx..9..x",
+    "x....xx.9..9.xx.....xx....x",
+    "x.9.xx........xx..9..xx...x",
+    "x..xx.9..9...9.xx.....xx...",
+    "x..x............xx..9..x..x",
+    " ......................... ",
+    "  xxxxxxxxxxxxxxxxxxxxx.x  "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_vaults_end_mu_triangles"
+}

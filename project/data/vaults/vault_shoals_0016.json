@@ -1,0 +1,36 @@
+{
+  "name": "vault_shoals_0016",
+  "size": [
+    3,
+    3
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "shoals"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "111",
+    "1.1",
+    "111"
+  ],
+  "spawns": {
+    "1": {
+      "enemy_pool": [
+        "manticore"
+      ]
+    }
+  },
+  "_original_dcss_id": "des_minmay_shoals_entry_beasts"
+}

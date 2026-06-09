@@ -1,0 +1,46 @@
+{
+  "name": "vault_zot_0007",
+  "size": [
+    33,
+    19
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "zot"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "no_monster_gen"
+  ],
+  "grid": [
+    "               xxx               ",
+    "             xxx.xxx             ",
+    "  xxxxx    xxx.....xxx    xxxxx  ",
+    " xx...xxxxxx.........xxxxxxCCCxx ",
+    "xx.....xxxx...........xxxxCCCCCxx",
+    "+........................CC...CC+",
+    "+...<...........<........CC.<.CC+",
+    "+........................CC...CC+",
+    "xx.....xxxx...........xxxxCCCCCxx",
+    " xx...xxxxxx.........xxxxxxCCCxx ",
+    "  xxxxx    xxx.....xxx    xxxxx  ",
+    "             xx+++xx             ",
+    "             .x...x.             ",
+    "             .......             ",
+    "             .......             ",
+    "             .......             ",
+    "             .......             ",
+    "             ...7...             ",
+    "             .......             "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_ebering_greatest_show_in_zot"
+}

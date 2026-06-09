@@ -1,0 +1,32 @@
+{
+  "name": "vault_abyss_0002",
+  "size": [
+    7,
+    7
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "abyss",
+    "dungeon"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 5,
+  "tags": [],
+  "grid": [
+    "... ...",
+    ".T...T.",
+    ".......",
+    " ..... ",
+    ".......",
+    ".T...T.",
+    "... ..."
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_abyss_entry_glasseish"
+}

@@ -1,0 +1,48 @@
+{
+  "name": "vault_shoals_0062",
+  "size": [
+    21,
+    21
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "shoals"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "   xxxxxxx   xxxxxxx ",
+    "  xxx....xx xx.....xx",
+    " xx.......xxx.......x",
+    "xx..........x.......x",
+    "x.....xx............x",
+    "x....xxxx.........2.x",
+    "x....xxxxx..........x",
+    "x.......xxxxx.2.....x",
+    "x........xxxx......xx",
+    "xx........xxxxxxxxxx ",
+    "xxxx.........x.....xx",
+    "xxxxxxxx............x",
+    " xx..xxxx........1..x",
+    " x....xxxxxx...x....x",
+    " x....x...xxxxxx....x",
+    " x..........xx.....xx",
+    "  ....x............x ",
+    "   ...x...........xx ",
+    "    xxx...........x  ",
+    "     xx...xx.....xx  ",
+    "           xxxxxxx   "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_shoals_raging_river"
+}

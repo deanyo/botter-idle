@@ -1,0 +1,48 @@
+{
+  "name": "vault_swamp_0096",
+  "size": [
+    12,
+    20
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "swamp",
+    "forest"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "     ..     ",
+    "   ......   ",
+    "  ........  ",
+    " .......T.. ",
+    " ......T....",
+    " ....TTT....",
+    "....T.......",
+    ".....TT.TT..",
+    ".......T....",
+    "............",
+    "............",
+    ".TTTTT......",
+    "......T.....",
+    "....TT..... ",
+    " ..T....... ",
+    " .T........ ",
+    "  ........  ",
+    "  ........  ",
+    "   .....    ",
+    "   ....     "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_swamp_trees_clearing"
+}

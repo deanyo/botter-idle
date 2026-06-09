@@ -1,0 +1,68 @@
+{
+  "name": "vault_lair_0051",
+  "size": [
+    32,
+    28
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "lair"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "no_monster_gen"
+  ],
+  "grid": [
+    "xxxxxxxxxxxxxxxxxxxx...  .  .  .",
+    "xxxxxxxxxxxxxxxxxxxxxxxxx...... ",
+    "xxxxxxxxxxxxxxxxxxxxxxxxxx..... ",
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxx.... ",
+    "xx..56xxxxxxxxxxxxxxxxxxxxx.....",
+    "xx6..56xxx55x.xxxxxxxxxx...x... ",
+    "xxx9..xxx....x.xx1x.x.x..1..x.. ",
+    "xxxx...xxx....x5x............x..",
+    "xxxxxx8.......x........x...xxxx ",
+    "xxxxx..xx5...x.5..x2..x.xxxxxxx ",
+    "xxxxxx1.xx..xxxx..xxxxxxxxxxxxx.",
+    "xxxxx.x.6..xxxxx..xx1x.xx2xxxxx.",
+    "xxxxxx....5xxxxx....x.x....x.xx.",
+    "xxxxx.....xxxxxxx.............x.",
+    "xxxxx5....5xxxxxxx............x.",
+    "xxxxxx5....6xxxxxxxx1x...x2x..xx",
+    "xxxxxx.6..6xxxxxxxxxxxx.xxxxx..x",
+    "xxxxx.x.x.xxxxxxxxxxxxxxxxxxx.xx",
+    "xxxxxx6x6xxxxx1.xxxxxx2.x2x...xx",
+    "xxxxx...xxxxxx..x.x1x.........x.",
+    "xx*x1......xx1.....x.........xx.",
+    "xxx..9......x.......8........xxx",
+    "xx....1.xx....xx.....xx.1.2xxxxx",
+    "xxx2...xxxx..xxx2...x.xx1x1xxxxx",
+    "xxx...xxxxxx.xxxx..xxxxxxxxxxxxx",
+    "xxx...xxxxxxxxxxxx2xxxxxxxxxxxxx",
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+  ],
+  "spawns": {
+    "1": {
+      "enemy_pool": [
+        "wolf",
+        "wolf",
+        "hell_hound"
+      ]
+    },
+    "2": {
+      "enemy_pool": [
+        "black_bear"
+      ]
+    }
+  },
+  "_original_dcss_id": "des_hangedman_lair_caniforms_friends"
+}

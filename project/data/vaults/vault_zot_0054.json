@@ -1,0 +1,46 @@
+{
+  "name": "vault_zot_0054",
+  "size": [
+    27,
+    19
+  ],
+  "orient": "north",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "zot"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "no_monster_gen"
+  ],
+  "grid": [
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "xxx......xxxxxxxxx......xxx",
+    "xx.3......xxx.xxx......3.xx",
+    "x..........x...x..........x",
+    "x.........1..2..1.........x",
+    "x.........................x",
+    "x.........................x",
+    "xx...........3...........xx",
+    "xxx......3.......3......xxx",
+    "xxxx..3.............3..xxxx",
+    "xxxxx.................xxxxx",
+    "xxxx...................xxxx",
+    "xxx.....................xxx",
+    "xx.......................xx",
+    "xx.........x...x.........xx",
+    "xx.........x.T.x.........xx",
+    "xxx...3...xx...xx...3...xxx",
+    "xxxx.....xxx...xxx.....xxxx",
+    "xxxxxxxxxxx.....xxxxxxxxxxx"
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_moth_party"
+}

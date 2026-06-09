@@ -1,0 +1,36 @@
+{
+  "name": "vault_zot_0000",
+  "size": [
+    7,
+    8
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "zot"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "no_monster_gen",
+    "transparent"
+  ],
+  "grid": [
+    ".xxxxx.",
+    "...*...",
+    "x.....x",
+    "x.....x",
+    "x..1..x",
+    "x2...2x",
+    "x.....x",
+    "xxxxxxx"
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_amethyst_zot_foddershock"
+}

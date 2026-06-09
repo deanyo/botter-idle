@@ -1,0 +1,42 @@
+{
+  "name": "vault_crypt_0019",
+  "size": [
+    11,
+    11
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "crypt",
+    "dungeon"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "  .......  ",
+    " ..2.2.2.. ",
+    "...+++++...",
+    ".2.......2.",
+    "..+..1..+..",
+    ".2..3.3..2.",
+    "...........",
+    ".2+.....+2.",
+    "...........",
+    ".2+.....+2.",
+    "....+.+...."
+  ],
+  "spawns": {
+    "1": {
+      "enemy_pool": [
+        "zombie"
+      ]
+    }
+  },
+  "_original_dcss_id": "des_minicrypt_bobbens"
+}

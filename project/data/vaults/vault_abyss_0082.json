@@ -1,0 +1,41 @@
+{
+  "name": "vault_abyss_0082",
+  "size": [
+    13,
+    14
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "abyss",
+    "dungeon"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "      ....   ",
+    "    .......  ",
+    "   ......... ",
+    "  ...........",
+    " ............",
+    "....   ......",
+    "... 224 .... ",
+    "... 223 .... ",
+    "....   ......",
+    " ............",
+    "  ...........",
+    "   ......... ",
+    "     ......  ",
+    "      ....   "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_hangedman_steaming_rock"
+}

@@ -1,0 +1,36 @@
+{
+  "name": "vault_swamp_0046",
+  "size": [
+    9,
+    9
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "swamp"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "SSSSSSSSS",
+    "S.......S",
+    "S.......S",
+    "S.......S",
+    "........S",
+    "S.......S",
+    "S.......S",
+    "S.......S",
+    "SSSSSSSSS"
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_swamp_ascending_descending"
+}

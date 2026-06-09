@@ -1,0 +1,50 @@
+{
+  "name": "vault_zot_0094",
+  "size": [
+    14,
+    25
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "zot"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "   xxxxxxxx.  ",
+    " xxx........  ",
+    " x...S......  ",
+    "xx..........  ",
+    "x..........   ",
+    "x.S........   ",
+    "x....C...     ",
+    "x......       ",
+    "x......       ",
+    "x.....        ",
+    "x.....        ",
+    "....          ",
+    "              ",
+    "          ....",
+    "        .....x",
+    "        .....x",
+    "       ......x",
+    "       ......x",
+    "     ........x",
+    "   ........S.x",
+    "   ..........x",
+    "  ..........xx",
+    "  ......S...x ",
+    "  ........xxx ",
+    "  .xxxxxxxx   "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_regret_index_zotdec_storm_pass"
+}

@@ -1,0 +1,44 @@
+{
+  "name": "vault_spider_0042",
+  "size": [
+    21,
+    17
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "spider"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    " ................... ",
+    "..xxxxxxxxxxxxxxxxx..",
+    ".xx...xxx...xxx...xx.",
+    ".x.....x.....x.....x.",
+    ".x.....x..9..x.....x.",
+    ".x.....x.....x.....x.",
+    ".xx...xxx...xxx...xx.",
+    ".....................",
+    ".....................",
+    ".....................",
+    ".xx...xxx...xxx...xx.",
+    ".x.....x.....x.....x.",
+    ".x.....x..9..x.....x.",
+    ".x.....x.....x.....x.",
+    ".xx...xxx...xxx...xx.",
+    "..xxxxxxxxxxxxxxxxx..",
+    " ................... "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_spider_claw_tunnel"
+}

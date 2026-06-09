@@ -1,0 +1,38 @@
+{
+  "name": "vault_swamp_0103",
+  "size": [
+    12,
+    13
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "swamp"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 5,
+  "tags": [],
+  "grid": [
+    ".          .",
+    " .......... ",
+    " .......... ",
+    " .......... ",
+    " .......... ",
+    " .......... ",
+    " .......... ",
+    " .......... ",
+    " .......... ",
+    " .......... ",
+    " .......... ",
+    " .......... ",
+    ".          ."
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nzn_swamp_blast_mining"
+}

@@ -1,0 +1,32 @@
+{
+  "name": "vault_shoals_0074",
+  "size": [
+    7,
+    5
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "shoals"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    " ..... ",
+    ".......",
+    ".+.+.+.",
+    ".......",
+    " ..... "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_shoals_the_drawing_of_the_three"
+}

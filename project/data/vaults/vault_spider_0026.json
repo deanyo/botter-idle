@@ -1,0 +1,52 @@
+{
+  "name": "vault_spider_0026",
+  "size": [
+    32,
+    25
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "spider"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "no_monster_gen"
+  ],
+  "grid": [
+    "       xxxxxx                   ",
+    "      xx....xx                  ",
+    "xxxxxxx......xx                 ",
+    "x.............xxx               ",
+    "xxxxxx..........xxxx            ",
+    "     xx............xxxx         ",
+    "      x...111.........xx        ",
+    "      x..11111.........x        ",
+    "      xx.11111.........xx       ",
+    "       x..111...........xxxxxxxx",
+    "       x.......................x",
+    ".......x................xxxxxxxx",
+    ".....2.+.............xxxx       ",
+    ".......xx.........xxxx          ",
+    "        xx......xxx             ",
+    "         xxx...xx               ",
+    "           x...x                ",
+    "         xxx..xx                ",
+    "       xxx....x                 ",
+    "     xxx.....xx                 ",
+    "    xx..>..xxx                  ",
+    "    x.....xx                    ",
+    "    xx...xx                     ",
+    "     x.xxx                      ",
+    "     xxx                        "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_lemuel_spider_zombies"
+}

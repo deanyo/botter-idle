@@ -1,0 +1,59 @@
+{
+  "name": "vault_elf_0023",
+  "size": [
+    12,
+    20
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "elf",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 3,
+  "tags": [
+    "no_monster_gen"
+  ],
+  "grid": [
+    "....xxxxxxxx",
+    ".xx.xxx..xxx",
+    "....xx1..1xx",
+    ".xx.x..xx..x",
+    "....x..xx..x",
+    ".xx.xx1..2xx",
+    "....1xx..xxx",
+    ".xxx.....xxx",
+    ".........1xx",
+    ".x.........x",
+    "x.........x.",
+    "xx3.........",
+    "xxx.....xxx.",
+    "xxx..xx5....",
+    "xx6..5xx.xx.",
+    "x..xx..x....",
+    "x..xx..x.xx.",
+    "xx5...xx....",
+    "xxx..xxx.xx.",
+    "xxxxxxxx...."
+  ],
+  "spawns": {
+    "1": {
+      "enemy_pool": [
+        "deep_elf_pyromancer"
+      ]
+    },
+    "3": {
+      "enemy_pool": [
+        "deep_elf_knight"
+      ]
+    }
+  },
+  "_original_dcss_id": "des_hangedman_elf_represent"
+}

@@ -1,0 +1,32 @@
+{
+  "name": "vault_crypt_0095",
+  "size": [
+    9,
+    7
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "crypt",
+    "dungeon"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    ".......  ",
+    "....T... ",
+    "+....T*..",
+    "+...T1*..",
+    "+....T*..",
+    "....T... ",
+    ".......  "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_skrybe_necro_troll_2"
+}

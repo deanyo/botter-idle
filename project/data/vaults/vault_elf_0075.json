@@ -1,0 +1,38 @@
+{
+  "name": "vault_elf_0075",
+  "size": [
+    11,
+    9
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "elf",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent",
+    "no_item_gen"
+  ],
+  "grid": [
+    "xxx..x     ",
+    "x....xxx   ",
+    "x.....1xxx ",
+    "x.....1..xx",
+    "x.....1.2.x",
+    "x.....1..xx",
+    "x.....1xxx ",
+    "x....xxx   ",
+    "xxx..x     "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_elf_archery_training"
+}

@@ -1,0 +1,60 @@
+{
+  "name": "vault_lair_0047",
+  "size": [
+    30,
+    25
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "lair"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "no_monster_gen",
+    "no_item_gen"
+  ],
+  "grid": [
+    "                        x.....",
+    "                       xx.....",
+    "                      xx......",
+    "         xxxxxx     xxx.......",
+    "        xx....xxx  xx..7..7...",
+    "       xx.6.....xxxx.....7....",
+    "     xxx.6.6...........7..7...",
+    "    xx..6.6.6.........7.7..7..",
+    "   xx..6.6.............7....xx",
+    "   x..6....................xx ",
+    "  xx......................xx  ",
+    "  x.......................x   ",
+    "  x............1..........x   ",
+    "  x........C....2........xx   ",
+    "  x.......C.C............x    ",
+    "  x......C.C.C...........x    ",
+    "  x....4..C.C...........xx    ",
+    " xx.....3..C...........xx     ",
+    " x....................xx      ",
+    "xx................5...x       ",
+    "x..............5.5.5.xx       ",
+    "xxx..xx.....5.5.5.5.xx        ",
+    "xxxxxxxx.....5.5...xx         ",
+    "xxxxxxxxx...5xxxxxxx          ",
+    "xxxxxxxxxxxxxx                "
+  ],
+  "spawns": {
+    "3": {
+      "enemy_pool": [
+        "wolf",
+        "black_bear"
+      ]
+    }
+  },
+  "_original_dcss_id": "des_grunt_lair_end_beastmaster"
+}

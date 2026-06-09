@@ -1,0 +1,43 @@
+{
+  "name": "vault_mines_0061",
+  "size": [
+    9,
+    15
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "mines",
+    "orc"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    " ....... ",
+    ".........",
+    ".........",
+    "...+.+...",
+    ".........",
+    ".........",
+    ".........",
+    "...+.+...",
+    ".........",
+    ".........",
+    ".........",
+    "...+.+...",
+    ".........",
+    ".........",
+    " ....... "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_orc_minecarts"
+}

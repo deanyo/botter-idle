@@ -1,0 +1,38 @@
+{
+  "name": "vault_crypt_0043",
+  "size": [
+    7,
+    10
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "crypt",
+    "dungeon"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 3,
+  "tags": [
+    "no_monster_gen",
+    "no_item_gen"
+  ],
+  "grid": [
+    "...+...",
+    ".......",
+    ".......",
+    ".......",
+    ".......",
+    ".......",
+    ".......",
+    ".......",
+    ".......",
+    "......."
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_crypt_fedhas_prevails"
+}

@@ -1,0 +1,43 @@
+{
+  "name": "vault_abyss_0053",
+  "size": [
+    12,
+    12
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "abyss",
+    "dungeon"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    ".x x........",
+    "x.x.x..C....",
+    "xx.x..C..8..",
+    "x x.x...C...",
+    "xx.x.x....C.",
+    "x x1x+x..C..",
+    "xx x1++x....",
+    "x x.x1x.x.x.",
+    "xx.x.x.x.x.x",
+    "x x.x x1x.x ",
+    "xx x x x x.x",
+    " xxxxxxxxxx."
+  ],
+  "spawns": {
+    "1": {
+      "enemy_pool": [
+        "butterfly"
+      ]
+    }
+  },
+  "_original_dcss_id": "des_hangedman_abyss_batty_box"
+}

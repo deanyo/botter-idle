@@ -1,0 +1,46 @@
+{
+  "name": "vault_spider_0034",
+  "size": [
+    15,
+    13
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "spider"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "      .........",
+    "      .xxxxxxx.",
+    "     ..x.....x.",
+    "     .xx.111.x.",
+    "     .xx.1.1.x.",
+    "     xx..111.x.",
+    "   . x.......x.",
+    ".xx.xx....xxxx.",
+    ".x..x....xxx...",
+    ".x......xx...  ",
+    ".xx....xx..    ",
+    "..xxxxxx..     ",
+    " ........      "
+  ],
+  "spawns": {
+    "1": {
+      "enemy_pool": [
+        "giant_spider"
+      ]
+    }
+  },
+  "_original_dcss_id": "des_nicolae_spider_altar_of_dancing"
+}

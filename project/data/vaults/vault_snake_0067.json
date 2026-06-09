@@ -1,0 +1,41 @@
+{
+  "name": "vault_snake_0067",
+  "size": [
+    14,
+    14
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "snake"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "..............",
+    "..............",
+    "..............",
+    "..............",
+    "..............",
+    "..............",
+    "..............",
+    ".......       ",
+    ".......       ",
+    ".......       ",
+    ".......       ",
+    ".......       ",
+    ".......       ",
+    ".......       "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_snake_nagamander_alliance_4"
+}

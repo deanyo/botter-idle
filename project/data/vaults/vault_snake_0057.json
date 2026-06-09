@@ -1,0 +1,38 @@
+{
+  "name": "vault_snake_0057",
+  "size": [
+    17,
+    11
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "snake"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "xxxxxxxxxxx      ",
+    "xxxxxxx.....     ",
+    "xxx..........    ",
+    "xxx............  ",
+    "x............... ",
+    "xx.S.............",
+    "x............... ",
+    "xxx............  ",
+    "xxx..........    ",
+    "xxxxxxx.....     ",
+    "xxxxxxxxxxx      "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_snake_hissss"
+}

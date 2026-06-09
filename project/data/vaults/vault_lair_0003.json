@@ -1,0 +1,34 @@
+{
+  "name": "vault_lair_0003",
+  "size": [
+    14,
+    7
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "lair"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "     ..       ",
+    ". .......xx   ",
+    " ..xxxxx...   ",
+    "..xx2x4x...   ",
+    ".xx...2xx.    ",
+    "....xxxxxx..  ",
+    " ...    ......"
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_beast_lair_carwin_11"
+}

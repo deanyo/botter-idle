@@ -1,0 +1,38 @@
+{
+  "name": "vault_mines_0038",
+  "size": [
+    3,
+    3
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "mines",
+    "orc"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 5,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "1.1",
+    "...",
+    "1.1"
+  ],
+  "spawns": {
+    "1": {
+      "enemy_pool": [
+        "wolf",
+        "wolf"
+      ]
+    }
+  },
+  "_original_dcss_id": "des_minmay_orc_entry_guard_dogs"
+}

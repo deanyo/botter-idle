@@ -1,0 +1,38 @@
+{
+  "name": "vault_swamp_0106",
+  "size": [
+    14,
+    13
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "swamp"
+  ],
+  "floor_range": [
+    2,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    ".......  xxxxx",
+    ".........x222x",
+    "xxxxx......12x",
+    "x3..x....x222x",
+    "x3.1.....xxxxx",
+    "x3..x.........",
+    "xxxxx.........",
+    "   ......     ",
+    "   ..xx.xx    ",
+    "   ..x.1.x    ",
+    "   ..x...x    ",
+    "   ..xx.xx    ",
+    "   ..xxxxx    "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nzn_swamp_weyward_sisters"
+}

@@ -1,0 +1,58 @@
+{
+  "name": "vault_zot_0107",
+  "size": [
+    15,
+    32
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "zot",
+    "forge"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "xxxxxxxxxxxxxxx",
+    "xxxxxx..xxxx..x",
+    "xxxx.x.xx.xx..x",
+    "xxx.x.xx...+..x",
+    "xx..x....x.x..x",
+    "xx.xxxxxxx.xxxx",
+    "x..xxxxxxx..xxx",
+    "x..xxx..xxx..xx",
+    "x..xx*.*.xxx.xx",
+    "x.xx.....xx...x",
+    "x..x...*.xx...x",
+    "x.......xx....x",
+    "xx..1...xx....x",
+    "xx....*xxx..1.x",
+    "xxx..xxxx.....x",
+    "xxx+xxxx......x",
+    "xx.*.xxx.x...xx",
+    "xx*.*xx..xx..xx",
+    "xx.*.x..xxx+xxx",
+    "xxxxxx.xxx*.*xx",
+    ".xxx.x..xx...xx",
+    "x.x...x.xx*.*xx",
+    "x.xx..x.xxxxxxx",
+    "xx.xxxx..xxxxxx",
+    "..x.xxxx..xxxxx",
+    "x..x.xxxxx..xxx",
+    "x.x..xxxxxx..xx",
+    ".xxx..xxxxx..xx",
+    "xxxxx...x....xx",
+    "xxxxxx......xxx",
+    "xxxxxxxx.x.xxxx",
+    "xxxxxxxxxxxxxxx"
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_st_large_dragon_hoard_4"
+}

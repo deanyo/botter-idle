@@ -1,0 +1,42 @@
+{
+  "name": "vault_mines_0035",
+  "size": [
+    13,
+    9
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "mines",
+    "orc"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "  xxxx.xxxx  ",
+    " xx2.....2xx ",
+    "xx.2xxxxx2.xx",
+    "x..x..1..x..x",
+    "x..x.....x..x",
+    "x..x.222.x..x",
+    "xx.2xx+xx2.xx",
+    " xx..2.2..xx ",
+    "  xxxxxxxxx  "
+  ],
+  "spawns": {
+    "1": {
+      "enemy_pool": [
+        "orc",
+        "two_headed_ogre"
+      ]
+    }
+  },
+  "_original_dcss_id": "des_mines4_lemuel"
+}

@@ -1,0 +1,41 @@
+{
+  "name": "vault_shoals_0071",
+  "size": [
+    14,
+    14
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "shoals"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "..............",
+    "..............",
+    "..............",
+    "...        ...",
+    "...        ...",
+    "...        ...",
+    "...        ...",
+    "...        ...",
+    "...        ...",
+    "...        ...",
+    "...        ...",
+    "..............",
+    "..............",
+    ".............."
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_shoals_square_sea_wall"
+}

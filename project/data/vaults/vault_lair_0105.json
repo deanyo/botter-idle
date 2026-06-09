@@ -1,0 +1,35 @@
+{
+  "name": "vault_lair_0105",
+  "size": [
+    14,
+    8
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "lair"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "..............",
+    "...xxxxxxxxxxx",
+    "...xxxxxxxxxxx",
+    "......xx......",
+    "......xx....  ",
+    "...xxxxxxxx.  ",
+    "...xxxxxxxx.  ",
+    "............  "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_lair_garden_over_the_wall_5"
+}

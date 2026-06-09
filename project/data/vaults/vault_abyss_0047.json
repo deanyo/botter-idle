@@ -1,0 +1,44 @@
+{
+  "name": "vault_abyss_0047",
+  "size": [
+    11,
+    11
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "abyss",
+    "dungeon"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "   xxxxx   ",
+    "  xx...xx  ",
+    " xx..3..xx ",
+    "xx.......xx",
+    "x....1....x",
+    "x..2...2..x",
+    "x....4....x",
+    "x.........x",
+    "...........",
+    " ..........",
+    "  ........ "
+  ],
+  "spawns": {
+    "1": {
+      "enemy_pool": [
+        "swamp_dragon"
+      ]
+    }
+  },
+  "_original_dcss_id": "des_grunt_abyss_exit_deep_breaths"
+}

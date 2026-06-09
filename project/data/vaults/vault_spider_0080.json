@@ -1,0 +1,78 @@
+{
+  "name": "vault_spider_0080",
+  "size": [
+    26,
+    47
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "spider"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 15,
+  "tags": [],
+  "grid": [
+    "xxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "xxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "xxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "xxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "xxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "xxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "xxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "xxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "xxxxxxx.x..xxxxxxxxxxxxxxx",
+    "xxxxxx...5..xxxxxxxxx1xxxx",
+    "xxxxx.......xxxxxxxx44xxxx",
+    "xxxx...........xxxx444.xxx",
+    "xxxx.5.xxxx...5.xxxx...xxx",
+    "xxx...xxxxx........x..xxxx",
+    "xxx....xxx4..xx.......xxxx",
+    "xxx.....xx1..4xx..5..xxxxx",
+    "xxxx....xxx444xxx.....xxxx",
+    "xxxxx..5..xxxxxxxxx...xxxx",
+    ".xxxxxx...xx......xx.6xxxx",
+    ".xxxxxxx...x....1.xxx.xxxx",
+    ".xxxxxxxx..x......xxx..xxx",
+    ".6xxxxx....x...........xxx",
+    ".6xxxx..44.x....+.....5.xx",
+    "..xxx..44.xx....+..xx...xx",
+    "..+.....4.xx......xxx...xx",
+    "..+.....44.x......x...xxxx",
+    "..+...xx4..x....7.x.5.xxxx",
+    "..xxx.xx...x.+....xx6.xxxx",
+    ".6xxxx....xx...xxxx...xxxx",
+    ".6xxxx.5..xx...xx....xxxxx",
+    ".xxxx....xxx...x.....xxxxx",
+    ".xxx...xxx44xxxx.5..xxxxxx",
+    ".xxx..xxx144xxx....xxxxxxx",
+    "xxx.5.xxxx4.x.......xxxxxx",
+    "xxxx...xxxx......x..xxxxxx",
+    "xxxx...xxxx..5.xxx..xxxxxx",
+    "xxxxx...xxx....xx..xxxxxxx",
+    "xxxxx...xx....xxx4.xxxxxxx",
+    "xxxxxx.......xxxx44xxxxxxx",
+    "  xxxx..5..xxxxx441xxxxxxx",
+    "   xxxx....xxxxxxxxxxxxxxx",
+    "   xxxxx..xxxxxxxxxxxxxxxx",
+    "    xxxxxxxxxxxxxxxxxxxxxx",
+    "    xxxxxxxxxxxxxxxxxxxxxx",
+    "    xxxxxxxxxxxxxxxxxxxxxx",
+    "     xxxxxxxxxxxxxxxxxxxxx",
+    "     xxxxxxxxxxxxxxxxxxxxx"
+  ],
+  "spawns": {
+    "4": {
+      "enemy_pool": [
+        "orb_spider"
+      ]
+    }
+  },
+  "_original_dcss_id": "des_spider_rune_water"
+}

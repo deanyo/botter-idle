@@ -1,0 +1,52 @@
+{
+  "name": "vault_vaults_0039",
+  "size": [
+    23,
+    27
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "  xxxxxxxxxxxxxxxxxxx  ",
+    "  xxxxxxxxxx.9xxxxxx.x ",
+    "xx.xxxxxxxx9...xx9....x",
+    "xxx.xxxxxxx...9x9....xx",
+    "xxxx.xxxxx.x9.xx...9xxx",
+    "xxxxx.xxx.xxx.xxx.9xxxx",
+    "xxxxxx.9.xxxxx.xxxx.xxx",
+    "xxxxx.....xxxxx.xxxx.xx",
+    "xxxxx9...9.xxxxx.xT9Txx",
+    "xxxxx.....x.xxxxxT.T.Tx",
+    "xxxxxx.9.xxx.xxxx9T.T9x",
+    "xxxxxxx.xxx.x.xxxT.T.Tx",
+    "xxxxxx.xxx.xxx.xxxT9Txx",
+    "xx.9x.xxx...xxxS9xxxxxx",
+    "x9...xx9...xxx9..Sxxxxx",
+    "x...9x9...xxxxS..9xxxxx",
+    "xx9.xx...9xxx.x9Sx.xxxx",
+    "xxxx.xx.9xxx.xxxxxx.xxx",
+    "xxxxx.xxx.x.xxxx.9..xxx",
+    "xxxxxx.xxx.xxxx......xx",
+    "xxxxxxx.x.9.xx.......9x",
+    "xx.9.xxx.....x........x",
+    "x.....x.9...9x........x",
+    "x9...9.x.....x9.......x",
+    "x.....xxx.9.xxx.......x",
+    " x.9.xxxxxxxxxxx..9..x ",
+    "  xxxxxxxxxxxxxxxxxxx  "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_vaults_end_minmay_connected_circles"
+}

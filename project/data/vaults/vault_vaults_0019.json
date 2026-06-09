@@ -1,0 +1,48 @@
+{
+  "name": "vault_vaults_0019",
+  "size": [
+    27,
+    23
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "  .xxxxxxxxxxxxxxxxxxxxx.  ",
+    " ............99........... ",
+    "..xxxxxxxxxxx..xxxxxxxx.x..",
+    "x.x.........x..xxxxxxxxxx.x",
+    "x.x.........x..xxxxxxxxxx.x",
+    "x.x.........x..xxxxxxxxxx.x",
+    "x.x.........x..xxxxxxxxxx.x",
+    "x.x.........x..xxxxxxxxxx.x",
+    "x.x.........x..xxxxxxxxxx.x",
+    "x...............xxxxxxxxx.x",
+    "x.xxxxxxxxxxxxxxxxxxxxxxx.x",
+    "x.9..........998..........x",
+    "x.9..........998........x.x",
+    "x.xxxxxxxxx.x88xxxxxxxx.x.x",
+    "x.x.........x..x........x.x",
+    "x.x.........x..x........x.x",
+    "x.x.........x..x........x.x",
+    "x.x.........x..x........x.x",
+    "x.x.........x..x........x.x",
+    "x.x.........x..C........x.x",
+    "..xxxxxxxxx.x..xxxxxxxxxx..",
+    " ........................  ",
+    "  .xxxxxxxxxxxxxxxxxxxxx.  "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_vaults_end_classical_rooms"
+}

@@ -1,0 +1,43 @@
+{
+  "name": "vault_spider_0053",
+  "size": [
+    23,
+    18
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "spider"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "xxxxxxxx...........xxxx",
+    "xxxxxxxx...........xxxx",
+    "xxxxxxxxxxx......xxxxxx",
+    "xxxxxxxxxxx......xxxxxx",
+    "xxxxxxxxxxx.......xxxxx",
+    " xxxxxxxxx........xxxxx",
+    " xxxxxxxxx.........xxxx",
+    " xx.................xxx",
+    " x..................xxx",
+    "xx...xx.............xxx",
+    "x....xx......xx.....xxx",
+    "....xxx.....xxxx....xxx",
+    "....xxx....xxxxxxxxxxxx",
+    "....xx.....xxxxxxxxxxxx",
+    "xxxxxx......xxxxxxxxxxx",
+    "  xxxxx.....xxxxxxxxxxx",
+    "    xxxxxxxxxxxxxxxxxxx",
+    "     xxxxxxxxx         "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_spider_mines_3"
+}

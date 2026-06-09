@@ -1,0 +1,32 @@
+{
+  "name": "vault_crypt_0069",
+  "size": [
+    7,
+    5
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "crypt",
+    "dungeon"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    ".......",
+    "xxx.xxx",
+    "..+.+..",
+    "xxx.xxx",
+    "......."
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_crypt_reliquary_box_3"
+}

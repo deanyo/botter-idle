@@ -1,0 +1,60 @@
+{
+  "name": "vault_snake_0032",
+  "size": [
+    10,
+    35
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "snake"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "xxxxxxxxxx",
+    "xxx.xxxxxx",
+    "xx*.*xxxxx",
+    "x..*..xxxx",
+    "xx...xxxxx",
+    "xx444xxxxx",
+    "xx....xxxx",
+    "xxx...xxxx",
+    "xxx....xxx",
+    "xxxx....xx",
+    "xxxxx...xx",
+    "xxxxx....x",
+    "xxxxxx...x",
+    "xxxxxx...x",
+    "xxxxxx...x",
+    "xxxxx....x",
+    "xxxxx...xx",
+    "xxxx....xx",
+    "xxx....xxx",
+    "xxx...xxxx",
+    "xx....xxxx",
+    "xx...xxxxx",
+    "xx...xxxxx",
+    "xx...xxxxx",
+    "xx....xxxx",
+    "xxx...xxxx",
+    "xxx....xxx",
+    "xxxx....xx",
+    "xxxxx...xx",
+    "xxxxx....x",
+    "xxxxxx...x",
+    "xxxxxx...x",
+    "xxxxxx...x",
+    "xxxxxx...x",
+    "xxxxxxxxxx"
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_snake_attic_fulla_snakes"
+}

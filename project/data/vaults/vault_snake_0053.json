@@ -1,0 +1,51 @@
+{
+  "name": "vault_snake_0053",
+  "size": [
+    24,
+    24
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "snake"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "........................",
+    "..xxxxxxxx....xxxxxxxx..",
+    ".xxxxxxxxxx..xxxxxxxxxx.",
+    ".xx......xx..xx......xx.",
+    ".xx......xx..xx......xx.",
+    ".xx..x...xxxxxx...xxxxx.",
+    "..x..x....xxxx...xxxxx..",
+    ".................xx.....",
+    ".................xx.....",
+    "..x..xxxxx....xxxxx...x.",
+    ".xx...xxxxx..xxxxx...xx.",
+    ".xx..................xx.",
+    ".xx..................xx.",
+    ".xx...xxxxx..xxxxx...xx.",
+    ".x...xxxxx....xxxxx..x..",
+    ".....xx.................",
+    ".....xx.................",
+    "..xxxxx...xxxx....x..x..",
+    ".xxxxx...xxxxxx...x..xx.",
+    ".xx......xx..xx......xx.",
+    ".xx......xx..xx......xx.",
+    ".xxxxxxxxxx..xxxxxxxxxx.",
+    "..xxxxxxxx....xxxxxxxx..",
+    "........................"
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_snake_gridmaze_zigzag"
+}

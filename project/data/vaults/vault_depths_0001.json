@@ -1,0 +1,39 @@
+{
+  "name": "vault_depths_0001",
+  "size": [
+    14,
+    13
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "depths",
+    "dungeon",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "        ...   ",
+    "      ....... ",
+    "     .........",
+    "     .3.....4.",
+    "     .........",
+    "  ........... ",
+    " ...........xx",
+    ".......xx....x",
+    "+...1...xxx..x",
+    ".........xx.xx",
+    " ......x...3.x",
+    "  .... x..x.xx",
+    "       xxxxxx "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_gammafunk_enter_depths_forms"
+}

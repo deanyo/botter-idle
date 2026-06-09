@@ -1,0 +1,44 @@
+{
+  "name": "vault_zot_0078",
+  "size": [
+    25,
+    19
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "zot"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 5,
+  "tags": [],
+  "grid": [
+    " xxxxxxxxxx...xxxxxxxxxx ",
+    "xx..x.....x.x.x.....x..xx",
+    "x.....x...x...x...x.....x",
+    "xx...xxx..x...x..xxx...xx",
+    " xx...xx..x...x..xx...xx ",
+    "  xx...xxxx...xxxx...xx  ",
+    "  xxx...x.x...x.x...xxx  ",
+    "  xx............xx...xx  ",
+    " xx...................xx ",
+    " xx...................xx ",
+    "  xx...xx............xx  ",
+    "  xxx...x.x...x.x...xxx  ",
+    "  xx...xxxx...xxxx...xx  ",
+    " xx...xx..x...x..xx...xx ",
+    "xx...xxx..x...x..xxx...xx",
+    "x.....x...x...x...x.....x",
+    "xx..x.....x...x.....x..xx",
+    " xxxxxxxxxx.x.xxxxxxxxxx ",
+    "    xxxxxxx...xxxxxxx    "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_regret_index_zotdec_gossamer_gf"
+}

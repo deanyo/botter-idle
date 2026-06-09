@@ -1,0 +1,35 @@
+{
+  "name": "vault_crypt_0071",
+  "size": [
+    6,
+    7
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "crypt",
+    "dungeon",
+    "forge"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "xxxxxx",
+    "x....x",
+    "x....x",
+    "x.*...",
+    "x....x",
+    "x....x",
+    "xxxxxx"
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_crypt_remembering"
+}

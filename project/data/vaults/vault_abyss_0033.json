@@ -1,0 +1,40 @@
+{
+  "name": "vault_abyss_0033",
+  "size": [
+    7,
+    15
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "abyss",
+    "dungeon"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "   .   ",
+    "  .+.  ",
+    "  ...  ",
+    "  ...  ",
+    " ..... ",
+    " ..... ",
+    " .1.1. ",
+    " ..... ",
+    " ..+.. ",
+    ".......",
+    "..1.1..",
+    ".1...1.",
+    "..1.1..",
+    "...1...",
+    " ..... "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_evilmike_abyss_exit_chaos"
+}

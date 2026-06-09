@@ -1,0 +1,49 @@
+{
+  "name": "vault_mines_0088",
+  "size": [
+    11,
+    15
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "mines",
+    "orc"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 5,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "xxxx...xxxx",
+    "x21.....12x",
+    "x11.111.11x",
+    "x.........x",
+    "x.........x",
+    "...........",
+    "..1.322.1..",
+    "..1.4.1.1..",
+    "..1.322.1..",
+    "...........",
+    "x.........x",
+    "x.........x",
+    "x11.111.11x",
+    "x21.....12x",
+    "xxxx...xxxx"
+  ],
+  "spawns": {
+    "3": {
+      "enemy_pool": [
+        "orc_priest"
+      ]
+    }
+  },
+  "_original_dcss_id": "des_zombieorc2_lemuel"
+}

@@ -1,0 +1,38 @@
+{
+  "name": "vault_spider_0018",
+  "size": [
+    10,
+    11
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "spider"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "no_monster_gen"
+  ],
+  "grid": [
+    "   .....  ",
+    " .........",
+    " .........",
+    "...1...1..",
+    "....1.1...",
+    "..........",
+    "....1.1...",
+    "...1...1..",
+    " .........",
+    " .........",
+    "   .....  "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_hellmonk_spider_entry_not_the_bees"
+}

@@ -1,0 +1,46 @@
+{
+  "name": "vault_zot_0071",
+  "size": [
+    16,
+    21
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "zot"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "  xxxxxxxxxxx   ",
+    " xxxx.xxxxxxxx  ",
+    "xxxx........xxx ",
+    "xx..........xxx ",
+    "x....xxx.....x  ",
+    "xx.....xx....x  ",
+    "xx......xx..xxx ",
+    "x........xxxxxx ",
+    "x..........xxx. ",
+    "x...............",
+    "x...............",
+    "x...............",
+    "x..........xxx. ",
+    "x........xxxxxx ",
+    "xx......xx..xxx ",
+    "xx.....xx....x  ",
+    "x....xxx.....x  ",
+    "xx..........xxx ",
+    "xxxx........xxx ",
+    " xxxx.xxxxxxxx  ",
+    "  xxxxxxxxxxx   "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_regret_index_zotdec_decaying_basic"
+}

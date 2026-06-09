@@ -1,0 +1,44 @@
+{
+  "name": "vault_elf_0006",
+  "size": [
+    9,
+    18
+  ],
+  "orient": "west",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "elf",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "..x.x.x..",
+    ".........",
+    "..x.1.x..",
+    "xxx...xxx",
+    "xxx...xxx",
+    "xxx...xxx",
+    "xxx1.1xxx",
+    "xxx...xxx",
+    "xxx...xxx",
+    "xxxx.xxxx",
+    "xxxx.xxxx",
+    "xxxx.xxxx",
+    "xxxx.xxxx",
+    "xxxx.xxxx",
+    "xxx...xxx",
+    "xxx...xxx",
+    "xxx...xxx",
+    "xxxxxxxxx"
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_elf_arrival_001"
+}

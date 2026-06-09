@@ -1,0 +1,51 @@
+{
+  "name": "vault_snake_0047",
+  "size": [
+    24,
+    24
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "snake"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "...............SS.......",
+    "..xxxxxxxxxxxxxxxxxxxx..",
+    ".xxxxxxxxxxxxxxxxxxxxxx.",
+    ".xx..................xx.",
+    ".xx..................xx.",
+    ".xx...xxxx....xxxx...xx.",
+    ".xx..xxxxxx..xxxxx...xx.",
+    ".xx..xx..............xx.",
+    ".xx..xx..............xx.",
+    ".xxxxxx...x..x....x..xx.",
+    "..xxxx...xx..xx..x......",
+    ".........xx..xx.........",
+    ".........xx..xx.........",
+    "......x..xx..xx...xxxx..",
+    ".xx..x....x..x...xxxxxx.",
+    ".xx..............xx..xx.",
+    ".xx..............xx..xx.",
+    ".xx...xxxxx..xxxxxx..xx.",
+    ".xx...xxxx....xxxx...xx.",
+    ".xx..................xx.",
+    ".xx..................xx.",
+    ".xxxxxxxxxxxxxxxxxxxxxx.",
+    "..xxxxxxxxxxxxxxxxxxxx..",
+    ".......SS..............."
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_snake_gridmaze_entwining"
+}

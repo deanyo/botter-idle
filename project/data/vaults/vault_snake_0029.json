@@ -1,0 +1,51 @@
+{
+  "name": "vault_snake_0029",
+  "size": [
+    25,
+    24
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "snake"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "     xxxxxxx............x",
+    "   xxx.....xxx..........x",
+    "  xx.........xx.........x",
+    " xx...........xx........x",
+    " x.............x........x",
+    "xx.......xxx...xx.......x",
+    "x.......xx.xx...x.......x",
+    "x...x...x...x...x.......x",
+    "x...x...x...x...x.......x",
+    "x...x...x...x...x.......x",
+    "    x...xx.............xx",
+    "    xx...x.............x ",
+    "     x...xx...........xx ",
+    "     x....xx.........xx  ",
+    "     xx....xxx.....xxx   ",
+    "      x......xxxxxxx.    ",
+    "      xx.............    ",
+    "       xx............    ",
+    "        xx...........    ",
+    "         xx..........    ",
+    "          xx.........    ",
+    "           xxx.......    ",
+    "             xxxx....    ",
+    "                xxxxx    "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_large_snake_swirl"
+}

@@ -1,0 +1,46 @@
+{
+  "name": "vault_snake_0008",
+  "size": [
+    13,
+    11
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "snake"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "no_monster_gen",
+    "transparent"
+  ],
+  "grid": [
+    "   .......   ",
+    "  .........  ",
+    " ........... ",
+    ".............",
+    ".....212.....",
+    ".....1.1.....",
+    ".....212.....",
+    ".............",
+    " ........... ",
+    "  .........  ",
+    "   .......   "
+  ],
+  "spawns": {
+    "1": {
+      "enemy_pool": [
+        "naga",
+        "water_moccasin"
+      ]
+    }
+  },
+  "_original_dcss_id": "des_guppyfry_snake_entry_island"
+}

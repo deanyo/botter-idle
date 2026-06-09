@@ -1,0 +1,40 @@
+{
+  "name": "vault_crypt_0073",
+  "size": [
+    9,
+    13
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "crypt",
+    "dungeon"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    ".........",
+    "xxx.xxx.x",
+    "x.x.x.x.x",
+    "x.xxx.xxx",
+    ".........",
+    "xxx.xxx.x",
+    "x.x.x.x.x",
+    "x.xxx.xxx",
+    ".........",
+    "xxx.xxx.x",
+    "x.x.x.x.x",
+    "x.xxx.xxx",
+    "........."
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_crypt_skeletal_stacks"
+}

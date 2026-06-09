@@ -1,0 +1,39 @@
+{
+  "name": "vault_elf_0030",
+  "size": [
+    14,
+    13
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "elf",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "   ...        ",
+    "    .         ",
+    "    .         ",
+    " x.....x      ",
+    " .......      ",
+    " ..1.1..     .",
+    "..............",
+    " ..1.1..     .",
+    " .......      ",
+    " x.....x      ",
+    "    .         ",
+    "    .         ",
+    "   ...        "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_infiniplex_blade_entry_pillars"
+}

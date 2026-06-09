@@ -1,0 +1,38 @@
+{
+  "name": "vault_mines_0071",
+  "size": [
+    9,
+    10
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "mines",
+    "orc"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "no_item_gen"
+  ],
+  "grid": [
+    "  xxxxx  ",
+    " xxxxxxx ",
+    "xxx..xxx ",
+    "xx....xxx",
+    "xx.....xx",
+    "xx......x",
+    "xxx...x..",
+    " xxx.xx. ",
+    "  xxxxx. ",
+    "   xxx   "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_orc_tapped_out"
+}

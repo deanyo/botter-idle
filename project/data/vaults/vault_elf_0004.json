@@ -1,0 +1,39 @@
+{
+  "name": "vault_elf_0004",
+  "size": [
+    11,
+    11
+  ],
+  "orient": "south",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "elf",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "no_monster_gen"
+  ],
+  "grid": [
+    "xxxxxxxxxx ",
+    "xxx........",
+    "xx.........",
+    "x..........",
+    "x..........",
+    "x..........",
+    "x..........",
+    "x..........",
+    "xx.........",
+    "xxx........",
+    "xxxxxxxxxx "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_eino_elf_arrival_sip"
+}

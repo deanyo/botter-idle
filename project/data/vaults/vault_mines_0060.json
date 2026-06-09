@@ -1,0 +1,39 @@
+{
+  "name": "vault_mines_0060",
+  "size": [
+    10,
+    11
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "mines",
+    "orc"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "no_item_gen"
+  ],
+  "grid": [
+    "    xxxx  ",
+    " ..xxxxxx ",
+    " ..C....x ",
+    ".C......xx",
+    "xC......xx",
+    "x.......xx",
+    "x.......xx",
+    "x.......xx",
+    "x.......x ",
+    "xxxxxxxxx ",
+    " xxxxxxx  "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_orc_lost_temple"
+}

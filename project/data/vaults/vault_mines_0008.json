@@ -1,0 +1,35 @@
+{
+  "name": "vault_mines_0008",
+  "size": [
+    22,
+    9
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "mines",
+    "orc"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "xxxxxxxxxxxxxxxxxxxxxx",
+    "xxxxxxx.xxx.xxx.xxx.xx",
+    "x....x...x...x...x...x",
+    "x....x................",
+    "x....+................",
+    "x....x................",
+    "x....x...x...x...x...x",
+    "xxxxxxx.xxx.xxx.xxx.xx",
+    "xxxxxxxxxxxxxxxxxxxxxx"
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_david_orc_4"
+}

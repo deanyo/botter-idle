@@ -1,0 +1,40 @@
+{
+  "name": "vault_lair_0095",
+  "size": [
+    13,
+    13
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "lair"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    ".............",
+    ".............",
+    ".............",
+    "....x.x.x....",
+    "...x.....x...",
+    ".............",
+    ".........x...",
+    ".............",
+    ".........x...",
+    "....x.x.x....",
+    ".............",
+    ".............",
+    "............."
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_lair_demoated_fort"
+}

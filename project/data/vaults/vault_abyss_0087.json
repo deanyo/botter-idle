@@ -1,0 +1,50 @@
+{
+  "name": "vault_abyss_0087",
+  "size": [
+    15,
+    16
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "abyss",
+    "dungeon"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 5,
+  "tags": [
+    "transparent",
+    "no_monster_gen"
+  ],
+  "grid": [
+    "   .x..    ..x.",
+    "   ..x..  ..x..",
+    "   .x.x....x.x.",
+    "   x...x..x...x",
+    "   x...x..x...x",
+    "   x..1x..x1..x",
+    "   .x.x....x.x.",
+    " ....x......x..",
+    "..x......x.... ",
+    ".x.x....x.x.   ",
+    "x..1x..x1..x   ",
+    "x...x..x...x   ",
+    "x...x..x...x   ",
+    ".x.x....x.x.   ",
+    "..x..  ..x..   ",
+    " x..    ..x.   "
+  ],
+  "spawns": {
+    "1": {
+      "enemy_pool": [
+        "lich"
+      ]
+    }
+  },
+  "_original_dcss_id": "des_regret_index_abyss_entry_already_here"
+}

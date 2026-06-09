@@ -1,0 +1,42 @@
+{
+  "name": "vault_shoals_0010",
+  "size": [
+    13,
+    15
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "shoals"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    ".............",
+    ".xxxxx.xxxx+.",
+    ".x...x.x...x.",
+    ".x.1.xxx.1.x.",
+    "xx...x.x...xx",
+    "x.xxx+.xxxx.x",
+    "x...x.1.x...x",
+    "x..1x...x1..x",
+    "x...x.1.x...x",
+    "x.xxxx.+xxx.x",
+    "xx...x.x...xx",
+    ".x.1.xxx.1.x.",
+    ".x...x.x...x.",
+    ".+xxxx.xxxxx.",
+    "............."
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_elwin_shoals_entry_rooms"
+}

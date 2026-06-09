@@ -1,0 +1,46 @@
+{
+  "name": "vault_lair_0061",
+  "size": [
+    17,
+    19
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "lair"
+  ],
+  "floor_range": [
+    3,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "no_monster_gen"
+  ],
+  "grid": [
+    "xxxxxxxxxxxxxxxxx",
+    "xxxxxxxxxxxxxxxxx",
+    "xxxxxxxxxxxxxxxxx",
+    "xxxxxx.....xxxxxx",
+    "xxxxxx.....xxxxxx",
+    "xxxx.........xxxx",
+    "xxxx.........xxxx",
+    "xxx...........xxx",
+    "xxx...........xxx",
+    "xxx..........1xxx",
+    "xxx...........xxx",
+    "xxx...........xxx",
+    "xxxx.........xxxx",
+    "xxxx.........xxxx",
+    "xxxxxx.....xxxxxx",
+    "xxxxxx.....xxxxxx",
+    "xxxxxxxxxxxxxxxxx",
+    "xxxxxxxxxxxxxxxxx",
+    "xxxxxxxxxxxxxxxxx"
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_kennysheep_catoblepas_arena"
+}

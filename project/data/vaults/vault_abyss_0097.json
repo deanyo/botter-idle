@@ -1,0 +1,32 @@
+{
+  "name": "vault_abyss_0097",
+  "size": [
+    11,
+    7
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "abyss",
+    "dungeon"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "x.........x",
+    "x.........x",
+    "x.........x",
+    "xx.......xx",
+    " xx.....xx ",
+    "  xx...xx  ",
+    "   xxxxx   "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_tekkud_abyss_exit_so_close"
+}

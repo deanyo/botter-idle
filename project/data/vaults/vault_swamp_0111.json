@@ -1,0 +1,37 @@
+{
+  "name": "vault_swamp_0111",
+  "size": [
+    18,
+    12
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "swamp"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 4,
+  "tags": [],
+  "grid": [
+    "  x       x       ",
+    "  xx      xx      ",
+    " .xx..  ..xx..    ",
+    "..xx......xx...   ",
+    "..xx......xx....  ",
+    " xxxxxxxxxxxxxxxx ",
+    " xxxxxxxxxxxxxxxx ",
+    "  ....xx......xx..",
+    "   ...xx......xx..",
+    "    ..xx..  ..xx. ",
+    "      xx      xx  ",
+    "      x       x   "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_regret_index_swamp_ruin_wall"
+}

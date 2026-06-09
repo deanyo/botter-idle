@@ -1,0 +1,47 @@
+{
+  "name": "vault_abyss_0081",
+  "size": [
+    19,
+    19
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "abyss",
+    "dungeon"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent",
+    "no_monster_gen"
+  ],
+  "grid": [
+    "   .. xxxxxxx      ",
+    "  ....xxxxxxx      ",
+    " . . xx ..4xx      ",
+    ".....xx.x3.xx      ",
+    ".. ...x..x.xxx     ",
+    " .xx...... xxxx    ",
+    "xxxxx.x.xxxxxxxxxxx",
+    "xx ....T.x..xxxxxxx",
+    "xx.x..x.....x 1.1xx",
+    "xx..x.xx.>.xx.x..xx",
+    "xx3.3 x.....x..x.xx",
+    "xxxxxxx..x.T.... xx",
+    "xxxxxxxxxxx.x.xxxxx",
+    "    xxxx ......xx .",
+    "     xxx.x..x......",
+    "      xx.1x.xx.. ..",
+    "      xx2.. xx. .. ",
+    "      xxxxxxx ...  ",
+    "      xxxxxxx...   "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_hangedman_shadowy_showcase"
+}

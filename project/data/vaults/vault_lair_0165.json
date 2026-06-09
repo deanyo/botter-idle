@@ -1,0 +1,49 @@
+{
+  "name": "vault_lair_0165",
+  "size": [
+    38,
+    22
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "lair"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "no_monster_gen"
+  ],
+  "grid": [
+    "               .xx..xxx..xxxxx..xx    ",
+    "             ..xxxxxxxxxxxxxxxxxxxx   ",
+    "           ..xxxxxxxxxxxxxx.x..xxxxx  ",
+    "          .xxxxxx..xxxxxx.*..xx.xxxxx ",
+    ".........xxxxx.4..1.xxxxx....xxx....xx",
+    ".....xx..x..xxx......xxx4....xxxxxx.xx",
+    ".....xx...xxxxx....*xxxxxx....xxx..xxx",
+    "............xx....x.xxxxxxxx..x...xxxx",
+    "..xxx.x......xxx...xxxxxxxx...x....xxx",
+    ".xxxx.x...x.xxxxx...x.xxxx......6...xx",
+    ".xxxxx..x..xxxxxxx...xxxx...xx......xx",
+    ".xxxxxxx..xxxxxxxxx....x...xxx...5..xx",
+    "xxxxxxxx..xxxxxxxx......4xxxxx......xx",
+    "xxxxxx...xxxxxxxx......xxxxCC.......xx",
+    "xxxxx...xxxxxxxx....xxxxxxCCC*x....xxx",
+    "xxxx...xxxxxxx.....xxxxxxx4C..1....xxx",
+    "xxxxxx...xxxx....x..xxxxxxxx..x.xx.xxx",
+    "xxxxxxx...xx...xxx.....xxxx...x.xx.xxx",
+    " xxxxxxx.....xxxxxx..........xx.x..xxx",
+    "  xxxxxxxx...xxxxxxxxxx....xxxxx.xxxxx",
+    "   xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_wormcave"
+}

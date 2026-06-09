@@ -1,0 +1,38 @@
+{
+  "name": "vault_spider_0022",
+  "size": [
+    12,
+    10
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "spider"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "no_monster_gen",
+    "transparent"
+  ],
+  "grid": [
+    "            ",
+    "  xxxxxxxx  ",
+    " xx......xx ",
+    " xx......xx ",
+    " x...xx...x ",
+    ".....xx.....",
+    " x...xx...x ",
+    " xx......xx ",
+    " xx......xx ",
+    "  xxxxxxxx  "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_hellmonk_test_site"
+}

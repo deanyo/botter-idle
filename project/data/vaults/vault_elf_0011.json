@@ -1,0 +1,61 @@
+{
+  "name": "vault_elf_0011",
+  "size": [
+    12,
+    14
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "elf",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "   ......   ",
+    "  x.x++x.x  ",
+    "  xxx33xxx  ",
+    "  xTx++xTx  ",
+    " xx333333xx ",
+    "xx33x33x33xx",
+    "x.7..21..7.x",
+    "x.7..54..7.x",
+    "xx66x66x66xx",
+    " xx6.6666xx ",
+    "  xTx++xTx  ",
+    "  xxx66xxx  ",
+    "  x.x++x.x  ",
+    "   ......   "
+  ],
+  "spawns": {
+    "3": {
+      "enemy_pool": [
+        "deep_elf_knight"
+      ]
+    },
+    "6": {
+      "enemy_pool": [
+        "orc_knight"
+      ]
+    },
+    "4": {
+      "enemy_pool": [
+        "orc_warlord"
+      ]
+    },
+    "2": {
+      "enemy_pool": [
+        "deep_elf_sorcerer"
+      ]
+    }
+  },
+  "_original_dcss_id": "des_elf_orc_summit_meeting"
+}

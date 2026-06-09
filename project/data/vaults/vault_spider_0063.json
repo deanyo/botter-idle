@@ -1,0 +1,35 @@
+{
+  "name": "vault_spider_0063",
+  "size": [
+    13,
+    10
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "spider"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    " ........... ",
+    " .xxx...xxx. ",
+    ".....x.x.....",
+    ".xxx.xxx.xxx.",
+    "....xxxxx....",
+    "....xxxxx....",
+    ".xxx.xxx.xxx.",
+    ".....x.x.....",
+    " .xxx...xxx. ",
+    " ........... "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_spider_shape"
+}

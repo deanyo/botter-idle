@@ -1,0 +1,36 @@
+{
+  "name": "vault_shoals_0057",
+  "size": [
+    11,
+    9
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "shoals"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "no_monster_gen"
+  ],
+  "grid": [
+    "  ........ ",
+    " ...xx.xx..",
+    " ..xx.2.xx.",
+    "..1x..*..x.",
+    "...+....2..",
+    "..1x..*..x.",
+    " ..xx.2.xx.",
+    " ...xx.xx..",
+    "  ........ "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_shoals_mertower"
+}

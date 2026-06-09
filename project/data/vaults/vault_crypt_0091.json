@@ -1,0 +1,42 @@
+{
+  "name": "vault_crypt_0091",
+  "size": [
+    15,
+    15
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "crypt",
+    "dungeon"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    ".....     .....",
+    ".SSS.     .....",
+    ".SSS.     .....",
+    ".SSS... .......",
+    "....... .......",
+    "   .........   ",
+    "   .........   ",
+    "     .....     ",
+    "   .........   ",
+    "   .........   ",
+    "....... .......",
+    "....... .......",
+    ".....     .....",
+    ".....     .....",
+    ".....     ....."
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_crypt_x_marks_the_plot"
+}

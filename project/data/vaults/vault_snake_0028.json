@@ -1,0 +1,36 @@
+{
+  "name": "vault_snake_0028",
+  "size": [
+    15,
+    11
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "snake"
+  ],
+  "floor_range": [
+    2,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "  xxxxxxxx     ",
+    " xx......xx    ",
+    "xx.xxxxxx.xx   ",
+    "x.xx....xx.xxxx",
+    "x.x.xxxx.x.x..x",
+    "x.x.x..x.x.....",
+    "x.x.xx.x.xxx..x",
+    "x.xx..xx.x xxxx",
+    "xx.xxxx.xx     ",
+    " xx....xx      ",
+    "  xxxxxx       "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_coiled_stairwell_up"
+}

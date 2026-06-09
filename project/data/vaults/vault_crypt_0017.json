@@ -1,0 +1,35 @@
+{
+  "name": "vault_crypt_0017",
+  "size": [
+    11,
+    10
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "crypt",
+    "dungeon"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "...........",
+    "....111....",
+    "...11111...",
+    "..1111111..",
+    ".111111111.",
+    ".111111111.",
+    "..1111111..",
+    "...11111...",
+    "....111....",
+    "..........."
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_lemuel_dead_fish_pool"
+}

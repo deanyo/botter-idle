@@ -1,0 +1,43 @@
+{
+  "name": "vault_spider_0007",
+  "size": [
+    12,
+    12
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "spider"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "xx.xxxx..xxx",
+    "xx..xxx.xxx.",
+    "xxx..x..xx..",
+    ".xxx...xx..x",
+    "..xxx..x..xx",
+    "x....11..xxx",
+    "xx..1111xxxx",
+    "xxxx.11..xxx",
+    "xxxxx..x..xx",
+    "xxx....xx..x",
+    "xx..x...xx.x",
+    "x..xx.x..x.."
+  ],
+  "spawns": {
+    "1": {
+      "enemy_pool": [
+        "jumping_spider"
+      ]
+    }
+  },
+  "_original_dcss_id": "des_guppyfry_spider_mini_1"
+}

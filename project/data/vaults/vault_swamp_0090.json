@@ -1,0 +1,36 @@
+{
+  "name": "vault_swamp_0090",
+  "size": [
+    12,
+    9
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "swamp"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "....    ....",
+    "............",
+    "............",
+    "............",
+    "............",
+    "............",
+    "...........S",
+    "...........S",
+    "....    ...."
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_swamp_stuck_in_the_mud"
+}

@@ -1,0 +1,51 @@
+{
+  "name": "vault_zot_0052",
+  "size": [
+    23,
+    24
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "zot"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "no_monster_gen"
+  ],
+  "grid": [
+    ".......................",
+    ".......................",
+    "..xxxxxxxxxxxxxxxxxxx..",
+    "..x......xx.xxxxxxxxx..",
+    "..x.....xxx.xxxxxxxxx..",
+    "..x.....+...+......xx..",
+    "..x.....x.x.xxxx.x.xx..",
+    "..x.232..xx...xx.x.xx..",
+    "..x......xx.xxxxxx+xx..",
+    "..xxxxxxxxx...xxx...x..",
+    "..xxxxx...x.xxxxx.>.x..",
+    "..xxxxx...+...xxx.3.x..",
+    "..x..xx...x.xxxxx...x..",
+    "..x..xxxxxx...xxx.x.x..",
+    "..x+xxxxxxx+xxxxxx.xx..",
+    "..x4.4.xxx.2.xxx.4.4x..",
+    "..x.4.4.xx...xxx4.4.x..",
+    "..x4.4.xxxx+xxxx.4.4x..",
+    "..x.4.6x.......x6.4.x..",
+    "..x6...+.......+...6x..",
+    "..x....x.......x....x..",
+    "..xxxxxxxxx+xxxxxxxxx..",
+    ".......................",
+    "......................."
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_lemuel_lich_library"
+}

@@ -1,0 +1,44 @@
+{
+  "name": "vault_elf_0090",
+  "size": [
+    10,
+    10
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "elf",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "  xxxxx   ",
+    " xx....x  ",
+    "xx...2..x ",
+    "x..3...1..",
+    "x......1..",
+    "x.2...1...",
+    "x....1....",
+    " x.11...  ",
+    "  x....   ",
+    "   ....   "
+  ],
+  "spawns": {
+    "3": {
+      "enemy_pool": [
+        "deep_elf_sorcerer"
+      ]
+    }
+  },
+  "_original_dcss_id": "des_nicolae_elf_free_trip_to_the_abyss"
+}

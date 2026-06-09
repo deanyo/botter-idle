@@ -1,0 +1,35 @@
+{
+  "name": "vault_depths_0005",
+  "size": [
+    12,
+    9
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "depths",
+    "dungeon",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "............",
+    ".........1..",
+    "..........+.",
+    "............",
+    "+...........",
+    "............",
+    "..........+.",
+    ".........1..",
+    "............"
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_grunt_enter_depths_snipers"
+}

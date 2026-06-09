@@ -1,0 +1,35 @@
+{
+  "name": "vault_crypt_0049",
+  "size": [
+    8,
+    8
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "crypt",
+    "dungeon"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "........",
+    "........",
+    "........",
+    "........",
+    "........",
+    "........",
+    "........",
+    "........"
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_crypt_gravecubes"
+}

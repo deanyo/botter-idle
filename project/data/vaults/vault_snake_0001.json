@@ -1,0 +1,98 @@
+{
+  "name": "vault_snake_0001",
+  "size": [
+    15,
+    23
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "snake",
+    "forge"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "no_item_gen",
+    "no_monster_gen"
+  ],
+  "grid": [
+    "      ...      ",
+    "   ...+++...   ",
+    "  ...........  ",
+    " ............. ",
+    "...............",
+    "..6............",
+    "...............",
+    "..5............",
+    "...............",
+    "..4............",
+    "...............",
+    "..3.........9..",
+    "......*.*......",
+    "..2.........8..",
+    "......*.*......",
+    "..1.........7..",
+    "...............",
+    "...............",
+    "...............",
+    " ............. ",
+    "  ...........  ",
+    "   .........   ",
+    "     .....     "
+  ],
+  "spawns": {
+    "1": {
+      "enemy_pool": [
+        "salamander"
+      ]
+    },
+    "2": {
+      "enemy_pool": [
+        "salamander"
+      ]
+    },
+    "3": {
+      "enemy_pool": [
+        "salamander"
+      ]
+    },
+    "4": {
+      "enemy_pool": [
+        "salamander"
+      ]
+    },
+    "5": {
+      "enemy_pool": [
+        "salamander"
+      ]
+    },
+    "6": {
+      "enemy_pool": [
+        "salamander"
+      ]
+    },
+    "7": {
+      "enemy_pool": [
+        "salamander"
+      ]
+    },
+    "8": {
+      "enemy_pool": [
+        "salamander"
+      ]
+    },
+    "9": {
+      "enemy_pool": [
+        "salamander"
+      ]
+    }
+  },
+  "_original_dcss_id": "des_cheibrodos_snake_lava_hold"
+}

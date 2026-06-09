@@ -1,0 +1,44 @@
+{
+  "name": "vault_abyss_0056",
+  "size": [
+    21,
+    16
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "abyss",
+    "dungeon"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "no_item_gen",
+    "allow_dup"
+  ],
+  "grid": [
+    "        .....        ",
+    "        .....        ",
+    "        .....        ",
+    "        .....        ",
+    "          .          ",
+    "     .          .    ",
+    "    ....      ....   ",
+    "    ....      ....   ",
+    "    ....      ....   ",
+    "    ....      ....   ",
+    "          .          ",
+    " .                 . ",
+    "....             ....",
+    "....             ....",
+    "....             ..S.",
+    "....             ...."
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_hangedman_abyss_feature_spike"
+}

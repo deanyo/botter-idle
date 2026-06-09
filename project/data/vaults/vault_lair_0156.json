@@ -1,0 +1,51 @@
+{
+  "name": "vault_lair_0156",
+  "size": [
+    19,
+    24
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "lair"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "       x.x.x       ",
+    "     .........     ",
+    "    x.x.x.x.x.x    ",
+    "    ...........    ",
+    "   x.x.x.x.x.x.x   ",
+    "   .............   ",
+    "  x...x.x.x.x...x  ",
+    "  ...............  ",
+    " x.x.x...x...x.x.x ",
+    " ................. ",
+    "x.x.x.........x.x.x",
+    "...................",
+    ".x...x.......x...x.",
+    "...................",
+    "x.x.x.........x.x.x",
+    " ................. ",
+    " x.x.x.......x.x.x ",
+    "  ..S.........S..  ",
+    "  xS.Sx.....xS.Sx  ",
+    "   .S.........S.   ",
+    "   x.x.......x.x   ",
+    "    ...........    ",
+    "    ...........    ",
+    "   xxxxxxxxxxxxx   "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_regret_index_lairdec_dandelion"
+}

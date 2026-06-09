@@ -1,0 +1,47 @@
+{
+  "name": "vault_crypt_0104",
+  "size": [
+    16,
+    12
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "crypt",
+    "dungeon"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "no_monster_gen",
+    "no_item_gen"
+  ],
+  "grid": [
+    " ........       ",
+    " ...+....       ",
+    " .+...1.......  ",
+    "...........+2.  ",
+    "............+...",
+    "....+...........",
+    "............+...",
+    "..+.....+...2.  ",
+    " .....1...+.+.  ",
+    " ...+.........  ",
+    " .............  ",
+    "      .         "
+  ],
+  "spawns": {
+    "1": {
+      "enemy_pool": [
+        "lich",
+        "zombie"
+      ]
+    }
+  },
+  "_original_dcss_id": "des_weyrava_lich_vault"
+}

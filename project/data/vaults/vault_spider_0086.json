@@ -1,0 +1,52 @@
+{
+  "name": "vault_spider_0086",
+  "size": [
+    16,
+    18
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "spider"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "no_item_gen",
+    "no_monster_gen"
+  ],
+  "grid": [
+    "   xxx xx xxxx  ",
+    "  xxxxxxxxxxxxx ",
+    " xx1...1xx1...xx",
+    "xxx..x.1xx..x.xx",
+    "xx..xx.xx..xx.xx",
+    "xx..x..x..xx..xx",
+    "xx..x....xx***xx",
+    " x..xx..1xx***xx",
+    " xx..xxxxxx***xx",
+    "  xx.xxx..xxx*xx",
+    " xx..1xx....xxx ",
+    "xx..xxx.xx...x  ",
+    "xx.xxx..xxx1.xx ",
+    "xx.1x..1xxxxx.xx",
+    "xx....xxx xxx.xx",
+    "xx1..xxx  x x.x.",
+    " xxxxxx     x...",
+    "  xxx        ..."
+  ],
+  "spawns": {
+    "1": {
+      "enemy_pool": [
+        "wolf_spider"
+      ]
+    }
+  },
+  "_original_dcss_id": "des_spiders_nest_spider_trap"
+}

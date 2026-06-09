@@ -1,0 +1,40 @@
+{
+  "name": "vault_abyss_0084",
+  "size": [
+    11,
+    13
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "abyss",
+    "dungeon"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "    ....   ",
+    "   ......  ",
+    "  ........ ",
+    " ..........",
+    "...........",
+    ".....1.....",
+    "....1.1....",
+    ".....1.....",
+    "...........",
+    ".......... ",
+    " ........  ",
+    "  ......   ",
+    "   ....    "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_abyss_entry_one_way_or_another"
+}

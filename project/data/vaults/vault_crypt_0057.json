@@ -1,0 +1,37 @@
+{
+  "name": "vault_crypt_0057",
+  "size": [
+    10,
+    10
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "crypt",
+    "dungeon"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "xxx....xxx",
+    "x........x",
+    "x........x",
+    "xxx....xxx",
+    "x........x",
+    "x........x",
+    "xxx....xxx",
+    "x........x",
+    "x........x",
+    "xxx....xxx"
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_crypt_lounge_for_the_living"
+}

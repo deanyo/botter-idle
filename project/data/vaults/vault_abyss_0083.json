@@ -1,0 +1,32 @@
+{
+  "name": "vault_abyss_0083",
+  "size": [
+    6,
+    6
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "abyss",
+    "dungeon",
+    "pandemonium"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "xxxxxx",
+    "x.113x",
+    "x1221x",
+    "x1221+",
+    "x3113x",
+    "xxxxxx"
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_minmay_room_of_horrors"
+}

@@ -1,0 +1,60 @@
+{
+  "name": "vault_zot_0088",
+  "size": [
+    13,
+    33
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "zot"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "        xxx..",
+    "       xxx...",
+    "      xxx....",
+    "     xxx....x",
+    "    xx......x",
+    "   xxx.....xx",
+    "  xxx......xx",
+    " xxx....xx.xx",
+    "xxx...C..xxxx",
+    "xx.........xx",
+    "x........xxxx",
+    "........xx.xx",
+    "......x....xx",
+    "...x..xx...xx",
+    "..xx..xxx..xx",
+    ".xx....xx..xx",
+    "...........xx",
+    ".xx....xx..xx",
+    "..xx..xxx..xx",
+    "...x..xx...xx",
+    "......x....xx",
+    "........xx.xx",
+    "x........xxxx",
+    "xx.........xx",
+    "xxx...C..xxxx",
+    " xxx....xx.xx",
+    "  xxx......xx",
+    "   xxx.....xx",
+    "    xx......x",
+    "     xxx....x",
+    "      xxx....",
+    "       xxx...",
+    "        xxx.."
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_regret_index_zotdec_serpentine_scales"
+}

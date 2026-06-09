@@ -1,0 +1,44 @@
+{
+  "name": "vault_elf_0089",
+  "size": [
+    13,
+    10
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "elf",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "    .....    ",
+    "......+......",
+    ".............",
+    "..+.1.1.1.+..",
+    ".....1.1.....",
+    "....1.1.1....",
+    ".....1.1.....",
+    "..+.......+S.",
+    "......2......",
+    "............."
+  ],
+  "spawns": {
+    "1": {
+      "enemy_pool": [
+        "deep_elf_pyromancer"
+      ]
+    }
+  },
+  "_original_dcss_id": "des_nicolae_elf_elemental_lessons"
+}

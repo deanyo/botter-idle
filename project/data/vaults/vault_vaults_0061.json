@@ -1,0 +1,52 @@
+{
+  "name": "vault_vaults_0061",
+  "size": [
+    23,
+    27
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "  xxxxxxxxxxxxxxxxxxx  ",
+    " ..................... ",
+    "x.xx9..9xx...xx9..9xx.x",
+    "x.xxx**xxx...xxx**xxx.x",
+    "x.9xxxxxx9...9xxxxxx9.x",
+    "x..*xxxx*.....*xxxx*..x",
+    "x..*xxxx*.....*xxxx*..x",
+    "x.9xxxxxx9...9xxxxxx9.x",
+    "x.xxx**xxx...xxx**xxx.x",
+    "x.xx9..9xx...xx9..9xx.x",
+    "x.....................x",
+    "x...xxxx.xx9xx.xxxx...x",
+    "x...x..x.xxxxx.x..x...x",
+    "x...x..+.9xxx9.+..x...x",
+    "x...x..x.xxxxx.x..x...x",
+    "x...xxxx.xx9xx.xxxx...x",
+    "x.....................x",
+    "x.xx9..9xx...xx9..9xx.x",
+    "x.xxx**xxx...xxx**xxx.x",
+    "x.9xxxxxx9...9xxxxxx9.x",
+    "x..*xxxx*.....*xxxx*..x",
+    "x..*xxxx*.....*xxxx*..x",
+    "x.9xxxxxx9...9xxxxxx9.x",
+    "x.xxx**xxx...xxx**xxx.x",
+    "x.xx9..9xx...xx9..9xx.x",
+    " ....................  ",
+    "  xxxxxxxxxxxxxxxxxxx  "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_vaults_end_minmay_small_xes"
+}

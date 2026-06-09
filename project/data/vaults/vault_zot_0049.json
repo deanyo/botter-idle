@@ -1,0 +1,32 @@
+{
+  "name": "vault_zot_0049",
+  "size": [
+    8,
+    7
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "zot"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "  ....  ",
+    " ...... ",
+    "...11...",
+    "..1..1..",
+    "...11...",
+    " ...... ",
+    "  ....  "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_lemuel_golem_globe"
+}

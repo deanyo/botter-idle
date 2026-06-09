@@ -1,0 +1,40 @@
+{
+  "name": "vault_elf_0069",
+  "size": [
+    13,
+    14
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "elf",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "      .      ",
+    "....2...2....",
+    ".............",
+    ".............",
+    "....1...1....",
+    ".............",
+    ".............",
+    ".............",
+    ".............",
+    " .1.......1. ",
+    " ........... ",
+    "  .........  ",
+    "   .......   ",
+    "     ...     "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_blade_entry_sentries_behind_glass"
+}

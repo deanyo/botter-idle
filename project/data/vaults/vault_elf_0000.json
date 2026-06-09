@@ -1,0 +1,48 @@
+{
+  "name": "vault_elf_0000",
+  "size": [
+    11,
+    13
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "elf",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "no_item_gen",
+    "no_monster_gen"
+  ],
+  "grid": [
+    "   xxxxx   ",
+    " xxx...xxx ",
+    "xx1..2..1xx",
+    "x.........x",
+    "x+x.....x+x",
+    "x.........x",
+    "x.........x",
+    "x.........x",
+    "x.........x",
+    "x.........x",
+    "xxx3...3xxx",
+    "  xx+++xx  ",
+    "  .......  "
+  ],
+  "spawns": {
+    "1": {
+      "enemy_pool": [
+        "deep_elf_knight"
+      ]
+    }
+  },
+  "_original_dcss_id": "des_cheibrodos_elf_bladeworks"
+}

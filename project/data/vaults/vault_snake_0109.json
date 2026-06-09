@@ -1,0 +1,42 @@
+{
+  "name": "vault_snake_0109",
+  "size": [
+    11,
+    15
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "snake"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "   ....... ",
+    "   ....... ",
+    " ......... ",
+    ".........  ",
+    "...........",
+    "...........",
+    "...........",
+    "...........",
+    "...........",
+    "...........",
+    "...........",
+    "  .........",
+    " ......... ",
+    " .......   ",
+    " .......   "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_snake_yet_another_squirming_detour"
+}

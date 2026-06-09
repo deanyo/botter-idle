@@ -1,0 +1,45 @@
+{
+  "name": "vault_crypt_0090",
+  "size": [
+    10,
+    18
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "crypt",
+    "dungeon"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "xxxxxxxxxx",
+    ".........x",
+    ".........x",
+    "xxxx..xxxx",
+    "xxxx..xxxx",
+    "xxx....xxx",
+    "xx......xx",
+    "x........x",
+    "x...88...x",
+    "x...88...x",
+    "x........x",
+    "xx......xx",
+    "xxx....xxx",
+    "xxxx..xxxx",
+    "xxxx..xxxx",
+    "x.........",
+    "x.........",
+    "xxxxxxxxxx"
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_crypt_wrong_turn"
+}

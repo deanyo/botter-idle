@@ -1,0 +1,46 @@
+{
+  "name": "vault_snake_0019",
+  "size": [
+    15,
+    13
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "snake"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 2,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    ".........      ",
+    "..........     ",
+    "........2..    ",
+    "............   ",
+    "..........2..  ",
+    ".......2...... ",
+    "..2...1.2...2..",
+    " ......2.......",
+    "  ..2..........",
+    "   ............",
+    "    ..2........",
+    "     ..........",
+    "      ........."
+  ],
+  "spawns": {
+    "1": {
+      "enemy_pool": [
+        "naga"
+      ]
+    }
+  },
+  "_original_dcss_id": "des_minmay_snake_entry_guardpost_large"
+}

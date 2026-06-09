@@ -1,0 +1,32 @@
+{
+  "name": "vault_zot_0109",
+  "size": [
+    5,
+    6
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "zot",
+    "forge"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "xx.xx",
+    "xx..x",
+    "xxx.x",
+    "x*..x",
+    "x.*xx",
+    "xxxxx"
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_st_single_dragon_hoard_2"
+}

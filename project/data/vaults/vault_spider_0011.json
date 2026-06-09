@@ -1,0 +1,70 @@
+{
+  "name": "vault_spider_0011",
+  "size": [
+    25,
+    43
+  ],
+  "orient": "west",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "spider"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 5,
+  "tags": [
+    "no_monster_gen"
+  ],
+  "grid": [
+    "xxxxxxxxxxxxxxxxxxxxxxxxx",
+    "xxxxxxxxxxxxxxxxxxxxxxxxx",
+    "xx.x.xxxx...xxx.xxxxxxxxx",
+    "x.....xx....x2x.xx..xxxxx",
+    "..xxx......xx1x.x.....xxx",
+    " .x.xx..xxxx.xx...xxx..xx",
+    "..xx1xxxx.....xx.xx1xx.. ",
+    " ..xx1x........xxx1x1x.  ",
+    "  ..xx...xxx.x..xx.xxx.. ",
+    "   .x...xxxx1xx........  ",
+    "  ..x..x1xxx2xxx.......  ",
+    " ..xx.xxx1xxxx.xxx.xxx.. ",
+    "...x..xxxx.x....xx1x1x.  ",
+    "xxxx..xxxxxx.. ..xx1xx.. ",
+    "x.21..12.x...   ..xxx..  ",
+    "xxxx..xxxxxx..   .....   ",
+    "...x..xxxx.x....  ..     ",
+    " ..x..xxx5xxxxx.         ",
+    "  .x...x4xxxx6x..   . .  ",
+    "  .xx...xxxx4xx..  ..... ",
+    " ...xx...xxx2x......xxx..",
+    " ..xx4x..113.xxxx..xx.x. ",
+    "..xx5xxxx.1...1.xxxx5xx..",
+    " .x.xx..xxxx.311..x4xx.. ",
+    "..xxx......x2xxx...xx... ",
+    " .....  ..xx4xxxx...x..  ",
+    "  . .    .x6xxxx4x..xx.  ",
+    "         .xxxxx5xxx..x.. ",
+    "     ..  ...xx.xxxx..x...",
+    "   .....  ...xxxxxx..xxxx",
+    "  ..xxx..   ...xC21..12.x",
+    " ..xx1xx.. ..xxxxxx..xxxx",
+    "  .x1x1xx....x.xxxx..x...",
+    " ..xxx.xxx.xxxx1xxx.xx.. ",
+    "  .......xxx2xxx1x..x..  ",
+    "  ........xx1xxxx..xx.   ",
+    " ..xxx.xx..x.xxx...xx..  ",
+    "  .x1x1xxx........x1xx.. ",
+    " ..xx1xx.xx.....xxxx1xx..",
+    "  ..xxx...xx.xxxx..xx.x. ",
+    "   ..... .x1xx......xxx..",
+    "    ...  .x2x....  ..... ",
+    "         .xxx.      . .  "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_hangedman_creepy_crawlies"
+}

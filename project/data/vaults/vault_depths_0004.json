@@ -1,0 +1,43 @@
+{
+  "name": "vault_depths_0004",
+  "size": [
+    11,
+    11
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "depths",
+    "dungeon",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "  ...+...  ",
+    " ......... ",
+    "....1.1....",
+    "...........",
+    ".....3.....",
+    "...........",
+    "..1.....1..",
+    ".....+.....",
+    "...........",
+    " ....2.... ",
+    "  .......  "
+  ],
+  "spawns": {
+    "1": {
+      "enemy_pool": [
+        "deep_elf_pyromancer"
+      ]
+    }
+  },
+  "_original_dcss_id": "des_grunt_enter_depths_magical_seal"
+}

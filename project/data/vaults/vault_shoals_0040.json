@@ -1,0 +1,41 @@
+{
+  "name": "vault_shoals_0040",
+  "size": [
+    24,
+    14
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "shoals"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "   ...xxxxxxxx.......   ",
+    "  .xxxxxxxxxxx........  ",
+    " .xxx.......xx......... ",
+    ".xxx.........xx........ ",
+    ".xx...........xx........",
+    ".xx.....................",
+    ".x......................",
+    ".x......................",
+    ".xx.....................",
+    ".xx...........xx........",
+    ".xxx.........xx........ ",
+    " .xxx.......xx......... ",
+    "  .xxxxxxxxxxx........  ",
+    "   ...xxxxxxxx.......   "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_shoals_goliath_grotto"
+}

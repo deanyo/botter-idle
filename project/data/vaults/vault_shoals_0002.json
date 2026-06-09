@@ -1,0 +1,42 @@
+{
+  "name": "vault_shoals_0002",
+  "size": [
+    14,
+    14
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "shoals"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "no_item_gen",
+    "no_monster_gen"
+  ],
+  "grid": [
+    "       .......",
+    ".........6..*.",
+    ".*..6.........",
+    "..............",
+    "............6.",
+    ".6...+..+.....",
+    "..............",
+    "............. ",
+    "........+.... ",
+    "...........6. ",
+    ".........CC.. ",
+    ".........CC.. ",
+    "........6..*. ",
+    "............. "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_cheibrodos_shoals_epimethial_gifts"
+}

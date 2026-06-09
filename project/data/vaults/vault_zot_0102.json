@@ -1,0 +1,42 @@
+{
+  "name": "vault_zot_0102",
+  "size": [
+    15,
+    15
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "zot"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "xxxxxx...xxxxxx",
+    "x.............x",
+    "x.............x",
+    "x.............x",
+    "x.............x",
+    "x.............x",
+    "...............",
+    "...............",
+    "...............",
+    "x.............x",
+    "x.............x",
+    "x.............x",
+    "x.............x",
+    "x.............x",
+    "xxxxxx...xxxxxx"
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_skrybe_zot_glass_3"
+}

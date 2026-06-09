@@ -1,0 +1,48 @@
+{
+  "name": "vault_vaults_0024",
+  "size": [
+    27,
+    23
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "  xxxxxxxxxxxxxxxxxxxxxxx  ",
+    " ...+xxxxxxxxxxxxxxxxx+... ",
+    "x.xxx....xxxxxxxxx....xxx.x",
+    "x+x....9..*xxxxx*..9....x+x",
+    "xx...9.....*xxx*.....9...xx",
+    "xx..........xxx..........xx",
+    "xx.9........xxx........9.xx",
+    "xx........9..x..9........xx",
+    "xxx*.........+.........*xxx",
+    "xxxxx*...9.+xxx+.9...*xxxxx",
+    "xxxxxxxx...x.9*x...xxxxxxxx",
+    "xxxxxxxxx+xx9.9xx+xxxxxxxxx",
+    "xxxxxxxx...x.9.x...xxxxxxxx",
+    "xxxxx*...9.+xxx+.9...*xxxxx",
+    "xxx*.........+.........*xxx",
+    "xx........9..x..9........xx",
+    "xx.9........xxx........9.xx",
+    "xx.........*xxx*.........xx",
+    "xx...9.....xxxxx.....9...xx",
+    "x+x....9..*xxxxx*..9....x+x",
+    "x.xxx....xxxxxxxxx....xxx.x",
+    "  ..+xxxxxxxxxxxxxxxxx+... ",
+    "  xxxxxxxxxxxxxxxxxxxxxxx  "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_vaults_end_grunt_cloverleaf"
+}

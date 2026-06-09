@@ -1,0 +1,42 @@
+{
+  "name": "vault_elf_0061",
+  "size": [
+    13,
+    14
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "elf",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "no_item_gen"
+  ],
+  "grid": [
+    "      .      ",
+    "xxxx.....xxxx",
+    "xx.........xx",
+    "x...........x",
+    "x...........x",
+    "......2......",
+    ".............",
+    "....2...2....",
+    ".............",
+    "......2......",
+    "x...........x",
+    "x...........x",
+    "xx.........xx",
+    "xxxx.....xxxx"
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_blade_bullseye"
+}

@@ -1,0 +1,46 @@
+{
+  "name": "vault_spider_0076",
+  "size": [
+    11,
+    12
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "spider"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "no_monster_gen"
+  ],
+  "grid": [
+    "....x      ",
+    "....xx     ",
+    "xx...xx    ",
+    " xx...xxx  ",
+    "  x.....x  ",
+    "  xx....xx ",
+    "   x.....xx",
+    "   xx...11x",
+    "    xx...1x",
+    "     xx.11x",
+    "      xxx1x",
+    "        xxx"
+  ],
+  "spawns": {
+    "1": {
+      "enemy_pool": [
+        "redback",
+        "wolf_spider"
+      ]
+    }
+  },
+  "_original_dcss_id": "des_spider_nest_entry_funnel_web"
+}

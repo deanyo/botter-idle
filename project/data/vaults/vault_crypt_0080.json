@@ -1,0 +1,34 @@
+{
+  "name": "vault_crypt_0080",
+  "size": [
+    11,
+    7
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "crypt",
+    "dungeon"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [
+    "transparent"
+  ],
+  "grid": [
+    "xxxxxxxxxxx",
+    "x...xxx...x",
+    "...........",
+    "...........",
+    "...........",
+    "x...xxx...x",
+    "xxxxxxxxxxx"
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_crypt_staircase_of_the_dead"
+}

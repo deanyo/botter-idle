@@ -1,0 +1,40 @@
+{
+  "name": "vault_elf_0107",
+  "size": [
+    13,
+    14
+  ],
+  "orient": "float",
+  "categories": [
+    "ported"
+  ],
+  "themes": [
+    "dungeon",
+    "elf",
+    "vaults"
+  ],
+  "floor_range": [
+    1,
+    10
+  ],
+  "weight": 10,
+  "tags": [],
+  "grid": [
+    "     ...     ",
+    "     ...     ",
+    "  xxx...xxx  ",
+    "  x.......x  ",
+    "  x.......x  ",
+    " ....2.2.... ",
+    ".............",
+    " ....2.2.... ",
+    "  x.......x  ",
+    "  x.......x  ",
+    "  xxx...xxx  ",
+    "    x...x    ",
+    "    xx.xx    ",
+    "      .      "
+  ],
+  "spawns": {},
+  "_original_dcss_id": "des_nicolae_vaults_blade_armed_guards"
+}
