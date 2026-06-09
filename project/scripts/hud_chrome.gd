@@ -1270,9 +1270,10 @@ func _add_label_to(parent: Node, t: String, x: int, y: int, size: int, color: Co
 var _last_hp: int = -1
 var _last_max_hp: int = -1
 var _last_lvl: int = -1
-# Stale-period suppressor — feed StatCalc only when an equip changed.
-# StatPanel itself diffs the dict, but skipping the recompute call
-# saves a Dictionary allocation per frame.
+# Stale-period suppressor — feed StatCalc only when an input changed.
+# Pre-fix this called SaveState.load_state (file open + JSON parse) plus
+# StatCalc.compute every frame even when nothing relevant changed; the
+# audit flagged it as the dominant per-frame stall during waves.
 var _last_equip_hash_for_stats: int = 0
 
 func update_stats(bot_ref: Bot, place_str: String, _turn: int) -> void:
@@ -1295,15 +1296,26 @@ func update_stats(bot_ref: Bot, place_str: String, _turn: int) -> void:
 		hp_bar_fill.color = COL_HP_LOW if hp_pct < 0.3 else COL_HP
 		_last_hp = bot_ref.hp
 		_last_max_hp = bot_ref.max_hp
-	# Stats tab — recompute via StatCalc only when the equip / level /
-	# gold / xp changed. StatPanel.render diffs each row internally.
+	# Stats tab — recompute only when something feeding StatCalc has
+	# actually changed. bot.upgrade_state is the live save dict by
+	# reference (set in Bot.apply_gear), so we read it directly instead
+	# of reopening the JSON file every frame.
 	if _stat_panel_widget != null and is_instance_valid(_stat_panel_widget):
-		var save_state: Dictionary = SaveState.load_state()
-		var stats: Dictionary = StatCalc.compute(
-			bot_ref.equipped, _items_db_cache, save_state, bot_ref.species_id,
-			bot_ref.level, bot_ref.xp, bot_ref.gold, bot_ref.blessings,
-		)
-		_stat_panel_widget.render(stats)
+		var hash_keys: Array = [
+			bot_ref.equipped.hash(),
+			bot_ref.upgrade_state.hash(),
+			bot_ref.blessings.hash(),
+			bot_ref.species_id,
+			bot_ref.level, bot_ref.xp, bot_ref.gold,
+		]
+		var input_hash: int = hash_keys.hash()
+		if input_hash != _last_equip_hash_for_stats:
+			var stats: Dictionary = StatCalc.compute(
+				bot_ref.equipped, _items_db_cache, bot_ref.upgrade_state, bot_ref.species_id,
+				bot_ref.level, bot_ref.xp, bot_ref.gold, bot_ref.blessings,
+			)
+			_stat_panel_widget.render(stats)
+			_last_equip_hash_for_stats = input_hash
 
 func push_log(msg: String, tag: String = "combat") -> void:
 	# Beat 1: only loot-tagged messages render. Combat/etc are accepted but
