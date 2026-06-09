@@ -123,6 +123,7 @@ static func _finalize_loaded_wrapper(raw: Dictionary) -> Dictionary:
 		for k in _default().keys():
 			if not legacy.has(k):
 				legacy[k] = _default()[k]
+		_validate_loaded_state(legacy)
 		return {"characters": [legacy], "active": 0}
 	var chars: Array = raw.get("characters", [])
 	for ch in chars:
@@ -132,10 +133,57 @@ static func _finalize_loaded_wrapper(raw: Dictionary) -> Dictionary:
 		for k in _default().keys():
 			if not ch.has(k):
 				ch[k] = _default()[k]
+		_validate_loaded_state(ch)
 	if chars.is_empty():
 		chars.append(_default())
 	var active: int = clampi(int(raw.get("active", 0)), 0, chars.size() - 1)
 	return {"characters": chars, "active": active}
+
+# Walk equipped + inventory, evict any item whose base_id no longer
+# exists in items.json. Orphaned items are pushed to state.orphaned_items
+# so a player who started a build around (say) `urand_arc_blade` doesn't
+# wake up to find their weapon silently vanished — the entry is
+# recoverable as soon as the item is re-added to the catalog.
+#
+# Audit fix 2026-06-09: items.json churn is constant during dev (renames,
+# deletions). Pre-fix, equipping an orphan triggered cascading failures
+# in StatCalc / paperdoll / tooltips. Post-fix, the orphan is sidelined,
+# the slot is null, and a "N items hidden — saved separately" warning
+# surfaces via state.last_load_warnings.
+static func _validate_loaded_state(state: Dictionary) -> void:
+	var items_db: Dictionary = ItemsDb.items()
+	if items_db.is_empty():
+		# Loader running before ItemsDb is warmed (rare — main._ready
+		# preloads ItemsDb before scenes load). Skip rather than evict
+		# every item on a save written by a healthy build.
+		return
+	var equipped: Dictionary = state.get("equipped", {})
+	var orphans: Array = []
+	for slot: String in equipped.keys():
+		var inst: Variant = equipped[slot]
+		if typeof(inst) != TYPE_DICTIONARY:
+			continue
+		var base_id: String = String(inst.get("base_id", ""))
+		if base_id == "" or items_db.has(base_id):
+			continue
+		orphans.append(inst)
+		equipped[slot] = null
+	state["equipped"] = equipped
+	var inv: Array = state.get("inventory", [])
+	var kept: Array = []
+	for inst in inv:
+		if typeof(inst) != TYPE_DICTIONARY:
+			continue
+		var base_id: String = String(inst.get("base_id", ""))
+		if base_id == "" or items_db.has(base_id):
+			kept.append(inst)
+		else:
+			orphans.append(inst)
+	if not orphans.is_empty():
+		var prior: Array = state.get("orphaned_items", [])
+		state["orphaned_items"] = prior + orphans
+		state["inventory"] = kept
+		last_load_warnings.append("orphan_items_count_%d" % orphans.size())
 
 # Move a corrupted file to .corrupted-<unix_ts> so the next write doesn't
 # clobber it. Best-effort — failure to rename does NOT abort the load
@@ -598,6 +646,12 @@ static func _default() -> Dictionary:
 		"bot_upgrades": {},
 		"shards": 0,
 		"last_seen_timestamp": 0,
+		# Items whose base_id was removed from items.json since the save
+		# was written. _validate_loaded_state moves them here so the
+		# player isn't silently robbed of build-defining gear when an
+		# item is renamed or deleted between builds. Recoverable when
+		# the base_id reappears.
+		"orphaned_items": [],
 		# Shop state — rotating real-time stock + daily modifier. The
 		# shop refreshes every SHOP_REFRESH_SECS (~15 minutes) measured
 		# against last_refresh_ts. Stock is an array of item instances

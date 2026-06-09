@@ -293,6 +293,84 @@ func test_warnings_not_persisted_through_save_cycle() -> void:
 		"clean load surfaces no warnings")
 
 # ---------------------------------------------------------------------
+# Orphan base_id validation — _validate_loaded_state
+# ---------------------------------------------------------------------
+
+func test_orphan_equipped_item_pushed_to_orphaned_items() -> void:
+	# Save with an equipped item whose base_id doesn't exist in items.json.
+	# Loader should null the slot, push the orphan to orphaned_items, and
+	# surface an orphan_items_count warning.
+	var save := SaveState._default()
+	save["equipped"]["weapon"] = {
+		"base_id": "definitely_not_a_real_item_id_xyz",
+		"instance_id": "orphan_inst_1",
+		"affixes": [],
+	}
+	var wrapper := {"characters": [save], "active": 0}
+	var f := FileAccess.open(SaveState.DEBUG_PATH, FileAccess.WRITE)
+	f.store_string(JSON.stringify(wrapper))
+	f.close()
+	var loaded := SaveState.load_state()
+	assert_eq(loaded["equipped"]["weapon"], null,
+		"orphan slot nulled")
+	var orphans: Array = loaded.get("orphaned_items", [])
+	assert_eq(orphans.size(), 1, "1 orphan preserved")
+	assert_eq(String(orphans[0]["base_id"]), "definitely_not_a_real_item_id_xyz",
+		"orphan base_id intact for forensic recovery")
+	var warnings: Array = loaded.get("last_load_warnings", [])
+	var saw_orphan_warning := false
+	for w: String in warnings:
+		if w.begins_with("orphan_items_count_"):
+			saw_orphan_warning = true
+	assert_true(saw_orphan_warning, "orphan_items_count warning surfaced")
+
+func test_real_equipped_item_not_evicted() -> void:
+	# A real items.json id (rusty_dagger from the starter armor / weapon
+	# pair) must not be evicted. Sanity check that the validator isn't
+	# false-positive evicting healthy saves.
+	var save := SaveState._default()
+	# Default already has rusty_dagger equipped. Save and reload.
+	var wrapper := {"characters": [save], "active": 0}
+	var f := FileAccess.open(SaveState.DEBUG_PATH, FileAccess.WRITE)
+	f.store_string(JSON.stringify(wrapper))
+	f.close()
+	var loaded := SaveState.load_state()
+	assert_not_null(loaded["equipped"]["weapon"], "real item not evicted")
+	assert_eq(String(loaded["equipped"]["weapon"]["base_id"]), "rusty_dagger",
+		"real item identity preserved")
+	assert_eq(int(loaded.get("orphaned_items", []).size()), 0,
+		"no orphans for a healthy save")
+
+func test_orphan_inventory_item_pushed_to_orphaned_items() -> void:
+	# Inventory side of orphan eviction — the kept array must shrink and
+	# the orphan must end up on orphaned_items, not lost.
+	var save := SaveState._default()
+	save["inventory"] = [
+		{
+			"base_id": "rusty_dagger",  # real
+			"instance_id": "real_inv_1",
+			"affixes": [],
+		},
+		{
+			"base_id": "another_definitely_not_real_item_xyz",
+			"instance_id": "orphan_inv_1",
+			"affixes": [],
+		},
+	]
+	var wrapper := {"characters": [save], "active": 0}
+	var f := FileAccess.open(SaveState.DEBUG_PATH, FileAccess.WRITE)
+	f.store_string(JSON.stringify(wrapper))
+	f.close()
+	var loaded := SaveState.load_state()
+	assert_eq(int(loaded["inventory"].size()), 1,
+		"orphan dropped from inventory; real item kept")
+	assert_eq(int(loaded.get("orphaned_items", []).size()), 1,
+		"orphan preserved on orphaned_items")
+	assert_eq(String(loaded["orphaned_items"][0]["base_id"]),
+		"another_definitely_not_real_item_xyz",
+		"orphan identity intact")
+
+# ---------------------------------------------------------------------
 # Schema version chain — versioned _migrate
 # ---------------------------------------------------------------------
 
