@@ -4,7 +4,77 @@ Point-in-time snapshot of what's actually shipping. Updated as we go. The
 durable rules and process live in `CLAUDE.md`; the roadmap and open work
 items live in `TODO.md`.
 
-Last refresh: 2026-06-09 (Tier 3 dungeon.gd split — first extraction
+Last refresh: 2026-06-09 (Tier 3 dungeon.gd split — second extraction
+shipped: HUDInventoryController pulled out of the 4167-LOC dungeon).
+
+`project/scripts/hud_inventory_controller.gd` is a RefCounted helper
+the dungeon owns. It carries the live HUD inventory state (`loot_segments`,
+`current_floor_segment_index`, `hud_inv_cache`, `hud_inventory_seeded`,
+`inventory_cap`, `run_salvaged_count`, `run_salvaged_gold`,
+`pending_salvage_check`, `slot_cooldowns`) and the methods that mutate
+it: `init_run`, `complete_loot_pickup`, `flush_pending_drops`,
+`maybe_auto_salvage`, `maybe_auto_salvage_if_pending`,
+`try_equip_from_segment`, `instance_at_segment_idx`, `handle_drag_drop`,
+`handle_unequip_request`, `append_to_active_segment`,
+`tick_cooldowns`, `push_inventory_to_hud`. The drag-equip surface
+(`_hud_drag_equip_by_instance_id`, `_hud_drag_equip_at`,
+`_hud_drag_equip_from_inv`, `_hud_drag_swap_slots`,
+`_equip_to_explicit_slot`, `_resolve_equip_slot_for`) is private to the
+controller. The `STARTER_IDS` const and `EQUIP_COOLDOWN_SECONDS` move
+with it. Behavior is a strict copy — no tuning or balance changes ride
+the extraction.
+
+Two load-bearing fixes survive the move verbatim:
+* **Chest-loot-loss** (commit `f80376b`) — `flush_pending_drops` folds
+  in-flight LootDrops into the active segment via a Callable provider
+  the dungeon hands the controller. The `_on_inv_drop_folded` callback
+  keeps `floor_loot_picked` + `dropped_items` in sync on the dungeon
+  side (those counters live there, not on the controller).
+* **Click-duplication guard** — `instance_at_segment_idx` + the
+  `prev_inst_id` / `now_inst_id` snapshots in every equip path.
+  HUD chrome still calls `equip_request_target.try_equip_from_segment`
+  + `instance_at_segment_idx` by name; dungeon keeps thin forwarders
+  so chrome doesn't need to learn about the controller.
+
+`dungeon.gd` shrank 4167 → 3727 (-440 lines). Signal connect
+(`chrome.hud_drag_drop` / `chrome.hud_unequip_requested`) still
+targets the dungeon, which forwards into the controller. Per-frame
+`_tick_equip_cooldowns(delta)` calls `inv.tick_cooldowns(delta)`.
+`flush_to_save` and `_end_run` read `inv.hud_inv_cache` and
+`inv.run_salvaged_*` for serialization. Run-init creates the
+controller once and re-binds it on subsequent runs (Bot is fresh
+each run) via `bind(bot, items_db, chrome)`.
+
+Test foundation extended: `test_hud_inventory_controller.gd` 18 tests
+covering segment shape (init_run seeds Base + cap, complete_loot_pickup
+lazy-creates the floor segment, reuses on subsequent picks),
+flush_pending_drops happy path + chest-loss edge case (no walk-pickup
+yet → segment lazy-created), auto-salvage walking oldest-first,
+skipping favorites + STARTER_IDS + above-filter rarity, and
+maybe_auto_salvage_if_pending clearing the deferred-flag. The
+click-duplication guard is locked down via three
+`instance_at_segment_idx` cases including the post-shift stale read.
+Cooldown tick decay + eviction. `_stub_bot.gd` provides the minimal
+Bot surface the salvage path needs without dragging in Actor's rig.
+GUT 73 → 91 tests, ~2544 → ~2599 asserts. Suite still ~3s headless.
+
+Validation: GUT 91/91 pass post-extraction.
+`tools/check_before_commit.sh` all 5 steps pass. Manual mortal T1
+3-run grind (preset t1, --mortal): 215 loot pickups, 1 sewer portal
+entered (chest-open path exercised), 1949+137+979 kills, 0 errors,
+0 stalls. Auto-salvage exercised inline (run 1 cap=50 with 133
+loot rolls, run 3 with 71 + base inventory). Inventory pipeline
+behaves identically to pre-extraction within run-to-run RNG
+variance.
+
+Next dungeon.gd extraction: DebugDump (pure dev-tool, no shipping
+surface — moves the floor-dump JSON serializer + clipboard helpers
+out). Each session shrinks dungeon.gd by ~400-600 lines and doesn't
+touch anything else.
+
+---
+
+Earlier 2026-06-09 (Tier 3 dungeon.gd split — first extraction
 shipped: LootFactory pulled out of the 4492-LOC god-class).
 
 `project/scripts/loot_factory.gd` is a pure static utility class
@@ -44,9 +114,6 @@ all 5 steps pass. Manual mortal T1 3-run grind: 174 loot drops, 1
 trove portal entered (chest-open path exercised), 1046+119+1302
 kills, 0 errors, 0 stalls. Loot pipeline behaves identically to
 pre-extraction within run-to-run RNG variance.
-
-Next dungeon.gd extraction: HUDInventoryController. Each session
-shrinks dungeon.gd by ~600 lines and doesn't touch anything else.
 
 ---
 

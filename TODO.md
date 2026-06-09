@@ -18,11 +18,12 @@ The single source of truth for "what's the live work" is
 `~/claude/game-audit/prompts/SESSION.md` section 6 — read that for the
 current session's full inline brief.
 
-- **Tier 3 dungeon split — LootFactory (next session).** First god-class
-  extraction. Test foundation + save durability prerequisites both
-  shipped. Multi-session effort; LootFactory is item #1 of 6
-  (HUDInventoryController, DebugDump, RunState, WaveSpawner, Showcase
-  follow). Full brief in
+- **Tier 3 dungeon split — DebugDump (next session).** Third god-class
+  extraction. LootFactory + HUDInventoryController shipped (commits
+  `e8aa0f5`, this session). DebugDump is the pure dev-tool floor-dump
+  JSON serializer + clipboard helpers — no shipping surface, low
+  blast radius. Multi-session effort; remaining order is DebugDump,
+  RunState, WaveSpawner, Showcase. Full brief in
   `~/claude/game-audit/prompts/tier3_dungeon_split.md`.
 
 ---

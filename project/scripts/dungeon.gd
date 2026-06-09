@@ -127,17 +127,16 @@ var active_modifiers: Array = []
 # them. _boss_floor always equals _floors_per_run (boss is final floor).
 var _floors_per_run: int = 6
 var _boss_floor: int = 6
-# Inventory cap drives auto-salvage when the bag fills up. Run-cached so
-# the per-pickup check doesn't re-read disk. _run_salvaged_* track the
-# stats reported in the run summary.
-var _inventory_cap: int = 50
-var _run_salvaged_count: int = 0
-var _run_salvaged_gold: int = 0
-# Auto-salvage runs deferred (floor end + run end) so each individual
-# pickup never pays for the segment-shrink HUD rebuild. The previous
-# inline call ran on every pickup once cap was hit, which was the
-# loot-pickup stutter the user reported.
-var _pending_salvage_check: bool = false
+# Live HUD inventory + auto-salvage + drag-drop equip surface. Owns
+# loot_segments / hud_inv_cache / slot_cooldowns / inventory_cap /
+# run_salvaged_* state. Extracted from dungeon.gd 2026-06-09 (Tier 3
+# god-class split, follow-up to LootFactory). Accessed through thin
+# forwarders below; chrome-side signals still target `self` so the HUD
+# doesn't need to know the controller exists. Preloaded (instead of
+# class_name reference) so dungeon.gd parses on a fresh editor / CLI
+# launch before the global script class cache catches up.
+const _HUDInventoryControllerScript := preload("res://scripts/hud_inventory_controller.gd")
+var inv: RefCounted = null
 const MAX_TICKS_WITHOUT_MOVE := 30
 var chrome: HudChrome = null
 var run_turn: int = 0
@@ -274,23 +273,21 @@ func _start_run() -> void:
 	# Cache loot filter rank for the run — LootDrop.should_skip reads it
 	# in the AI hot path so we don't want a disk hit there.
 	LootDrop.loot_filter_min_rank = LootDrop.RARITY_RANK.get(String(save.get("loot_filter", "common")), 0)
-	_inventory_cap = int(save.get("inventory_cap", 50)) + int(BotUpgrades.total_for_stat(save, "inventory_cap"))
-	_run_salvaged_count = 0
-	_run_salvaged_gold = 0
 	# Seed the live inventory with the player's stash. The HUD renders this
 	# as a "Base" section; loot picked up this run appends as Floor-N
 	# sections below it.
-	_loot_segments.clear()
-	_loot_segments.append({"header": "Base", "items": save.get("inventory", []).duplicate(true)})
-	_current_floor_segment_index = -1
-	_slot_cooldowns.clear()
-	_hud_inventory_seeded = false
-	_rebuild_inv_cache()
+	if inv == null:
+		inv = _HUDInventoryControllerScript.new(bot, items_db, chrome)
+		inv.set_log_callback(_log)
+		inv.set_pending_drops_provider(_pending_drops_for_inv, _on_inv_drop_folded)
+	else:
+		inv.bind(bot, items_db, chrome)
+	inv.init_run(save)
 	# Push once so the HUD shows the base inventory before any loot drops.
 	# (chrome may not exist yet on the first frame; the HUD's _ensure path
 	# will pick this up on its next update_biome_hud tick.)
 	if chrome != null:
-		_push_inventory_to_hud()
+		inv.push_inventory_to_hud()
 	GrindLog.log_line("[run] start hp=%d/%d level=%d gold=%d seed=%d" % [bot.hp, bot.max_hp, bot.level, bot.gold, rng.seed])
 	_build_floor()
 
@@ -342,7 +339,8 @@ func _async_build_floor() -> void:
 	_fog_dirty = true
 	_cached_world_lights_valid = false
 	# Each floor opens a new loot segment lazily — first pickup creates it.
-	_current_floor_segment_index = -1
+	if inv != null:
+		inv.clear_current_floor_segment()
 	_last_equipped_hash = 0
 	floor_kills = 0
 	floor_loot_picked = 0
@@ -1194,275 +1192,41 @@ func _ensure_hud() -> void:
 	# spells mid-run by dragging from inventory onto a paperdoll slot.
 	chrome.hud_drag_drop.connect(_on_hud_drag_drop)
 	chrome.hud_unequip_requested.connect(_on_hud_unequip_requested)
+	# HUDInventoryController was constructed in _start_run with chrome=null
+	# (chrome is built lazily on the first _update_biome_hud tick, AFTER
+	# _start_run runs). Re-bind now so push_inventory_to_hud and
+	# update_cooldowns see the live chrome — without this the bag never
+	# rendered the inventory mid-run (the seed-once first_tick_seed call
+	# would no-op against a null chrome). 2026-06-09 hotfix.
+	if inv != null:
+		inv.bind(bot, items_db, chrome)
 	if chrome.has_signal("debug_dump_requested"):
 		chrome.debug_dump_requested.connect(_on_debug_dump_requested)
 
 # DragManager fired drag_ended; HUD bubbled the payload + dst_slot up.
-# Routes both inventory→paperdoll and paperdoll→paperdoll through the
-# same code paths the click-equip uses (try_equip_from_segment +
-# bot.equip_from_inventory) so the segment math + 2H exclusion + cache
-# rebuild stay consistent. Without this, the drag-drop path fragmented
-# the segment list and double-appended items.
+# Forwards into HUDInventoryController which owns the segment math +
+# 2H exclusion + cache rebuild. Don't double-rebuild here: the next
+# _update_biome_hud tick will see bot.equipped's hash change and call
+# update_equipped exactly once. Calling it here AND resetting the
+# hash caused two full paperdoll rebuilds back-to-back. 2026-06-06
+# perf fix.
 func _on_hud_drag_drop(payload: Dictionary, dst_slot: String) -> void:
-	if not is_instance_valid(bot):
+	if inv == null:
 		return
-	var src_role: String = String(payload.get("role", ""))
-	if src_role == "inventory":
-		# Resolve by instance_id (authoritative) — falls back to
-		# flat_inv_index only when the payload doesn't carry an id.
-		# Stale flat_inv_index from drag-start time was the
-		# "drag a targe, equipped a tattered hide" cross-wire bug;
-		# instance_id is set on the source instance dict and survives
-		# any segment shrink/reorder. 2026-06-05 corruption fix.
-		var iid: String = String(payload.get("instance_id", ""))
-		if iid != "":
-			_hud_drag_equip_by_instance_id(iid, dst_slot)
-		else:
-			_hud_drag_equip_from_inv(int(payload.get("inv_index", -1)), dst_slot)
-	elif src_role == "paperdoll":
-		_hud_drag_swap_slots(String(payload.get("slot_id", "")), dst_slot)
-	# Don't double-rebuild: the next _update_biome_hud tick will see
-	# bot.equipped's hash change and call update_equipped exactly once.
-	# Calling it here AND resetting the hash caused two full paperdoll
-	# rebuilds back-to-back. 2026-06-06 perf fix.
-	_push_inventory_to_hud()
+	inv.handle_drag_drop(payload, dst_slot)
 	_last_equipped_hash = 0
 
-# Mid-run unequip — HUD sent the slot, we move the item back to the
-# active loot segment so it shows up in the bag. Updates bot.equipped
-# directly + rebuilds the inv cache so the bag re-renders cleanly.
+# Mid-run unequip — HUD sent the slot, controller moves the item back
+# to the active loot segment so it shows up in the bag. Single-rebuild:
+# let _update_biome_hud's hash detect the change.
 func _on_hud_unequip_requested(slot_id: String) -> void:
-	if not is_instance_valid(bot):
+	if inv == null:
 		return
-	var current: Variant = bot.equipped.get(slot_id, null)
-	if current == null or typeof(current) != TYPE_DICTIONARY:
-		return
-	bot.equipped[slot_id] = null
-	bot.recompute_stats()
-	bot._refresh_gear_overlays()
-	_append_to_active_segment(current)
-	_rebuild_inv_cache()
-	# Single-rebuild: let _update_biome_hud's hash detect the change.
-	_push_inventory_to_hud()
+	inv.handle_unequip_request(slot_id)
 	_last_equipped_hash = 0
-
-# Inventory → paperdoll (drag). Find the segment that owns the flat
-# inv_index, hand the item to bot.equip_from_inventory (which handles
-# slot routing + 2H exclusion + recompute_stats), and place displaced
-# items back at the SOURCE segment so the inventory order stays
-# stable. Mirrors try_equip_from_segment exactly.
-# Authoritative drag-equip resolver — finds the source item by its
-# instance_id rather than by a stale flat_inv_index. Walks every
-# segment's items array, equips the first match. instance_id is unique
-# (minted at drop time, preserved across save/load), so this is the
-# safest route. 2026-06-05.
-func _hud_drag_equip_by_instance_id(instance_id: String, dst_slot: String) -> void:
-	for seg_i in _loot_segments.size():
-		var items: Array = _loot_segments[seg_i].get("items", [])
-		for item_i in items.size():
-			var inst: Variant = items[item_i]
-			if typeof(inst) != TYPE_DICTIONARY:
-				continue
-			if String(inst.get("instance_id", "")) == instance_id:
-				_hud_drag_equip_at(seg_i, item_i, dst_slot)
-				return
-
-# Shared body — used by both _hud_drag_equip_by_instance_id and
-# _hud_drag_equip_from_inv. Equips items[seg_idx][item_idx] into
-# dst_slot with all the same guards (cooldown, species block, 2H/shield
-# exclusion, no-op detection). 2026-06-05.
-func _hud_drag_equip_at(src_seg_idx: int, src_local_idx: int, dst_slot: String) -> void:
-	if src_seg_idx < 0 or src_seg_idx >= _loot_segments.size():
-		return
-	var src_items: Array = _loot_segments[src_seg_idx].get("items", [])
-	if src_local_idx < 0 or src_local_idx >= src_items.size():
-		return
-	var inst: Variant = src_items[src_local_idx]
-	if typeof(inst) != TYPE_DICTIONARY:
-		return
-	var cd: float = float(_slot_cooldowns.get(dst_slot, 0.0))
-	if cd > 0.0:
-		_log("Equip on cooldown: %s (%.0fs left)" % [dst_slot.capitalize(), cd], "combat")
-		return
-	var item: Dictionary = items_db.get(String(inst.get("base_id", "")), {})
-	if item.is_empty():
-		return
-	var prev_inst_id: String = ""
-	var prev_inst: Variant = bot.equipped.get(dst_slot, null)
-	if typeof(prev_inst) == TYPE_DICTIONARY:
-		prev_inst_id = String(prev_inst.get("instance_id", ""))
-	var displaced_arr: Array = _equip_to_explicit_slot(inst, dst_slot)
-	var now_inst: Variant = bot.equipped.get(dst_slot, null)
-	var now_inst_id: String = ""
-	if typeof(now_inst) == TYPE_DICTIONARY:
-		now_inst_id = String(now_inst.get("instance_id", ""))
-	if displaced_arr.is_empty() and now_inst_id == prev_inst_id:
-		return
-	src_items.remove_at(src_local_idx)
-	for d in displaced_arr:
-		if typeof(d) == TYPE_DICTIONARY:
-			src_items.append(d)
-	_slot_cooldowns[dst_slot] = EQUIP_COOLDOWN_SECONDS
-	_rebuild_inv_cache()
-
-func _hud_drag_equip_from_inv(flat_inv_index: int, dst_slot: String) -> void:
-	if flat_inv_index < 0 or flat_inv_index >= _hud_inv_cache.size():
-		return
-	# Find source segment + local index from the flat index.
-	var src_seg_idx: int = -1
-	var src_local_idx: int = -1
-	var offset: int = 0
-	for i in _loot_segments.size():
-		var items: Array = _loot_segments[i].get("items", [])
-		if flat_inv_index < offset + items.size():
-			src_seg_idx = i
-			src_local_idx = flat_inv_index - offset
-			break
-		offset += items.size()
-	if src_seg_idx < 0 or src_local_idx < 0:
-		return
-	var src_items: Array = _loot_segments[src_seg_idx].get("items", [])
-	var inst: Variant = src_items[src_local_idx]
-	if typeof(inst) != TYPE_DICTIONARY:
-		return
-	# Per-slot cooldown gate (mirrors try_equip_from_segment so click
-	# and drag honour the same equip cadence).
-	var cd: float = float(_slot_cooldowns.get(dst_slot, 0.0))
-	if cd > 0.0:
-		_log("Equip on cooldown: %s (%.0fs left)" % [dst_slot.capitalize(), cd], "combat")
-		return
-	# Force the bot's resolver to write into the EXPLICIT dst_slot the
-	# user picked — without this, dragging a spell onto spell3 would
-	# auto-route into spell1 if it was empty. Cache + restore the
-	# instance's "slot" field briefly to short-circuit the resolver.
-	var item: Dictionary = items_db.get(String(inst.get("base_id", "")), {})
-	if item.is_empty():
-		return
-	# Snapshot whatever was in the slot BEFORE the equip attempt so we
-	# can detect a true no-op (block hit upstream — species, cooldown,
-	# etc.) by comparing the slot's instance_id afterwards. Comparing
-	# `bot.equipped[dst_slot] != inst` was incorrect because
-	# `_equip_to_explicit_slot` deep-duplicates the inst into the slot,
-	# so the check ALWAYS fired on a successful equip into an empty
-	# slot — leaving the inventory copy in place AND a duplicate on the
-	# bot. Source of the duplication bug. UI polish 2026-06-04.
-	var prev_inst_id: String = ""
-	var prev_inst: Variant = bot.equipped.get(dst_slot, null)
-	if typeof(prev_inst) == TYPE_DICTIONARY:
-		prev_inst_id = String(prev_inst.get("instance_id", ""))
-	var displaced_arr: Array = _equip_to_explicit_slot(inst, dst_slot)
-	var now_inst: Variant = bot.equipped.get(dst_slot, null)
-	var now_inst_id: String = ""
-	if typeof(now_inst) == TYPE_DICTIONARY:
-		now_inst_id = String(now_inst.get("instance_id", ""))
-	# A successful equip always changes the instance_id in the slot.
-	# If displaced is empty AND the slot looks unchanged, the equip
-	# was rejected by an upstream block — leave the inventory alone.
-	if displaced_arr.is_empty() and now_inst_id == prev_inst_id:
-		return
-	src_items.remove_at(src_local_idx)
-	for d in displaced_arr:
-		if typeof(d) == TYPE_DICTIONARY:
-			src_items.append(d)
-	_slot_cooldowns[dst_slot] = EQUIP_COOLDOWN_SECONDS
-	_rebuild_inv_cache()
-
-# Equip an inventory instance into an EXPLICIT slot (no auto-routing).
-# Returns displaced items the same way bot.equip_from_inventory does
-# so callers can reinsert them. Used by the drag-drop path; the click
-# path keeps using bot.equip_from_inventory which auto-routes.
-func _equip_to_explicit_slot(inst: Dictionary, dst_slot: String) -> Array:
-	if not is_instance_valid(bot):
-		return []
-	var item: Dictionary = items_db.get(String(inst.get("base_id", "")), {})
-	if item.is_empty():
-		return []
-	# Slot-family hard guard. The hover-time check in
-	# hud_chrome._paperdoll_accepts_drop should already reject
-	# mismatched drops, but a stale payload / corrupted inventory cell
-	# could route an amulet onto the weapon slot. Reject defensively
-	# so we never equip an item into a slot it doesn't belong in.
-	# 2026-06-05 corruption fix.
-	var item_slot: String = String(item.get("slot", ""))
-	if item_slot == "":
-		return []
-	var dst_family: String = dst_slot
-	if dst_slot.begins_with("ring"):
-		dst_family = "ring"
-	elif dst_slot.begins_with("spell"):
-		dst_family = "spell"
-	if item_slot != dst_family:
-		return []
-	# Species body-shape block.
-	if not dst_slot.begins_with("spell") and not SpeciesData.can_wear(bot.species_id, dst_slot):
-		return []
-	var displaced: Array = []
-	# 2H/dual ↔ shield exclusion (gear slots only). Routes through
-	# is_two_handed(item) so dual-wield uniques (Gyre) trigger the
-	# same shield-exclusion as 2H weapons. 2026-06-05.
-	if dst_slot == "weapon" and Bot.is_two_handed(item):
-		var s: Variant = bot.equipped.get("shield", null)
-		if s != null and typeof(s) == TYPE_DICTIONARY:
-			displaced.append(s)
-			bot.equipped["shield"] = null
-	elif dst_slot == "shield":
-		var w: Variant = bot.equipped.get("weapon", null)
-		if w != null and typeof(w) == TYPE_DICTIONARY:
-			var w_id: String = String(w.get("base_id", ""))
-			if w_id != "" and items_db.has(w_id):
-				if Bot.is_two_handed(items_db[w_id]):
-					displaced.append(w)
-					bot.equipped["weapon"] = null
-	# Direct displace into dst_slot.
-	var prev: Variant = bot.equipped.get(dst_slot, null)
-	if prev != null and typeof(prev) == TYPE_DICTIONARY:
-		displaced.append(prev)
-	bot.equipped[dst_slot] = inst.duplicate(true)
-	var prev_max: int = bot.max_hp
-	bot.recompute_stats()
-	bot.hp = clampi(bot.hp + (bot.max_hp - prev_max), 0, bot.max_hp)
-	bot._update_hp_bar()
-	bot._refresh_gear_overlays()
-	return displaced
-
-func _hud_drag_swap_slots(src_slot: String, dst_slot: String) -> void:
-	if src_slot == "" or src_slot == dst_slot:
-		return
-	var a: Variant = bot.equipped.get(src_slot, null)
-	if a == null or typeof(a) != TYPE_DICTIONARY:
-		return
-	var b: Variant = bot.equipped.get(dst_slot, null)
-	bot.equipped[dst_slot] = a
-	bot.equipped[src_slot] = b if (b != null and typeof(b) == TYPE_DICTIONARY) else null
-	bot.recompute_stats()
-	bot._refresh_gear_overlays()
-
-# Append `inst` to the active floor segment if one exists, else
-# segment 0 (Base). Used by mid-run unequip + drag-drop displaced
-# items. Keeps newly-displaced gear discoverable on the current
-# floor instead of polluting the base inventory.
-func _append_to_active_segment(inst: Dictionary) -> void:
-	if _loot_segments.is_empty():
-		return
-	var idx: int = _current_floor_segment_index if (_current_floor_segment_index >= 0 and _current_floor_segment_index < _loot_segments.size()) else 0
-	_loot_segments[idx]["items"].append(inst)
 
 var _hud_full_refresh_accum: float = 0.0
 var _last_equipped_hash: int = 0
-# Inventory presented to the player. Segmented so the HUD can render a
-# Base section + one section per floor that produced loot. Each segment is
-# {header: String, items: Array[Dictionary]}. Mutating the items array
-# (equip / loot) updates the HUD next frame; segments are never collapsed
-# during a run so the player can see "what came from where" at a glance.
-var _loot_segments: Array = []
-var _current_floor_segment_index: int = -1
-# Mirror used at run end to compute the flat saved inventory. Equals the
-# concatenation of every segment's items, in order.
-var _hud_inv_cache: Array = []
-var _hud_inventory_seeded: bool = false
-# Per-slot equip cooldowns in seconds. Decremented every _process tick.
-var _slot_cooldowns: Dictionary = {}
-const EQUIP_COOLDOWN_SECONDS := 30.0
 
 func _update_biome_hud() -> void:
 	_ensure_hud()
@@ -1482,12 +1246,11 @@ func _update_biome_hud() -> void:
 	if eq_changed:
 		chrome.update_equipped(bot.equipped if is_instance_valid(bot) else {}, items_db, bot.species_id if is_instance_valid(bot) else "")
 		_last_equipped_hash = equipped_hash
-	# Inventory updates are pushed via _push_inventory_to_hud() whenever
-	# segments mutate (loot pickup, equip). First-tick push covers the case
-	# where the chrome wasn't ready when the run started.
-	if not _hud_inventory_seeded:
-		_push_inventory_to_hud()
-		_hud_inventory_seeded = true
+	# Inventory updates are pushed by HUDInventoryController whenever
+	# segments mutate (loot pickup, equip). First-tick push covers the
+	# case where the chrome wasn't ready when the run started.
+	if inv != null:
+		inv.first_tick_seed()
 	# Minimap — every 0.25s is plenty for visualizing bot motion.
 	if _hud_full_refresh_accum >= 0.25:
 		_hud_full_refresh_accum = 0.0
@@ -2814,17 +2577,9 @@ func _complete_loot_pickup(drop: LootDrop) -> void:
 	PerfMon.note_spike_context("loot_pickup rarity=%s base=%s" % [String(item.get("rarity", "?")), String(item.get("base_id", inst.get("base_id", "?")))])
 	floor_loot_picked += 1
 	dropped_items.append(inst)
-	# Append into this floor's segment (lazy-create on first pickup).
-	_ensure_current_floor_segment()
-	(_loot_segments[_current_floor_segment_index].items as Array).append(inst)
-	_rebuild_inv_cache()
-	# Auto-salvage is deferred to floor-end / run-end so the HUD never
-	# pays the segment-shrink rebuild cost mid-combat. The cap is a
-	# soft cap during a run; the next descent / death flushes overflow.
-	# Inline call ran on every pickup once cap was hit, which was the
-	# loot stutter we tracked down.
-	_pending_salvage_check = true
-	_push_inventory_to_hud()
+	# Segment append + cache rebuild + HUD push live in HUDInventoryController.
+	if inv != null:
+		inv.complete_loot_pickup(inst, current_floor)
 	loot_log.append("Looted: [%s] %s" % [item.rarity, display_name])
 	_log("Found: %s [%s]" % [display_name, item.rarity], "loot")
 	loot_drops.erase(drop)
@@ -2841,24 +2596,6 @@ func _complete_loot_pickup(drop: LootDrop) -> void:
 	if bot.fx:
 		bot.fx.loot_pop()
 	drop.play_pickup_then_free()
-
-func _ensure_current_floor_segment() -> void:
-	if _current_floor_segment_index >= 0 and _current_floor_segment_index < _loot_segments.size():
-		return
-	_loot_segments.append({"header": "Floor %d" % current_floor, "items": []})
-	_current_floor_segment_index = _loot_segments.size() - 1
-
-func _rebuild_inv_cache() -> void:
-	# Flat mirror of every segment's items, in render order. Used at run
-	# end to write SaveState.inventory.
-	_hud_inv_cache.clear()
-	for seg in _loot_segments:
-		for inst in seg.get("items", []):
-			_hud_inv_cache.append(inst)
-
-func _push_inventory_to_hud() -> void:
-	if chrome != null:
-		chrome.update_inventory_segments(_loot_segments, items_db, _slot_cooldowns)
 
 # Pull this branch's rolled modifiers from save, clear them so the next
 # Outpost visit re-rolls fresh, and resolve floor count from any
@@ -2878,187 +2615,29 @@ func _resolve_active_modifiers() -> void:
 	_floors_per_run = C.FLOORS_PER_RUN + extra_floors
 	_boss_floor = _floors_per_run
 
-# Auto-salvage: when inventory exceeds cap, walk segments oldest-first
-# and convert items to gold until back under. Only salvages items with
-# rarity at-or-below loot_filter (so a player who set filter=epic doesn't
-# lose epic+ items). Starter gear is excluded — never salvage rusty_dagger
-# or tattered_hide. Per item: gold = LootFactory.salvage_value(rarity).
-const _STARTER_IDS := ["rusty_dagger", "tattered_hide"]
-
-func _maybe_auto_salvage() -> void:
-	if _hud_inv_cache.size() <= _inventory_cap:
-		return
-	# Salvage threshold = the player's loot filter. Items above filter
-	# rarity are protected; only filtered-or-below get sold.
-	var threshold_rank: int = LootDrop.loot_filter_min_rank
-	var gold_earned: int = 0
-	var salvaged_count: int = 0
-	# Walk segments oldest-first (Base segment first — that's the player's
-	# stash, which is correct for "salvage what's been sitting there
-	# longest"). Within a segment, walk items by index.
-	for seg in _loot_segments:
-		var items_arr: Array = seg.get("items", [])
-		var i: int = 0
-		while i < items_arr.size() and _hud_inv_cache.size() - salvaged_count > _inventory_cap:
-			var inst: Variant = items_arr[i]
-			if typeof(inst) != TYPE_DICTIONARY:
-				i += 1
-				continue
-			var base_id: String = String(inst.get("base_id", ""))
-			if base_id in _STARTER_IDS:
-				i += 1
-				continue
-			if not items_db.has(base_id):
-				i += 1
-				continue
-			# Favorited items are locked from auto-salvage. The user
-			# starred them deliberately — bulk salvage skips them
-			# regardless of rarity or filter setting.
-			if bool(inst.get("favorite", false)):
-				i += 1
-				continue
-			var item: Dictionary = items_db[base_id]
-			var rarity: String = String(item.get("rarity", "common"))
-			# Anything strictly above the filter is protected.
-			if LootDrop.RARITY_RANK.get(rarity, 0) > threshold_rank:
-				i += 1
-				continue
-			gold_earned += LootFactory.salvage_value(rarity)
-			salvaged_count += 1
-			items_arr.remove_at(i)
-			# Don't advance i — the next item shifted into this slot.
-		if _hud_inv_cache.size() - salvaged_count <= _inventory_cap:
-			break
-	if salvaged_count > 0:
-		bot.gold += gold_earned
-		_run_salvaged_count += salvaged_count
-		_run_salvaged_gold += gold_earned
-		_rebuild_inv_cache()
-		_push_inventory_to_hud()
-		_log("Salvaged %d items (+%d gold)." % [salvaged_count, gold_earned], "loot")
-
-# Player-initiated equip from the HUD inventory. Per-slot cooldown stops
-# the player from juggling identical items every tick to game positioning.
-# Returns true if the equip happened.
-# Identity probe used by the HUD to verify a click hasn't drifted to
-# a different item between rebuilds. Returns the instance_id at
-# (seg_idx, item_idx), or "" if out-of-range. UI polish 2026-06-04.
+# Identity probe used by the HUD chrome (still calls
+# `equip_request_target.instance_at_segment_idx` by name) — forwarder
+# into the controller so the chrome doesn't need to learn about it.
 func instance_at_segment_idx(seg_idx: int, item_idx: int) -> String:
-	if seg_idx < 0 or seg_idx >= _loot_segments.size():
+	if inv == null:
 		return ""
-	var items: Array = _loot_segments[seg_idx].get("items", [])
-	if item_idx < 0 or item_idx >= items.size():
-		return ""
-	var inst: Variant = items[item_idx]
-	if typeof(inst) != TYPE_DICTIONARY:
-		return ""
-	return String(inst.get("instance_id", ""))
+	return inv.instance_at_segment_idx(seg_idx, item_idx)
 
-# Mirrors bot.equip_from_inventory's slot resolver so try_equip_from_segment
-# can pre-snapshot the destination slot's instance_id before delegating.
-# Without this we couldn't tell "successfully equipped into empty slot"
-# from "blocked, did nothing." 2026-06-05.
-func _resolve_equip_slot_for(inst: Dictionary, item_slot: String) -> String:
-	if not is_instance_valid(bot):
-		return item_slot
-	if item_slot == "ring":
-		var ring_ids: Array = SpeciesData.ring_slot_ids(bot.species_id)
-		for r in ring_ids:
-			if bot.equipped.get(r, null) == null:
-				return r
-		return "ring"
-	if item_slot == "spell":
-		var spell_ids: Array = ["spell1", "spell2", "spell3", "spell4", "spell5"]
-		for s in spell_ids:
-			if bot.equipped.get(s, null) == null:
-				return s
-		return "spell1"
-	return item_slot
-
+# HUD chrome calls `equip_request_target.try_equip_from_segment(seg, idx)`
+# on click — forwarder into the controller. Equip changed → trigger
+# paperdoll refresh next frame via the existing equipped-hash compare
+# in _update_biome_hud.
 func try_equip_from_segment(seg_idx: int, item_idx: int) -> bool:
-	if seg_idx < 0 or seg_idx >= _loot_segments.size():
+	if inv == null:
 		return false
-	var seg: Dictionary = _loot_segments[seg_idx]
-	var items: Array = seg.get("items", [])
-	if item_idx < 0 or item_idx >= items.size():
-		return false
-	var inst: Variant = items[item_idx]
-	if typeof(inst) != TYPE_DICTIONARY:
-		return false
-	var base_id: String = String(inst.get("base_id", ""))
-	if not items_db.has(base_id):
-		return false
-	var slot: String = String(items_db[base_id].get("slot", ""))
-	if slot == "":
-		return false
-	# Per-slot cooldown gate.
-	var cd: float = float(_slot_cooldowns.get(slot, 0.0))
-	if cd > 0.0:
-		_log("Equip on cooldown: %s (%.0fs left)" % [slot.capitalize(), cd], "combat")
-		return false
-	if not is_instance_valid(bot):
-		return false
-	# Species can't wear this slot. Block early with a player-visible
-	# log so the click feels intentional rather than silently ignored.
-	if not SpeciesData.can_wear(bot.species_id, slot):
-		var sp_def: Dictionary = SpeciesData.get_def(bot.species_id)
-		_log("%s cannot wear %s." % [String(sp_def.get("name", "Bot")), slot.capitalize()], "combat")
-		return false
-	# Snapshot the destination slot's instance_id so we can detect a
-	# true no-op (species block, slot resolver missed, etc.). Without
-	# this guard the caller would unconditionally remove the picked
-	# item from inventory whether the equip succeeded or not.
-	# 2026-06-05 corruption fix.
-	#
-	# bot.equip_from_inventory returns [] for BOTH:
-	#   * blocked (species, missing data) — nothing equipped
-	#   * succeeded into an empty slot — nothing displaced
-	# We can't tell those apart from the return value alone, so check
-	# whether the slot's instance_id changed.
-	var resolved_slot: String = _resolve_equip_slot_for(inst, slot)
-	var prev_id: String = ""
-	var prev_inst: Variant = bot.equipped.get(resolved_slot, null)
-	if typeof(prev_inst) == TYPE_DICTIONARY:
-		prev_id = String(prev_inst.get("instance_id", ""))
-	# 2H ↔ shield exclusion can return up to TWO displaced items.
-	var displaced_arr: Array = bot.equip_from_inventory(inst)
-	var now_inst: Variant = bot.equipped.get(resolved_slot, null)
-	var now_id: String = ""
-	if typeof(now_inst) == TYPE_DICTIONARY:
-		now_id = String(now_inst.get("instance_id", ""))
-	# True no-op: nothing displaced AND the destination slot didn't
-	# change instance_id. Don't touch inventory.
-	if displaced_arr.is_empty() and now_id == prev_id:
-		return false
-	# Remove the picked item from its segment.
-	items.remove_at(item_idx)
-	# Stash all displaced items back at the same segment so the player
-	# can find them. Newest at the end so equipped→unequipped order
-	# is preserved.
-	for d in displaced_arr:
-		if typeof(d) == TYPE_DICTIONARY:
-			items.append(d)
-	_slot_cooldowns[slot] = EQUIP_COOLDOWN_SECONDS
-	_rebuild_inv_cache()
-	_push_inventory_to_hud()
-	# Equip changed → trigger paperdoll refresh next frame via the existing
-	# equipped-hash compare in _update_biome_hud.
-	_last_equipped_hash = 0
-	return true
+	var ok: bool = inv.try_equip_from_segment(seg_idx, item_idx)
+	if ok:
+		_last_equipped_hash = 0
+	return ok
 
 func _tick_equip_cooldowns(delta: float) -> void:
-	if _slot_cooldowns.is_empty():
-		return
-	for slot in _slot_cooldowns.keys():
-		var cd: float = float(_slot_cooldowns[slot]) - delta
-		if cd <= 0.0:
-			_slot_cooldowns.erase(slot)
-		else:
-			_slot_cooldowns[slot] = cd
-	# Lightweight per-frame refresh — only updates the paperdoll countdown
-	# labels, not the inventory grid (which would be wasteful every tick).
-	if chrome != null:
-		chrome.update_cooldowns(_slot_cooldowns)
+	if inv != null:
+		inv.tick_cooldowns(delta)
 
 func _on_chest_opened(chest: Chest, n: int, bias: int) -> void:
 	floor_chests_opened += 1
@@ -3210,13 +2789,25 @@ func _nearest_unvisited_room_center() -> Vector2i:
 func _room_center(r: Rect2i) -> Vector2i:
 	return Vector2i(r.position.x + int(r.size.x / 2.0), r.position.y + int(r.size.y / 2.0))
 
+# HUDInventoryController-side callbacks.
+# Provider: returns the live loot_drops array (filtered by the controller
+# for invalid/consumed/empty). Drops the controller folds into the
+# inventory get _on_inv_drop_folded called per drop so dungeon-side
+# counters (floor_loot_picked, dropped_items) stay in sync — these
+# live on the dungeon, not the controller.
+func _pending_drops_for_inv() -> Array:
+	return loot_drops
+
+func _on_inv_drop_folded(drop: LootDrop) -> void:
+	floor_loot_picked += 1
+	dropped_items.append(drop.instance)
+
 func _descend() -> void:
 	PerfMon.note_spike_context("descend f=%d" % current_floor)
 	# Flush any deferred auto-salvage now that the floor is over —
 	# the HUD rebuild happens during the load screen, not mid-combat.
-	if _pending_salvage_check:
-		_pending_salvage_check = false
-		_maybe_auto_salvage()
+	if inv != null:
+		inv.maybe_auto_salvage_if_pending()
 	# Per-floor summary line — one structured row per cleared floor. Emitted
 	# before floor_cleared so consumers see the data first.
 	var ticks: int = Engine.get_process_frames() - floor_start_tick
@@ -3283,32 +2874,11 @@ func _try_death_retreat(reason: String) -> bool:
 	bot.hp = bot.max_hp
 	bot._update_hp_bar()
 	# Reset to floor 1 of the same branch. Loot accumulated so far stays
-	# in _loot_segments and _hud_inv_cache; new floor opens its own segment.
+	# in the controller's segments and cache; new floor opens its own
+	# segment.
 	current_floor = 1
 	_build_floor()
 	return true
-
-# Bank any in-flight LootDrops into the inventory cache. Chests, vault
-# loot marks and enemy drops all spawn `LootDrop` Interactables that
-# only enter `_hud_inv_cache` when the bot finishes walking onto them
-# (`_complete_loot_pickup` after `interact_duration` seconds). If the
-# scene tears down before the bot reaches a drop, the item is lost.
-# Called from `flush_to_save` so menu-exit mid-pickup banks the items.
-func _fold_pending_loot_drops_into_inventory() -> void:
-	for drop in loot_drops:
-		if not is_instance_valid(drop):
-			continue
-		if drop.consumed:
-			continue
-		if drop.instance.is_empty():
-			continue
-		floor_loot_picked += 1
-		dropped_items.append(drop.instance)
-		_ensure_current_floor_segment()
-		(_loot_segments[_current_floor_segment_index].items as Array).append(drop.instance)
-		drop.consumed = true
-	_rebuild_inv_cache()
-	_push_inventory_to_hud()
 
 # Public: persist mid-run state to disk WITHOUT ending the run. Called
 # by main.gd when the player goes back to the main menu mid-run so
@@ -3320,19 +2890,18 @@ func flush_to_save() -> void:
 		return
 	# Fold any live LootDrops the bot hadn't finished walking to into the
 	# inventory before we serialize. Pre-fix, chests rolled their loot at
-	# OPEN time + spawned drops, but items only entered _hud_inv_cache when
-	# _complete_loot_pickup ran (after the bot stood on each drop for
-	# ~0.4-0.8s). Esc → Main Menu mid-pickup discarded everything. Audit
-	# fix 2026-06-08.
-	_fold_pending_loot_drops_into_inventory()
-	if _pending_salvage_check or _hud_inv_cache.size() > _inventory_cap:
-		_pending_salvage_check = false
-		_maybe_auto_salvage()
+	# OPEN time + spawned drops, but items only entered the inventory
+	# cache when complete_loot_pickup ran (after the bot stood on each
+	# drop for ~0.4-0.8s). Esc → Main Menu mid-pickup discarded
+	# everything. Audit fix 2026-06-08 (commit f80376b).
+	if inv != null:
+		inv.flush_pending_drops(current_floor)
+		inv.maybe_auto_salvage_if_pending()
 	var save: Dictionary = SaveState.load_state()
 	save.gold = bot.gold
 	save.level = bot.level
 	save.xp = bot.xp
-	save.inventory = _hud_inv_cache.duplicate(true)
+	save.inventory = inv.hud_inv_cache.duplicate(true) if inv != null else []
 	save.equipped = bot.equipped.duplicate(true)
 	save.highest_floor = maxi(int(save.get("highest_floor", 0)), current_floor)
 	save.stat_points_unspent = int(bot.upgrade_state.get("stat_points_unspent", 0))
@@ -3351,9 +2920,8 @@ func _end_run(victory: bool) -> void:
 	# Final salvage pass before we serialize. Done unconditionally so
 	# the saved inventory respects the cap even if the run ended on a
 	# pickup that overflowed without a chance to flush.
-	if _pending_salvage_check or _hud_inv_cache.size() > _inventory_cap:
-		_pending_salvage_check = false
-		_maybe_auto_salvage()
+	if inv != null:
+		inv.maybe_auto_salvage_if_pending()
 	# Loot is loot — banked on victory or death. The idle-game loop is "watch
 	# the bot fill your stash"; a 50% death tax punishes idle play.
 	var save: Dictionary = SaveState.load_state()
@@ -3364,7 +2932,7 @@ func _end_run(victory: bool) -> void:
 	# the source of truth — it includes base inventory + everything looted
 	# this run, minus anything that got equipped mid-run (those moved to
 	# bot.equipped, also persisted below).
-	save.inventory = _hud_inv_cache.duplicate(true)
+	save.inventory = inv.hud_inv_cache.duplicate(true) if inv != null else []
 	save.equipped = bot.equipped.duplicate(true) if is_instance_valid(bot) else save.get("equipped", {})
 	save.runs_completed = int(save.get("runs_completed", 0)) + 1
 	save.highest_floor = maxi(int(save.get("highest_floor", 0)), current_floor)
@@ -3397,8 +2965,8 @@ func _end_run(victory: bool) -> void:
 		"hp": bot.hp,
 		"max_hp": bot.max_hp,
 		"retreats": retreats_this_run,
-		"salvaged_count": _run_salvaged_count,
-		"salvaged_gold": _run_salvaged_gold,
+		"salvaged_count": inv.run_salvaged_count if inv != null else 0,
+		"salvaged_gold": inv.run_salvaged_gold if inv != null else 0,
 		"kills": kills.duplicate(),
 		"loot_log": loot_log.duplicate(),
 		"dropped": dropped_items.duplicate(),
