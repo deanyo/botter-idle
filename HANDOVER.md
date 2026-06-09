@@ -4,7 +4,46 @@ Point-in-time snapshot of what's actually shipping. Updated as we go. The
 durable rules and process live in `CLAUDE.md`; the roadmap and open work
 items live in `TODO.md`.
 
-Last refresh: 2026-06-09 (Tier 2 test-foundation shipped — GUT
+Last refresh: 2026-06-09 (Tier 1 UI cleanup cluster shipped — 7
+small commits closing the last of the audit's UI / cleanup
+backlog).
+
+The 7 fixes, in commit order:
+
+- `5c98387` — HUD `update_stats` now hashes its inputs and skips
+  `SaveState.load_state()` + `StatCalc.compute()` when nothing
+  changed. Reads `bot.upgrade_state` directly. Headless 16× grind
+  frame_ms dropped 3.0-3.4 → 1.7-2.5 (~35%).
+- `fa18a5f` — main menu hides FX Tuner / Paperdoll Audit / Spell
+  Showcase / Item Generator unless `OS.is_debug_build()` or
+  `BOTTER_DEV=1`. Pause-menu FX Tuner still works in release.
+- `acce5a7` — delete-bot confirm dialog now identifies the
+  character (species / level / runs / gold) instead of saying
+  "this character".
+- `f93f633` — `lightning` flavor canonicalized to `thunderous`
+  across items.json (3 fixes) + enchant_combos.json (6 combos
+  whose pair lookup was silently dead). Closed 8 other coverage
+  gaps; wired `tools/check_flavor_coverage.py` into pre-commit
+  step 2/5 to catch future drift.
+- `57bbc47` — v1-schema residue stripped from `format_item_tooltip`
+  (was reading `atk/def/hp` keys that v2 items don't carry; now
+  reads `damage_min/max + armor + evasion`). `_format_stat_line`
+  drops the dead `atk`/`def` cases. ItemsDb asserts
+  `_format_version == 2` on load. 3 new tests in
+  `test_affix_system.gd`.
+- `0a4e995` — `bot._realize_implicit` deleted (verbatim duplicate
+  of `stat_calc._realize_implicit` with zero callers).
+- `4a125f6` — `species_data.gd` doc comments refreshed to describe
+  StatCalc reality (the `base_max_hp` / `base_atk` / `base_def`
+  fields the comments referenced were already removed in `81500b0`).
+
+GUT 47 → 50 tests, ~933 → ~941 asserts, full suite still ~3s
+headless. Pre-commit umbrella now 5 steps (was 4) — added a
+flavor-coverage gate.
+
+---
+
+Earlier 2026-06-09 (Tier 2 test-foundation shipped — GUT
 addon vendored, three new test files added, full suite wired into
 both pre-commit and CI).
 

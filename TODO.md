@@ -91,6 +91,60 @@ Shipped. Three audit-flagged exposures closed before public release:
 
 ---
 
+## Tier 1 UI cleanup (2026-06-09)
+
+Shipped — 7-item audit cluster, one commit per item:
+
+- ✅ **HUD stats hash gate** (`hud_chrome.gd::update_stats`). Pre-fix
+  ran `SaveState.load_state()` (file open + JSON parse) plus
+  `StatCalc.compute()` every dungeon frame. Now hashes
+  `(equipped, upgrade_state, blessings, species, level, xp, gold)`
+  and only recomputes on change; reads `bot.upgrade_state` directly
+  (already bound to the live save dict). Headless 16× grind
+  smoke: frame_ms 3.0–3.4 → 1.7–2.5 (~35% drop). Commit `5c98387`.
+- ✅ **Dev-tool buttons gated** in main menu — FX Tuner / Paperdoll
+  Audit / Spell Showcase / Item Generator now only show when
+  `OS.is_debug_build()` or `BOTTER_DEV=1`. FX Tuner stays
+  reachable in-run via the pause menu (CLAUDE.md "both surfaces
+  must work" rule). Reset Save kept (typed-confirm gated).
+  Commit `fa18a5f`.
+- ✅ **Delete-bot dialog disambiguator.** "Permanently delete this
+  character?" now reads "Permanently delete Spriggan · Lv 12  ·  4
+  runs  ·  283 gold?". `_on_delete_bot` takes the bot dict instead
+  of just idx. Commit `acce5a7`.
+- ✅ **Flavor naming canonicalized: lightning → thunderous.** 3
+  items + 6 enchant_combos.json combo components used `lightning`
+  while everywhere else (FLAVOR_COLORS / ENCHANT_BLURBS / spell
+  pipeline) used `thunderous`. The 6 lightning-component combos
+  were silently dead (sorted-pair lookup never matched). Renamed
+  data only — combat damage_type "lightning" untouched. Closed 8
+  other coverage gaps (agility, harm, precision, rage, reflective,
+  shadow, thorns, vitality) by adding FLAVOR_COLORS entries +
+  ENCHANT_BLURBS for the 2 missing. Wired
+  `tools/check_flavor_coverage.py` into pre-commit step 2/5 so
+  future drift gets caught. Commit `f93f633`.
+- ✅ **v1 schema residue stripped from tooltips.**
+  `affix_system._format_stat_line` had pattern-match cases for
+  `atk`/`def` (pre-v2 affix stat names — no live affix uses them).
+  Dropped. `format_item_tooltip` was reading
+  `item_def["atk"|"def"|"hp"]` — every read returned 0 against the
+  v2 schema, so those lines never rendered. Replaced with v2 reads
+  (`damage_min/max + armor + evasion`). `ItemsDb.items()` now
+  asserts `_format_version == 2` on load. 3 new tests in
+  `test_affix_system.gd` lock the v2 tooltip output. Commit `57bbc47`.
+- ✅ **Duplicate `_realize_implicit` deleted from bot.gd.** Verbatim
+  copy of `stat_calc.gd::_realize_implicit` with zero callers
+  project-wide. Removed; updated stat_calc's stale "same as
+  bot.gd::_realize_implicit" comment to describe the function on
+  its own terms. Commit `0a4e995`.
+- ✅ **Dead `bonus_*` field deletion** — already shipped in the
+  earlier StatCalc residue session (`81500b0`); the only remaining
+  work was a doc-comment refresh in `species_data.gd` so it
+  doesn't reference the removed `base_max_hp` / `base_atk` /
+  `base_def` field names. Commit `4a125f6`.
+
+---
+
 ## HTML5 / itch.io shipping (2026-06-08)
 
 **Status:** Shipped. Friend playtesting in Safari confirms smooth
