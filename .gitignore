@@ -4,8 +4,9 @@ dcss-source/
 
 # Note: dcss/ (the CC0 tile pack, ~35 MB) IS tracked. The authoring
 # portal hosted on GitHub Pages reads tiles from `dcss/...` for the
-# atlas viewer + item editor. CC0 license; no attribution required
-# but credited in the in-game credits screen.
+# atlas viewer + item editor. CC0 1.0 Universal; no attribution
+# required, but credited in NOTICE.md and the in-game Credits screen
+# (main menu → Credits) per the original DCSS team's request.
 
 # macOS metadata
 .DS_Store

@@ -149,17 +149,18 @@ the project stays free of GPLv2+ obligations on its game logic.
 
 ## License
 
-Game logic and assets: **All rights reserved.** This repo is a public
-preview for playtesting and authoring contributions. No license is
-granted to redistribute, modify, or use the GDScript source or shipped
-game data outside of those workflows.
+Game logic and game data: **All rights reserved.** See `LICENSE` for
+the full notice. This repo is a public preview for playtesting and
+authoring contributions; no grant is given to redistribute or modify
+the GDScript source or shipped game data outside of those workflows.
 
-Bundled tile sprites (`project/assets/tiles/`) are CC0 (RLTiles / DCSS
-contributors) and remain CC0 if extracted.
+Bundled tile sprites (`project/assets/tiles/`) are CC0 1.0 Universal
+(RLTiles / DCSS tile-pack contributors) and remain CC0 if extracted.
 
-Pending: a final license grant for the game logic, plus a NOTICE.md
-enumerating third-party content sources, will land once the
-`dcss_layouts.gd` clean-room status is resolved.
+Third-party attribution — CC0 tile artists, DCSS .des vault
+contributors, Godot Engine MIT, GUT MIT — lives in `NOTICE.md`. Game
+credits live in `CREDITS.md`. The in-game **Credits** screen
+(main-menu button) renders both.
 
 ## Status & roadmap
 
