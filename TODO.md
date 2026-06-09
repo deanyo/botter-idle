@@ -33,6 +33,15 @@ Shipped. Three audit-flagged exposures closed before public release:
 
 ### Still TBD (Tier 1 / Tier 2)
 
+- ~~Tier 2: test foundation~~ Shipped 2026-06-09. GUT 9.6.0 vendored at
+  `project/addons/gut/`. Five test files at `project/tests/test_*.gd`
+  (StatCalc, Actor combat, SaveState migrations, AffixSystem rolling,
+  DungeonGenerator connectivity) — 47 tests, ~933 assertions, ~3s
+  headless. Wired into `tools/check_before_commit.sh` step 2/4 and
+  CI via `.github/workflows/test.yml`. Convention going forward:
+  every Tier 1+ fix that touches a covered system adds at least one
+  regression test before commit. Unblocks Tier 2 save_durability
+  and Tier 3 dungeon split.
 - Tier 1: ~~`unspent_points` typo~~, ~~ring-collapse migration gate~~,
   ~~chest loot persistence~~, ~~StatCalc unification residue cluster
   (blessings + species + elements + lifesteal + per-god buff icons)~~,

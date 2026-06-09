@@ -4,7 +4,58 @@ Point-in-time snapshot of what's actually shipping. Updated as we go. The
 durable rules and process live in `CLAUDE.md`; the roadmap and open work
 items live in `TODO.md`.
 
-Last refresh: 2026-06-08 (clean-room rewrite of `dcss_layouts.gd`).
+Last refresh: 2026-06-09 (Tier 2 test-foundation shipped — GUT
+addon vendored, three new test files added, full suite wired into
+both pre-commit and CI).
+
+The 2026-06-08 hand-rolled SceneTree harness (`stat_calc_tests.gd` +
+`actor_combat_tests.gd`) migrated to GUT 9.6.0, vendored at
+`project/addons/gut/`. Five test files now live at
+`project/tests/test_*.gd`:
+
+| File | Tests | Locks in |
+|---|---|---|
+| `test_stat_calc.gd` | 12 | StatCalc unification (blessing kinds, species mods, lifesteal clamp, spell_element_pct, unspent_points routing) |
+| `test_actor_combat.gd` | 11 | Combat-correctness fixes (single avoidance roll per swing, thorns/crystal aggregation, multi-emit `died` regression, spell element piping) |
+| `test_save_state.gd` | 8 | Migration idempotence + historic shapes (octopode ring2 regression, ring1/ring2 collapse, spell-slot/gloves/cloak forward-compat init, stat-point retroactive grant) |
+| `test_affix_system.gd` | 9 | `roll_affixes_for` reproducibility, rarity_affix_count contract, applies_to filter, common/uncommon spell flag-affix gating, no duplicate affixes |
+| `test_dungeon_generator.gd` | 7 | `generate` connectivity (spawn reaches stairs across biome × layout × seed cross-section), seeded determinism |
+
+47 tests, ~933 assertions, full suite runs in ~3s headless.
+
+Run locally:
+
+```
+/Applications/Godot.app/Contents/MacOS/Godot --path project --headless \
+    -s addons/gut/gut_cmdln.gd -gdir=res://tests -gexit
+```
+
+Or via the umbrella (also runs the per-biome smoke-build):
+
+```
+bash tools/check_before_commit.sh
+```
+
+Pre-commit step 2/4 invokes GUT; CI runs the same `gut_cmdln.gd`
+invocation via `.github/workflows/test.yml` on every push/PR (caches
+the Godot 4.6.2 Linux binary across runs).
+
+**Convention going forward.** Every Tier 1+ fix that touches a
+covered system must add at least one regression test to its
+relevant `test_*.gd` file before the fix is committed. Tests are
+cheap (3s) — there's no excuse to skip them. New systems get a new
+`test_<system>.gd` file; co-locate stubs as `_stub_<role>.gd` (see
+`tests/_stub_attacker.gd` / `tests/_stub_defender.gd`).
+
+GUT's `assert_*` helpers — `assert_eq`, `assert_almost_eq`,
+`assert_true`, `assert_false`, `assert_not_null`, `assert_lt` /
+`assert_gte` — replace the hand-rolled `_eq` / `_assert_close`. One
+gotcha: `assert_ne(x, null, msg)` chokes on null comparisons; use
+`assert_not_null(x, msg)` instead.
+
+---
+
+Earlier 2026-06-08 (clean-room rewrite of `dcss_layouts.gd`).
 Tier 2 audit item shipped: the dungeon-layout algorithms (`basic_level`,
 `make_trail`, `delve`) were a structural line-translation of GPLv2+
 DCSS C++ — same magic constants, same `denom_table`, same control

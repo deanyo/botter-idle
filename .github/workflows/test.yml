@@ -1,0 +1,64 @@
+name: Tests
+
+# Runs the GUT-based test suite (project/tests/test_*.gd) headlessly
+# on every push and PR. Mirrors what tools/check_before_commit.sh runs
+# locally, minus the per-biome smoke build (which depends on the
+# editor binary's macOS bundle and is best left to the dev machine).
+#
+# Tests installed in project/addons/gut/ (vendored, not fetched in CI).
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cache Godot binary
+        id: cache-godot
+        uses: actions/cache@v4
+        with:
+          path: ~/.local/share/godot
+          key: godot-4.6.2-stable-linux
+
+      - name: Install Godot 4.6.2
+        if: steps.cache-godot.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p ~/.local/share/godot
+          cd ~/.local/share/godot
+          curl -fsSL -o godot.zip \
+            'https://github.com/godotengine/godot/releases/download/4.6.2-stable/Godot_v4.6.2-stable_linux.x86_64.zip'
+          unzip -q godot.zip
+          mv Godot_v4.6.2-stable_linux.x86_64 godot
+          chmod +x godot
+
+      - name: Import project (registers class_name registry)
+        run: |
+          ~/.local/share/godot/godot --path project --headless --import \
+            > /tmp/import.log 2>&1 || true
+          # --import returns non-zero on warnings; we only fail the job
+          # if the test run itself fails, not on import noise.
+          tail -5 /tmp/import.log
+
+      - name: Run GUT test suite
+        run: |
+          ~/.local/share/godot/godot --path project --headless \
+            -s addons/gut/gut_cmdln.gd -gdir=res://tests -gexit \
+            | tee /tmp/test_output.log
+          # GUT's --gexit returns 0 on pass, 1 on fail. tee preserves
+          # the exit code via PIPESTATUS.
+          exit ${PIPESTATUS[0]}
+
+      - name: Upload test logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-logs
+          path: /tmp/test_output.log

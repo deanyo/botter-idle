@@ -24,37 +24,38 @@ SAMPLE_BIOMES=(dungeon lair vaults crypt forge glacier slime spider zot)
 FAIL=0
 
 # 1. Refresh class cache (catches "class not declared" for any new class_name)
-echo "1/5  Refreshing class cache..."
+echo "1/4  Refreshing class cache..."
 if ! "$GODOT" --path "$PROJECT" --headless --import >"$LOG" 2>&1; then
     echo "FAIL: --import failed (see $LOG)" >&2
     tail -10 "$LOG" >&2
     exit 1
 fi
 
-# 2. StatCalc.compute golden-master tests. Locks the post-2026-06-08
-# unification residue cluster (blessing kinds, species atk_pct/def_pct/
-# aggro_flat, spell_element_pct, lifesteal_pct clamp) against silent
-# regressions. Runs in <2s.
-echo "2/5  Running StatCalc tests..."
-STAT_LOG="$LOG_DIR/${TS}_stat_calc.log"
-if ! "$GODOT" --path "$PROJECT" --headless --script tests/stat_calc_tests.gd >"$STAT_LOG" 2>&1; then
-    echo "FAIL: StatCalc tests failed (see $STAT_LOG)" >&2
-    grep -E '^  (PASS|FAIL)' "$STAT_LOG" | tail -25 >&2
+# 2. GUT test suite. Discovers project/tests/test_*.gd and runs every
+# test_* function. Locks: StatCalc unification (blessing kinds,
+# species mods, lifesteal clamp, spell_element_pct), Actor combat
+# correctness (single avoidance roll per swing, thorns/crystal
+# aggregation, spell element piping), SaveState migrations
+# (idempotence, octopode ring2 regression, ring1/ring2 collapse),
+# AffixSystem rolling (reproducibility, applies_to filter, spell
+# flag-affix gating), DungeonGenerator connectivity (spawn reaches
+# stairs across biome × layout × seed cross-section).
+#
+# CONVENTION: every Tier 1+ fix should add at least one regression
+# test to the relevant test_*.gd file before the fix is committed.
+# Tests are cheap (~3s for the full suite as of 2026-06-09) — there's
+# no excuse to skip them.
+echo "2/4  Running GUT test suite..."
+TEST_LOG="$LOG_DIR/${TS}_gut.log"
+if ! "$GODOT" --path "$PROJECT" --headless \
+        -s addons/gut/gut_cmdln.gd -gdir=res://tests -gexit \
+        >"$TEST_LOG" 2>&1; then
+    echo "FAIL: GUT tests failed (see $TEST_LOG)" >&2
+    grep -E '\[Failed\]|^- test_|Failing Tests|Asserts' "$TEST_LOG" | tail -25 >&2
     FAIL=1
 fi
 
-# 3. Actor combat tests. Locks the 2026-06-08 combat-correctness fixes
-# (single avoidance roll per swing, thorns/crystal aggregation, spell
-# element piping into typed mitigation). Runs in <2s.
-echo "3/5  Running Actor combat tests..."
-COMBAT_LOG="$LOG_DIR/${TS}_actor_combat.log"
-if ! "$GODOT" --path "$PROJECT" --headless --script tests/actor_combat_tests.gd >"$COMBAT_LOG" 2>&1; then
-    echo "FAIL: Actor combat tests failed (see $COMBAT_LOG)" >&2
-    grep -E '^  (PASS|FAIL)' "$COMBAT_LOG" | tail -25 >&2
-    FAIL=1
-fi
-
-# 4. Per-biome 1-floor smoke build via debug-jump (no screenshot — just gen)
+# 3. Per-biome 1-floor smoke build via debug-jump (no screenshot — just gen)
 USER_DIR="$HOME/Library/Application Support/Godot/app_userdata/Botter"
 mkdir -p "$USER_DIR"
 DEBUG_MARKER="$USER_DIR/DEBUG_FLOOR.txt"
@@ -64,7 +65,7 @@ GRIND_MARKER="$USER_DIR/AUTO_GRIND.txt"
 [[ -f "$DEBUG_MARKER" ]] && mv "$DEBUG_MARKER" "$DEBUG_MARKER.precommit_parked"
 [[ -f "$GRIND_MARKER" ]] && mv "$GRIND_MARKER" "$GRIND_MARKER.precommit_parked"
 
-echo "4/5  Smoke-building 1 floor each across ${#SAMPLE_BIOMES[@]} biomes..."
+echo "3/4  Smoke-building 1 floor each across ${#SAMPLE_BIOMES[@]} biomes..."
 for biome in "${SAMPLE_BIOMES[@]}"; do
     # Floor 1, no vault, no screenshot mode (4th field unset)
     echo "${biome},_,1" > "$DEBUG_MARKER"
@@ -109,8 +110,8 @@ if [[ ! -f "$USER_DIR/DEBUG_FLOOR.txt.precommit_parked" ]]; then
     rm -f "$USER_DIR/DEBUG_FLOOR.txt"
 fi
 
-# 5. Summary
-echo "5/5  Summary"
+# 4. Summary
+echo "4/4  Summary"
 if [[ $FAIL -eq 0 ]]; then
     echo "PASS — ${#SAMPLE_BIOMES[@]} biomes built without errors."
     echo "logs: $LOG_DIR/${TS}_*.log"
