@@ -1,0 +1,24 @@
+Botter — All Rights Reserved
+
+Copyright (c) 2026 Dean Ryan
+
+This repository is provided as a public preview for playtesting and
+authoring contributions. No license is granted to copy, redistribute,
+modify, or use the GDScript source code, game data, scenes, scripts,
+shaders, or any other game-logic content outside of those workflows.
+
+Bundled tile sprites under `project/assets/tiles/` and the unbundled
+DCSS tile pack under `dcss/` are licensed CC0 1.0 Universal by their
+respective contributors and remain CC0 if extracted from this
+repository. See NOTICE.md for the full attribution list.
+
+The Godot Engine (https://godotengine.org/) is used under the MIT
+License. See NOTICE.md for the full notice text.
+
+THE GAME LOGIC AND GAME DATA IN THIS REPOSITORY ARE PROVIDED "AS IS",
+WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
+LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+PURPOSE AND NONINFRINGEMENT.
+
+For attribution of bundled third-party content, see NOTICE.md.
+For game credits, see CREDITS.md.
