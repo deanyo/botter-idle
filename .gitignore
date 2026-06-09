@@ -43,6 +43,8 @@ __pycache__/
 logs/
 # Local screenshot copies (canonical lives in user://debug_screenshots/)
 screenshots/
+# analyze_spell_dps_curve.py output (regenerated on every run)
+tools/plots/
 
 # Project-local Claude config (only commit settings.json shared cfg if you want)
 .claude/settings.local.json

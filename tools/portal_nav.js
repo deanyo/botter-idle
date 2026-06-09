@@ -17,6 +17,7 @@
     { id: 'affixes',   href: 'affix_editor.html',  label: 'Bonuses' },
     { id: 'drops',     href: 'drop_tuning.html',   label: 'Drop rates' },
     { id: 'flowchart', href: 'roll_flowchart.html',label: 'Roll flowchart' },
+    { id: 'matrix',    href: 'build_matrix.html', label: 'Build matrix' },
   ];
 
   function build() {

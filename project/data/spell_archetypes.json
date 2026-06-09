@@ -1,0 +1,102 @@
+{
+  "spell_fireball": {
+    "primary_stat": "int",
+    "cooldown": 1.6,
+    "damage": 18,
+    "range_cells": 8,
+    "projectile": "res://assets/tiles/projectiles/fireball.png",
+    "trail_flavor": "fire",
+    "element": "fire",
+    "projectile_speed": 320.0
+  },
+  "spell_axes": {
+    "primary_stat": "str",
+    "cooldown": 5.0,
+    "damage": 14,
+    "range_cells": 2,
+    "projectile": "res://assets/tiles/items/hand_axe.png",
+    "trail_flavor": "thunderous",
+    "element": "",
+    "projectile_speed": 0.0
+  },
+  "spell_holy_beam": {
+    "primary_stat": "str",
+    "cooldown": 3.2,
+    "damage": 26,
+    "range_cells": 4,
+    "projectile": "",
+    "trail_flavor": "holy",
+    "element": "holy",
+    "projectile_speed": 0.0
+  },
+  "spell_chain_lightning": {
+    "primary_stat": "dex",
+    "cooldown": 2.4,
+    "damage": 16,
+    "range_cells": 7,
+    "projectile": "",
+    "trail_flavor": "thunderous",
+    "element": "thunderous",
+    "projectile_speed": 0.0
+  },
+  "spell_frost_nova": {
+    "primary_stat": "int",
+    "cooldown": 4.0,
+    "damage": 16,
+    "range_cells": 3,
+    "projectile": "",
+    "trail_flavor": "cold",
+    "element": "cold",
+    "projectile_speed": 0.0
+  },
+  "spell_magic_dart": {
+    "primary_stat": "dex",
+    "cooldown": 0.7,
+    "damage": 14,
+    "range_cells": 9,
+    "projectile": "res://assets/tiles/projectiles/magic_dart.png",
+    "trail_flavor": "arcane",
+    "element": "",
+    "projectile_speed": 420.0
+  },
+  "spell_iron_shot": {
+    "primary_stat": "str",
+    "cooldown": 3.5,
+    "damage": 32,
+    "range_cells": 9,
+    "projectile": "res://assets/tiles/projectiles/iron_shot.png",
+    "trail_flavor": "earth",
+    "element": "",
+    "projectile_speed": 220.0
+  },
+  "spell_sandblast": {
+    "primary_stat": "str",
+    "cooldown": 2.6,
+    "damage": 30,
+    "range_cells": 4,
+    "projectile": "",
+    "trail_flavor": "earth",
+    "element": "",
+    "projectile_speed": 0.0
+  },
+  "spell_drain": {
+    "primary_stat": "int",
+    "cooldown": 2.4,
+    "damage": 22,
+    "range_cells": 8,
+    "projectile": "res://assets/tiles/projectiles/drain.png",
+    "trail_flavor": "dark",
+    "element": "dark",
+    "projectile_speed": 280.0
+  },
+  "spell_shatter": {
+    "primary_stat": "str",
+    "cooldown": 5.0,
+    "damage": 28,
+    "range_cells": 4,
+    "projectile": "",
+    "trail_flavor": "earth",
+    "element": "",
+    "projectile_speed": 0.0
+  }
+}
