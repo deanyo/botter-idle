@@ -16,7 +16,12 @@ dcss-source/
 project/.godot/
 project/.import/
 project/export.cfg
-project/export_presets.cfg
+# Note: project/export_presets.cfg IS tracked. It carries the
+# load-bearing `exclude_filter="data/vaults/*.json,..."` entry that
+# keeps GPL-derived vault content out of the web build (see
+# NOTICE.md). Gitignoring would mean a fresh checkout silently
+# re-ships those vaults. tools/deploy_web.sh additionally asserts
+# the filter is present at deploy time as defense in depth.
 project/exports/
 # Itch.io / web build outputs — regenerated per release, not tracked.
 dist/

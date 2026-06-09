@@ -23,6 +23,30 @@ DIST_DIR="$REPO_ROOT/dist/web"
 ZIP_PATH="$REPO_ROOT/dist/botter_web.zip"
 GODOT="${GODOT:-/Applications/Godot.app/Contents/MacOS/Godot}"
 
+echo "==> Verifying export_presets.cfg vault exclude_filter"
+# Load-bearing legal hygiene gate. Vault content is GPL-derived from
+# DCSS source — we keep it out of the web .pck via the Web preset's
+# exclude_filter. If this filter is ever dropped (regenerated preset,
+# manual edit, merge conflict) the next deploy would silently re-
+# ship the vault bundle to itch. Assert before exporting.
+PRESETS="$PROJECT_DIR/export_presets.cfg"
+if [[ ! -f "$PRESETS" ]]; then
+  echo "ERROR: missing $PRESETS" >&2
+  exit 1
+fi
+if ! grep -q 'exclude_filter=.*data/vaults/\*\.json' "$PRESETS"; then
+  echo "ERROR: export_presets.cfg is missing the data/vaults/*.json exclude_filter." >&2
+  echo "       This filter keeps GPL-derived vault content out of the web build." >&2
+  echo "       Aborting deploy — see NOTICE.md and CLAUDE.md before proceeding." >&2
+  exit 1
+fi
+if ! grep -q 'exclude_filter=.*data/vaults_bundle\.json' "$PRESETS"; then
+  echo "ERROR: export_presets.cfg is missing the data/vaults_bundle.json exclude_filter." >&2
+  echo "       Aborting deploy." >&2
+  exit 1
+fi
+echo "    OK — vault exclude_filter present"
+
 echo "==> Stamping build version"
 # Bump a per-deploy counter and stamp it into a JSON file the game
 # reads at boot — main.gd prints "[build] version=N ts=..." so the
