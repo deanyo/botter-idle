@@ -477,9 +477,12 @@ static func _scaled_affix_sums(affixes: Array, qmult_affix: float, source_count:
 			sums[stat + "_max"] = float(sums.get(stat + "_max", 0)) + float(af_inst["value_max"]) * qmult_affix * dr
 	return sums
 
-# Implicit affix realizer — same as bot.gd::_realize_implicit. Lifted here
-# because StatCalc must be self-contained for outpost / main-menu callers
-# that don't have a Bot instance.
+# Implicit affix realizer. Implicit affixes are stamped on uniques in
+# items.json as just an id string; compute() needs (id, value) shaped
+# entries to feed AffixSystem.sum_affix_stats. The value is synthesized
+# from the affix def's tier matching the item rarity — range affixes
+# get value_min/value_max bounds + a midpoint value, plain affixes get
+# the tier midpoint so an implicit on a unique is deterministic.
 static func _realize_implicit(affix_id: String, item_rarity: String) -> Dictionary:
 	var def: Dictionary = AffixSystem.get_affix_def(affix_id)
 	if def.is_empty():

@@ -357,38 +357,6 @@ func equip_from_inventory(inst: Dictionary) -> Array:
 	_refresh_gear_overlays()
 	return displaced
 
-# Realize an implicit affix into a rolled instance dict. Implicit
-# affixes are stamped on uniques in items.json as just an id string;
-# recompute_stats needs (id, value) shaped entries to feed
-# AffixSystem.sum_affix_stats. We synthesize the value using the affix
-# def's tier matching the item rarity. Range affixes get value_min /
-# value_max bounds matching the tier range mid-point.
-func _realize_implicit(affix_id: String, item_rarity: String) -> Dictionary:
-	var def: Dictionary = AffixSystem.get_affix_def(affix_id)
-	if def.is_empty():
-		return {"id": affix_id, "value": 0}
-	var tiers: Array = def.get("tiers", [])
-	var idx: int = AffixSystem.tier_index_for_rarity(item_rarity)
-	idx = clampi(idx, 0, tiers.size() - 1)
-	if tiers.is_empty():
-		return {"id": affix_id, "value": 0}
-	var tier_entry = tiers[idx]
-	var out: Dictionary = {"id": affix_id}
-	if tier_entry is Array and tier_entry.size() >= 2:
-		var lo: int = int(tier_entry[0])
-		var hi: int = int(tier_entry[1])
-		if String(def.get("kind", "flat")) == "range":
-			out["value_min"] = lo
-			out["value_max"] = hi
-			out["value"] = int(round((lo + hi) / 2.0))
-		else:
-			# Implicits roll the AVG of the range so they're deterministic
-			# (a Vampire's Tooth always gives the same lifesteal).
-			out["value"] = int(round((lo + hi) / 2.0))
-	else:
-		out["value"] = int(tier_entry)
-	return out
-
 func recompute_stats() -> void:
 	# Single source of truth lives in StatCalc.compute. The bot's job
 	# here is to feed inputs in and copy the result dict back onto its
