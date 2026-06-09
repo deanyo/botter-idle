@@ -212,7 +212,9 @@ static func compute_damage(bot: Node, item: Dictionary, inst: Variant = null) ->
 		elif meta == "primal":
 			meta_mult = 1.50
 		var qmult: float = Quality.multiplier_for(inst)
-		base_dmg *= meta_mult * qmult
+		# Mirror StatCalc baseline rollback (a10 §5.3) — cap meta×quality
+		# at ×1.30 so spell base rolls stay inside ceiling.
+		base_dmg *= clampf(meta_mult * qmult, 0.0, 1.30)
 	var pstat: String = primary_stat_for_item(item)
 	var pval: int = primary_stat_value(bot, pstat)
 	var stat_mult: float = 1.0 + float(pval - 5) * 0.02
@@ -221,7 +223,22 @@ static func compute_damage(bot: Node, item: Dictionary, inst: Variant = null) ->
 	var elem_mult: float = 1.0
 	if elem != "" and bot.spell_element_pct.has(elem):
 		elem_mult = 1.0 + float(bot.spell_element_pct[elem]) / 100.0
-	return int(round(base_dmg * stat_mult * dmg_mult * elem_mult))
+	# Class-mastery multiplier (of_str/dex/int_mastery). Reads the bot's
+	# class lane that matches the spell's primary_stat — pure-Str spells
+	# benefit from of_str_mastery, Int from of_int_mastery, etc.
+	var class_pct: float = 0.0
+	match pstat:
+		"str": class_pct = float(bot.get("str_spell_dmg_pct"))
+		"dex": class_pct = float(bot.get("dex_spell_dmg_pct"))
+		"int": class_pct = float(bot.get("int_spell_dmg_pct"))
+	var class_mult: float = 1.0 + class_pct / 100.0
+	# Ephemeral conditional spell bonus, capped at +30% per cast (a10
+	# §5.1). Conditional/trigger-based spell affixes write into the
+	# bot's ephemeral_spell_dmg_pct accumulator; cap is applied here so
+	# stacking multiple windows can't burst the ceiling.
+	var eph_pct: float = float(bot.get("ephemeral_spell_dmg_pct")) if bot.get("ephemeral_spell_dmg_pct") != null else 0.0
+	var eph_mult: float = 1.0 + minf(0.30, maxf(0.0, eph_pct / 100.0))
+	return int(round(base_dmg * stat_mult * dmg_mult * elem_mult * class_mult * eph_mult))
 
 # Resolve the effective cooldown — base × (1 - cdr/100), clamped.
 # CDR caps at 60% (DCSS-style diminishing returns; we don't want

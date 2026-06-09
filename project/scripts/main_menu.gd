@@ -341,9 +341,14 @@ func _on_reset() -> void:
 	input.grab_focus()
 
 func _perform_reset() -> void:
-	var path := "user://botter_save.json"
-	if FileAccess.file_exists(path):
-		DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
+	# Wipe the live save AND its rotate-backup. Pre-2026-06-09 only the
+	# primary was deleted, but SaveState._load_wrapper falls back to
+	# .bak when the primary is missing, so the "reset" appeared to roll
+	# back on next launch. The .tmp file is the in-progress write — also
+	# cleared in case a Reset interrupts a save mid-rotate.
+	for path in ["user://botter_save.json", "user://botter_save.json.bak", "user://botter_save.json.tmp"]:
+		if FileAccess.file_exists(path):
+			DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
 	# Re-render so the vignette reflects the wiped save.
 	for c in get_children():
 		c.queue_free()

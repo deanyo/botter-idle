@@ -180,8 +180,15 @@ func render() -> void:
 	else:
 		_border.border_color = Color(0.4, 0.35, 0.2, 0.8)
 	if role == "paperdoll" and slot_id.begins_with("spell") and has_item:
-		var pstat: String = UITheme.spell_primary_stat(item)
+		# PLAYTEST #7 — spell scaling stat read by border color (red/green/
+		# blue = STR/DEX/INT). Resolve via SpellData so an item that
+		# overrides primary_stat reads correctly; bump the border width
+		# so the cue is visible against the cell's rarity halo.
+		var pstat: String = SpellData.primary_stat_for_item(item)
 		_border.border_color = UITheme.spell_class_color(pstat)
+		_border.border_width = 2.5
+	else:
+		_border.border_width = 1.0
 	# Favorite star.
 	var fav: bool = false
 	if has_item:

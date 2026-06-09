@@ -207,3 +207,151 @@ func test_format_stat_line_drops_legacy_atk_def_cases() -> void:
 	# hp stays — `of_vitality` rolls stat=hp.
 	assert_eq(AffixSystem._format_stat_line("hp", 30), "+30 HP",
 		"hp stays on the formatter — of_vitality is alive")
+
+# ---------------------------------------------------------------------
+# S1 regressions (2026-06-09 audit) — locking the four critical fixes
+# from SYNTHESIS §C2: of_venom collision rename, element-pct affix
+# survival, base_type category expansion, of_multicast non-zero floor.
+# ---------------------------------------------------------------------
+
+func test_of_envenom_replaces_pct_venom_no_collision() -> void:
+	# Pre-fix: two affixes shared id "of_venom" — range (poison_extra)
+	# and pct (poison_dmg_pct). Loader silently dropped one. Post-fix
+	# the pct version is renamed to of_envenom; both must coexist with
+	# distinct ids and distinct stat keys.
+	var range_def: Dictionary = AffixSystem.get_affix_def("of_venom")
+	var pct_def: Dictionary = AffixSystem.get_affix_def("of_envenom")
+	assert_false(range_def.is_empty(), "of_venom (range) survives the rename")
+	assert_false(pct_def.is_empty(), "of_envenom (pct) is reachable post-rename")
+	assert_eq(String(range_def.get("stat", "")), "poison_extra",
+		"of_venom keeps poison_extra range stat")
+	assert_eq(String(pct_def.get("stat", "")), "poison_dmg_pct",
+		"of_envenom owns poison_dmg_pct")
+
+func test_element_pct_affixes_can_roll_on_jewelry() -> void:
+	# Pre-fix: of_pyromancer / of_cryomancer / of_storm / of_zealot /
+	# of_envenom / of_shadow appeared in zero items' affix_pool — pure
+	# dead code. Post-fix every ring/amulet/spell pool carries them.
+	# Statistical: across 200 legendary ring rolls (5 affixes each =
+	# 1000 picks), at least one element-pct id should land.
+	var rng := RandomNumberGenerator.new()
+	var saw: bool = false
+	var element_ids := ["of_pyromancer", "of_cryomancer", "of_storm",
+		"of_zealot", "of_envenom", "of_shadow"]
+	for s in 200:
+		rng.seed = s
+		var item := {
+			"slot": "ring", "rarity": "legendary", "base_type": "ring",
+			"affix_pool": {
+				"of_pyromancer": 8, "of_cryomancer": 8, "of_storm": 8,
+				"of_zealot": 8, "of_envenom": 8, "of_shadow": 8,
+				"of_might": 8, "of_finesse": 8,
+			},
+		}
+		var roll: Array = AffixSystem.roll_affixes_for(item, rng)
+		for af_inst in roll:
+			if String(af_inst.id) in element_ids:
+				saw = true
+				break
+		if saw:
+			break
+	assert_true(saw, "element-pct affix rolled on ring within 200 attempts")
+
+func test_base_type_category_expansion_resolves_to_real_affix_ids() -> void:
+	# Pre-fix base_type_affixes.json keys ("crit"/"haste"/"strength"/…)
+	# matched zero affix ids — the entire file fell through to the
+	# applies_to fallback. Post-fix categories expand to id-lists at
+	# load time; a tower_shield's "stamina:40 regen:10" should now
+	# bias toward of_vitality / of_the_bear / of_regen / of_lifesteal.
+	var rng := RandomNumberGenerator.new()
+	var bias_count: int = 0
+	var biased_ids := {"of_vitality": true, "of_the_bear": true,
+		"of_regen": true, "of_lifesteal": true}
+	for s in 200:
+		rng.seed = s
+		# tower_shield is in base_type_affixes with stamina:40 regen:10
+		var item := {"slot": "shield", "rarity": "legendary", "base_type": "tower_shield"}
+		var roll: Array = AffixSystem.roll_affixes_for(item, rng)
+		for af_inst in roll:
+			if biased_ids.has(String(af_inst.id)):
+				bias_count += 1
+	assert_gt(bias_count, 0,
+		"tower_shield base-type weights should bias toward stamina/regen affixes (got %d hits over 200 rolls)" % bias_count)
+
+func test_format_affix_lines_drops_zero_value_rows() -> void:
+	# PLAYTEST #9 / S3.1 — flat/pct affix rolls whose displayed integer
+	# is 0 must NOT reach the tooltip. format_affix_lines is the legacy
+	# text-tooltip path (outpost slot tooltip + a few fallback callers),
+	# so it has to suppress the same zero-rows the visual ItemTooltip
+	# already filters. Range affixes carry value_min/max so a 0-midpoint
+	# range stays visible.
+	var affixes := [
+		{"id": "of_multicast", "value": 0},        # flat, zero -> dropped
+		{"id": "of_might",     "value": 4},        # flat, non-zero -> kept
+		{"id": "of_channeling","value": 0},        # pct, zero -> dropped
+		{"id": "of_embers",    "value_min": 0, "value_max": 0, "value": 0}, # range zero -> dropped
+		{"id": "of_sharpness", "value_min": 1, "value_max": 3, "value": 2}, # range non-zero -> kept
+	]
+	var lines: Array = AffixSystem.format_affix_lines(affixes)
+	# The +0 sub-string must never appear in any rendered row.
+	for line in lines:
+		assert_false(String(line).contains("+0 "),
+			"format_affix_lines emitted a +0 flat row: " + String(line))
+		assert_false(String(line).contains("+0%"),
+			"format_affix_lines emitted a +0pct row: " + String(line))
+	# At least one of_might row should exist (sanity: filter didn't drop everything).
+	var saw_might: bool = false
+	for line in lines:
+		if String(line).contains("Strength") or String(line).contains("Str"):
+			saw_might = true
+			break
+	assert_true(saw_might, "non-zero of_might survived the zero-filter")
+
+func test_spell_items_canonical_primary_stat_per_archetype() -> void:
+	# S3.6 / A01 F-SPELL-03 — every spell item of a given archetype must
+	# declare the SAME primary_stat. Audit found ~50% of items in each
+	# archetype overrode the default; the flatten pass aligned them.
+	# Lock the contract.
+	var arch_defaults := {
+		"spell_fireball": "int", "spell_axes": "str",
+		"spell_holy_beam": "str", "spell_chain_lightning": "dex",
+		"spell_frost_nova": "int", "spell_magic_dart": "int",
+		"spell_iron_shot": "str", "spell_sandblast": "str",
+		"spell_drain": "int", "spell_shatter": "str",
+	}
+	var f := FileAccess.open("res://data/items.json", FileAccess.READ)
+	assert_not_null(f, "items.json readable")
+	if f == null:
+		return
+	var parsed: Variant = JSON.parse_string(f.get_as_text())
+	assert_eq(typeof(parsed), TYPE_DICTIONARY, "items.json parses")
+	var data: Dictionary = parsed
+	var mismatches: Array = []
+	for it in data.get("items", []):
+		if String(it.get("slot", "")) != "spell":
+			continue
+		var bt: String = String(it.get("base_type", ""))
+		if not arch_defaults.has(bt):
+			continue
+		if not it.has("primary_stat"):
+			continue
+		if String(it["primary_stat"]) != String(arch_defaults[bt]):
+			mismatches.append("%s declares primary_stat=%s, archetype=%s" %
+				[String(it.get("id", "?")), String(it["primary_stat"]), bt])
+	assert_eq(mismatches.size(), 0,
+		"spell items must match archetype primary_stat. Drift: %s" % str(mismatches.slice(0, 5)))
+
+func test_of_multicast_floor_no_longer_rolls_zero() -> void:
+	# Pre-fix common/uncommon of_multicast tiers were [0,0]/[0,0],
+	# producing "+0 Spell Projectile" tooltip lines (PLAYTEST #9).
+	# Post-fix all five tiers floor at [1,1] minimum. The affix def
+	# itself is the contract — no roll math required.
+	var def: Dictionary = AffixSystem.get_affix_def("of_multicast")
+	assert_false(def.is_empty(), "of_multicast still exists post-fix")
+	for tier in def.get("tiers", []):
+		assert_true(typeof(tier) == TYPE_ARRAY and tier.size() == 2,
+			"of_multicast tier malformed: %s" % str(tier))
+		var lo: int = int(tier[0])
+		var hi: int = int(tier[1])
+		assert_gte(lo, 1, "of_multicast tier floor < 1: %s" % str(tier))
+		assert_gte(hi, 1, "of_multicast tier ceiling < 1: %s" % str(tier))

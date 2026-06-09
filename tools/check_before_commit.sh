@@ -53,6 +53,16 @@ if ! python3 "$REPO/tools/sync_credits.py" --check >"$SYNC_LOG" 2>&1; then
     cat "$SYNC_LOG" >&2
     FAIL=1
 fi
+# Affix-system data integrity. Cross-references affixes.json × items.json
+# × stat_calc.gd × spell_data.gd. Catches the bug class found in the
+# 2026-06-09 audit (duplicate ids, never-rolled affixes, orphan stat
+# keys, near-zero tier ranges, unknown pool references).
+DI_LOG="$LOG_DIR/${TS}_data_integrity.log"
+if ! python3 "$REPO/tools/audit_data_integrity.py" >"$DI_LOG" 2>&1; then
+    echo "FAIL: affix data-integrity issues (see $DI_LOG)" >&2
+    cat "$DI_LOG" >&2
+    FAIL=1
+fi
 
 # 3. GUT test suite. Discovers project/tests/test_*.gd and runs every
 # test_* function. Locks: StatCalc unification (blessing kinds,

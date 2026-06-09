@@ -133,6 +133,81 @@ func test_element_affix_populates_spell_element_pct() -> void:
 	var elem: Dictionary = d.get("spell_element_pct", {})
 	assert_almost_eq(float(elem.get("fire", 0)), 24.0, 0.001, "of_pyromancer → spell_element_pct.fire")
 
+func test_class_mastery_affixes_route_to_class_pct_keys() -> void:
+	# S1 (2026-06-09): of_str_mastery / of_dex_mastery / of_int_mastery
+	# write to str_spell_dmg_pct / dex_spell_dmg_pct / int_spell_dmg_pct
+	# accumulators. Pre-fix StatCalc never read those keys; post-fix
+	# spell_data.compute_damage multiplies by the matching class lane.
+	var fake_db: Dictionary = items_db.duplicate(true)
+	fake_db["__test_helm"] = {
+		"id": "__test_helm", "slot": "helm", "rarity": "epic",
+		"flavor_tags": [], "implicit_affixes": [],
+	}
+	var inst := {
+		"base_id": "__test_helm", "rarity": "epic",
+		"affixes": [
+			{"id": "of_str_mastery", "value": 20},
+			{"id": "of_dex_mastery", "value": 15},
+			{"id": "of_int_mastery", "value": 30},
+		],
+	}
+	var save := _bare_save("human")
+	var d: Dictionary = StatCalc.compute({"helm": inst}, fake_db, save, "human", 1, 0, 0, [])
+	assert_almost_eq(float(d.get("str_spell_dmg_pct", 0)), 20.0, 0.001,
+		"of_str_mastery → str_spell_dmg_pct accumulator")
+	assert_almost_eq(float(d.get("dex_spell_dmg_pct", 0)), 15.0, 0.001,
+		"of_dex_mastery → dex_spell_dmg_pct accumulator")
+	assert_almost_eq(float(d.get("int_spell_dmg_pct", 0)), 30.0, 0.001,
+		"of_int_mastery → int_spell_dmg_pct accumulator")
+
+func test_meta_qmult_caps_at_1_30() -> void:
+	# S2 cap rules (a10 §5.3): meta_mult × qmult product is clamped to
+	# ×1.30 in stat_calc.gd:128 so endgame Primal+Sublime weapons can't
+	# multiply baseline by ×1.80 (Primal 1.50 × Sublime 1.20 = 1.80).
+	# Authoring a fake weapon at base 100/100 with meta_rarity=primal
+	# and quality=sublime; expected post-cap damage_min/max = 130, not
+	# 180.
+	var fake_db: Dictionary = items_db.duplicate(true)
+	fake_db["__test_weapon"] = {
+		"id": "__test_weapon", "slot": "weapon", "rarity": "legendary",
+		"damage_min": 100, "damage_max": 100, "speed": 1.0,
+		"damage_type": "physical", "weapon_class": "1H",
+		"flavor_tags": [], "implicit_affixes": [],
+	}
+	var inst := {
+		"base_id": "__test_weapon", "rarity": "legendary",
+		"meta_rarity": "primal",  # ×1.50
+		"quality": "sublime",     # ×1.20
+		"affixes": [],
+	}
+	var save := _bare_save("human")
+	var d: Dictionary = StatCalc.compute({"weapon": inst}, fake_db, save, "human", 1, 0, 0, [])
+	# Pre-cap: 100 × 1.80 = 180. Post-cap: 100 × 1.30 = 130.
+	# Human's atk_pct/def_pct are 0; bare-bot upgrades 0. Damage_min
+	# is computed as round(100 × min(1.50×1.20, 1.30)) = 130.
+	assert_eq(int(d.damage_min), 130,
+		"meta×qmult clamp: Primal(×1.50) × Sublime(×1.20) caps at ×1.30")
+	assert_eq(int(d.damage_max), 130,
+		"meta×qmult clamp: damage_max also clamped")
+
+func test_class_mastery_caps_at_100_pct() -> void:
+	# Soft cap per a06 §3.2 — each class lane caps at 100%.
+	# Use a single oversized roll (value=150) to verify the clamp fires
+	# without depending on the per-affix-DR composition rules.
+	var fake_db: Dictionary = items_db.duplicate(true)
+	fake_db["__test_helm"] = {
+		"id": "__test_helm", "slot": "helm", "rarity": "epic",
+		"flavor_tags": [], "implicit_affixes": [],
+	}
+	var inst := {
+		"base_id": "__test_helm", "rarity": "epic",
+		"affixes": [{"id": "of_int_mastery", "value": 150}],
+	}
+	var save := _bare_save("human")
+	var d: Dictionary = StatCalc.compute({"helm": inst}, fake_db, save, "human", 1, 0, 0, [])
+	assert_almost_eq(float(d.get("int_spell_dmg_pct", 0)), 100.0, 0.001,
+		"int_spell_dmg_pct soft-caps at 100 — raw=150 should clamp")
+
 # ---------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------

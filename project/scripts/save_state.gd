@@ -381,7 +381,7 @@ static func delete_character(idx: int) -> void:
 # instance of this). Versioned chain replaces probe gating with explicit
 # `if v < N` ordering. Starting at 7 acknowledges the historic bumps so
 # any future references to "older save shapes" use real version numbers.
-const SCHEMA_VERSION := 7
+const SCHEMA_VERSION := 8
 
 # In-place migrations applied on load. Idempotent — once schema_version
 # matches SCHEMA_VERSION, every step short-circuits.
@@ -396,6 +396,9 @@ static func _migrate(state: Dictionary) -> void:
 	if v < 7:
 		_migrate_to_v7(state)
 		v = 7
+	if v < 8:
+		_migrate_to_v8(state)
+		v = 8
 	state["schema_version"] = SCHEMA_VERSION
 
 # v0 → v7: subsumes every historic probe-based migration into one step.
@@ -517,6 +520,37 @@ static func _migrate_to_v7(state: Dictionary) -> void:
 			equipped.erase("ring2")
 			state["equipped"] = equipped
 		state["migration_v_ring_collapse"] = true
+
+# v7 → v8: rename rolled `of_venom` (pct) instances to `of_envenom`. The
+# affix id collided with the older `of_venom` (range, poison_extra) in
+# affixes.json — pre-2026-06-09 the loader silently overwrote one with
+# the other. The pct version's instances on saves are disambiguated by
+# the absence of `value_min` / `value_max` (range affixes carry both).
+# Walk every char's equipped slots + inventory + container affix arrays
+# and rename. Idempotent: once stamped at v8, re-running is a no-op
+# because the matching ids are already migrated.
+static func _migrate_to_v8(state: Dictionary) -> void:
+	var equipped: Dictionary = state.get("equipped", {})
+	for slot in equipped.keys():
+		_v8_migrate_inst(equipped[slot])
+	var inventory: Array = state.get("inventory", [])
+	for inst in inventory:
+		_v8_migrate_inst(inst)
+
+static func _v8_migrate_inst(inst: Variant) -> void:
+	if typeof(inst) != TYPE_DICTIONARY:
+		return
+	var affixes: Variant = inst.get("affixes", null)
+	if typeof(affixes) != TYPE_ARRAY:
+		return
+	for af in affixes:
+		if typeof(af) != TYPE_DICTIONARY:
+			continue
+		if String(af.get("id", "")) != "of_venom":
+			continue
+		# Range version carries value_min + value_max; pct does not.
+		if not af.has("value_min") and not af.has("value_max"):
+			af["id"] = "of_envenom"
 
 # Flush the underlying user:// filesystem to durable storage. No-op on
 # Steam / desktop / mobile (Godot's FileAccess.flush + close already

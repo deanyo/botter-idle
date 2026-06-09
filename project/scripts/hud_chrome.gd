@@ -190,6 +190,13 @@ var debug_lbl: Label
 var debug_dump_btn: Button = null
 var debug_dump_status: Label = null
 var _debug_status_timer: SceneTreeTimer = null
+# F8 Stat-Rollup Inspector (S3.5 / a06 §4.1). Read-only debug panel that
+# renders the full StatCalc.compute output dict — every accumulator,
+# soft-cap clamps, per-element resists. Toggles visibility on F8; never
+# rebuilt mid-frame (cheap enough to render text in-place).
+var _stat_inspector_panel: Control = null
+var _stat_inspector_label: Label = null
+var _stat_inspector_visible: bool = false
 
 # WoW-style buff/debuff bar — top-of-screen row of 36×36 icons with
 # timer text under each. Reads from bot._statuses; cells reused across
@@ -225,6 +232,21 @@ func _build_layout() -> void:
 		_build_log_overlay()
 	_build_debug()
 	_build_buff_bar()
+	_build_stat_inspector()
+
+# F8 unhandled-input gate — only toggles the inspector when no UI element
+# is consuming the key. Lives on the HUD because the dungeon scene owns
+# this CanvasLayer at run time; outpost / character_create don't need
+# the inspector.
+func _unhandled_key_input(event: InputEvent) -> void:
+	if not (event is InputEventKey):
+		return
+	var k: InputEventKey = event
+	if not k.pressed or k.echo:
+		return
+	if k.keycode == KEY_F8:
+		_toggle_stat_inspector()
+		get_viewport().set_input_as_handled()
 
 func _on_viewport_resized() -> void:
 	# Tear down + rebuild. Caches that point at the old node tree must be
@@ -1007,6 +1029,154 @@ func _build_debug() -> void:
 	add_child(debug_dump_status)
 	_build_fullscreen_button()
 
+# F8 Stat-Rollup Inspector (S3.5). Read-only debug panel that dumps the
+# full StatCalc.compute output dict — every accumulator, every clamped
+# resist, the soft-cap-pressure values. Hidden by default; toggle with
+# F8. Useful for "did this affix actually wire up?" without reading code.
+func _build_stat_inspector() -> void:
+	var vp: Vector2 = get_viewport().get_visible_rect().size
+	var w: int = mini(int(vp.x) - 80, 520)
+	var h: int = mini(int(vp.y) - 80, 640)
+	_stat_inspector_panel = Control.new()
+	_stat_inspector_panel.position = Vector2(40, 40)
+	_stat_inspector_panel.size = Vector2(w, h)
+	_stat_inspector_panel.visible = false
+	_stat_inspector_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_stat_inspector_panel.z_index = 100
+	add_child(_stat_inspector_panel)
+	var bg := ColorRect.new()
+	bg.color = Color(0.0, 0.0, 0.0, 0.92)
+	bg.size = Vector2(w, h)
+	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_stat_inspector_panel.add_child(bg)
+	var border := ReferenceRect.new()
+	border.size = Vector2(w, h)
+	border.border_color = COL_AMBER
+	border.border_width = 1.5
+	border.editor_only = false
+	border.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_stat_inspector_panel.add_child(border)
+	var hdr := Label.new()
+	hdr.text = "Stat Rollup [F8]"
+	hdr.position = Vector2(8, 4)
+	hdr.add_theme_font_size_override("font_size", 12)
+	hdr.add_theme_color_override("font_color", COL_GOLD)
+	_stat_inspector_panel.add_child(hdr)
+	# Scrollable text area — set as a Label inside a ScrollContainer so
+	# the dict can grow without needing layout math.
+	var scroll := ScrollContainer.new()
+	scroll.position = Vector2(8, 24)
+	scroll.size = Vector2(w - 16, h - 32)
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	scroll.mouse_filter = Control.MOUSE_FILTER_PASS
+	_stat_inspector_panel.add_child(scroll)
+	_stat_inspector_label = Label.new()
+	_stat_inspector_label.text = "(no bot)"
+	_stat_inspector_label.add_theme_font_size_override("font_size", 11)
+	_stat_inspector_label.add_theme_color_override("font_color", Color(0.85, 0.85, 0.75))
+	_stat_inspector_label.add_theme_font_override("font", _monospace_font())
+	_stat_inspector_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_stat_inspector_label.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_stat_inspector_label.autowrap_mode = TextServer.AUTOWRAP_OFF
+	scroll.add_child(_stat_inspector_label)
+
+func _toggle_stat_inspector() -> void:
+	_stat_inspector_visible = not _stat_inspector_visible
+	if _stat_inspector_panel != null and is_instance_valid(_stat_inspector_panel):
+		_stat_inspector_panel.visible = _stat_inspector_visible
+	# Invalidate the equip-hash gate so update_stats pumps a fresh dict
+	# next tick — otherwise toggling on with no equip change leaves the
+	# panel stale.
+	_last_equip_hash_for_stats = 0
+
+# Pump the latest StatCalc.compute output into the inspector. Cheap when
+# the panel is hidden — early-returns before formatting.
+func update_stat_inspector(stats: Dictionary) -> void:
+	if not _stat_inspector_visible:
+		return
+	if _stat_inspector_label == null or not is_instance_valid(_stat_inspector_label):
+		return
+	_stat_inspector_label.text = _format_stat_inspector(stats)
+
+# Render the dict as aligned key=value lines, grouped by section. Soft-
+# capped values get an inline "(cap N)" suffix so we can tell at a
+# glance whether the value is at or below its ceiling.
+func _format_stat_inspector(s: Dictionary) -> String:
+	var caps := {
+		"crit_chance": 75.0, "haste_pct": 200.0, "evasion": 75.0,
+		"lifesteal_pct": 15.0, "spell_damage_pct": 120.0,
+		"spell_area_pct": 100.0, "spell_cdr_pct": 50.0,
+		"spell_duration_pct": 100.0, "spell_proj_speed_pct": 100.0,
+		"spell_proj_bonus": 5.0, "str_spell_dmg_pct": 100.0,
+		"dex_spell_dmg_pct": 100.0, "int_spell_dmg_pct": 100.0,
+	}
+	var sections := [
+		["Identity", ["species_id", "level", "xp", "gold"]],
+		["Primary",  ["str", "dex", "int", "alloc_str", "alloc_dex", "alloc_int", "unspent_points"]],
+		["Vitals",   ["max_hp", "hp_regen", "armor", "evasion"]],
+		["Combat",   ["damage_min", "damage_max", "weapon_speed", "weapon_damage_type", "weapon_class", "attack_interval", "crit_chance", "haste_pct", "lifesteal_pct"]],
+		["Spell",    ["spell_damage_pct", "spell_cdr_pct", "spell_proj_bonus", "spell_proj_speed_pct", "spell_area_pct", "spell_duration_pct", "str_spell_dmg_pct", "dex_spell_dmg_pct", "int_spell_dmg_pct"]],
+		["Misc",     ["move_speed", "aggro_bonus", "loot_rarity_bonus", "xp_gain_pct"]],
+	]
+	var lines: Array = []
+	for sec in sections:
+		var title: String = sec[0]
+		var keys: Array = sec[1]
+		lines.append("[%s]" % title)
+		for k in keys:
+			var v: Variant = s.get(k, null)
+			var v_str: String = _stat_value_repr(v)
+			var cap: Variant = caps.get(k, null)
+			if cap != null and v != null and (v is float or v is int):
+				v_str = "%s   (cap %s)" % [v_str, _stat_value_repr(cap)]
+			lines.append("  %s = %s" % [_stat_pad(k, 24), v_str])
+		lines.append("")
+	# Resistances and per-element spell-pct collapse to a single line each
+	# so the panel stays compact.
+	var res: Dictionary = s.get("resistances", {})
+	if not res.is_empty():
+		var parts: Array = []
+		for elem in res.keys():
+			parts.append("%s=%s" % [elem, _stat_value_repr(res[elem])])
+		lines.append("[Resistances]")
+		lines.append("  " + ", ".join(parts))
+		lines.append("")
+	var spe: Dictionary = s.get("spell_element_pct", {})
+	if not spe.is_empty():
+		var parts2: Array = []
+		for elem in spe.keys():
+			parts2.append("%s=%s" % [elem, _stat_value_repr(spe[elem])])
+		lines.append("[Spell Element %]")
+		lines.append("  " + ", ".join(parts2))
+		lines.append("")
+	var ed: Dictionary = s.get("extra_damage", {})
+	if not ed.is_empty():
+		lines.append("[Extra Damage]")
+		for elem in ed.keys():
+			var rng: Dictionary = ed[elem]
+			lines.append("  %s = %d-%d" % [_stat_pad(elem, 24), int(rng.get("min", 0)), int(rng.get("max", 0))])
+	return "\n".join(lines)
+
+func _stat_value_repr(v: Variant) -> String:
+	if v == null:
+		return "(null)"
+	match typeof(v):
+		TYPE_FLOAT:
+			return "%.2f" % float(v)
+		TYPE_INT:
+			return str(int(v))
+		TYPE_STRING:
+			return String(v)
+		TYPE_BOOL:
+			return "true" if bool(v) else "false"
+	return str(v)
+
+func _stat_pad(s: String, n: int) -> String:
+	var out: String = s
+	while out.length() < n:
+		out += " "
+	return out
+
 func _build_fullscreen_button() -> void:
 	# Always-visible fullscreen toggle. CanvasLayer ignores Control
 	# anchor presets, so position by viewport size directly. We re-place
@@ -1315,6 +1485,7 @@ func update_stats(bot_ref: Bot, place_str: String, _turn: int) -> void:
 				bot_ref.level, bot_ref.xp, bot_ref.gold, bot_ref.blessings,
 			)
 			_stat_panel_widget.render(stats)
+			update_stat_inspector(stats)
 			_last_equip_hash_for_stats = input_hash
 
 func push_log(msg: String, tag: String = "combat") -> void:

@@ -4,6 +4,22 @@ extends RefCounted
 const AFFIXES_PATH := "res://data/affixes.json"
 const BASE_TYPE_AFFIXES_PATH := "res://data/base_type_affixes.json"
 
+# base_type_affixes.json uses readable category aliases ("crit", "haste",
+# "strength", …) instead of raw affix ids. Pre-2026-06-09 the loader
+# required keys to match an affix id verbatim, so every weight fell
+# through the unknown-id filter and silently became uniform applies_to
+# fallback. We now expand each category to a small id-list at load time
+# so a tower_shield's "stamina:40 regen:10" actually biases toward
+# of_vitality / of_the_bear / of_regen / of_lifesteal.
+const _CATEGORY_EXPANSION := {
+	"crit":     {"of_crit": 1.0},
+	"haste":    {"of_haste": 1.0},
+	"strength": {"of_might": 0.6, "of_str_mastery": 0.4},
+	"agility":  {"of_finesse": 0.6, "of_the_cat": 0.4},
+	"stamina":  {"of_vitality": 0.5, "of_the_bear": 0.5},
+	"regen":    {"of_regen": 0.6, "of_lifesteal": 0.4},
+}
+
 static var _affixes_by_id: Dictionary = {}
 static var _rarity_count: Dictionary = {}
 static var _rarity_idx: Dictionary = {}
@@ -36,7 +52,24 @@ static func _ensure_loaded() -> void:
 	if bt_f != null:
 		var bt_parsed: Variant = JSON.parse_string(bt_f.get_as_text())
 		if typeof(bt_parsed) == TYPE_DICTIONARY:
-			_base_type_weights = bt_parsed.get("base_types", {})
+			var raw_bt: Dictionary = bt_parsed.get("base_types", {})
+			# Expand category aliases ("crit"/"haste"/…) to real affix-ids
+			# so the weight pool roll_affixes_for builds carries actual
+			# affix entries. Pre-fix the entire file was silently dead.
+			for base_type in raw_bt.keys():
+				var src: Dictionary = raw_bt[base_type]
+				var dst: Dictionary = {}
+				for key in src.keys():
+					var w: float = float(src[key])
+					if w <= 0.0:
+						continue
+					var sub: Variant = _CATEGORY_EXPANSION.get(key, null)
+					if typeof(sub) == TYPE_DICTIONARY:
+						for af_id in sub.keys():
+							dst[af_id] = float(dst.get(af_id, 0.0)) + w * float(sub[af_id])
+					elif _affixes_by_id.has(key):
+						dst[key] = float(dst.get(key, 0.0)) + w
+				_base_type_weights[base_type] = dst
 	_loaded = true
 
 static func roll_affixes_for(item: Dictionary, rng: RandomNumberGenerator) -> Array:
@@ -56,12 +89,14 @@ static func roll_affixes_for(item: Dictionary, rng: RandomNumberGenerator) -> Ar
 	#      can apply to the slot (legacy behavior)
 	var weights: Dictionary = {}
 	var item_pool: Variant = item.get("affix_pool", null)
+	var weights_from_base_type: bool = false
 	if typeof(item_pool) == TYPE_DICTIONARY and not item_pool.is_empty():
 		weights = item_pool
 	else:
 		var base_type: String = String(item.get("base_type", ""))
 		if base_type != "" and _base_type_weights.has(base_type):
 			weights = _base_type_weights[base_type]
+			weights_from_base_type = true
 	# Build the pool: weighted entries from `weights`, or applies_to
 	# fallback at uniform weight 1.
 	var pool: Array = []
@@ -76,6 +111,14 @@ static func roll_affixes_for(item: Dictionary, rng: RandomNumberGenerator) -> Ar
 			var w: float = float(weights[af_id])
 			if w <= 0.0 or not _affixes_by_id.has(af_id):
 				continue
+			# Base-type pools come from category expansion and may include
+			# affix-ids that don't apply to this item's slot (e.g.
+			# of_str_mastery via "strength" → only helm/amulet/spell). The
+			# explicit per-item affix_pool override is trusted as authored.
+			if weights_from_base_type:
+				var bt_applies: Array = _affixes_by_id[af_id].applies_to
+				if not (bt_applies.has(slot) or bt_applies.has("any")):
+					continue
 			pool.append({"def": _affixes_by_id[af_id], "weight": w})
 		# If the override pool somehow ended up empty (all weights 0
 		# or unknown ids), fall back to applies_to so the item still
@@ -219,6 +262,17 @@ static func format_affix_lines(affixes: Array) -> Array:
 			continue
 		var stat: String = String(def.stat)
 		var v: int = int(af_inst.value)
+		# PLAYTEST #9 — hide rounded-zero rows so a "+0 Spell Projectile"
+		# never reaches the tooltip. Range affixes carry value_min/max
+		# bounds; suppress them only when BOTH bounds round to zero (a
+		# +1-3 range row stays visible even if its midpoint rounds to 0).
+		if af_inst.has("value_min") and af_inst.has("value_max"):
+			var lo: int = int(af_inst.get("value_min", 0))
+			var hi: int = int(af_inst.get("value_max", 0))
+			if lo == 0 and hi == 0:
+				continue
+		elif v == 0:
+			continue
 		lines.append(_format_stat_line(stat, v))
 	return lines
 

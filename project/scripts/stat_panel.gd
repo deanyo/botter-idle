@@ -20,6 +20,33 @@ extends Control
 const COL_AMBER := Color(0.92, 0.78, 0.45)
 const COL_DIM := Color(0.7, 0.6, 0.4)
 const COL_GOLD := Color(1.0, 0.85, 0.3)
+# Soft-cap exposure (a06 §4.4 / S3.4). Saturated yellow when the value
+# is at its cap, dim yellow when within 10% of cap. Caps mirror the
+# clamps in stat_calc.gd:275-316.
+const COL_AT_CAP := Color(1.00, 0.85, 0.20)
+const COL_NEAR_CAP := Color(1.00, 0.85, 0.55)
+# Hover tooltips for STR/DEX/INT — explain what each stat governs so the
+# player can read "this is the stat for me" at a glance (PLAYTEST #2).
+const _PRIMARY_TOOLTIPS := {
+	"str": "Strength\n+1.5% HP per excess point\nMelee weapon damage scales here",
+	"dex": "Dexterity\n+0.5% Crit per excess point\n+1% Haste per excess point",
+	"int": "Intelligence\n+1% Spell Damage per excess point\n+0.5% Spell Area per excess point\n+0.5% Spell Duration per excess point",
+}
+# Soft-cap table — stat key → ceiling value used by stat_calc.gd. Row
+# colors lerp toward yellow as the displayed value approaches the cap.
+# Entries omitted here render in their normal color.
+const _STAT_SOFT_CAPS := {
+	"crit_chance":          75.0,
+	"haste_pct":            200.0,
+	"evasion":              75.0,
+	"lifesteal_pct":        15.0,
+	"spell_damage_pct":     120.0,
+	"spell_area_pct":       100.0,
+	"spell_cdr_pct":        50.0,
+	"spell_duration_pct":   100.0,
+	"spell_proj_speed_pct": 100.0,
+	"spell_proj_bonus":     5.0,
+}
 
 # When true, the Primary section renders +/- alloc buttons and a Reset
 # button so the player can spend stat points. Outpost only.
@@ -67,6 +94,23 @@ func _build_layout(stats: Dictionary) -> void:
 
 	# Build sections in order. Each `_section` adds a header + underline;
 	# `_row` adds a stat row.
+	#
+	# PLAYTEST #2 — Primary stats lead the panel. STR/DEX/INT are the
+	# core build-shape lever; burying them at the bottom under Vitals
+	# made race choice / level-up alloc feel like decoration. Their
+	# section also gets per-stat hover tooltips explaining what each
+	# governs.
+	_section("Primary")
+	if editable:
+		_attribute_row("str", "Str", UITheme.spell_class_color("str"))
+		_attribute_row("dex", "Dex", UITheme.spell_class_color("dex"))
+		_attribute_row("int", "Int", UITheme.spell_class_color("int"))
+		_unspent_row()
+	else:
+		_row("str", "Str", UITheme.spell_class_color("str"))
+		_row("dex", "Dex", UITheme.spell_class_color("dex"))
+		_row("int", "Int", UITheme.spell_class_color("int"))
+
 	_section("Vitals")
 	_row("max_hp", "HP", UITheme.affix_stat_color("hp"))
 	_row("hp_regen", "Regen / sec", UITheme.affix_stat_color("hp_regen"))
@@ -99,17 +143,6 @@ func _build_layout(stats: Dictionary) -> void:
 	for elem in StatCalc.SPELL_ELEMENTS:
 		var col3: Color = UITheme.damage_type_color(elem)
 		_row("spell_" + elem + "_pct", "%s Spell Dmg" % elem.capitalize(), col3)
-
-	_section("Primary")
-	if editable:
-		_attribute_row("str", "Str", UITheme.spell_class_color("str"))
-		_attribute_row("dex", "Dex", UITheme.spell_class_color("dex"))
-		_attribute_row("int", "Int", UITheme.spell_class_color("int"))
-		_unspent_row()
-	else:
-		_row("str", "Str", UITheme.spell_class_color("str"))
-		_row("dex", "Dex", UITheme.spell_class_color("dex"))
-		_row("int", "Int", UITheme.spell_class_color("int"))
 
 	_section("Misc")
 	_row("move_speed", "Move Speed", COL_DIM)
@@ -148,6 +181,13 @@ func _row(key: String, label_text: String, color: Color) -> void:
 	name_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	name_lbl.size_flags_stretch_ratio = 0.6
 	name_lbl.clip_text = true
+	# PLAYTEST #2 — per-stat hover tooltips explain what STR/DEX/INT
+	# governs. Engine native tooltip — Control.tooltip_text. Mouse_filter
+	# pass so the row's hover area dispatches the engine tooltip.
+	var hover: String = String(_PRIMARY_TOOLTIPS.get(key, ""))
+	if hover != "":
+		name_lbl.mouse_filter = Control.MOUSE_FILTER_STOP
+		name_lbl.tooltip_text = hover
 	row.add_child(name_lbl)
 	var val_lbl := UITheme.label("—", UITheme.FS_SMALL, color)
 	val_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
@@ -156,7 +196,7 @@ func _row(key: String, label_text: String, color: Color) -> void:
 	val_lbl.clip_text = true
 	row.add_child(val_lbl)
 	_content.add_child(row)
-	_rows[key] = {"lbl": val_lbl, "last": ""}
+	_rows[key] = {"lbl": val_lbl, "last": "", "base_color": color}
 
 # Attribute row (outpost editable mode) — name + value + − value + buttons.
 func _attribute_row(stat: String, label_text: String, color: Color) -> void:
@@ -167,6 +207,11 @@ func _attribute_row(stat: String, label_text: String, color: Color) -> void:
 	name_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	name_lbl.size_flags_stretch_ratio = 0.6
 	name_lbl.clip_text = true
+	# PLAYTEST #2 — same per-stat tooltip surface used by _row().
+	var hover: String = String(_PRIMARY_TOOLTIPS.get(stat, ""))
+	if hover != "":
+		name_lbl.mouse_filter = Control.MOUSE_FILTER_STOP
+		name_lbl.tooltip_text = hover
 	row.add_child(name_lbl)
 	var val_lbl := UITheme.label("—", UITheme.FS_SMALL, color)
 	val_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
@@ -192,7 +237,7 @@ func _attribute_row(stat: String, label_text: String, color: Color) -> void:
 		plus.pressed.connect(alloc_plus_cb.bind(stat))
 	row.add_child(plus)
 	_content.add_child(row)
-	_rows[stat] = {"lbl": val_lbl, "last": ""}
+	_rows[stat] = {"lbl": val_lbl, "last": "", "base_color": color}
 
 # Unspent points row + Reset button (outpost editable mode).
 func _unspent_row() -> void:
@@ -220,7 +265,7 @@ func _unspent_row() -> void:
 		reset_btn.pressed.connect(alloc_reset_cb)
 	row.add_child(reset_btn)
 	_content.add_child(row)
-	_rows["unspent_points"] = {"lbl": val_lbl, "last": ""}
+	_rows["unspent_points"] = {"lbl": val_lbl, "last": "", "base_color": COL_AMBER}
 
 # Diff-update every row's text from the stats dict. Cheap: only writes
 # Label.text when the formatted value changed (skips the layout pass).
@@ -228,7 +273,8 @@ func _apply_values(stats: Dictionary) -> void:
 	_set_text("max_hp", "%d" % int(stats.get("max_hp", 0)))
 	_set_text("hp_regen", _fmt_float(float(stats.get("hp_regen", 0)), 1))
 	_set_text("armor", "%d" % int(stats.get("armor", 0)))
-	_set_text("evasion", "%d%%" % int(round(float(stats.get("evasion", 0)))))
+	var evasion_v: float = float(stats.get("evasion", 0))
+	_set_text("evasion", "%d%%" % int(round(evasion_v)), evasion_v)
 	var resistances: Dictionary = stats.get("resistances", {})
 	for elem in StatCalc.RESISTANCE_ELEMENTS:
 		_set_text("res_" + elem, "%d%%" % int(round(float(resistances.get(elem, 0)))))
@@ -239,22 +285,32 @@ func _apply_values(stats: Dictionary) -> void:
 	_set_text("damage", "%d-%d %s" % [dmin, dmax, dtype])
 	_set_text("weapon_speed", "%.2fs" % float(stats.get("weapon_speed", 1.0)))
 	_set_text("attack_interval", "%.2fs/swing" % float(stats.get("attack_interval", 1.0)))
-	_set_text("crit_chance", "%d%%" % int(round(float(stats.get("crit_chance", 0)))))
-	_set_text("haste_pct", "+%d%%" % int(round(float(stats.get("haste_pct", 0)))))
-	_set_text("lifesteal_pct", "%d%%" % int(round(float(stats.get("lifesteal_pct", 0)))))
+	var crit_v: float = float(stats.get("crit_chance", 0))
+	_set_text("crit_chance", "%d%%" % int(round(crit_v)), crit_v)
+	var haste_v: float = float(stats.get("haste_pct", 0))
+	_set_text("haste_pct", "+%d%%" % int(round(haste_v)), haste_v)
+	var ls_v: float = float(stats.get("lifesteal_pct", 0))
+	_set_text("lifesteal_pct", "%d%%" % int(round(ls_v)), ls_v)
 	var extra: Dictionary = stats.get("extra_damage", {})
 	for elem in ["physical", "fire", "cold", "lightning", "holy", "poison", "dark"]:
 		var rng: Dictionary = extra.get(elem, {"min": 0, "max": 0})
 		var lo: int = int(rng.get("min", 0))
 		var hi: int = int(rng.get("max", 0))
 		_set_text("extra_" + elem, "—" if (lo == 0 and hi == 0) else "%d-%d" % [lo, hi])
-	# Spells block.
-	_set_text("spell_cdr_pct", "%d%%" % int(round(float(stats.get("spell_cdr_pct", 0)))))
-	_set_text("spell_proj_bonus", "+%d" % int(stats.get("spell_proj_bonus", 0)))
-	_set_text("spell_proj_speed_pct", "%d%%" % int(round(float(stats.get("spell_proj_speed_pct", 0)))))
-	_set_text("spell_area_pct", "%d%%" % int(round(float(stats.get("spell_area_pct", 0)))))
-	_set_text("spell_duration_pct", "%d%%" % int(round(float(stats.get("spell_duration_pct", 0)))))
-	_set_text("spell_damage_pct", "%d%%" % int(round(float(stats.get("spell_damage_pct", 0)))))
+	# Spells block. Soft-capped values pass their numeric so cap-pressure
+	# colors fire (S3.4).
+	var cdr_v: float = float(stats.get("spell_cdr_pct", 0))
+	_set_text("spell_cdr_pct", "%d%%" % int(round(cdr_v)), cdr_v)
+	var proj_v: float = float(stats.get("spell_proj_bonus", 0))
+	_set_text("spell_proj_bonus", "+%d" % int(proj_v), proj_v)
+	var pspeed_v: float = float(stats.get("spell_proj_speed_pct", 0))
+	_set_text("spell_proj_speed_pct", "%d%%" % int(round(pspeed_v)), pspeed_v)
+	var sarea_v: float = float(stats.get("spell_area_pct", 0))
+	_set_text("spell_area_pct", "%d%%" % int(round(sarea_v)), sarea_v)
+	var sdur_v: float = float(stats.get("spell_duration_pct", 0))
+	_set_text("spell_duration_pct", "%d%%" % int(round(sdur_v)), sdur_v)
+	var sdmg_v: float = float(stats.get("spell_damage_pct", 0))
+	_set_text("spell_damage_pct", "%d%%" % int(round(sdmg_v)), sdmg_v)
 	var spell_elem: Dictionary = stats.get("spell_element_pct", {})
 	for elem in StatCalc.SPELL_ELEMENTS:
 		_set_text("spell_" + elem + "_pct", "%d%%" % int(round(float(spell_elem.get(elem, 0)))))
@@ -273,7 +329,7 @@ func _apply_values(stats: Dictionary) -> void:
 
 # Diff-set: write Label.text only when the new value differs. Pre-fix
 # this saved the per-frame relayout cost in update_stats; same idea here.
-func _set_text(key: String, value: String) -> void:
+func _set_text(key: String, value: String, numeric: float = NAN) -> void:
 	var refs: Variant = _rows.get(key, null)
 	if refs == null:
 		return
@@ -282,6 +338,19 @@ func _set_text(key: String, value: String) -> void:
 	var lbl: Label = refs.get("lbl", null)
 	if lbl != null and is_instance_valid(lbl):
 		lbl.text = value
+		# Soft-cap exposure (S3.4 / a06 §4.4). When the stat is in the
+		# soft-cap table and the caller fed a numeric value, recolor the
+		# row so cap-pressure is legible: saturated yellow at cap, faint
+		# yellow within 10% of cap, base color otherwise.
+		if not is_nan(numeric) and _STAT_SOFT_CAPS.has(key):
+			var cap: float = float(_STAT_SOFT_CAPS[key])
+			var base_color: Color = refs.get("base_color", COL_AMBER)
+			if cap > 0.0 and numeric >= cap - 0.001:
+				lbl.add_theme_color_override("font_color", COL_AT_CAP)
+			elif cap > 0.0 and numeric >= cap * 0.90:
+				lbl.add_theme_color_override("font_color", COL_NEAR_CAP)
+			else:
+				lbl.add_theme_color_override("font_color", base_color)
 	refs["last"] = value
 
 # Round a float to N decimals, dropping trailing ".0" for cleanliness.

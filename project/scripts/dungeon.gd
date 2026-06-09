@@ -591,6 +591,12 @@ func _async_build_floor() -> void:
 	# boss-spawn paths. 2026-06-05.
 	if run.is_final_boss_floor() and is_instance_valid(bot):
 		run.capture_boss_floor_entry(int(bot.hp), String(current_biome.get("id", "")))
+	# Reset the revive mutex (a10 §5.2 / a11 §2.11, S2 cap rules). Future
+	# revive sources (of_phoenix, Last Heart, Phylactery, etc.) gate on
+	# this flag so only ONE revive fires per floor regardless of how many
+	# revive items the bot is wearing.
+	if is_instance_valid(bot):
+		bot.revive_used_this_floor = false
 	floor_started.emit(current_floor)
 
 	# Debug-jump screenshot mode: after a short settle delay, save the

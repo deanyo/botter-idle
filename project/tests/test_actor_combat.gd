@@ -30,6 +30,11 @@ func before_all() -> void:
 # ---------------------------------------------------------------------
 
 func test_physical_armor_subtracts() -> void:
+	# Physical damage keeps the legacy flat-armor subtract. The S2
+	# additive cap (a10 §5.2) governs the worn-tag DR + element resist
+	# layers; armor sits outside it so early-game defenses still feel
+	# right (otherwise a 3-dmg rat vs 0-armor fresh-save bot mitigates
+	# to 2 instead of 1 via floor — doubling time-to-die).
 	var d: Actor = _make_defender(100, 5, [], {})
 	var dealt: int = d.take_damage(20, null, "physical")
 	assert_eq(dealt, 15, "physical armor subtracts (20-5)")
@@ -140,14 +145,17 @@ func test_died_signal_fires_once_on_hybrid_kill() -> void:
 # ---------------------------------------------------------------------
 
 func test_spell_fire_vs_fire_res_tag_and_resistance_dict() -> void:
-	# Defender with fire_res tag (50% cut when attacker carries `fire`)
-	# AND 50% fire resistance via dict. Attacker has fire weapon tag.
-	# Fire 100 → tag halves to 50 → dict halves to 25.
+	# S2 cap rules (a10 §5.2): mitigation layers additively sum, then
+	# clamp at +90%. Defender carries fire_res tag (+50% vs attacker's
+	# fire) AND 50% fire resistance via dict (+50%). Sum = 1.0 → cap
+	# 0.90 → 100 × 0.10 = 10 dealt. Pre-cap multiplied: tag halves to
+	# 50 → dict halves to 25. The cap intentionally compresses the
+	# overlap so a single defensive identity can't trivialize fire.
 	var attacker: _StubAttacker = _StubAttacker.new()
 	attacker.weapon_tags = ["fire"]
 	var d: Actor = _make_defender(1000, 0, ["fire_res"], {"fire": 50.0})
 	var dealt: int = d.take_damage(100, attacker, "fire")
-	assert_eq(dealt, 25, "fire vs fire_res tag + resistance dict")
+	assert_eq(dealt, 10, "fire vs fire_res tag + resistance dict (capped 90%)")
 	d.free()
 	attacker.free()
 
@@ -161,6 +169,35 @@ func test_lightning_resistance_halves_thunderous() -> void:
 	var d: Actor = _make_defender(1000, 0, [], {"lightning": 50.0})
 	var dealt: int = d.take_damage(80, null, "lightning")
 	assert_eq(dealt, 40, "lightning resistance halves spell damage")
+	d.free()
+
+# ---------------------------------------------------------------------
+# S2 cap rules (a10 §5.2): defensive mitigation cap +90%
+# ---------------------------------------------------------------------
+
+func test_defensive_mitigation_caps_at_90_pct() -> void:
+	# Stack 75% lightning resist + 50% acrobat (low HP) + 25%
+	# willpower vs an arcane attacker. Pre-cap multiplicative sum:
+	# 0.25 × 0.83 × 0.75 = 0.156 → 84.4% mitigation. Additive sum:
+	# 0.75 + 0.17 + 0.25 = 1.17 → cap 0.90 → 10% lands. The cap
+	# enforces "no defensive stack ever drops damage below 10%".
+	var attacker: _StubAttacker = _StubAttacker.new()
+	attacker.weapon_tags = ["arcane"]
+	var d: _StubDefender = _make_defender(100, 0, ["acrobat", "willpower"], {"lightning": 75.0})
+	# Acrobat triggers below 30% HP — drop hp first.
+	d.hp = 20
+	var dealt: int = d.take_damage(100, attacker, "lightning")
+	assert_eq(dealt, 10, "stacked DR clamps at 90% mitigation (10 of 100)")
+	d.free()
+	attacker.free()
+
+func test_harm_can_amplify_past_baseline() -> void:
+	# harm contributes -0.25; mit_sum can go negative. Floor of -0.50
+	# means a hot stack of harm (alone or compounding with future
+	# mods) can amplify damage taken up to ×1.50 — but not past it.
+	var d: Actor = _make_defender(100, 0, ["harm"], {})
+	var dealt: int = d.take_damage(20, null, "physical")
+	assert_eq(dealt, 25, "harm amplifies +25% (mit_sum -0.25)")
 	d.free()
 
 # ---------------------------------------------------------------------

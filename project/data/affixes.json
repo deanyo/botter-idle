@@ -83,7 +83,7 @@
       "id": "of_multicast",   "family": "generic", "kind": "flat",
       "name": "of Multicast", "stat": "spell_proj_bonus",
       "applies_to": ["amulet","ring","spell"],
-      "tiers": [[0,0],[0,0],[0,1],[1,1],[1,2]]
+      "tiers": [[1,1],[1,1],[1,1],[1,2],[1,2]]
     },
     {
       "id": "of_channeling",  "family": "generic", "kind": "pct",
@@ -298,8 +298,8 @@
       "tiers": [[4,8],[8,14],[14,22],[22,32],[32,45]]
     },
     {
-      "id": "of_venom",      "family": "generic", "kind": "pct",
-      "name": "of Venom",    "stat": "poison_dmg_pct",
+      "id": "of_envenom",    "family": "generic", "kind": "pct",
+      "name": "of Envenom",  "stat": "poison_dmg_pct",
       "applies_to": ["amulet","ring","helm","gloves","cloak","spell"],
       "tiers": [[4,8],[8,14],[14,22],[22,32],[32,45]]
     },

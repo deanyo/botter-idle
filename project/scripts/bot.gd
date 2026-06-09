@@ -38,6 +38,28 @@ var spell_element_pct: Dictionary = {
 	"fire": 0.0, "cold": 0.0, "thunderous": 0.0,
 	"holy": 0.0, "poison": 0.0, "dark": 0.0,
 }
+# Per-class spell-damage multipliers from of_str_mastery / of_dex_mastery /
+# of_int_mastery. spell_data.compute_damage adds the matching one (keyed
+# off the spell's primary_stat) into dmg_mult.
+var str_spell_dmg_pct: float = 0.0
+var dex_spell_dmg_pct: float = 0.0
+var int_spell_dmg_pct: float = 0.0
+# Ephemeral conditional spell bonus accumulator (a10 §5.1). Future
+# conditional/trigger-based spell affixes (Wrath Charge, Curse of
+# Brittlebone, Tempest active windows, Sage unspent-points scaling)
+# write a percentage into this lane. spell_data.compute_damage sums
+# what's active on the cast and clamps total at +30% per cast — the
+# same ceiling weapon swings respect. Permanent stat scalers
+# (spell_damage_pct, spell_element_pct, class lanes) live in their
+# own already-capped fields; this one is the conditional bucket.
+var ephemeral_spell_dmg_pct: float = 0.0
+# Revive mutex (a10 §5.2 / a11 §2.11, S2 cap rules). Future revive
+# sources (of_phoenix amulet, Cloak of the Last Heart, boss-anchor
+# Phylactery, etc.) gate on this flag — only ONE revive may fire per
+# floor, regardless of how many revive items are equipped. Cleared on
+# floor_started so the next floor restores the budget. Without the
+# mutex, stacking 3+ revive sources turns boss fights into auto-clear.
+var revive_used_this_floor: bool = false
 # Primary stats (DCSS-style). Base 5/5/5; species adds str_flat/dex_flat/
 # int_flat on top. Each stat point = +2% damage on its scaling spells +
 # small contributions to derived stats (str→hp, dex→crit/haste, int→spell
@@ -391,6 +413,9 @@ func recompute_stats() -> void:
 	spell_duration_pct = float(d.spell_duration_pct)
 	spell_damage_pct = float(d.spell_damage_pct)
 	spell_element_pct = d.spell_element_pct
+	str_spell_dmg_pct = float(d.get("str_spell_dmg_pct", 0.0))
+	dex_spell_dmg_pct = float(d.get("dex_spell_dmg_pct", 0.0))
+	int_spell_dmg_pct = float(d.get("int_spell_dmg_pct", 0.0))
 	move_speed = float(d.move_speed)
 	aggro_bonus = int(d.aggro_bonus)
 	# Legacy Actor fields combat-log paths read.

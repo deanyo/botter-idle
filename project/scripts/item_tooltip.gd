@@ -395,6 +395,14 @@ func _render_damage_block() -> void:
 	elif slot == "spell":
 		var cd: float = float(item.get("spell_cooldown", 3.0))
 		_vbox.add_child(_make_label("%.1fs Cooldown" % cd, 12, COLOR_BODY, false))
+		# PLAYTEST #7 — surface the scaling primary stat so the player can
+		# tell at a glance whether a Fireball Tome scales Str/Dex/Int.
+		# Color matches the HUD spell-cell border (red/green/blue) so the
+		# two surfaces telegraph the same identity.
+		var pstat: String = SpellData.primary_stat_for_item(item)
+		var pstat_label: String = {"str": "Strength", "dex": "Dexterity", "int": "Intelligence"}.get(pstat, pstat.capitalize())
+		var pstat_color: Color = UITheme.spell_class_color(pstat)
+		_vbox.add_child(_make_label("Scales: %s" % pstat_label, 12, pstat_color, true))
 
 # Build affix lines from inst.affixes + item.implicit_affixes. Each
 # line is a Label colored by family (uncommon-blue for generic /
@@ -412,6 +420,8 @@ func _build_affix_lines() -> Array:
 		if def.is_empty():
 			continue
 		var rolled: Dictionary = _implicit_value_at_rarity(def, String(item.get("rarity", "common")))
+		if _is_zero_affix(def, rolled):
+			continue
 		var line_text: String = _format_affix_line(def, rolled)
 		var stat_col: Color = UITheme.affix_stat_color(String(def.get("stat", "")))
 		# Implicits get a +20% value boost toward gold so they read as
@@ -426,6 +436,8 @@ func _build_affix_lines() -> Array:
 		for af_inst in inst.get("affixes", []):
 			var def: Dictionary = AffixSystem.get_affix_def(String(af_inst.get("id", "")))
 			if def.is_empty():
+				continue
+			if _is_zero_affix(def, af_inst):
 				continue
 			var line_text: String = _format_affix_line(def, af_inst)
 			var line_color: Color = UITheme.affix_stat_color(String(def.get("stat", "")))
@@ -527,6 +539,20 @@ func _format_affix_line(def: Dictionary, af_inst: Dictionary) -> String:
 	var v_flat: int = int(af_inst.get("value", 0))
 	var label_flat: String = _STAT_FLAT_LABELS.get(stat, name)
 	return "+%d %s" % [v_flat, label_flat]
+
+# PLAYTEST #9 — flat/pct affix lines whose displayed integer is 0 (e.g.
+# "+0 Spell Projectile", "+0% Spell Damage") are pure noise. Range affixes
+# (kind=range) carry value_min/max so a 0-midpoint roll still has a
+# meaningful "+1-2 Fire" line; flag affixes are descriptions, never zero.
+func _is_zero_affix(def: Dictionary, af_inst: Dictionary) -> bool:
+	var kind: String = String(def.get("kind", "flat"))
+	if kind == "flag":
+		return false
+	if kind == "range":
+		var lo: int = int(af_inst.get("value_min", 0))
+		var hi: int = int(af_inst.get("value_max", 0))
+		return lo == 0 and hi == 0
+	return int(af_inst.get("value", 0)) == 0
 
 const _STAT_FLAT_LABELS := {
 	"str": "Strength", "dex": "Dexterity", "int": "Intelligence",

@@ -78,6 +78,12 @@ static func compute(
 	var spell_area_pct: float = 0.0
 	var spell_duration_pct: float = 0.0
 	var spell_damage_pct: float = 0.0
+	# Class-mastery spell multipliers (of_str_mastery / of_dex_mastery /
+	# of_int_mastery). Accumulated per-class so spell_data.compute_damage
+	# can read the matching one off the spell's primary_stat.
+	var str_spell_dmg_pct: float = 0.0
+	var dex_spell_dmg_pct: float = 0.0
+	var int_spell_dmg_pct: float = 0.0
 
 	# Bot upgrades — gold-sink purchases. Pre-2026-06-06 combat_training
 	# (atk) and toughening (def) were never read here; players spent gold
@@ -125,7 +131,13 @@ static func compute(
 			meta_mult = 1.50
 		var qmult: float = Quality.multiplier_for(inst)
 		var qmult_affix: float = Quality.affix_multiplier_for(inst)
-		var combined_base: float = meta_mult * qmult
+		# Baseline rollback (a10 §5.3, §8). Primal+Sublime stacked
+		# meta_mult ×1.50 × qmult ×1.20 = ×1.80, pushing endgame Minotaur
+		# weapon swing range into 198-324 — already 30-55% over the
+		# 400-peak-hit ceiling before any new affix landed. Cap product
+		# at ×1.30 so combined base scaling stays inside design rails;
+		# affix expansion can layer on top without bursting the cap.
+		var combined_base: float = clampf(meta_mult * qmult, 0.0, 1.30)
 
 		if slot == "weapon":
 			damage_min = int(round(float(item.get("damage_min", 1)) * combined_base))
@@ -177,6 +189,9 @@ static func compute(
 		spell_area_pct += float(slot_sums.get("spell_area_pct", 0))
 		spell_duration_pct += float(slot_sums.get("spell_duration_pct", 0))
 		spell_damage_pct += float(slot_sums.get("spell_damage_pct", 0))
+		str_spell_dmg_pct += float(slot_sums.get("str_spell_dmg_pct", 0))
+		dex_spell_dmg_pct += float(slot_sums.get("dex_spell_dmg_pct", 0))
+		int_spell_dmg_pct += float(slot_sums.get("int_spell_dmg_pct", 0))
 		# Per-element spell-damage affixes (of_pyromancer / of_cryomancer
 		# / of_storm / of_zealot / of_venom / of_shadow). Each writes to
 		# `<elem>_dmg_pct`; we accumulate into spell_element_pct keyed by
@@ -277,6 +292,12 @@ static func compute(
 	var evasion_capped: float = clampf(evasion_total, 0.0, 75.0)
 	lifesteal_pct = clampf(lifesteal_pct, 0.0, 15.0)
 	spell_damage_pct = clampf(spell_damage_pct, 0.0, 120.0)
+	# Class-mastery cap (per a06 §3.2) — same shape as spell_element_pct.
+	# Each class lane caps independently so a pure-class build doesn't
+	# trivially eclipse generic spell_damage_pct.
+	str_spell_dmg_pct = clampf(str_spell_dmg_pct, 0.0, 100.0)
+	dex_spell_dmg_pct = clampf(dex_spell_dmg_pct, 0.0, 100.0)
+	int_spell_dmg_pct = clampf(int_spell_dmg_pct, 0.0, 100.0)
 	spell_area_pct = clampf(spell_area_pct, 0.0, 100.0)
 	spell_cdr_pct = clampf(spell_cdr_pct, 0.0, 50.0)
 	spell_duration_pct = clampf(spell_duration_pct, 0.0, 100.0)
@@ -383,6 +404,9 @@ static func compute(
 	out["spell_duration_pct"] = spell_duration_pct
 	out["spell_damage_pct"] = spell_damage_pct
 	out["spell_element_pct"] = spell_element_pct
+	out["str_spell_dmg_pct"] = str_spell_dmg_pct
+	out["dex_spell_dmg_pct"] = dex_spell_dmg_pct
+	out["int_spell_dmg_pct"] = int_spell_dmg_pct
 	out["move_speed"] = move_speed
 	out["aggro_bonus"] = vision_count + sp_aggro_flat
 	out["loot_rarity_bonus"] = loot_rarity_bonus
@@ -409,6 +433,7 @@ static func _initial_dict() -> Dictionary:
 		"spell_proj_speed_pct": 0.0, "spell_area_pct": 0.0,
 		"spell_duration_pct": 0.0, "spell_damage_pct": 0.0,
 		"spell_element_pct": {},
+		"str_spell_dmg_pct": 0.0, "dex_spell_dmg_pct": 0.0, "int_spell_dmg_pct": 0.0,
 		"move_speed": _BASE_MOVE_SPEED, "aggro_bonus": 0,
 		"loot_rarity_bonus": 0.0, "xp_gain_pct": 0.0,
 		"alloc_str": 0, "alloc_dex": 0, "alloc_int": 0, "unspent_points": 0,

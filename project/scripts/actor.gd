@@ -317,14 +317,22 @@ func resolve_swing(typed: Dictionary, attacker: Actor = null) -> int:
 func _apply_typed_damage(raw: int, damage_type: String, attacker: Actor, def_tags: Array, atk_tags: Array) -> int:
 	if damage_type == "":
 		damage_type = "physical"
-	# Defender-side mitigation tags — element resists (50% if attacker
-	# carries the matching tag), then -% multipliers from earth /
-	# willpower / warding / acrobat / guardian, then +% from harm.
+	# Mitigation cap (a10 §5.2, S2). Worn-tag conditional DR, element
+	# resistance, and normalized armor additively SUM into mit_sum,
+	# then clamp to [-0.50, +0.90] (10% always lands; harm can amplify
+	# up to 1.5×). Pre-cap, layers multiplied: a Gargoyle stoneflesh +
+	# tower-warding + fortified + 75% phys-resist + 75% evasion stack
+	# could compound to 96%+ effective mitigation = ~30× EHP. Additive
+	# composition keeps the defensive ceiling sane regardless of how
+	# many DR sources land.
+	var mit_sum: float = 0.0
 	if not def_tags.is_empty():
+		# Element resists (legacy: -50% off elemental hits whose attacker
+		# tag matches the worn resist).
 		if "fire_res" in def_tags and "fire" in atk_tags:
-			raw = int(round(float(raw) * 0.5))
+			mit_sum += 0.50
 		if "cold_res" in def_tags and "cold" in atk_tags:
-			raw = int(round(float(raw) * 0.5))
+			mit_sum += 0.50
 		# `earth`: -15% from any non-elemental, non-magical attack.
 		if "earth" in def_tags:
 			var is_physical: bool = true
@@ -333,38 +341,51 @@ func _apply_typed_damage(raw: int, damage_type: String, attacker: Actor, def_tag
 					is_physical = false
 					break
 			if is_physical:
-				raw = int(round(float(raw) * 0.85))
+				mit_sum += 0.15
 		# `willpower`: -25% from arcane / elemental / magical attackers.
 		if "willpower" in def_tags:
 			for t in ["arcane", "elemental", "fire", "cold"]:
 				if t in atk_tags:
-					raw = int(round(float(raw) * 0.75))
+					mit_sum += 0.25
 					break
 		# `warding`: -20% from boss / miniboss attackers.
 		if "warding" in def_tags and attacker is Enemy:
 			var e: Enemy = attacker as Enemy
 			if e.is_boss or e.is_miniboss:
-				raw = int(round(float(raw) * 0.8))
+				mit_sum += 0.20
 		# `acrobat`: -17% when below 30% HP.
 		if "acrobat" in def_tags and max_hp > 0 and float(hp) / float(max_hp) <= 0.30:
-			raw = int(round(float(raw) * 0.83))
+			mit_sum += 0.17
 		# `guardian`: flat -10% damage taken — backup armor.
 		if "guardian" in def_tags:
-			raw = int(round(float(raw) * 0.9))
+			mit_sum += 0.10
+		# `harm`: damage taken AMPLIFIED. Negative contribution.
 		if "harm" in def_tags:
-			raw = int(round(float(raw) * 1.25))
-	# Type-aware mitigation. Physical → flat armor subtraction. Elemental
-	# → percent resistance from the defender's resistances dict (defaults
-	# to 0 when the actor doesn't declare one — enemies with no resistances
-	# field eat full damage). Floor of 1 so a 100%-resisted hit still pings.
+			mit_sum += -0.25
+	# Apply additive worn-tag/element mitigation FIRST, then route by
+	# type. Physical keeps the legacy flat-armor subtraction so early-
+	# game defenses still feel right (a 3-dmg rat vs 0-armor fresh-save
+	# bot mitigates to 1 dmg via the floor, not via the additive cap
+	# which would only knock 3 down to 2 — doubling time-to-die against
+	# trash). Elemental damage routes resist_pct into mit_sum so it
+	# stacks additively with worn-tag DR rather than multiplicatively.
+	# This preserves the pre-cap early-game feel while still enforcing
+	# the +90% additive ceiling on the late-game DR stack
+	# (worn-tag + element-tag + resist_pct).
+	var final_mit: float = clampf(mit_sum, -0.50, 0.90)
 	var dmg: int
 	if damage_type == "physical":
-		dmg = maxi(1, raw - defense)
+		# Apply mit_sum first, then armor flat-subtract. Floor of 1 so
+		# a fully mitigated hit still pings the HP bar.
+		var post_mit: int = int(round(float(raw) * (1.0 - final_mit)))
+		dmg = maxi(1, post_mit - defense)
 	else:
 		var resist_pct: float = 0.0
 		if "resistances" in self:
 			resist_pct = float(self.resistances.get(damage_type, 0))
-		dmg = maxi(1, int(round(float(raw) * (1.0 - resist_pct / 100.0))))
+		# Resist pct joins the additive cap.
+		var elem_mit: float = clampf(mit_sum + resist_pct / 100.0, -0.50, 0.90)
+		dmg = maxi(1, int(round(float(raw) * (1.0 - elem_mit))))
 	hp -= dmg
 	damaged.emit(self, dmg)
 	_update_hp_bar()
@@ -446,57 +467,65 @@ func attempt_attack(other: Actor, delta: float) -> int:
 	var tags: Array = combat_weapon_tags()
 	var def_tags: Array = combat_defense_tags()
 	var crit_bonus: float = 0.0
-	var dmg_mult: float = 1.0
+	# Ephemeral conditional damage bonuses additively sum, then cap at
+	# +30% per swing (a10 §5.1, S2 cap rules). Pre-cap, holy+brutal+cold+
+	# arcane+demon+harm+rage+stealthy could compound to ~7.96× peak
+	# (a10 §4.1). Each conditional contributes a flat fraction; total is
+	# clamped before applying alongside str_mult (a permanent stat scaler
+	# — NOT ephemeral). The cap is the floor for all future conditional
+	# affixes (Berserker, Hunter, Sundering, Tempest …) so adding more
+	# can't burst the ceiling.
+	var ephemeral_sum: float = 0.0
 	if not tags.is_empty():
 		if "precision" in tags:
 			crit_bonus = clampf(float(_precision_streak) * 5.0, 0.0, 50.0)
 		var target_id: String = other.combat_label() if is_instance_valid(other) else ""
 		if "holy" in tags and _StatusOverlay.enemy_matches_any(target_id, _StatusOverlay.HOLY_HATES):
-			dmg_mult *= 1.5
+			ephemeral_sum += 0.50
 		if "dragon_bane" in tags and _StatusOverlay.enemy_matches_any(target_id, _StatusOverlay.DRAGON_HATES):
-			dmg_mult *= 1.5
+			ephemeral_sum += 0.50
 		# `brutal`: +25% damage against targets below 30% HP (executioner).
 		if "brutal" in tags and is_instance_valid(other) and other.max_hp > 0:
 			if float(other.hp) / float(other.max_hp) <= 0.3:
-				dmg_mult *= 1.25
+				ephemeral_sum += 0.25
 		# `cold`: +20% damage to already-frozen targets (the chance to
 		# freeze itself is post-attack so the freeze applies for the
 		# NEXT swing's bonus, not this one).
 		if "cold" in tags and is_instance_valid(other) and other.has_status("frozen"):
-			dmg_mult *= 1.20
+			ephemeral_sum += 0.20
 		# `elemental`: bonus damage scales with character level. Weapon
 		# grows with the wielder. Bot's level via cast; enemies skip
 		# (no level concept beyond the floor multiplier).
 		if "elemental" in tags and self is Bot:
 			var lvl: int = (self as Bot).level
-			dmg_mult *= 1.0 + 0.01 * float(lvl)
+			ephemeral_sum += 0.01 * float(lvl)
 		# `arcane`: every 4th swing fires a +50% magic burst.
 		if "arcane" in tags:
 			_arcane_swing_count += 1
 			if _arcane_swing_count >= 4:
 				_arcane_swing_count = 0
-				dmg_mult *= 1.5
+				ephemeral_sum += 0.50
 		# `demon`: inverse of holy — +25% damage vs HOLY_HATES targets
 		# (undead/demon already favored by holy; demon stacks with it
 		# rather than gating). Lore: a demonic weapon hates the same
 		# things holy ones do, but for different reasons.
 		var target_id_d: String = other.combat_label() if is_instance_valid(other) else ""
 		if "demon" in tags and _StatusOverlay.enemy_matches_any(target_id_d, _StatusOverlay.HOLY_HATES):
-			dmg_mult *= 1.25
+			ephemeral_sum += 0.25
 		# `ponderous`: heavy weapon — +10% damage but slower swing
 		# (swing-rate handled in recompute_stats; here just the dmg).
 		if "ponderous" in tags:
-			dmg_mult *= 1.10
+			ephemeral_sum += 0.10
 		# `stealth` / first-strike: bot under "stealthy" status lands
 		# +25% damage. Status is a one-shot — clear after the hit
 		# below. Granted at floor build via the stealthy flavor on gear
 		# (see Bot._refresh_stealthy_status).
 		if has_status("stealthy"):
-			dmg_mult *= 1.25
+			ephemeral_sum += 0.25
 	# `harm` (defender-worn): +25% damage dealt and +25% damage taken
 	# (the receive side is in take_damage). Applies regardless of weapon.
 	if "harm" in def_tags:
-		dmg_mult *= 1.25
+		ephemeral_sum += 0.25
 	# `rage` (defender-worn): stacking +5% atk per kill in last 6s, max
 	# +30%. State maintained on attacker; cleared on expiry in
 	# attempt_attack so we don't need a separate tick.
@@ -504,7 +533,8 @@ func attempt_attack(other: Actor, delta: float) -> int:
 		var now_r: float = float(Time.get_ticks_msec()) / 1000.0
 		if now_r > _rage_expires_at:
 			_rage_stacks = 0
-		dmg_mult *= 1.0 + 0.05 * float(_rage_stacks)
+		ephemeral_sum += 0.05 * float(_rage_stacks)
+	var dmg_mult: float = 1.0 + minf(0.30, maxf(0.0, ephemeral_sum))
 
 	# Item-overhaul v2: weapon damage is a roll over [damage_min,
 	# damage_max] of weapon_damage_type. extra_damage adds typed bonus
@@ -532,11 +562,17 @@ func attempt_attack(other: Actor, delta: float) -> int:
 				continue
 			typed[elem] = int(typed.get(elem, 0)) + randi_range(lo, max(lo, hi))
 	# Str scaling on the whole swing — affects all damage types so a
-	# Strength build buffs hybrid weapons evenly.
+	# Strength build buffs hybrid weapons evenly. Capped at ×1.30 to
+	# match the meta×qmult and ephemeral ceilings (S2 / a10 §10). Pre-
+	# cap, lvl-30 alloc=50 STR Minotaur reached str_mult ×2.68, which
+	# layered on top of the post-baseline damage_max pushed peak swings
+	# to ~900 — V4 reference-build failure. STR still scales linearly
+	# below ~20 excess (1.0+0.02×x clears 1.30 at x=15), so early-game
+	# STR identity stays intact; only endgame stat dumps are clamped.
 	var str_excess: int = 0
 	if "str_stat" in self:
 		str_excess = int(self.str_stat) - 5
-	var str_mult: float = 1.0 + float(str_excess) * 0.02
+	var str_mult: float = clampf(1.0 + float(str_excess) * 0.02, 1.0, 1.30)
 	# Enchant-combo damage modifier — fires per damage type so combos
 	# like Brittle Storm (+50% lightning vs frozen) and Quench (+100%
 	# fire vs frozen) interact correctly with hybrid weapons.
