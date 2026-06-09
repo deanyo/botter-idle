@@ -42,6 +42,19 @@ static func _load_wrapper() -> Dictionary:
 	# both the primary and the .bak are exhausted do we hand back defaults.
 	var primary: Variant = _try_load_file(path)
 	if typeof(primary) == TYPE_DICTIONARY:
+		# Downgrade refusal: if the file was written by a future build
+		# (schema_version > SCHEMA_VERSION on any character), refuse to
+		# overwrite. Migrating a future save backward is not safe — we
+		# don't know what fields the future build added. Back the file
+		# up under .future-<version>-<ts> and load defaults so the user
+		# at least gets a playable game; their future save is preserved
+		# for when they switch back to the newer build.
+		var future_v: int = _max_schema_version(primary)
+		if future_v > SCHEMA_VERSION:
+			_quarantine_future(path, future_v)
+			if primary_existed:
+				last_load_warnings.append("save_from_future_build")
+			return {"characters": [_default()], "active": 0}
 		return _finalize_loaded_wrapper(primary)
 	if primary_existed:
 		_quarantine_corrupted(path)
@@ -51,6 +64,11 @@ static func _load_wrapper() -> Dictionary:
 	if FileAccess.file_exists(bak_path):
 		var fallback: Variant = _try_load_file(bak_path)
 		if typeof(fallback) == TYPE_DICTIONARY:
+			var future_v_bak: int = _max_schema_version(fallback)
+			if future_v_bak > SCHEMA_VERSION:
+				_quarantine_future(bak_path, future_v_bak)
+				last_load_warnings.append("save_from_future_build")
+				return {"characters": [_default()], "active": 0}
 			return _finalize_loaded_wrapper(fallback)
 		# Backup is also unreadable — preserve it too so a human can
 		# recover later, then hand back defaults.
@@ -91,24 +109,29 @@ static func _try_load_file(path: String) -> Variant:
 # Wrap a parsed top-level dict in the canonical {"characters", "active"}
 # shape, run migrations on each character, and validate equipped/inventory
 # against the items_db so orphaned base_ids don't crash the equip pipeline.
+#
+# Order matters: _migrate runs BEFORE the default-key fill. If we filled
+# defaults first the schema_version key from _default() would mask the
+# missing-or-low version on a pre-v7 save and the migration chain would
+# short-circuit instead of upgrading the shape.
 static func _finalize_loaded_wrapper(raw: Dictionary) -> Dictionary:
 	if not raw.has("characters") or typeof(raw.get("characters", [])) != TYPE_ARRAY:
 		# Legacy single-character shape — top-level had `species`, `equipped`,
 		# `inventory` etc. Wrap into characters[0].
 		var legacy: Dictionary = raw
+		_migrate(legacy)
 		for k in _default().keys():
 			if not legacy.has(k):
 				legacy[k] = _default()[k]
-		_migrate(legacy)
 		return {"characters": [legacy], "active": 0}
 	var chars: Array = raw.get("characters", [])
 	for ch in chars:
 		if typeof(ch) != TYPE_DICTIONARY:
 			continue
+		_migrate(ch)
 		for k in _default().keys():
 			if not ch.has(k):
 				ch[k] = _default()[k]
-		_migrate(ch)
 	if chars.is_empty():
 		chars.append(_default())
 	var active: int = clampi(int(raw.get("active", 0)), 0, chars.size() - 1)
@@ -128,6 +151,34 @@ static func _quarantine_corrupted(path: String) -> void:
 	# (relative) when both are user:// paths.
 	d.rename(path, quarantine)
 	push_error("[save] corrupted file quarantined: %s" % quarantine)
+
+# Move a future-version file aside so the user's newer-build save
+# isn't overwritten by an older build. The newer build can still find
+# it under user:// for forensic recovery.
+static func _quarantine_future(path: String, future_v: int) -> void:
+	var ts: int = int(Time.get_unix_time_from_system())
+	var quarantine: String = "%s.future-v%d-%d" % [path, future_v, ts]
+	var d := DirAccess.open("user://")
+	if d == null:
+		return
+	d.rename(path, quarantine)
+	push_error("[save] save from future build (v%d > v%d) preserved at %s" % [
+		future_v, SCHEMA_VERSION, quarantine,
+	])
+
+# Highest schema_version found across any character in the wrapper.
+# Returns 0 if the wrapper is in legacy single-character shape (no
+# characters key) — those predate schema_version and migrate cleanly
+# through _migrate_to_v7.
+static func _max_schema_version(wrapper: Dictionary) -> int:
+	if not wrapper.has("characters"):
+		return int(wrapper.get("schema_version", 0))
+	var max_v: int = 0
+	var chars: Array = wrapper.get("characters", [])
+	for ch in chars:
+		if typeof(ch) == TYPE_DICTIONARY:
+			max_v = max(max_v, int(ch.get("schema_version", 0)))
+	return max_v
 
 # Atomic write: write-to-tmp, rotate-old-to-bak, rename-tmp-to-final.
 # A torn write leaves either the previous .bak intact (rename failed
@@ -217,10 +268,11 @@ static func create_character(species: String) -> int:
 	var w: Dictionary = _load_wrapper()
 	var ch: Dictionary = _default()
 	ch["species"] = species
-	# New characters never had legacy ring1/ring2 slots, so the one-time
-	# ring-collapse migration is implicitly already done. Stamping this
-	# prevents _migrate from running the cleanup that would otherwise wipe
-	# octopode/naga's ring2 every load.
+	# New characters are already at the current schema. Stamp both the
+	# version field and the historic ring-collapse flag so _migrate
+	# short-circuits (the legacy ring-collapse block lives inside
+	# _migrate_to_v7 which would otherwise wipe ring2 for octopode/naga).
+	ch["schema_version"] = SCHEMA_VERSION
 	ch["migration_v_ring_collapse"] = true
 	var equipped: Dictionary = ch.get("equipped", {})
 	# Strip starter gear in disallowed slots.
@@ -271,11 +323,49 @@ static func delete_character(idx: int) -> void:
 		w["active"] = int(w.active) - 1
 	_save_wrapper(w)
 
-# In-place migrations applied on load. Idempotent — running twice is a no-op.
+# Schema version for the save format. Bumped whenever a migration ships.
+#
+# Historical context: pre-2026-06-09 the save format had 6+ probe-based
+# schema bumps that ran on every load via `if not state.has(key)` checks.
+# Audit 2026-06-08 flagged the probe approach as unsafe — re-running an
+# already-applied migration on a future save would silently re-fire it
+# (the ring1/ring2 wipe regression that hit octopode/naga saves was an
+# instance of this). Versioned chain replaces probe gating with explicit
+# `if v < N` ordering. Starting at 7 acknowledges the historic bumps so
+# any future references to "older save shapes" use real version numbers.
+const SCHEMA_VERSION := 7
+
+# In-place migrations applied on load. Idempotent — once schema_version
+# matches SCHEMA_VERSION, every step short-circuits.
+#
+# Each migration step takes a state dict at version N and brings it to
+# version N+1. Step bodies are unconditional inside their gate — the
+# version check above replaces the historic `if not state.has(key)`
+# probes. Steps must be IDEMPOTENT against the input version they
+# expect (re-running v3→v4 on an already-v4 state must be a no-op).
 static func _migrate(state: Dictionary) -> void:
-	# Ring collapse (2026-06-02): old saves had ring1/ring2 slots; new layout
-	# uses one `ring` slot. Promote ring1 (or ring2 if ring1 was empty); push
-	# the displaced ring2 item, if any, to the inventory so it isn't lost.
+	var v: int = int(state.get("schema_version", 0))
+	if v < 7:
+		_migrate_to_v7(state)
+		v = 7
+	state["schema_version"] = SCHEMA_VERSION
+
+# v0 → v7: subsumes every historic probe-based migration into one step.
+# These were applied unconditionally pre-2026-06-09 on every load via
+# has-key probes. In the versioned chain they fire exactly once when an
+# unstamped save is first loaded under the new format, then never again.
+#
+# Each block here corresponds to a historic schema bump:
+#   - Gloves + cloak slots (2026-06-03)
+#   - Spell slots 1-5 (2026-06-04 combat pivot)
+#   - Run-active fields (2026-06-04)
+#   - Stat-point allocation (2026-06-04 item-overhaul v2)
+#   - Starter spell retroactive grant (2026-06-04)
+#   - Species selector (2026-06-03)
+#   - Body-shape correction for disallowed_slots (2026-06-04)
+#   - Extra ring slot init for slot_conversion species
+#   - Legacy ring1/ring2 → ring collapse (2026-06-02, gated 2026-06-08)
+static func _migrate_to_v7(state: Dictionary) -> void:
 	var equipped: Dictionary = state.get("equipped", {})
 	# Gloves + cloak slots added 2026-06-03. Ensure existing saves
 	# have the keys present (default null) so equip flow can populate
@@ -405,6 +495,12 @@ static func _default() -> Dictionary:
 	# the weapon overlay sprite has something to render. Chosen for shape
 	# (dagger -> simple silhouette) and balance (low stats).
 	return {
+		# Schema version of this character's payload. _migrate runs the
+		# version-N→version-N+1 chain whenever this is below SCHEMA_VERSION;
+		# loaders refuse to overwrite saves with a higher value (downgrade
+		# protection). Defaults to current so fresh characters skip the
+		# v0→v7 historic migration entirely.
+		"schema_version": SCHEMA_VERSION,
 		# Picked at character creation; locked per character. Defaults
 		# to "spriggan" because that matches the historic bot sprite —
 		# pre-character-select saves migrate to spriggan via _migrate.

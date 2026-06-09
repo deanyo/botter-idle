@@ -132,6 +132,9 @@ func test_pre_ring_collapse_save_promotes_ring1() -> void:
 	save["species"] = "human"
 	# Wipe migration flag so legacy block is allowed to run.
 	save.erase("migration_v_ring_collapse")
+	# Pre-collapse saves predate schema_version too — drop it so the
+	# v0→v7 migration actually fires on this fixture.
+	save.erase("schema_version")
 	var equipped: Dictionary = save["equipped"]
 	equipped.erase("ring")
 	equipped["ring1"] = {
@@ -288,6 +291,58 @@ func test_warnings_not_persisted_through_save_cycle() -> void:
 	var reloaded := SaveState.load_state()
 	assert_false(reloaded.has("last_load_warnings"),
 		"clean load surfaces no warnings")
+
+# ---------------------------------------------------------------------
+# Schema version chain — versioned _migrate
+# ---------------------------------------------------------------------
+
+func test_pre_v7_save_gets_stamped_after_migrate() -> void:
+	# Pre-versioned saves had no schema_version key. _migrate should
+	# stamp it to current after running the v0→v7 step.
+	var save := _pre_pivot_save()
+	assert_false(save.has("schema_version"), "fixture has no schema_version")
+	SaveState._migrate(save)
+	assert_eq(int(save["schema_version"]), SaveState.SCHEMA_VERSION,
+		"schema_version stamped after migrate")
+
+func test_current_version_save_short_circuits_migrate() -> void:
+	# A save already at SCHEMA_VERSION must not be mutated by _migrate.
+	# Specifically, the v0→v7 step (which contained legacy ring-collapse)
+	# must not fire.
+	var save := SaveState._default()
+	save["migration_v_ring_collapse"] = true
+	var snapshot := JSON.stringify(save)
+	SaveState._migrate(save)
+	assert_eq(JSON.stringify(save), snapshot,
+		"current-version save unchanged by _migrate")
+
+func test_future_version_save_quarantined_on_load() -> void:
+	# Write a save with schema_version one above SCHEMA_VERSION. Loader
+	# should refuse to overwrite, move it to .future-vN-<ts>, and return
+	# defaults with the save_from_future_build warning.
+	var future := SaveState._default()
+	future["schema_version"] = SaveState.SCHEMA_VERSION + 1
+	future["gold"] = 9999
+	var wrapper := {"characters": [future], "active": 0}
+	var f := FileAccess.open(SaveState.DEBUG_PATH, FileAccess.WRITE)
+	f.store_string(JSON.stringify(wrapper, "  "))
+	f.close()
+	var loaded := SaveState.load_state()
+	# Engine emits one push_error for the future-version preservation.
+	assert_push_error("save from future build")
+	# Default save returned (gold=0 not 9999).
+	assert_eq(int(loaded["gold"]), 0,
+		"loader returned defaults when future-version save was refused")
+	assert_true("save_from_future_build" in loaded.get("last_load_warnings", []),
+		"save_from_future_build warning surfaced")
+	# File preserved as .future-vN-<ts>.
+	var d := DirAccess.open("user://")
+	var found_future := false
+	for fname: String in d.get_files():
+		if fname.begins_with("botter_save_debug.json.future-v"):
+			found_future = true
+			break
+	assert_true(found_future, "future-version save preserved as .future-v<n>-<ts>")
 
 # ---------------------------------------------------------------------
 # Forward-compat: unknown keys preserved
