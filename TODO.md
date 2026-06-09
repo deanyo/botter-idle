@@ -5,6 +5,102 @@ the durable rules in `CLAUDE.md`. Update this file when committing.
 
 ---
 
+## Tier 2 save durability (2026-06-09)
+
+Shipped — five-item audit cluster, four commits:
+
+- ✅ **Atomic save writes** (`b231740`). `_save_wrapper` writes to
+  `<path>.tmp`, rotates the previous final to `<path>.bak`, then
+  atomically renames `.tmp` into place. Torn writes leave the prior
+  `.bak` intact + a stale `.tmp` for next-boot cleanup; the previous
+  final never gets clobbered until the new tmp is fully flushed.
+  `_load_wrapper` falls back to `.bak` on parse failure, quarantines
+  corrupted files as `.corrupted-<unix_ts>` for forensic recovery,
+  and surfaces `save_recovered_from_backup` /
+  `save_could_not_be_loaded` via `SaveState.last_load_warnings` plus
+  a runtime-only `state.last_load_warnings` field. Switched parse
+  to `JSON.new().parse()` so corrupted-file recovery doesn't emit
+  engine errors.
+- ✅ **schema_version + versioned migration chain** (`3421610`).
+  `SCHEMA_VERSION = 7` (subsumes the 6+ historic probe-based
+  schema bumps). `_migrate` is now `_migrate_to_v7` gated on
+  `if v < 7`. Future migrations get their own `_migrate_to_vN+1`
+  step. Downgrade refusal: a save with `schema_version >
+  SCHEMA_VERSION` is moved aside as `.future-v<n>-<ts>` and the
+  loader returns defaults; the newer save is preserved on disk for
+  when the user switches back to the newer build. Surfaces
+  `save_from_future_build` warning. `_finalize_loaded_wrapper` order
+  swapped so `_migrate` runs BEFORE the `_default()`-key fill —
+  otherwise a pre-v7 save's missing `schema_version` would get masked
+  into a no-op migrate.
+- ✅ **Equipped base_id validation** (`cbd4ea1`).
+  `_validate_loaded_state` walks equipped + inventory after migrate,
+  evicts orphaned `base_id` entries (missing from items.json) into
+  a new `state.orphaned_items` array. Player isn't silently robbed
+  of build-defining gear when a base_id is renamed or deleted between
+  builds; once the missing id is restored the orphan is recoverable
+  via inventory move. Surfaces `orphan_items_count_<n>` warning.
+- ✅ **Web tab-close save flush** (`b19d07f`). New
+  `SaveState.flush_to_disk(on_done: Callable)` — no-op on Steam, on
+  web kicks off `FS.syncfs(false, ...)` with optional callback so the
+  caller can gate UI on durability. `main.gd._notification
+  (NOTIFICATION_WM_CLOSE_REQUEST)` saves + flushes; a JS-side
+  `pagehide` / `beforeunload` / `visibilitychange` listener fires
+  syncfs unconditionally on tab close (more reliable than the engine
+  hook on Chrome/Safari). Explicit flush calls after
+  `_on_boss_killed`, `_on_run_ended`, shop `_buy_one` /
+  `_sell_all_junk`.
+- ✅ **Boss-kill durability gate** (`b19d07f` — same commit). Run-
+  report Continue / Outpost buttons start disabled with a "Saving…"
+  hint, become clickable when the `flush_to_disk` callback fires.
+  Steam fires synchronously (no visible gate); web round-trip is
+  <100ms (brief gate a fast clicker won't notice), but ensures the
+  unlock is durable before tab-close is even possible.
+
+GUT extended 50 → 60 tests (`test_save_state.gd` 8 → 18). Suite still
+~3s headless. Manual `/grind 3 --preset t1 --mortal` smoke — 3 cycles
+of save/load/migrate/re-save, atomic rotation working, schema_version
+stamped, no orphans on the live debug save.
+
+### Tier 2 save-durability follow-ups (deferred)
+
+- ⬜ **UI surfacing for last_load_warnings.** The loader stamps
+  warnings into `state.last_load_warnings` (e.g.
+  `save_recovered_from_backup`, `orphan_items_count_3`) but no UI
+  reads them yet. Add a banner in `main_menu.gd` + `run_report.gd`:
+  "Save recovered from backup" amber banner / "3 items hidden — saved
+  separately" amber banner. Cleared after first display via
+  `state.last_load_warnings = []` + save. ~30m. Was deliberately
+  deferred from this session — touching the save format is the
+  load-bearing fix; the banner can land in any UI session.
+- ⬜ **orphaned_items recovery UI.** Once `last_load_warnings` is
+  surfaced, also add a "Recovered Items" tab in the outpost / shop
+  that lets the player move orphaned items back to inventory if
+  they've reappeared in items.json. Today the items are preserved
+  but invisible until manual JSON inspection. ~1-2h.
+- ⬜ **stale .tmp / .corrupted / .future cleanup.** Atomic-write
+  may leave `.tmp` from a torn write; `.corrupted-<ts>` and
+  `.future-v<n>-<ts>` accumulate over time. Add a one-time sweep on
+  startup: scan `user://`, drop any `*.corrupted-*` /
+  `*.future-v*-*` older than 30 days, drop any `botter_save*.tmp`
+  older than 1 day. ~15m. Cosmetic — no actual disk-pressure
+  problem yet.
+- ⬜ **DirAccess.rename error handling.** `_save_wrapper` ignores
+  the rotate-to-`.bak` rename error (only the final `.tmp → final`
+  rename's error is logged). On Windows / sandboxed FS, the rotate
+  could fail and we'd silently overwrite the prior generation.
+  Defensive: log the rotate error too, and fall through to the
+  rename-tmp path so the new save still lands. ~10m.
+- ⬜ **Mid-session corruption recovery test.** Today's
+  `test_load_falls_back_to_bak_when_primary_corrupted` simulates the
+  corrupted-on-load scenario but doesn't simulate "save survived
+  N writes, then write N+1 truncates the primary mid-write." A
+  test that writes, mutates, kills the process mid-store, reopens —
+  end-to-end torn-write recovery. Requires GUT-level subprocess
+  spawning that we don't have today. Defer until ITC needs it.
+
+---
+
 ## Tier 0 legal hygiene (2026-06-08)
 
 Shipped. Three audit-flagged exposures closed before public release:

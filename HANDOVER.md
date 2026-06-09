@@ -4,7 +4,70 @@ Point-in-time snapshot of what's actually shipping. Updated as we go. The
 durable rules and process live in `CLAUDE.md`; the roadmap and open work
 items live in `TODO.md`.
 
-Last refresh: 2026-06-09 (Tier 1 UI cleanup cluster shipped — 7
+Last refresh: 2026-06-09 (Tier 2 save durability shipped — atomic
+.tmp+.bak rotate, schema_version + versioned migration chain with
+downgrade refusal, equipped/inventory orphan validation against
+items.json, web tab-close FS.syncfs flush, run-report dismissal
+gated on flush completion).
+
+Five-item audit cluster, four commits:
+
+- `b231740` — `_save_wrapper` rewrites via `<path>.tmp` + rotate-old-
+  to-`.bak` + atomic rename. `_load_wrapper` falls back to `.bak` when
+  the primary fails to parse, quarantines corrupted files as
+  `.corrupted-<unix_ts>` for forensic recovery, and surfaces
+  `save_recovered_from_backup` / `save_could_not_be_loaded` via
+  `SaveState.last_load_warnings` + a runtime-only
+  `state.last_load_warnings` field. Switched the parse path to
+  `JSON.new().parse()` so corrupted-file recovery doesn't emit
+  engine-level errors.
+- `3421610` — `SCHEMA_VERSION = 7` field added; `_migrate` is now a
+  versioned chain (`_migrate_to_v7` subsumes the 6+ historic
+  probe-based bumps from gloves/cloak through ring-collapse). Loader
+  refuses to overwrite saves with `schema_version > SCHEMA_VERSION` —
+  preserves the future-version save as `.future-v<n>-<ts>` and
+  surfaces `save_from_future_build` so an older build can't silently
+  downgrade a newer build's save. `_finalize_loaded_wrapper` now runs
+  `_migrate` BEFORE the `_default()`-key fill so a pre-v7 save's
+  missing `schema_version` isn't masked into a no-op migrate.
+- `cbd4ea1` — `_validate_loaded_state` walks equipped + inventory,
+  evicts orphaned `base_id` entries (missing from items.json) into a
+  new `state.orphaned_items` array. Player isn't silently robbed of
+  build-defining gear when a base_id is renamed/deleted between
+  builds; once it's restored the orphan is recoverable. Surfaces
+  `orphan_items_count_<n>` warning. `orphaned_items` added to
+  `_default()`.
+- `b19d07f` — Web tab-close save flush. New `SaveState.flush_to_disk
+  (on_done: Callable)` — no-op on Steam/desktop (`FileAccess` is
+  already synchronous), `FS.syncfs(false, ...)` on web with optional
+  callback. `main.gd` installs a JS pagehide / beforeunload /
+  visibilitychange listener that fires syncfs unconditionally on tab
+  close, plus a belt-and-braces `NOTIFICATION_WM_CLOSE_REQUEST`
+  handler. Explicit flush calls after `_on_boss_killed` (the audit's
+  headline web failure mode), `_on_run_ended`, shop `_buy_one` /
+  `_sell_all_junk`. Run-report buttons start disabled with a "Saving…"
+  hint and become clickable when the syncfs callback fires — Steam
+  fires it synchronously, web round-trip is <100ms, but a fast clicker
+  could otherwise drop the unlock to a tab close in the moments after
+  the report appears.
+
+Test foundation extended: `test_save_state.gd` 8 → 18 tests covering
+atomic-write happy path, `.bak` torn-write recovery, both-files-
+corrupted defaults, warnings-not-baked-to-disk, schema_version stamps
+and short-circuits, future-version quarantine, orphan eviction in
+both equipped and inventory, real-item not-evicted false-positive
+guard. GUT 50 → 60 tests, ~941 → ~973 asserts, suite still ~3s
+headless.
+
+Manual /grind 3 t1 mortal smoke: 3 cycles of save / load / migrate /
+re-save, atomic rotation working (`<path>` + `<path>.bak`, no `.tmp`
+residue), `schema_version: 7` stamped, no orphans on the live debug
+save. No itch redeploy this session — durability changes need
+broader playtest validation before pushing to the playtester.
+
+---
+
+Earlier 2026-06-09 (Tier 1 UI cleanup cluster shipped — 7
 small commits closing the last of the audit's UI / cleanup
 backlog).
 
