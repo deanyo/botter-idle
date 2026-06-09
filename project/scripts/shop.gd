@@ -37,11 +37,9 @@ const RARITY_COLORS := {
 	"epic":      Color(1.0, 0.5, 0.2),
 	"legendary": Color(1.0, 0.3, 0.3),
 }
-# Salvage values (kept in sync with dungeon.gd::_SALVAGE_VALUES).
-# Sell price = 2× salvage × today's shop modifier.
-const SALVAGE_VALUES := {
-	"common": 2, "uncommon": 6, "rare": 18, "epic": 60, "legendary": 200,
-}
+# Salvage values now live in LootFactory.SALVAGE_VALUES; access via
+# LootFactory.salvage_value(rarity). Sell price = 2× salvage × today's
+# shop modifier. Buy price = 15× salvage.
 const INV_CELL_SIZE := 64
 const PANEL_PAD := 16
 
@@ -550,7 +548,7 @@ func _sell_price(inst: Dictionary, item: Dictionary) -> int:
 	# sell ratio gates the gold-flow tap to a reasonable rate while
 	# keeping selling worthwhile.
 	var rarity: String = String(item.get("rarity", "common"))
-	var base: int = int(SALVAGE_VALUES.get(rarity, 1))
+	var base: int = LootFactory.salvage_value(rarity)
 	var mult: float = 1.0
 	var mod_def: Dictionary = _modifier_def(String(state["shop"].get("modifier_id", "")))
 	if _modifier_applies(mod_def, item):
@@ -559,15 +557,15 @@ func _sell_price(inst: Dictionary, item: Dictionary) -> int:
 
 func _buy_price(item: Dictionary) -> int:
 	# Buy price: scales steeply with rarity so legendaries are a real
-	# gold sink, not a casual purchase. SALVAGE_VALUES = 2/6/18/60/200,
-	# multiplied by 15 → 30/90/270/900/3000g. 2026-06-05: was 10×, the
-	# user reported gold flowed too easily into top-tier shop items.
-	# 2026-06-07: spells × 5 on top — they fire forever and a 30g common
-	# spell let the user fill all 5 slots from a 300g failed-run kitty.
-	# Spells are big gear-changers, priced accordingly.
+	# gold sink, not a casual purchase. LootFactory.SALVAGE_VALUES =
+	# 2/6/18/60/200, multiplied by 15 → 30/90/270/900/3000g. 2026-06-05:
+	# was 10×, the user reported gold flowed too easily into top-tier
+	# shop items. 2026-06-07: spells × 5 on top — they fire forever and
+	# a 30g common spell let the user fill all 5 slots from a 300g
+	# failed-run kitty. Spells are big gear-changers, priced accordingly.
 	# Modifier buy_mult multiplies (less-than-1 = discount).
 	var rarity: String = String(item.get("rarity", "common"))
-	var base: int = int(SALVAGE_VALUES.get(rarity, 1)) * 15
+	var base: int = LootFactory.salvage_value(rarity) * 15
 	if String(item.get("slot", "")) == "spell":
 		base *= 5
 	var mult: float = 1.0

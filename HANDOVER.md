@@ -4,7 +4,53 @@ Point-in-time snapshot of what's actually shipping. Updated as we go. The
 durable rules and process live in `CLAUDE.md`; the roadmap and open work
 items live in `TODO.md`.
 
-Last refresh: 2026-06-09 (Tier 2 save durability shipped — atomic
+Last refresh: 2026-06-09 (Tier 3 dungeon.gd split — first extraction
+shipped: LootFactory pulled out of the 4492-LOC god-class).
+
+`project/scripts/loot_factory.gd` is a pure static utility class
+owning the loot pipeline: `roll_rarity`, `roll_rarity_with_bias`,
+`pick_loot_id`, `clamp_rarity_to_tier`, `create_item_instance`,
+`salvage_value`, `hue_to_stat_lean`, plus the `TIER_RARITY_CAP`,
+`RARITY_RANK`, `SLOT_DROP_WEIGHTS`, `SALVAGE_VALUES` constant tables.
+Caller passes rng + items_db + derived state; LootFactory holds no
+node graph and no per-instance state. Behavior is a strict copy of
+the prior dungeon.gd functions — no tuning or balance changes ride
+the extraction.
+
+`dungeon.gd` shrank 4492 → 4167 (-325 lines). All five call sites
+now route through LootFactory: enemy drops, vault loot_marks, chest
+opens, auto-salvage gold totals, and the showcase floor's spawn
+helper. Kept a thin `_roll_drop_rarity` wrapper that pulls the bot's
+blessing bonus + active run-modifier rarity_bonus into the call so
+LootFactory's `roll_rarity` stays pure. `shop.gd`'s duplicate
+`SALVAGE_VALUES` const replaced with `LootFactory.salvage_value()`
+(buy_price + sell_price). `offline_progress.gd` had its dead
+`_legacy_apply` body and helpers (including the audit-flagged third
+`_roll_rarity` duplicate) deleted; public `apply()` no-op stub
+preserved for main.gd / main_menu.gd callers.
+
+Test foundation extended: `test_loot_factory.gd` 13 tests / ~26
+asserts covering same-seed determinism (roll_rarity,
+roll_rarity_with_bias, pick_loot_id, create_item_instance), rarity
+distribution within ±5% of expected thresholds at T5/floor 1,
+T1-clamp behavior, boss-roll skew toward legendary, salvage values,
+hue→stat-lean color wheel, allow_spell gating, and unique-item
+single-roll guarantee. GUT 60 → 73 tests, ~973 → ~2544 asserts
+(distribution test alone runs N=2000 rolls). Suite still ~3.3s
+headless.
+
+Validation: GUT 73/73 pass post-extraction. `tools/check_before_commit.sh`
+all 5 steps pass. Manual mortal T1 3-run grind: 174 loot drops, 1
+trove portal entered (chest-open path exercised), 1046+119+1302
+kills, 0 errors, 0 stalls. Loot pipeline behaves identically to
+pre-extraction within run-to-run RNG variance.
+
+Next dungeon.gd extraction: HUDInventoryController. Each session
+shrinks dungeon.gd by ~600 lines and doesn't touch anything else.
+
+---
+
+Earlier 2026-06-09 (Tier 2 save durability shipped — atomic
 .tmp+.bak rotate, schema_version + versioned migration chain with
 downgrade refusal, equipped/inventory orphan validation against
 items.json, web tab-close FS.syncfs flush, run-report dismissal

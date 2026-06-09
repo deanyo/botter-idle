@@ -2021,173 +2021,12 @@ func _maybe_drop_item(e: Enemy) -> void:
 		or e.pack_tier == Enemy.PACK_MAGIC
 	)
 	for _i in drop_count:
-		var rarity: String = _roll_rarity(e.is_boss or e.is_miniboss or e.pack_tier == Enemy.PACK_RARE)
-		var picked: String = _pick_loot_id(rarity, allow_spell)
+		var rarity: String = _roll_drop_rarity(e.is_boss or e.is_miniboss or e.pack_tier == Enemy.PACK_RARE)
+		var picked: String = LootFactory.pick_loot_id(rng, rarity, items_db, _source_tier(), run_dropped_uniques, allow_spell)
 		if picked == "":
 			continue
-		var instance: Dictionary = _create_item_instance(picked)
+		var instance: Dictionary = LootFactory.create_item_instance(rng, picked, items_db)
 		_spawn_loot_drop(instance, e.cell)
-
-func _create_item_instance(base_id: String) -> Dictionary:
-	var base: Dictionary = items_db.get(base_id, {})
-	var affixes: Array = AffixSystem.roll_affixes_for(base, rng)
-	var inst: Dictionary = {
-		"base_id": base_id,
-		"instance_id": _gen_instance_id(),
-		"affixes": affixes,
-	}
-	# Meta-rarity roll (D3 Ancient / Primal pattern). Independent of
-	# the rarity tier — any drop, even a common, can roll "ancient"
-	# (1%) for +20% stats or "primal" (0.1%) for +50% stats. Visual
-	# tint changes (gold for ancient, red for primal) plus a name
-	# prefix. This is the "screenshot brag" lever the user asked for.
-	var meta_roll: float = rng.randf()
-	var primal_t: float = DropTuning.primal_chance()
-	var ancient_t: float = DropTuning.ancient_chance()
-	if meta_roll < primal_t:
-		inst["meta_rarity"] = "primal"
-	elif meta_roll < ancient_t:
-		inst["meta_rarity"] = "ancient"
-	# Item-authored default_tint short-circuits the random recolor
-	# roll. Items with `default_tint: {hue, sat, mode}` in items.json
-	# always drop with that recolor — set via item_editor.html's Look
-	# section. 2026-06-05.
-	var def_tint: Variant = base.get("default_tint", null)
-	if typeof(def_tint) == TYPE_DICTIONARY and String(def_tint.get("mode", "")) != "":
-		var d: Dictionary = (def_tint as Dictionary).duplicate(true)
-		# Stat lean falls out of hue same as rolled tints, so build
-		# editor doesn't have to set it.
-		if not d.has("lean"):
-			d["lean"] = _hue_to_stat_lean(float(d.get("hue", 0.0)))
-		if not d.has("lean_pct"):
-			d["lean_pct"] = 8.0
-		inst["tint"] = d
-	# Per-instance recolor roll (~30% of drops get a hue shift; tiny
-	# fractions get shimmer/inverted/prismatic). Each hue carries a
-	# small stat lean — red leans strength, blue leans regen, etc.
-	# Even non-recolored items keep `tint` absent so the runtime
-	# can short-circuit the shader for free.
-	var tint_roll: float = rng.randf()
-	# Tint thresholds layer in priority order (rarest first). Each one
-	# pulls from DropTuning so the portal can scale them.
-	var prismatic_t: float = DropTuning.tint_prismatic_chance()
-	var inverted_t: float = prismatic_t + DropTuning.tint_inverted_chance()
-	var shimmer_t: float = inverted_t + DropTuning.tint_shimmer_chance()
-	var any_t: float = DropTuning.tint_any_chance()  # absolute, not cumulative
-	# If the item already carries a default_tint (set just above), the
-	# random roll is suppressed — the author wanted a specific look.
-	if inst.has("tint"):
-		tint_roll = 999.0
-	if tint_roll < prismatic_t:
-		inst["tint"] = {
-			"hue": rng.randf_range(0.0, 360.0),
-			"sat": 1.0,
-			"mode": "prismatic",
-			"lean": _hue_to_stat_lean(rng.randf_range(0.0, 360.0)),
-			"lean_pct": 15.0,
-		}
-	elif tint_roll < inverted_t:
-		var h: float = rng.randf_range(0.0, 360.0)
-		inst["tint"] = {
-			"hue": h, "sat": rng.randf_range(0.6, 1.2), "mode": "inverted",
-			"lean": _hue_to_stat_lean(h), "lean_pct": 12.0,
-		}
-	elif tint_roll < shimmer_t:
-		var h2: float = rng.randf_range(0.0, 360.0)
-		inst["tint"] = {
-			"hue": h2, "sat": rng.randf_range(0.9, 1.3), "mode": "shimmer",
-			"lean": _hue_to_stat_lean(h2), "lean_pct": 10.0,
-		}
-	elif tint_roll < any_t:
-		var h3: float = rng.randf_range(0.0, 360.0)
-		inst["tint"] = {
-			"hue": h3, "sat": rng.randf_range(0.7, 1.2), "mode": "normal",
-			"lean": _hue_to_stat_lean(h3), "lean_pct": 7.0,
-		}
-	# Per-instance "enchant" flavor roll. Static `flavor_tags` on the
-	# base item still apply (vampires_tooth is always vampiric); this
-	# layer adds an optional ADDITIONAL flavor on top, e.g. "Iron
-	# Dagger" rolling fire 5% of the time. Distinct from rarity rolls
-	# so it's a separate axis of surprise on drops.
-	# items.json controls:
-	#   enchant_chance: 0..1 (default 0.05 if pool present, else 0)
-	#   enchant_pool:   array of flavor ids that can roll; falls back
-	#                   to UITheme's full FLAVOR_COLORS list when omitted
-	var enchant_chance: float = float(base.get("enchant_chance", 0.0)) * DropTuning.enchant_chance_mult()
-	if enchant_chance > 0.0 and rng.randf() < enchant_chance:
-		var pool: Array = base.get("enchant_pool", [])
-		if pool.is_empty():
-			pool = UITheme.FLAVOR_COLORS.keys()
-		# Don't roll an enchant that duplicates a static tag — pointless
-		# and visually noisy (double trails, double glow).
-		var existing: Array = base.get("flavor_tags", [])
-		var candidates: Array = []
-		for p in pool:
-			if not (p in existing):
-				candidates.append(p)
-		if not candidates.is_empty():
-			var first_enchant: String = String(candidates[rng.randi_range(0, candidates.size() - 1)])
-			inst["enchant"] = first_enchant
-			# Enchant combo roll — secondary enchant pick that, if it
-			# matches a registered combo with the first, replaces both
-			# with the compound. Item-overhaul follow-up 2026-06-04.
-			var combo_chance: float = DropTuning.enchant_combo_chance()
-			if combo_chance > 0.0 and rng.randf() < combo_chance:
-				# Build a fresh candidate list excluding the already-rolled
-				# enchant + static tags so we don't pair fire+fire.
-				var combo_candidates: Array = []
-				for p2 in candidates:
-					if String(p2) != first_enchant:
-						combo_candidates.append(p2)
-				if not combo_candidates.is_empty():
-					var second_enchant: String = String(combo_candidates[rng.randi_range(0, combo_candidates.size() - 1)])
-					var combo: Dictionary = EnchantCombos.combo_for_pair(first_enchant, second_enchant)
-					if not combo.is_empty():
-						# Replace both individual enchants with the
-						# compound. Tooltip + combat read inst.enchant_combo.
-						inst["enchant_combo"] = String(combo.id)
-						inst.erase("enchant")  # the compound is the merged
-												# representation; component
-												# flavors still fire via
-												# combat_weapon_tags, which
-												# expands the combo into
-												# its pair at attack time.
-	if String(base.get("rarity", "")) == "legendary":
-		var slot: String = String(base.get("slot", "armor"))
-		var artefact: String = ArtefactPool.pick_for_slot(slot, rng)
-		if artefact != "":
-			inst["tile_override"] = "artefacts/" + artefact
-	# Quality tier — every drop rolls one (Rusted/Worn/.../Masterwork
-	# for gear, Mouldering/.../Sublime for spells). Multiplier scales
-	# baseline stats at full strength + affixes at half strength so
-	# affix rolls still feel like the rolled axis. Tail extremes
-	# (Rusted/Masterwork) are the lottery moments. Item-overhaul
-	# follow-up 2026-06-04.
-	var quality_slot: String = String(base.get("slot", ""))
-	var quality_tier: Dictionary = Quality.roll(quality_slot, rng)
-	if not quality_tier.is_empty():
-		inst["quality"] = String(quality_tier.name)
-	return inst
-
-func _gen_instance_id() -> String:
-	return "%d_%d" % [Time.get_unix_time_from_system(), rng.randi()]
-
-# Map a hue (0–360°) to which stat the recolored item leans toward.
-# Mirrors the color-wheel intuition: red→strength, green→haste, etc.
-# Used by Bot.recompute_stats to apply a per-instance percentage
-# bonus on top of the base item stats.
-func _hue_to_stat_lean(hue: float) -> String:
-	hue = fmod(hue, 360.0)
-	if hue < 0.0:
-		hue += 360.0
-	if hue < 30.0:    return "atk"        # red
-	if hue < 60.0:    return "hp"         # orange — stamina-leaning
-	if hue < 100.0:   return "atk_speed"  # yellow → haste
-	if hue < 160.0:   return "haste"      # green
-	if hue < 200.0:   return "def"        # cyan → agility
-	if hue < 260.0:   return "regen"      # blue
-	if hue < 300.0:   return "crit"       # purple
-	return "atk"                          # magenta — back to red family
 
 func _spawn_loot_drop(instance: Dictionary, at_cell: Vector2i) -> void:
 	var base_id: String = String(instance.get("base_id", ""))
@@ -2232,11 +2071,11 @@ func _apply_vault_results(results: Dictionary) -> void:
 	var loot_marks: Array = results.get("loot_marks", [])
 	for entry in loot_marks:
 		var cell: Vector2i = entry.cell if typeof(entry) == TYPE_DICTIONARY else entry
-		var rarity: String = _roll_rarity(false)
-		var picked: String = _pick_loot_id(rarity)
+		var rarity: String = _roll_drop_rarity(false)
+		var picked: String = LootFactory.pick_loot_id(rng, rarity, items_db, _source_tier(), run_dropped_uniques, true)
 		if picked == "":
 			continue
-		var inst: Dictionary = _create_item_instance(picked)
+		var inst: Dictionary = LootFactory.create_item_instance(rng, picked, items_db)
 		_spawn_loot_drop(inst, cell)
 	var statues: Array = results.get("statues", [])
 	for cell in statues:
@@ -2325,161 +2164,15 @@ func _source_tier() -> int:
 		return clampi(BiomeData.tier_for_biome(branch_id), 1, 5)
 	return clampi(int(current_biome.get("tier", 1)), 1, 5)
 
-# Cap a rolled rarity by source-floor tier. T1: max uncommon, T2: rare,
-# T3: epic, T4+: legendary. Stops a Floor-2 portal from showering the
-# bot with T5-grade legendaries that the home branch hasn't earned.
-const _TIER_RARITY_CAP := {
-	1: "uncommon",
-	2: "rare",
-	3: "epic",
-	4: "legendary",
-	5: "legendary",
-}
-const _RARITY_RANK := {
-	"common": 0, "uncommon": 1, "rare": 2, "epic": 3, "legendary": 4,
-}
-func _clamp_rarity_to_tier(rarity: String, tier: int = -1) -> String:
-	var t: int = tier if tier > 0 else _source_tier()
-	var cap: String = String(_TIER_RARITY_CAP.get(t, "legendary"))
-	if int(_RARITY_RANK.get(rarity, 0)) <= int(_RARITY_RANK.get(cap, 4)):
-		return rarity
-	return cap
-
-# Slot-drop weights — proportion of drops that should go to each slot
-# class. Pre-2026-06-06 _pick_loot_id picked uniformly across all items
-# of the requested rarity, which meant slots with bigger pools (weapons
-# 139, spells 175) drowned out slots with smaller pools (gloves 15,
-# cloak 19). User catch: "you never see gloves because there are less
-# unique types of gloves." Now we pick slot first via this table, then
-# pick an item within that slot weighted by its drop_weights[tier-1].
-const _SLOT_DROP_WEIGHTS: Dictionary = {
-	"weapon": 18,
-	"armor":  10,
-	"helm":   10,
-	"shield": 10,
-	"boots":  10,
-	"gloves": 10,
-	"cloak":  10,
-	"ring":   10,
-	"amulet":  8,
-	"spell":   4,  # gated below to magic+ kills, see _is_spell_eligible_drop
-}
-
-# Pick an item id of the given rarity. Two-stage roll:
-#   1. Pick a slot from _SLOT_DROP_WEIGHTS (gated by `allow_spell` —
-#      common-mob kills can't roll spells).
-#   2. Pick an item within that slot, weighted by drop_weights[source_tier-1].
-# Items already dropped this run AND flagged unique are excluded.
-# Returns "" if no eligible item exists.
-func _pick_loot_id(rarity: String, allow_spell: bool = true) -> String:
-	var tier: int = _source_tier()
-	var idx: int = tier - 1
-	# Build per-slot pools at the requested rarity. Each pool entry:
-	#   {id: String, weight: float}
-	var pools: Dictionary = {}  # slot → Array[Dict]
-	for id in items_db.keys():
-		var item: Dictionary = items_db[id]
-		if String(item.get("rarity", "")) != rarity:
-			continue
-		if bool(item.get("unique", false)) and run_dropped_uniques.has(id):
-			continue
-		var slot: String = String(item.get("slot", ""))
-		if slot == "":
-			continue
-		if slot == "spell" and not allow_spell:
-			continue
-		var dw: Array = item.get("drop_weights", [])
-		var w: float
-		if dw.size() == 5:
-			w = float(dw[idx])
-			if w <= 0.0:
-				continue
-		else:
-			w = 1.0
-		var p: Array = pools.get(slot, [])
-		p.append({"id": id, "weight": w})
-		pools[slot] = p
-	if pools.is_empty():
-		return ""
-	# Pick a slot first, weighted by _SLOT_DROP_WEIGHTS but skipping
-	# slots with empty pools at this rarity.
-	var slot_total: float = 0.0
-	var slot_keys: Array = []
-	var slot_weights: Array = []
-	for slot in pools.keys():
-		var w: float = float(_SLOT_DROP_WEIGHTS.get(slot, 5))
-		slot_keys.append(slot)
-		slot_weights.append(w)
-		slot_total += w
-	if slot_total <= 0.0:
-		return ""
-	var slot_roll: float = rng.randf() * slot_total
-	var picked_slot: String = ""
-	var slot_acc: float = 0.0
-	for i in slot_keys.size():
-		slot_acc += float(slot_weights[i])
-		if slot_roll <= slot_acc:
-			picked_slot = String(slot_keys[i])
-			break
-	if picked_slot == "":
-		return ""
-	# Pick an item within the slot weighted by its drop_weights.
-	var slot_pool: Array = pools[picked_slot]
-	var item_total: float = 0.0
-	for entry in slot_pool:
-		item_total += float(entry.weight)
-	if item_total <= 0.0:
-		return ""
-	var item_roll: float = rng.randf() * item_total
-	var item_acc: float = 0.0
-	for entry in slot_pool:
-		item_acc += float(entry.weight)
-		if item_roll <= item_acc:
-			var picked_id: String = String(entry.id)
-			var picked_item: Dictionary = items_db[picked_id]
-			if bool(picked_item.get("unique", false)):
-				run_dropped_uniques.append(picked_id)
-			return picked_id
-	# Floating-point fallback: if accumulator never crosses the roll
-	# (rare rounding edge case), pick the last entry deterministically.
-	var last_entry: Dictionary = slot_pool[slot_pool.size() - 1]
-	var last_id: String = String(last_entry.id)
-	var last_item: Dictionary = items_db[last_id]
-	if bool(last_item.get("unique", false)):
-		run_dropped_uniques.append(last_id)
-	return last_id
-
-func _roll_rarity(is_boss: bool) -> String:
-	# Tier ceiling: source branch tier (NOT portal-overridden biome tier),
-	# applied last so every other bonus stacks first then gets clamped.
-	# A T1 dungeon boss rolls legendary 50% of the time then drops to
-	# uncommon — keeps boss kills meaningful without trivializing T5
-	# uniques.
-	var src_tier: int = _source_tier()
-	if is_boss:
-		var boss_roll: float = rng.randf()
-		var rarity_b: String
-		if boss_roll < 0.5: rarity_b = "legendary"
-		elif boss_roll < 0.85: rarity_b = "epic"
-		else: rarity_b = "rare"
-		return _clamp_rarity_to_tier(rarity_b, src_tier)
-	var floor_bonus: float = float(current_floor - 1) * 0.05
+# Roll an enemy-drop rarity through LootFactory. Pulls bot's blessing
+# bonus and active run modifiers into the call so LootFactory itself
+# stays a pure function. Used by both the enemy-kill loot path and
+# vault loot_marks. Chest pickups go through LootFactory.roll_rarity_with_bias
+# directly because they don't get blessing/mod bonuses.
+func _roll_drop_rarity(is_boss: bool) -> String:
 	var blessing_bonus: float = bot.loot_rarity_bonus / 100.0 if is_instance_valid(bot) else 0.0
-	# Tier baseline: tier 1 = 0, tier 5 = +0.20. Higher-tier branches
-	# always lean toward better loot even without modifiers. Uses the
-	# source branch tier so a low-tier portal doesn't double-dip on the
-	# portal biome's tier here.
-	var tier_bonus: float = float(src_tier - 1) * 0.05
-	# Modifier-driven rarity bias (Treasure Hoard, Glittering).
 	var mod_bonus: float = RunModifiers.sum_effect(active_modifiers, "rarity_bonus", 0.0)
-	var r: float = rng.randf() - floor_bonus - blessing_bonus - tier_bonus - mod_bonus
-	var rarity: String
-	if r < 0.02: rarity = "legendary"
-	elif r < 0.10: rarity = "epic"
-	elif r < 0.25: rarity = "rare"
-	elif r < 0.55: rarity = "uncommon"
-	else: rarity = "common"
-	return _clamp_rarity_to_tier(rarity, src_tier)
+	return LootFactory.roll_rarity(rng, _source_tier(), current_floor, is_boss, blessing_bonus, mod_bonus)
 
 var _turn_accum: float = 0.0
 
@@ -3189,10 +2882,7 @@ func _resolve_active_modifiers() -> void:
 # and convert items to gold until back under. Only salvages items with
 # rarity at-or-below loot_filter (so a player who set filter=epic doesn't
 # lose epic+ items). Starter gear is excluded — never salvage rusty_dagger
-# or tattered_hide. Per item: gold = SALVAGE_VALUES[rarity].
-const _SALVAGE_VALUES := {
-	"common": 2, "uncommon": 6, "rare": 18, "epic": 60, "legendary": 200,
-}
+# or tattered_hide. Per item: gold = LootFactory.salvage_value(rarity).
 const _STARTER_IDS := ["rusty_dagger", "tattered_hide"]
 
 func _maybe_auto_salvage() -> void:
@@ -3233,7 +2923,7 @@ func _maybe_auto_salvage() -> void:
 			if LootDrop.RARITY_RANK.get(rarity, 0) > threshold_rank:
 				i += 1
 				continue
-			gold_earned += int(_SALVAGE_VALUES.get(rarity, 1))
+			gold_earned += LootFactory.salvage_value(rarity)
 			salvaged_count += 1
 			items_arr.remove_at(i)
 			# Don't advance i — the next item shifted into this slot.
@@ -3375,11 +3065,11 @@ func _on_chest_opened(chest: Chest, n: int, bias: int) -> void:
 	PerfMon.note_spike_context("chest_open n=%d bias=%d" % [n, bias])
 	var chest_world: Vector2 = chest.position + Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5)
 	for i in n:
-		var rarity: String = _roll_rarity_with_bias(bias)
-		var picked: String = _pick_loot_id(rarity)
+		var rarity: String = LootFactory.roll_rarity_with_bias(rng, _source_tier(), current_floor, bias)
+		var picked: String = LootFactory.pick_loot_id(rng, rarity, items_db, _source_tier(), run_dropped_uniques, true)
 		if picked == "":
 			continue
-		var inst: Dictionary = _create_item_instance(picked)
+		var inst: Dictionary = LootFactory.create_item_instance(rng, picked, items_db)
 		var spawn_cell: Vector2i = _adjacent_walkable_cell(chest.cell, i + 1)
 		var drop := _spawn_loot_drop_get(inst, spawn_cell)
 		if drop:
@@ -3402,21 +3092,6 @@ func _spawn_loot_drop_get(instance: Dictionary, at_cell: Vector2i) -> LootDrop:
 	loot_drops.append(drop)
 	interactables.append(drop)
 	return drop
-
-func _roll_rarity_with_bias(bias: int) -> String:
-	# Chest-pickup variant. Same source-tier clamp as _roll_rarity so
-	# entering a wizlab portal on Floor 2 of the dungeon doesn't dump
-	# T5-grade legendaries from the bonus chests.
-	var floor_bonus: float = float(current_floor - 1) * 0.05
-	var bias_bonus: float = float(bias) * 0.10
-	var r: float = rng.randf() - floor_bonus - bias_bonus
-	var rarity: String
-	if r < 0.02: rarity = "legendary"
-	elif r < 0.10: rarity = "epic"
-	elif r < 0.25: rarity = "rare"
-	elif r < 0.55: rarity = "uncommon"
-	else: rarity = "common"
-	return _clamp_rarity_to_tier(rarity)
 
 func _adjacent_walkable_cell(center: Vector2i, idx: int) -> Vector2i:
 	var offsets: Array[Vector2i] = [
@@ -4149,7 +3824,7 @@ func _showcase_spawn_loot_at(cell: Vector2i, rarity: String) -> void:
 	if pool.is_empty():
 		return
 	var picked: String = pool[0]
-	var inst: Dictionary = _create_item_instance(picked)
+	var inst: Dictionary = LootFactory.create_item_instance(rng, picked, items_db)
 	_spawn_loot_drop(inst, cell)
 
 func _showcase_spawn_enemy(id: String, cell: Vector2i) -> void:
