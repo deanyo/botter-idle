@@ -492,14 +492,18 @@ static func _fire_iron_shot(bot: Node, dungeon: Node, item: Dictionary) -> bool:
 			p.pierce_apply_duration = 1.5
 	return true
 
-# Sandblast — short cone in bot facing. Same shape as holy_beam but
-# tighter (range 3, half-angle 45°). Earth/physical so no element_pct
-# scaling but raw damage is higher per cast.
+# Dust Devil (reworked spell_sandblast) — physical cyclone that sweeps
+# range_cells in the bot's facing direction along a ~1.5-cell-wide
+# rectangle. Enemies whose perpendicular distance to the swept axis is
+# within the half-width AND whose along-axis distance is within the
+# range take damage once. Differentiates from holy_beam by shape (linear
+# corridor sweep vs cone fan), keeps STR primary + physical damage type.
+# Blinding Grit affix flag still applies on hit. (S6, a05 dead-1.)
 static func _fire_sandblast(bot: Node, dungeon: Node, item: Dictionary) -> bool:
 	var arch: Dictionary = SpellData.archetype_def("spell_sandblast")
 	if arch.is_empty() or not is_instance_valid(bot) or dungeon == null:
 		return false
-	var range_cells: int = int(arch.get("range_cells", 3))
+	var range_cells: int = int(arch.get("range_cells", 4))
 	var origin: Vector2 = bot.position + Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5)
 	var facing: Vector2 = Vector2.RIGHT
 	if "_facing_x" in bot:
@@ -519,31 +523,35 @@ static func _fire_sandblast(bot: Node, dungeon: Node, item: Dictionary) -> bool:
 		var dir: Vector2 = nearest.position - origin
 		if dir.length_squared() > 0.01:
 			facing = dir.normalized()
-	var cone_half_angle: float = deg_to_rad(45.0) * (1.0 + float(bot.spell_area_pct) / 100.0)
+	var f_norm: Vector2 = facing.normalized() if facing.length_squared() > 0.01 else Vector2.RIGHT
+	var perp: Vector2 = Vector2(-f_norm.y, f_norm.x)
 	var max_dist: float = float(range_cells) * float(C.TILE_SIZE)
+	# Half-width grows with spell_area_pct so AoE-stacking still scales.
+	var half_width: float = 0.75 * float(C.TILE_SIZE) * (1.0 + float(bot.spell_area_pct) / 100.0)
 	var damage: int = SpellData.compute_damage(bot, item, item.get("_inst", null))
 	var sand_dt: String = SpellData.damage_type_for_element(String(arch.get("element", "")))
-	# Blinding Grit affix flag — apply blinded debuff (miss chance) on hit.
 	var blind: bool = bool(item.get("spell_sandblast_blind", false))
 	var hits: int = 0
 	for e in dungeon.enemies:
 		if not is_instance_valid(e) or not e.is_alive:
 			continue
 		var to_e: Vector2 = e.position - origin
-		var dist: float = to_e.length()
-		if dist > max_dist or dist < 4.0:
+		var along: float = to_e.dot(f_norm)
+		if along < 4.0 or along > max_dist:
 			continue
-		var ang: float = abs(to_e.angle_to(facing))
-		if ang <= cone_half_angle:
-			e.take_damage(damage, bot, sand_dt)
-			if blind and e.has_method("add_status"):
-				e.add_status("blinded", 2.0)
-			hits += 1
+		var across: float = absf(to_e.dot(perp))
+		if across > half_width:
+			continue
+		e.take_damage(damage, bot, sand_dt)
+		if blind and e.has_method("add_status"):
+			e.add_status("blinded", 2.0)
+		hits += 1
 	if hits == 0:
 		return false
-	# Sandblast — DCSS sandblast0/1/2 + cloud_dust sprites painted over
-	# a tan/brown volume. Per-flavor preset in spell_aoe.gd.
-	SpellAoe.spawn_cone(dungeon.actor_layer, origin, facing, max_dist, cone_half_angle, _visual_color_for_item(item, "earth"), "sand")
+	# Reuse the cone visual at a tight angle to imply a focused vortex
+	# until a dedicated cyclone effect ships. Sand sprites still tint earth.
+	var visual_half_angle: float = deg_to_rad(18.0)
+	SpellAoe.spawn_cone(dungeon.actor_layer, origin, f_norm, max_dist, visual_half_angle, _visual_color_for_item(item, "earth"), "sand")
 	return true
 
 # Vampiric Drain — homing dark projectile that heals the bot for 35%
@@ -579,32 +587,60 @@ static func _fire_drain(bot: Node, dungeon: Node, item: Dictionary) -> bool:
 				p.lifesteal_buff_bot = true
 	return true
 
-# Shatter — radial physical AoE pulse. Bigger raw damage than Frost
-# Nova but no slow — instead a brief stun on hit. Aftershock affix
-# (`spell_shatter_aftershock`) fires a second smaller pulse 0.4s later.
+# Shatter — directional physical cone in bot facing. Bigger raw damage
+# than Frost Nova and preserves the brief stun, but the cone shape gives
+# distinct positional play vs frost_nova's radial AoE (S6, a05 dead-2).
+# Aftershock affix (`spell_shatter_aftershock`) fires a second smaller
+# cone 0.4s later at 70% range, half damage.
 static func _fire_shatter(bot: Node, dungeon: Node, item: Dictionary) -> bool:
 	var arch: Dictionary = SpellData.archetype_def("spell_shatter")
 	if arch.is_empty() or not is_instance_valid(bot) or dungeon == null:
 		return false
 	var range_cells: int = int(arch.get("range_cells", 4))
-	var area_mult: float = 1.0 + float(bot.spell_area_pct) / 100.0
-	var radius_cells: int = max(1, int(round(float(range_cells) * area_mult)))
-	var enemies: Array = _enemies_in_range(bot, dungeon, radius_cells)
-	if enemies.is_empty():
-		return false
+	var origin: Vector2 = bot.position + Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5)
+	var facing: Vector2 = Vector2.RIGHT
+	if "_facing_x" in bot:
+		facing = Vector2(float(bot._facing_x), 0.0)
+		if facing.length_squared() < 0.01:
+			facing = Vector2.RIGHT
+	var nearest: Node = null
+	var nearest_d: float = INF
+	for e in dungeon.enemies:
+		if not is_instance_valid(e) or not e.is_alive:
+			continue
+		var d: float = origin.distance_to(e.position)
+		if d < nearest_d:
+			nearest_d = d
+			nearest = e
+	if nearest != null:
+		var dir: Vector2 = nearest.position - origin
+		if dir.length_squared() > 0.01:
+			facing = dir.normalized()
+	var f_norm: Vector2 = facing.normalized() if facing.length_squared() > 0.01 else Vector2.RIGHT
+	var cone_half_angle: float = deg_to_rad(60.0) * (1.0 + float(bot.spell_area_pct) / 100.0)
+	var max_dist: float = float(range_cells) * float(C.TILE_SIZE)
 	var damage: int = SpellData.compute_damage(bot, item, item.get("_inst", null))
 	var shatter_dt: String = SpellData.damage_type_for_element(String(arch.get("element", "")))
-	for entry in enemies:
-		var e: Node = entry.e
-		if is_instance_valid(e) and e.has_method("take_damage"):
-			e.take_damage(damage, bot, shatter_dt)
-			if e.has_method("add_status"):
-				e.add_status("stunned", 0.6)
-	var origin: Vector2 = bot.position + Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5)
-	SpellAoe.spawn_ring(dungeon.actor_layer, origin, float(radius_cells) * float(C.TILE_SIZE), _visual_color_for_item(item, "earth"))
-	# Aftershock — second smaller pulse via SceneTree timer. Timer is
-	# auto-freed; the lambda captures the current radius/damage which
-	# is fine because they're values, not refs. Half damage, 70% radius.
+	var hits: int = 0
+	for e2 in dungeon.enemies:
+		if not is_instance_valid(e2) or not e2.is_alive:
+			continue
+		var to_e: Vector2 = e2.position - origin
+		var dist: float = to_e.length()
+		if dist > max_dist or dist < 4.0:
+			continue
+		var ang: float = abs(to_e.angle_to(f_norm))
+		if ang > cone_half_angle:
+			continue
+		e2.take_damage(damage, bot, shatter_dt)
+		if e2.has_method("add_status"):
+			e2.add_status("stunned", 0.6)
+		hits += 1
+	if hits == 0:
+		return false
+	SpellAoe.spawn_cone(dungeon.actor_layer, origin, f_norm, max_dist, cone_half_angle, _visual_color_for_item(item, "earth"), "sand")
+	# Aftershock — second smaller cone via SceneTree timer. Half damage,
+	# 70% range, narrower angle. Timer is auto-freed.
 	if bool(item.get("spell_shatter_aftershock", false)):
 		var t := Timer.new()
 		t.one_shot = true
@@ -615,13 +651,21 @@ static func _fire_shatter(bot: Node, dungeon: Node, item: Dictionary) -> bool:
 				t.queue_free()
 				return
 			var late_origin: Vector2 = bot.position + Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5)
-			var radius2_cells: int = max(1, int(round(float(radius_cells) * 0.7)))
-			var enemies2: Array = _enemies_in_range(bot, dungeon, radius2_cells)
-			for entry2 in enemies2:
-				var e2: Node = entry2.e
-				if is_instance_valid(e2) and e2.has_method("take_damage"):
-					e2.take_damage(int(damage * 0.5), bot, shatter_dt)
-			SpellAoe.spawn_ring(dungeon.actor_layer, late_origin, float(radius2_cells) * float(C.TILE_SIZE), _visual_color_for_item(item, "earth"))
+			var late_dist: float = max_dist * 0.7
+			var late_half: float = cone_half_angle * 0.85
+			for e3 in dungeon.enemies:
+				if not is_instance_valid(e3) or not e3.is_alive:
+					continue
+				var to_e3: Vector2 = e3.position - late_origin
+				var d3: float = to_e3.length()
+				if d3 > late_dist or d3 < 4.0:
+					continue
+				var ang3: float = abs(to_e3.angle_to(f_norm))
+				if ang3 > late_half:
+					continue
+				if e3.has_method("take_damage"):
+					e3.take_damage(int(damage * 0.5), bot, shatter_dt)
+			SpellAoe.spawn_cone(dungeon.actor_layer, late_origin, f_norm, late_dist, late_half, _visual_color_for_item(item, "earth"), "sand")
 			t.queue_free()
 		)
 		t.start()

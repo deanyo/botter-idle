@@ -279,17 +279,16 @@ static func is_two_handed_base_type(base_type: String) -> bool:
 	return base_type in TWO_HANDED_BASE_TYPES
 
 # Item-level "occupies both hands" check — true for canonical 2H base
-# types AND for items flagged `weapon_class: "dual"` (e.g. Gyre — a
-# DCSS dual-wield blade where the off-hand IS the second weapon).
-# Mechanically identical from the shield-exclusion standpoint: equipping
-# either kind clears the shield slot. 2026-06-05 — gyre balance pass.
+# types or items explicitly flagged `weapon_class: "2H"` / `two_handed`.
+# Dual-wield (`weapon_class: "dual"`) deferred — S6 deleted the only
+# dual base (gyre); re-add this branch only if 10+ dual bases ship at once.
 static func is_two_handed(item: Dictionary) -> bool:
 	if item == null or item.is_empty():
 		return false
 	if is_two_handed_base_type(String(item.get("base_type", ""))):
 		return true
 	var wc: String = String(item.get("weapon_class", ""))
-	if wc == "dual" or wc == "2H":
+	if wc == "2H":
 		return true
 	return bool(item.get("two_handed", false))
 

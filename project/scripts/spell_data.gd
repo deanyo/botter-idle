@@ -75,11 +75,13 @@ const ARCHETYPES := {
 	#
 	# magic_dart: cheap fast projectile, very short CD. The "filler"
 	# spell that fires constantly. Low single-hit damage but high DPS
-	# from cast frequency.
+	# from cast frequency. Re-tagged INT → DEX (S6, a03 §A.4): closes
+	# the dagger-Halfling-spam archetype gap. Base damage bumped per
+	# F-SPELL-02 so the t5 mid lands within 30% of chain_lightning.
 	"spell_magic_dart": {
-		"primary_stat": "int",
+		"primary_stat": "dex",
 		"cooldown": 0.7,
-		"damage": 9,
+		"damage": 14,
 		"range_cells": 9,
 		"projectile": "res://assets/tiles/projectiles/magic_dart.png",
 		"trail_flavor": "arcane",
@@ -98,13 +100,17 @@ const ARCHETYPES := {
 		"element": "",
 		"projectile_speed": 220.0,
 	},
-	# sandblast: tight short cone, physical. Like holy_beam at half
-	# the range with higher damage; closer-quarters caster.
+	# sandblast → Dust Devil rework (S6, a05 dead-1). Was a tight
+	# physical cone strictly outclassed by spell_holy_beam at every
+	# floor depth. Now a moving cyclone: a vortex that sweeps 4 cells
+	# in the bot's facing direction, hitting enemies inside a swept
+	# rectangle (~1.5 cells wide) along its path. Differentiates by
+	# shape, not numbers — same STR primary, same physical damage type.
 	"spell_sandblast": {
 		"primary_stat": "str",
 		"cooldown": 2.6,
 		"damage": 30,
-		"range_cells": 3,
+		"range_cells": 4,
 		"projectile": "",
 		"trail_flavor": "earth",
 		"element": "",

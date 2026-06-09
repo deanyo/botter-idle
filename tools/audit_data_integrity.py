@@ -50,6 +50,7 @@ def _load_json(p: Path):
 
 def main() -> int:
     issues: list[str] = []
+    warnings: list[str] = []
 
     affixes_doc = _load_json(AFFIXES_JSON)
     items_doc = _load_json(ITEMS_JSON)
@@ -198,6 +199,48 @@ def main() -> int:
                     f"affix id {af_id!r}"
                 )
 
+    # ── 6b. recolor_of references resolve ───────────────────────────
+    items_by_id = {it.get("id"): it for it in items_doc.get("items", [])}
+    for it in items_doc.get("items", []):
+        root = it.get("recolor_of")
+        if not root:
+            continue
+        item_id = it.get("id", "?")
+        if root not in items_by_id:
+            issues.append(
+                f"UNKNOWN_RECOLOR item {item_id!r} recolor_of {root!r} "
+                f"does not exist in items.json"
+            )
+            continue
+        if items_by_id[root].get("slot") != it.get("slot"):
+            issues.append(
+                f"RECOLOR_SLOT   item {item_id!r} slot mismatch with "
+                f"recolor_of {root!r}"
+            )
+
+    # ── 6c. Per slot×tier design diversity (recolor-aware) ──────────
+    # Per a04 §9.4: collapse recolor twins to their root when counting
+    # distinct designs. Warn (non-fatal) when a (slot, item_tier) cell
+    # has < 3 distinct non-unique designs after recolor collapse —
+    # the build matrix gets thin there.
+    cells: dict[tuple[str, int], set[str]] = {}
+    for it in items_doc.get("items", []):
+        if it.get("unique"):
+            continue
+        slot = it.get("slot", "")
+        tier = int(it.get("item_tier", 0) or 0)
+        if not slot or tier == 0:
+            continue
+        canonical = it.get("recolor_of") or it.get("id")
+        cells.setdefault((slot, tier), set()).add(canonical)
+    for (slot, tier), designs in sorted(cells.items()):
+        if len(designs) < 3:
+            warnings.append(
+                f"THIN_DESIGNS   slot={slot!r} tier={tier} has "
+                f"{len(designs)} distinct non-unique design(s) post-recolor "
+                f"collapse (target ≥3)"
+            )
+
     # ── 7. Sanity: KNOWN_CATEGORIES match affix_system.gd ───────────
     # Read the GD source and pull the exact dict so the linter doesn't
     # drift behind code edits.
@@ -232,6 +275,11 @@ def main() -> int:
             )
 
     # ── Report ──────────────────────────────────────────────────────
+    if warnings:
+        print(f"audit_data_integrity: {len(warnings)} warning(s) (non-fatal).\n")
+        for line in warnings:
+            print(" ", line)
+        print()
     if not issues:
         print("audit_data_integrity: OK — no issues found.")
         return 0

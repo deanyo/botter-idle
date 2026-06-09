@@ -315,7 +315,7 @@ func test_spell_items_canonical_primary_stat_per_archetype() -> void:
 	var arch_defaults := {
 		"spell_fireball": "int", "spell_axes": "str",
 		"spell_holy_beam": "str", "spell_chain_lightning": "dex",
-		"spell_frost_nova": "int", "spell_magic_dart": "int",
+		"spell_frost_nova": "int", "spell_magic_dart": "dex",
 		"spell_iron_shot": "str", "spell_sandblast": "str",
 		"spell_drain": "int", "spell_shatter": "str",
 	}
@@ -355,3 +355,74 @@ func test_of_multicast_floor_no_longer_rolls_zero() -> void:
 		var hi: int = int(tier[1])
 		assert_gte(lo, 1, "of_multicast tier floor < 1: %s" % str(tier))
 		assert_gte(hi, 1, "of_multicast tier ceiling < 1: %s" % str(tier))
+
+func test_dual_wield_class_deferred() -> void:
+	# S6 cuts (synthesis §5.1, a01 F-DUAL-01) — the only weapon_class:"dual"
+	# base (gyre) was deleted; dual-wield is deferred until 10+ bases ship
+	# at once. Lock against accidental re-introduction.
+	var f := FileAccess.open("res://data/items.json", FileAccess.READ)
+	assert_not_null(f, "items.json readable")
+	if f == null:
+		return
+	var parsed: Variant = JSON.parse_string(f.get_as_text())
+	assert_eq(typeof(parsed), TYPE_DICTIONARY, "items.json parses")
+	var data: Dictionary = parsed
+	var dual_items: Array = []
+	for it in data.get("items", []):
+		if String(it.get("weapon_class", "")) == "dual":
+			dual_items.append(String(it.get("id", "?")))
+	assert_eq(dual_items.size(), 0,
+		"weapon_class:\"dual\" items present (re-add only if 10+ bases ship): %s"
+		% str(dual_items))
+
+func test_t3_axe_outliers_flattened() -> void:
+	# S6.1 (a01 F-WEP-02) — five t3 axe/halberd/dire-flail outliers
+	# previously sat at DPS=85, ~30% above the t3 2H median (74). They
+	# made every t3 1H non-axe redundant. Flattened to ~74 DPS to restore
+	# tier-curve sanity. Lock against re-tuning.
+	var f := FileAccess.open("res://data/items.json", FileAccess.READ)
+	assert_not_null(f, "items.json readable")
+	if f == null:
+		return
+	var parsed: Variant = JSON.parse_string(f.get_as_text())
+	var data: Dictionary = parsed
+	var seen := {}
+	var targets := ["steel_battle_axe", "steel_broad_axe", "dire_flail", "steel_halberd"]
+	for it in data.get("items", []):
+		var iid: String = String(it.get("id", ""))
+		if iid in targets:
+			var dmin: float = float(it.get("damage_min", 0))
+			var dmax: float = float(it.get("damage_max", 0))
+			var sp: float = float(it.get("speed", 1.0))
+			var dps: float = (dmin + dmax) / 2.0 / sp
+			seen[iid] = dps
+	for tgt in targets:
+		assert_true(seen.has(tgt), "missing t3 outlier %s" % tgt)
+		assert_lt(float(seen.get(tgt, 999.0)), 80.0,
+			"t3 outlier %s DPS %.1f exceeds flattened ceiling 80"
+			% [tgt, float(seen.get(tgt, 999.0))])
+
+func test_magic_dart_retagged_dex() -> void:
+	# S6.7 (a03 §A.4, a01 F-SPELL-02) — spell_magic_dart re-tagged INT → DEX
+	# to close the dagger-Halfling-spam archetype gap. t5 mid bumped to 22.
+	var f := FileAccess.open("res://data/items.json", FileAccess.READ)
+	if f == null:
+		return
+	var parsed: Variant = JSON.parse_string(f.get_as_text())
+	var data: Dictionary = parsed
+	var saw_t5 := false
+	for it in data.get("items", []):
+		if String(it.get("base_type", "")) != "spell_magic_dart":
+			continue
+		# Every magic_dart item that declares primary_stat must be DEX.
+		if it.has("primary_stat"):
+			assert_eq(String(it["primary_stat"]), "dex",
+				"magic_dart item %s primary_stat = %s (expected dex)"
+				% [String(it.get("id", "?")), String(it["primary_stat"])])
+		if int(it.get("item_tier", 0)) == 5:
+			saw_t5 = true
+			var mid: float = (float(it.get("damage_min", 0)) + float(it.get("damage_max", 0))) / 2.0
+			assert_gte(mid, 21.0,
+				"t5 magic_dart %s mid damage %.1f below 21 (expect ≥22)"
+				% [String(it.get("id", "?")), mid])
+	assert_true(saw_t5, "expected at least one t5 spell_magic_dart item")
