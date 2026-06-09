@@ -4,7 +4,94 @@ Point-in-time snapshot of what's actually shipping. Updated as we go. The
 durable rules and process live in `CLAUDE.md`; the roadmap and open work
 items live in `TODO.md`.
 
-Last refresh: 2026-06-09 (Tier 3 dungeon.gd split — sixth and final
+Last refresh: 2026-06-09 (Tier 2 attribution shipped — final session
+of the Botter audit. Vault filenames stripped of DCSS contributor
+handles, LICENSE / NOTICE.md / CREDITS.md added at repo root, in-game
+Credits screen wired into main menu, README + .gitignore refreshed,
+export_presets.cfg tracked + vault exclude_filter asserted at
+deploy time. **The Botter multi-agent audit is CLOSED** — no NEXT
+tier; future work is open-ended).
+
+`project/data/vaults/` now uses opaque per-theme IDs
+(`vault_<theme>_NNNN.json`) instead of `des_<author>_*.json`. The
+1320 ported vaults bucket across 14 themes (lair 166 / swamp 133 /
+zot 127 / shoals 117 / snake 116 / elf 113 / crypt 106 / abyss 99 /
+mines 89 / spider 88 / vaults 83 / slime 39 / tomb 35 / depths 9).
+Each vault's `_original_dcss_id` field preserves the source
+filename, and `project/data/vault_id_map.json` records the full
+mapping (old_filename → new_filename / new_name / original_name /
+primary_theme) for traceability. `tools/strip_vault_handles.py` is
+the one-shot rename script; idempotent, --dry-run flag, deterministic
+sort key, never re-runs against already-renamed files.
+
+`LICENSE` declares "All Rights Reserved" mirroring the README's
+existing public-preview framing — durable posture pre-launch, not a
+transitional stub. `NOTICE.md` enumerates third-party attribution:
+the full DCSS / RLTiles tile-pack contributor list (~50 names) with
+the original RLTiles attribution language, 49 verified DCSS .des
+vault contributor handles cross-referenced from the audit trail
+(covering 1219 of 1320 ported vaults; ~100 unattributed credited
+collectively to the DCSS community), Godot Engine MIT, and GUT MIT.
+`CREDITS.md` carries dev credit + Claude Code AI-assist
+acknowledgment + inspiration list + bundled-content roster.
+
+In-game **Credits** screen (`project/scripts/credits.gd`) follows
+the existing script-only screen pattern — paints itself in `_ready`,
+two RichTextLabel panels rendering CREDITS.md / NOTICE.md side-by-
+side, header back-button. Reachable from main menu →
+"Credits" between "Item Generator" and "Reset Save".
+`project/data/credits.txt` and `project/data/notice.txt` are the
+shipped copies the screen reads via `res://data/`; repo-root .md
+remains authoritative. `tools/sync_credits.py --check` is wired into
+`tools/check_before_commit.sh` step 2/5 so attribution edits that
+miss the project copy fail pre-commit instead of silently lagging.
+
+`project/export_presets.cfg` now tracked (was gitignored). Carries
+the load-bearing
+`exclude_filter="data/vaults/*.json,data/vaults_bundle.json"` line
+that keeps GPL-derived vault content out of the web .pck.
+`tools/deploy_web.sh` adds a pre-export grep gate that aborts the
+deploy with a NOTICE.md / CLAUDE.md pointer if either filter goes
+missing — defense in depth against fresh-checkout / regenerated-
+preset regressions.
+
+`README.md` License section now points at `LICENSE`, `NOTICE.md`,
+`CREDITS.md`, and the in-game Credits screen — the dcss_layouts.gd
+clean-room "pending" sentence removed (that work shipped 2026-06-08
+in commit `a2674e5`). `.gitignore:5-8` refreshed to point at
+NOTICE.md as the canonical attribution record.
+
+Validation: GUT 132/132 pass. `tools/check_before_commit.sh` 5/5
+pass with the new credits-sync gate. Mortal T1 3-run grind
+post-rename: 0 errors / 0 stalls, vault stamps confirmed in
+`[gen]` log lines (`vaults=["vault_crypt_0093"]` etc).
+
+**Botter audit retrospective.** Started 2026-06-08 with 100 verified
+findings across 8 categories from a multi-agent audit. Ten Tier 0–3
+sessions shipped sequentially over two days:
+  - Tier 0 — legal hygiene fires (vault bundle out of .pck, Pages
+    allowlist, README honesty, manifest scrub).
+  - Tier 1 — save/progression bugs (chest-loot-loss, octopode/naga
+    ring2 wipe, unspent_points key); StatCalc residue (15 dead
+    altars + species stats); combat correctness (avoidance roll,
+    spell element piping, spell-item damage scaling); UI cleanup.
+  - Tier 2 — clean-room dcss_layouts.gd rewrite, GUT test
+    foundation, save durability (atomic write, schema migrations,
+    orphan validation, web pagehide flush).
+  - Tier 3 — dungeon.gd god-class split: LootFactory,
+    HUDInventoryController, DebugDump, RunState, WaveSpawner,
+    ShowcaseRunner. dungeon.gd 4492 → 3064 LOC (-32%); the
+    remainder is the irreducible orchestrator.
+  - Tier 2 attribution (this session) — pre-public-launch hygiene
+    cap: vault handle strip, LICENSE/NOTICE/CREDITS, in-game
+    Credits screen, export-preset tracking + deploy guard.
+GUT 0 → 132 tests, ~933 → ~2745 asserts. The audit is closed;
+remaining open work in TODO.md is balance / UI / dev-tool follow-
+ups, not audit findings.
+
+---
+
+Earlier 2026-06-09 (Tier 3 dungeon.gd split — sixth and final
 extraction shipped: ShowcaseRunner pulled out of the 3179-LOC
 dungeon. **The dungeon.gd Tier 3 split is COMPLETE** — what remains
 is the irreducible orchestrator).

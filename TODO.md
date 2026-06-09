@@ -14,17 +14,15 @@ not maintained per beat.
 
 ## Active priorities (NEXT)
 
-The single source of truth for "what's the live work" is
-`~/claude/game-audit/prompts/SESSION.md` section 6 — read that for the
-current session's full inline brief.
+**The Botter multi-agent audit is CLOSED (2026-06-09).** All Tier 0–3
+sessions shipped + Tier 2 attribution as the final cap. Future work is
+open-ended (balance / UI / dev-tools / new features), not audit
+follow-ups. The orchestrator file at
+`~/claude/game-audit/prompts/SESSION.md` is archived; future sessions
+don't need it.
 
-- **Tier 3 dungeon split — DebugDump (next session).** Third god-class
-  extraction. LootFactory + HUDInventoryController shipped (commits
-  `e8aa0f5`, this session). DebugDump is the pure dev-tool floor-dump
-  JSON serializer + clipboard helpers — no shipping surface, low
-  blast radius. Multi-session effort; remaining order is DebugDump,
-  RunState, WaveSpawner, Showcase. Full brief in
-  `~/claude/game-audit/prompts/tier3_dungeon_split.md`.
+The active backlog below is the live agenda — pick the highest-leverage
+item or anything from PLAYTEST.md that the playtester surfaced.
 
 ---
 
@@ -83,15 +81,12 @@ current session's full inline brief.
   for lava cells (and `"physical"` for water if/when water deals
   damage — currently it only slows). Low-priority because lava chip
   damage is small.
-- ⬜ **NOTICE.md / CREDITS surface.** Pre-req before final license
-  grant. Should enumerate CC0 tile attribution + Godot MIT, AND call
-  out that dungeon-layout algorithms are now original GDScript
-  implementations inspired by standard dungeon-gen patterns
-  (drunkard-walk, cellular excavation), not derived from DCSS source.
-- ⬜ **itch redeploy with clean-room `dcss_layouts.gd`.** v17 on itch
-  is still the pre-rewrite derived file. Next `/deploy-web` will pick
-  up the rewrite — do once dungeon feel is confirmed locally and
-  (ideally) NOTICE.md update has landed.
+- ⬜ **itch redeploy after attribution session.** Vault-handle strip
+  + clean-room dcss_layouts.gd + new credits screen all want a fresh
+  web build before the password is removed. Run `/deploy-web` once
+  the playtester confirms current build is stable. tools/deploy_web.sh
+  now asserts the vault exclude_filter at deploy time so the rename
+  can't accidentally re-ship handle-bearing filenames to web.
 
 ---
 
