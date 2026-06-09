@@ -60,7 +60,11 @@ Background-friendly. Mobile-first.
   where they overlap. Don't delete resolved items — the trail of
   what changed in response to play-feel feedback is durable memory.
 - **`docs/`** — biome audit, branch research dossier, vault audit
-  (long-form references).
+  (long-form references). **`docs/CHANGELOG.md`** archives shipped
+  work moved out of `TODO.md` so the engineering todo file reflects
+  what's ahead, not what's behind. Append-only, dated; mirror the
+  `TODO.md` entry as a one-paragraph summary when a tier or beat
+  ships, then delete it from TODO.md.
 - **`project/`** — the Godot project. Open this in the editor.
 - **`tools/`** — atlas builder + viewer, biome editor, item editor +
   per-slot manifests, `sync_items.py` (manifest → items.json + sprites),
