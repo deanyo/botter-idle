@@ -766,7 +766,13 @@ backward-compatible. Affixes without `description` render cleanly
 unchanged.
 
 ### 3. Bought 4 items in shop, only 3 in inventory back at outpost
-**Status:** `untriaged`
+**Status:** `triaged → fixed` (Phase 2 inventory cluster, 2026-06-10) —
+shop.gd `_buy_one()` now checks inventory cap before append
+(shop.gd:733). Buys at-or-over cap are rejected with a 1-second
+red-flash on the new "Carrying N / cap" counter in the inventory pane.
+Pre-fix the buy succeeded, gold was deducted, item appended, then
+silently dropped on next save round-trip via salvage flush. Paired
+with default cap raise to 200 (see #7).
 
 Player purchased 4 items in the run shop, returned to outpost, only
 3 of those items appeared in stash/inventory. Either:
@@ -959,7 +965,25 @@ who's tempted to "simplify" tooltip rendering knows the FX are
 load-bearing for game feel. Don't strip them.
 
 ### 7. Inventory cap doesn't seem to work — and should be much higher anyway
-**Status:** `untriaged`
+**Status:** `triaged → fixed` (Phase 2 inventory cluster, 2026-06-10)
+
+Fix landed across four files:
+- save_state.gd: default `inventory_cap` 50 → 200. New saves start at
+  200; existing saves migrate via new schema v9 (any save still on the
+  legacy 50 gets bumped to 200; user-upgraded values >50 are
+  preserved).
+- shop.gd: enforce cap on `_buy_one()` (shop.gd:733). Pre-fix the
+  shop bypassed cap entirely and items were silently dropped on save
+  round-trip. Buys at full now reject with a red-flash counter.
+- shop.gd: added "Carrying N / cap" counter to the inventory pane
+  (shop.gd `_render`).
+- outpost.gd + hud_inventory_controller.gd: matched fallback default
+  to 200 so all read paths agree.
+
+The "doesn't seem to work" perception was three things stacked: shop
+bypass (real bug — fixed), soft-cap-only-flushes-at-floor-end (working
+as designed; auto-salvage runs on floor-end + run-end + menu-exit),
+and 50 being too low to feel like a cap (design — fixed).
 
 Player observation: the inventory cap doesn't appear to enforce
 during play (items keep stacking in past where the cap should kick

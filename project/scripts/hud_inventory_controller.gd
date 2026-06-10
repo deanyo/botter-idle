@@ -60,7 +60,7 @@ var slot_cooldowns: Dictionary = {}
 # Inventory cap drives auto-salvage when the bag fills up. Run-cached so
 # the per-pickup check doesn't re-read disk. run_salvaged_* track the
 # stats reported in the run summary.
-var inventory_cap: int = 50
+var inventory_cap: int = 200
 var run_salvaged_count: int = 0
 var run_salvaged_gold: int = 0
 # Auto-salvage runs deferred (floor end + run end) so each individual
@@ -103,7 +103,7 @@ func _log(msg: String, tag: String = "combat") -> void:
 # renders this as a "Base" section; loot picked up this run appends as
 # Floor-N sections below it.
 func init_run(save: Dictionary) -> void:
-	inventory_cap = int(save.get("inventory_cap", 50)) + int(BotUpgrades.total_for_stat(save, "inventory_cap"))
+	inventory_cap = int(save.get("inventory_cap", 200)) + int(BotUpgrades.total_for_stat(save, "inventory_cap"))
 	run_salvaged_count = 0
 	run_salvaged_gold = 0
 	loot_segments.clear()

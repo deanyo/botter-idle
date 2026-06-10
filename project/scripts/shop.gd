@@ -51,6 +51,7 @@ var shop_mods: Array = []
 var lbl_gold: Label
 var lbl_modifier: Label
 var lbl_countdown: Label
+var lbl_inv_count: Label
 var inventory_grid: GridContainer
 var stock_grid: GridContainer
 
@@ -257,6 +258,14 @@ func _build_inventory_pane(x: int, y: int, w: int, h: int) -> void:
 	hint.add_theme_font_size_override("font_size", 11)
 	hint.add_theme_color_override("font_color", COL_DIM)
 	add_child(hint)
+	lbl_inv_count = Label.new()
+	lbl_inv_count.position = Vector2(x + 16, y + h - 76)
+	lbl_inv_count.size = Vector2(w - 32, 18)
+	lbl_inv_count.add_theme_font_size_override("font_size", 11)
+	lbl_inv_count.add_theme_color_override("font_color", COL_DIM)
+	lbl_inv_count.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	lbl_inv_count.clip_text = true
+	add_child(lbl_inv_count)
 	# Sell-all-junk button.
 	var sell_btn := Button.new()
 	sell_btn.text = "Sell all common/uncommon (★ favorites kept)"
@@ -579,6 +588,11 @@ func _buy_price(item: Dictionary) -> int:
 func _render() -> void:
 	if lbl_gold != null:
 		lbl_gold.text = "Gold: %d" % int(state.gold)
+	if lbl_inv_count != null:
+		var n: int = int(state.inventory.size())
+		var c: int = _inventory_cap()
+		lbl_inv_count.text = "Carrying %d / %d" % [n, c]
+		lbl_inv_count.add_theme_color_override("font_color", COL_DIM if n < c else Color(1.0, 0.45, 0.35))
 	if lbl_modifier != null:
 		var mod: Dictionary = _modifier_def(String(state["shop"].get("modifier_id", "")))
 		if mod.is_empty():
@@ -587,6 +601,27 @@ func _render() -> void:
 			lbl_modifier.text = "%s — %s" % [String(mod.get("name", "")), String(mod.get("description", ""))]
 	_render_inventory()
 	_render_stock()
+
+# Inventory-full flash — three-frame red+bold pulse on the carrying
+# counter when the player tries to buy at cap. Better feedback than
+# the silent click-does-nothing of the pre-fix path.
+func _flash_inv_full() -> void:
+	if lbl_inv_count == null:
+		return
+	var t := create_tween()
+	var red := Color(1.0, 0.4, 0.35)
+	var dim := COL_DIM
+	t.tween_callback(func():
+		lbl_inv_count.add_theme_color_override("font_color", red)
+		lbl_inv_count.text = "Inventory full — sell something first"
+	)
+	t.tween_interval(1.0)
+	t.tween_callback(func():
+		lbl_inv_count.add_theme_color_override("font_color", red)  # stays red while full
+		var n: int = int(state.inventory.size())
+		var c: int = _inventory_cap()
+		lbl_inv_count.text = "Carrying %d / %d" % [n, c]
+	)
 
 func _render_inventory() -> void:
 	if inventory_grid == null:
@@ -730,6 +765,9 @@ func _sell_all_junk() -> void:
 		SaveState.flush_to_disk()
 		_render()
 
+func _inventory_cap() -> int:
+	return int(state.get("inventory_cap", 200)) + int(BotUpgrades.total_for_stat(state, "inventory_cap"))
+
 func _buy_one(stock_index: int) -> void:
 	var stock: Array = state["shop"].get("stock", [])
 	if stock_index < 0 or stock_index >= stock.size():
@@ -743,6 +781,14 @@ func _buy_one(stock_index: int) -> void:
 	var item: Dictionary = items_db[base_id]
 	var price: int = _buy_price(item)
 	if int(state.get("gold", 0)) < price:
+		return
+	# Cap enforcement — pre-fix the shop bypassed this entirely. Player
+	# could buy 4 items at cap=50 with 50/50 inventory, return to outpost
+	# with only 50 (overflow silently dropped on next save/load round-trip
+	# through the run path's salvage flush). Now: reject the buy when full,
+	# nudge the player to sell first.
+	if state.inventory.size() >= _inventory_cap():
+		_flash_inv_full()
 		return
 	state.gold = int(state.gold) - price
 	state.inventory.append(inst.duplicate(true))

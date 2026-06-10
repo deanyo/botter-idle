@@ -770,7 +770,7 @@ func _build_instructions_tab(tabs: TabContainer, w: int, h: int) -> void:
 	page.add_child(filter_btn); sy += 36
 	_add_section(page, sx, sy, "Inventory"); sy += 22
 	var inv_count: int = int(state.get("inventory", []).size())
-	var cap: int = int(state.get("inventory_cap", 50)) + int(BotUpgrades.total_for_stat(state, "inventory_cap"))
+	var cap: int = int(state.get("inventory_cap", 200)) + int(BotUpgrades.total_for_stat(state, "inventory_cap"))
 	var inv_lbl := _add_stat_to(page, sx, sy, UITheme.FS_BODY, COL_DIM, "Carrying %d / %d" % [inv_count, cap])
 	inv_lbl.size = Vector2(w - 16, 20)
 	inv_lbl.clip_text = true; sy += 22

@@ -381,7 +381,7 @@ static func delete_character(idx: int) -> void:
 # instance of this). Versioned chain replaces probe gating with explicit
 # `if v < N` ordering. Starting at 7 acknowledges the historic bumps so
 # any future references to "older save shapes" use real version numbers.
-const SCHEMA_VERSION := 8
+const SCHEMA_VERSION := 9
 
 # In-place migrations applied on load. Idempotent — once schema_version
 # matches SCHEMA_VERSION, every step short-circuits.
@@ -399,6 +399,9 @@ static func _migrate(state: Dictionary) -> void:
 	if v < 8:
 		_migrate_to_v8(state)
 		v = 8
+	if v < 9:
+		_migrate_to_v9(state)
+		v = 9
 	state["schema_version"] = SCHEMA_VERSION
 
 # v0 → v7: subsumes every historic probe-based migration into one step.
@@ -536,6 +539,16 @@ static func _migrate_to_v8(state: Dictionary) -> void:
 	var inventory: Array = state.get("inventory", [])
 	for inst in inventory:
 		_v8_migrate_inst(inst)
+
+static func _migrate_to_v9(state: Dictionary) -> void:
+	# Bump default inventory_cap from 50 → 200. Players reported the cap
+	# wasn't enforcing during play (shop bypassed it; soft-cap only
+	# triggered at floor/run-end) and was too low even when it did. Old
+	# saves carry the explicit 50 value, so a defaults-fill won't catch
+	# them — apply the bump here for any save still on the legacy 50.
+	# Custom values above 50 (player upgraded the cap) are preserved.
+	if int(state.get("inventory_cap", 50)) <= 50:
+		state["inventory_cap"] = 200
 
 static func _v8_migrate_inst(inst: Variant) -> void:
 	if typeof(inst) != TYPE_DICTIONARY:
@@ -729,7 +742,7 @@ static func _default() -> Dictionary:
 		# rarity (default common = everything goes in the bag). inventory_cap:
 		# hard ceiling triggering auto-salvage when exceeded.
 		"loot_filter": "common",
-		"inventory_cap": 50,
+		"inventory_cap": 200,
 		# Last branch the player deployed to. Offline progress simulates
 		# floors of this branch while the game was closed. Empty until the
 		# first deploy.
