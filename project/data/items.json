@@ -33445,7 +33445,7 @@
     },
     {
       "id": "vampire_splintered_tooth",
-      "name": "Splintered Tooth",
+      "name": "Toxic Splintered Tooth",
       "slot": "weapon",
       "rarity": "uncommon",
       "tile": "spwpn_vampires_tooth.png",
@@ -33455,28 +33455,42 @@
       "damage_max": 12,
       "damage_type": "physical",
       "speed": 0.45,
-      "item_tier": 1,
+      "item_tier": 2,
       "flavor_tags": [
-        "vampiric"
+        "poison"
       ],
-      "lore": "Yours, once. Returned to you sharper.",
+      "lore": "Remember to wear gloves.",
       "drop_weights": [
-        12,
-        30,
-        8,
+        0,
+        100,
+        0,
         0,
         0
       ],
       "unique": true,
-      "enchant_chance": 0.0,
+      "enchant_chance": 0.03,
       "requires_innate_tag": "vampiric",
       "implicit_affixes": [
         "of_lifesteal"
       ],
       "affix_pool": {
-        "of_lifesteal": 12,
-        "of_might": 8,
-        "of_executioner": 8
+        "of_shadows": 10,
+        "of_venom": 7,
+        "of_hunter": 12
+      },
+      "enchant_pool": [
+        "death",
+        "dark"
+      ],
+      "default_tint_overlay": {
+        "hue": 115,
+        "sat": 1,
+        "mode": "normal"
+      },
+      "default_tint": {
+        "hue": 125,
+        "sat": 1.2,
+        "mode": "normal"
       }
     },
     {

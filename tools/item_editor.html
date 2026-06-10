@@ -427,6 +427,8 @@
   <div class="spacer"></div>
   <button onclick="addItem()">+ New item</button>
   <button onclick="forceRefreshData()" title="Bypass CDN cache and re-fetch all data files. Use after pushing a change you want to see immediately.">🔄 Refresh data</button>
+  <button onclick="document.getElementById('import-file-input').click()" title="Import a previously-exported JSON file. Merges per-item: preserves fields the export doesn't carry (no schema loss when the editor's allowlist drifts).">⬆ Import</button>
+  <input type="file" id="import-file-input" accept="application/json,.json" style="display:none" onchange="importJSON(event)">
   <button class="primary" onclick="exportJSON()" title="Download a JSON file with every item in this slot. Drop it into project/data/ to ship.">⬇ Export this slot</button>
 </div>
 
@@ -2076,6 +2078,168 @@ function refreshSpritePreviews(id) {
 }
 
 // ---------- Export ----------
+// Build the export payload for one item. Pre-fix this hand-listed an
+// allowlist of fields, which silently dropped everything else
+// (weapon damage_min/max/speed/damage_type/weapon_class, armor's
+// armor/evasion, spells' spell_cooldown/primary_stat,
+// requires_innate_tag, implicit_affixes, recolor_of, _balance_bumps).
+// Now: start from the full loaded item dict (which IS the
+// items.json shape — manifest sync mirrors items.json verbatim) and
+// drop only legacy / always-zero noise. Any new schema field added
+// to items.json automatically rides through.
+function exportableItem(it) {
+  const out = {};
+  for (const k of Object.keys(it)) {
+    const v = it[k];
+    // Legacy v1 stats — items.json v2 has weapon damage_min/max +
+    // armor/evasion instead. Drop atk/def/hp when zero so the export
+    // doesn't carry stale zeroes the runtime ignores anyway.
+    if ((k === 'atk' || k === 'def' || k === 'hp') && (!v || v === 0)) continue;
+    // Empty containers — keep schema clean.
+    if (Array.isArray(v) && v.length === 0 && k !== 'drop_weights' && k !== 'flavor_tags') continue;
+    if (v && typeof v === 'object' && !Array.isArray(v) && Object.keys(v).length === 0) continue;
+    // Tints with no mode are no-ops.
+    if ((k === 'default_tint' || k === 'default_tint_overlay') && (!v || !v.mode || v.mode === 'none')) continue;
+    out[k] = v;
+  }
+  // Ensure the canonical-order required keys exist even if the loaded
+  // item is missing one — keeps every export entry shaped uniformly.
+  if (!('flavor_tags' in out)) out.flavor_tags = [];
+  if (!('drop_weights' in out)) out.drop_weights = [0,0,0,0,0];
+  if (!('lore' in out)) out.lore = '';
+  if (!('unique' in out)) out.unique = false;
+  return out;
+}
+
+// Field-by-field merge of an imported entry into the in-memory item.
+// The KEY rule: only OVERWRITE fields the import explicitly carries.
+// Anything missing from the import (because the exporter dropped it,
+// or the file is older than a schema bump) is left intact. This is
+// the inverse of the prior bug where a round-trip Export→Import
+// silently lost weapon stats / requires_innate_tag / implicit_affixes.
+function mergeImportedItem(target, incoming) {
+  for (const k of Object.keys(incoming)) {
+    // Skip metadata that's not a real schema field.
+    if (k.startsWith('_')) continue;
+    // Skip legacy v1 zeroes (atk/def/hp); items.json v2 doesn't carry
+    // them and the runtime ignores them.
+    if ((k === 'atk' || k === 'def' || k === 'hp') && (!incoming[k])) continue;
+    target[k] = incoming[k];
+  }
+  return target;
+}
+
+async function importJSON(event) {
+  const file = event.target.files && event.target.files[0];
+  // Reset the input so picking the same file twice still triggers change.
+  event.target.value = '';
+  if (!file) return;
+  let parsed;
+  try {
+    const text = await file.text();
+    parsed = JSON.parse(text);
+  } catch (e) {
+    setStatus('Import failed: ' + e.message, true);
+    return;
+  }
+  // Two payload shapes are accepted:
+  //   1. Bulk export — top-level has _slot + an items_<slot> array.
+  //   2. Single-item snapshot — top-level IS the item dict (has id+slot).
+  let importedItems = null;
+  let importedSlot = null;
+  if (Array.isArray(parsed)) {
+    importedItems = parsed;
+  } else if (parsed && typeof parsed === 'object') {
+    if (parsed._slot) importedSlot = parsed._slot;
+    // Find the array key — usually `items_<slot>`, but accept `items` too.
+    for (const k of Object.keys(parsed)) {
+      if (Array.isArray(parsed[k]) && parsed[k].length && parsed[k][0] && parsed[k][0].id) {
+        importedItems = parsed[k];
+        break;
+      }
+    }
+    if (!importedItems && parsed.id && parsed.slot) {
+      importedItems = [parsed];                    // single-item shape
+      importedSlot = importedSlot || parsed.slot;
+    }
+  }
+  if (!importedItems) {
+    setStatus('Import failed: no items[] array or single-item dict found in JSON.', true);
+    return;
+  }
+  // Slot-mismatch guard. The active slot's `items[]` is what we'll
+  // mutate; refuse to import a different slot's payload silently.
+  if (importedSlot && importedSlot !== activeSlot.id) {
+    if (!confirm(`Import file targets slot "${importedSlot}" but active slot is "${activeSlot.id}". Switch tabs first, or click OK to import anyway (only matching-slot items will land).`)) {
+      return;
+    }
+  }
+  // Diff: classify each imported entry as new / changed / unchanged.
+  const byId = new Map(items.map(x => [x.id, x]));
+  const planned = {new: [], changed: [], unchanged: [], wrongSlot: []};
+  for (const inc of importedItems) {
+    if (!inc || !inc.id) continue;
+    if (inc.slot && inc.slot !== activeSlot.id) {
+      planned.wrongSlot.push(inc.id);
+      continue;
+    }
+    const cur = byId.get(inc.id);
+    if (!cur) {
+      planned.new.push(inc);
+    } else {
+      // Test: would the merge actually change any field?
+      const probe = JSON.parse(JSON.stringify(cur));
+      mergeImportedItem(probe, inc);
+      if (JSON.stringify(probe) !== JSON.stringify(cur)) {
+        planned.changed.push({inc, cur});
+      } else {
+        planned.unchanged.push(inc.id);
+      }
+    }
+  }
+  // Confirm before applying. Skip the prompt when there's nothing to do.
+  const total = planned.new.length + planned.changed.length;
+  if (total === 0) {
+    setStatus(`Import: no changes (${planned.unchanged.length} unchanged, ${planned.wrongSlot.length} wrong-slot).`);
+    setTimeout(() => setStatus(''), 4000);
+    return;
+  }
+  const summary = [
+    `${planned.new.length} new item(s)`,
+    `${planned.changed.length} changed item(s)`,
+    `${planned.unchanged.length} unchanged`,
+    planned.wrongSlot.length ? `${planned.wrongSlot.length} skipped (wrong slot)` : null,
+  ].filter(Boolean).join(', ');
+  if (!confirm(`Import "${file.name}":\n\n${summary}\n\nApply now?`)) {
+    setStatus('Import cancelled.');
+    setTimeout(() => setStatus(''), 2400);
+    return;
+  }
+  // Apply.
+  for (const inc of planned.new) {
+    // Strip metadata keys (_balance_bumps etc are real schema; _note isn't).
+    const fresh = {};
+    mergeImportedItem(fresh, inc);
+    items.push(fresh);
+    dirty.add(inc.id);
+  }
+  for (const {inc, cur} of planned.changed) {
+    mergeImportedItem(cur, inc);
+    dirty.add(inc.id);
+  }
+  // Re-cache the per-slot state so a tab switch + back doesn't blow
+  // the imported edits away. Same shape switchSlot uses.
+  if (slotState[activeSlot.id]) {
+    slotState[activeSlot.id] = {manifest, items, dirty: new Set(dirty)};
+  }
+  closeEdit();
+  renderSidebar();
+  renderGrid();
+  updateSlotCount(activeSlot.id, items.length);
+  setStatus(`Imported "${file.name}" — ${summary}. Hit ⬇ Export to write items.json.`);
+  setTimeout(() => setStatus(''), 6000);
+}
+
 function exportJSON() {
   // Build items.json-compatible slice for the active slot.
   const slot = activeSlot;
@@ -2083,32 +2247,7 @@ function exportJSON() {
     "_note": "Auto-generated by item_editor.html. Merge into project/data/items.json (the items[] array).",
     "_generated": new Date().toISOString(),
     "_slot": slot.id,
-    [slot.export_key]: items.map(it => ({
-      id: it.id,
-      name: it.name,
-      slot: it.slot || slot.id,
-      base_type: it.base_type,
-      item_tier: it.item_tier,
-      rarity: it.rarity,
-      tile: it.tile,
-      atk: it.atk || 0,
-      def: it.def || 0,
-      hp: it.hp || 0,
-      flavor_tags: it.flavor_tags || [],
-      lore: it.lore || '',
-      drop_weights: it.drop_weights || [0,0,0,0,0],
-      unique: it.unique || false,
-      ...(it.overlay ? {overlay: it.overlay} : {}),
-      ...(it.enchant_chance ? {enchant_chance: it.enchant_chance} : {}),
-      ...(it.enchant_pool && it.enchant_pool.length ? {enchant_pool: it.enchant_pool} : {}),
-      ...(it.affix_pool && Object.keys(it.affix_pool).length ? {affix_pool: it.affix_pool} : {}),
-      ...(it.default_tint && it.default_tint.mode ? {default_tint: it.default_tint} : {}),
-      ...(it.default_tint_overlay && it.default_tint_overlay.mode ? {default_tint_overlay: it.default_tint_overlay} : {}),
-      ...(it.crit_chance ? {crit_chance: it.crit_chance} : {}),
-      ...(it.atk_speed_pct ? {atk_speed_pct: it.atk_speed_pct} : {}),
-      ...(it.hp_regen ? {hp_regen: it.hp_regen} : {}),
-      ...(it.future_mechanic ? {future_mechanic: it.future_mechanic} : {})
-    }))
+    [slot.export_key]: items.map(exportableItem),
   };
 
   const blob = new Blob([JSON.stringify(out, null, 2)], {type:'application/json'});
@@ -2127,33 +2266,21 @@ function exportJSON() {
 // have, so a reviewer can paste it straight into the array. Used by
 // the share-back loop where someone authors ONE item and posts it.
 function singleItemPayload(it) {
-  return {
-    id: it.id,
-    name: it.name,
-    slot: it.slot || activeSlot.id,
-    base_type: it.base_type,
-    item_tier: it.item_tier,
-    rarity: it.rarity,
-    tile: it.tile,
-    atk: it.atk || 0,
-    def: it.def || 0,
-    hp: it.hp || 0,
-    flavor_tags: it.flavor_tags || [],
-    lore: it.lore || '',
-    drop_weights: it.drop_weights || [0,0,0,0,0],
-    unique: it.unique || false,
-    ...(it.overlay ? {overlay: it.overlay} : {}),
-    ...(it.enchant_chance ? {enchant_chance: it.enchant_chance} : {}),
-    ...(it.enchant_pool && it.enchant_pool.length ? {enchant_pool: it.enchant_pool} : {}),
-    ...(it.affix_pool && Object.keys(it.affix_pool).length ? {affix_pool: it.affix_pool} : {}),
-    ...(it.default_tint && it.default_tint.mode ? {default_tint: it.default_tint} : {}),
-    ...(it.default_tint_overlay && it.default_tint_overlay.mode ? {default_tint_overlay: it.default_tint_overlay} : {}),
-    ...(it.crit_chance ? {crit_chance: it.crit_chance} : {}),
-    ...(it.atk_speed_pct ? {atk_speed_pct: it.atk_speed_pct} : {}),
-    ...(it.hp_regen ? {hp_regen: it.hp_regen} : {}),
-    ...(it.future_mechanic ? {future_mechanic: it.future_mechanic} : {})
-  };
+  // Reuse the shared exporter so single-item payloads carry the same
+  // schema-preserving fields as the bulk export.
+  const payload = exportableItem(it);
+  // Make sure slot is filled in — single-item payloads are sometimes
+  // pasted into items.json by hand.
+  if (!payload.slot) payload.slot = activeSlot.id;
+  // Legacy callers expected explicit zeros for atk/def/hp on the
+  // share-back snapshot. Nothing reads them anymore; keeping the
+  // payload clean.
+  return payload;
 }
+
+// Removed: hand-listed export allowlist that silently dropped
+// weapon stats / armor stats / spell stats / requires_innate_tag /
+// implicit_affixes / recolor_of. exportableItem() above replaces it.
 
 function exportSingleItem() {
   if (!selectedId) return;
