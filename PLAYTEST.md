@@ -1207,6 +1207,80 @@ against grind perf logs before broader feature gates.
 
 ---
 
+## 2026-06-10 — second session, post-deploy notes
+
+Status legend: `untriaged` | `triaged → fixed` | `triaged → TODO` |
+`triaged → next-session-brief` | `triaged → deferred` | `triaged →
+not-a-bug`.
+
+### 1. Tier-1 floors 1-3 are a sea of blue with no rarity variety
+**Status:** `untriaged`
+
+Player observation: progressing through the game, the first three
+floors of tier 1 produce drops that are overwhelmingly **uncommon
+(blue)** with very little rarity spread. No commons mixed in
+(too easy), no rares peeking through (no excitement), basically
+no white/yellow/orange to break the visual monotony. Reads as
+"every drop is the same."
+
+The design tension: how do we add **variety** without letting
+players see **legendaries too early**? Legendaries showing up on
+floor 2 collapses the entire progression curve.
+
+Some directions worth considering (open question — not a triage
+recommendation, just shape):
+
+- **Floor-1-only common-weighted curve.** Floors 1-2 of any
+  tier-1 branch should still drop white items at meaningful
+  rates so the player has a visible "starting point" before the
+  rarity ladder kicks in. DCSS does this — early levels drop
+  garbage that the player upgrades from. Right now the rarity
+  curve seems to skip whites entirely after the starter loadout.
+- **Tier-bounded rarity ceiling.** Cap the rarity ceiling per
+  tier-zone so tier 1 maxes at *rare* (yellow), tier 2 at *epic*
+  (orange), tier 3 at *legendary* (red). Even a 0.001% chance for
+  a legendary on tier 1 floor 1 is a "design decision moment" —
+  the player remembers it forever — but tier 1 systematically
+  rolling the full rarity distribution feels bland/random.
+- **Mixed roll bands inside a tier.** Within tier 1, weight
+  drops as ~30% common / 50% uncommon / 18% rare / 2% epic, so
+  the player sees the **shape** of the rarity ladder without
+  seeing every tier. The current bands (verify in
+  `loot_factory.gd`/`drop_tuning.gd`) might be over-flattened.
+- **Quality variance over rarity variance.** Even if the rarity
+  bucket is the same, the existing Quality system (Pristine /
+  Exceptional / Mastercrafted) already gives a +/- band on top.
+  If quality variance is too tight on tier 1, drops within the
+  blue bucket all read as identical. Loosening that band is a
+  cheaper variety lever than touching rarity weights.
+- **Boss-vs-trash differentiation.** Trash mob drops should
+  bias *down* a rarity step relative to floor; rare/elite mob
+  drops bias *up*; bosses always drop at-or-above floor median.
+  This carves space for "oh a rare leader, that's where I'll
+  see my first uncommon roll."
+
+DCSS precedent worth checking: Crawl's item rarity is heavily
+floor-banded (D:1-3 sees mostly trinkets and trash, D:5-7 first
+real artifacts, deep dungeon for unrands). The CLAUDE.md "lean
+on DCSS" rule applies — read what the DCSS source does for
+floor-vs-rarity weighting before redesigning ours from scratch.
+
+Probably wants its own session brief with a small experiment:
+**run 50 fresh-save tier-1 grinds, log the rarity histogram per
+floor, see what the actual distribution looks like vs. what the
+player perceives.** Could be a lever-pulling problem (curves
+need tuning) or a generator problem (a bug in pick_loot_id is
+biasing toward uncommon). The data will tell us which before any
+redesign.
+
+Files to investigate first:
+- `scripts/loot_factory.gd::pick_loot_id` — rarity roll function
+- `scripts/drop_tuning.gd` — tier/floor weight curves
+- `data/items.json` — rarity distribution of base item pool
+- `data/run_modifiers.json` — any modifier squashing rarity?
+
+---
+
 <!-- New playtest sessions append below. Keep this comment as the
      insertion marker so future-me drops new dated sections in the
      right place. -->
