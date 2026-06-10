@@ -426,6 +426,7 @@
   <div id="status"></div>
   <div class="spacer"></div>
   <button onclick="addItem()">+ New item</button>
+  <button onclick="forceRefreshData()" title="Bypass CDN cache and re-fetch all data files. Use after pushing a change you want to see immediately.">🔄 Refresh data</button>
   <button class="primary" onclick="exportJSON()" title="Download a JSON file with every item in this slot. Drop it into project/data/ to ship.">⬇ Export this slot</button>
 </div>
 
@@ -631,16 +632,23 @@ let pickerCategory = 'all';
 // (they only persist to disk via Export).
 const slotState = {}; // id -> {manifest, items, dirty}
 
-// GitHub Pages serves data files with cache-control: max-age=600 (10
-// minutes), and the CDN can hold a stale edge-copy even when the
-// origin is fresh. For an authoring tool — where the user pushes a
-// change and IMMEDIATELY wants to see it — that staleness reads as a
-// bug ("I pushed but the editor still shows the old data"). Append a
-// per-page-load nonce to every JSON fetch so each refresh hits the
-// origin. Tile PNGs aren't versioned the same way (filenames change
-// when art changes), so they keep the long cache.
-const CACHE_BUSTER = '?_v=' + Date.now();
-function noCache(url) { return url + (url.includes('?') ? '&' : '') + '_v=' + Date.now(); }
+// GitHub Pages serves data files via Fastly. With the cache-buster
+// nonce we tried earlier, every fetch was a cache MISS that hit the
+// origin — but Fastly also negative-caches 404s, so when an edge node
+// briefly 404'd a path during a deploy, the cache-buster URLs pinned
+// that 404 to the user's edge for ~10 minutes (different nonces all
+// hashed to the same cached negative response).
+//
+// Default to cache-friendly URLs — the regular CDN cache serves 200s
+// fast and consistently. When the user explicitly wants fresh data
+// (after pushing a change), they hit the "🔄 Force refresh data"
+// button which appends a one-shot nonce and bypasses both browser
+// and CDN cache for the next set of fetches.
+let _forceRefreshOnce = false;
+function noCache(url) {
+  if (!_forceRefreshOnce) return url;
+  return url + (url.includes('?') ? '&' : '') + '_v=' + Date.now();
+}
 
 // Robust JSON fetch with diagnostic errors. The bare `fetch().then(r => r.json())`
 // pattern hides the URL on parse failure — when GitHub Pages returns
@@ -682,6 +690,20 @@ async function init() {
     setStatus('Load error: '+e.message, true);
     console.error('Load error:', e);
   }
+}
+
+// Force-refresh handler — bypass CDN cache for the next round of
+// fetches by appending a one-shot nonce. Resets state, drops cached
+// per-slot manifests, re-runs init(). Use when you've pushed a
+// change and want to see it before the 10-minute CDN TTL expires.
+async function forceRefreshData() {
+  _forceRefreshOnce = true;
+  // Drop per-slot caches so loadSlot re-fetches from origin.
+  for (const k of Object.keys(slotState)) delete slotState[k];
+  allWeaponTiles = [];
+  allOverlayTiles = [];
+  await init();
+  _forceRefreshOnce = false;
 }
 
 // Filter affixes to those whose applies_to matches the given slot.
