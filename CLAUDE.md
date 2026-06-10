@@ -81,6 +81,16 @@ Background-friendly. Mobile-first.
 to match what just shipped or got deferred.** They're the source of truth
 for "what's done, what's next" and they rot fast if not maintained per beat.
 
+**Hard rule**: **after pushing player-facing fixes to `main`, propose
+running `/deploy-web`.** The user playtests on itch, not locally — code
+that's only on GitHub doesn't reach them. Don't auto-deploy (sometimes
+the user wants to batch multiple commits, or stage local builds first),
+but ask. Skip the prompt for repo-only changes (CI tweaks, internal
+tools, docs, items.json edits the user will pick up via re-import). When
+in doubt, ask. The cost of asking is low; the cost of letting itch lag
+multiple beats behind `main` is the user discovering it during a live
+playtest.
+
 ## Audit artifacts (2026-06-08, multi-agent review)
 
 A multi-agent audit produced 100 verified findings across architecture,
