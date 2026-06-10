@@ -262,6 +262,9 @@ const AFFIX_STAT_COLORS := {
 	"evasion":              Color(0.85, 0.85, 0.85),
 	# Universal combat.
 	"crit_chance":          Color(1.00, 0.85, 0.30),
+	"crit_multiplier_pct":  Color(1.00, 0.78, 0.20),
+	"block_chance":         Color(0.65, 0.78, 0.95),
+	"block_amount":         Color(0.65, 0.78, 0.95),
 	"haste_pct":            Color(1.00, 0.67, 0.23),
 	"lifesteal_pct":        Color(0.85, 0.23, 0.23),
 	# Spell modifiers — soft purple/cyan family.

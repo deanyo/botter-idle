@@ -127,6 +127,16 @@ var resistances: Dictionary = {
 	"holy": 0.0, "poison": 0.0, "dark": 0.0, "physical": 0.0,
 }
 var lifesteal_pct: float = 0.0
+# S9 — crit_multiplier_pct (a06 §2.1). actor.gd::attempt_attack reads this
+# and the const ×1.5 base crit-mult to compute (1.5 + cmp/100) × base for
+# crits. Soft-capped at +35% in stat_calc.gd (peak crit ×1.85).
+var crit_multiplier_pct: float = 0.0
+# S9 — block_chance / block_amount (a06 §2.2). Shield slot gates after
+# evasion / footwork / reflective in actor.gd::resolve_swing. On block
+# proc, subtract block_amount from each typed component (≥1 floor); if
+# all zero → full block. Soft-capped 30% chance / +20 amount.
+var block_chance: float = 0.0
+var block_amount: int = 0
 # Haste accumulator after caps (0..200). Surfaced as a field so UI
 # layers can show "Haste +24%" without recomputing the inverse-of-
 # attack_interval formula. 2026-06-06 stat-calc unification.
@@ -434,6 +444,9 @@ func recompute_stats() -> void:
 	evasion = float(d.evasion)
 	resistances = d.resistances
 	crit_chance = float(d.crit_chance)
+	crit_multiplier_pct = float(d.get("crit_multiplier_pct", 0.0))
+	block_chance = float(d.get("block_chance", 0.0))
+	block_amount = int(d.get("block_amount", 0))
 	haste_pct = float(d.haste_pct)
 	lifesteal_pct = float(d.lifesteal_pct)
 	damage_min = int(d.damage_min)

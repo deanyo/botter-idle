@@ -57,6 +57,9 @@ const _STAT_VALUE := {
 	"armor":               1.5,
 	"evasion":             3.0,   # %, scarce stat
 	"crit_chance":         4.0,
+	"crit_multiplier_pct": 4.0,
+	"block_chance":        3.0,
+	"block_amount":        2.5,
 	"haste_pct":           3.0,
 	"lifesteal_pct":       5.0,   # capped lower so high values don't dominate
 	"physical_extra":      2.5,

@@ -413,8 +413,100 @@ func test_s5_species_data_has_innate_tag_lookup() -> void:
 			assert_true(has_any, "species %s has at least one innate_tag" % sid)
 
 # ---------------------------------------------------------------------
+# S9 — spell crit (a06 §3.1, a10 ×1.25 rescope).
+# ---------------------------------------------------------------------
+# spell_data.compute_damage rolls crit_chance gated by bot.crit_chance.
+# On crit, damage scales by (1.25 + crit_multiplier_pct/100/2). Pre-S9
+# the spell branch never crit; Dex-spec on chain_lightning was a no-op
+# for spell DPS.
+
+func test_s9_spell_crit_at_zero_crit_chance_never_fires() -> void:
+	# Stub bot dict; compute_damage reads crit_chance + crit_multiplier_pct
+	# off the Node-shaped argument. With crit_chance=0, no crit ever fires
+	# — damage stays deterministic across many rolls.
+	var stub_bot: _SpellCritStubBot = _SpellCritStubBot.new()
+	stub_bot.crit_chance = 0.0
+	stub_bot.crit_multiplier_pct = 30.0  # huge cmp; should not matter
+	var item: Dictionary = {
+		"base_type": "spell_holy_beam",
+		"damage_min": 100, "damage_max": 100,
+		"primary_stat": "str",
+	}
+	# Set str_stat=5 (no excess), spell_damage_pct=0, no element bonuses.
+	# Expected dmg = round(100 × 1.0 × 1.0 × 1.0 × 1.0 × 1.0) = 100.
+	var saw_higher: bool = false
+	for _i in 30:
+		var dmg: int = SpellData.compute_damage(stub_bot, item, null)
+		if dmg > 100:
+			saw_higher = true
+			break
+	assert_false(saw_higher, "crit_chance=0 → spell never crits regardless of crit_multiplier_pct")
+	stub_bot.free()
+
+func test_s9_spell_crit_at_full_chance_applies_half_rate_multiplier() -> void:
+	# crit_chance=100 forces every cast to crit. crit_multiplier_pct=30
+	# → spell crit multiplier = 1.25 + 30/100/2 = 1.40. Base dmg 100 →
+	# crit dmg 140. Tests ×1.25 base + half-rate cmp composition.
+	var stub_bot: _SpellCritStubBot = _SpellCritStubBot.new()
+	stub_bot.crit_chance = 100.0
+	stub_bot.crit_multiplier_pct = 30.0
+	var item: Dictionary = {
+		"base_type": "spell_holy_beam",
+		"damage_min": 100, "damage_max": 100,
+		"primary_stat": "str",
+	}
+	var dmg: int = SpellData.compute_damage(stub_bot, item, null)
+	assert_eq(dmg, 140,
+		"crit @ 100% × cmp+30 → dmg = round(100 × (1.25 + 30/100/2)) = 140")
+	stub_bot.free()
+
+func test_s9_spell_crit_base_at_125_when_cmp_zero() -> void:
+	# Base spell-crit multiplier alone is ×1.25 (vs melee ×1.5). Confirms
+	# the rescope: spell_data uses 1.25, NOT the actor.gd const 1.5.
+	var stub_bot: _SpellCritStubBot = _SpellCritStubBot.new()
+	stub_bot.crit_chance = 100.0
+	stub_bot.crit_multiplier_pct = 0.0
+	var item: Dictionary = {
+		"base_type": "spell_holy_beam",
+		"damage_min": 100, "damage_max": 100,
+		"primary_stat": "str",
+	}
+	var dmg: int = SpellData.compute_damage(stub_bot, item, null)
+	assert_eq(dmg, 125, "spell crit base ×1.25 (rescoped from melee ×1.5)")
+	stub_bot.free()
+
+# ---------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------
+
+# Spell-crit stub bot — minimal Node carrying the fields spell_data reads
+# (str_stat, dex_stat, int_stat, spell_damage_pct, spell_element_pct,
+# str/dex/int_spell_dmg_pct, ephemeral_spell_dmg_pct, crit_chance,
+# crit_multiplier_pct, sage_per_unspent_pct, unspent_points,
+# synergy_active, synergy_pct). Defaults to neutral values so a
+# vanilla cast yields raw base damage; tests poke fields they care about.
+class _SpellCritStubBot extends Node:
+	var str_stat: int = 5
+	var dex_stat: int = 5
+	var int_stat: int = 5
+	var spell_damage_pct: float = 0.0
+	var spell_element_pct: Dictionary = {
+		"fire": 0.0, "cold": 0.0, "thunderous": 0.0,
+		"holy": 0.0, "poison": 0.0, "dark": 0.0,
+	}
+	var str_spell_dmg_pct: float = 0.0
+	var dex_spell_dmg_pct: float = 0.0
+	var int_spell_dmg_pct: float = 0.0
+	var ephemeral_spell_dmg_pct: float = 0.0
+	var sage_per_unspent_pct: float = 0.0
+	var unspent_points: int = 0
+	var synergy_active: bool = false
+	var synergy_pct: float = 0.0
+	var crit_chance: float = 0.0
+	var crit_multiplier_pct: float = 0.0
+	var spell_cdr_pct: float = 0.0
+	var spell_proj_bonus: int = 0
+	var tempest_cd_penalty_pct: float = 0.0
 
 func _bare_save(species: String) -> Dictionary:
 	return {

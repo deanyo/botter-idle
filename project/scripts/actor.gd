@@ -285,6 +285,33 @@ func resolve_swing(typed: Dictionary, attacker: Actor = null) -> int:
 			if fx and is_alive:
 				fx.hit_squish()
 			return 0
+	# S9 block gate (a06 §2.2). Sits AFTER evasion/footwork/reflective so
+	# block fires only on swings that aren't already evaded — keeps the
+	# defensive layers from compounding on the same roll. On block proc:
+	# subtract block_amount from each typed component pre-mitigation; if
+	# block_amount ≥ every component, treat as full block (return 0). Else
+	# partial block reduces each typed leg by block_amount, ≥1 floor, and
+	# falls through to the normal mitigation pipeline.
+	# Bot-only — mundane actors carry no block_chance/block_amount fields.
+	if self is Bot and is_alive:
+		var bot_block: Bot = self as Bot
+		if bot_block.block_chance > 0.0 and randf() * 100.0 < bot_block.block_chance:
+			var amt: int = bot_block.block_amount
+			var full_block: bool = true
+			for k in typed.keys():
+				if int(typed[k]) > amt:
+					full_block = false
+					break
+			if full_block:
+				if fx and is_alive:
+					fx.hit_squish()
+				return 0
+			# Partial block — reduce each typed leg by amt with a ≥1 floor.
+			for k in typed.keys():
+				var part: int = int(typed[k])
+				if part <= 0:
+					continue
+				typed[k] = maxi(1, part - amt)
 	# Apply each typed component through mitigation + HP drop. Death
 	# check is deferred until after the loop so a fatal first component
 	# doesn't double-emit `died` from later components.
@@ -677,8 +704,14 @@ func attempt_attack(other: Actor, delta: float) -> int:
 	# Combo crit bonus (e.g. Judgement +10%).
 	var roll_chance: float = crit_chance + crit_bonus + EnchantCombos.crit_bonus_for(combo_id)
 	if roll_chance > 0.0 and randf() * 100.0 < roll_chance:
+		# S9 crit_multiplier_pct (a06 §2.1). Bot reads its own field; mundane
+		# actors fall back to the const 1.5×. Cap is enforced in stat_calc
+		# (+35%) so peak hit at 75% crit × ×1.85 stays inside the ceiling.
+		var crit_mult: float = CRIT_MULTIPLIER
+		if self is Bot:
+			crit_mult = CRIT_MULTIPLIER + float((self as Bot).crit_multiplier_pct) / 100.0
 		for k in typed.keys():
-			typed[k] = int(round(float(typed[k]) * CRIT_MULTIPLIER))
+			typed[k] = int(round(float(typed[k]) * crit_mult))
 		crit = true
 	# Stash crit state on a meta flag so combo on-hit handlers (e.g.
 	# Judgement: crits chain to adjacent foe) can read it.

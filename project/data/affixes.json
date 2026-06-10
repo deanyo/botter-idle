@@ -375,6 +375,25 @@
       "name": "of Synergy",  "stat": "synergy_pct",
       "applies_to": ["amulet","spell","ring"],
       "tiers": [[2,4],[4,6],[6,8],[8,10],[10,12]]
+    },
+
+    {
+      "id": "of_executioner", "family": "generic", "kind": "pct",
+      "name": "of the Executioner", "stat": "crit_multiplier_pct",
+      "applies_to": ["amulet","ring","gloves","weapon","helm"],
+      "tiers": [[3,5],[5,8],[8,12],[12,18],[18,26]]
+    },
+    {
+      "id": "of_warding",    "family": "generic", "kind": "pct",
+      "name": "of Warding",  "stat": "block_chance",
+      "applies_to": ["shield","amulet"],
+      "tiers": [[2,4],[4,7],[7,10],[10,14],[14,18]]
+    },
+    {
+      "id": "of_bulwark",    "family": "generic", "kind": "flat",
+      "name": "of Bulwark",  "stat": "block_amount",
+      "applies_to": ["shield","gloves"],
+      "tiers": [[1,2],[2,4],[4,7],[7,11],[11,16]]
     }
   ]
 }

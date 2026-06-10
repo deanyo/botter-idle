@@ -19,6 +19,7 @@ extends GutTest
 
 const _StubAttacker := preload("res://tests/_stub_attacker.gd")
 const _StubDefender := preload("res://tests/_stub_defender.gd")
+const _StubBotDefender := preload("res://tests/_stub_bot_defender.gd")
 
 func before_all() -> void:
 	# Deterministic RNG so evasion / footwork / reflective rolls are
@@ -368,11 +369,158 @@ func test_s4_of_bloodletting_applies_bleeding_status() -> void:
 	d.free()
 
 # ---------------------------------------------------------------------
+# S9 — crit_multiplier_pct + block_chance / block_amount
+# ---------------------------------------------------------------------
+
+func test_s9_block_full_negates_when_amount_covers_swing() -> void:
+	# block_chance=100 forces the gate to fire every swing. block_amount=20
+	# covers a 15-physical hit entirely → full block (return 0).
+	var d: _StubBotDefender = _make_bot_defender(200, 0, [], {})
+	d.block_chance = 100.0
+	d.block_amount = 20
+	var dealt: int = d.take_damage(15, null, "physical")
+	assert_eq(dealt, 0, "block_amount=20 vs raw=15 → full block (returns 0)")
+	assert_eq(d.hp, 200, "full block — hp unchanged")
+	d.free()
+
+func test_s9_block_partial_reduces_each_typed_leg_by_amount() -> void:
+	# block_chance=100, block_amount=5. Hybrid swing 20 phys + 10 fire.
+	# Both legs > 5, so partial block: reduce each by 5 (≥1 floor),
+	# then mitigation pipeline runs. With no armor / no resistances,
+	# defender takes (20-5) + (10-5) = 15 + 5 = 20.
+	var d: _StubBotDefender = _make_bot_defender(200, 0, [], {})
+	d.block_chance = 100.0
+	d.block_amount = 5
+	var attacker: _StubAttacker = _StubAttacker.new()
+	attacker.weapon_tags = []
+	var dealt: int = d.resolve_swing({"physical": 20, "fire": 10}, attacker)
+	assert_eq(dealt, 20, "partial block: (20-5) + (10-5) = 20 dealt")
+	d.free()
+	attacker.free()
+
+func test_s9_block_chance_zero_skips_gate() -> void:
+	# block_chance=0 must skip the block branch entirely; even with a
+	# huge block_amount, no swing should be reduced.
+	var d: _StubBotDefender = _make_bot_defender(200, 0, [], {})
+	d.block_chance = 0.0
+	d.block_amount = 50
+	var dealt: int = d.take_damage(20, null, "physical")
+	assert_eq(dealt, 20, "block_chance=0 — block_amount irrelevant")
+	d.free()
+
+func test_s9_executioner_routes_to_crit_multiplier_pct() -> void:
+	# of_executioner writes crit_multiplier_pct via the standard
+	# accumulator pipeline. Authored on a single ring, expected mid-tier
+	# value flows into the bot field via StatCalc.compute.
+	ItemsDb.preload_all()
+	var items_db: Dictionary = ItemsDb.items()
+	var fake_db: Dictionary = items_db.duplicate(true)
+	fake_db["__test_ring"] = {
+		"id": "__test_ring", "slot": "ring", "rarity": "epic",
+		"flavor_tags": [], "implicit_affixes": [],
+	}
+	var inst := {
+		"base_id": "__test_ring", "rarity": "epic",
+		"affixes": [{"id": "of_executioner", "value": 15}],
+	}
+	var save := {
+		"species": "human",
+		"stat_alloc_str": 0, "stat_alloc_dex": 0, "stat_alloc_int": 0,
+		"stat_points_unspent": 0, "bot_upgrades": {},
+	}
+	var d: Dictionary = StatCalc.compute({"ring": inst}, fake_db, save, "human", 1, 0, 0, [])
+	assert_almost_eq(float(d.get("crit_multiplier_pct", 0)), 15.0, 0.001,
+		"of_executioner value=15 routes to crit_multiplier_pct accumulator")
+
+func test_s9_crit_multiplier_pct_caps_at_35() -> void:
+	# Soft cap at +35% per a10 §6 rescope. Single oversized roll (raw=200)
+	# must clamp regardless of DR composition.
+	ItemsDb.preload_all()
+	var items_db: Dictionary = ItemsDb.items()
+	var fake_db: Dictionary = items_db.duplicate(true)
+	fake_db["__test_ring"] = {
+		"id": "__test_ring", "slot": "ring", "rarity": "legendary",
+		"flavor_tags": [], "implicit_affixes": [],
+	}
+	var inst := {
+		"base_id": "__test_ring", "rarity": "legendary",
+		"affixes": [{"id": "of_executioner", "value": 200}],
+	}
+	var save := {
+		"species": "human",
+		"stat_alloc_str": 0, "stat_alloc_dex": 0, "stat_alloc_int": 0,
+		"stat_points_unspent": 0, "bot_upgrades": {},
+	}
+	var d: Dictionary = StatCalc.compute({"ring": inst}, fake_db, save, "human", 1, 0, 0, [])
+	assert_almost_eq(float(d.get("crit_multiplier_pct", 0)), 35.0, 0.001,
+		"crit_multiplier_pct soft-caps at +35% — raw=200 should clamp")
+
+func test_s9_shield_base_block_stats_flow_through() -> void:
+	# Shield-slot base items carry block_chance + block_amount fields.
+	# StatCalc reads them off items_db (not affix-rolled) and surfaces them
+	# on the dict. tower_shield = 25/20 per S9.
+	ItemsDb.preload_all()
+	var items_db: Dictionary = ItemsDb.items()
+	if not items_db.has("tower_shield"):
+		pending("tower_shield not present in items_db")
+		return
+	var inst := {"base_id": "tower_shield", "rarity": "uncommon", "affixes": []}
+	var save := {
+		"species": "human",
+		"stat_alloc_str": 0, "stat_alloc_dex": 0, "stat_alloc_int": 0,
+		"stat_points_unspent": 0, "bot_upgrades": {},
+	}
+	var d: Dictionary = StatCalc.compute({"shield": inst}, items_db, save, "human", 1, 0, 0, [])
+	# tower_shield base = block_chance=25 / block_amount=20 (uncommon
+	# meta_mult ×1.0, qmult ×1.0 → combined_base=1.0).
+	assert_almost_eq(float(d.get("block_chance", 0)), 25.0, 0.001,
+		"tower_shield base block_chance=25 flows through")
+	assert_eq(int(d.get("block_amount", 0)), 20,
+		"tower_shield base block_amount=20 flows through")
+
+func test_s9_block_caps_at_30_chance_and_20_amount() -> void:
+	# Soft caps per a10 rescope. block_chance ≤ 30, block_amount ≤ 20.
+	ItemsDb.preload_all()
+	var items_db: Dictionary = ItemsDb.items()
+	var fake_db: Dictionary = items_db.duplicate(true)
+	fake_db["__test_shield"] = {
+		"id": "__test_shield", "slot": "shield", "rarity": "legendary",
+		"base_type": "tower_shield",
+		"block_chance": 100,    # raw, pre-cap
+		"block_amount": 100,    # raw, pre-cap
+		"flavor_tags": [], "implicit_affixes": [],
+	}
+	var inst := {"base_id": "__test_shield", "rarity": "legendary", "affixes": []}
+	var save := {
+		"species": "human",
+		"stat_alloc_str": 0, "stat_alloc_dex": 0, "stat_alloc_int": 0,
+		"stat_points_unspent": 0, "bot_upgrades": {},
+	}
+	var d: Dictionary = StatCalc.compute({"shield": inst}, fake_db, save, "human", 1, 0, 0, [])
+	assert_almost_eq(float(d.get("block_chance", 0)), 30.0, 0.001,
+		"block_chance soft-caps at 30")
+	assert_eq(int(d.get("block_amount", 0)), 20,
+		"block_amount soft-caps at 20")
+
+# ---------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------
 
 func _make_defender(hp_max: int, armor: int, defense_tags: Array, resistances: Dictionary) -> _StubDefender:
 	var d: _StubDefender = _StubDefender.new()
+	d.max_hp = hp_max
+	d.hp = hp_max
+	d.defense = armor
+	d.defense_tags_value = defense_tags.duplicate()
+	d.resistances = resistances.duplicate()
+	d.is_alive = true
+	return d
+
+func _make_bot_defender(hp_max: int, armor: int, defense_tags: Array, resistances: Dictionary) -> _StubBotDefender:
+	# Real-Bot-typed defender so the `self is Bot` gate in resolve_swing
+	# evaluates true. Used by S9 block tests where the gate is gated on
+	# the actor type.
+	var d: _StubBotDefender = _StubBotDefender.new()
 	d.max_hp = hp_max
 	d.hp = hp_max
 	d.defense = armor

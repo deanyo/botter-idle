@@ -569,6 +569,7 @@ const _STAT_FLAT_LABELS := {
 	"str": "Strength", "dex": "Dexterity", "int": "Intelligence",
 	"hp": "Health", "armor": "Armor", "hp_regen": "HP/sec",
 	"spell_proj_bonus": "Spell Projectiles",
+	"block_amount": "Block Amount",
 }
 const _STAT_PCT_LABELS := {
 	"evasion": "Evasion", "spell_cdr_pct": "Spell Cooldown",
@@ -576,6 +577,8 @@ const _STAT_PCT_LABELS := {
 	"spell_proj_speed_pct": "Projectile Speed",
 	"spell_damage_pct": "Spell Damage",
 	"crit_chance": "Crit Chance", "haste_pct": "Haste",
+	"crit_multiplier_pct": "Crit Damage",
+	"block_chance": "Block Chance",
 	"lifesteal_pct": "Lifesteal",
 	"fire_res": "Fire Resistance", "cold_res": "Cold Resistance",
 	"lightning_res": "Lightning Resistance", "holy_res": "Holy Resistance",

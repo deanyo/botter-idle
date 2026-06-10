@@ -293,6 +293,9 @@ static func _format_stat_line(stat: String, v: int) -> String:
 		"spell_area_pct": return "+%d%% Spell Area" % v
 		"spell_duration_pct": return "+%d%% Spell Duration" % v
 		"spell_damage_pct": return "+%d%% Spell Damage" % v
+		"crit_multiplier_pct": return "+%d%% Crit Damage" % v
+		"block_chance": return "+%d%% Block Chance" % v
+		"block_amount": return "+%d Block Amount" % v
 		"fire_dmg_pct": return "+%d%% Fire Damage" % v
 		"cold_dmg_pct": return "+%d%% Cold Damage" % v
 		"thunderous_dmg_pct": return "+%d%% Lightning Damage" % v

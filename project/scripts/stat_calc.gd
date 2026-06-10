@@ -58,6 +58,19 @@ static func compute(
 	var hp_flat: int = 0
 	var lifesteal_pct: float = 0.0
 	var crit_sum: float = float(sp.get("crit_flat", 0))
+	# S9 crit_multiplier_pct (a06 §2.1, a10 rescope to +35% cap). Replaces
+	# the const ×1.5 crit_mult at actor.gd:557 with (1.5 + cmp/100). Soft
+	# cap at +35% so a 75% crit × ×1.85 build hits the ~555 peak — a slight
+	# overshoot of the 400 ceiling but well under the +100% original a06
+	# proposal that would have hit ~750 peak.
+	var crit_multiplier_pct: float = 0.0
+	# S9 block_chance / block_amount (a06 §2.2, a10 rescope to 30% / +20).
+	# Shield-slot identity: bucklers/round/kite/tower carry distinct base
+	# block stats, of_warding scales chance via affix, of_bulwark scales
+	# flat damage reduced. Combat gate sits AFTER evasion+footwork+reflective
+	# in actor.gd::resolve_swing.
+	var block_chance: float = 0.0
+	var block_amount: int = 0
 	var haste_sum: float = float(sp.get("haste_pct", 0))
 	var gear_regen: float = float(sp.get("regen_flat", 0))
 	var sp_hp_mult: float = 1.0 + float(sp.get("hp_pct", 0)) / 100.0
@@ -164,6 +177,13 @@ static func compute(
 		else:
 			armor_total += int(round(float(item.get("armor", 0)) * combined_base))
 			evasion_total += float(item.get("evasion", 0)) * combined_base
+			# S9 shield-slot base block stats (a06 §2.2). Bucklers/round/kite/
+			# tower carry block_chance + block_amount on the items_db def so
+			# the slot has identity beyond raw armor. Scaled by combined_base
+			# so meta_rarity / quality affects shields the same way.
+			if slot == "shield":
+				block_chance += float(item.get("block_chance", 0)) * combined_base
+				block_amount += int(round(float(item.get("block_amount", 0)) * combined_base))
 
 		# Affix rollup (implicit + rolled). Each affix contributes through
 		# the per-id DR scaler so wearing the same affix on N slots gets
@@ -207,6 +227,12 @@ static func compute(
 		for elem in ELEMENTS:
 			resistances[elem] = float(resistances[elem]) + float(slot_sums.get(elem + "_res", 0))
 		crit_sum += float(slot_sums.get("crit_chance", 0))
+		# S9 — of_executioner writes crit_multiplier_pct.
+		crit_multiplier_pct += float(slot_sums.get("crit_multiplier_pct", 0))
+		# S9 — of_warding (pct) writes block_chance, of_bulwark (flat) writes
+		# block_amount. Both layer additively on top of the shield base.
+		block_chance += float(slot_sums.get("block_chance", 0))
+		block_amount += int(round(float(slot_sums.get("block_amount", 0))))
 		haste_sum += float(slot_sums.get("haste_pct", 0))
 		lifesteal_pct += float(slot_sums.get("lifesteal_pct", 0))
 		spell_cdr_pct += float(slot_sums.get("spell_cdr_pct", 0))
@@ -397,6 +423,14 @@ static func compute(
 	hunter_pct = clampf(hunter_pct, 0.0, 20.0)
 	str_dmg_per5_peak_pct = clampf(str_dmg_per5_peak_pct, 0.0, 25.0)
 	synergy_pct = clampf(synergy_pct, 0.0, 12.0)
+	# S9 caps (a06 + a10 rescopes). crit_multiplier_pct cap +35% — combined
+	# crit-mult ceiling at ×1.85 (1.5 + 0.35), peak hit ~555 with 75% crit.
+	# block_chance cap 30% — leaves 70% of swings landing. block_amount cap
+	# +20 — a tower-warding+bulwark stack reduces a 30-dmg hit to 10 on a
+	# block proc (then armor subtracts on top).
+	crit_multiplier_pct = clampf(crit_multiplier_pct, 0.0, 35.0)
+	block_chance = clampf(block_chance, 0.0, 30.0)
+	block_amount = clampi(block_amount, 0, 20)
 
 	var attack_interval: float = max(0.15, weapon_speed / (1.0 + haste_pct / 100.0))
 
@@ -471,6 +505,10 @@ static func compute(
 	out["evasion"] = evasion_capped
 	out["resistances"] = resistances
 	out["crit_chance"] = crit_chance
+	# S9 — crit_multiplier_pct, block_chance, block_amount.
+	out["crit_multiplier_pct"] = crit_multiplier_pct
+	out["block_chance"] = block_chance
+	out["block_amount"] = block_amount
 	out["haste_pct"] = haste_pct
 	out["lifesteal_pct"] = lifesteal_pct
 	out["damage_min"] = damage_min
@@ -525,7 +563,9 @@ static func _initial_dict() -> Dictionary:
 		"level": 1, "xp": 0, "gold": 0, "species_id": "",
 		"max_hp": _BASE_HP, "hp_regen": 0.0,
 		"armor": 0, "evasion": 0.0, "resistances": {},
-		"crit_chance": 0.0, "haste_pct": 0.0, "lifesteal_pct": 0.0,
+		"crit_chance": 0.0, "crit_multiplier_pct": 0.0,
+		"block_chance": 0.0, "block_amount": 0,
+		"haste_pct": 0.0, "lifesteal_pct": 0.0,
 		"damage_min": 1, "damage_max": 2,
 		"weapon_speed": 1.0, "weapon_damage_type": "physical", "weapon_class": "1H",
 		"attack_interval": 1.0, "extra_damage": {},

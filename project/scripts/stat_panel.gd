@@ -37,6 +37,9 @@ const _PRIMARY_TOOLTIPS := {
 # Entries omitted here render in their normal color.
 const _STAT_SOFT_CAPS := {
 	"crit_chance":          75.0,
+	"crit_multiplier_pct":  35.0,
+	"block_chance":         30.0,
+	"block_amount":         20.0,
 	"haste_pct":            200.0,
 	"evasion":              75.0,
 	"lifesteal_pct":        15.0,
@@ -126,6 +129,9 @@ func _build_layout(stats: Dictionary) -> void:
 	_row("weapon_speed", "Weapon Speed", COL_DIM)
 	_row("attack_interval", "Swing Interval", COL_AMBER)
 	_row("crit_chance", "Crit", UITheme.affix_stat_color("crit_chance"))
+	_row("crit_multiplier_pct", "Crit Damage", UITheme.affix_stat_color("crit_chance"))
+	_row("block_chance", "Block Chance", UITheme.affix_stat_color("armor"))
+	_row("block_amount", "Block Amount", UITheme.affix_stat_color("armor"))
 	_row("haste_pct", "Haste", UITheme.affix_stat_color("haste_pct"))
 	_row("lifesteal_pct", "Lifesteal", UITheme.affix_stat_color("lifesteal_pct"))
 	# One row per element where extra-damage might appear; always shown.
@@ -287,6 +293,12 @@ func _apply_values(stats: Dictionary) -> void:
 	_set_text("attack_interval", "%.2fs/swing" % float(stats.get("attack_interval", 1.0)))
 	var crit_v: float = float(stats.get("crit_chance", 0))
 	_set_text("crit_chance", "%d%%" % int(round(crit_v)), crit_v)
+	var cmp_v: float = float(stats.get("crit_multiplier_pct", 0))
+	_set_text("crit_multiplier_pct", "+%d%%" % int(round(cmp_v)), cmp_v)
+	var bc_v: float = float(stats.get("block_chance", 0))
+	_set_text("block_chance", "%d%%" % int(round(bc_v)), bc_v)
+	var ba_v: float = float(stats.get("block_amount", 0))
+	_set_text("block_amount", "%d" % int(ba_v), ba_v)
 	var haste_v: float = float(stats.get("haste_pct", 0))
 	_set_text("haste_pct", "+%d%%" % int(round(haste_v)), haste_v)
 	var ls_v: float = float(stats.get("lifesteal_pct", 0))

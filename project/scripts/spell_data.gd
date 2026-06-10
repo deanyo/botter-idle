@@ -264,7 +264,21 @@ static func compute_damage(bot: Node, item: Dictionary, inst: Variant = null) ->
 	if bool(bot.get("synergy_active")) and float(bot.get("synergy_pct")) > 0.0:
 		eph_pct += float(bot.get("synergy_pct"))
 	var eph_mult: float = 1.0 + minf(0.30, maxf(0.0, eph_pct / 100.0))
-	return int(round(base_dmg * stat_mult * dmg_mult * elem_mult * class_mult * eph_mult))
+	var dmg: float = base_dmg * stat_mult * dmg_mult * elem_mult * class_mult * eph_mult
+	# S9 spell crit (a06 §3.1, a10 rescope to ×1.25 base + half-rate crit-
+	# multiplier composition). Pre-S9, spell_data.compute_damage never
+	# rolled a crit — Dex-spec on a chain_lightning build was a no-op for
+	# spell DPS. Now: crit_chance gates the roll; on crit, damage scales
+	# by (1.25 + crit_multiplier_pct/100/2). The /2 keeps spells from
+	# compounding the same crit-mult as melee (which already lands at
+	# ×1.85 cap with the +35% rescope).
+	if bot != null:
+		var cc: float = float(bot.get("crit_chance")) if bot.get("crit_chance") != null else 0.0
+		if cc > 0.0 and randf() * 100.0 < cc:
+			var cmp_v: float = float(bot.get("crit_multiplier_pct")) if bot.get("crit_multiplier_pct") != null else 0.0
+			var spell_crit_mult: float = 1.25 + cmp_v / 100.0 / 2.0
+			dmg *= spell_crit_mult
+	return int(round(dmg))
 
 # Resolve the effective cooldown — base × (1 - cdr/100), clamped.
 # CDR caps at 60% (DCSS-style diminishing returns; we don't want
