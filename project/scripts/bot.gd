@@ -819,12 +819,12 @@ func swing_weapon(toward: Vector2) -> void:
 	else:
 		_play_swing_horizontal(toward)
 
-func _play_swing_horizontal(toward: Vector2) -> void:
-	# Direction sign mirrors the arc for leftward attacks (weapon held in
-	# right hand, so leftward swings go overhead the other way).
-	var sign: float = 1.0 if toward.x >= 0 else -1.0
-	var windup_rot: float = sign * deg_to_rad(35.0)   # cock back slightly
-	var swing_rot: float = sign * -deg_to_rad(110.0)  # sweep across body
+func _play_swing_horizontal(_toward: Vector2) -> void:
+	# Rotations are in the rig's local frame. The rig flips horizontally
+	# (rig.scale.x = -1) when facing left, which automatically mirrors the
+	# arc into screen space — so the windup/swing values are facing-agnostic.
+	var windup_rot: float = deg_to_rad(35.0)   # cock back slightly
+	var swing_rot: float = -deg_to_rad(110.0)  # sweep across body
 	weapon_sprite.rotation = 0.0
 	weapon_sprite.scale = Vector2(1, 1)
 	weapon_sprite.position = Vector2.ZERO

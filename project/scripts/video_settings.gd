@@ -37,12 +37,12 @@ const GFX_EFFECTS := [
 # Quality presets. Each lists which effects are on by default.
 const GFX_PRESET_HIGH := {
 	"color_grade": true, "heat_haze": true, "water_shimmer": true,
-	"memory_desat": true, "threat_outlines": true, "light_cookies": true, "ench": true,
+	"memory_desat": true, "threat_outlines": true, "light_cookies": true, "ench": false,
 	"shadow": true, "bloom": true,
 }
 const GFX_PRESET_MEDIUM := {
 	"color_grade": true, "heat_haze": true, "water_shimmer": true,
-	"memory_desat": true, "threat_outlines": true, "light_cookies": false,
+	"memory_desat": true, "threat_outlines": true, "light_cookies": false, "ench": false,
 	"shadow": true, "bloom": true,
 }
 const GFX_PRESET_LOW := {

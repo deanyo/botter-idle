@@ -262,16 +262,7 @@ static func format_affix_lines(affixes: Array) -> Array:
 			continue
 		var stat: String = String(def.stat)
 		var v: int = int(af_inst.value)
-		# PLAYTEST #9 — hide rounded-zero rows so a "+0 Spell Projectile"
-		# never reaches the tooltip. Range affixes carry value_min/max
-		# bounds; suppress them only when BOTH bounds round to zero (a
-		# +1-3 range row stays visible even if its midpoint rounds to 0).
-		if af_inst.has("value_min") and af_inst.has("value_max"):
-			var lo: int = int(af_inst.get("value_min", 0))
-			var hi: int = int(af_inst.get("value_max", 0))
-			if lo == 0 and hi == 0:
-				continue
-		elif v == 0:
+		if v == 0:
 			continue
 		lines.append(_format_stat_line(stat, v))
 	return lines
