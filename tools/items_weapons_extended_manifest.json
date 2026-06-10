@@ -4003,7 +4003,8 @@
         "of_channeling": 8,
         "of_quickcast": 8,
         "of_executioner": 8
-      }
+      },
+      "overlay": "bullwhip_new"
     },
     {
       "id": "wyrmbane",
