@@ -280,10 +280,10 @@ func render_for(item_def: Dictionary, instance: Variant, db: Dictionary) -> void
 		var evasion: int = int(item.get("evasion", 0))
 		if armor > 0:
 			_vbox.add_child(_make_label("Armor: %d" % armor, 13, COLOR_BODY, false))
-			_maybe_emit_stat_desc("armor")
+			_maybe_emit_stat_desc("armor", {"value": armor})
 		if evasion > 0:
 			_vbox.add_child(_make_label("Evasion: +%d%%" % evasion, 13, COLOR_BODY, false))
-			_maybe_emit_stat_desc("evasion")
+			_maybe_emit_stat_desc("evasion", {"value": evasion})
 		if armor > 0 or evasion > 0:
 			_vbox.add_child(_make_separator())
 	# S5 race-anchor: render the requires_innate_tag requirement line
@@ -453,7 +453,7 @@ func _build_affix_lines() -> Array:
 		if alt_held:
 			# Alt-held: mathematical description for every affix + the
 			# existing debug-detail line.
-			var desc_lbl: Label = _make_affix_description_label(def)
+			var desc_lbl: Label = _make_affix_description_label(def, rolled)
 			if desc_lbl != null:
 				out.append(desc_lbl)
 			out.append(_make_alt_line(def, rolled, true))
@@ -469,26 +469,33 @@ func _build_affix_lines() -> Array:
 			var line_color: Color = UITheme.affix_stat_color(String(def.get("stat", "")))
 			out.append(_make_label(line_text, 12, line_color, false))
 			if alt_held:
-				var desc_lbl_2: Label = _make_affix_description_label(def)
+				var desc_lbl_2: Label = _make_affix_description_label(def, af_inst)
 				if desc_lbl_2 != null:
 					out.append(desc_lbl_2)
 				out.append(_make_alt_line(def, af_inst, false))
 	return out
 
-# Plain-English description of what an affix's stat does. Returns null
-# when the stat has no description (so the tooltip stays compact for
-# self-explanatory stats like "+5 HP"). PLAYTEST 2026-06-10 #2.
-func _make_affix_description_label(def: Dictionary) -> Label:
+# Plain-English description of what an affix's stat does. Interpolates
+# the rolled value into {N} placeholders so a +24 HP roll renders as
+# "Adds 24 to your max health" instead of "Adds N to your max health".
+# Returns null when the stat has no description (tooltip stays compact
+# for self-explanatory stats like "+5 HP"). PLAYTEST 2026-06-10 #2.
+func _make_affix_description_label(def: Dictionary, af_inst: Variant = null) -> Label:
 	var stat: String = String(def.get("stat", ""))
-	return _make_stat_description_label(stat)
+	return _make_stat_description_label(stat, af_inst)
 
 # Same shape as _make_affix_description_label but keyed directly by stat
-# string — used for base-stat lines (Damage/Armor/Evasion etc) where
-# there's no affix def to look up. Returns null on unknown stats.
-func _make_stat_description_label(stat: String) -> Label:
+# string. Used for base-stat lines (Damage/Armor/Evasion etc) where
+# there's no affix def to look up. The optional `payload` may carry a
+# rolled value the description can interpolate (e.g. {N} → "24"). For
+# base-stat lines without a single rolled value, payload stays null and
+# {N} placeholders simply leave the variable name visible — fine for
+# generic stats like crit_chance which describe behavior, not a roll.
+func _make_stat_description_label(stat: String, payload: Variant = null) -> Label:
 	var description: String = AffixSystem.description_for_stat(stat)
 	if description == "":
 		return null
+	description = _interpolate_stat_placeholders(description, payload)
 	# Slightly brighter than the alt debug-detail line so the description
 	# reads as content, not metadata. Indent + leading "→" telegraphs
 	# attachment to the line above.
@@ -497,14 +504,34 @@ func _make_stat_description_label(stat: String) -> Label:
 	lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	return lbl
 
+# Replace {N}, {LO}, {HI} in a description template with the rolled
+# values from the affix instance. Range affixes carry value_min/value_max;
+# flat / pct affixes carry a single value. Anything not interpolated is
+# left as-is (so a base-stat description without a payload still renders
+# coherently).
+func _interpolate_stat_placeholders(template: String, payload: Variant) -> String:
+	if typeof(payload) != TYPE_DICTIONARY:
+		return template
+	var out: String = template
+	if payload.has("value_min") and payload.has("value_max"):
+		out = out.replace("{LO}", str(int(payload["value_min"])))
+		out = out.replace("{HI}", str(int(payload["value_max"])))
+		# Use the midpoint for {N} on range affixes so single-N templates
+		# can still substitute meaningfully.
+		var mid: int = int(round((float(payload["value_min"]) + float(payload["value_max"])) / 2.0))
+		out = out.replace("{N}", str(mid))
+	elif payload.has("value"):
+		out = out.replace("{N}", str(int(payload["value"])))
+	return out
+
 # Conditional emit — when Alt is held AND we have a description for
 # this stat, append a description label to the vbox. No-op otherwise.
 # Use this under any base-stat line (damage/armor/evasion/etc) so the
 # alt-held tooltip actually explains what the stat does to the player.
-func _maybe_emit_stat_desc(stat: String) -> void:
+func _maybe_emit_stat_desc(stat: String, payload: Variant = null) -> void:
 	if not UILayout.alt_held():
 		return
-	var lbl: Label = _make_stat_description_label(stat)
+	var lbl: Label = _make_stat_description_label(stat, payload)
 	if lbl != null:
 		_vbox.add_child(lbl)
 
