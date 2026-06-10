@@ -1560,6 +1560,12 @@
         "of_channeling": 12,
         "of_crit": 12,
         "of_executioner": 8
+      },
+      "overlay": "urand_pondering_new",
+      "default_tint": {
+        "hue": 270,
+        "sat": 1.0,
+        "mode": "normal"
       }
     },
     {

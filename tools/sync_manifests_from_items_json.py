@@ -58,6 +58,13 @@ def main():
 
     additions = {key: 0 for key in manifests}
     updates = {key: 0 for key in manifests}
+    # Track which manifest each item now belongs in. After the walk,
+    # any manifest entry whose id does NOT belong here gets pruned —
+    # this is the bug fix for the duplicate-entry case where an item's
+    # base_type moves it between weapon manifests but the stale entry
+    # in the old manifest never got removed (editor showed two of it).
+    target_for_id = {}
+
     for it in db['items']:
         slot = it.get('slot')
         if slot == 'spell':
@@ -69,6 +76,7 @@ def main():
             target = slot
         else:
             continue
+        target_for_id[it['id']] = target
         path, mf = manifests[target]
         existing = manifest_index[target].get(it['id'])
         if existing is None:
@@ -85,10 +93,27 @@ def main():
             manifest_index[target][it['id']] = it
             updates[target] += 1
 
+    # Prune: drop manifest entries whose id is now routed to a different
+    # manifest (item moved due to base_type / slot change). Any id that
+    # appears in a manifest but ISN'T in items.json at all also gets
+    # dropped — the manifest mirrors items.json, never accumulates.
+    removals = {key: 0 for key in manifests}
+    items_by_id = {it['id']: it for it in db['items']}
+    for key, (path, mf) in manifests.items():
+        kept = []
+        for m_it in mf['items']:
+            iid = m_it.get('id')
+            if iid in items_by_id and target_for_id.get(iid) == key:
+                kept.append(m_it)
+            else:
+                removals[key] += 1
+        mf['items'] = kept
+
     total_added = 0
     total_updated = 0
+    total_removed = 0
     for key, (path, mf) in manifests.items():
-        if additions[key] or updates[key]:
+        if additions[key] or updates[key] or removals[key]:
             with open(ROOT / path, 'w') as f:
                 json.dump(mf, f, indent=2)
                 f.write('\n')
@@ -97,14 +122,17 @@ def main():
                 bits.append(f'+{additions[key]} new')
             if updates[key]:
                 bits.append(f'~{updates[key]} updated')
-            print(f'  {", ".join(bits):20} → {path} (now {len(mf["items"])} items)')
+            if removals[key]:
+                bits.append(f'-{removals[key]} pruned')
+            print(f'  {", ".join(bits):28} → {path} (now {len(mf["items"])} items)')
             total_added += additions[key]
             total_updated += updates[key]
+            total_removed += removals[key]
 
-    if total_added == 0 and total_updated == 0:
+    if total_added == 0 and total_updated == 0 and total_removed == 0:
         print('All manifests already in sync with items.json.')
     else:
-        print(f'\nAdded {total_added}, updated {total_updated} across all manifests. Reload the item editor.')
+        print(f'\nAdded {total_added}, updated {total_updated}, pruned {total_removed} across all manifests. Reload the item editor.')
 
 
 if __name__ == '__main__':

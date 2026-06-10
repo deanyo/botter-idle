@@ -1344,7 +1344,13 @@
         "of_bulwark": 8
       },
       "block_chance": 20,
-      "block_amount": 15
+      "block_amount": 15,
+      "overlay": "urand_gong",
+      "default_tint": {
+        "hue": 110,
+        "sat": 1.2,
+        "mode": "normal"
+      }
     },
     {
       "affix_pool": {

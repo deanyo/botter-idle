@@ -786,6 +786,12 @@
         "of_the_cat": 26,
         "of_haste": 26,
         "of_regen": 10
+      },
+      "overlay": "boots_iron_2",
+      "default_tint": {
+        "hue": 210,
+        "sat": 1.0,
+        "mode": "normal"
       }
     },
     {

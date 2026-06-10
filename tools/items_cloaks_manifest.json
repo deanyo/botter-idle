@@ -53,7 +53,8 @@
         "of_lingering": 14,
         "of_haste": 10,
         "of_regen": 8
-      }
+      },
+      "overlay": "cloak_1_leather"
     },
     {
       "id": "starlight_cloak",
@@ -99,6 +100,12 @@
         "of_lingering": 14,
         "of_haste": 10,
         "of_regen": 8
+      },
+      "overlay": "cloak_3",
+      "default_tint": {
+        "hue": 200,
+        "sat": 0.5,
+        "mode": "normal"
       }
     },
     {
@@ -144,6 +151,12 @@
         "of_lingering": 14,
         "of_haste": 10,
         "of_regen": 8
+      },
+      "overlay": "cloak_1_leather",
+      "default_tint": {
+        "hue": 0,
+        "sat": 1.4,
+        "mode": "normal"
       }
     },
     {
@@ -188,6 +201,12 @@
         "of_lingering": 14,
         "of_haste": 10,
         "of_regen": 8
+      },
+      "overlay": "cloak_2",
+      "default_tint": {
+        "hue": 0,
+        "sat": 0.0,
+        "mode": "normal"
       }
     },
     {

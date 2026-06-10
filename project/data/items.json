@@ -3516,6 +3516,12 @@
         "of_channeling": 12,
         "of_crit": 12,
         "of_executioner": 8
+      },
+      "overlay": "urand_pondering_new",
+      "default_tint": {
+        "hue": 270,
+        "sat": 1.0,
+        "mode": "normal"
       }
     },
     {
@@ -3683,6 +3689,12 @@
         "of_the_cat": 26,
         "of_haste": 26,
         "of_regen": 10
+      },
+      "overlay": "boots_iron_2",
+      "default_tint": {
+        "hue": 210,
+        "sat": 1.0,
+        "mode": "normal"
       }
     },
     {
@@ -3813,7 +3825,8 @@
         "of_lingering": 14,
         "of_haste": 10,
         "of_regen": 8
-      }
+      },
+      "overlay": "cloak_1_leather"
     },
     {
       "id": "robe_of_clouds",
@@ -4021,7 +4034,13 @@
         "of_bulwark": 8
       },
       "block_chance": 20,
-      "block_amount": 15
+      "block_amount": 15,
+      "overlay": "urand_gong",
+      "default_tint": {
+        "hue": 110,
+        "sat": 1.2,
+        "mode": "normal"
+      }
     },
     {
       "id": "salamander_hide",
@@ -4237,6 +4256,12 @@
         "of_lingering": 14,
         "of_haste": 10,
         "of_regen": 8
+      },
+      "overlay": "cloak_3",
+      "default_tint": {
+        "hue": 200,
+        "sat": 0.5,
+        "mode": "normal"
       }
     },
     {
@@ -6879,6 +6904,12 @@
         "of_velocity": 12,
         "of_executioner": 8,
         "of_bulwark": 8
+      },
+      "overlay": "glove_4_gauntlets",
+      "default_tint": {
+        "hue": 0,
+        "sat": 0.0,
+        "mode": "normal"
       }
     },
     {
@@ -7567,6 +7598,12 @@
         "of_lingering": 14,
         "of_haste": 10,
         "of_regen": 8
+      },
+      "overlay": "cloak_1_leather",
+      "default_tint": {
+        "hue": 0,
+        "sat": 1.4,
+        "mode": "normal"
       }
     },
     {
@@ -7655,6 +7692,12 @@
         "of_lingering": 14,
         "of_haste": 10,
         "of_regen": 8
+      },
+      "overlay": "cloak_2",
+      "default_tint": {
+        "hue": 0,
+        "sat": 0.0,
+        "mode": "normal"
       }
     },
     {
