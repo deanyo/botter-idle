@@ -134,7 +134,8 @@
         "of_channeling": 12,
         "of_crit": 12,
         "of_sage": 8,
-        "of_scribe": 8
+        "of_scribe": 8,
+        "of_executioner": 8
       }
     },
     {
@@ -174,7 +175,8 @@
         "of_channeling": 12,
         "of_crit": 12,
         "of_sage": 8,
-        "of_scribe": 8
+        "of_scribe": 8,
+        "of_executioner": 8
       }
     },
     {
@@ -214,7 +216,8 @@
         "of_channeling": 12,
         "of_crit": 12,
         "of_sage": 8,
-        "of_scribe": 8
+        "of_scribe": 8,
+        "of_executioner": 8
       }
     },
     {
@@ -254,7 +257,8 @@
         "of_channeling": 12,
         "of_crit": 12,
         "of_sage": 8,
-        "of_scribe": 8
+        "of_scribe": 8,
+        "of_executioner": 8
       },
       "overlay": "helm_padded_coif"
     },
@@ -297,7 +301,8 @@
         "of_channeling": 12,
         "of_crit": 12,
         "of_sage": 8,
-        "of_scribe": 8
+        "of_scribe": 8,
+        "of_executioner": 8
       }
     },
     {
@@ -339,7 +344,8 @@
         "of_channeling": 12,
         "of_crit": 12,
         "of_sage": 8,
-        "of_scribe": 8
+        "of_scribe": 8,
+        "of_executioner": 8
       }
     },
     {
@@ -379,7 +385,8 @@
         "of_channeling": 12,
         "of_crit": 12,
         "of_sage": 8,
-        "of_scribe": 8
+        "of_scribe": 8,
+        "of_executioner": 8
       }
     },
     {
@@ -421,7 +428,8 @@
         "of_channeling": 12,
         "of_crit": 12,
         "of_sage": 8,
-        "of_scribe": 8
+        "of_scribe": 8,
+        "of_executioner": 8
       }
     },
     {
@@ -464,7 +472,8 @@
         "of_channeling": 12,
         "of_crit": 12,
         "of_sage": 8,
-        "of_scribe": 8
+        "of_scribe": 8,
+        "of_executioner": 8
       }
     },
     {
@@ -506,7 +515,8 @@
         "of_channeling": 12,
         "of_crit": 12,
         "of_sage": 8,
-        "of_scribe": 8
+        "of_scribe": 8,
+        "of_executioner": 8
       }
     },
     {
@@ -548,7 +558,8 @@
         "of_channeling": 12,
         "of_crit": 12,
         "of_sage": 8,
-        "of_scribe": 8
+        "of_scribe": 8,
+        "of_executioner": 8
       },
       "default_tint": {
         "hue": 220,
@@ -596,7 +607,8 @@
         "of_channeling": 12,
         "of_crit": 12,
         "of_sage": 8,
-        "of_scribe": 8
+        "of_scribe": 8,
+        "of_executioner": 8
       },
       "default_tint": {
         "hue": 200,
@@ -645,7 +657,8 @@
         "of_channeling": 12,
         "of_crit": 12,
         "of_sage": 8,
-        "of_scribe": 8
+        "of_scribe": 8,
+        "of_executioner": 8
       }
     },
     {
@@ -688,7 +701,8 @@
         "of_channeling": 12,
         "of_crit": 12,
         "of_sage": 8,
-        "of_scribe": 8
+        "of_scribe": 8,
+        "of_executioner": 8
       }
     },
     {
@@ -731,7 +745,8 @@
         "of_channeling": 12,
         "of_crit": 12,
         "of_sage": 8,
-        "of_scribe": 8
+        "of_scribe": 8,
+        "of_executioner": 8
       }
     },
     {
@@ -774,7 +789,8 @@
         "of_channeling": 12,
         "of_crit": 12,
         "of_sage": 8,
-        "of_scribe": 8
+        "of_scribe": 8,
+        "of_executioner": 8
       }
     },
     {
@@ -817,7 +833,8 @@
         "of_channeling": 12,
         "of_crit": 12,
         "of_sage": 8,
-        "of_scribe": 8
+        "of_scribe": 8,
+        "of_executioner": 8
       }
     },
     {
@@ -860,7 +877,8 @@
         "of_channeling": 12,
         "of_crit": 12,
         "of_sage": 8,
-        "of_scribe": 8
+        "of_scribe": 8,
+        "of_executioner": 8
       },
       "default_tint": {
         "hue": 50,
@@ -908,7 +926,8 @@
         "of_channeling": 12,
         "of_crit": 12,
         "of_sage": 8,
-        "of_scribe": 8
+        "of_scribe": 8,
+        "of_executioner": 8
       }
     },
     {
@@ -951,7 +970,8 @@
         "of_channeling": 12,
         "of_crit": 12,
         "of_sage": 8,
-        "of_scribe": 8
+        "of_scribe": 8,
+        "of_executioner": 8
       }
     },
     {
@@ -994,7 +1014,8 @@
         "of_channeling": 12,
         "of_crit": 12,
         "of_sage": 8,
-        "of_scribe": 8
+        "of_scribe": 8,
+        "of_executioner": 8
       }
     },
     {
@@ -1035,7 +1056,8 @@
         "of_quickcast": 12,
         "of_resonance": 12,
         "of_channeling": 12,
-        "of_crit": 12
+        "of_crit": 12,
+        "of_executioner": 8
       }
     },
     {
@@ -1076,7 +1098,8 @@
         "of_quickcast": 12,
         "of_resonance": 12,
         "of_channeling": 12,
-        "of_crit": 12
+        "of_crit": 12,
+        "of_executioner": 8
       }
     },
     {
@@ -1117,7 +1140,8 @@
         "of_quickcast": 12,
         "of_resonance": 12,
         "of_channeling": 12,
-        "of_crit": 12
+        "of_crit": 12,
+        "of_executioner": 8
       },
       "default_tint": {
         "hue": 30,
@@ -1163,7 +1187,8 @@
         "of_quickcast": 12,
         "of_resonance": 12,
         "of_channeling": 12,
-        "of_crit": 12
+        "of_crit": 12,
+        "of_executioner": 8
       }
     },
     {
@@ -1204,7 +1229,8 @@
         "of_quickcast": 12,
         "of_resonance": 12,
         "of_channeling": 12,
-        "of_crit": 12
+        "of_crit": 12,
+        "of_executioner": 8
       },
       "default_tint": {
         "hue": 45,
@@ -1251,7 +1277,8 @@
         "of_channeling": 12,
         "of_crit": 12,
         "of_sage": 8,
-        "of_scribe": 8
+        "of_scribe": 8,
+        "of_executioner": 8
       },
       "overlay": "helm_jesters_cap"
     },
@@ -1295,7 +1322,8 @@
         "of_channeling": 12,
         "of_crit": 12,
         "of_sage": 8,
-        "of_scribe": 8
+        "of_scribe": 8,
+        "of_executioner": 8
       }
     },
     {
@@ -1338,7 +1366,8 @@
         "of_channeling": 12,
         "of_crit": 12,
         "of_sage": 8,
-        "of_scribe": 8
+        "of_scribe": 8,
+        "of_executioner": 8
       },
       "default_tint": {
         "hue": 180,
@@ -1386,7 +1415,8 @@
         "of_channeling": 12,
         "of_crit": 12,
         "of_sage": 8,
-        "of_scribe": 8
+        "of_scribe": 8,
+        "of_executioner": 8
       },
       "default_tint": {
         "hue": 280,
@@ -1436,7 +1466,8 @@
         "of_channeling": 12,
         "of_crit": 12,
         "of_sage": 8,
-        "of_scribe": 8
+        "of_scribe": 8,
+        "of_executioner": 8
       },
       "default_tint": {
         "hue": 0,
@@ -1485,7 +1516,8 @@
         "of_channeling": 12,
         "of_crit": 12,
         "of_sage": 8,
-        "of_scribe": 8
+        "of_scribe": 8,
+        "of_executioner": 8
       }
     },
     {
@@ -1526,7 +1558,8 @@
         "of_quickcast": 12,
         "of_resonance": 12,
         "of_channeling": 12,
-        "of_crit": 12
+        "of_crit": 12,
+        "of_executioner": 8
       }
     },
     {
@@ -1547,7 +1580,8 @@
         "of_shadows": 26,
         "of_dark_resist": 18,
         "of_sage": 8,
-        "of_scribe": 8
+        "of_scribe": 8,
+        "of_executioner": 8
       },
       "armor": 10,
       "base_type": "hood",
@@ -1606,7 +1640,8 @@
         "of_lifesteal": 14,
         "of_dark_resist": 14,
         "of_sage": 8,
-        "of_scribe": 8
+        "of_scribe": 8,
+        "of_executioner": 8
       },
       "armor": 21,
       "base_type": "crown",
@@ -1661,7 +1696,8 @@
         "of_channeling": 12,
         "of_crit": 12,
         "of_sage": 8,
-        "of_scribe": 8
+        "of_scribe": 8,
+        "of_executioner": 8
       },
       "armor": 15,
       "base_type": "great_helm",
@@ -1715,7 +1751,8 @@
         "of_channeling": 12,
         "of_crit": 12,
         "of_shadows": 22,
-        "of_lifesteal": 12
+        "of_lifesteal": 12,
+        "of_executioner": 8
       },
       "armor": 24,
       "base_type": "crown",
@@ -1775,7 +1812,8 @@
         "of_crit": 12,
         "of_sharpness": 14,
         "of_sage": 8,
-        "of_scribe": 8
+        "of_scribe": 8,
+        "of_executioner": 8
       },
       "armor": 7,
       "base_type": "helmet",
@@ -1834,7 +1872,8 @@
         "of_channeling": 12,
         "of_crit": 12,
         "of_shadows": 22,
-        "of_lifesteal": 12
+        "of_lifesteal": 12,
+        "of_executioner": 8
       },
       "armor": 24,
       "base_type": "wizard_hat",
@@ -1895,7 +1934,8 @@
         "of_shadows": 22,
         "of_lifesteal": 12,
         "of_sage": 8,
-        "of_scribe": 8
+        "of_scribe": 8,
+        "of_executioner": 8
       },
       "armor": 10,
       "base_type": "wizard_hat",
@@ -1954,7 +1994,8 @@
         "of_channeling": 12,
         "of_crit": 12,
         "of_shadows": 22,
-        "of_dark_resist": 18
+        "of_dark_resist": 18,
+        "of_executioner": 8
       },
       "armor": 24,
       "base_type": "crown",
@@ -2018,7 +2059,8 @@
         "of_lifesteal": 14,
         "of_dark_resist": 14,
         "of_sage": 8,
-        "of_scribe": 8
+        "of_scribe": 8,
+        "of_executioner": 8
       },
       "armor": 10,
       "base_type": "hood",
@@ -2062,7 +2104,7 @@
       "name": "Horn-Bound Helm",
       "slot": "helm",
       "rarity": "epic",
-      "tile": "horned_helm.png",
+      "tile": "crested_helmet.png",
       "base_type": "great_helm",
       "armor": 14,
       "evasion": 4,
@@ -2088,7 +2130,13 @@
       ],
       "affix_pool": {
         "of_might": 20,
-        "of_vitality": 14
+        "of_vitality": 14,
+        "of_executioner": 8
+      },
+      "default_tint": {
+        "hue": 25,
+        "sat": 1.0,
+        "mode": "normal"
       }
     },
     {
@@ -2096,7 +2144,7 @@
       "name": "Sky-Striker Beak Helm",
       "slot": "helm",
       "rarity": "epic",
-      "tile": "tengu_helm.png",
+      "tile": "plumed_helmet.png",
       "base_type": "helmet",
       "armor": 9,
       "evasion": 11,
@@ -2121,7 +2169,13 @@
       ],
       "affix_pool": {
         "of_finesse": 18,
-        "of_crit": 12
+        "of_crit": 12,
+        "of_executioner": 8
+      },
+      "default_tint": {
+        "hue": 200,
+        "sat": 0.9,
+        "mode": "normal"
       }
     },
     {
@@ -2129,7 +2183,7 @@
       "name": "Ashen Crown",
       "slot": "helm",
       "rarity": "epic",
-      "tile": "ashen_crown.png",
+      "tile": "helmet_art_3.png",
       "base_type": "crown",
       "armor": 8,
       "evasion": 8,
@@ -2155,7 +2209,13 @@
       ],
       "affix_pool": {
         "of_pyromancer": 18,
-        "of_int_mastery": 14
+        "of_int_mastery": 14,
+        "of_executioner": 8
+      },
+      "default_tint": {
+        "hue": 0,
+        "sat": 0.0,
+        "mode": "normal"
       }
     }
   ]

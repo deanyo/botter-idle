@@ -115,13 +115,17 @@
         "of_lightning_resist": 14,
         "of_holy_resist": 8,
         "of_poison_resist": 10,
-        "of_dark_resist": 8
+        "of_dark_resist": 8,
+        "of_warding": 8,
+        "of_bulwark": 8
       },
       "default_tint": {
         "hue": 30,
         "sat": 1.0,
         "mode": "colorize"
-      }
+      },
+      "block_chance": 8,
+      "block_amount": 5
     },
     {
       "id": "iron_buckler",
@@ -156,14 +160,18 @@
         "of_lightning_resist": 14,
         "of_holy_resist": 8,
         "of_poison_resist": 10,
-        "of_dark_resist": 8
+        "of_dark_resist": 8,
+        "of_warding": 8,
+        "of_bulwark": 8
       },
       "default_tint": {
         "hue": 220,
         "sat": 0.5,
         "mode": "colorize",
         "colorize_strength": 0.4
-      }
+      },
+      "block_chance": 8,
+      "block_amount": 5
     },
     {
       "id": "round_shield",
@@ -198,13 +206,17 @@
         "of_lightning_resist": 14,
         "of_holy_resist": 8,
         "of_poison_resist": 10,
-        "of_dark_resist": 8
+        "of_dark_resist": 8,
+        "of_warding": 8,
+        "of_bulwark": 8
       },
       "default_tint": {
         "hue": 180,
         "sat": 1.1,
         "mode": "normal"
-      }
+      },
+      "block_chance": 15,
+      "block_amount": 10
     },
     {
       "id": "kite_shield",
@@ -241,13 +253,17 @@
         "of_lightning_resist": 14,
         "of_holy_resist": 8,
         "of_poison_resist": 10,
-        "of_dark_resist": 8
+        "of_dark_resist": 8,
+        "of_warding": 8,
+        "of_bulwark": 8
       },
       "default_tint": {
         "hue": 90,
         "sat": 1.1,
         "mode": "normal"
-      }
+      },
+      "block_chance": 20,
+      "block_amount": 15
     },
     {
       "id": "elven_buckler",
@@ -285,13 +301,17 @@
         "of_lightning_resist": 14,
         "of_holy_resist": 8,
         "of_poison_resist": 10,
-        "of_dark_resist": 8
+        "of_dark_resist": 8,
+        "of_warding": 8,
+        "of_bulwark": 8
       },
       "default_tint": {
         "hue": 290,
         "sat": 1.1,
         "mode": "normal"
-      }
+      },
+      "block_chance": 8,
+      "block_amount": 5
     },
     {
       "id": "reinforced_buckler",
@@ -326,13 +346,17 @@
         "of_lightning_resist": 14,
         "of_holy_resist": 8,
         "of_poison_resist": 10,
-        "of_dark_resist": 8
+        "of_dark_resist": 8,
+        "of_warding": 8,
+        "of_bulwark": 8
       },
       "default_tint": {
         "hue": 30,
         "sat": 1.1,
         "mode": "normal"
-      }
+      },
+      "block_chance": 8,
+      "block_amount": 5
     },
     {
       "id": "guardsman_kite",
@@ -369,13 +393,17 @@
         "of_lightning_resist": 14,
         "of_holy_resist": 8,
         "of_poison_resist": 10,
-        "of_dark_resist": 8
+        "of_dark_resist": 8,
+        "of_warding": 8,
+        "of_bulwark": 8
       },
       "default_tint": {
         "hue": 0,
         "sat": 1.1,
         "mode": "normal"
-      }
+      },
+      "block_chance": 20,
+      "block_amount": 15
     },
     {
       "id": "elven_shield",
@@ -413,13 +441,17 @@
         "of_lightning_resist": 14,
         "of_holy_resist": 8,
         "of_poison_resist": 10,
-        "of_dark_resist": 8
+        "of_dark_resist": 8,
+        "of_warding": 8,
+        "of_bulwark": 8
       },
       "default_tint": {
         "hue": 130,
         "sat": 1.1,
         "mode": "normal"
-      }
+      },
+      "block_chance": 15,
+      "block_amount": 10
     },
     {
       "id": "dwarven_buckler",
@@ -457,8 +489,12 @@
         "of_lightning_resist": 14,
         "of_holy_resist": 8,
         "of_poison_resist": 10,
-        "of_dark_resist": 8
-      }
+        "of_dark_resist": 8,
+        "of_warding": 8,
+        "of_bulwark": 8
+      },
+      "block_chance": 8,
+      "block_amount": 5
     },
     {
       "id": "spellward_kite",
@@ -496,13 +532,17 @@
         "of_lightning_resist": 14,
         "of_holy_resist": 8,
         "of_poison_resist": 10,
-        "of_dark_resist": 8
+        "of_dark_resist": 8,
+        "of_warding": 8,
+        "of_bulwark": 8
       },
       "default_tint": {
         "hue": 260,
         "sat": 1.2,
         "mode": "normal"
-      }
+      },
+      "block_chance": 20,
+      "block_amount": 15
     },
     {
       "id": "large_kite",
@@ -539,13 +579,17 @@
         "of_lightning_resist": 14,
         "of_holy_resist": 8,
         "of_poison_resist": 10,
-        "of_dark_resist": 8
+        "of_dark_resist": 8,
+        "of_warding": 8,
+        "of_bulwark": 8
       },
       "default_tint": {
         "hue": 200,
         "sat": 1.1,
         "mode": "normal"
-      }
+      },
+      "block_chance": 20,
+      "block_amount": 15
     },
     {
       "id": "tower_shield",
@@ -582,13 +626,17 @@
         "of_lightning_resist": 14,
         "of_holy_resist": 8,
         "of_poison_resist": 10,
-        "of_dark_resist": 8
+        "of_dark_resist": 8,
+        "of_warding": 8,
+        "of_bulwark": 8
       },
       "default_tint": {
         "hue": 200.0,
         "sat": 1.1,
         "mode": "normal"
-      }
+      },
+      "block_chance": 25,
+      "block_amount": 20
     },
     {
       "id": "spriggan_shield",
@@ -626,13 +674,17 @@
         "of_lightning_resist": 14,
         "of_holy_resist": 8,
         "of_poison_resist": 10,
-        "of_dark_resist": 8
+        "of_dark_resist": 8,
+        "of_warding": 8,
+        "of_bulwark": 8
       },
       "default_tint": {
         "hue": 60,
         "sat": 1.2,
         "mode": "normal"
-      }
+      },
+      "block_chance": 8,
+      "block_amount": 5
     },
     {
       "id": "dragoncrest_shield",
@@ -670,14 +722,18 @@
         "of_lightning_resist": 14,
         "of_holy_resist": 8,
         "of_poison_resist": 10,
-        "of_dark_resist": 8
+        "of_dark_resist": 8,
+        "of_warding": 8,
+        "of_bulwark": 8
       },
       "default_tint": {
         "hue": 0,
         "sat": 1.2,
         "mode": "normal"
       },
-      "overlay": "shield_dragoncrest"
+      "overlay": "shield_dragoncrest",
+      "block_chance": 20,
+      "block_amount": 15
     },
     {
       "id": "fortress_wall",
@@ -715,13 +771,17 @@
         "of_lightning_resist": 14,
         "of_holy_resist": 8,
         "of_poison_resist": 10,
-        "of_dark_resist": 8
+        "of_dark_resist": 8,
+        "of_warding": 8,
+        "of_bulwark": 8
       },
       "default_tint": {
         "hue": 30.0,
         "sat": 1.15,
         "mode": "normal"
-      }
+      },
+      "block_chance": 25,
+      "block_amount": 20
     },
     {
       "id": "phantom_aegis",
@@ -759,14 +819,18 @@
         "of_lightning_resist": 14,
         "of_holy_resist": 8,
         "of_poison_resist": 10,
-        "of_dark_resist": 8
+        "of_dark_resist": 8,
+        "of_warding": 8,
+        "of_bulwark": 8
       },
       "default_tint": {
         "hue": 270,
         "sat": 1.1,
         "mode": "normal"
       },
-      "overlay": "shield_phantom_aegis"
+      "overlay": "shield_phantom_aegis",
+      "block_chance": 15,
+      "block_amount": 10
     },
     {
       "id": "warlords_bulwark",
@@ -804,13 +868,17 @@
         "of_lightning_resist": 14,
         "of_holy_resist": 8,
         "of_poison_resist": 10,
-        "of_dark_resist": 8
+        "of_dark_resist": 8,
+        "of_warding": 8,
+        "of_bulwark": 8
       },
       "default_tint": {
         "hue": 0.0,
         "sat": 1.2,
         "mode": "normal"
-      }
+      },
+      "block_chance": 25,
+      "block_amount": 20
     },
     {
       "id": "shield_of_reflection",
@@ -848,14 +916,18 @@
         "of_lightning_resist": 14,
         "of_holy_resist": 8,
         "of_poison_resist": 10,
-        "of_dark_resist": 8
+        "of_dark_resist": 8,
+        "of_warding": 8,
+        "of_bulwark": 8
       },
       "default_tint": {
         "hue": 200,
         "sat": 1.0,
         "mode": "colorize",
         "colorize_strength": 0.45
-      }
+      },
+      "block_chance": 20,
+      "block_amount": 15
     },
     {
       "id": "lshield_louise",
@@ -893,13 +965,17 @@
         "of_lightning_resist": 14,
         "of_holy_resist": 8,
         "of_poison_resist": 10,
-        "of_dark_resist": 8
+        "of_dark_resist": 8,
+        "of_warding": 8,
+        "of_bulwark": 8
       },
       "default_tint": {
         "hue": 130.0,
         "sat": 1.15,
         "mode": "inverted"
-      }
+      },
+      "block_chance": 25,
+      "block_amount": 20
     },
     {
       "id": "bullseye",
@@ -937,8 +1013,12 @@
         "of_lightning_resist": 14,
         "of_holy_resist": 8,
         "of_poison_resist": 10,
-        "of_dark_resist": 8
-      }
+        "of_dark_resist": 8,
+        "of_warding": 8,
+        "of_bulwark": 8
+      },
+      "block_chance": 15,
+      "block_amount": 10
     },
     {
       "id": "gong_shield",
@@ -978,8 +1058,12 @@
         "of_lightning_resist": 14,
         "of_holy_resist": 8,
         "of_poison_resist": 10,
-        "of_dark_resist": 8
-      }
+        "of_dark_resist": 8,
+        "of_warding": 8,
+        "of_bulwark": 8
+      },
+      "block_chance": 8,
+      "block_amount": 5
     },
     {
       "id": "elven_buckler_2",
@@ -1017,13 +1101,17 @@
         "of_lightning_resist": 14,
         "of_holy_resist": 8,
         "of_poison_resist": 10,
-        "of_dark_resist": 8
+        "of_dark_resist": 8,
+        "of_warding": 8,
+        "of_bulwark": 8
       },
       "default_tint": {
         "hue": 110,
         "sat": 1.2,
         "mode": "normal"
-      }
+      },
+      "block_chance": 8,
+      "block_amount": 5
     },
     {
       "id": "dwarven_buckler_2",
@@ -1061,13 +1149,17 @@
         "of_lightning_resist": 14,
         "of_holy_resist": 8,
         "of_poison_resist": 10,
-        "of_dark_resist": 8
+        "of_dark_resist": 8,
+        "of_warding": 8,
+        "of_bulwark": 8
       },
       "default_tint": {
         "hue": 30,
         "sat": 1.1,
         "mode": "normal"
-      }
+      },
+      "block_chance": 8,
+      "block_amount": 5
     },
     {
       "id": "donald_shield",
@@ -1105,8 +1197,12 @@
         "of_lightning_resist": 14,
         "of_holy_resist": 8,
         "of_poison_resist": 10,
-        "of_dark_resist": 8
-      }
+        "of_dark_resist": 8,
+        "of_warding": 8,
+        "of_bulwark": 8
+      },
+      "block_chance": 20,
+      "block_amount": 15
     },
     {
       "id": "dd_scion_shield",
@@ -1143,13 +1239,17 @@
         "of_lightning_resist": 14,
         "of_holy_resist": 8,
         "of_poison_resist": 10,
-        "of_dark_resist": 8
+        "of_dark_resist": 8,
+        "of_warding": 8,
+        "of_bulwark": 8
       },
       "default_tint": {
         "hue": 280.0,
         "sat": 1.1,
         "mode": "normal"
-      }
+      },
+      "block_chance": 25,
+      "block_amount": 20
     },
     {
       "id": "lshield_doomknight",
@@ -1188,13 +1288,17 @@
         "of_lightning_resist": 14,
         "of_holy_resist": 8,
         "of_poison_resist": 10,
-        "of_dark_resist": 8
+        "of_dark_resist": 8,
+        "of_warding": 8,
+        "of_bulwark": 8
       },
       "default_tint": {
         "hue": 320.0,
         "sat": 1.2,
         "mode": "shimmer"
-      }
+      },
+      "block_chance": 25,
+      "block_amount": 20
     },
     {
       "id": "shield_of_resistance",
@@ -1235,8 +1339,12 @@
         "of_lightning_resist": 14,
         "of_holy_resist": 8,
         "of_poison_resist": 10,
-        "of_dark_resist": 8
-      }
+        "of_dark_resist": 8,
+        "of_warding": 8,
+        "of_bulwark": 8
+      },
+      "block_chance": 20,
+      "block_amount": 15
     },
     {
       "affix_pool": {
@@ -1253,7 +1361,9 @@
         "of_dark_resist": 8,
         "of_int_mastery": 18,
         "of_quickcast": 14,
-        "of_resonance": 14
+        "of_resonance": 14,
+        "of_warding": 8,
+        "of_bulwark": 8
       },
       "armor": 36,
       "base_type": "round_shield",
@@ -1289,7 +1399,9 @@
         "of_int_mastery": 18,
         "of_quickcast": 14,
         "of_resonance": 14
-      }
+      },
+      "block_chance": 15,
+      "block_amount": 10
     },
     {
       "affix_pool": {
@@ -1304,7 +1416,9 @@
         "of_holy_resist": 26,
         "of_poison_resist": 10,
         "of_dark_resist": 8,
-        "of_devotion": 14
+        "of_devotion": 14,
+        "of_warding": 8,
+        "of_bulwark": 8
       },
       "armor": 10,
       "base_type": "buckler",
@@ -1345,7 +1459,9 @@
         "of_devotion": 14,
         "of_finesse": 14,
         "of_wisdom": 12
-      }
+      },
+      "block_chance": 8,
+      "block_amount": 5
     },
     {
       "affix_pool": {
@@ -1362,7 +1478,9 @@
         "of_dark_resist": 30,
         "of_shadows": 30,
         "of_int_mastery": 14,
-        "of_channeling": 14
+        "of_channeling": 14,
+        "of_warding": 8,
+        "of_bulwark": 8
       },
       "armor": 14,
       "base_type": "buckler",
@@ -1404,7 +1522,9 @@
         "of_dark_resist": 22,
         "of_int_mastery": 14,
         "of_channeling": 14
-      }
+      },
+      "block_chance": 8,
+      "block_amount": 5
     },
     {
       "affix_pool": {
@@ -1419,7 +1539,9 @@
         "of_holy_resist": 8,
         "of_poison_resist": 10,
         "of_dark_resist": 8,
-        "of_sharpness": 14
+        "of_sharpness": 14,
+        "of_warding": 8,
+        "of_bulwark": 8
       },
       "armor": 20,
       "base_type": "tower_shield",
@@ -1460,7 +1582,9 @@
         "of_might": 14,
         "of_sharpness": 14
       },
-      "recolor_of": "tower_shield"
+      "recolor_of": "tower_shield",
+      "block_chance": 25,
+      "block_amount": 20
     },
     {
       "affix_pool": {
@@ -1475,7 +1599,9 @@
         "of_holy_resist": 8,
         "of_poison_resist": 10,
         "of_dark_resist": 26,
-        "of_shadows": 22
+        "of_shadows": 22,
+        "of_warding": 8,
+        "of_bulwark": 8
       },
       "armor": 31,
       "base_type": "round_shield",
@@ -1519,7 +1645,9 @@
         "of_dark_resist": 18,
         "of_vitality": 18
       },
-      "recolor_of": "phantom_aegis"
+      "recolor_of": "phantom_aegis",
+      "block_chance": 15,
+      "block_amount": 10
     },
     {
       "affix_pool": {
@@ -1535,7 +1663,9 @@
         "of_poison_resist": 10,
         "of_dark_resist": 8,
         "of_shadows": 22,
-        "of_lifesteal": 12
+        "of_lifesteal": 12,
+        "of_warding": 8,
+        "of_bulwark": 8
       },
       "armor": 22,
       "base_type": "kite_shield",
@@ -1576,7 +1706,9 @@
         "of_might": 14,
         "of_finesse": 14,
         "of_lifesteal": 12
-      }
+      },
+      "block_chance": 20,
+      "block_amount": 15
     },
     {
       "affix_pool": {
@@ -1593,7 +1725,9 @@
         "of_dark_resist": 8,
         "of_frost": 35,
         "of_quickcast": 18,
-        "of_crit": 15
+        "of_crit": 15,
+        "of_warding": 8,
+        "of_bulwark": 8
       },
       "armor": 14,
       "base_type": "buckler",
@@ -1631,7 +1765,9 @@
         "of_quickcast": 18,
         "of_crit": 15
       },
-      "recolor_of": "dwarven_buckler_2"
+      "recolor_of": "dwarven_buckler_2",
+      "block_chance": 8,
+      "block_amount": 5
     },
     {
       "affix_pool": {
@@ -1647,7 +1783,9 @@
         "of_poison_resist": 10,
         "of_dark_resist": 8,
         "of_shadows": 22,
-        "of_lifesteal": 12
+        "of_lifesteal": 12,
+        "of_warding": 8,
+        "of_bulwark": 8
       },
       "armor": 14,
       "base_type": "round_shield",
@@ -1688,7 +1826,9 @@
         "of_might": 14,
         "of_finesse": 14,
         "of_lifesteal": 12
-      }
+      },
+      "block_chance": 15,
+      "block_amount": 10
     },
     {
       "affix_pool": {
@@ -1709,7 +1849,9 @@
         "of_devotion": 18,
         "of_venom": 18,
         "of_shadows": 18,
-        "of_sharpness": 18
+        "of_sharpness": 18,
+        "of_warding": 8,
+        "of_bulwark": 8
       },
       "armor": 36,
       "base_type": "buckler",
@@ -1750,7 +1892,9 @@
         "of_sharpness": 18
       },
       "_rebalance_v5": true,
-      "recolor_of": "gong_shield"
+      "recolor_of": "gong_shield",
+      "block_chance": 8,
+      "block_amount": 5
     },
     {
       "affix_pool": {
@@ -1771,7 +1915,9 @@
         "of_devotion": 18,
         "of_venom": 18,
         "of_shadows": 18,
-        "of_sharpness": 18
+        "of_sharpness": 18,
+        "of_warding": 8,
+        "of_bulwark": 8
       },
       "armor": 14,
       "base_type": "kite_shield",
@@ -1811,7 +1957,9 @@
         "of_sharpness": 18
       },
       "_rebalance_v5": true,
-      "recolor_of": "large_kite"
+      "recolor_of": "large_kite",
+      "block_chance": 20,
+      "block_amount": 15
     },
     {
       "affix_pool": {
@@ -1834,7 +1982,9 @@
         "of_devotion": 18,
         "of_venom": 18,
         "of_shadows": 18,
-        "of_sharpness": 18
+        "of_sharpness": 18,
+        "of_warding": 8,
+        "of_bulwark": 8
       },
       "armor": 14,
       "base_type": "buckler",
@@ -1876,7 +2026,9 @@
         "of_sharpness": 18
       },
       "_rebalance_v5": true,
-      "recolor_of": "dwarven_buckler_2"
+      "recolor_of": "dwarven_buckler_2",
+      "block_chance": 8,
+      "block_amount": 5
     },
     {
       "affix_pool": {
@@ -1892,7 +2044,9 @@
         "of_poison_resist": 10,
         "of_dark_resist": 8,
         "of_devotion": 30,
-        "of_regen": 12
+        "of_regen": 12,
+        "of_warding": 8,
+        "of_bulwark": 8
       },
       "armor": 36,
       "base_type": "round_shield",
@@ -1930,7 +2084,9 @@
         "of_might": 18,
         "of_regen": 12
       },
-      "recolor_of": "bullseye"
+      "recolor_of": "bullseye",
+      "block_chance": 15,
+      "block_amount": 10
     },
     {
       "affix_pool": {
@@ -1945,7 +2101,9 @@
         "of_holy_resist": 8,
         "of_poison_resist": 10,
         "of_dark_resist": 8,
-        "of_sharpness": 14
+        "of_sharpness": 14,
+        "of_warding": 8,
+        "of_bulwark": 8
       },
       "armor": 14,
       "base_type": "buckler",
@@ -1987,7 +2145,9 @@
         "of_might": 14,
         "of_sharpness": 14
       },
-      "recolor_of": "dwarven_buckler_2"
+      "recolor_of": "dwarven_buckler_2",
+      "block_chance": 8,
+      "block_amount": 5
     }
   ]
 }

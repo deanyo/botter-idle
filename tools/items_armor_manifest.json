@@ -2472,7 +2472,7 @@
       "name": "Troll-Hide Armor",
       "slot": "armor",
       "rarity": "rare",
-      "tile": "troll_leather_unique.png",
+      "tile": "troll_hide.png",
       "base_type": "troll_leather",
       "armor": 18,
       "evasion": 4,
@@ -2506,7 +2506,7 @@
       "name": "Sigil-Wrappings of the Tomb",
       "slot": "armor",
       "rarity": "epic",
-      "tile": "tomb_wrappings.png",
+      "tile": "urand_misfortune.png",
       "base_type": "robe",
       "armor": 6,
       "evasion": 18,
@@ -2533,6 +2533,11 @@
       "affix_pool": {
         "of_wisdom": 16,
         "of_channeling": 12
+      },
+      "default_tint": {
+        "hue": 40,
+        "sat": 0.6,
+        "mode": "normal"
       }
     },
     {
@@ -2540,7 +2545,7 @@
       "name": "Stoneflesh Plate",
       "slot": "armor",
       "rarity": "epic",
-      "tile": "stoneflesh_plate.png",
+      "tile": "urand_lear.png",
       "base_type": "plate",
       "armor": 30,
       "evasion": 0,
@@ -2567,6 +2572,11 @@
       "affix_pool": {
         "of_the_bear": 18,
         "of_might": 12
+      },
+      "default_tint": {
+        "hue": 0,
+        "sat": 0.0,
+        "mode": "normal"
       }
     },
     {
@@ -2574,7 +2584,7 @@
       "name": "Scavenger's Coat",
       "slot": "armor",
       "rarity": "rare",
-      "tile": "scavenger_coat.png",
+      "tile": "urand_ratskin_cloak.png",
       "base_type": "leather",
       "armor": 8,
       "evasion": 8,

@@ -55,7 +55,9 @@
         "of_haste": 18,
         "of_lifesteal": 10,
         "of_channeling": 10,
-        "of_velocity": 12
+        "of_velocity": 12,
+        "of_executioner": 8,
+        "of_bulwark": 8
       }
     },
     {
@@ -102,7 +104,9 @@
         "of_haste": 18,
         "of_lifesteal": 10,
         "of_channeling": 10,
-        "of_velocity": 12
+        "of_velocity": 12,
+        "of_executioner": 8,
+        "of_bulwark": 8
       }
     },
     {
@@ -149,7 +153,9 @@
         "of_hunter": 8,
         "of_echoes": 8,
         "of_sundering": 8,
-        "of_berserker_rage": 8
+        "of_berserker_rage": 8,
+        "of_executioner": 8,
+        "of_bulwark": 8
       }
     },
     {
@@ -196,7 +202,9 @@
         "of_hunter": 8,
         "of_echoes": 8,
         "of_sundering": 8,
-        "of_berserker_rage": 8
+        "of_berserker_rage": 8,
+        "of_executioner": 8,
+        "of_bulwark": 8
       }
     },
     {
@@ -243,7 +251,9 @@
         "of_hunter": 8,
         "of_echoes": 8,
         "of_sundering": 8,
-        "of_berserker_rage": 8
+        "of_berserker_rage": 8,
+        "of_executioner": 8,
+        "of_bulwark": 8
       }
     },
     {
@@ -292,7 +302,9 @@
         "of_hunter": 8,
         "of_echoes": 8,
         "of_sundering": 8,
-        "of_berserker_rage": 8
+        "of_berserker_rage": 8,
+        "of_executioner": 8,
+        "of_bulwark": 8
       }
     },
     {
@@ -341,7 +353,9 @@
         "of_hunter": 8,
         "of_echoes": 8,
         "of_sundering": 8,
-        "of_berserker_rage": 8
+        "of_berserker_rage": 8,
+        "of_executioner": 8,
+        "of_bulwark": 8
       }
     },
     {
@@ -391,7 +405,9 @@
         "of_hunter": 8,
         "of_echoes": 8,
         "of_sundering": 8,
-        "of_berserker_rage": 8
+        "of_berserker_rage": 8,
+        "of_executioner": 8,
+        "of_bulwark": 8
       }
     },
     {
@@ -440,7 +456,9 @@
         "of_hunter": 8,
         "of_echoes": 8,
         "of_sundering": 8,
-        "of_berserker_rage": 8
+        "of_berserker_rage": 8,
+        "of_executioner": 8,
+        "of_bulwark": 8
       }
     },
     {
@@ -490,7 +508,9 @@
         "of_hunter": 8,
         "of_echoes": 8,
         "of_sundering": 8,
-        "of_berserker_rage": 8
+        "of_berserker_rage": 8,
+        "of_executioner": 8,
+        "of_bulwark": 8
       }
     },
     {
@@ -540,7 +560,9 @@
         "of_hunter": 8,
         "of_echoes": 8,
         "of_sundering": 8,
-        "of_berserker_rage": 8
+        "of_berserker_rage": 8,
+        "of_executioner": 8,
+        "of_bulwark": 8
       }
     },
     {
@@ -568,7 +590,9 @@
         "of_hunter": 8,
         "of_echoes": 8,
         "of_sundering": 8,
-        "of_berserker_rage": 8
+        "of_berserker_rage": 8,
+        "of_executioner": 8,
+        "of_bulwark": 8
       },
       "armor": 3,
       "base_type": "gloves",
@@ -636,7 +660,9 @@
         "of_hunter": 8,
         "of_echoes": 8,
         "of_sundering": 8,
-        "of_berserker_rage": 8
+        "of_berserker_rage": 8,
+        "of_executioner": 8,
+        "of_bulwark": 8
       },
       "armor": 5,
       "base_type": "gloves",
@@ -701,7 +727,9 @@
         "of_hunter": 8,
         "of_echoes": 8,
         "of_sundering": 8,
-        "of_berserker_rage": 8
+        "of_berserker_rage": 8,
+        "of_executioner": 8,
+        "of_bulwark": 8
       },
       "armor": 5,
       "base_type": "gloves",
@@ -761,7 +789,9 @@
         "of_hunter": 8,
         "of_echoes": 8,
         "of_sundering": 8,
-        "of_berserker_rage": 8
+        "of_berserker_rage": 8,
+        "of_executioner": 8,
+        "of_bulwark": 8
       },
       "armor": 2,
       "base_type": "gloves",
@@ -806,7 +836,7 @@
       "name": "Grimoire-Bound Gloves",
       "slot": "gloves",
       "rarity": "epic",
-      "tile": "elf_gloves.png",
+      "tile": "glove_4_gauntlets.png",
       "base_type": "gloves",
       "armor": 3,
       "evasion": 8,
@@ -832,7 +862,14 @@
       ],
       "affix_pool": {
         "of_wisdom": 16,
-        "of_channeling": 12
+        "of_channeling": 12,
+        "of_executioner": 8,
+        "of_bulwark": 8
+      },
+      "default_tint": {
+        "hue": 270,
+        "sat": 1.1,
+        "mode": "normal"
       }
     },
     {
@@ -840,7 +877,7 @@
       "name": "Throwing Hand",
       "slot": "gloves",
       "rarity": "rare",
-      "tile": "kobold_gloves.png",
+      "tile": "glove_3_new.png",
       "base_type": "gloves",
       "armor": 2,
       "evasion": 8,
@@ -865,7 +902,14 @@
       ],
       "affix_pool": {
         "of_finesse": 14,
-        "of_velocity": 10
+        "of_velocity": 10,
+        "of_executioner": 8,
+        "of_bulwark": 8
+      },
+      "default_tint": {
+        "hue": 25,
+        "sat": 1.0,
+        "mode": "normal"
       }
     }
   ]

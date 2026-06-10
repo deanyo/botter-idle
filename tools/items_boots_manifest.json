@@ -1118,7 +1118,7 @@
       "name": "Leaf-Light Slippers",
       "slot": "boots",
       "rarity": "rare",
-      "tile": "wormwood_boots.png",
+      "tile": "boots_4_green.png",
       "base_type": "sandals",
       "armor": 2,
       "evasion": 12,

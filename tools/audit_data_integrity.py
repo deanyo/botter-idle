@@ -30,6 +30,24 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parent.parent
 DATA = REPO / "project" / "data"
 SCRIPTS = REPO / "project" / "scripts"
+ASSETS_TILES_ITEMS = REPO / "project" / "assets" / "tiles" / "items"
+ASSETS_TILES_PLAYER = REPO / "project" / "assets" / "tiles" / "player"
+
+# Slots that render an on-character overlay sprite (paperdoll_renderer.gd
+# SLOT_DIRS). Items in these slots need a matching PNG under
+# project/assets/tiles/player/<dir>/<stem>.png so the inventory icon and
+# the on-character overlay match. Subdir prefixes in `tile` (e.g.
+# "artefacts/foo.png") don't carry over to the overlay path — the
+# resolver strips to the basename.
+PAPERDOLL_SLOT_DIRS = {
+    "weapon": "weapons",
+    "armor":  "body",
+    "helm":   "helm",
+    "shield": "shield",
+    "boots":  "boots",
+    "gloves": "gloves",
+    "cloak":  "cloak",
+}
 
 AFFIXES_JSON = DATA / "affixes.json"
 ITEMS_JSON = DATA / "items.json"
@@ -260,6 +278,58 @@ def main() -> int:
                 f"UNKNOWN_RACE_TAG item {it.get('id', '?')!r} "
                 f"requires_innate_tag {rt!r} appears on no species "
                 f"(implicits will silently mute for every character)"
+            )
+
+    # ── 6e. Item tile files exist on disk ───────────────────────────
+    # An item's `tile` field names a PNG under project/assets/tiles/items/
+    # (subdirs allowed via "artefacts/foo.png" / "spells/bar.png"). When a
+    # tile doesn't resolve, item_cell.gd silently renders a blank — visible
+    # only via the editor, with no error in logs. S5 shipped 30 race
+    # anchors with invented filenames that all rendered blank for a week
+    # before someone noticed. Fail-fast in CI is the only way to keep
+    # this from happening again.
+    #
+    # Paperdoll slots (weapon/armor/helm/shield/boots/gloves/cloak) ALSO
+    # render an on-character overlay sprite from
+    # project/assets/tiles/player/<slot_dir>/<stem>.png. paperdoll_renderer
+    # falls back silently to "no overlay" when the file is missing, so
+    # the item shows in the inventory but the bot looks unequipped.
+    # Anchors should match on both surfaces. Items can opt out by
+    # declaring "overlay": "<other_stem>" if intentional.
+    for it in items_doc.get("items", []):
+        tile = it.get("tile", "")
+        if not tile:
+            continue
+        if not (ASSETS_TILES_ITEMS / tile).exists():
+            issues.append(
+                f"MISSING_TILE   item {it.get('id', '?')!r} tile "
+                f"{tile!r} not found under "
+                f"project/assets/tiles/items/"
+            )
+            continue
+        slot = it.get("slot", "")
+        plr_dir = PAPERDOLL_SLOT_DIRS.get(slot)
+        if not plr_dir:
+            continue
+        # Explicit overlay override wins over tile-stem matching.
+        overlay_stem = it.get("overlay", "")
+        if not overlay_stem:
+            # Strip subdir prefix and .png suffix (paperdoll_renderer
+            # operates on the basename stem).
+            overlay_stem = tile.split("/")[-1]
+            if overlay_stem.endswith(".png"):
+                overlay_stem = overlay_stem[:-4]
+        plr_path = ASSETS_TILES_PLAYER / plr_dir / (overlay_stem + ".png")
+        if not plr_path.exists():
+            # Warning, not error — fixing the inventory-only items is a
+            # separate cleanup pass and shouldn't gate every commit.
+            # New uniques SHOULD ship with overlays; this surface tells
+            # authors which tiles are inventory-only.
+            warnings.append(
+                f"MISSING_OVERLAY item {it.get('id', '?')!r} slot={slot!r} "
+                f"has no on-character overlay at "
+                f"project/assets/tiles/player/{plr_dir}/{overlay_stem}.png "
+                f"(inventory tile renders, but the bot will look unequipped)"
             )
 
     # ── 7. Sanity: KNOWN_CATEGORIES match affix_system.gd ───────────
