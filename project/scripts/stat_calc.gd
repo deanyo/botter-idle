@@ -168,9 +168,19 @@ static func compute(
 		# Affix rollup (implicit + rolled). Each affix contributes through
 		# the per-id DR scaler so wearing the same affix on N slots gets
 		# 100% / 75% / 50% / 25% as the count climbs.
+		# S5 race-anchor gate: an item with `requires_innate_tag` mutes
+		# its implicit_affixes when the wearer's species lacks the tag.
+		# Base stats (armor/damage) and rolled affixes still apply — only
+		# the unique mechanic is gated. Humans (no innate_tags) get the
+		# muted version, matching a04 §5.1's "baseline by design" rule.
+		var requires_tag: String = String(item.get("requires_innate_tag", ""))
+		var implicits_active: bool = true
+		if requires_tag != "":
+			implicits_active = SpeciesData.has_innate_tag(species_id, requires_tag)
 		var combined_affixes: Array = []
-		for a in item.get("implicit_affixes", []):
-			combined_affixes.append(_realize_implicit(String(a), String(item.get("rarity", "common"))))
+		if implicits_active:
+			for a in item.get("implicit_affixes", []):
+				combined_affixes.append(_realize_implicit(String(a), String(item.get("rarity", "common"))))
 		for a in inst.get("affixes", []):
 			combined_affixes.append(a)
 		# Bump source counts BEFORE summing so each affix instance gets

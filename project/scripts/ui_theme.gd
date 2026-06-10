@@ -360,6 +360,10 @@ const FLAVOR_COLORS := {
 	"vitality":    Color(0.55, 1.00, 0.55),   # vital green
 	"agility":     Color(0.70, 1.00, 0.65),   # nimble lime
 	"shadow":      Color(0.40, 0.30, 0.55),   # umbra purple
+	# S5 race-anchor conditional flavors (a04 §5 + a10 rescopes).
+	"feast":       Color(0.55, 0.85, 0.45),   # ravenous green
+	"first_blood": Color(0.95, 0.55, 0.40),   # opening-strike coral
+	"petrify":     Color(0.65, 0.65, 0.55),   # petrified stone
 }
 # Priority order — wired-mechanic flavors first because their COLOR
 # carries the most meaning. Decorative-but-wired ones below. Anything

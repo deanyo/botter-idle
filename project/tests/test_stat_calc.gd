@@ -313,6 +313,106 @@ func test_s4_of_synergy_active_requires_triplet() -> void:
 		"of_might + of_finesse + of_wisdom triplet activates synergy_active")
 
 # ---------------------------------------------------------------------
+# S5 — race-anchor implicit gating (requires_innate_tag)
+# ---------------------------------------------------------------------
+
+func test_s5_requires_innate_tag_skipped_on_mismatch() -> void:
+	# An item that requires a tag the species doesn't carry must skip its
+	# implicit_affixes in the StatCalc rollup. Base stats still apply.
+	var fake_db: Dictionary = items_db.duplicate(true)
+	fake_db["__s5_amulet"] = {
+		"id": "__s5_amulet", "slot": "amulet", "rarity": "legendary",
+		"flavor_tags": [],
+		"requires_innate_tag": "vampiric",
+		"implicit_affixes": ["of_might"],
+	}
+	var inst := {"base_id": "__s5_amulet", "rarity": "legendary", "affixes": []}
+	# Human (no innate_tags) — implicit muted, str unchanged from base.
+	var d_human: Dictionary = StatCalc.compute(
+		{"amulet": inst}, fake_db, _bare_save("human"), "human", 1, 0, 0, []
+	)
+	# Vampire — implicit fires, str gains the of_might tier-mid roll.
+	var d_vamp: Dictionary = StatCalc.compute(
+		{"amulet": inst}, fake_db, _bare_save("vampire"), "vampire", 1, 0, 0, []
+	)
+	assert_gt(int(d_vamp.str), int(d_human.str),
+		"vampire (innate_tag=vampiric) sees of_might implicit; human (muted) does not")
+
+func test_s5_requires_innate_tag_only_mutes_implicits_not_rolled() -> void:
+	# Rolled affixes (inst.affixes) should still apply even when the item
+	# is heritage-locked and the bot doesn't satisfy it. Only the
+	# implicit_affixes lane mutes.
+	var fake_db: Dictionary = items_db.duplicate(true)
+	fake_db["__s5_amulet2"] = {
+		"id": "__s5_amulet2", "slot": "amulet", "rarity": "legendary",
+		"flavor_tags": [],
+		"requires_innate_tag": "fae",
+		"implicit_affixes": ["of_might"],
+	}
+	var inst := {
+		"base_id": "__s5_amulet2", "rarity": "legendary",
+		"affixes": [{"id": "of_finesse", "value": 12}],
+	}
+	# Human — implicit muted, but rolled of_finesse still adds to dex.
+	var d: Dictionary = StatCalc.compute(
+		{"amulet": inst}, fake_db, _bare_save("human"), "human", 1, 0, 0, []
+	)
+	# Bare human dex = 6 (5 + species 1). With of_finesse +12 → 18.
+	assert_eq(int(d.dex), 18,
+		"rolled affixes apply on heritage-locked items even when implicits mute")
+
+func test_s5_humans_get_no_implicits_on_anchor() -> void:
+	# Sanity-check the new ANCHORS dataset: a human equipping a vampire
+	# anchor (vampire_splintered_tooth) does NOT get its implicit_affixes
+	# pumped through StatCalc. The damage_min / damage_max base stats
+	# still apply.
+	if not items_db.has("vampire_splintered_tooth"):
+		# Items.json drift — skip rather than fail (pre-S5 trees lack it).
+		pending("vampire_splintered_tooth not present in items_db")
+		return
+	var inst := {"base_id": "vampire_splintered_tooth", "rarity": "uncommon", "affixes": []}
+	var d_human: Dictionary = StatCalc.compute(
+		{"weapon": inst}, items_db, _bare_save("human"), "human", 1, 0, 0, []
+	)
+	var d_vamp: Dictionary = StatCalc.compute(
+		{"weapon": inst}, items_db, _bare_save("vampire"), "vampire", 1, 0, 0, []
+	)
+	# Both load the weapon's damage_min/max, so the swing range is the
+	# same. But of_lifesteal is implicit on the splintered tooth — only
+	# the vampire bot sees lifesteal_pct climb.
+	assert_eq(int(d_human.damage_min), int(d_vamp.damage_min),
+		"base damage_min identical regardless of heritage")
+	assert_gt(float(d_vamp.lifesteal_pct), float(d_human.lifesteal_pct),
+		"vampire gets implicit of_lifesteal; human does not")
+
+func test_s5_species_data_has_innate_tag_lookup() -> void:
+	# SpeciesData.has_innate_tag is the gate every other surface reads.
+	# Verify it answers correctly on both populated and empty species.
+	assert_true(SpeciesData.has_innate_tag("vampire", "vampiric"),
+		"vampire carries vampiric tag")
+	assert_true(SpeciesData.has_innate_tag("vampire", "undead"),
+		"vampire also carries undead tag (shared with mummy)")
+	assert_false(SpeciesData.has_innate_tag("human", "vampiric"),
+		"human carries no innate_tags — every lookup false")
+	assert_false(SpeciesData.has_innate_tag("vampire", ""),
+		"empty tag query returns false")
+	assert_false(SpeciesData.has_innate_tag("", "vampiric"),
+		"empty species query returns false")
+	# Sanity-check every species got tagged. Human is intentionally [].
+	for sp in SpeciesData.all():
+		var sid: String = String(sp.id)
+		var has_any: bool = false
+		for t in sp.get("innate_tags", []):
+			has_any = SpeciesData.has_innate_tag(sid, String(t))
+			if has_any:
+				break
+		if sid == "human":
+			assert_eq(int((sp.get("innate_tags", []) as Array).size()), 0,
+				"human species defined with empty innate_tags")
+		else:
+			assert_true(has_any, "species %s has at least one innate_tag" % sid)
+
+# ---------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------
 

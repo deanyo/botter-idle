@@ -279,6 +279,17 @@ func render_for(item_def: Dictionary, instance: Variant, db: Dictionary) -> void
 			_vbox.add_child(_make_label("Evasion: +%d%%" % evasion, 13, COLOR_BODY, false))
 		if armor > 0 or evasion > 0:
 			_vbox.add_child(_make_separator())
+	# S5 race-anchor: render the requires_innate_tag requirement line
+	# above the affix block so the player sees it before the implicit
+	# mechanics it gates. Color faded green when the active character
+	# satisfies it, hot-yellow + "implicits muted" when it doesn't.
+	var req_tag: String = String(item.get("requires_innate_tag", ""))
+	if req_tag != "":
+		var sid: String = String(SaveState.load_state().get("species", ""))
+		var satisfied: bool = SpeciesData.has_innate_tag(sid, req_tag)
+		var req_color: Color = Color(0.45, 0.85, 0.55) if satisfied else Color(0.95, 0.78, 0.30)
+		var suffix: String = "" if satisfied else " (implicits muted)"
+		_vbox.add_child(_make_label("Requires: %s heritage%s" % [req_tag.capitalize(), suffix], 11, req_color, true))
 	# Affix block (implicit + rolled).
 	var affix_lines: Array = _build_affix_lines()
 	for line in affix_lines:

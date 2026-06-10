@@ -35,7 +35,9 @@
       ],
       "unique": true,
       "enchant_chance": 0.0,
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_might"
+      ],
       "affix_pool": {
         "of_might": 16,
         "of_finesse": 18,
@@ -80,7 +82,9 @@
       ],
       "unique": true,
       "enchant_chance": 0.0,
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_finesse"
+      ],
       "affix_pool": {
         "of_might": 16,
         "of_finesse": 18,
@@ -140,7 +144,12 @@
         "of_haste": 18,
         "of_lifesteal": 10,
         "of_channeling": 10,
-        "of_velocity": 12
+        "of_velocity": 12,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_berserker_rage": 8
       }
     },
     {
@@ -182,7 +191,12 @@
         "of_haste": 18,
         "of_lifesteal": 10,
         "of_channeling": 10,
-        "of_velocity": 12
+        "of_velocity": 12,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_berserker_rage": 8
       }
     },
     {
@@ -224,7 +238,12 @@
         "of_haste": 18,
         "of_lifesteal": 10,
         "of_channeling": 10,
-        "of_velocity": 12
+        "of_velocity": 12,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_berserker_rage": 8
       }
     },
     {
@@ -268,7 +287,12 @@
         "of_haste": 18,
         "of_lifesteal": 10,
         "of_channeling": 10,
-        "of_velocity": 12
+        "of_velocity": 12,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_berserker_rage": 8
       }
     },
     {
@@ -312,7 +336,12 @@
         "of_haste": 18,
         "of_lifesteal": 10,
         "of_channeling": 10,
-        "of_velocity": 12
+        "of_velocity": 12,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_berserker_rage": 8
       }
     },
     {
@@ -357,7 +386,12 @@
         "of_haste": 18,
         "of_lifesteal": 10,
         "of_channeling": 10,
-        "of_velocity": 12
+        "of_velocity": 12,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_berserker_rage": 8
       }
     },
     {
@@ -401,7 +435,12 @@
         "of_haste": 18,
         "of_lifesteal": 10,
         "of_channeling": 10,
-        "of_velocity": 12
+        "of_velocity": 12,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_berserker_rage": 8
       }
     },
     {
@@ -446,7 +485,12 @@
         "of_haste": 18,
         "of_lifesteal": 10,
         "of_channeling": 10,
-        "of_velocity": 12
+        "of_velocity": 12,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_berserker_rage": 8
       }
     },
     {
@@ -491,7 +535,12 @@
         "of_haste": 18,
         "of_lifesteal": 10,
         "of_channeling": 10,
-        "of_velocity": 12
+        "of_velocity": 12,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_berserker_rage": 8
       }
     },
     {
@@ -514,7 +563,12 @@
         "of_channeling": 24,
         "of_velocity": 12,
         "of_dark_resist": 22,
-        "of_int_mastery": 14
+        "of_int_mastery": 14,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_berserker_rage": 8
       },
       "armor": 3,
       "base_type": "gloves",
@@ -577,7 +631,12 @@
         "of_channeling": 10,
         "of_velocity": 12,
         "of_cold_resist": 22,
-        "of_quickcast": 18
+        "of_quickcast": 18,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_berserker_rage": 8
       },
       "armor": 5,
       "base_type": "gloves",
@@ -613,7 +672,8 @@
         "of_cold_resist": 22,
         "of_quickcast": 18,
         "of_crit": 15
-      }
+      },
+      "recolor_of": "dwarven_gloves"
     },
     {
       "affix_pool": {
@@ -636,7 +696,12 @@
         "of_velocity": 12,
         "of_int_mastery": 18,
         "of_quickcast": 14,
-        "of_resonance": 14
+        "of_resonance": 14,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_berserker_rage": 8
       },
       "armor": 5,
       "base_type": "gloves",
@@ -691,7 +756,12 @@
         "of_haste": 18,
         "of_lifesteal": 10,
         "of_channeling": 10,
-        "of_velocity": 12
+        "of_velocity": 12,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_berserker_rage": 8
       },
       "armor": 2,
       "base_type": "gloves",
@@ -728,7 +798,75 @@
         "of_shadows": 18,
         "of_sharpness": 18
       },
-      "_rebalance_v5": true
+      "_rebalance_v5": true,
+      "recolor_of": "studded_gloves"
+    },
+    {
+      "id": "elf_grimoire_gloves",
+      "name": "Grimoire-Bound Gloves",
+      "slot": "gloves",
+      "rarity": "epic",
+      "tile": "elf_gloves.png",
+      "base_type": "gloves",
+      "armor": 3,
+      "evasion": 8,
+      "item_tier": 3,
+      "flavor_tags": [
+        "wisdom",
+        "arcane"
+      ],
+      "lore": "Each finger underwritten with a verse the wearer half-remembers.",
+      "drop_weights": [
+        0,
+        0,
+        12,
+        30,
+        8
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "requires_innate_tag": "scholar",
+      "implicit_affixes": [
+        "of_wisdom",
+        "of_quickcast"
+      ],
+      "affix_pool": {
+        "of_wisdom": 16,
+        "of_channeling": 12
+      }
+    },
+    {
+      "id": "kobold_throwing_hand",
+      "name": "Throwing Hand",
+      "slot": "gloves",
+      "rarity": "rare",
+      "tile": "kobold_gloves.png",
+      "base_type": "gloves",
+      "armor": 2,
+      "evasion": 8,
+      "item_tier": 3,
+      "flavor_tags": [
+        "agility"
+      ],
+      "lore": "Wraps two fingers and a thumb. The other digits do their own work.",
+      "drop_weights": [
+        0,
+        0,
+        12,
+        30,
+        8
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "requires_innate_tag": "scavenger",
+      "implicit_affixes": [
+        "of_velocity",
+        "of_multicast"
+      ],
+      "affix_pool": {
+        "of_finesse": 14,
+        "of_velocity": 10
+      }
     }
   ]
 }

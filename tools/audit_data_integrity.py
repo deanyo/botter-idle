@@ -37,6 +37,7 @@ BASE_TYPE_AFFIXES_JSON = DATA / "base_type_affixes.json"
 STAT_CALC_GD = SCRIPTS / "stat_calc.gd"
 SPELL_DATA_GD = SCRIPTS / "spell_data.gd"
 AFFIX_SYSTEM_GD = SCRIPTS / "affix_system.gd"
+SPECIES_JSON = DATA / "species.json"
 
 # Categories accepted in base_type_affixes.json — must match the
 # _CATEGORY_EXPANSION dict in scripts/affix_system.gd. Keep in sync.
@@ -239,6 +240,26 @@ def main() -> int:
                 f"THIN_DESIGNS   slot={slot!r} tier={tier} has "
                 f"{len(designs)} distinct non-unique design(s) post-recolor "
                 f"collapse (target ≥3)"
+            )
+
+    # ── 6d. requires_innate_tag references resolve ──────────────────
+    # S5 race-anchor schema: items can declare requires_innate_tag.
+    # The tag must appear on at least one species in species.json — a
+    # typo silently mutes the implicit_affixes for every character.
+    species_doc = _load_json(SPECIES_JSON)
+    known_tags: set[str] = set()
+    for sp in species_doc.get("species", []):
+        for t in sp.get("innate_tags", []):
+            known_tags.add(str(t))
+    for it in items_doc.get("items", []):
+        rt = it.get("requires_innate_tag")
+        if not rt:
+            continue
+        if rt not in known_tags:
+            issues.append(
+                f"UNKNOWN_RACE_TAG item {it.get('id', '?')!r} "
+                f"requires_innate_tag {rt!r} appears on no species "
+                f"(implicits will silently mute for every character)"
             )
 
     # ── 7. Sanity: KNOWN_CATEGORIES match affix_system.gd ───────────

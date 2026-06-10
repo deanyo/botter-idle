@@ -47,7 +47,13 @@
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_channeling": 8,
-        "of_quickcast": 8
+        "of_quickcast": 8,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       }
     },
     {
@@ -90,7 +96,13 @@
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_channeling": 8,
-        "of_quickcast": 8
+        "of_quickcast": 8,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       }
     },
     {
@@ -133,7 +145,13 @@
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_channeling": 8,
-        "of_quickcast": 8
+        "of_quickcast": 8,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       }
     },
     {
@@ -176,7 +194,13 @@
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_channeling": 8,
-        "of_quickcast": 8
+        "of_quickcast": 8,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       }
     },
     {
@@ -221,7 +245,13 @@
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_channeling": 8,
-        "of_quickcast": 8
+        "of_quickcast": 8,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       }
     },
     {
@@ -264,7 +294,13 @@
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_channeling": 8,
-        "of_quickcast": 8
+        "of_quickcast": 8,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       }
     },
     {
@@ -309,7 +345,13 @@
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_channeling": 8,
-        "of_quickcast": 8
+        "of_quickcast": 8,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       }
     },
     {
@@ -354,7 +396,13 @@
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_channeling": 8,
-        "of_quickcast": 8
+        "of_quickcast": 8,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       }
     },
     {
@@ -365,8 +413,8 @@
       "tile": "battle_axe_3.png",
       "base_type": "battle_axe",
       "weapon_class": "2H",
-      "damage_min": 67,
-      "damage_max": 120,
+      "damage_min": 60,
+      "damage_max": 103,
       "damage_type": "physical",
       "speed": 1.1,
       "item_tier": 3,
@@ -399,7 +447,13 @@
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_channeling": 8,
-        "of_quickcast": 8
+        "of_quickcast": 8,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       }
     },
     {
@@ -445,7 +499,13 @@
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_channeling": 8,
-        "of_quickcast": 8
+        "of_quickcast": 8,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       }
     },
     {
@@ -492,7 +552,13 @@
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_channeling": 8,
-        "of_quickcast": 8
+        "of_quickcast": 8,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       }
     },
     {
@@ -537,7 +603,13 @@
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_channeling": 8,
-        "of_quickcast": 8
+        "of_quickcast": 8,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       }
     },
     {
@@ -548,8 +620,8 @@
       "tile": "broad_axe_3.png",
       "base_type": "broad_axe",
       "weapon_class": "2H",
-      "damage_min": 72,
-      "damage_max": 124,
+      "damage_min": 62,
+      "damage_max": 108,
       "damage_type": "physical",
       "speed": 1.15,
       "item_tier": 3,
@@ -582,7 +654,13 @@
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_channeling": 8,
-        "of_quickcast": 8
+        "of_quickcast": 8,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       }
     },
     {
@@ -628,7 +706,13 @@
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_channeling": 8,
-        "of_quickcast": 8
+        "of_quickcast": 8,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       }
     },
     {
@@ -674,7 +758,13 @@
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_channeling": 8,
-        "of_quickcast": 8
+        "of_quickcast": 8,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       }
     },
     {
@@ -721,7 +811,13 @@
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_channeling": 8,
-        "of_quickcast": 8
+        "of_quickcast": 8,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       },
       "_rebalance_v6": true
     },
@@ -765,7 +861,13 @@
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_channeling": 8,
-        "of_quickcast": 8
+        "of_quickcast": 8,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       }
     },
     {
@@ -808,7 +910,13 @@
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_channeling": 8,
-        "of_quickcast": 8
+        "of_quickcast": 8,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       }
     },
     {
@@ -851,7 +959,13 @@
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_channeling": 8,
-        "of_quickcast": 8
+        "of_quickcast": 8,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       }
     },
     {
@@ -894,7 +1008,13 @@
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_channeling": 8,
-        "of_quickcast": 8
+        "of_quickcast": 8,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       }
     },
     {
@@ -939,7 +1059,13 @@
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_channeling": 8,
-        "of_quickcast": 8
+        "of_quickcast": 8,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       }
     },
     {
@@ -984,7 +1110,13 @@
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_channeling": 8,
-        "of_quickcast": 8
+        "of_quickcast": 8,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       }
     },
     {
@@ -1029,7 +1161,13 @@
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_channeling": 8,
-        "of_quickcast": 8
+        "of_quickcast": 8,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       }
     },
     {
@@ -1075,7 +1213,13 @@
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_channeling": 8,
-        "of_quickcast": 8
+        "of_quickcast": 8,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       }
     },
     {
@@ -1120,7 +1264,13 @@
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_channeling": 8,
-        "of_quickcast": 8
+        "of_quickcast": 8,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       },
       "_rebalance_v6": true
     },
@@ -1167,7 +1317,13 @@
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_channeling": 8,
-        "of_quickcast": 8
+        "of_quickcast": 8,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       },
       "_rebalance_v6": true
     },
@@ -1211,7 +1367,13 @@
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_channeling": 8,
-        "of_quickcast": 8
+        "of_quickcast": 8,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       }
     },
     {
@@ -1222,8 +1384,8 @@
       "tile": "dire_flail_1.png",
       "base_type": "dire_flail",
       "weapon_class": "2H",
-      "damage_min": 67,
-      "damage_max": 120,
+      "damage_min": 60,
+      "damage_max": 103,
       "damage_type": "physical",
       "speed": 1.1,
       "item_tier": 3,
@@ -1256,7 +1418,13 @@
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_channeling": 8,
-        "of_quickcast": 8
+        "of_quickcast": 8,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       }
     },
     {
@@ -1301,7 +1469,13 @@
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_channeling": 8,
-        "of_quickcast": 8
+        "of_quickcast": 8,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       }
     },
     {
@@ -1346,7 +1520,13 @@
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_channeling": 8,
-        "of_quickcast": 8
+        "of_quickcast": 8,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       }
     },
     {
@@ -1391,7 +1571,13 @@
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_channeling": 8,
-        "of_quickcast": 8
+        "of_quickcast": 8,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       },
       "_rebalance_v5": true
     },
@@ -1438,7 +1624,13 @@
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_channeling": 8,
-        "of_quickcast": 8
+        "of_quickcast": 8,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       },
       "_rebalance_v5": true
     },
@@ -1482,7 +1674,13 @@
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_channeling": 8,
-        "of_quickcast": 8
+        "of_quickcast": 8,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       }
     },
     {
@@ -1525,7 +1723,13 @@
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_channeling": 8,
-        "of_quickcast": 8
+        "of_quickcast": 8,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       }
     },
     {
@@ -1568,7 +1772,13 @@
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_channeling": 8,
-        "of_quickcast": 8
+        "of_quickcast": 8,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       }
     },
     {
@@ -1611,7 +1821,13 @@
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_channeling": 8,
-        "of_quickcast": 8
+        "of_quickcast": 8,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       }
     },
     {
@@ -1656,7 +1872,13 @@
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_channeling": 8,
-        "of_quickcast": 8
+        "of_quickcast": 8,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       }
     },
     {
@@ -1667,8 +1889,8 @@
       "tile": "halberd_2.png",
       "base_type": "halberd",
       "weapon_class": "2H",
-      "damage_min": 57,
-      "damage_max": 105,
+      "damage_min": 50,
+      "damage_max": 91,
       "damage_type": "physical",
       "speed": 0.95,
       "item_tier": 3,
@@ -1701,7 +1923,13 @@
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_channeling": 8,
-        "of_quickcast": 8
+        "of_quickcast": 8,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       }
     },
     {
@@ -1747,7 +1975,13 @@
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_channeling": 8,
-        "of_quickcast": 8
+        "of_quickcast": 8,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       },
       "_rebalance_v5": true
     },
@@ -1795,7 +2029,13 @@
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_channeling": 8,
-        "of_quickcast": 8
+        "of_quickcast": 8,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       }
     },
     {
@@ -1840,7 +2080,13 @@
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_channeling": 8,
-        "of_quickcast": 8
+        "of_quickcast": 8,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       },
       "_rebalance_v5": true
     },
@@ -1887,7 +2133,13 @@
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_channeling": 8,
-        "of_quickcast": 8
+        "of_quickcast": 8,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       }
     },
     {
@@ -1930,7 +2182,13 @@
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_channeling": 8,
-        "of_quickcast": 8
+        "of_quickcast": 8,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       }
     },
     {
@@ -1973,7 +2231,13 @@
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_channeling": 8,
-        "of_quickcast": 8
+        "of_quickcast": 8,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       }
     },
     {
@@ -2018,7 +2282,13 @@
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_channeling": 8,
-        "of_quickcast": 8
+        "of_quickcast": 8,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       }
     },
     {
@@ -2064,7 +2334,13 @@
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_channeling": 8,
-        "of_quickcast": 8
+        "of_quickcast": 8,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       }
     },
     {
@@ -2109,7 +2385,13 @@
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_channeling": 8,
-        "of_quickcast": 8
+        "of_quickcast": 8,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       }
     },
     {
@@ -2154,7 +2436,13 @@
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_channeling": 8,
-        "of_quickcast": 8
+        "of_quickcast": 8,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       }
     },
     {
@@ -2200,7 +2488,13 @@
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_channeling": 8,
-        "of_quickcast": 8
+        "of_quickcast": 8,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       }
     },
     {
@@ -2243,7 +2537,13 @@
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_channeling": 8,
-        "of_quickcast": 8
+        "of_quickcast": 8,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       }
     },
     {
@@ -2286,7 +2586,13 @@
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_channeling": 8,
-        "of_quickcast": 8
+        "of_quickcast": 8,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       }
     },
     {
@@ -2331,7 +2637,13 @@
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_channeling": 8,
-        "of_quickcast": 8
+        "of_quickcast": 8,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       }
     },
     {
@@ -2376,7 +2688,13 @@
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_channeling": 8,
-        "of_quickcast": 8
+        "of_quickcast": 8,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       }
     },
     {
@@ -2421,7 +2739,13 @@
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_channeling": 8,
-        "of_quickcast": 8
+        "of_quickcast": 8,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       },
       "_rebalance_v6": true
     },
@@ -2469,7 +2793,13 @@
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_channeling": 8,
-        "of_quickcast": 8
+        "of_quickcast": 8,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       },
       "_rebalance_v6": true
     },
@@ -2513,7 +2843,13 @@
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_channeling": 8,
-        "of_quickcast": 8
+        "of_quickcast": 8,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       },
       "_rebalance_v5": true
     },
@@ -2557,7 +2893,13 @@
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_channeling": 8,
-        "of_quickcast": 8
+        "of_quickcast": 8,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       }
     },
     {
@@ -2602,7 +2944,13 @@
         "of_haste": 20,
         "of_lifesteal": 15,
         "of_channeling": 8,
-        "of_quickcast": 8
+        "of_quickcast": 8,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       },
       "_rebalance_v5": true
     },
@@ -2623,7 +2971,13 @@
         "of_lifesteal": 15,
         "of_channeling": 8,
         "of_quickcast": 8,
-        "of_dex_mastery": 14
+        "of_dex_mastery": 14,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       },
       "base_type": "halberd",
       "damage_max": 68,
@@ -2662,7 +3016,8 @@
         "of_finesse": 18,
         "of_dex_mastery": 14,
         "of_crit": 15
-      }
+      },
+      "recolor_of": "halberd"
     },
     {
       "affix_pool": {
@@ -2682,7 +3037,13 @@
         "of_channeling": 8,
         "of_quickcast": 22,
         "of_int_mastery": 18,
-        "of_resonance": 14
+        "of_resonance": 14,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       },
       "base_type": "quarterstaff",
       "damage_max": 43,
@@ -2737,7 +3098,13 @@
         "of_lifesteal": 33,
         "of_channeling": 8,
         "of_quickcast": 8,
-        "of_dark_resist": 22
+        "of_dark_resist": 22,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       },
       "base_type": "broad_axe",
       "damage_max": 80,
@@ -2797,7 +3164,13 @@
         "of_quickcast": 8,
         "of_poison_resist": 22,
         "of_regen": 14,
-        "of_vitality": 15
+        "of_vitality": 15,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       },
       "base_type": "spear",
       "damage_max": 53,
@@ -2835,7 +3208,8 @@
         "of_poison_resist": 22,
         "of_regen": 14,
         "of_vitality": 15
-      }
+      },
+      "recolor_of": "steel_spear"
     },
     {
       "affix_pool": {
@@ -2854,7 +3228,13 @@
         "of_lifesteal": 15,
         "of_channeling": 8,
         "of_quickcast": 22,
-        "of_cold_resist": 22
+        "of_cold_resist": 22,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       },
       "base_type": "claymore",
       "damage_max": 100,
@@ -2893,7 +3273,8 @@
         "of_finesse": 15,
         "of_quickcast": 14,
         "of_cold_resist": 22
-      }
+      },
+      "recolor_of": "claymore"
     },
     {
       "affix_pool": {
@@ -2911,7 +3292,13 @@
         "of_haste": 38,
         "of_lifesteal": 27,
         "of_channeling": 8,
-        "of_quickcast": 23
+        "of_quickcast": 23,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       },
       "base_type": "hammer",
       "damage_max": 22,
@@ -2950,7 +3337,8 @@
         "of_haste": 18,
         "of_lifesteal": 12,
         "of_quickcast": 15
-      }
+      },
+      "recolor_of": "warhammer"
     },
     {
       "affix_pool": {
@@ -2969,7 +3357,13 @@
         "of_lifesteal": 15,
         "of_channeling": 8,
         "of_quickcast": 8,
-        "of_dex_mastery": 14
+        "of_dex_mastery": 14,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       },
       "base_type": "greatsword",
       "damage_max": 62,
@@ -3007,7 +3401,8 @@
         "of_finesse": 18,
         "of_dex_mastery": 14,
         "of_crit": 15
-      }
+      },
+      "recolor_of": "greatsword"
     },
     {
       "affix_pool": {
@@ -3026,7 +3421,13 @@
         "of_lifesteal": 15,
         "of_channeling": 23,
         "of_quickcast": 20,
-        "of_holy_resist": 18
+        "of_holy_resist": 18,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       },
       "base_type": "bullwhip",
       "damage_max": 22,
@@ -3084,7 +3485,13 @@
         "of_lifesteal": 15,
         "of_channeling": 8,
         "of_quickcast": 22,
-        "of_cold_resist": 22
+        "of_cold_resist": 22,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       },
       "base_type": "broad_axe",
       "damage_max": 194,
@@ -3124,7 +3531,8 @@
         "of_finesse": 15,
         "of_quickcast": 14,
         "of_cold_resist": 22
-      }
+      },
+      "recolor_of": "runed_broad_axe"
     },
     {
       "affix_pool": {
@@ -3145,7 +3553,13 @@
         "of_quickcast": 8,
         "of_poison_resist": 22,
         "of_regen": 14,
-        "of_vitality": 15
+        "of_vitality": 15,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       },
       "base_type": "bardiche",
       "damage_max": 187,
@@ -3186,7 +3600,8 @@
         "of_poison_resist": 22,
         "of_regen": 14,
         "of_vitality": 15
-      }
+      },
+      "recolor_of": "runed_bardiche"
     },
     {
       "affix_pool": {
@@ -3205,7 +3620,13 @@
         "of_lifesteal": 27,
         "of_channeling": 8,
         "of_quickcast": 8,
-        "of_fire_resist": 18
+        "of_fire_resist": 18,
+        "of_berserker": 8,
+        "of_hunter": 8,
+        "of_echoes": 8,
+        "of_sundering": 8,
+        "of_bloodletting": 8,
+        "of_berserker_rage": 8
       },
       "base_type": "giant_club",
       "damage_max": 112,
@@ -3247,7 +3668,119 @@
         "of_fire_resist": 18,
         "of_haste": 12
       },
-      "_rebalance_v5": true
+      "_rebalance_v5": true,
+      "recolor_of": "giant_club"
+    },
+    {
+      "id": "minotaur_champion_blade",
+      "name": "Blade of the Champion",
+      "slot": "weapon",
+      "rarity": "epic",
+      "tile": "spwpn_axes_arena.png",
+      "base_type": "executioner_axe",
+      "weapon_class": "2H",
+      "damage_min": 58,
+      "damage_max": 102,
+      "damage_type": "physical",
+      "speed": 0.85,
+      "item_tier": 4,
+      "flavor_tags": [
+        "brutal",
+        "lordly"
+      ],
+      "lore": "Wielded only by the champion. Loaned only to the next.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        12,
+        30
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "requires_innate_tag": "champion",
+      "implicit_affixes": [
+        "of_sharpness",
+        "of_berserker"
+      ],
+      "affix_pool": {
+        "of_might": 24,
+        "of_crit": 16,
+        "of_sharpness": 18
+      }
+    },
+    {
+      "id": "troll_crusher",
+      "name": "Crusher",
+      "slot": "weapon",
+      "rarity": "epic",
+      "tile": "spwpn_giant_club_unique.png",
+      "base_type": "giant_club",
+      "weapon_class": "2H",
+      "damage_min": 65,
+      "damage_max": 110,
+      "damage_type": "physical",
+      "speed": 1.0,
+      "item_tier": 4,
+      "flavor_tags": [
+        "brutal",
+        "ponderous"
+      ],
+      "lore": "It will outlast you, and the troll, and the troll's grandchildren.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        12,
+        30
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "requires_innate_tag": "primal",
+      "implicit_affixes": [
+        "of_might",
+        "of_hunter"
+      ],
+      "affix_pool": {
+        "of_might": 25,
+        "of_sharpness": 18
+      }
+    },
+    {
+      "id": "orc_raider_axe",
+      "name": "Raider's Hand-Axe",
+      "slot": "weapon",
+      "rarity": "rare",
+      "tile": "spwpn_orc_handaxe.png",
+      "base_type": "hand_axe",
+      "weapon_class": "1H",
+      "damage_min": 26,
+      "damage_max": 48,
+      "damage_type": "physical",
+      "speed": 0.7,
+      "item_tier": 2,
+      "flavor_tags": [
+        "rampaging"
+      ],
+      "lore": "Notched once for every farmstead. The notches go around twice.",
+      "drop_weights": [
+        0,
+        12,
+        30,
+        8,
+        0
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "requires_innate_tag": "raider",
+      "implicit_affixes": [
+        "of_might",
+        "of_plunder"
+      ],
+      "affix_pool": {
+        "of_might": 14,
+        "of_plunder": 10
+      }
     }
   ]
 }

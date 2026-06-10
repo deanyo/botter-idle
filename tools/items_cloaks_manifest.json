@@ -79,7 +79,9 @@
       ],
       "unique": true,
       "enchant_chance": 0.0,
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_holy_resist"
+      ],
       "affix_pool": {
         "of_might": 10,
         "of_finesse": 12,
@@ -226,7 +228,8 @@
         "of_resonance": 12,
         "of_lingering": 14,
         "of_haste": 10,
-        "of_regen": 8
+        "of_regen": 8,
+        "of_plunder": 8
       },
       "overlay": "cloak_leather"
     },
@@ -268,7 +271,8 @@
         "of_resonance": 12,
         "of_lingering": 14,
         "of_haste": 10,
-        "of_regen": 8
+        "of_regen": 8,
+        "of_plunder": 8
       },
       "overlay": "cloak_travelers"
     },
@@ -312,7 +316,8 @@
         "of_resonance": 12,
         "of_lingering": 14,
         "of_haste": 10,
-        "of_regen": 8
+        "of_regen": 8,
+        "of_plunder": 8
       },
       "overlay": "cloak_wool"
     },
@@ -356,7 +361,8 @@
         "of_resonance": 12,
         "of_lingering": 14,
         "of_haste": 10,
-        "of_regen": 8
+        "of_regen": 8,
+        "of_plunder": 8
       },
       "overlay": "cloak_hooded"
     },
@@ -401,7 +407,8 @@
         "of_resonance": 12,
         "of_lingering": 14,
         "of_haste": 10,
-        "of_regen": 8
+        "of_regen": 8,
+        "of_plunder": 8
       },
       "overlay": "cloak_woven"
     },
@@ -446,7 +453,8 @@
         "of_resonance": 12,
         "of_lingering": 14,
         "of_haste": 10,
-        "of_regen": 8
+        "of_regen": 8,
+        "of_plunder": 8
       },
       "overlay": "cloak_rangers"
     },
@@ -492,7 +500,8 @@
         "of_resonance": 12,
         "of_lingering": 14,
         "of_haste": 10,
-        "of_regen": 8
+        "of_regen": 8,
+        "of_plunder": 8
       },
       "overlay": "cloak_silken"
     },
@@ -537,7 +546,8 @@
         "of_resonance": 12,
         "of_lingering": 14,
         "of_haste": 10,
-        "of_regen": 8
+        "of_regen": 8,
+        "of_plunder": 8
       },
       "overlay": "cloak_warlord"
     },
@@ -561,7 +571,8 @@
         "of_regen": 8,
         "of_shadows": 30,
         "of_int_mastery": 14,
-        "of_channeling": 14
+        "of_channeling": 14,
+        "of_plunder": 8
       },
       "armor": 1,
       "base_type": "cloak",
@@ -623,7 +634,8 @@
         "of_haste": 28,
         "of_regen": 8,
         "of_storms": 32,
-        "of_velocity": 14
+        "of_velocity": 14,
+        "of_plunder": 8
       },
       "armor": 1,
       "base_type": "cloak",
@@ -642,7 +654,7 @@
       "enchant_chance": 0.05,
       "evasion": 6,
       "flavor_tags": [
-        "lightning"
+        "thunderous"
       ],
       "id": "travelers_cloak_stormtouched",
       "implicit_affixes": [],
@@ -681,7 +693,8 @@
         "of_regen": 8,
         "of_shadows": 30,
         "of_int_mastery": 14,
-        "of_channeling": 14
+        "of_channeling": 14,
+        "of_plunder": 8
       },
       "armor": 1,
       "base_type": "cloak",
@@ -742,7 +755,8 @@
         "of_lingering": 14,
         "of_haste": 10,
         "of_regen": 22,
-        "of_venom": 28
+        "of_venom": 28,
+        "of_plunder": 8
       },
       "armor": 1,
       "base_type": "cloak",
@@ -778,7 +792,8 @@
         "of_poison_resist": 22,
         "of_regen": 14,
         "of_vitality": 15
-      }
+      },
+      "recolor_of": "travelers_cloak"
     },
     {
       "affix_pool": {
@@ -800,7 +815,8 @@
         "of_regen": 8,
         "of_storms": 32,
         "of_velocity": 14,
-        "of_sharpness": 14
+        "of_sharpness": 14,
+        "of_plunder": 8
       },
       "armor": 1,
       "base_type": "cloak",
@@ -824,7 +840,7 @@
       "enchant_chance": 0.05,
       "evasion": 6,
       "flavor_tags": [
-        "lightning"
+        "thunderous"
       ],
       "id": "travelers_cloak_stormtouched_ironclad",
       "implicit_affixes": [],
@@ -841,7 +857,8 @@
         "of_vitality": 22,
         "of_might": 14,
         "of_sharpness": 14
-      }
+      },
+      "recolor_of": "travelers_cloak_stormtouched"
     },
     {
       "affix_pool": {
@@ -862,7 +879,8 @@
         "of_haste": 10,
         "of_regen": 8,
         "of_shadows": 26,
-        "of_lifesteal": 14
+        "of_lifesteal": 14,
+        "of_plunder": 8
       },
       "armor": 1,
       "base_type": "cloak",
@@ -919,7 +937,8 @@
         "of_haste": 10,
         "of_regen": 8,
         "of_shadows": 26,
-        "of_quickcast": 12
+        "of_quickcast": 12,
+        "of_plunder": 8
       },
       "armor": 1,
       "base_type": "cloak",
@@ -955,6 +974,141 @@
         "of_dark_resist": 18,
         "of_finesse": 14,
         "of_quickcast": 12
+      },
+      "recolor_of": "leather_cloak"
+    },
+    {
+      "id": "spriggan_fae_cloak",
+      "name": "Fey-Sap Cloak",
+      "slot": "cloak",
+      "rarity": "epic",
+      "tile": "fae_cloak.png",
+      "base_type": "cloak",
+      "armor": 4,
+      "evasion": 24,
+      "item_tier": 4,
+      "flavor_tags": [
+        "stealth",
+        "willpower"
+      ],
+      "lore": "It dries the wood of every forest it walks through.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        12,
+        30
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "requires_innate_tag": "forest",
+      "implicit_affixes": [
+        "of_haste",
+        "of_resonance"
+      ],
+      "affix_pool": {
+        "of_finesse": 16,
+        "of_wisdom": 12
+      }
+    },
+    {
+      "id": "tengu_wind_cloak",
+      "name": "Windborn Cloak",
+      "slot": "cloak",
+      "rarity": "rare",
+      "tile": "tengu_cloak.png",
+      "base_type": "cloak",
+      "armor": 1,
+      "evasion": 16,
+      "item_tier": 3,
+      "flavor_tags": [
+        "swiftness",
+        "flying"
+      ],
+      "lore": "Catches the air the wearer's wings would have, were they still there.",
+      "drop_weights": [
+        0,
+        0,
+        12,
+        30,
+        8
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "requires_innate_tag": "windborn",
+      "implicit_affixes": [
+        "of_haste"
+      ],
+      "affix_pool": {
+        "of_finesse": 14
+      }
+    },
+    {
+      "id": "vampire_nightshade_cloak",
+      "name": "Nightshade Cloak",
+      "slot": "cloak",
+      "rarity": "rare",
+      "tile": "cloak_nightshade.png",
+      "base_type": "cloak",
+      "armor": 2,
+      "evasion": 14,
+      "item_tier": 3,
+      "flavor_tags": [
+        "stealth",
+        "vampiric"
+      ],
+      "lore": "Folded shadow with a salt taste. Closes around the neck like a kiss.",
+      "drop_weights": [
+        0,
+        0,
+        12,
+        30,
+        8
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "requires_innate_tag": "vampiric",
+      "implicit_affixes": [
+        "of_lifesteal",
+        "of_haste"
+      ],
+      "affix_pool": {
+        "of_lifesteal": 14,
+        "of_finesse": 10
+      }
+    },
+    {
+      "id": "orc_beoghs_banner",
+      "name": "Beogh's Banner",
+      "slot": "cloak",
+      "rarity": "epic",
+      "tile": "orcish_banner.png",
+      "base_type": "cloak",
+      "armor": 4,
+      "evasion": 18,
+      "item_tier": 3,
+      "flavor_tags": [
+        "rage",
+        "lordly"
+      ],
+      "lore": "Pinned to the back of every orc warlord. Most are too proud to drop it.",
+      "drop_weights": [
+        0,
+        0,
+        12,
+        30,
+        8
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "requires_innate_tag": "orcish",
+      "implicit_affixes": [
+        "of_might",
+        "of_berserker"
+      ],
+      "affix_pool": {
+        "of_might": 18,
+        "of_berserker": 14
       }
     }
   ]

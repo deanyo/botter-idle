@@ -240,6 +240,11 @@ func step_movement(delta: float) -> void:
 			target_cell = Vector2i(int(next.x / C.TILE_SIZE), int(next.y / C.TILE_SIZE))
 	else:
 		position += dir.normalized() * step
+	# S5 race-anchor: stamp the last-move time on Bot. Stoneflesh's
+	# `petrify` tag reads it to grant DR while stationary; only Bot
+	# carries the field, so guard the cast.
+	if self is Bot:
+		(self as Bot)._last_move_at_msec = Time.get_ticks_msec()
 
 # Resolve a swing: avoidance gates ONCE, each typed component goes through
 # mitigation, returns (thorns/crystal) fire ONCE against the aggregated
@@ -371,6 +376,16 @@ func _apply_typed_damage(raw: int, damage_type: String, attacker: Actor, def_tag
 		# `harm`: damage taken AMPLIFIED. Negative contribution.
 		if "harm" in def_tags:
 			mit_sum += -0.25
+		# `petrify` (S5 Gargoyle Stoneflesh Plate, a10 5.13.B rescope):
+		# -25% phys damage taken while stationary for ≥0.4s. Re-rolling
+		# from a04 -50% would have given +100% EHP at 1953 base — broken.
+		# 0.4s window is just-after-step so the bot has to actually pause
+		# to claim the bonus (matches the visual "petrified" beat).
+		if "petrify" in def_tags and damage_type == "physical" and self is Bot:
+			var bot_p: Bot = self as Bot
+			var since_move: int = Time.get_ticks_msec() - bot_p._last_move_at_msec
+			if since_move >= 400:
+				mit_sum += 0.25
 	# Apply additive worn-tag/element mitigation FIRST, then route by
 	# type. Physical keeps the legacy flat-armor subtraction so early-
 	# game defenses still feel right (a 3-dmg rat vs 0-armor fresh-save
@@ -543,6 +558,17 @@ func attempt_attack(other: Actor, delta: float) -> int:
 		# (see Bot._refresh_stealthy_status).
 		if has_status("stealthy"):
 			ephemeral_sum += 0.25
+		# `first_blood` (S5 Tengu Sky-Striker Helm, a10 5.5.B rescope):
+		# +20% on the FIRST swing of a new encounter. "New encounter" =
+		# ≥3s since the last kill landed by this bot, so chained pack
+		# clears don't repeatedly fire it. Flat additive (vs guaranteed
+		# crit in a04) — guaranteed crit composed catastrophically with
+		# crit_multiplier_pct.
+		if "first_blood" in tags and self is Bot:
+			var bot_fb: Bot = self as Bot
+			var since_kill: int = Time.get_ticks_msec() - bot_fb._last_kill_at_msec
+			if since_kill >= 3000:
+				ephemeral_sum += 0.20
 	# `harm` (defender-worn): +25% damage dealt and +25% damage taken
 	# (the receive side is in take_damage). Applies regardless of weapon.
 	if "harm" in def_tags:
@@ -731,6 +757,25 @@ func attempt_attack(other: Actor, delta: float) -> int:
 		if bot_kk.berserker_peak_pct > 0.0:
 			bot_kk._berserker_stacks = mini(bot_kk._berserker_stacks + 1, 5)
 			bot_kk._berserker_expires_at = float(Time.get_ticks_msec()) / 1000.0 + 3.0
+		# S5 race-anchor: stamp last-kill time for first_blood encounter
+		# gating, and feed `feast` worn-tag (Troll Hide) the on-kill heal
+		# subject to a 50% MHP/s rolling-window cap so a 5-mob pack clear
+		# can't insta-fill (a10 5.6.A rescope).
+		bot_kk._last_kill_at_msec = Time.get_ticks_msec()
+		if "feast" in def_tags:
+			var heal: int = int(round(float(bot_kk.max_hp) * 0.02))
+			if heal > 0:
+				var now_ms: int = Time.get_ticks_msec()
+				if now_ms - bot_kk._feast_window_start_msec >= 1000:
+					bot_kk._feast_window_start_msec = now_ms
+					bot_kk._feast_window_heal = 0
+				var window_cap: int = int(round(float(bot_kk.max_hp) * 0.50))
+				var allowed: int = maxi(0, window_cap - bot_kk._feast_window_heal)
+				var applied: int = mini(heal, allowed)
+				if applied > 0:
+					bot_kk.hp = clampi(bot_kk.hp + applied, 0, bot_kk.max_hp)
+					bot_kk._feast_window_heal += applied
+					bot_kk._update_hp_bar()
 	# of_bloodletting (a02 P-9 rescoped to flat values): on-crit, apply
 	# a flat-DPS bleed for 4 seconds. Stack count caps at 4 per a02 spec;
 	# refreshes duration on re-crit. Uses the existing bleeding status

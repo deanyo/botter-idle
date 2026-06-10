@@ -1910,7 +1910,8 @@
         "of_haste": 18,
         "of_lifesteal": 12,
         "of_quickcast": 15
-      }
+      },
+      "recolor_of": "robe_of_folly"
     },
     {
       "affix_pool": {
@@ -2025,7 +2026,8 @@
         "of_shadows": 18,
         "of_sharpness": 18
       },
-      "_rebalance_v5": true
+      "_rebalance_v5": true,
+      "recolor_of": "robe_of_folly"
     },
     {
       "affix_pool": {
@@ -2132,7 +2134,8 @@
         "of_haste": 18,
         "of_lifesteal": 12,
         "of_quickcast": 15
-      }
+      },
+      "recolor_of": "banded_mail"
     },
     {
       "affix_pool": {
@@ -2294,7 +2297,8 @@
         "of_vitality": 22,
         "of_might": 14,
         "of_sharpness": 14
-      }
+      },
+      "recolor_of": "scout_robe"
     },
     {
       "affix_pool": {
@@ -2352,7 +2356,8 @@
         "of_vitality": 22,
         "of_might": 14,
         "of_sharpness": 14
-      }
+      },
+      "recolor_of": "robe_of_clouds"
     },
     {
       "affix_pool": {
@@ -2405,7 +2410,8 @@
         "of_finesse": 18,
         "of_dex_mastery": 14,
         "of_crit": 15
-      }
+      },
+      "recolor_of": "tattered_hide"
     },
     {
       "affix_pool": {
@@ -2458,6 +2464,143 @@
         "of_quickcast": 14,
         "of_fire_resist": 22,
         "of_channeling": 10
+      },
+      "recolor_of": "orcish_leather"
+    },
+    {
+      "id": "troll_hide_armor",
+      "name": "Troll-Hide Armor",
+      "slot": "armor",
+      "rarity": "rare",
+      "tile": "troll_leather_unique.png",
+      "base_type": "troll_leather",
+      "armor": 18,
+      "evasion": 4,
+      "item_tier": 3,
+      "flavor_tags": [
+        "feast",
+        "regen"
+      ],
+      "lore": "Sloughs and re-knits with each meal. Smells worse than its previous owner.",
+      "drop_weights": [
+        0,
+        0,
+        12,
+        30,
+        8
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "requires_innate_tag": "regen",
+      "implicit_affixes": [
+        "of_vitality",
+        "of_regen"
+      ],
+      "affix_pool": {
+        "of_might": 12,
+        "of_the_bear": 10
+      }
+    },
+    {
+      "id": "mummy_tomb_wrappings",
+      "name": "Sigil-Wrappings of the Tomb",
+      "slot": "armor",
+      "rarity": "epic",
+      "tile": "tomb_wrappings.png",
+      "base_type": "robe",
+      "armor": 6,
+      "evasion": 18,
+      "item_tier": 3,
+      "flavor_tags": [
+        "dark",
+        "willpower"
+      ],
+      "lore": "Three sigils per wrap. The sigils outlast the linen.",
+      "drop_weights": [
+        0,
+        0,
+        12,
+        30,
+        8
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "requires_innate_tag": "ancient",
+      "implicit_affixes": [
+        "of_dark_resist",
+        "of_int_mastery"
+      ],
+      "affix_pool": {
+        "of_wisdom": 16,
+        "of_channeling": 12
+      }
+    },
+    {
+      "id": "gargoyle_stoneflesh_plate",
+      "name": "Stoneflesh Plate",
+      "slot": "armor",
+      "rarity": "epic",
+      "tile": "stoneflesh_plate.png",
+      "base_type": "plate",
+      "armor": 30,
+      "evasion": 0,
+      "item_tier": 4,
+      "flavor_tags": [
+        "petrify",
+        "fortified"
+      ],
+      "lore": "Becomes the wearer's skin where it touches it. Take it off carefully.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        12,
+        30
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "requires_innate_tag": "stone",
+      "implicit_affixes": [
+        "of_the_bear",
+        "of_vitality"
+      ],
+      "affix_pool": {
+        "of_the_bear": 18,
+        "of_might": 12
+      }
+    },
+    {
+      "id": "kobold_scavenger_coat",
+      "name": "Scavenger's Coat",
+      "slot": "armor",
+      "rarity": "rare",
+      "tile": "scavenger_coat.png",
+      "base_type": "leather",
+      "armor": 8,
+      "evasion": 8,
+      "item_tier": 2,
+      "flavor_tags": [
+        "fortune",
+        "regen"
+      ],
+      "lore": "Patched with whatever the previous owner had no further use for.",
+      "drop_weights": [
+        0,
+        12,
+        30,
+        8,
+        0
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "requires_innate_tag": "scavenger",
+      "implicit_affixes": [
+        "of_plunder",
+        "of_regen"
+      ],
+      "affix_pool": {
+        "of_plunder": 12,
+        "of_finesse": 10
       }
     }
   ]

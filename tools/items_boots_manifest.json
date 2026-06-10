@@ -113,7 +113,8 @@
         "of_the_bear": 16,
         "of_the_cat": 26,
         "of_haste": 26,
-        "of_regen": 10
+        "of_regen": 10,
+        "of_berserker": 8
       }
     },
     {
@@ -148,7 +149,8 @@
         "of_the_bear": 16,
         "of_the_cat": 26,
         "of_haste": 26,
-        "of_regen": 10
+        "of_regen": 10,
+        "of_berserker": 8
       }
     },
     {
@@ -181,7 +183,8 @@
         "of_the_bear": 16,
         "of_the_cat": 26,
         "of_haste": 26,
-        "of_regen": 10
+        "of_regen": 10,
+        "of_berserker": 8
       }
     },
     {
@@ -214,7 +217,8 @@
         "of_the_bear": 16,
         "of_the_cat": 26,
         "of_haste": 26,
-        "of_regen": 10
+        "of_regen": 10,
+        "of_berserker": 8
       }
     },
     {
@@ -250,7 +254,8 @@
         "of_the_bear": 16,
         "of_the_cat": 26,
         "of_haste": 26,
-        "of_regen": 10
+        "of_regen": 10,
+        "of_berserker": 8
       },
       "overlay": "boots_scouts"
     },
@@ -286,7 +291,8 @@
         "of_the_bear": 16,
         "of_the_cat": 26,
         "of_haste": 26,
-        "of_regen": 10
+        "of_regen": 10,
+        "of_berserker": 8
       },
       "default_tint": {
         "hue": 200,
@@ -329,7 +335,8 @@
         "of_the_bear": 16,
         "of_the_cat": 26,
         "of_haste": 26,
-        "of_regen": 10
+        "of_regen": 10,
+        "of_berserker": 8
       },
       "overlay": "boots_ranger"
     },
@@ -366,7 +373,8 @@
         "of_the_bear": 16,
         "of_the_cat": 26,
         "of_haste": 26,
-        "of_regen": 10
+        "of_regen": 10,
+        "of_berserker": 8
       },
       "default_tint": {
         "hue": 220,
@@ -408,7 +416,8 @@
         "of_the_bear": 16,
         "of_the_cat": 26,
         "of_haste": 26,
-        "of_regen": 10
+        "of_regen": 10,
+        "of_berserker": 8
       }
     },
     {
@@ -444,7 +453,8 @@
         "of_the_bear": 16,
         "of_the_cat": 26,
         "of_haste": 26,
-        "of_regen": 10
+        "of_regen": 10,
+        "of_berserker": 8
       },
       "default_tint": {
         "hue": 10,
@@ -487,7 +497,8 @@
         "of_the_bear": 16,
         "of_the_cat": 26,
         "of_haste": 26,
-        "of_regen": 10
+        "of_regen": 10,
+        "of_berserker": 8
       },
       "default_tint": {
         "hue": 220,
@@ -530,7 +541,8 @@
         "of_the_bear": 16,
         "of_the_cat": 26,
         "of_haste": 26,
-        "of_regen": 10
+        "of_regen": 10,
+        "of_berserker": 8
       },
       "overlay": "boots_stormrunner"
     },
@@ -567,7 +579,8 @@
         "of_the_bear": 16,
         "of_the_cat": 26,
         "of_haste": 26,
-        "of_regen": 10
+        "of_regen": 10,
+        "of_berserker": 8
       },
       "default_tint": {
         "hue": 30,
@@ -609,7 +622,8 @@
         "of_the_bear": 16,
         "of_the_cat": 26,
         "of_haste": 26,
-        "of_regen": 10
+        "of_regen": 10,
+        "of_berserker": 8
       },
       "overlay": "boots_windwalker"
     },
@@ -647,7 +661,8 @@
         "of_the_bear": 16,
         "of_the_cat": 26,
         "of_haste": 26,
-        "of_regen": 10
+        "of_regen": 10,
+        "of_berserker": 8
       },
       "default_tint": {
         "hue": 50,
@@ -680,7 +695,9 @@
       ],
       "unique": true,
       "enchant_chance": 0.0,
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_crit"
+      ],
       "affix_pool": {
         "of_finesse": 22,
         "of_might": 12,
@@ -782,7 +799,8 @@
         "of_haste": 26,
         "of_regen": 22,
         "of_devotion": 30,
-        "of_holy_resist": 22
+        "of_holy_resist": 22,
+        "of_berserker": 8
       },
       "armor": 3,
       "base_type": "sandals",
@@ -818,7 +836,8 @@
         "of_holy_resist": 22,
         "of_might": 18,
         "of_regen": 12
-      }
+      },
+      "recolor_of": "worn_sandals"
     },
     {
       "affix_pool": {
@@ -832,7 +851,8 @@
         "of_regen": 10,
         "of_shadows": 32,
         "of_dark_resist": 22,
-        "of_lifesteal": 18
+        "of_lifesteal": 18,
+        "of_berserker": 8
       },
       "armor": 3,
       "base_type": "leather_boots",
@@ -880,7 +900,8 @@
         "of_haste": 26,
         "of_regen": 10,
         "of_holy_resist": 18,
-        "of_devotion": 14
+        "of_devotion": 14,
+        "of_berserker": 8
       },
       "armor": 5,
       "base_type": "greaves",
@@ -935,7 +956,8 @@
         "of_regen": 10,
         "of_int_mastery": 18,
         "of_quickcast": 14,
-        "of_resonance": 14
+        "of_resonance": 14,
+        "of_berserker": 8
       },
       "armor": 5,
       "base_type": "leather_boots",
@@ -991,7 +1013,8 @@
         "of_storms": 18,
         "of_venom": 18,
         "of_shadows": 18,
-        "of_sharpness": 18
+        "of_sharpness": 18,
+        "of_berserker": 8
       },
       "armor": 3,
       "base_type": "sandals",
@@ -1031,7 +1054,8 @@
         "of_shadows": 18,
         "of_sharpness": 18
       },
-      "_rebalance_v5": true
+      "_rebalance_v5": true,
+      "recolor_of": "worn_sandals"
     },
     {
       "affix_pool": {
@@ -1043,7 +1067,8 @@
         "of_the_cat": 26,
         "of_haste": 26,
         "of_regen": 10,
-        "of_sharpness": 14
+        "of_sharpness": 14,
+        "of_berserker": 8
       },
       "armor": 11,
       "base_type": "treads",
@@ -1085,6 +1110,39 @@
         "of_vitality": 22,
         "of_might": 14,
         "of_sharpness": 14
+      },
+      "recolor_of": "earthshaker_treads"
+    },
+    {
+      "id": "spriggan_leaf_boots",
+      "name": "Leaf-Light Slippers",
+      "slot": "boots",
+      "rarity": "rare",
+      "tile": "wormwood_boots.png",
+      "base_type": "sandals",
+      "armor": 2,
+      "evasion": 12,
+      "item_tier": 3,
+      "flavor_tags": [
+        "swiftness",
+        "footwork"
+      ],
+      "lore": "Stitched from dryad-blessed leaves. The wearer steps on tomorrow's grass.",
+      "drop_weights": [
+        0,
+        0,
+        12,
+        30,
+        8
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "requires_innate_tag": "fae",
+      "implicit_affixes": [
+        "of_haste"
+      ],
+      "affix_pool": {
+        "of_finesse": 14
       }
     }
   ]

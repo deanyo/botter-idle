@@ -35,7 +35,7 @@
       "aggro_flat": 0,
       "xp_pct": 0,
       "loot_pct": 0,
-      "innate_tags": [],
+      "innate_tags": ["forest", "fae"],
       "str_flat": -2,
       "dex_flat": 5,
       "int_flat": 1
@@ -54,7 +54,7 @@
       "aggro_flat": 1,
       "xp_pct": 0,
       "loot_pct": 0,
-      "innate_tags": [],
+      "innate_tags": ["bovine", "champion"],
       "str_flat": 5,
       "dex_flat": 0,
       "int_flat": -2
@@ -73,7 +73,7 @@
       "aggro_flat": -1,
       "xp_pct": 0,
       "loot_pct": 0,
-      "innate_tags": [],
+      "innate_tags": ["serpentine", "coldblooded"],
       "slot_conversions": {
         "boots": "ring"
       },
@@ -95,7 +95,7 @@
       "aggro_flat": 1,
       "xp_pct": 0,
       "loot_pct": 0,
-      "innate_tags": [],
+      "innate_tags": ["avian", "windborn"],
       "str_flat": 0,
       "dex_flat": 4,
       "int_flat": 0
@@ -114,7 +114,7 @@
       "aggro_flat": 0,
       "xp_pct": -10,
       "loot_pct": 0,
-      "innate_tags": [],
+      "innate_tags": ["regen", "primal"],
       "str_flat": 5,
       "dex_flat": -2,
       "int_flat": -3
@@ -133,7 +133,7 @@
       "aggro_flat": 0,
       "xp_pct": 0,
       "loot_pct": 20,
-      "innate_tags": [],
+      "innate_tags": ["aquatic", "many-armed"],
       "slot_conversions": {
         "armor": "ring",
         "boots": "ring",
@@ -178,9 +178,7 @@
       "aggro_flat": 0,
       "xp_pct": 0,
       "loot_pct": 0,
-      "innate_tags": [
-        "vampiric"
-      ],
+      "innate_tags": ["vampiric", "undead"],
       "str_flat": 1,
       "dex_flat": 2,
       "int_flat": 1
@@ -199,7 +197,7 @@
       "aggro_flat": 0,
       "xp_pct": 20,
       "loot_pct": 0,
-      "innate_tags": [],
+      "innate_tags": ["undead", "ancient"],
       "str_flat": -2,
       "dex_flat": -2,
       "int_flat": 6
@@ -218,7 +216,7 @@
       "aggro_flat": 0,
       "xp_pct": 0,
       "loot_pct": 10,
-      "innate_tags": [],
+      "innate_tags": ["orcish", "raider"],
       "str_flat": 4,
       "dex_flat": 0,
       "int_flat": 0
@@ -237,7 +235,7 @@
       "aggro_flat": 1,
       "xp_pct": 10,
       "loot_pct": 0,
-      "innate_tags": [],
+      "innate_tags": ["elf", "scholar"],
       "str_flat": -2,
       "dex_flat": 1,
       "int_flat": 5
@@ -256,7 +254,7 @@
       "aggro_flat": 0,
       "xp_pct": 0,
       "loot_pct": 0,
-      "innate_tags": [],
+      "innate_tags": ["construct", "stone"],
       "str_flat": 3,
       "dex_flat": -2,
       "int_flat": 1
@@ -275,7 +273,7 @@
       "aggro_flat": -1,
       "xp_pct": 0,
       "loot_pct": 15,
-      "innate_tags": [],
+      "innate_tags": ["small", "lucky"],
       "str_flat": -2,
       "dex_flat": 5,
       "int_flat": 1
@@ -294,7 +292,7 @@
       "aggro_flat": 0,
       "xp_pct": 0,
       "loot_pct": 20,
-      "innate_tags": [],
+      "innate_tags": ["small", "scavenger"],
       "str_flat": -2,
       "dex_flat": 4,
       "int_flat": 0

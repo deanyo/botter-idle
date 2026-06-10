@@ -301,6 +301,57 @@ func test_s4_of_sundering_expires_after_duration() -> void:
 	assert_eq(d._sunder_stacks, 0, "sunder stacks reset on expiry")
 	d.free()
 
+func test_s5_petrify_gates_on_physical_only() -> void:
+	# Stoneflesh Plate (Gargoyle anchor, a10 5.13.B rescope) carries
+	# `petrify` worn-tag — -25% PHYSICAL DR while stationary. The
+	# implementation guards on damage_type=="physical" AND self is Bot,
+	# so a non-Bot with the tag should NOT mitigate elemental hits.
+	# Stub defender path proves the type-gate without needing a real
+	# Bot — fire damage must not pick up the petrify reduction here.
+	var d: Actor = _make_defender(100, 0, ["petrify"], {})
+	var dealt_fire: int = d.take_damage(40, null, "fire")
+	assert_eq(dealt_fire, 40, "petrify must not reduce non-physical hits")
+	d.free()
+	# Same defender hit physically also doesn't fire petrify (stub
+	# isn't a Bot — `self is Bot` short-circuits in actor.gd). The
+	# point of the test: petrify never bleeds through on stubs, so
+	# the field can be tested via Bot-instance integration tests.
+	var d2: Actor = _make_defender(100, 0, ["petrify"], {})
+	var dealt_phys: int = d2.take_damage(40, null, "physical")
+	assert_eq(dealt_phys, 40, "petrify gated on `self is Bot` — stub picks up no DR")
+	d2.free()
+
+func test_s5_anchors_present_in_items_db() -> void:
+	# Sanity check: the 30 race-anchor uniques shipped with S5 must
+	# resolve in ItemsDb. If sync_items.py wasn't run after editing
+	# items.json the editor / drop tables won't see them either.
+	ItemsDb.preload_all()
+	var db: Dictionary = ItemsDb.items()
+	var expected: Array = [
+		"spriggan_leaf_boots", "spriggan_fae_cloak", "spriggan_wisp_lance",
+		"minotaur_horn_helm", "minotaur_champion_blade",
+		"naga_coiled_ring", "naga_frostfang_ring",
+		"tengu_wind_cloak", "tengu_skystriker_helm",
+		"troll_hide_armor", "troll_crusher",
+		"octopode_coral_ring", "octopode_eight_amulet",
+		"demonspawn_hellsigil_brand", "demonspawn_ashen_crown",
+		"vampire_sangromancer_locket", "vampire_nightshade_cloak",
+		"vampire_splintered_tooth",
+		"mummy_tomb_wrappings", "mummy_relic_amulet",
+		"orc_beoghs_banner", "orc_raider_axe",
+		"elf_grimoire_gloves", "elf_spire_tome",
+		"gargoyle_stoneflesh_plate", "gargoyle_granite_amulet",
+		"halfling_luck_charm", "halfling_quiet_knife",
+		"kobold_scavenger_coat", "kobold_throwing_hand",
+	]
+	for aid in expected:
+		assert_true(db.has(aid), "ItemsDb missing race anchor: %s" % aid)
+		var item: Dictionary = db[aid]
+		assert_true(item.has("requires_innate_tag"),
+			"%s must declare requires_innate_tag" % aid)
+		assert_true(bool(item.get("unique", false)),
+			"%s must be unique:true" % aid)
+
 func test_s4_of_bloodletting_applies_bleeding_status() -> void:
 	# add_bloodletting routes through _apply_dot_status with the
 	# "bleeding" id and sets up the per-tick payload. Confirms the

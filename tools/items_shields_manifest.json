@@ -964,7 +964,9 @@
       ],
       "unique": true,
       "enchant_chance": 0.0,
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_resonance"
+      ],
       "affix_pool": {
         "of_might": 16,
         "of_finesse": 8,
@@ -1219,7 +1221,9 @@
       ],
       "unique": true,
       "enchant_chance": 0.0,
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_fire_resist"
+      ],
       "affix_pool": {
         "of_might": 16,
         "of_finesse": 8,
@@ -1455,7 +1459,8 @@
         "of_vitality": 22,
         "of_might": 14,
         "of_sharpness": 14
-      }
+      },
+      "recolor_of": "tower_shield"
     },
     {
       "affix_pool": {
@@ -1513,7 +1518,8 @@
         "of_the_bear": 22,
         "of_dark_resist": 18,
         "of_vitality": 18
-      }
+      },
+      "recolor_of": "phantom_aegis"
     },
     {
       "affix_pool": {
@@ -1624,7 +1630,8 @@
         "of_cold_resist": 22,
         "of_quickcast": 18,
         "of_crit": 15
-      }
+      },
+      "recolor_of": "dwarven_buckler_2"
     },
     {
       "affix_pool": {
@@ -1742,7 +1749,8 @@
         "of_shadows": 18,
         "of_sharpness": 18
       },
-      "_rebalance_v5": true
+      "_rebalance_v5": true,
+      "recolor_of": "gong_shield"
     },
     {
       "affix_pool": {
@@ -1802,7 +1810,8 @@
         "of_shadows": 18,
         "of_sharpness": 18
       },
-      "_rebalance_v5": true
+      "_rebalance_v5": true,
+      "recolor_of": "large_kite"
     },
     {
       "affix_pool": {
@@ -1866,7 +1875,8 @@
         "of_shadows": 18,
         "of_sharpness": 18
       },
-      "_rebalance_v5": true
+      "_rebalance_v5": true,
+      "recolor_of": "dwarven_buckler_2"
     },
     {
       "affix_pool": {
@@ -1919,7 +1929,8 @@
         "of_holy_resist": 22,
         "of_might": 18,
         "of_regen": 12
-      }
+      },
+      "recolor_of": "bullseye"
     },
     {
       "affix_pool": {
@@ -1975,7 +1986,8 @@
         "of_vitality": 22,
         "of_might": 14,
         "of_sharpness": 14
-      }
+      },
+      "recolor_of": "dwarven_buckler_2"
     }
   ]
 }

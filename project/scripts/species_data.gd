@@ -128,3 +128,17 @@ static func ring_slot_ids(id: String) -> Array:
 	for i in range(1, extra_ring_slots(id) + 1):
 		out.append("ring" + str(i + 1))
 	return out
+
+# True iff the named species carries `tag` in its innate_tags array.
+# Used by S5 race-anchor gating: items with `requires_innate_tag` only
+# fire their implicit_affixes when the wearer's species matches.
+# Empty/unknown id → false (humans return false for every tag — the
+# baseline-by-design choice from a04 §5.1).
+static func has_innate_tag(species_id: String, tag: String) -> bool:
+	if species_id == "" or tag == "":
+		return false
+	var d: Dictionary = get_def(species_id)
+	for t in d.get("innate_tags", []):
+		if String(t) == tag:
+			return true
+	return false

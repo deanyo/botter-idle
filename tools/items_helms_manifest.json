@@ -132,7 +132,9 @@
         "of_quickcast": 12,
         "of_resonance": 12,
         "of_channeling": 12,
-        "of_crit": 12
+        "of_crit": 12,
+        "of_sage": 8,
+        "of_scribe": 8
       }
     },
     {
@@ -170,7 +172,9 @@
         "of_quickcast": 12,
         "of_resonance": 12,
         "of_channeling": 12,
-        "of_crit": 12
+        "of_crit": 12,
+        "of_sage": 8,
+        "of_scribe": 8
       }
     },
     {
@@ -208,7 +212,9 @@
         "of_quickcast": 12,
         "of_resonance": 12,
         "of_channeling": 12,
-        "of_crit": 12
+        "of_crit": 12,
+        "of_sage": 8,
+        "of_scribe": 8
       }
     },
     {
@@ -246,7 +252,9 @@
         "of_quickcast": 12,
         "of_resonance": 12,
         "of_channeling": 12,
-        "of_crit": 12
+        "of_crit": 12,
+        "of_sage": 8,
+        "of_scribe": 8
       },
       "overlay": "helm_padded_coif"
     },
@@ -287,7 +295,9 @@
         "of_quickcast": 12,
         "of_resonance": 12,
         "of_channeling": 12,
-        "of_crit": 12
+        "of_crit": 12,
+        "of_sage": 8,
+        "of_scribe": 8
       }
     },
     {
@@ -327,7 +337,9 @@
         "of_quickcast": 12,
         "of_resonance": 12,
         "of_channeling": 12,
-        "of_crit": 12
+        "of_crit": 12,
+        "of_sage": 8,
+        "of_scribe": 8
       }
     },
     {
@@ -365,7 +377,9 @@
         "of_quickcast": 12,
         "of_resonance": 12,
         "of_channeling": 12,
-        "of_crit": 12
+        "of_crit": 12,
+        "of_sage": 8,
+        "of_scribe": 8
       }
     },
     {
@@ -405,7 +419,9 @@
         "of_quickcast": 12,
         "of_resonance": 12,
         "of_channeling": 12,
-        "of_crit": 12
+        "of_crit": 12,
+        "of_sage": 8,
+        "of_scribe": 8
       }
     },
     {
@@ -446,7 +462,9 @@
         "of_quickcast": 12,
         "of_resonance": 12,
         "of_channeling": 12,
-        "of_crit": 12
+        "of_crit": 12,
+        "of_sage": 8,
+        "of_scribe": 8
       }
     },
     {
@@ -486,7 +504,9 @@
         "of_quickcast": 12,
         "of_resonance": 12,
         "of_channeling": 12,
-        "of_crit": 12
+        "of_crit": 12,
+        "of_sage": 8,
+        "of_scribe": 8
       }
     },
     {
@@ -526,7 +546,9 @@
         "of_quickcast": 12,
         "of_resonance": 12,
         "of_channeling": 12,
-        "of_crit": 12
+        "of_crit": 12,
+        "of_sage": 8,
+        "of_scribe": 8
       },
       "default_tint": {
         "hue": 220,
@@ -572,7 +594,9 @@
         "of_quickcast": 12,
         "of_resonance": 12,
         "of_channeling": 12,
-        "of_crit": 12
+        "of_crit": 12,
+        "of_sage": 8,
+        "of_scribe": 8
       },
       "default_tint": {
         "hue": 200,
@@ -619,7 +643,9 @@
         "of_quickcast": 12,
         "of_resonance": 12,
         "of_channeling": 12,
-        "of_crit": 12
+        "of_crit": 12,
+        "of_sage": 8,
+        "of_scribe": 8
       }
     },
     {
@@ -660,7 +686,9 @@
         "of_quickcast": 12,
         "of_resonance": 12,
         "of_channeling": 12,
-        "of_crit": 12
+        "of_crit": 12,
+        "of_sage": 8,
+        "of_scribe": 8
       }
     },
     {
@@ -701,7 +729,9 @@
         "of_quickcast": 12,
         "of_resonance": 12,
         "of_channeling": 12,
-        "of_crit": 12
+        "of_crit": 12,
+        "of_sage": 8,
+        "of_scribe": 8
       }
     },
     {
@@ -742,7 +772,9 @@
         "of_quickcast": 12,
         "of_resonance": 12,
         "of_channeling": 12,
-        "of_crit": 12
+        "of_crit": 12,
+        "of_sage": 8,
+        "of_scribe": 8
       }
     },
     {
@@ -783,7 +815,9 @@
         "of_quickcast": 12,
         "of_resonance": 12,
         "of_channeling": 12,
-        "of_crit": 12
+        "of_crit": 12,
+        "of_sage": 8,
+        "of_scribe": 8
       }
     },
     {
@@ -824,7 +858,9 @@
         "of_quickcast": 12,
         "of_resonance": 12,
         "of_channeling": 12,
-        "of_crit": 12
+        "of_crit": 12,
+        "of_sage": 8,
+        "of_scribe": 8
       },
       "default_tint": {
         "hue": 50,
@@ -870,7 +906,9 @@
         "of_quickcast": 12,
         "of_resonance": 12,
         "of_channeling": 12,
-        "of_crit": 12
+        "of_crit": 12,
+        "of_sage": 8,
+        "of_scribe": 8
       }
     },
     {
@@ -911,7 +949,9 @@
         "of_quickcast": 12,
         "of_resonance": 12,
         "of_channeling": 12,
-        "of_crit": 12
+        "of_crit": 12,
+        "of_sage": 8,
+        "of_scribe": 8
       }
     },
     {
@@ -952,7 +992,9 @@
         "of_quickcast": 12,
         "of_resonance": 12,
         "of_channeling": 12,
-        "of_crit": 12
+        "of_crit": 12,
+        "of_sage": 8,
+        "of_scribe": 8
       }
     },
     {
@@ -1207,7 +1249,9 @@
         "of_quickcast": 12,
         "of_resonance": 12,
         "of_channeling": 12,
-        "of_crit": 12
+        "of_crit": 12,
+        "of_sage": 8,
+        "of_scribe": 8
       },
       "overlay": "helm_jesters_cap"
     },
@@ -1249,7 +1293,9 @@
         "of_quickcast": 12,
         "of_resonance": 12,
         "of_channeling": 12,
-        "of_crit": 12
+        "of_crit": 12,
+        "of_sage": 8,
+        "of_scribe": 8
       }
     },
     {
@@ -1290,7 +1336,9 @@
         "of_quickcast": 12,
         "of_resonance": 12,
         "of_channeling": 12,
-        "of_crit": 12
+        "of_crit": 12,
+        "of_sage": 8,
+        "of_scribe": 8
       },
       "default_tint": {
         "hue": 180,
@@ -1336,7 +1384,9 @@
         "of_quickcast": 12,
         "of_resonance": 12,
         "of_channeling": 12,
-        "of_crit": 12
+        "of_crit": 12,
+        "of_sage": 8,
+        "of_scribe": 8
       },
       "default_tint": {
         "hue": 280,
@@ -1384,7 +1434,9 @@
         "of_quickcast": 12,
         "of_resonance": 12,
         "of_channeling": 12,
-        "of_crit": 12
+        "of_crit": 12,
+        "of_sage": 8,
+        "of_scribe": 8
       },
       "default_tint": {
         "hue": 0,
@@ -1431,7 +1483,9 @@
         "of_quickcast": 12,
         "of_resonance": 12,
         "of_channeling": 12,
-        "of_crit": 12
+        "of_crit": 12,
+        "of_sage": 8,
+        "of_scribe": 8
       }
     },
     {
@@ -1491,7 +1545,9 @@
         "of_channeling": 12,
         "of_crit": 12,
         "of_shadows": 26,
-        "of_dark_resist": 18
+        "of_dark_resist": 18,
+        "of_sage": 8,
+        "of_scribe": 8
       },
       "armor": 10,
       "base_type": "hood",
@@ -1528,7 +1584,8 @@
         "of_dark_resist": 18,
         "of_finesse": 14,
         "of_quickcast": 12
-      }
+      },
+      "recolor_of": "green_mask"
     },
     {
       "affix_pool": {
@@ -1547,7 +1604,9 @@
         "of_crit": 12,
         "of_shadows": 26,
         "of_lifesteal": 14,
-        "of_dark_resist": 14
+        "of_dark_resist": 14,
+        "of_sage": 8,
+        "of_scribe": 8
       },
       "armor": 21,
       "base_type": "crown",
@@ -1600,7 +1659,9 @@
         "of_quickcast": 26,
         "of_resonance": 26,
         "of_channeling": 12,
-        "of_crit": 12
+        "of_crit": 12,
+        "of_sage": 8,
+        "of_scribe": 8
       },
       "armor": 15,
       "base_type": "great_helm",
@@ -1712,7 +1773,9 @@
         "of_resonance": 12,
         "of_channeling": 12,
         "of_crit": 12,
-        "of_sharpness": 14
+        "of_sharpness": 14,
+        "of_sage": 8,
+        "of_scribe": 8
       },
       "armor": 7,
       "base_type": "helmet",
@@ -1752,7 +1815,8 @@
         "of_vitality": 22,
         "of_might": 14,
         "of_sharpness": 14
-      }
+      },
+      "recolor_of": "etched_helm"
     },
     {
       "affix_pool": {
@@ -1829,7 +1893,9 @@
         "of_channeling": 12,
         "of_crit": 12,
         "of_shadows": 22,
-        "of_lifesteal": 12
+        "of_lifesteal": 12,
+        "of_sage": 8,
+        "of_scribe": 8
       },
       "armor": 10,
       "base_type": "wizard_hat",
@@ -1930,7 +1996,8 @@
         "of_the_bear": 22,
         "of_dark_resist": 18,
         "of_vitality": 18
-      }
+      },
+      "recolor_of": "crown_of_dyrovepreva"
     },
     {
       "affix_pool": {
@@ -1949,7 +2016,9 @@
         "of_crit": 12,
         "of_shadows": 26,
         "of_lifesteal": 14,
-        "of_dark_resist": 14
+        "of_dark_resist": 14,
+        "of_sage": 8,
+        "of_scribe": 8
       },
       "armor": 10,
       "base_type": "hood",
@@ -1986,6 +2055,107 @@
         "of_finesse": 14,
         "of_lifesteal": 14,
         "of_dark_resist": 14
+      }
+    },
+    {
+      "id": "minotaur_horn_helm",
+      "name": "Horn-Bound Helm",
+      "slot": "helm",
+      "rarity": "epic",
+      "tile": "horned_helm.png",
+      "base_type": "great_helm",
+      "armor": 14,
+      "evasion": 4,
+      "item_tier": 3,
+      "flavor_tags": [
+        "lordly",
+        "rampaging"
+      ],
+      "lore": "The skull beneath remembers older wars. Charging is a virtue.",
+      "drop_weights": [
+        0,
+        0,
+        12,
+        30,
+        8
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "requires_innate_tag": "bovine",
+      "implicit_affixes": [
+        "of_might",
+        "of_hunter"
+      ],
+      "affix_pool": {
+        "of_might": 20,
+        "of_vitality": 14
+      }
+    },
+    {
+      "id": "tengu_skystriker_helm",
+      "name": "Sky-Striker Beak Helm",
+      "slot": "helm",
+      "rarity": "epic",
+      "tile": "tengu_helm.png",
+      "base_type": "helmet",
+      "armor": 9,
+      "evasion": 11,
+      "item_tier": 4,
+      "flavor_tags": [
+        "first_blood",
+        "precision"
+      ],
+      "lore": "The first stroke is the one that breaks the sky.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        12,
+        30
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "requires_innate_tag": "avian",
+      "implicit_affixes": [
+        "of_crit"
+      ],
+      "affix_pool": {
+        "of_finesse": 18,
+        "of_crit": 12
+      }
+    },
+    {
+      "id": "demonspawn_ashen_crown",
+      "name": "Ashen Crown",
+      "slot": "helm",
+      "rarity": "epic",
+      "tile": "ashen_crown.png",
+      "base_type": "crown",
+      "armor": 8,
+      "evasion": 8,
+      "item_tier": 4,
+      "flavor_tags": [
+        "fire",
+        "harm"
+      ],
+      "lore": "Worn by every demonspawn who outlived their patron.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        12,
+        30
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "requires_innate_tag": "demon",
+      "implicit_affixes": [
+        "of_pyromancer",
+        "of_resonance"
+      ],
+      "affix_pool": {
+        "of_pyromancer": 18,
+        "of_int_mastery": 14
       }
     }
   ]

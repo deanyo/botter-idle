@@ -87,6 +87,17 @@ var ephemeral_spell_dmg_pct: float = 0.0
 # floor_started so the next floor restores the budget. Without the
 # mutex, stacking 3+ revive sources turns boss fights into auto-clear.
 var revive_used_this_floor: bool = false
+# S5 race-anchor state. `_last_move_at_msec` tracks the last frame the
+# bot took a step — `petrify` flavor reads it to grant -25% phys DR
+# while stationary (Gargoyle Stoneflesh Plate). `_last_kill_at_msec`
+# anchors the new-encounter window so `first_blood` (Tengu Sky-Striker
+# Helm) only fires once per pause-between-fights. `_feast_window_*`
+# enforce the 50% MHP/s heal cap on the `feast` worn-tag (Troll Hide
+# Armor) — without it, a 5-mob pack clear nets +490 HP at endgame.
+var _last_move_at_msec: int = 0
+var _last_kill_at_msec: int = 0
+var _feast_window_start_msec: int = 0
+var _feast_window_heal: int = 0
 # Primary stats (DCSS-style). Base 5/5/5; species adds str_flat/dex_flat/
 # int_flat on top. Each stat point = +2% damage on its scaling spells +
 # small contributions to derived stats (str→hp, dex→crit/haste, int→spell

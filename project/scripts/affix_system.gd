@@ -437,6 +437,10 @@ const ENCHANT_BLURBS := {
 	"psychic":     "Mind-shielded. (decorative for now)",
 	"agility":     "Stat-flavor (already on base evasion).",
 	"shadow":      "Umbral. (decorative for now)",
+	# S5 race-anchor conditional flavors (a04 §5 + a10 rescopes).
+	"feast":       "On kill, heal +2% max HP (capped at 50% MHP/s).",
+	"first_blood": "+20% damage on the first swing of a new encounter.",
+	"petrify":     "-25% physical damage taken while stationary.",
 }
 
 static func sum_affix_stats(affixes: Array) -> Dictionary:
