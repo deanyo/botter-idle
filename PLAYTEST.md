@@ -118,7 +118,12 @@ In `_play_swing_horizontal()`, `_play_swing_overhead_chop()`, and
   base_scale sync at line 39–40).
 
 ### 2. STR/DEX/INT need to be the "core" stats — currently buried + opaque
-**Status:** `untriaged`
+**Status:** `triaged → fixed` (Phase 4 explainability, 2026-06-10) —
+stat_panel.gd now renders an always-visible dim hint line under each
+primary stat ("+HP, melee damage" / "+Crit, +Haste" / "+Spell dmg,
+area, duration"). Hover still gives the full numeric breakdown via
+the existing `_PRIMARY_TOOLTIPS` dict. The hint applies to both the
+HUD stats panel and the outpost editable variant.
 
 The Stats panel doesn't lead with STR/DEX/INT, and there's no
 indication of what each does. Player should see at a glance: "STR
@@ -270,7 +275,22 @@ layers visible"). The task is twofold:
   Jiyva regen rates are in code not desc).
 
 ### 4. Mystery green debuff icon on low-HP mobs
-**Status:** `untriaged`
+**Status:** `triaged → fixed` (incidentally, Phase 1 sweep)
+
+Phase 1 disabled the on-sprite buff/debuff overlay by default in HIGH
+and MEDIUM video presets (video_settings.gd:38–47). The mystery green
+icon was likely the `regen` status (tint 0.55,1,0.6) leaking onto
+enemies via projectile pierce-apply, with no on-sprite tooltip wiring
+to identify it. With the on-sprite layer off by default, the icon
+no longer appears. The top-of-screen buff bar already had tooltips
+wired (hud_chrome.gd:1371) for buffs that affect the player; that's
+where statuses belong.
+
+Players who turn the on-sprite layer back on (LOW preset has it on by
+default for legacy reasons) still don't get tooltips on those icons,
+but that's an opt-in performance/visual choice. Native tooltips on
+sprite-attached Node2D's would need a separate StatusTooltip class —
+deferred until anyone actually requests it.
 
 When attacking mobs, a green debuff icon appears once they reach low
 HP. Player doesn't know what it is. Either it's a real mechanic with
@@ -376,7 +396,15 @@ configs may need density tuning (patch_density=0 for Shoals suggests
 wave-tiles replace patches entirely).
 
 ### 6. Portal opt-out + Football Manager–style bot behaviour config
-**Status:** `untriaged`
+**Status:** `triaged → next-session-brief` (Phase 4, 2026-06-10) —
+this is a design-heavy beat (CLAUDE.md "Bot AI is the actual game"),
+not a quick fix. The cheap part — `state["skip_portals"]` toggle in
+the outpost instructions tab + `Portal.should_skip()` override — is
+~30 lines, but that's just the seed. The full vision (FM-style
+profile: skip portals / loot priority / engage HP threshold / etc)
+needs a design pass on the full instruction surface before any code.
+Bumped to its own session brief, candidate path:
+`~/claude/game-audit/prompts/playtest_bot_behaviour.md`.
 
 Player observation: **does getting sent into a portal screw your
 run?** Portals can be harder than the home branch. If the player's
@@ -450,7 +478,12 @@ Botter needs similar behavior knobs.
   here; add `skip_portals_enabled`)
 
 ### 7. Spell scaling stat (STR / DEX / INT) isn't legible
-**Status:** `untriaged`
+**Status:** `triaged → fixed` (Phase 4 explainability, 2026-06-10) —
+item_cell.gd now paints a corner letter glyph (S/D/I in red/green/blue)
+on paperdoll spell cells, on top of the existing class-color border.
+Border-only was too subtle at 32-56px; the letter resolves the scaling
+stat unambiguously. Tooltip "Scales: …" line was already present
+(item_tooltip.gd:421).
 
 Player can't tell which spell scales off which primary stat. Per
 HANDOVER.md the assignments exist (Spinning Axes / Holy Beam = Str,
@@ -502,7 +535,14 @@ register as a legible UI signal.
   larger UI, player experience differs)
 
 ### 8. Race selection feels low-stakes; slot limitations not visible
-**Status:** `untriaged`
+**Status:** `triaged → next-session-brief` (Phase 4, 2026-06-10) —
+two-part. The surfacing fix (show octopode/naga slot conversions on
+character_create) is a UI-cleanup beat using existing
+`SpeciesData.disallowed_slots()` / `slot_conversions()` data. The
+identity-mechanics half (per-race signature passives — felid forbids
+weapons, deep dwarf can't regen, etc) is a design pass that needs
+direction on which mechanics are worth porting and what the idle-
+game frame does with them. Bumped to its own brief.
 
 Player observation: **picking a race seems like a boring decision.**
 The current shape is stat tweaks (atk_pct / def_pct / hp_pct), some
@@ -706,7 +746,16 @@ serialization or reproduction logs. Test rare pack drops and boss
 multi-loot scenarios post-fix.
 
 ### 2. Affix names are opaque to the player — need stat explanations
-**Status:** `untriaged`
+**Status:** `triaged → fixed` (Phase 4 explainability, 2026-06-10) —
+two changes:
+- affix_system.gd: new `_STAT_DESCRIPTIONS` dict + `description_for_stat()`
+  helper. Keyed by the affix's `stat` field (not the flavor name), so
+  "of Bloodletting" with stat=lifesteal_pct gets "Heal for a portion
+  of damage you deal." 41 stat keys covered.
+- item_tooltip.gd: when Alt is held, each affix line gets a dim
+  description sub-line above its existing debug-detail line. Existing
+  hotkey hint "[Alt] affix detail" still surfaces the binding.
+Self-explanatory stats (+5 HP) are skipped to keep tooltips compact.
 
 Player sees an item "of bloodletting" and has no idea what that does.
 Affix names are flavor-coded but the actual mechanical effect isn't
@@ -1070,7 +1119,13 @@ prompts; forces meaningful trash/treasure decisions.
    UI.
 
 ### 8. Firefox performance is still terrible; other browsers fine
-**Status:** `untriaged`
+**Status:** `triaged → partial` (Phase 4, 2026-06-10) — added a
+dismissable Firefox-only banner via JavaScriptBridge in main.gd's
+`_install_firefox_warning`. Detects Firefox via UA, shows a one-time
+"recommend Chrome or Safari" notice at the top of the page,
+remembers dismissal in localStorage. Doesn't fix the actual perf gap
+(that's a deeper diagnostic + WebGL feature-gate beat — bumped to
+its own session). At least players know now.
 
 Web build performance is "completely shite" on Firefox but works
 well in every other browser (Chrome, Safari, etc). Not a regression

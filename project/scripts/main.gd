@@ -181,6 +181,7 @@ func _ready() -> void:
 		# the page unloads. Audit fix 2026-06-09.
 		if OS.has_feature("web"):
 			_install_web_close_handler()
+			_install_firefox_warning()
 		# Apply offline progress before the menu loads so the player sees
 		# the loot in their inventory + a "While You Were Away" banner.
 		# Skipped in grind/debug-jump because those use the debug save and
@@ -217,6 +218,37 @@ func _install_web_close_handler() -> void:
 			document.addEventListener('visibilitychange', function() {
 				if (document.visibilityState === 'hidden') flush();
 			});
+		})();
+	""", true)
+
+func _install_firefox_warning() -> void:
+	# Firefox's WebGL Compatibility renderer + single-threaded WASM
+	# combo runs noticeably worse than Chrome on this build. Until we
+	# diagnose the specific bottleneck, surface a one-time dismissable
+	# banner so Firefox players know they can switch browsers.
+	# PLAYTEST 2026-06-10 #8.
+	JavaScriptBridge.eval("""
+		(function() {
+			if (window.__botter_firefox_banner) return;
+			window.__botter_firefox_banner = true;
+			if (!/Firefox\\//.test(navigator.userAgent)) return;
+			if (localStorage.getItem('botter_ff_dismissed') === '1') return;
+			var bar = document.createElement('div');
+			bar.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;'
+				+ 'background:#3a1a1a;color:#ffd0c0;padding:8px 16px;'
+				+ 'font-family:system-ui,sans-serif;font-size:13px;'
+				+ 'border-bottom:1px solid #6a2a2a;display:flex;align-items:center;'
+				+ 'justify-content:space-between;box-shadow:0 2px 4px rgba(0,0,0,.4);';
+			bar.innerHTML = '<span>Firefox runs Botter slower than other browsers — '
+				+ 'we recommend Chrome or Safari for now.</span>'
+				+ '<button id="botter-ff-dismiss" style="background:#5a2a2a;color:#fff;'
+				+ 'border:1px solid #8a3a3a;padding:4px 12px;cursor:pointer;'
+				+ 'border-radius:3px;">Dismiss</button>';
+			document.body.appendChild(bar);
+			document.getElementById('botter-ff-dismiss').onclick = function() {
+				localStorage.setItem('botter_ff_dismissed', '1');
+				bar.remove();
+			};
 		})();
 	""", true)
 

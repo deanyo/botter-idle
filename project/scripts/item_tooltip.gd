@@ -446,6 +446,9 @@ func _build_affix_lines() -> Array:
 		var line_color: Color = stat_col.lerp(gold, 0.35)
 		out.append(_make_label(line_text, 12, line_color, false))
 		if alt_held:
+			var desc_lbl: Label = _make_affix_description_label(def)
+			if desc_lbl != null:
+				out.append(desc_lbl)
 			out.append(_make_alt_line(def, rolled, true))
 	# Rolled affixes — colored by their stat per the affix-editor map.
 	if typeof(inst) == TYPE_DICTIONARY:
@@ -459,8 +462,25 @@ func _build_affix_lines() -> Array:
 			var line_color: Color = UITheme.affix_stat_color(String(def.get("stat", "")))
 			out.append(_make_label(line_text, 12, line_color, false))
 			if alt_held:
+				var desc_lbl_2: Label = _make_affix_description_label(def)
+				if desc_lbl_2 != null:
+					out.append(desc_lbl_2)
 				out.append(_make_alt_line(def, af_inst, false))
 	return out
+
+# Plain-English description of what an affix's stat does. Returns null
+# when the stat has no description (so the tooltip stays compact for
+# self-explanatory stats like "+5 HP"). Rendered dim + small under the
+# stat line. PLAYTEST 2026-06-10 #2.
+func _make_affix_description_label(def: Dictionary) -> Label:
+	var stat: String = String(def.get("stat", ""))
+	var description: String = AffixSystem.description_for_stat(stat)
+	if description == "":
+		return null
+	var lbl := _make_label(description, 10, Color(0.65, 0.62, 0.5), false)
+	lbl.custom_minimum_size = Vector2(TOOLTIP_W - PADDING * 2, 0)
+	lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	return lbl
 
 # Alt-extended detail line — surfaces the underlying mechanics of an
 # affix roll for build inspection. Renders dim + smaller below the

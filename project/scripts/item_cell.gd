@@ -51,6 +51,7 @@ var _bg: ColorRect = null
 var _border: ReferenceRect = null
 var _sprite: TextureRect = null
 var _star: Label = null
+var _class_glyph: Label = null  # S/D/I letter on spell paperdoll cells
 var _block_label: Label = null
 var _hover_glow: ColorRect = null  # appears when a compatible drag hovers
 var _badge: TextureRect = null     # bottom-right flavor/meta-rarity icon
@@ -103,6 +104,19 @@ func _ready() -> void:
 	_star.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_star.modulate = Color(1, 1, 1, 0)
 	add_child(_star)
+	# Spell-class glyph (S/D/I in red/green/blue) — top-left corner.
+	# Only painted on paperdoll spell cells. Pre-fix the spell scaling
+	# stat was carried only by border color, which read as ambient
+	# decoration at small cell sizes. PLAYTEST 2026-06-09 #7.
+	_class_glyph = Label.new()
+	_class_glyph.position = Vector2(2, -2)
+	_class_glyph.size = Vector2(14, 14)
+	_class_glyph.add_theme_font_size_override("font_size", 12)
+	_class_glyph.add_theme_color_override("font_outline_color", Color(0, 0, 0, 1.0))
+	_class_glyph.add_theme_constant_override("outline_size", 3)
+	_class_glyph.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_class_glyph.modulate = Color(1, 1, 1, 0)
+	add_child(_class_glyph)
 	# Block (🚫) overlay for species-blocked / can't-afford cells.
 	_block_label = Label.new()
 	_block_label.text = "🚫"
@@ -181,14 +195,28 @@ func render() -> void:
 		_border.border_color = Color(0.4, 0.35, 0.2, 0.8)
 	if role == "paperdoll" and slot_id.begins_with("spell") and has_item:
 		# PLAYTEST #7 — spell scaling stat read by border color (red/green/
-		# blue = STR/DEX/INT). Resolve via SpellData so an item that
-		# overrides primary_stat reads correctly; bump the border width
-		# so the cue is visible against the cell's rarity halo.
+		# blue = STR/DEX/INT) AND a corner letter glyph (S/D/I). Border
+		# alone read as ambient decoration; the glyph makes the scaling
+		# stat unambiguous at a glance.
 		var pstat: String = SpellData.primary_stat_for_item(item)
-		_border.border_color = UITheme.spell_class_color(pstat)
+		var pcolor: Color = UITheme.spell_class_color(pstat)
+		_border.border_color = pcolor
 		_border.border_width = 2.5
+		var glyph: String = ""
+		match pstat:
+			"str": glyph = "S"
+			"dex": glyph = "D"
+			"int": glyph = "I"
+		if glyph != "" and _class_glyph != null:
+			_class_glyph.text = glyph
+			_class_glyph.add_theme_color_override("font_color", pcolor)
+			_class_glyph.modulate = Color(1, 1, 1, 1)
+		elif _class_glyph != null:
+			_class_glyph.modulate = Color(1, 1, 1, 0)
 	else:
 		_border.border_width = 1.0
+		if _class_glyph != null:
+			_class_glyph.modulate = Color(1, 1, 1, 0)
 	# Favorite star.
 	var fav: bool = false
 	if has_item:

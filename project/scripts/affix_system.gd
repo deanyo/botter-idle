@@ -267,6 +267,57 @@ static func format_affix_lines(affixes: Array) -> Array:
 		lines.append(_format_stat_line(stat, v))
 	return lines
 
+# Plain-English description of what each affix stat actually does, keyed
+# by the affix's `stat` field. Surfaces under the stat line when Alt is
+# held in the tooltip — players read flavor names like "of Bloodletting"
+# without knowing they're seeing lifesteal. PLAYTEST 2026-06-10 #2.
+const _STAT_DESCRIPTIONS := {
+	"hp": "Boosts max health.",
+	"hp_regen": "Restores HP every second.",
+	"str": "+1.5% HP and scales melee damage.",
+	"dex": "+0.5% Crit and +1% Haste per point.",
+	"int": "+1% Spell Damage, +0.5% Area, +0.5% Duration per point.",
+	"armor": "Flat-reduces incoming physical damage.",
+	"evasion": "Chance to dodge attacks entirely.",
+	"crit_chance": "Chance to deal a critical hit (extra damage).",
+	"crit_multiplier_pct": "How much extra damage your crits deal.",
+	"block_chance": "Chance to block incoming hits.",
+	"block_amount": "Damage reduced when a block triggers.",
+	"haste_pct": "Faster swing rate, faster spell cycling.",
+	"lifesteal_pct": "Heal for a portion of damage you deal.",
+	"spell_damage_pct": "All spells hit harder.",
+	"spell_cdr_pct": "Spells come off cooldown faster.",
+	"spell_proj_bonus": "Extra projectiles per cast (more hits).",
+	"spell_proj_speed_pct": "Spell projectiles travel faster.",
+	"spell_area_pct": "Spell radius / cone size.",
+	"spell_duration_pct": "Lingering spell effects last longer.",
+	"fire_dmg_pct": "Boosts fire-element spell damage.",
+	"cold_dmg_pct": "Boosts cold-element spell damage.",
+	"thunderous_dmg_pct": "Boosts lightning-element spell damage.",
+	"holy_dmg_pct": "Boosts holy-element spell damage.",
+	"poison_dmg_pct": "Boosts poison-element spell damage.",
+	"dark_dmg_pct": "Boosts dark-element spell damage.",
+	"fire_extra": "Bonus fire damage per hit.",
+	"cold_extra": "Bonus cold damage per hit.",
+	"thunderous_extra": "Bonus lightning damage per hit.",
+	"holy_extra": "Bonus holy damage per hit.",
+	"poison_extra": "Bonus poison damage per hit.",
+	"dark_extra": "Bonus dark damage per hit.",
+	"res_fire": "Reduces incoming fire damage.",
+	"res_cold": "Reduces incoming cold damage.",
+	"res_lightning": "Reduces incoming lightning damage.",
+	"res_holy": "Reduces incoming holy damage.",
+	"res_poison": "Reduces incoming poison damage.",
+	"res_dark": "Reduces incoming dark damage.",
+	"loot_rarity_bonus": "Improved chance for higher-rarity drops.",
+	"xp_gain_pct": "Faster experience accumulation.",
+	"aggro_bonus": "Enemies notice you from further away.",
+	"move_speed": "Walk and pathing pace.",
+}
+
+static func description_for_stat(stat: String) -> String:
+	return String(_STAT_DESCRIPTIONS.get(stat, ""))
+
 static func _format_stat_line(stat: String, v: int) -> String:
 	# Items v2 (2026-06-04) replaced atk/def with damage_min/max + armor +
 	# evasion. No live affix uses "atk" or "def" any more — those cases

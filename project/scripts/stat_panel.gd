@@ -32,6 +32,15 @@ const _PRIMARY_TOOLTIPS := {
 	"dex": "Dexterity\n+0.5% Crit per excess point\n+1% Haste per excess point",
 	"int": "Intelligence\n+1% Spell Damage per excess point\n+0.5% Spell Area per excess point\n+0.5% Spell Duration per excess point",
 }
+# Always-visible one-liners under each primary stat row. Hover gives
+# the full breakdown (above); this is the "what does it do?" hint
+# that doesn't require a hover. PLAYTEST 2026-06-09 #2 — the player
+# said the hover wasn't discoverable, so promote a tight summary.
+const _PRIMARY_HINTS := {
+	"str": "+HP, melee damage",
+	"dex": "+Crit, +Haste",
+	"int": "+Spell dmg, area, duration",
+}
 # Soft-cap table — stat key → ceiling value used by stat_calc.gd. Row
 # colors lerp toward yellow as the displayed value approaches the cap.
 # Entries omitted here render in their normal color.
@@ -106,13 +115,19 @@ func _build_layout(stats: Dictionary) -> void:
 	_section("Primary")
 	if editable:
 		_attribute_row("str", "Str", UITheme.spell_class_color("str"))
+		_primary_hint("str")
 		_attribute_row("dex", "Dex", UITheme.spell_class_color("dex"))
+		_primary_hint("dex")
 		_attribute_row("int", "Int", UITheme.spell_class_color("int"))
+		_primary_hint("int")
 		_unspent_row()
 	else:
 		_row("str", "Str", UITheme.spell_class_color("str"))
+		_primary_hint("str")
 		_row("dex", "Dex", UITheme.spell_class_color("dex"))
+		_primary_hint("dex")
 		_row("int", "Int", UITheme.spell_class_color("int"))
+		_primary_hint("int")
 
 	_section("Vitals")
 	_row("max_hp", "HP", UITheme.affix_stat_color("hp"))
@@ -156,6 +171,19 @@ func _build_layout(stats: Dictionary) -> void:
 	_row("loot_rarity_bonus", "Loot Rarity Bonus", COL_GOLD)
 	_row("xp_gain_pct", "XP Gain Bonus", COL_DIM)
 	_row("gold", "Gold", COL_GOLD)
+
+# Dim one-liner under a Primary stat row. Always-visible
+# explanation of what STR/DEX/INT govern; the per-stat hover
+# tooltip still carries the full numeric breakdown.
+func _primary_hint(key: String) -> void:
+	var hint_text: String = String(_PRIMARY_HINTS.get(key, ""))
+	if hint_text == "":
+		return
+	var hint := UITheme.label(hint_text, UITheme.FS_SMALL - 1, Color(0.55, 0.5, 0.4))
+	hint.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	hint.clip_text = true
+	hint.add_theme_constant_override("margin_left", 8)
+	_content.add_child(hint)
 
 # Section header — amber-dim text + thin underline, matching the
 # outpost `_add_section` look.
