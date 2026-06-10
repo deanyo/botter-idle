@@ -345,6 +345,13 @@
        gaps and missed both the image and the name label. */
     user-select: none;
     display: flex; flex-direction: column; gap: 4px;
+    /* Explicit height = square image area + name strip + padding so
+       grid rows don't squash the image when content count > visible
+       row count. Without this, with 300+ cells in the picker the
+       layout engine on some browsers compressed the row height to
+       fit within the modal viewport, leaving image cells sliced to
+       3-4px tall. The +28px is room for the .pick-name label. */
+    min-height: calc(var(--pick-size, 192px) + 28px);
   }
   .pick-cell:hover {
     border-color: var(--accent);
@@ -361,11 +368,18 @@
     object-fit: contain; image-rendering: pixelated; background: #000;
     pointer-events: none;  /* let the cell click handler win */
     border-radius: 2px;
+    /* Keep the cell square even before the image natural-dimensions
+       resolve. Without min-height, lazy/erroring images collapse the
+       row to ~3px tall on Firefox/WebKit grid auto-tracks. */
+    min-height: var(--pick-size, 192px);
   }
   .pick-cell.layered .pick-img-wrap {
     position: relative;
     width: 100%; aspect-ratio: 1;
     background: #000; border-radius: 2px;
+    /* See note above — same defensive min-height for the layered
+       variant where the wrap holds two absolute-positioned images. */
+    min-height: var(--pick-size, 192px);
     /* Layered paperdoll preview — checkered backdrop helps the bot
        silhouette read against varying overlay colors. */
     background-image:
@@ -1364,8 +1378,11 @@ function setRecolorField(id, key, val) {
   it.default_tint[key] = val;
   dirty.add(id);
   // Live-update the preview filter without a full panel rebuild so
-  // the slider drag stays smooth. Also updates the big edit-panel
-  // sprite + the card sprite in the grid behind the editor.
+  // the slider drag stays smooth. Updates: (1) the small recolor-
+  // preview thumb under the sliders; (2) the big inventory sprite at
+  // the top of the edit panel; (3) the on-character paperdoll
+  // overlay so authors see the tint on the bot in real time; (4) the
+  // card sprite in the grid behind the editor.
   const styleSuffix = recolorPreviewStyle(it.default_tint);
   const previewImg = document.getElementById('recolor-preview-' + id);
   if (previewImg) {
@@ -1373,6 +1390,12 @@ function setRecolorField(id, key, val) {
   }
   const editImg = document.getElementById('edit-sprite-img');
   if (editImg) editImg.style.cssText = styleSuffix;
+  // Paperdoll overlay sprite (the layer on top of the bot base).
+  // Pre-fix this stayed at the authored tint when the panel rendered,
+  // so dragging hue/sat updated the inventory icon but the on-bot
+  // preview lagged behind until you closed + reopened the editor.
+  const overlayImg = document.getElementById('edit-overlay-img');
+  if (overlayImg) overlayImg.style.cssText = styleSuffix;
   // Card sprite in the grid — find the matching card-id img.
   const cardImg = document.querySelector(`[data-id="${id}"] .sprite-wrap img`);
   if (cardImg) cardImg.style.cssText = styleSuffix;
