@@ -272,9 +272,12 @@ static func format_affix_lines(affixes: Array) -> Array:
 # held in the tooltip — players read flavor names like "of Bloodletting"
 # without knowing they're seeing lifesteal. PLAYTEST 2026-06-10 #2.
 const _STAT_DESCRIPTIONS := {
+	# Base item stats (rendered on the top of the tooltip — these aren't
+	# affix-driven, but the same description path serves them).
 	"damage": "Min-max physical damage per swing or cast.",
 	"attack_speed": "Seconds between swings — lower is faster.",
 	"spell_cooldown": "Seconds between casts — lower is faster.",
+	# Core stats.
 	"hp": "Boosts max health.",
 	"hp_regen": "Restores HP every second.",
 	"str": "+1.5% HP and scales melee damage.",
@@ -288,38 +291,104 @@ const _STAT_DESCRIPTIONS := {
 	"block_amount": "Damage reduced when a block triggers.",
 	"haste_pct": "Faster swing rate, faster spell cycling.",
 	"lifesteal_pct": "Heal for a portion of damage you deal.",
+	# Spell tuning stats.
 	"spell_damage_pct": "All spells hit harder.",
 	"spell_cdr_pct": "Spells come off cooldown faster.",
 	"spell_proj_bonus": "Extra projectiles per cast (more hits).",
 	"spell_proj_speed_pct": "Spell projectiles travel faster.",
 	"spell_area_pct": "Spell radius / cone size.",
 	"spell_duration_pct": "Lingering spell effects last longer.",
+	# Element-coded spell-school masteries.
 	"fire_dmg_pct": "Boosts fire-element spell damage.",
 	"cold_dmg_pct": "Boosts cold-element spell damage.",
 	"thunderous_dmg_pct": "Boosts lightning-element spell damage.",
 	"holy_dmg_pct": "Boosts holy-element spell damage.",
 	"poison_dmg_pct": "Boosts poison-element spell damage.",
 	"dark_dmg_pct": "Boosts dark-element spell damage.",
-	"fire_extra": "Bonus fire damage per hit.",
-	"cold_extra": "Bonus cold damage per hit.",
-	"thunderous_extra": "Bonus lightning damage per hit.",
-	"holy_extra": "Bonus holy damage per hit.",
-	"poison_extra": "Bonus poison damage per hit.",
-	"dark_extra": "Bonus dark damage per hit.",
-	"res_fire": "Reduces incoming fire damage.",
-	"res_cold": "Reduces incoming cold damage.",
-	"res_lightning": "Reduces incoming lightning damage.",
-	"res_holy": "Reduces incoming holy damage.",
-	"res_poison": "Reduces incoming poison damage.",
-	"res_dark": "Reduces incoming dark damage.",
+	# Stat-class spell masteries.
+	"str_spell_dmg_pct": "Boosts strength-scaling spell damage.",
+	"dex_spell_dmg_pct": "Boosts dexterity-scaling spell damage.",
+	"int_spell_dmg_pct": "Boosts intelligence-scaling spell damage.",
+	# +X-Y bonus damage on hit (range affixes).
+	"fire_extra": "Adds bonus fire damage per hit.",
+	"cold_extra": "Adds bonus cold damage per hit.",
+	"thunderous_extra": "Adds bonus lightning damage per hit.",
+	"lightning_extra": "Adds bonus lightning damage per hit.",
+	"holy_extra": "Adds bonus holy damage per hit.",
+	"poison_extra": "Adds bonus poison damage per hit.",
+	"dark_extra": "Adds bonus dark damage per hit.",
+	"physical_extra": "Adds bonus physical damage per hit.",
+	# Resistances.
+	"fire_res": "Reduces incoming fire damage.",
+	"cold_res": "Reduces incoming cold damage.",
+	"lightning_res": "Reduces incoming lightning damage.",
+	"holy_res": "Reduces incoming holy damage.",
+	"poison_res": "Reduces incoming poison damage.",
+	"dark_res": "Reduces incoming dark damage.",
+	# Misc utility.
 	"loot_rarity_bonus": "Improved chance for higher-rarity drops.",
 	"xp_gain_pct": "Faster experience accumulation.",
 	"aggro_bonus": "Enemies notice you from further away.",
 	"move_speed": "Walk and pathing pace.",
+	"gold_drop_pct": "More gold drops from kills and chests.",
+	"spell_tome_drop_pct": "Bosses sometimes drop an extra spell tome.",
+	# "Named" affixes — bespoke conditional/proc stats. Match the name
+	# the player sees ("of the Tempest", "of the Hunter") to its actual
+	# mechanic so flavor text stops being a black box.
+	"tempest_dmg_pct": "Big spell-damage boost, but adds a small cooldown penalty.",
+	"synergy_pct": "Bonus damage when you carry STR + DEX + INT affixes together.",
+	"sage_per_unspent_pct": "Spell damage scales with unspent stat points (more = bigger).",
+	"berserker_peak_pct": "On-kill rage stacks (up to 5) — each kill juices your damage briefly.",
+	"hunter_pct": "Bonus damage to enemies above 80% HP — opener bonus.",
+	"str_dmg_per5_peak_pct": "Damage scales with excess STR (every 5 points up to a cap).",
+	"echo_every_n": "Every Nth swing fires a free echo strike (lower N = more often).",
+	"sundering_per_stack": "Hits stack armor reduction on the target (max 2 stacks).",
+	"bloodletting_per_stack": "Hits inflict a 4-second physical bleed.",
+	# Spell-archetype flag affixes — each modifies one specific spell.
+	"spell_axes_bleed": "Spinning Axes leaves a bleed on hit.",
+	"spell_chain_extra_jumps": "Chain Lightning gains extra jumps.",
+	"spell_dart_split": "Magic Dart splits into multiple shards.",
+	"spell_fireball_ground": "Fireball ignites the ground for lingering damage.",
+	"spell_frost_root": "Frost Nova roots enemies briefly.",
+	"spell_holy_radiance": "Holy Beam radiates damage in a small aura.",
+	"spell_iron_dust": "Earthbreaker leaves an iron-dust cloud.",
+	"spell_sandblast_blind": "Sandblast blinds hit enemies (miss-chance debuff).",
+	"spell_shatter_aftershock": "Shatter triggers a delayed aftershock blast.",
+	"spell_drain_buff": "On-cast self-buff that drains damage from enemies into healing.",
 }
 
 static func description_for_stat(stat: String) -> String:
 	return String(_STAT_DESCRIPTIONS.get(stat, ""))
+
+# Stats whose flavor name ("of the Tempest", "Bleeding Edge") is opaque
+# without a description. The tooltip always renders these descriptions
+# inline regardless of Alt — no need to discover the binding to read
+# what your item does. Plain-stat affixes (str/dex/hp/etc) stay
+# Alt-gated since "+5 Strength" already self-documents.
+const _NAMED_EFFECT_STATS := {
+	"tempest_dmg_pct": true,
+	"synergy_pct": true,
+	"sage_per_unspent_pct": true,
+	"berserker_peak_pct": true,
+	"hunter_pct": true,
+	"str_dmg_per5_peak_pct": true,
+	"echo_every_n": true,
+	"sundering_per_stack": true,
+	"bloodletting_per_stack": true,
+	"spell_axes_bleed": true,
+	"spell_chain_extra_jumps": true,
+	"spell_dart_split": true,
+	"spell_fireball_ground": true,
+	"spell_frost_root": true,
+	"spell_holy_radiance": true,
+	"spell_iron_dust": true,
+	"spell_sandblast_blind": true,
+	"spell_shatter_aftershock": true,
+	"spell_drain_buff": true,
+}
+
+static func is_named_effect_stat(stat: String) -> bool:
+	return _NAMED_EFFECT_STATS.has(stat)
 
 static func _format_stat_line(stat: String, v: int) -> String:
 	# Items v2 (2026-06-04) replaced atk/def with damage_min/max + armor +
