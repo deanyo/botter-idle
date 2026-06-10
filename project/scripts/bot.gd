@@ -640,7 +640,9 @@ func _apply_overlay_recolor(sprite: Sprite2D, inst: Variant) -> void:
 		return
 	if sprite.material != null:
 		return
-	var mat: ShaderMaterial = UITheme.recolor_material_for(inst)
+	# Use the overlay-specific tint when the item authored a separate
+	# default_tint_overlay; falls back to default_tint otherwise.
+	var mat: ShaderMaterial = UITheme.recolor_material_for_overlay(inst)
 	if mat != null:
 		sprite.material = mat
 

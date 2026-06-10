@@ -168,6 +168,18 @@ const _MODE_INDEX := {
 static var _recolor_mat_cache: Dictionary = {}
 
 static func recolor_material_for(inst: Variant) -> ShaderMaterial:
+	return _recolor_material_for_inst(inst, "")
+
+# Same shape, but pulls `default_tint_overlay` off the base item def
+# when present (else falls through to the regular `default_tint`).
+# Lets authors recolor the on-character paperdoll sprite independently
+# of the inventory icon — e.g. inventory keeps its iconic art tint
+# while the on-bot overlay reads a different hue. Used by paperdoll_
+# renderer + bot.gd's _apply_rarity_decor for overlay sprites.
+static func recolor_material_for_overlay(inst: Variant) -> ShaderMaterial:
+	return _recolor_material_for_inst(inst, "overlay")
+
+static func _recolor_material_for_inst(inst: Variant, surface: String) -> ShaderMaterial:
 	# Web GL Compatibility compiles a shader pipeline per (texture ×
 	# shader) combination synchronously on the main thread. Recolor
 	# materials applied to dozens of unique item textures (each
@@ -179,7 +191,22 @@ static func recolor_material_for(inst: Variant) -> ShaderMaterial:
 		return null
 	if typeof(inst) != TYPE_DICTIONARY:
 		return null
-	var tint: Variant = inst.get("tint", null)
+	# Per-surface tint key. Inventory uses inst.tint (per-roll random
+	# tint applied at drop time) with default_tint as fallback. Overlay
+	# prefers default_tint_overlay so authors can de-correlate the two
+	# surfaces; falls back to inst.tint / default_tint if absent so
+	# items that don't author a separate overlay tint look identical
+	# to the inventory icon (the historical behavior).
+	var tint: Variant = null
+	if surface == "overlay":
+		var base_id_o: String = String(inst.get("base_id", ""))
+		if base_id_o != "":
+			var base_o: Dictionary = ItemsDb.items().get(base_id_o, {})
+			var dto: Variant = base_o.get("default_tint_overlay", null)
+			if typeof(dto) == TYPE_DICTIONARY:
+				tint = dto
+	if typeof(tint) != TYPE_DICTIONARY:
+		tint = inst.get("tint", null)
 	# Fallback — instances spawned outside _create_item_instance (e.g.
 	# starter spells in save_state.gd's new-save path) have no tint
 	# field. Look up the base item's default_tint via ItemsDb so the

@@ -136,7 +136,10 @@ static func _apply_recolor(sprite: Sprite2D, inst: Variant) -> void:
 		# Glow shader already attached — leave it. The glow shader
 		# emphasizes silhouette, recolor would conflict.
 		return
-	var mat: ShaderMaterial = UITheme.recolor_material_for(inst)
+	# Prefer the overlay-specific tint when authored (default_tint_overlay
+	# on the item def). Falls through to default_tint if absent so items
+	# without a separate overlay tint render identically to the inventory.
+	var mat: ShaderMaterial = UITheme.recolor_material_for_overlay(inst)
 	if mat != null:
 		sprite.material = mat
 

@@ -1135,7 +1135,7 @@ function renderEditBody(it) {
       ${PAPERDOLL_SLOT_DIRS[it.slot] ? `
         <div id="edit-overlay-wrap" title="Paperdoll sprite (how this item looks held / worn on the bot)">
           <img class="layer" id="edit-overlay-base" src="${BASE_SPRITE_URL}" alt="">
-          <img class="layer" id="edit-overlay-img" style="${recolorPreviewStyle(it.default_tint || {})}" src="${overlayUrl(it)}"
+          <img class="layer" id="edit-overlay-img" style="${recolorPreviewStyle(it.default_tint_overlay || it.default_tint || {})}" src="${overlayUrl(it)}"
                onerror="overlayFallback(this, '${it.id}')">
         </div>
       ` : ''}
@@ -1298,12 +1298,22 @@ function renderEditBody(it) {
     </div>
 
     <div class="field-group">
-      <label>Look (permanent recolor)</label>
-      ${recolorSection(it)}
+      <label>Inventory icon recolor (permanent)</label>
+      ${recolorSection(it, 'inventory')}
       <div style="font-size:10px;color:var(--muted);margin-top:4px">
         Optional. Locks a recolor onto every drop of this item — e.g. all Soulhungers always render inverted. Without one, drops randomly roll a recolor based on the global drop-tuning rates.
       </div>
     </div>
+
+    ${PAPERDOLL_SLOT_DIRS[it.slot] ? `
+      <div class="field-group">
+        <label>Paperdoll sprite recolor (permanent, on-character only)</label>
+        ${recolorSection(it, 'overlay')}
+        <div style="font-size:10px;color:var(--muted);margin-top:4px">
+          Optional. Recolors ONLY the on-character sprite — independent of the inventory icon. Useful when you want the iconic art kept in the bag but a different hue on the bot (e.g. a green Serpent's Whip in inventory but a red blood-stained whip when wielded). Leave on "None" to mirror the inventory icon's tint.
+        </div>
+      </div>
+    ` : ''}
 
     <div class="field-group">
       <label>Lore (flavor text shown in the tooltip)</label>
@@ -1322,11 +1332,16 @@ function renderEditBody(it) {
   `;
 }
 
-// Recolor controls — reads/writes it.default_tint. Used by the runtime
-// to render a permanent hue/sat shift on every drop. Mirrors the live
-// game shader (item_recolor.gdshader) — same modes + ranges.
-function recolorSection(it) {
-  const t = it.default_tint || {};
+// Recolor controls — reads/writes a tint dict on the item. `surface` is
+// 'inventory' (default — writes it.default_tint) or 'overlay' (writes
+// it.default_tint_overlay, only renders for paperdoll-slotted items).
+// Mirrors the live game shader (item_recolor.gdshader) — same modes +
+// ranges.
+function recolorSection(it, surface) {
+  surface = surface || 'inventory';
+  const tintKey = surface === 'overlay' ? 'default_tint_overlay' : 'default_tint';
+  const previewIdSuffix = surface === 'overlay' ? '-overlay' : '';
+  const t = it[tintKey] || {};
   const mode = t.mode || 'none';
   const hue = (t.hue == null) ? 0 : Math.round(t.hue);
   const sat = (t.sat == null) ? 1.0 : t.sat;
@@ -1342,28 +1357,46 @@ function recolorSection(it) {
   let html = `
     <div class="field-row">
       <span style="font-size:11px;color:var(--muted)">Effect</span>
-      <select onchange="setRecolorMode('${it.id}',this.value)">${opts}</select>
+      <select onchange="setRecolorMode('${it.id}',this.value,'${tintKey}')">${opts}</select>
     </div>`;
   if (mode !== 'none') {
+    // Preview source: inventory tile by default; for the overlay
+    // surface, render the bot base layered with the overlay sprite
+    // (same shape as the edit-panel paperdoll preview) so the author
+    // sees the recolor in the real on-character context. Falls back
+    // to the inventory tile when no overlay is resolvable.
+    let previewBlock;
+    if (surface === 'overlay') {
+      const overlaySrc = overlayUrl(it);
+      previewBlock = `
+        <div style="display:inline-block;width:96px;height:96px;background:#000;border:1px solid var(--border-strong);border-radius:3px;position:relative">
+          <img src="${BASE_SPRITE_URL}" style="position:absolute;inset:0;width:96px;height:96px;image-rendering:pixelated">
+          <img id="recolor-preview${previewIdSuffix}-${it.id}" src="${overlaySrc}"
+               style="position:absolute;inset:0;width:96px;height:96px;image-rendering:pixelated;${recolorPreviewStyle(t)}">
+        </div>`;
+    } else {
+      previewBlock = `
+        <div style="display:inline-block;width:96px;height:96px;background:#000;border:1px solid var(--border-strong);border-radius:3px;position:relative">
+          <img id="recolor-preview${previewIdSuffix}-${it.id}" src="${tileUrl(it.tile)}"
+               style="width:96px;height:96px;image-rendering:pixelated;${recolorPreviewStyle(t)}"
+               onerror="if(!this.dataset.f){this.dataset.f='1';this.src='${tileUrlDcssFull(it.tile)}'}else if(!this.dataset.s){this.dataset.s='1';this.src='${tileUrlDcssSupp(it.tile)}'}">
+        </div>`;
+    }
     html += `
       <div class="field-row">
         <span style="font-size:11px;color:var(--muted)">Hue</span>
         <input type="range" min="0" max="360" step="5" value="${hue}"
-          oninput="setRecolorField('${it.id}','hue',+this.value);this.nextElementSibling.textContent=this.value+'°'">
+          oninput="setRecolorField('${it.id}','hue',+this.value,'${tintKey}');this.nextElementSibling.textContent=this.value+'°'">
         <span style="min-width:42px;text-align:right;font-variant-numeric:tabular-nums">${hue}°</span>
       </div>
       <div class="field-row">
         <span style="font-size:11px;color:var(--muted)">Saturation</span>
         <input type="range" min="0" max="2" step="0.05" value="${sat}"
-          oninput="setRecolorField('${it.id}','sat',+this.value);this.nextElementSibling.textContent=this.value">
+          oninput="setRecolorField('${it.id}','sat',+this.value,'${tintKey}');this.nextElementSibling.textContent=this.value">
         <span style="min-width:42px;text-align:right;font-variant-numeric:tabular-nums">${sat}</span>
       </div>
       <div style="margin-top:6px">
-        <div style="display:inline-block;width:96px;height:96px;background:#000;border:1px solid var(--border-strong);border-radius:3px;position:relative">
-          <img id="recolor-preview-${it.id}" src="${tileUrl(it.tile)}"
-               style="width:96px;height:96px;image-rendering:pixelated;${recolorPreviewStyle(t)}"
-               onerror="if(!this.dataset.f){this.dataset.f='1';this.src='${tileUrlDcssFull(it.tile)}'}else if(!this.dataset.s){this.dataset.s='1';this.src='${tileUrlDcssSupp(it.tile)}'}">
-        </div>
+        ${previewBlock}
         <div style="font-size:10px;color:var(--muted);margin-top:4px;display:inline-block;vertical-align:top;margin-left:8px;max-width:240px">
           Preview is a CSS-filter approximation — the in-game shader may render slightly differently, especially on darker palettes.
         </div>
@@ -1397,46 +1430,66 @@ function recolorPreviewStyle(t) {
   return 'filter:' + filters.join(' ');
 }
 
-function setRecolorMode(id, mode) {
+function setRecolorMode(id, mode, tintKey) {
+  tintKey = tintKey || 'default_tint';
   const it = items.find(x => x.id === id);
   if (!it) return;
   if (mode === 'none') {
-    delete it.default_tint;
+    delete it[tintKey];
   } else {
-    if (!it.default_tint) it.default_tint = {hue: 0, sat: 1.0};
-    it.default_tint.mode = mode;
+    if (!it[tintKey]) it[tintKey] = {hue: 0, sat: 1.0};
+    it[tintKey].mode = mode;
   }
   dirty.add(id);
   renderEditBody(it);
 }
 
-function setRecolorField(id, key, val) {
+function setRecolorField(id, key, val, tintKey) {
+  tintKey = tintKey || 'default_tint';
   const it = items.find(x => x.id === id);
-  if (!it || !it.default_tint) return;
-  it.default_tint[key] = val;
+  if (!it || !it[tintKey]) return;
+  it[tintKey][key] = val;
   dirty.add(id);
-  // Live-update the preview filter without a full panel rebuild so
-  // the slider drag stays smooth. Updates: (1) the small recolor-
-  // preview thumb under the sliders; (2) the big inventory sprite at
-  // the top of the edit panel; (3) the on-character paperdoll
-  // overlay so authors see the tint on the bot in real time; (4) the
-  // card sprite in the grid behind the editor.
-  const styleSuffix = recolorPreviewStyle(it.default_tint);
-  const previewImg = document.getElementById('recolor-preview-' + id);
+  // Live-update the preview filters without a full panel rebuild so
+  // slider drags stay smooth. Each tint surface drives different DOM:
+  //   default_tint          → inventory sprite + card thumb + recolor
+  //                           preview thumb under inventory sliders.
+  //                           Also drives the on-character overlay
+  //                           UNLESS the item authors a separate
+  //                           default_tint_overlay (then overlay
+  //                           reads from that instead — runtime
+  //                           recolor_material_for_overlay logic).
+  //   default_tint_overlay  → on-character overlay sprite + recolor
+  //                           preview thumb under overlay sliders.
+  const styleSuffix = recolorPreviewStyle(it[tintKey]);
+  const previewSuffix = tintKey === 'default_tint_overlay' ? '-overlay' : '';
+  const previewImg = document.getElementById('recolor-preview' + previewSuffix + '-' + id);
   if (previewImg) {
-    previewImg.style.cssText = 'width:96px;height:96px;image-rendering:pixelated;' + styleSuffix;
+    // Overlay preview is layered (absolute-positioned over base
+    // sprite); inventory preview is a single image filling the box.
+    if (tintKey === 'default_tint_overlay') {
+      previewImg.style.cssText = 'position:absolute;inset:0;width:96px;height:96px;image-rendering:pixelated;' + styleSuffix;
+    } else {
+      previewImg.style.cssText = 'width:96px;height:96px;image-rendering:pixelated;' + styleSuffix;
+    }
   }
-  const editImg = document.getElementById('edit-sprite-img');
-  if (editImg) editImg.style.cssText = styleSuffix;
-  // Paperdoll overlay sprite (the layer on top of the bot base).
-  // Pre-fix this stayed at the authored tint when the panel rendered,
-  // so dragging hue/sat updated the inventory icon but the on-bot
-  // preview lagged behind until you closed + reopened the editor.
-  const overlayImg = document.getElementById('edit-overlay-img');
-  if (overlayImg) overlayImg.style.cssText = styleSuffix;
-  // Card sprite in the grid — find the matching card-id img.
-  const cardImg = document.querySelector(`[data-id="${id}"] .sprite-wrap img`);
-  if (cardImg) cardImg.style.cssText = styleSuffix;
+  if (tintKey === 'default_tint') {
+    // Inventory tint drives both the inventory icon and (via
+    // fallback) the on-character overlay when no overlay-specific
+    // tint is authored.
+    const editImg = document.getElementById('edit-sprite-img');
+    if (editImg) editImg.style.cssText = styleSuffix;
+    if (!it.default_tint_overlay) {
+      const overlayImg = document.getElementById('edit-overlay-img');
+      if (overlayImg) overlayImg.style.cssText = styleSuffix;
+    }
+    const cardImg = document.querySelector(`[data-id="${id}"] .sprite-wrap img`);
+    if (cardImg) cardImg.style.cssText = styleSuffix;
+  } else {
+    // Overlay-specific tint — only updates the on-character preview.
+    const overlayImg = document.getElementById('edit-overlay-img');
+    if (overlayImg) overlayImg.style.cssText = styleSuffix;
+  }
 }
 
 function applyEdit() {
@@ -1958,6 +2011,7 @@ function exportJSON() {
       ...(it.enchant_pool && it.enchant_pool.length ? {enchant_pool: it.enchant_pool} : {}),
       ...(it.affix_pool && Object.keys(it.affix_pool).length ? {affix_pool: it.affix_pool} : {}),
       ...(it.default_tint && it.default_tint.mode ? {default_tint: it.default_tint} : {}),
+      ...(it.default_tint_overlay && it.default_tint_overlay.mode ? {default_tint_overlay: it.default_tint_overlay} : {}),
       ...(it.crit_chance ? {crit_chance: it.crit_chance} : {}),
       ...(it.atk_speed_pct ? {atk_speed_pct: it.atk_speed_pct} : {}),
       ...(it.hp_regen ? {hp_regen: it.hp_regen} : {}),
@@ -2001,6 +2055,7 @@ function singleItemPayload(it) {
     ...(it.enchant_pool && it.enchant_pool.length ? {enchant_pool: it.enchant_pool} : {}),
     ...(it.affix_pool && Object.keys(it.affix_pool).length ? {affix_pool: it.affix_pool} : {}),
     ...(it.default_tint && it.default_tint.mode ? {default_tint: it.default_tint} : {}),
+    ...(it.default_tint_overlay && it.default_tint_overlay.mode ? {default_tint_overlay: it.default_tint_overlay} : {}),
     ...(it.crit_chance ? {crit_chance: it.crit_chance} : {}),
     ...(it.atk_speed_pct ? {atk_speed_pct: it.atk_speed_pct} : {}),
     ...(it.hp_regen ? {hp_regen: it.hp_regen} : {}),
