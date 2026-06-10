@@ -201,6 +201,59 @@ func test_harm_can_amplify_past_baseline() -> void:
 	d.free()
 
 # ---------------------------------------------------------------------
+# S8 (a08 §A1) — enemies.json declares resistances by thematic group.
+# These tests guard the data shape (the file contains the entries we
+# expect) and the math shape (negative values amplify, positive values
+# mitigate, both honoring the additive +90% / -50% mit_sum cap).
+# ---------------------------------------------------------------------
+
+func test_enemy_resistances_data_present() -> void:
+	# Guard against accidentally dropping the resistance dict during
+	# future enemies.json edits. ~45 enemies are tagged in S8; if the
+	# count drops below the audit floor, we've regressed.
+	var enemies: Dictionary = ItemsDb.enemies()
+	var with_res: int = 0
+	for id in enemies.keys():
+		var def: Dictionary = enemies[id]
+		var r: Variant = def.get("resistances", null)
+		if typeof(r) == TYPE_DICTIONARY and not (r as Dictionary).is_empty():
+			with_res += 1
+	assert_gte(with_res, 30, "≥30 enemies declare resistances (S8 broken-combo signal)")
+	# Spot-check the canonical anchor entries — these are load-bearing
+	# for the Forge / Glacier / Crypt themed-punishment loop.
+	assert_eq(int(enemies["fire_dragon"]["resistances"].get("fire", 0)), 75,
+		"fire_dragon: +75 fire (Forge flagship)")
+	assert_eq(int(enemies["fire_dragon"]["resistances"].get("cold", 0)), -40,
+		"fire_dragon: -40 cold (vulnerability lane)")
+	assert_eq(int(enemies["ice_dragon"]["resistances"].get("cold", 0)), 75,
+		"ice_dragon: +75 cold (Glacier flagship)")
+	assert_eq(int(enemies["lich"]["resistances"].get("holy", 0)), -50,
+		"lich: -50 holy (anti-undead lane)")
+	assert_eq(int(enemies["jelly"]["resistances"].get("poison", 0)), 75,
+		"jelly: +75 poison (slime profile)")
+	assert_eq(int(enemies["troll"]["resistances"].get("fire", 0)), -50,
+		"troll: -50 fire (DCSS regen-stops-on-fire pattern)")
+
+func test_enemy_resistance_negative_amplifies_via_mit_cap() -> void:
+	# Negative resistance value contributes negatively to mit_sum, which
+	# is clamped to [-0.50, +0.90]. -40% fire alone → 40% damage uplift.
+	# Confirms the -40 cold values on Forge fire-creatures actually
+	# punish a cold-mage who walks into the wrong biome.
+	var d: Actor = _make_defender(100, 0, [], {"cold": -40.0})
+	var dealt: int = d.take_damage(50, null, "cold")
+	assert_eq(dealt, 70, "cold-vulnerable defender takes +40% from cold")
+	d.free()
+
+func test_enemy_resistance_positive_caps_at_75_pct() -> void:
+	# The audit caps single-element resist at +75 to keep player counter-
+	# play viable (a08 §A3 — fully-stacked anti-fire still chips 25%).
+	# Test confirms the math: 75% lone resist → 25% lands.
+	var d: Actor = _make_defender(100, 0, [], {"fire": 75.0})
+	var dealt: int = d.take_damage(80, null, "fire")
+	assert_eq(dealt, 20, "fire 75% resist → 25% of 80 = 20")
+	d.free()
+
+# ---------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------
 

@@ -1334,6 +1334,14 @@ func _spawn_specific(id: String, at_cell: Vector2i, force_pack_tier: int = -1) -
 	else:
 		e.display_name = base_name
 	e.enemy_id = id
+	# Per-element resistances (S8). Data-only — actor.gd::_apply_typed_damage
+	# already reads `self.resistances`; we just need to populate the dict
+	# from enemies.json. Keys are damage_type strings; values are signed
+	# int percent (-40 vulnerable / +75 capped resist). Duplicate so a per-
+	# spawn pack-mod resist boost would not bleed into the canonical def.
+	var def_res: Variant = def.get("resistances", null)
+	if typeof(def_res) == TYPE_DICTIONARY:
+		e.resistances = (def_res as Dictionary).duplicate()
 	# Pack-tier xp scaling — magic 1.5x, rare 3x. Same shape as champion.
 	var pack_xp_mult: float = 1.0
 	if pack_tier == Enemy.PACK_MAGIC: pack_xp_mult = 1.5

@@ -18,6 +18,7 @@
     { id: 'drops',     href: 'drop_tuning.html',   label: 'Drop rates' },
     { id: 'flowchart', href: 'roll_flowchart.html',label: 'Roll flowchart' },
     { id: 'matrix',    href: 'build_matrix.html', label: 'Build matrix' },
+    { id: 'enemies',   href: 'enemy_resistance_editor.html', label: 'Enemies' },
   ];
 
   function build() {

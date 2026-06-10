@@ -25,6 +25,16 @@ var pack_mods: Array[String] = []
 # mechanics work without any per-mod special-case wiring.
 var _pack_defense_tags: Array[String] = []
 
+# Per-element resistance dict, populated from enemies.json by
+# dungeon.gd::_spawn_specific. Keys are damage_type strings
+# ("fire" / "cold" / "lightning" / "holy" / "poison" / "dark" /
+# "physical"). Values are signed int percent (+75 = 75% mitigation;
+# -40 = 40% amplification — the "vulnerable" lane). actor.gd::
+# _apply_typed_damage reads this via `if "resistances" in self`
+# and routes the value into the additive +90% mitigation cap.
+# Empty dict = no resistances (matches the actor.gd fall-through).
+var resistances: Dictionary = {}
+
 # Threat tier 0..3. Set by dungeon.gd::_apply_threat_auras after spawn,
 # based on power-vs-bot. Drives the threat_outline.gdshader pulse color.
 # 0 = trivial, 1 = even match, 2 = dangerous, 3 = lethal/boss.

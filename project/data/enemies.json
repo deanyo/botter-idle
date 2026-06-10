@@ -71,7 +71,12 @@
     "tier": 1,
     "boss": false,
     "visual_scale": 1.4,
-    "visual_anchor": "centre"
+    "visual_anchor": "centre",
+    "resistances": {
+      "fire": -25,
+      "physical": 25,
+      "poison": 75
+    }
   },
   "goblin": {
     "name": "Goblin",
@@ -133,7 +138,11 @@
     "xp": 6,
     "min_floor": 2,
     "tier": 2,
-    "boss": false
+    "boss": false,
+    "resistances": {
+      "cold": -25,
+      "poison": 25
+    }
   },
   "ball_python": {
     "name": "Ball Python",
@@ -145,7 +154,11 @@
     "xp": 7,
     "min_floor": 2,
     "tier": 2,
-    "boss": false
+    "boss": false,
+    "resistances": {
+      "cold": -25,
+      "poison": 25
+    }
   },
   "ooze": {
     "name": "Ooze",
@@ -159,7 +172,12 @@
     "tier": 2,
     "boss": false,
     "visual_scale": 1.4,
-    "visual_anchor": "centre"
+    "visual_anchor": "centre",
+    "resistances": {
+      "fire": -25,
+      "physical": 25,
+      "poison": 75
+    }
   },
   "acid_blob": {
     "name": "Acid Blob",
@@ -173,7 +191,12 @@
     "tier": 2,
     "boss": false,
     "visual_scale": 1.45,
-    "visual_anchor": "centre"
+    "visual_anchor": "centre",
+    "resistances": {
+      "fire": -25,
+      "physical": 25,
+      "poison": 75
+    }
   },
   "hobgoblin": {
     "name": "Hobgoblin",
@@ -235,7 +258,13 @@
     "xp": 8,
     "min_floor": 3,
     "tier": 2,
-    "boss": false
+    "boss": false,
+    "resistances": {
+      "cold": 25,
+      "dark": 50,
+      "holy": -40,
+      "poison": 50
+    }
   },
   "wolf": {
     "name": "Wolf",
@@ -259,7 +288,11 @@
     "xp": 11,
     "min_floor": 3,
     "tier": 3,
-    "boss": false
+    "boss": false,
+    "resistances": {
+      "holy": -10,
+      "poison": 50
+    }
   },
   "hound": {
     "name": "Hound",
@@ -295,7 +328,11 @@
     "xp": 14,
     "min_floor": 4,
     "tier": 3,
-    "boss": false
+    "boss": false,
+    "resistances": {
+      "cold": -25,
+      "poison": 25
+    }
   },
   "crocodile": {
     "name": "Crocodile",
@@ -368,7 +405,11 @@
     "min_floor": 4,
     "tier": 3,
     "boss": false,
-    "light_spec": "ice_creature"
+    "light_spec": "ice_creature",
+    "resistances": {
+      "cold": 75,
+      "fire": -40
+    }
   },
   "dwarf": {
     "name": "Dwarf",
@@ -404,7 +445,14 @@
     "xp": 16,
     "min_floor": 5,
     "tier": 3,
-    "boss": false
+    "boss": false,
+    "resistances": {
+      "cold": 50,
+      "dark": 50,
+      "holy": -50,
+      "physical": 50,
+      "poison": 75
+    }
   },
   "zombie": {
     "name": "Zombie",
@@ -416,7 +464,13 @@
     "xp": 13,
     "min_floor": 4,
     "tier": 3,
-    "boss": false
+    "boss": false,
+    "resistances": {
+      "cold": 25,
+      "dark": 50,
+      "holy": -40,
+      "poison": 50
+    }
   },
   "hell_hound": {
     "name": "Hell Hound",
@@ -428,7 +482,13 @@
     "xp": 18,
     "min_floor": 5,
     "tier": 3,
-    "boss": false
+    "boss": false,
+    "resistances": {
+      "cold": -25,
+      "dark": 25,
+      "fire": 50,
+      "holy": -40
+    }
   },
   "death_yak": {
     "name": "Death Yak",
@@ -492,7 +552,10 @@
     "tier": 4,
     "boss": false,
     "visual_scale": 1.5,
-    "visual_anchor": "ground"
+    "visual_anchor": "ground",
+    "resistances": {
+      "fire": 25
+    }
   },
   "ogre": {
     "name": "Ogre",
@@ -504,7 +567,10 @@
     "xp": 26,
     "min_floor": 6,
     "tier": 4,
-    "boss": false
+    "boss": false,
+    "resistances": {
+      "fire": 25
+    }
   },
   "troll": {
     "name": "Troll",
@@ -516,7 +582,11 @@
     "xp": 34,
     "min_floor": 6,
     "tier": 4,
-    "boss": false
+    "boss": false,
+    "resistances": {
+      "fire": -50,
+      "poison": 25
+    }
   },
   "anubis_guard": {
     "name": "Anubis Guard",
@@ -528,7 +598,13 @@
     "xp": 32,
     "min_floor": 6,
     "tier": 4,
-    "boss": false
+    "boss": false,
+    "resistances": {
+      "cold": 25,
+      "dark": 50,
+      "holy": -40,
+      "poison": 50
+    }
   },
   "death_knight": {
     "name": "Death Knight",
@@ -540,7 +616,13 @@
     "xp": 34,
     "min_floor": 7,
     "tier": 4,
-    "boss": false
+    "boss": false,
+    "resistances": {
+      "cold": 25,
+      "dark": 50,
+      "holy": -40,
+      "poison": 50
+    }
   },
   "deep_elf_knight": {
     "name": "Deep Elf Knight",
@@ -564,7 +646,10 @@
     "xp": 36,
     "min_floor": 7,
     "tier": 4,
-    "boss": false
+    "boss": false,
+    "resistances": {
+      "fire": 25
+    }
   },
   "fire_giant": {
     "name": "Fire Giant",
@@ -579,7 +664,11 @@
     "boss": false,
     "visual_scale": 1.5,
     "visual_anchor": "ground",
-    "light_spec": "fire_creature"
+    "light_spec": "fire_creature",
+    "resistances": {
+      "cold": -40,
+      "fire": 75
+    }
   },
   "hill_giant": {
     "name": "Hill Giant",
@@ -622,7 +711,11 @@
     "boss": false,
     "visual_scale": 1.5,
     "visual_anchor": "ground",
-    "light_spec": "ice_creature"
+    "light_spec": "ice_creature",
+    "resistances": {
+      "cold": 75,
+      "fire": -40
+    }
   },
   "fire_dragon": {
     "name": "Fire Dragon",
@@ -637,7 +730,11 @@
     "boss": false,
     "visual_scale": 1.5,
     "visual_anchor": "ground",
-    "light_spec": "fire_creature"
+    "light_spec": "fire_creature",
+    "resistances": {
+      "cold": -40,
+      "fire": 75
+    }
   },
   "iron_dragon": {
     "name": "Iron Dragon",
@@ -663,7 +760,13 @@
     "xp": 75,
     "min_floor": 8,
     "tier": 5,
-    "boss": false
+    "boss": false,
+    "resistances": {
+      "cold": 50,
+      "dark": 75,
+      "holy": -50,
+      "poison": 75
+    }
   },
   "vampire_knight": {
     "name": "Vampire Knight",
@@ -675,7 +778,13 @@
     "xp": 75,
     "min_floor": 8,
     "tier": 5,
-    "boss": false
+    "boss": false,
+    "resistances": {
+      "cold": 25,
+      "dark": 50,
+      "holy": -40,
+      "poison": 50
+    }
   },
   "orc_warlord": {
     "name": "Orc Warlord",
@@ -699,7 +808,11 @@
     "xp": 80,
     "min_floor": 8,
     "tier": 5,
-    "boss": false
+    "boss": false,
+    "resistances": {
+      "fire": -50,
+      "poison": 25
+    }
   },
   "anaconda": {
     "name": "Anaconda",
@@ -711,7 +824,11 @@
     "xp": 20,
     "min_floor": 5,
     "tier": 3,
-    "boss": false
+    "boss": false,
+    "resistances": {
+      "cold": -25,
+      "poison": 25
+    }
   },
   "dryad": {
     "name": "Dryad",
@@ -738,7 +855,11 @@
     "boss": false,
     "visual_scale": 1.5,
     "visual_anchor": "ground",
-    "light_spec": "ice_creature"
+    "light_spec": "ice_creature",
+    "resistances": {
+      "cold": 75,
+      "fire": -40
+    }
   },
   "balrug": {
     "name": "Balrug",
@@ -750,7 +871,12 @@
     "xp": 90,
     "min_floor": 8,
     "tier": 5,
-    "boss": false
+    "boss": false,
+    "resistances": {
+      "dark": 25,
+      "fire": 50,
+      "holy": -40
+    }
   },
   "cacodemon": {
     "name": "Cacodemon",
@@ -765,7 +891,13 @@
     "boss": false,
     "visual_scale": 1.6,
     "visual_anchor": "ground",
-    "light_spec": "fire_creature"
+    "light_spec": "fire_creature",
+    "resistances": {
+      "cold": -40,
+      "dark": 25,
+      "fire": 75,
+      "holy": -40
+    }
   },
   "blue_devil": {
     "name": "Blue Devil",
@@ -777,7 +909,13 @@
     "xp": 40,
     "min_floor": 7,
     "tier": 4,
-    "boss": false
+    "boss": false,
+    "resistances": {
+      "dark": 25,
+      "fire": 25,
+      "holy": -40,
+      "lightning": 50
+    }
   },
   "blizzard_demon": {
     "name": "Blizzard Demon",
@@ -792,7 +930,13 @@
     "boss": false,
     "visual_scale": 1.55,
     "visual_anchor": "ground",
-    "light_spec": "ice_creature"
+    "light_spec": "ice_creature",
+    "resistances": {
+      "cold": 75,
+      "dark": 25,
+      "fire": -40,
+      "holy": -40
+    }
   },
   "minotaur": {
     "name": "Minotaur",
@@ -830,7 +974,11 @@
     "xp": 8,
     "min_floor": 8,
     "tier": 2,
-    "boss": false
+    "boss": false,
+    "resistances": {
+      "holy": -10,
+      "poison": 50
+    }
   },
   "jumping_spider": {
     "name": "Jumping Spider",
@@ -842,7 +990,11 @@
     "xp": 7,
     "min_floor": 7,
     "tier": 2,
-    "boss": false
+    "boss": false,
+    "resistances": {
+      "holy": -10,
+      "poison": 50
+    }
   },
   "orb_spider": {
     "name": "Orb Spider",
@@ -854,7 +1006,11 @@
     "xp": 8,
     "min_floor": 8,
     "tier": 3,
-    "boss": false
+    "boss": false,
+    "resistances": {
+      "holy": -10,
+      "poison": 50
+    }
   },
   "giant_spider": {
     "name": "Giant Spider",
@@ -868,7 +1024,11 @@
     "tier": 3,
     "boss": false,
     "visual_scale": 1.4,
-    "visual_anchor": "centre"
+    "visual_anchor": "centre",
+    "resistances": {
+      "holy": -10,
+      "poison": 50
+    }
   },
   "water_moccasin": {
     "name": "Water Moccasin",
@@ -880,7 +1040,11 @@
     "xp": 5,
     "min_floor": 5,
     "tier": 2,
-    "boss": false
+    "boss": false,
+    "resistances": {
+      "cold": -25,
+      "poison": 25
+    }
   },
   "salamander": {
     "name": "Salamander",
@@ -893,7 +1057,11 @@
     "min_floor": 7,
     "tier": 3,
     "boss": false,
-    "light_spec": "fire_creature"
+    "light_spec": "fire_creature",
+    "resistances": {
+      "cold": -40,
+      "fire": 75
+    }
   },
   "naga": {
     "name": "Naga",
@@ -905,7 +1073,11 @@
     "xp": 7,
     "min_floor": 7,
     "tier": 3,
-    "boss": false
+    "boss": false,
+    "resistances": {
+      "cold": -25,
+      "poison": 25
+    }
   },
   "yak": {
     "name": "Yak",
@@ -1049,7 +1221,14 @@
     "tier": 2,
     "boss": false,
     "visual_scale": 1.3,
-    "visual_anchor": "centre"
+    "visual_anchor": "centre",
+    "resistances": {
+      "cold": 25,
+      "dark": 50,
+      "fire": -25,
+      "holy": -50,
+      "poison": 75
+    }
   },
   "greater_mummy": {
     "name": "Greater Mummy",
@@ -1063,7 +1242,14 @@
     "tier": 4,
     "boss": false,
     "visual_scale": 1.5,
-    "visual_anchor": "ground"
+    "visual_anchor": "ground",
+    "resistances": {
+      "cold": 25,
+      "dark": 50,
+      "fire": -25,
+      "holy": -50,
+      "poison": 75
+    }
   },
   "sphinx": {
     "name": "Sphinx",
@@ -1089,7 +1275,14 @@
     "xp": 5,
     "min_floor": 5,
     "tier": 2,
-    "boss": false
+    "boss": false,
+    "resistances": {
+      "cold": 50,
+      "dark": 50,
+      "holy": -50,
+      "physical": 50,
+      "poison": 75
+    }
   },
   "necrophage": {
     "name": "Necrophage",
@@ -1101,7 +1294,13 @@
     "xp": 6,
     "min_floor": 6,
     "tier": 3,
-    "boss": false
+    "boss": false,
+    "resistances": {
+      "cold": 25,
+      "dark": 50,
+      "holy": -40,
+      "poison": 50
+    }
   },
   "ancient_lich": {
     "name": "Ancient Lich",
@@ -1113,7 +1312,13 @@
     "xp": 10,
     "min_floor": 10,
     "tier": 5,
-    "boss": false
+    "boss": false,
+    "resistances": {
+      "cold": 50,
+      "dark": 75,
+      "holy": -50,
+      "poison": 75
+    }
   },
   "slime_creature": {
     "name": "Slime Creature",
@@ -1127,7 +1332,12 @@
     "tier": 2,
     "boss": false,
     "visual_scale": 1.4,
-    "visual_anchor": "centre"
+    "visual_anchor": "centre",
+    "resistances": {
+      "fire": -25,
+      "physical": 25,
+      "poison": 75
+    }
   },
   "death_ooze": {
     "name": "Death Ooze",
@@ -1141,7 +1351,13 @@
     "tier": 3,
     "boss": false,
     "visual_scale": 1.45,
-    "visual_anchor": "centre"
+    "visual_anchor": "centre",
+    "resistances": {
+      "dark": 25,
+      "fire": -25,
+      "physical": 25,
+      "poison": 75
+    }
   },
   "azure_jelly": {
     "name": "Azure Jelly",
@@ -1155,7 +1371,13 @@
     "tier": 3,
     "boss": false,
     "visual_scale": 1.5,
-    "visual_anchor": "centre"
+    "visual_anchor": "centre",
+    "resistances": {
+      "cold": 50,
+      "fire": -25,
+      "physical": 25,
+      "poison": 75
+    }
   },
   "deep_elf_mage": {
     "name": "Deep Elf Mage",
@@ -1229,7 +1451,11 @@
     "xp": 7,
     "min_floor": 7,
     "tier": 3,
-    "boss": false
+    "boss": false,
+    "resistances": {
+      "fire": -50,
+      "poison": 25
+    }
   },
   "rotting_devil": {
     "name": "Rotting Devil",
@@ -1241,7 +1467,13 @@
     "xp": 8,
     "min_floor": 8,
     "tier": 3,
-    "boss": false
+    "boss": false,
+    "resistances": {
+      "dark": 50,
+      "fire": 25,
+      "holy": -40,
+      "poison": 50
+    }
   },
   "wyvern": {
     "name": "Wyvern",
