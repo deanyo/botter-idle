@@ -3863,6 +3863,259 @@
         "sat": 0.7,
         "mode": "normal"
       }
+    },
+    {
+      "id": "firestarter",
+      "name": "Firestarter",
+      "slot": "weapon",
+      "rarity": "legendary",
+      "tile": "urand_firestarter.png",
+      "base_type": "mace",
+      "weapon_class": "1H",
+      "damage_min": 71,
+      "damage_max": 131,
+      "damage_type": "fire",
+      "speed": 0.65,
+      "item_tier": 5,
+      "flavor_tags": [
+        "fire"
+      ],
+      "lore": "A blade wreathed in eternal flame. It doesn't burn you. Yet.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        25
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_might": 25,
+        "of_finesse": 15,
+        "of_wisdom": 10,
+        "of_sharpness": 30,
+        "of_embers": 8,
+        "of_frost": 8,
+        "of_storms": 8,
+        "of_devotion": 6,
+        "of_venom": 6,
+        "of_shadows": 6,
+        "of_crit": 25,
+        "of_haste": 20,
+        "of_lifesteal": 15,
+        "of_channeling": 8,
+        "of_quickcast": 8,
+        "of_executioner": 8
+      }
+    },
+    {
+      "id": "majin_bo",
+      "name": "Majin-Bo",
+      "slot": "weapon",
+      "rarity": "legendary",
+      "tile": "spwpn_majin.png",
+      "base_type": "quarterstaff",
+      "weapon_class": "1H",
+      "damage_min": 48,
+      "damage_max": 83,
+      "damage_type": "dark",
+      "speed": 0.6,
+      "item_tier": 5,
+      "flavor_tags": [
+        "dark",
+        "arcane",
+        "vampiric"
+      ],
+      "lore": "Whispers names of the people the bearer has lost. Or will lose.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        3,
+        18
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_might": 25,
+        "of_finesse": 15,
+        "of_wisdom": 10,
+        "of_sharpness": 30,
+        "of_embers": 8,
+        "of_frost": 8,
+        "of_storms": 8,
+        "of_devotion": 6,
+        "of_venom": 6,
+        "of_shadows": 6,
+        "of_crit": 25,
+        "of_haste": 20,
+        "of_lifesteal": 15,
+        "of_channeling": 8,
+        "of_quickcast": 8,
+        "of_executioner": 8
+      }
+    },
+    {
+      "id": "serpent_scourge",
+      "name": "The Serpent's Scourge",
+      "slot": "weapon",
+      "rarity": "legendary",
+      "tile": "urand_serpent_scourge.png",
+      "base_type": "whip",
+      "weapon_class": "1H",
+      "damage_min": 60,
+      "damage_max": 119,
+      "damage_type": "poison",
+      "speed": 0.6,
+      "item_tier": 5,
+      "flavor_tags": [
+        "poison",
+        "swiftness"
+      ],
+      "lore": "Drips. Doesn't matter what you wipe it with.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        4,
+        22
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_might": 25,
+        "of_finesse": 15,
+        "of_wisdom": 10,
+        "of_sharpness": 30,
+        "of_embers": 8,
+        "of_frost": 8,
+        "of_storms": 8,
+        "of_devotion": 6,
+        "of_venom": 6,
+        "of_shadows": 6,
+        "of_crit": 25,
+        "of_haste": 20,
+        "of_lifesteal": 15,
+        "of_channeling": 8,
+        "of_quickcast": 8,
+        "of_executioner": 8
+      }
+    },
+    {
+      "id": "wyrmbane",
+      "name": "Wyrmbane",
+      "slot": "weapon",
+      "rarity": "legendary",
+      "tile": "urand_wyrmbane_new.png",
+      "base_type": "spear",
+      "weapon_class": "1H",
+      "damage_min": 60,
+      "damage_max": 119,
+      "damage_type": "holy",
+      "speed": 0.6,
+      "item_tier": 5,
+      "flavor_tags": [
+        "holy",
+        "dragon_bane"
+      ],
+      "lore": "Forged to end dragons. Still hungry.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        5,
+        25
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_might": 25,
+        "of_finesse": 15,
+        "of_wisdom": 10,
+        "of_sharpness": 30,
+        "of_embers": 8,
+        "of_frost": 8,
+        "of_storms": 8,
+        "of_devotion": 6,
+        "of_venom": 6,
+        "of_shadows": 6,
+        "of_crit": 25,
+        "of_haste": 20,
+        "of_lifesteal": 15,
+        "of_channeling": 8,
+        "of_quickcast": 8,
+        "of_executioner": 8
+      }
+    },
+    {
+      "affix_pool": {
+        "of_might": 39,
+        "of_finesse": 15,
+        "of_wisdom": 10,
+        "of_sharpness": 44,
+        "of_embers": 8,
+        "of_frost": 8,
+        "of_storms": 8,
+        "of_devotion": 6,
+        "of_venom": 6,
+        "of_shadows": 6,
+        "of_crit": 25,
+        "of_haste": 20,
+        "of_lifesteal": 15,
+        "of_channeling": 8,
+        "of_quickcast": 8,
+        "of_the_bear": 30,
+        "of_vitality": 22,
+        "of_executioner": 8
+      },
+      "base_type": "mace",
+      "damage_max": 131,
+      "damage_min": 71,
+      "damage_type": "fire",
+      "default_tint": {
+        "hue": 0.0,
+        "mode": "colorize",
+        "sat": 1.0,
+        "target_rgb": [
+          0.55,
+          0.58,
+          0.62
+        ]
+      },
+      "drop_weights": [
+        0,
+        0,
+        3,
+        25,
+        60
+      ],
+      "enchant_chance": 0.3,
+      "flavor_tags": [
+        "fire"
+      ],
+      "id": "firestarter_ironclad",
+      "implicit_affixes": [],
+      "item_tier": 5,
+      "lore": "Plain forged iron, but heavier than the metal alone explains.",
+      "name": "Ironclad Firestarter",
+      "rarity": "legendary",
+      "slot": "weapon",
+      "speed": 0.65,
+      "tile": "urand_firestarter.png",
+      "unique": true,
+      "weapon_class": "1H",
+      "_balance_bumps": {
+        "of_the_bear": 30,
+        "of_vitality": 22,
+        "of_might": 14,
+        "of_sharpness": 14
+      },
+      "recolor_of": "firestarter"
     }
   ]
 }
