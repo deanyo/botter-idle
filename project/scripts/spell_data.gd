@@ -243,6 +243,26 @@ static func compute_damage(bot: Node, item: Dictionary, inst: Variant = null) ->
 	# bot's ephemeral_spell_dmg_pct accumulator; cap is applied here so
 	# stacking multiple windows can't burst the ceiling.
 	var eph_pct: float = float(bot.get("ephemeral_spell_dmg_pct")) if bot.get("ephemeral_spell_dmg_pct") != null else 0.0
+	# S4 Tier-1 spell-side affix contributions (a10 §3.2 rescopes). All
+	# additively roll into the ephemeral lane so the +30% cap absorbs
+	# them. Permanent-stat lanes (sage/hunter when always-on) intentionally
+	# share the same ceiling — keeps the rescope projections honest.
+	#   of_sage:    +sage_per_unspent_pct × min(unspent, 10) / 10 (peaks at 24%)
+	#   of_hunter:  +hunter_pct (only on full-HP slot — spell branch
+	#               cannot read the target HP here, so we surface it
+	#               through ephemeral_spell_dmg_pct from the caller's
+	#               write-site instead. Documented for callers that may
+	#               want spell-side hunter: write to ephemeral_spell_dmg_pct
+	#               at cast-resolve time when target ≥80% HP.)
+	#   of_synergy: +synergy_pct (when synergy_active triplet present)
+	# of_tempest's spell-damage leg already folds into spell_damage_pct
+	# above; cd-penalty leg lands in compute_cooldown.
+	var sage_pct: float = float(bot.get("sage_per_unspent_pct")) if bot.get("sage_per_unspent_pct") != null else 0.0
+	if sage_pct > 0.0:
+		var unspent: int = clampi(int(bot.get("unspent_points") if bot.get("unspent_points") != null else 0), 0, 10)
+		eph_pct += sage_pct * float(unspent) / 10.0
+	if bool(bot.get("synergy_active")) and float(bot.get("synergy_pct")) > 0.0:
+		eph_pct += float(bot.get("synergy_pct"))
 	var eph_mult: float = 1.0 + minf(0.30, maxf(0.0, eph_pct / 100.0))
 	return int(round(base_dmg * stat_mult * dmg_mult * elem_mult * class_mult * eph_mult))
 
@@ -255,7 +275,13 @@ static func compute_cooldown(bot: Node, item: Dictionary) -> float:
 	if bot == null:
 		return base_cd
 	var cdr: float = clampf(float(bot.spell_cdr_pct), 0.0, 60.0)
-	return max(0.3, base_cd * (1.0 - cdr / 100.0))
+	# of_tempest cd-penalty leg (a02 P-10): subtracted from cdr — the
+	# affix trades cooldown speed for spell damage. Net cdr can go
+	# negative (longer cooldowns); clamp at -50% so a stacked Tempest
+	# loadout doesn't grind a 1.5s spell to 4s+.
+	var penalty: float = float(bot.get("tempest_cd_penalty_pct")) if bot.get("tempest_cd_penalty_pct") != null else 0.0
+	var net_cdr: float = clampf(cdr - penalty, -50.0, 60.0)
+	return max(0.3, base_cd * (1.0 - net_cdr / 100.0))
 
 # Effective projectile-count: archetype-default + spell_proj_bonus +
 # any per-item override. Each spell archetype interprets this its own

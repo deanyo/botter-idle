@@ -254,6 +254,69 @@ func test_enemy_resistance_positive_caps_at_75_pct() -> void:
 	d.free()
 
 # ---------------------------------------------------------------------
+# S4 Tier-1 affix mechanics (a02 P-8/9/10/11/12/13/15/16/19/27/28
+# rescoped per a10 §3.2). Defender-side hooks (sundering, bloodletting)
+# are testable without Bot stubs; attacker-side ephemeral lanes go
+# through stat_calc tests + the /grind validation in S4 §V10/V13.
+# ---------------------------------------------------------------------
+
+func test_s4_of_sundering_reduces_physical_armor() -> void:
+	# Defender at armor=20 takes 50 raw physical: post-mit (mit_sum=0) →
+	# 50 - 20 = 30. Apply a 7-amount sunder stack: armor reduced to 13,
+	# 50 - 13 = 37. Confirms the sunder hook routes the per-stack value
+	# into the physical-armor-subtract branch in _apply_typed_damage.
+	var d: Actor = _make_defender(200, 20, [], {})
+	var baseline: int = d.take_damage(50, null, "physical")
+	assert_eq(baseline, 30, "baseline physical: 50 raw - 20 armor = 30 dealt")
+	var d2: Actor = _make_defender(200, 20, [], {})
+	d2.add_sunder_stack(7)
+	var sundered: int = d2.take_damage(50, null, "physical")
+	assert_eq(sundered, 37, "sundered 7: 50 raw - (20-7) armor = 37 dealt")
+	d.free()
+	d2.free()
+
+func test_s4_of_sundering_caps_at_2_stacks() -> void:
+	# Per a10 P-11 rescope, sunder stacks cap at 2. A third
+	# add_sunder_stack call should NOT increase the amount past stack#2.
+	var d: Actor = _make_defender(200, 100, [], {})
+	d.add_sunder_stack(10)  # stack 1
+	d.add_sunder_stack(10)  # stack 2 — cap reached
+	d.add_sunder_stack(10)  # stack 3 — should be no-op
+	assert_eq(d._sunder_stacks, 2, "sunder stacks cap at 2")
+	assert_eq(d._sunder_amount, 20, "sunder amount = 2 stacks × 10 = 20")
+	d.free()
+
+func test_s4_of_sundering_expires_after_duration() -> void:
+	# Sunder expiry is checked lazily on next read. Manually set the
+	# expiry to the past; the next physical hit should ignore the
+	# sunder (full armor applies).
+	var d: Actor = _make_defender(200, 20, [], {})
+	d.add_sunder_stack(15)
+	# Force expiry: rewind the expires_at marker.
+	d._sunder_expires_at = 0.0
+	var dealt: int = d.take_damage(50, null, "physical")
+	assert_eq(dealt, 30, "expired sunder: 50 raw - 20 armor = 30 (full armor)")
+	# State auto-cleared after the read.
+	assert_eq(d._sunder_amount, 0, "sunder amount reset on expiry")
+	assert_eq(d._sunder_stacks, 0, "sunder stacks reset on expiry")
+	d.free()
+
+func test_s4_of_bloodletting_applies_bleeding_status() -> void:
+	# add_bloodletting routes through _apply_dot_status with the
+	# "bleeding" id and sets up the per-tick payload. Confirms the
+	# bleeding status is registered, has the expected per-tick amount,
+	# and IS NOT gated by poison_res / fire_res (bleed is physical).
+	var d: Actor = _make_defender(200, 0, ["poison_res", "fire_res"], {})
+	d.add_bloodletting(5)
+	assert_true(d.has_status("bleeding"),
+		"bleeding status registered (not gated by poison/fire resists)")
+	var entry: Dictionary = d._statuses["bleeding"]
+	var dot: Dictionary = entry.get("dot", {})
+	assert_eq(int(dot.get("amount", 0)), 5, "bleed per-tick = 5")
+	assert_almost_eq(float(dot.get("interval", 0)), 1.0, 0.001, "bleed interval = 1.0s")
+	d.free()
+
+# ---------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------
 

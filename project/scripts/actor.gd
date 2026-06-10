@@ -82,6 +82,15 @@ var _arcane_swing_count: int = 0
 # `dual`: 15% chance to deal a second hit on the same target. We
 # guard against infinite recursion via _dual_attacking.
 var _dual_attacking: bool = false
+# of_sundering (a02 P-11): defender carries a sunder amount + expiry.
+# Each successful sunder hit refreshes the timer and stacks the armor
+# reduction up to the cap (2 stacks per a10 P-11 rescope). Read by
+# _apply_typed_damage when computing physical mitigation.
+var _sunder_amount: int = 0
+var _sunder_stacks: int = 0
+var _sunder_expires_at: float = 0.0
+const _SUNDER_DURATION := 3.0
+const _SUNDER_MAX_STACKS := 2
 
 func _ready() -> void:
 	hp = max_hp
@@ -378,7 +387,19 @@ func _apply_typed_damage(raw: int, damage_type: String, attacker: Actor, def_tag
 		# Apply mit_sum first, then armor flat-subtract. Floor of 1 so
 		# a fully mitigated hit still pings the HP bar.
 		var post_mit: int = int(round(float(raw) * (1.0 - final_mit)))
-		dmg = maxi(1, post_mit - defense)
+		# of_sundering (a02 P-11 rescoped) — defender's armor temporarily
+		# reduced by the active sunder amount. Stacks expire silently on
+		# next read after _sunder_expires_at lapses; same shape as `rage`
+		# stacks on attackers.
+		var eff_armor: int = defense
+		if _sunder_amount > 0:
+			var now_s: float = float(Time.get_ticks_msec()) / 1000.0
+			if now_s > _sunder_expires_at:
+				_sunder_amount = 0
+				_sunder_stacks = 0
+			else:
+				eff_armor = maxi(0, defense - _sunder_amount)
+		dmg = maxi(1, post_mit - eff_armor)
 	else:
 		var resist_pct: float = 0.0
 		if "resistances" in self:
@@ -534,6 +555,47 @@ func attempt_attack(other: Actor, delta: float) -> int:
 		if now_r > _rage_expires_at:
 			_rage_stacks = 0
 		ephemeral_sum += 0.05 * float(_rage_stacks)
+	# S4 Tier-1 affix conditional damage. Each contributes a flat fraction
+	# into ephemeral_sum so the +30% per-swing cap absorbs them alongside
+	# pre-existing flavor-tag contributions. Combat-math change confined
+	# to the same lane S2 already governs.
+	if self is Bot:
+		var bot_self: Bot = self as Bot
+		# of_hunter — full-HP-bracket damage. ≥80% HP threshold per a02
+		# P-13 (rescoped peak +20% at T5).
+		if bot_self.hunter_pct > 0.0 and is_instance_valid(other) and other.max_hp > 0:
+			if float(other.hp) / float(other.max_hp) >= 0.8:
+				ephemeral_sum += bot_self.hunter_pct / 100.0
+		# of_berserker — on-kill stacks. _berserker_stacks ages out via
+		# 3s window; each stack contributes berserker_peak_pct/5 (peak
+		# pct is the 5-stack total). Mirrors `rage` shape.
+		if bot_self.berserker_peak_pct > 0.0:
+			var now_b: float = float(Time.get_ticks_msec()) / 1000.0
+			if now_b > bot_self._berserker_expires_at:
+				bot_self._berserker_stacks = 0
+			if bot_self._berserker_stacks > 0:
+				var per_stack: float = bot_self.berserker_peak_pct / 5.0 / 100.0
+				ephemeral_sum += per_stack * float(bot_self._berserker_stacks)
+		# of_berserker_rage — STR-scaling per 5-rank, peak at 10 ranks.
+		# str_excess clamped to 50 so the 10-rank cap holds at every
+		# alloc level (Minotaur stat dump can hit ~109 excess; the cap
+		# keeps bursts inside the +25% rescope).
+		if bot_self.str_dmg_per5_peak_pct > 0.0 and "str_stat" in bot_self:
+			var str_excess_b: int = int(bot_self.str_stat) - 5
+			var ranks_b: int = clampi(str_excess_b / 5, 0, 10)
+			var per_rank_b: float = bot_self.str_dmg_per5_peak_pct / 10.0 / 100.0
+			ephemeral_sum += per_rank_b * float(ranks_b)
+		# of_synergy — additive flat to all damage WHEN hybrid triplet
+		# active (Str-coded + Dex-coded + Int-coded affix in the loadout).
+		# synergy_pct already capped 12 in stat_calc.
+		if bot_self.synergy_active and bot_self.synergy_pct > 0.0:
+			ephemeral_sum += bot_self.synergy_pct / 100.0
+		# of_sundering — apply target armor-stack debuff BEFORE clamping
+		# ephemeral_sum, so the next-swing reduction shows as the same
+		# arch shape as armor on the defender's side. Stack count caps
+		# at 2 per a10 P-11 rescope. Status-overlay backed for HUD legibility.
+		if bot_self.sundering_per_stack > 0 and is_instance_valid(other):
+			other.add_sunder_stack(bot_self.sundering_per_stack)
 	var dmg_mult: float = 1.0 + minf(0.30, maxf(0.0, ephemeral_sum))
 
 	# Item-overhaul v2: weapon damage is a roll over [damage_min,
@@ -662,6 +724,35 @@ func attempt_attack(other: Actor, delta: float) -> int:
 	if killed and "rage" in def_tags:
 		_rage_stacks = mini(_rage_stacks + 1, 6)
 		_rage_expires_at = float(Time.get_ticks_msec()) / 1000.0 + 6.0
+	# of_berserker (a02 P-12): on-kill stack +N% per kill (cap 5 stacks,
+	# 3s window). Bot-only so only the bot accumulates Berserker stacks.
+	if killed and self is Bot:
+		var bot_kk: Bot = self as Bot
+		if bot_kk.berserker_peak_pct > 0.0:
+			bot_kk._berserker_stacks = mini(bot_kk._berserker_stacks + 1, 5)
+			bot_kk._berserker_expires_at = float(Time.get_ticks_msec()) / 1000.0 + 3.0
+	# of_bloodletting (a02 P-9 rescoped to flat values): on-crit, apply
+	# a flat-DPS bleed for 4 seconds. Stack count caps at 4 per a02 spec;
+	# refreshes duration on re-crit. Uses the existing bleeding status
+	# hook + dot/per-tick scheduler (same shape as `fire` enchant).
+	if crit and dealt > 0 and is_instance_valid(other) and other.is_alive and self is Bot:
+		var bot_bl: Bot = self as Bot
+		if bot_bl.bloodletting_per_stack > 0:
+			# 4 ticks × 1s = 4s total. Per-tick = bloodletting_per_stack.
+			# Stacks cap implicit via add_bloodletting helper.
+			other.add_bloodletting(bot_bl.bloodletting_per_stack)
+	# of_echoes (a02 P-8): every Nth swing echoes 50% damage to the same
+	# target. echo_min_n is the smallest N rolled across gear (smaller =
+	# more frequent). Echo skips crit + ephemeral re-resolve to avoid
+	# infinite recursion; just deals raw/2 routed through take_damage.
+	if dealt > 0 and is_instance_valid(other) and other.is_alive and self is Bot:
+		var bot_eh: Bot = self as Bot
+		if bot_eh.echo_min_n > 0:
+			bot_eh._echo_swing_count += 1
+			if bot_eh._echo_swing_count >= bot_eh.echo_min_n:
+				bot_eh._echo_swing_count = 0
+				var echo: int = maxi(1, int(round(float(raw) * 0.5)))
+				other.take_damage(echo, self)
 	# `rampaging`: on a kill, refund the next attack's cooldown so
 	# the bot can move/attack again immediately. PoE-Headhunter shape.
 	if killed and ("rampaging" in tags or "rampaging" in def_tags):
@@ -911,6 +1002,28 @@ func add_status(id: String, duration: float = 1.0) -> void:
 # `per_tick` true damage (skips defense — DoTs are intended to bypass
 # armor) and the status auto-expires after `ticks * interval` seconds.
 # Re-applying refreshes the timer and replaces tick params.
+# of_sundering (a02 P-11 rescoped): apply a sunder stack to this actor,
+# reducing physical armor for the next ~3s. Each call refreshes the
+# duration and stacks per-stack reduction up to the rescoped cap (2).
+# Called by attempt_attack when the attacker has of_sundering equipped.
+func add_sunder_stack(per_stack_amount: int) -> void:
+	var now: float = float(Time.get_ticks_msec()) / 1000.0
+	if now > _sunder_expires_at:
+		_sunder_amount = 0
+		_sunder_stacks = 0
+	if _sunder_stacks < _SUNDER_MAX_STACKS:
+		_sunder_stacks += 1
+		_sunder_amount += per_stack_amount
+	_sunder_expires_at = now + _SUNDER_DURATION
+
+# of_bloodletting (a02 P-9 rescoped): apply a flat-DPS bleed for 4s on
+# crit. Bleed amount per tick = `per_tick`; ticks 1/sec for 4s. Re-applies
+# refresh duration. Routes through the existing DoT scheduler so HUD
+# overlay + tick math stays consistent. Bypasses immunity tags (bleed is
+# physical, not poison/fire, so poison_res / fire_res don't gate it).
+func add_bloodletting(per_tick: int) -> void:
+	_apply_dot_status("bleeding", per_tick, 4, 1.0)
+
 func add_burn(per_tick: int, ticks: int, interval: float) -> void:
 	# fire_res grants immunity to burn DoT (matches DCSS rF+ stops
 	# being on fire). Resists are wired on every actor; non-bot

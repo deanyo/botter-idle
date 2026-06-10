@@ -209,6 +209,110 @@ func test_class_mastery_caps_at_100_pct() -> void:
 		"int_spell_dmg_pct soft-caps at 100 — raw=150 should clamp")
 
 # ---------------------------------------------------------------------
+# S4 Tier-1 affix accumulators (a02 P-8/9/10/11/12/13/15/16/19/27/28
+# rescoped per a10 §3.2). Confirm each new affix routes to its
+# dedicated accumulator + soft cap fires.
+# ---------------------------------------------------------------------
+
+func test_s4_of_sage_routes_to_sage_per_unspent_pct() -> void:
+	var fake_db: Dictionary = items_db.duplicate(true)
+	fake_db["__test_amulet"] = {
+		"id": "__test_amulet", "slot": "amulet", "rarity": "legendary",
+		"flavor_tags": [], "implicit_affixes": [],
+	}
+	var inst := {
+		"base_id": "__test_amulet", "rarity": "legendary",
+		"affixes": [{"id": "of_sage", "value": 24}],
+	}
+	var save := _bare_save("human")
+	var d: Dictionary = StatCalc.compute({"amulet": inst}, fake_db, save, "human", 1, 0, 0, [])
+	assert_almost_eq(float(d.get("sage_per_unspent_pct", 0)), 24.0, 0.001,
+		"of_sage value flows into sage_per_unspent_pct accumulator")
+
+func test_s4_caps_enforced_per_lane() -> void:
+	# Each S4 cap (a10 §3.2 rescopes) gets its own clamp in StatCalc.
+	# Stuff each lane with an oversized single roll; verify the clamp fires.
+	var fake_db: Dictionary = items_db.duplicate(true)
+	fake_db["__test_amulet"] = {
+		"id": "__test_amulet", "slot": "amulet", "rarity": "legendary",
+		"flavor_tags": [], "implicit_affixes": [],
+	}
+	# of_sage cap = 24. Use raw=200 to force the clamp.
+	var inst := {
+		"base_id": "__test_amulet", "rarity": "legendary",
+		"affixes": [
+			{"id": "of_sage", "value": 200},
+			{"id": "of_synergy", "value": 200},
+			{"id": "of_hunter", "value": 200},
+		],
+	}
+	var save := _bare_save("human")
+	var d: Dictionary = StatCalc.compute({"amulet": inst}, fake_db, save, "human", 1, 0, 0, [])
+	assert_almost_eq(float(d.get("sage_per_unspent_pct", 0)), 24.0, 0.001,
+		"sage_per_unspent_pct soft-caps at 24")
+	assert_almost_eq(float(d.get("synergy_pct", 0)), 12.0, 0.001,
+		"synergy_pct soft-caps at 12")
+	assert_almost_eq(float(d.get("hunter_pct", 0)), 20.0, 0.001,
+		"hunter_pct soft-caps at 20")
+
+func test_s4_of_echoes_picks_smallest_n() -> void:
+	# Multi-source of_echoes: smaller N wins (more frequent echoes).
+	# Two rolls (8, 5) → echo_min_n = 5.
+	var fake_db: Dictionary = items_db.duplicate(true)
+	fake_db["__test_weapon"] = {
+		"id": "__test_weapon", "slot": "weapon", "rarity": "legendary",
+		"damage_min": 5, "damage_max": 10, "speed": 1.0,
+		"damage_type": "physical", "weapon_class": "1H",
+		"flavor_tags": [], "implicit_affixes": [],
+	}
+	fake_db["__test_gloves"] = {
+		"id": "__test_gloves", "slot": "gloves", "rarity": "legendary",
+		"flavor_tags": [], "implicit_affixes": [],
+	}
+	var weapon := {
+		"base_id": "__test_weapon", "rarity": "legendary",
+		"affixes": [{"id": "of_echoes", "value": 8}],
+	}
+	var gloves := {
+		"base_id": "__test_gloves", "rarity": "legendary",
+		"affixes": [{"id": "of_echoes", "value": 5}],
+	}
+	var save := _bare_save("human")
+	var d: Dictionary = StatCalc.compute({"weapon": weapon, "gloves": gloves}, fake_db, save, "human", 1, 0, 0, [])
+	assert_eq(int(d.get("echo_min_n", 0)), 5,
+		"of_echoes picks the smaller N across sources")
+
+func test_s4_of_synergy_active_requires_triplet() -> void:
+	# Bot must wear at least one Str-coded, one Dex-coded, AND one Int-
+	# coded affix to activate synergy_pct. Single-axis loadouts do not.
+	var fake_db: Dictionary = items_db.duplicate(true)
+	fake_db["__test_amulet"] = {
+		"id": "__test_amulet", "slot": "amulet", "rarity": "legendary",
+		"flavor_tags": [], "implicit_affixes": [],
+	}
+	# Only str-coded affix: synergy NOT active.
+	var inst_str := {
+		"base_id": "__test_amulet", "rarity": "legendary",
+		"affixes": [{"id": "of_might", "value": 12}],
+	}
+	var save := _bare_save("human")
+	var d_str: Dictionary = StatCalc.compute({"amulet": inst_str}, fake_db, save, "human", 1, 0, 0, [])
+	assert_false(bool(d_str.get("synergy_active", true)),
+		"of_might alone does NOT activate synergy_active")
+	# str+dex+int: synergy ACTIVE.
+	var inst_triplet := {
+		"base_id": "__test_amulet", "rarity": "legendary",
+		"affixes": [
+			{"id": "of_might", "value": 12},
+			{"id": "of_finesse", "value": 12},
+			{"id": "of_wisdom", "value": 12},
+		],
+	}
+	var d_t: Dictionary = StatCalc.compute({"amulet": inst_triplet}, fake_db, save, "human", 1, 0, 0, [])
+	assert_true(bool(d_t.get("synergy_active", false)),
+		"of_might + of_finesse + of_wisdom triplet activates synergy_active")
+
+# ---------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------
 

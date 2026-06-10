@@ -1438,6 +1438,11 @@ func _on_enemy_died(actor: Actor) -> void:
 		Effects.blood_splat(actor_layer, kill_pos)
 	bot.gain_xp(e.xp_reward)
 	var gold_mult: float = RunModifiers.sum_effect(active_modifiers, "gold_mult", 1.0)
+	# of_plunder (a02 P-27): bot's gold_drop_pct stacks on the existing
+	# gold modifier as an additive +%. Capped through the per-affix DR
+	# scaler in StatCalc so 4× of_plunder doesn't quadruple gold.
+	if is_instance_valid(bot) and float(bot.gold_drop_pct) > 0.0:
+		gold_mult *= 1.0 + float(bot.gold_drop_pct) / 100.0
 	# Per-mob gold halved 2026-06-05 — old (1-5 + floor) ≈ 4-11g/mob with
 	# 100+ mobs/floor flooded gold faster than the shop should allow.
 	# Bosses + rare-tier packs still drop their own bigger pools below.
@@ -1534,6 +1539,17 @@ func _maybe_drop_item(e: Enemy) -> void:
 			continue
 		var instance: Dictionary = LootFactory.create_item_instance(rng, picked, items_db)
 		_spawn_loot_drop(instance, e.cell)
+	# of_scribe (a02 P-28): boss kills carry a chance to spawn an extra
+	# spell tome. Roll happens AFTER the standard loot for-loop so the
+	# bonus is purely additive (never replaces a normal drop). Rolls
+	# once per boss; the spell tome rarity scales with source tier.
+	if e.is_boss and is_instance_valid(bot) and float(bot.spell_tome_drop_pct) > 0.0:
+		if rng.randf() * 100.0 < float(bot.spell_tome_drop_pct):
+			var bonus_rarity: String = _roll_drop_rarity(true)
+			var bonus_id: String = LootFactory.pick_loot_id_for_slot(rng, bonus_rarity, "spell", items_db, _source_tier(), run_dropped_uniques)
+			if bonus_id != "":
+				var bonus_inst: Dictionary = LootFactory.create_item_instance(rng, bonus_id, items_db)
+				_spawn_loot_drop(bonus_inst, e.cell)
 
 func _spawn_loot_drop(instance: Dictionary, at_cell: Vector2i) -> void:
 	var base_id: String = String(instance.get("base_id", ""))

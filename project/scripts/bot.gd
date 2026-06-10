@@ -44,6 +44,33 @@ var spell_element_pct: Dictionary = {
 var str_spell_dmg_pct: float = 0.0
 var dex_spell_dmg_pct: float = 0.0
 var int_spell_dmg_pct: float = 0.0
+# S4 Tier-1 affix accumulators (a02 P-8/9/10/11/12/13/15/16/19/27/28
+# rescoped per a10 §3.2). Rolled up by StatCalc.compute; combat / spell /
+# drop hot paths read these directly. Caps applied in stat_calc.gd:
+#   sage_per_unspent_pct ≤ 24, berserker_peak_pct ≤ 20, hunter_pct ≤ 20,
+#   str_dmg_per5_peak_pct ≤ 25, synergy_pct ≤ 12. Flat affixes
+#   (echo_min_n / sundering_per_stack / bloodletting_per_stack) cap by
+#   their per-stack count in attempt_attack.
+var sage_per_unspent_pct: float = 0.0
+var berserker_peak_pct: float = 0.0
+var hunter_pct: float = 0.0
+var echo_min_n: int = 0
+var tempest_cd_penalty_pct: float = 0.0
+var sundering_per_stack: int = 0
+var bloodletting_per_stack: int = 0
+var gold_drop_pct: float = 0.0
+var spell_tome_drop_pct: float = 0.0
+var str_dmg_per5_peak_pct: float = 0.0
+var synergy_pct: float = 0.0
+var synergy_active: bool = false
+# Per-run berserker stack state (of_berserker). Each enemy kill bumps
+# the counter (cap 5); 3-second window from the LAST kill. Refreshes
+# on subsequent kills. attempt_attack reads + ages.
+var _berserker_stacks: int = 0
+var _berserker_expires_at: float = 0.0
+# Per-run echo counter (of_echoes). Smaller N is better; combat ticks
+# this and emits a 50% echo when it crosses the threshold.
+var _echo_swing_count: int = 0
 # Ephemeral conditional spell bonus accumulator (a10 §5.1). Future
 # conditional/trigger-based spell affixes (Wrath Charge, Curse of
 # Brittlebone, Tempest active windows, Sage unspent-points scaling)
@@ -415,6 +442,18 @@ func recompute_stats() -> void:
 	str_spell_dmg_pct = float(d.get("str_spell_dmg_pct", 0.0))
 	dex_spell_dmg_pct = float(d.get("dex_spell_dmg_pct", 0.0))
 	int_spell_dmg_pct = float(d.get("int_spell_dmg_pct", 0.0))
+	sage_per_unspent_pct = float(d.get("sage_per_unspent_pct", 0.0))
+	berserker_peak_pct = float(d.get("berserker_peak_pct", 0.0))
+	hunter_pct = float(d.get("hunter_pct", 0.0))
+	echo_min_n = int(d.get("echo_min_n", 0))
+	tempest_cd_penalty_pct = float(d.get("tempest_cd_penalty_pct", 0.0))
+	sundering_per_stack = int(d.get("sundering_per_stack", 0))
+	bloodletting_per_stack = int(d.get("bloodletting_per_stack", 0))
+	gold_drop_pct = float(d.get("gold_drop_pct", 0.0))
+	spell_tome_drop_pct = float(d.get("spell_tome_drop_pct", 0.0))
+	str_dmg_per5_peak_pct = float(d.get("str_dmg_per5_peak_pct", 0.0))
+	synergy_pct = float(d.get("synergy_pct", 0.0))
+	synergy_active = bool(d.get("synergy_active", false))
 	move_speed = float(d.move_speed)
 	aggro_bonus = int(d.aggro_bonus)
 	# Legacy Actor fields combat-log paths read.

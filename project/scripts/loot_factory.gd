@@ -199,6 +199,61 @@ static func pick_loot_id(
 		run_dropped_uniques.append(last_id)
 	return last_id
 
+# Slot-locked variant of pick_loot_id. Picks an item of the given rarity
+# AND given slot, weighted by drop_weights[src_tier-1] within the slot.
+# Used by S4 of_scribe (a02 P-28) to roll bonus spell tomes on boss kills
+# without involving SLOT_DROP_WEIGHTS' weapon-heavy distribution.
+static func pick_loot_id_for_slot(
+	rng: RandomNumberGenerator,
+	rarity: String,
+	target_slot: String,
+	items_db: Dictionary,
+	src_tier: int,
+	run_dropped_uniques: Array,
+) -> String:
+	var idx: int = src_tier - 1
+	var slot_pool: Array = []
+	for id in items_db.keys():
+		var item: Dictionary = items_db[id]
+		if String(item.get("slot", "")) != target_slot:
+			continue
+		if String(item.get("rarity", "")) != rarity:
+			continue
+		if bool(item.get("unique", false)) and run_dropped_uniques.has(id):
+			continue
+		var dw: Array = item.get("drop_weights", [])
+		var w: float
+		if dw.size() == 5:
+			w = float(dw[idx])
+			if w <= 0.0:
+				continue
+		else:
+			w = 1.0
+		slot_pool.append({"id": id, "weight": w})
+	if slot_pool.is_empty():
+		return ""
+	var item_total: float = 0.0
+	for entry in slot_pool:
+		item_total += float(entry.weight)
+	if item_total <= 0.0:
+		return ""
+	var item_roll: float = rng.randf() * item_total
+	var item_acc: float = 0.0
+	for entry in slot_pool:
+		item_acc += float(entry.weight)
+		if item_roll <= item_acc:
+			var picked_id: String = String(entry.id)
+			var picked_item: Dictionary = items_db[picked_id]
+			if bool(picked_item.get("unique", false)):
+				run_dropped_uniques.append(picked_id)
+			return picked_id
+	var last_entry: Dictionary = slot_pool[slot_pool.size() - 1]
+	var last_id: String = String(last_entry.id)
+	var last_item: Dictionary = items_db[last_id]
+	if bool(last_item.get("unique", false)):
+		run_dropped_uniques.append(last_id)
+	return last_id
+
 # Map a hue (0–360°) to which stat the recolored item leans toward.
 # Mirrors the color-wheel intuition: red→strength, green→haste, etc.
 # Used by Bot.recompute_stats to apply a per-instance percentage

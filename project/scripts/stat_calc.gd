@@ -84,6 +84,22 @@ static func compute(
 	var str_spell_dmg_pct: float = 0.0
 	var dex_spell_dmg_pct: float = 0.0
 	var int_spell_dmg_pct: float = 0.0
+	# S4 Tier-1 affix accumulators (a02 P-8/9/10/11/12/13/15/16/19/27/28
+	# rescoped per a10 §3.2). Each affix writes to its own bot field; the
+	# combat / spell / drop hot paths read those fields directly. Keep the
+	# accumulators independent so soft-cap behavior is per-affix.
+	var sage_per_unspent_pct: float = 0.0       # of_sage    — peak unspent_pts %
+	var berserker_peak_pct: float = 0.0         # of_berserker — peak (5-stack) %
+	var hunter_pct: float = 0.0                 # of_hunter — vs ≥80% HP
+	var echo_min_n: int = 0                     # of_echoes — smallest N wins
+	var tempest_dmg_pct: float = 0.0            # of_tempest — spell dmg leg
+	var tempest_cd_penalty_pct: float = 0.0     # of_tempest — cd penalty leg
+	var sundering_per_stack: int = 0            # of_sundering — armor stack
+	var bloodletting_per_stack: int = 0         # of_bloodletting — bleed stack
+	var gold_drop_pct: float = 0.0              # of_plunder
+	var spell_tome_drop_pct: float = 0.0        # of_scribe
+	var str_dmg_per5_peak_pct: float = 0.0      # of_berserker_rage — peak (10-rank) %
+	var synergy_pct: float = 0.0                # of_synergy — hybrid all-dmg
 
 	# Bot upgrades — gold-sink purchases. Pre-2026-06-06 combat_training
 	# (atk) and toughening (def) were never read here; players spent gold
@@ -192,6 +208,44 @@ static func compute(
 		str_spell_dmg_pct += float(slot_sums.get("str_spell_dmg_pct", 0))
 		dex_spell_dmg_pct += float(slot_sums.get("dex_spell_dmg_pct", 0))
 		int_spell_dmg_pct += float(slot_sums.get("int_spell_dmg_pct", 0))
+		# S4 Tier-1 affix slot rollups. of_tempest writes into the spell-
+		# damage lane (subject to spell_damage_pct soft cap below) AND the
+		# cd-penalty lane (kept on its own field; spell_data.compute_cooldown
+		# subtracts it from cdr to support burst-vs-sustain identity). All
+		# other Tier-1 affixes get their own dedicated accumulators read by
+		# the combat / spell / drop hot paths after the slot walk.
+		sage_per_unspent_pct += float(slot_sums.get("sage_per_unspent_pct", 0))
+		berserker_peak_pct += float(slot_sums.get("berserker_peak_pct", 0))
+		hunter_pct += float(slot_sums.get("hunter_pct", 0))
+		# of_echoes — stat key `echo_every_n`. Carries an N value where
+		# smaller is better — track the minimum across all sources rather
+		# than summing. Bypass the DR / qmult scaling pipeline because
+		# both would shrink N and FALSELY amplify the affix when stacked.
+		# Read raw value off each affix instance directly so a (N=8 + N=5)
+		# loadout fires every 5 swings, not every 4 (DR-shrunk to ~3.75).
+		for af in combined_affixes:
+			if String(af.get("id", "")) != "of_echoes":
+				continue
+			var raw_n: int = int(af.get("value", 0))
+			if raw_n > 0:
+				echo_min_n = raw_n if echo_min_n == 0 else mini(echo_min_n, raw_n)
+		var tempest_v: float = float(slot_sums.get("tempest_dmg_pct", 0))
+		if tempest_v > 0.0:
+			# Tempest folds spell-damage into the existing spell_damage_pct
+			# soft cap (120) — the player chooses burst-vs-sustain via the
+			# coupled cooldown penalty, NOT by stacking past the cap.
+			spell_damage_pct += tempest_v
+			# Cooldown penalty couples 1:1 with the dmg lane per a02 P-10
+			# (T5: dmg+40 / cd+22). Express as 0.55 of the dmg roll so a
+			# +20% common Tempest matches the 5/8/12/16/22 curve close
+			# enough without authoring two parallel range entries.
+			tempest_cd_penalty_pct += tempest_v * 0.55
+		sundering_per_stack += int(round(float(slot_sums.get("sundering_per_stack", 0))))
+		bloodletting_per_stack += int(round(float(slot_sums.get("bloodletting_per_stack", 0))))
+		gold_drop_pct += float(slot_sums.get("gold_drop_pct", 0))
+		spell_tome_drop_pct += float(slot_sums.get("spell_tome_drop_pct", 0))
+		str_dmg_per5_peak_pct += float(slot_sums.get("str_dmg_per5_peak_pct", 0))
+		synergy_pct += float(slot_sums.get("synergy_pct", 0))
 		# Per-element spell-damage affixes (of_pyromancer / of_cryomancer
 		# / of_storm / of_zealot / of_venom / of_shadow). Each writes to
 		# `<elem>_dmg_pct`; we accumulate into spell_element_pct keyed by
@@ -314,6 +368,25 @@ static func compute(
 	# trivially eclipse `of_channeling`'s generic boost.
 	for elem in spell_element_pct.keys():
 		spell_element_pct[elem] = clampf(float(spell_element_pct[elem]), 0.0, 100.0)
+	# S4 Tier-1 caps (a10 §3.2 rescopes). Each conditional/ephemeral lane
+	# stays inside the +30% per-swing ephemeral cap once attempt_attack
+	# clamps the sum, but the per-affix peak still wants its own ceiling
+	# so a chest of of_hunter ×4 can't blast straight through.
+	#   of_sage:           cap +24% peak (T5 mid 24 × 1 affix)
+	#   of_berserker:      cap +20% peak (5 stacks × 4%)
+	#   of_hunter:         cap +20% (a10 P-13 rescope)
+	#   of_tempest:        already routes through spell_damage_pct cap
+	#   of_berserker_rage: cap +25% peak (10 ranks × 2.5%)
+	#   of_synergy:        cap +12% (a10 P-19 rescope)
+	# of_sundering / of_bloodletting / of_echoes are flat values, no
+	# % cap; they cap by their own per-stack count in actor.attempt_attack.
+	# of_plunder / of_scribe are economy levers, capped via diminishing
+	# returns from the per-affix DR scaler in _scaled_affix_sums.
+	sage_per_unspent_pct = clampf(sage_per_unspent_pct, 0.0, 24.0)
+	berserker_peak_pct = clampf(berserker_peak_pct, 0.0, 20.0)
+	hunter_pct = clampf(hunter_pct, 0.0, 20.0)
+	str_dmg_per5_peak_pct = clampf(str_dmg_per5_peak_pct, 0.0, 25.0)
+	synergy_pct = clampf(synergy_pct, 0.0, 12.0)
 
 	var attack_interval: float = max(0.15, weapon_speed / (1.0 + haste_pct / 100.0))
 
@@ -407,6 +480,23 @@ static func compute(
 	out["str_spell_dmg_pct"] = str_spell_dmg_pct
 	out["dex_spell_dmg_pct"] = dex_spell_dmg_pct
 	out["int_spell_dmg_pct"] = int_spell_dmg_pct
+	# S4 Tier-1 affix accumulators (capped above).
+	out["sage_per_unspent_pct"] = sage_per_unspent_pct
+	out["berserker_peak_pct"] = berserker_peak_pct
+	out["hunter_pct"] = hunter_pct
+	out["echo_min_n"] = echo_min_n
+	out["tempest_cd_penalty_pct"] = tempest_cd_penalty_pct
+	out["sundering_per_stack"] = sundering_per_stack
+	out["bloodletting_per_stack"] = bloodletting_per_stack
+	out["gold_drop_pct"] = gold_drop_pct
+	out["spell_tome_drop_pct"] = spell_tome_drop_pct
+	out["str_dmg_per5_peak_pct"] = str_dmg_per5_peak_pct
+	out["synergy_pct"] = synergy_pct
+	# of_synergy hybrid flag — bot earns synergy_pct only when wearing at
+	# least one Str-coded, one Dex-coded, and one Int-coded affix. The
+	# three families are intentionally identity-aligned (a02 P-19 rescope
+	# per a10 §3.2): rewards balanced loadouts vs mono-stat builds.
+	out["synergy_active"] = _has_synergy_triplet(equipped, items_db)
 	out["move_speed"] = move_speed
 	out["aggro_bonus"] = vision_count + sp_aggro_flat
 	out["loot_rarity_bonus"] = loot_rarity_bonus
@@ -434,6 +524,11 @@ static func _initial_dict() -> Dictionary:
 		"spell_duration_pct": 0.0, "spell_damage_pct": 0.0,
 		"spell_element_pct": {},
 		"str_spell_dmg_pct": 0.0, "dex_spell_dmg_pct": 0.0, "int_spell_dmg_pct": 0.0,
+		"sage_per_unspent_pct": 0.0, "berserker_peak_pct": 0.0, "hunter_pct": 0.0,
+		"echo_min_n": 0, "tempest_cd_penalty_pct": 0.0,
+		"sundering_per_stack": 0, "bloodletting_per_stack": 0,
+		"gold_drop_pct": 0.0, "spell_tome_drop_pct": 0.0,
+		"str_dmg_per5_peak_pct": 0.0, "synergy_pct": 0.0, "synergy_active": false,
 		"move_speed": _BASE_MOVE_SPEED, "aggro_bonus": 0,
 		"loot_rarity_bonus": 0.0, "xp_gain_pct": 0.0,
 		"alloc_str": 0, "alloc_dex": 0, "alloc_int": 0, "unspent_points": 0,
@@ -501,6 +596,49 @@ static func _scaled_affix_sums(affixes: Array, qmult_affix: float, source_count:
 			sums[stat + "_min"] = float(sums.get(stat + "_min", 0)) + float(af_inst["value_min"]) * qmult_affix * dr
 			sums[stat + "_max"] = float(sums.get(stat + "_max", 0)) + float(af_inst["value_max"]) * qmult_affix * dr
 	return sums
+
+# Synergy triplet detector for of_synergy (a02 P-19). Returns true iff
+# the equipped set carries at least one Str-coded affix, one Dex-coded,
+# and one Int-coded affix across slots. Reads each instance's affix list +
+# implicits via the canonical AffixSystem stat lookup so reskin-as-
+# implicit uniques count too. Cheap O(equipped × affixes_per_item) — runs
+# once per recompute_stats. The three coding families are exhaustive
+# (matched to PLAYTEST #2 / #7 stat-identity work):
+#   STR: of_might / of_str_mastery / of_berserker / of_berserker_rage / of_sundering / of_bloodletting
+#   DEX: of_finesse / of_dex_mastery / of_haste / of_crit / of_hunter / of_echoes / of_velocity
+#   INT: of_wisdom / of_int_mastery / of_channeling / of_quickcast / of_resonance / of_lingering / of_sage / of_tempest / of_pyromancer / of_cryomancer / of_storm / of_zealot / of_envenom / of_shadow
+const _SYNERGY_STR := ["of_might", "of_str_mastery", "of_berserker", "of_berserker_rage", "of_sundering", "of_bloodletting"]
+const _SYNERGY_DEX := ["of_finesse", "of_dex_mastery", "of_haste", "of_crit", "of_hunter", "of_echoes", "of_velocity"]
+const _SYNERGY_INT := ["of_wisdom", "of_int_mastery", "of_channeling", "of_quickcast", "of_resonance", "of_lingering", "of_sage", "of_tempest", "of_pyromancer", "of_cryomancer", "of_storm", "of_zealot", "of_envenom", "of_shadow"]
+
+static func _has_synergy_triplet(equipped: Dictionary, items_db: Dictionary) -> bool:
+	var str_seen: bool = false
+	var dex_seen: bool = false
+	var int_seen: bool = false
+	for slot in equipped.keys():
+		var inst: Variant = equipped[slot]
+		if inst == null or typeof(inst) != TYPE_DICTIONARY:
+			continue
+		var base_id: String = String(inst.get("base_id", ""))
+		if base_id == "" or not items_db.has(base_id):
+			continue
+		var item: Dictionary = items_db[base_id]
+		var affixes: Array = []
+		for a in item.get("implicit_affixes", []):
+			affixes.append(a)
+		for a in inst.get("affixes", []):
+			affixes.append(a.get("id", "") if typeof(a) == TYPE_DICTIONARY else a)
+		for af_id in affixes:
+			var aid: String = String(af_id)
+			if not str_seen and aid in _SYNERGY_STR:
+				str_seen = true
+			if not dex_seen and aid in _SYNERGY_DEX:
+				dex_seen = true
+			if not int_seen and aid in _SYNERGY_INT:
+				int_seen = true
+			if str_seen and dex_seen and int_seen:
+				return true
+	return false
 
 # Implicit affix realizer. Implicit affixes are stamped on uniques in
 # items.json as just an id string; compute() needs (id, value) shaped
