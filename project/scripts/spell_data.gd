@@ -141,6 +141,127 @@ const ARCHETYPES := {
 		"element": "",
 		"projectile_speed": 0.0,
 	},
+	# S10 expansion (a05 D + a10 §3.2 rescopes). 8 archetypes, mix of STR
+	# (bone_spear, wrath_charge), DEX (echo_lance, stormcaller_totem,
+	# curse_brittlebone), INT (venom_cloud, ember_bloom, wisp_servant).
+	# All numbers come from a10's rescope decisions, NOT a05's originals.
+	#
+	# bone_spear: STR bouncing physical projectile. Fast, single-target
+	# with chain potential (30% damage loss per bounce, max 4 bounces).
+	# Anchors a STR projectile-stack build; of_multicast adds concurrent
+	# spears, of_velocity speeds them up.
+	"spell_bone_spear": {
+		"primary_stat": "str",
+		"cooldown": 1.8,
+		"damage": 22,
+		"range_cells": 7,
+		"projectile": "res://assets/tiles/spells/effects/crystal_spear3.png",
+		"trail_flavor": "earth",
+		"element": "",
+		"projectile_speed": 360.0,
+	},
+	# venom_cloud: INT poison DoT cloud. Stationary, ticks damage to
+	# enemies inside its radius. a10 §3.2 rescope: 1.5 dmg/tick × 2
+	# ticks/s × 8s × 3-enemy max (down from a05's 2.5/4/6/5 author-tuned
+	# values). The `damage` field is the PER-TICK base damage, not the
+	# per-cast total — Cloud node ticks every 0.5s and re-rolls. The
+	# tick rate is HARD-CAPPED at 2/s irrespective of of_lingering.
+	"spell_venom_cloud": {
+		"primary_stat": "int",
+		"cooldown": 4.5,
+		"damage": 2,
+		"range_cells": 5,
+		"projectile": "",
+		"trail_flavor": "poison",
+		"element": "poison",
+		"projectile_speed": 0.0,
+	},
+	# stormcaller_totem: DEX lightning turret. Drop at feet, zaps nearest
+	# enemy every 0.6s for 4s base × duration_pct. Despawns on floor
+	# change (idle-grind block: totem can't tick while bot offline since
+	# the parent dungeon node freezes its _process tree).
+	"spell_stormcaller_totem": {
+		"primary_stat": "dex",
+		"cooldown": 6.0,
+		"damage": 12,
+		"range_cells": 4,
+		"projectile": "",
+		"trail_flavor": "thunderous",
+		"element": "thunderous",
+		"projectile_speed": 0.0,
+	},
+	# curse_brittlebone: DEX multi-target debuff. Cursed enemies take
+	# +15% damage (a10 rescope from +30%) and -50% armor for 4s × dur_pct.
+	# 0 direct damage (1 to register kill log). Multi-target via
+	# spell_proj_bonus — base targets nearest enemy + (proj_bonus) extras.
+	"spell_curse_brittlebone": {
+		"primary_stat": "dex",
+		"cooldown": 8.0,
+		"damage": 1,
+		"range_cells": 6,
+		"projectile": "",
+		"trail_flavor": "dark",
+		"element": "dark",
+		"projectile_speed": 0.0,
+	},
+	# wrath_charge: STR self-buff. +20% weapon damage + +20% spell damage
+	# for a HARD-CAPPED 4-second window (a10 rescope from +50/+50/8s
+	# scalable). of_lingering MUST NOT extend it — the fixed window is
+	# what keeps the rescope honest. Folds into ephemeral lanes so the
+	# +30% per-swing / per-cast caps absorb stacking with other windows.
+	"spell_wrath_charge": {
+		"primary_stat": "str",
+		"cooldown": 9.0,
+		"damage": 0,
+		"range_cells": 0,
+		"projectile": "",
+		"trail_flavor": "brutal",
+		"element": "",
+		"projectile_speed": 0.0,
+	},
+	# echo_lance: DEX bouncing-once projectile. Fast lance, hits one
+	# target at full damage, then ricochets to nearest unhit enemy
+	# within 4 cells at full damage (no falloff — exactly 1 ricochet).
+	# Distinct from bone_spear's multi-bounce + chain_lightning's
+	# point-to-point lightning. Base 11 (a10 rescope from 14).
+	"spell_echo_lance": {
+		"primary_stat": "dex",
+		"cooldown": 1.4,
+		"damage": 11,
+		"range_cells": 8,
+		"projectile": "res://assets/tiles/spells/effects/bolt5.png",
+		"trail_flavor": "thunderous",
+		"element": "thunderous",
+		"projectile_speed": 480.0,
+	},
+	# wisp_servant: INT interim orbiter. Spawns N wisps that orbit the
+	# bot and home into nearby enemies on contact. Base 4 (a10 rescope
+	# from 8). Real minion AI is Tier-3; this is the "axes-but-flying-out"
+	# shape that fills the niche today.
+	"spell_wisp_servant": {
+		"primary_stat": "int",
+		"cooldown": 7.0,
+		"damage": 4,
+		"range_cells": 4,
+		"projectile": "res://assets/tiles/spells/effects/orb_glow1.png",
+		"trail_flavor": "arcane",
+		"element": "",
+		"projectile_speed": 220.0,
+	},
+	# ember_bloom: INT fire DoT patch. Same Cloud class as venom_cloud
+	# with fire damage type. a10 §3.2 rescope: 2.0 dmg/tick × 2 ticks/s
+	# × 5s × 3-enemy max (down from a05's 5 dmg/tick author-tuned).
+	# Same per-tick semantics as venom_cloud.
+	"spell_ember_bloom": {
+		"primary_stat": "int",
+		"cooldown": 5.0,
+		"damage": 2,
+		"range_cells": 4,
+		"projectile": "",
+		"trail_flavor": "fire",
+		"element": "fire",
+		"projectile_speed": 0.0,
+	},
 }
 
 static func archetype_def(base_type: String) -> Dictionary:
@@ -263,6 +384,11 @@ static func compute_damage(bot: Node, item: Dictionary, inst: Variant = null) ->
 		eph_pct += sage_pct * float(unspent) / 10.0
 	if bool(bot.get("synergy_active")) and float(bot.get("synergy_pct")) > 0.0:
 		eph_pct += float(bot.get("synergy_pct"))
+	# S10 — Wrath Charge spell-side leg (a05 prop-5 + a10 §3.2 rescope).
+	# +20% spell damage while "wrath" status is up; fixed 4s window
+	# baked at the cast site, of_lingering must NOT extend it.
+	if bot.has_method("has_status") and bot.has_status("wrath"):
+		eph_pct += 20.0
 	var eph_mult: float = 1.0 + minf(0.30, maxf(0.0, eph_pct / 100.0))
 	var dmg: float = base_dmg * stat_mult * dmg_mult * elem_mult * class_mult * eph_mult
 	# S9 spell crit (a06 §3.1, a10 rescope to ×1.25 base + half-rate crit-

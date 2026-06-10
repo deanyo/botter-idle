@@ -46,6 +46,18 @@ var lifesteal_pct: float = 0.0
 var lifesteal_target: Node = null  # bot-side healer; usually the bot
 var lifesteal_buff_bot: bool = false  # Ravenous affix — apply hasted on hit
 
+# S10 — bounce mode. Used by Bone Spear (max 4 bounces, 30% damage loss
+# per bounce) and Echo Lance (max 1 bounce, 0% loss). On impact:
+# instead of free-on-hit, pick the nearest unhit live enemy within
+# `bounce_seek_radius_px` and re-target. After `bounce_max` bounces,
+# the projectile's next impact frees as normal.
+var bounce_mode: bool = false
+var bounce_max: int = 0
+var bounce_count: int = 0
+var bounce_falloff: float = 0.7  # damage multiplier per bounce
+var bounce_seek_radius_px: float = float(32 * 4)
+var bounce_hit_set: Dictionary = {}
+
 @onready var sprite: Sprite2D = $Sprite
 
 static func spawn_fireball(parent: Node, world_pos: Vector2, target_enemy: Node, dmg: int, speed: float, sprite_path: String, element_key: String, dungeon: Node, tint: Color = Color(0, 0, 0, 0), scale_mult: float = 1.0, caster: Node = null) -> Projectile:
@@ -124,6 +136,43 @@ func _process(delta: float) -> void:
 
 func _impact_on(enemy: Node) -> void:
 	if dead:
+		return
+	# S10 — bounce mode: bone_spear / echo_lance handle impact differently.
+	# Instead of freeing on hit, deal damage, mark target as hit, find the
+	# nearest unhit live enemy within radius, and re-target. After
+	# bounce_max bounces, the next impact frees normally.
+	if bounce_mode and is_instance_valid(enemy) and enemy.has_method("take_damage") and bounce_count < bounce_max:
+		var dt_b: String = SpellData.damage_type_for_element(element)
+		var src_b: Node = caster if caster != null else lifesteal_target
+		enemy.take_damage(damage, src_b, dt_b)
+		bounce_hit_set[enemy.get_instance_id()] = true
+		bounce_count += 1
+		damage = maxi(1, int(round(float(damage) * bounce_falloff)))
+		# Find next target — closest unhit live enemy within bounce_seek_radius.
+		var next_target: Node = null
+		var best_d: float = INF
+		if dungeon_ref != null and is_instance_valid(dungeon_ref) and "enemies" in dungeon_ref:
+			for e in dungeon_ref.enemies:
+				if not is_instance_valid(e) or not e.is_alive:
+					continue
+				if bounce_hit_set.has(e.get_instance_id()):
+					continue
+				var d_sq: float = position.distance_squared_to(e.position)
+				if d_sq < best_d and d_sq <= bounce_seek_radius_px * bounce_seek_radius_px:
+					best_d = d_sq
+					next_target = e
+		if next_target != null:
+			target = next_target
+			var to_t: Vector2 = next_target.position - position
+			if to_t.length_squared() > 0.01:
+				heading = to_t.normalized()
+			# Visual: little spark to mark the bounce.
+			if dungeon_ref != null and is_instance_valid(dungeon_ref) and "actor_layer" in dungeon_ref:
+				Effects.magic_shimmer(dungeon_ref.actor_layer, position)
+			return  # don't free; keep flying
+		# No more targets — free as normal.
+		queue_free()
+		dead = true
 		return
 	dead = true
 	var dealt: int = 0

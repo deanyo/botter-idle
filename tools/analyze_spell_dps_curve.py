@@ -70,6 +70,16 @@ ARCHETYPE_TO_DAMAGE_TYPE = {
     "spell_sandblast": "physical",
     "spell_drain": "dark",
     "spell_shatter": "physical",
+    # S10 expansion (a05 D + a10 §3.2). Cloud/totem/wisp DPS uses a
+    # per-tick base; shape_multiplier handles the tick × duration math.
+    "spell_bone_spear": "physical",
+    "spell_venom_cloud": "poison",
+    "spell_stormcaller_totem": "lightning",
+    "spell_curse_brittlebone": "dark",
+    "spell_wrath_charge": "physical",  # 0-dmg buff; DPS curve will read 0
+    "spell_echo_lance": "lightning",
+    "spell_wisp_servant": "physical",
+    "spell_ember_bloom": "fire",
 }
 
 
@@ -255,6 +265,37 @@ def shape_multiplier(archetype: str, profile: Profile, target: str) -> float:
         if archetype == "spell_iron_shot":
             # First-body falloff = 1.0; pierce dies after one mob.
             return 1.0
+        if archetype in ("spell_venom_cloud", "spell_ember_bloom"):
+            # DoT cloud: per-tick × ticks-per-second × lifetime × 1 enemy.
+            # Lifetime = base × (1 + dur_pct/100). Tick rate cap = 2/s.
+            base_lifetime = 8.0 if archetype == "spell_venom_cloud" else 5.0
+            ticks = base_lifetime * duration * 2.0
+            return ticks  # one enemy in cloud for single-target
+        if archetype == "spell_stormcaller_totem":
+            # Stationary boss in range → totem zaps every 0.6s for 4s
+            # × duration_pct. ~6.6 zaps at cap.
+            base_lifetime = 4.0
+            return (base_lifetime * duration) / 0.6
+        if archetype == "spell_curse_brittlebone":
+            # Direct damage 1 — DPS curve reads near-zero. The actual
+            # value is the +15% amplification of OTHER spells, which
+            # this analyzer doesn't synthesize. Treat as 1 hit.
+            return 1.0
+        if archetype == "spell_wrath_charge":
+            return 0.0  # self-buff, no direct damage
+        if archetype == "spell_echo_lance":
+            # Single target — projectile bounces but only 1 enemy nearby
+            # → second target absent → 1 hit.
+            return 1.0
+        if archetype == "spell_wisp_servant":
+            # 1 wisp by default + proj_bonus. Each zaps every 1s for 6s
+            # × dur_pct. ~12 zaps at cap.
+            base_lifetime = 6.0
+            n_wisps = 1 + proj
+            return n_wisps * (base_lifetime * duration) / 1.0
+        if archetype == "spell_bone_spear":
+            # Single target → no bounce targets → 1 hit.
+            return 1.0
         return 1.0
 
     if target == "pack5":
@@ -294,6 +335,34 @@ def shape_multiplier(archetype: str, profile: Profile, target: str) -> float:
         if archetype == "spell_shatter":
             # Cone like holy_beam — same 4-target saturation.
             return min(4.0, 2.0 + 1.0 * (area - 1.0) + 1.0)
+        if archetype in ("spell_venom_cloud", "spell_ember_bloom"):
+            # 3-enemy cap per tick × ticks × duration.
+            base_lifetime = 8.0 if archetype == "spell_venom_cloud" else 5.0
+            ticks = base_lifetime * duration * 2.0
+            return ticks * 3.0  # 3-enemy cap
+        if archetype == "spell_stormcaller_totem":
+            # Totem zaps single target — pack of 5 still gets 1 zap
+            # every 0.6s. Pack DPS = same as single (one zap, nearest).
+            base_lifetime = 4.0
+            return (base_lifetime * duration) / 0.6
+        if archetype == "spell_curse_brittlebone":
+            # 1 + proj_bonus targets cursed; direct damage = 1 each.
+            return float(min(5, 1 + proj))
+        if archetype == "spell_wrath_charge":
+            return 0.0
+        if archetype == "spell_echo_lance":
+            # Hits 1 + 1 ricochet = 2 enemies at full damage.
+            return 2.0
+        if archetype == "spell_wisp_servant":
+            # n wisps zap nearest enemy every 1s; per-tick saturates
+            # at 1 enemy per wisp.
+            base_lifetime = 6.0
+            n_wisps = 1 + proj
+            return n_wisps * (base_lifetime * duration) / 1.0
+        if archetype == "spell_bone_spear":
+            # Bouncing physical — 1 + 4 bounces with 30% loss.
+            # Sum 1, 0.7, 0.49, 0.343, 0.240 = 2.77.
+            return sum(0.7 ** k for k in range(5))
         return 1.0
 
     if target == "line":

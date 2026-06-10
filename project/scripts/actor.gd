@@ -425,10 +425,20 @@ func _apply_typed_damage(raw: int, damage_type: String, attacker: Actor, def_tag
 	# (worn-tag + element-tag + resist_pct).
 	var final_mit: float = clampf(mit_sum, -0.50, 0.90)
 	var dmg: int
+	# S10 — Curse of Brittlebone debuff (a05 prop-4 + a10 §3.2 rescope to
+	# +15% damage taken). When the defender carries "cursed" status, raw
+	# damage is amplified BEFORE mitigation. Folds in alongside `harm`
+	# (which is attacker-side ephemeral); cursed is defender-side debuff.
+	# Multiplicative on raw is fine here because a10 §3.2 capped this at
+	# +15% — the post-cap stack with harm (-25% mit) is +43% effective
+	# per cast, well within the +30% ephemeral envelope on the attacker.
+	var raw_amped: float = float(raw)
+	if has_status("cursed"):
+		raw_amped *= 1.15
 	if damage_type == "physical":
 		# Apply mit_sum first, then armor flat-subtract. Floor of 1 so
 		# a fully mitigated hit still pings the HP bar.
-		var post_mit: int = int(round(float(raw) * (1.0 - final_mit)))
+		var post_mit: int = int(round(raw_amped * (1.0 - final_mit)))
 		# of_sundering (a02 P-11 rescoped) — defender's armor temporarily
 		# reduced by the active sunder amount. Stacks expire silently on
 		# next read after _sunder_expires_at lapses; same shape as `rage`
@@ -441,6 +451,11 @@ func _apply_typed_damage(raw: int, damage_type: String, attacker: Actor, def_tag
 				_sunder_stacks = 0
 			else:
 				eff_armor = maxi(0, defense - _sunder_amount)
+		# Cursed targets ALSO take an extra -50% effective armor on physical
+		# hits (a05 prop-4 second leg). Multiplicative with sunder so a 100-
+		# armor target with both stacks reads as ~25 armor.
+		if has_status("cursed"):
+			eff_armor = int(float(eff_armor) * 0.5)
 		dmg = maxi(1, post_mit - eff_armor)
 	else:
 		var resist_pct: float = 0.0
@@ -448,7 +463,7 @@ func _apply_typed_damage(raw: int, damage_type: String, attacker: Actor, def_tag
 			resist_pct = float(self.resistances.get(damage_type, 0))
 		# Resist pct joins the additive cap.
 		var elem_mit: float = clampf(mit_sum + resist_pct / 100.0, -0.50, 0.90)
-		dmg = maxi(1, int(round(float(raw) * (1.0 - elem_mit))))
+		dmg = maxi(1, int(round(raw_amped * (1.0 - elem_mit))))
 	hp -= dmg
 	damaged.emit(self, dmg)
 	_update_hp_bar()
@@ -643,6 +658,12 @@ func attempt_attack(other: Actor, delta: float) -> int:
 		# synergy_pct already capped 12 in stat_calc.
 		if bot_self.synergy_active and bot_self.synergy_pct > 0.0:
 			ephemeral_sum += bot_self.synergy_pct / 100.0
+		# S10 — Wrath Charge self-buff. While "wrath" status is ticking,
+		# +20% weapon damage. Fixed 4s window (a10 §3.2 prop-5 rescope);
+		# of_lingering must NOT extend the timer — Wrath Charge fires with
+		# duration baked in at the cast site, not via spell_duration_pct.
+		if has_status("wrath"):
+			ephemeral_sum += 0.20
 		# of_sundering — apply target armor-stack debuff BEFORE clamping
 		# ephemeral_sum, so the next-swing reduction shows as the same
 		# arch shape as armor on the defender's side. Stack count caps

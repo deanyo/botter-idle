@@ -54,6 +54,17 @@ const STATUSES := {
 	# alongside dodge math; 30% miss while up.
 	"blinded":  { "icon": "ward.png",   "tint": Color(0.85, 0.75, 0.30, 0.85), "pulse": true, "z": 9,
 		"label": "Blinded", "desc": "30% chance to miss attacks." },
+	# S10 spell-archetype expansion. Wrath Charge writes "wrath" on the
+	# bot for a HARD 4-second window — ephemeral_dmg_pct + ephemeral_spell_
+	# dmg_pct each gain +20% while it ticks. of_lingering must NOT extend
+	# this duration (a10 §3.2 prop-5 rescope: fixed 4s OR the +50% is
+	# always-on at endgame). Curse of Brittlebone writes "cursed" on
+	# enemies for 4s × duration_pct — incoming damage amplified +15%
+	# (a10 rescope from +30%) and effective armor -50% on physical hits.
+	"wrath":    { "icon": "rage.png",   "tint": Color(1, 0.45, 0.20, 0.95), "pulse": true,  "z": 10,
+		"label": "Wrath", "desc": "+20% weapon AND spell damage (Wrath Charge)." },
+	"cursed":   { "icon": "blood.png",  "tint": Color(0.55, 0.25, 0.55, 0.95), "pulse": true, "z": 4,
+		"label": "Cursed", "desc": "+15% damage taken; armor halved (Curse of Brittlebone)." },
 	# Per-god blessing statuses (2026-06-08). Replaces the single
 	# generic "blessed" icon — each altar emits its own status with
 	# its altar tile as the buff-bar icon, so the player sees a row

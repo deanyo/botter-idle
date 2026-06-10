@@ -208,6 +208,22 @@ static func _dispatch_fire(bot: Node, dungeon: Node, item: Dictionary) -> void:
 			fired = _fire_drain(bot, dungeon, item)
 		"spell_shatter":
 			fired = _fire_shatter(bot, dungeon, item)
+		"spell_bone_spear":
+			fired = _fire_bone_spear(bot, dungeon, item)
+		"spell_venom_cloud":
+			fired = _fire_venom_cloud(bot, dungeon, item)
+		"spell_stormcaller_totem":
+			fired = _fire_stormcaller_totem(bot, dungeon, item)
+		"spell_curse_brittlebone":
+			fired = _fire_curse_brittlebone(bot, dungeon, item)
+		"spell_wrath_charge":
+			fired = _fire_wrath_charge(bot, dungeon, item)
+		"spell_echo_lance":
+			fired = _fire_echo_lance(bot, dungeon, item)
+		"spell_wisp_servant":
+			fired = _fire_wisp_servant(bot, dungeon, item)
+		"spell_ember_bloom":
+			fired = _fire_ember_bloom(bot, dungeon, item)
 	if fired:
 		_fire_count += 1
 		_fire_by_arch[base_type] = int(_fire_by_arch.get(base_type, 0)) + 1
@@ -669,6 +685,201 @@ static func _fire_shatter(bot: Node, dungeon: Node, item: Dictionary) -> bool:
 			t.queue_free()
 		)
 		t.start()
+	return true
+
+# --- S10 2026-06-10 expansion archetypes ---------------------------
+# 8 new archetypes per a05 D + a10 §3.2 rescopes. Stoneheart deferred
+# (Tier-3 reactive event-bus needed). Numbers come from a10 — NOT a05.
+
+# Bone Spear — STR physical bouncing projectile. On impact, picks
+# nearest unhit enemy within 4 cells and re-targets, taking a 30%
+# damage loss per bounce, capped at 4 bounces. Uses Projectile.bounce
+# mode (added below in projectile.gd).
+static func _fire_bone_spear(bot: Node, dungeon: Node, item: Dictionary) -> bool:
+	var arch: Dictionary = SpellData.archetype_def("spell_bone_spear")
+	if arch.is_empty() or not is_instance_valid(bot) or dungeon == null:
+		return false
+	var range_cells: int = int(arch.get("range_cells", 7))
+	var candidates: Array = _enemies_in_range(bot, dungeon, range_cells)
+	if candidates.is_empty():
+		return false
+	candidates.sort_custom(func(a, b): return a.d < b.d)
+	var damage: int = SpellData.compute_damage(bot, item, item.get("_inst", null))
+	var sprite_path: String = String(arch.get("projectile", ""))
+	var element: String = String(arch.get("element", ""))
+	var base_speed: float = float(arch.get("projectile_speed", 360.0))
+	var speed: float = base_speed * (1.0 + float(bot.spell_proj_speed_pct) / 100.0)
+	var tint: Color = _visual_color_for_item(item, "earth")
+	var origin: Vector2 = bot.position + Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5)
+	var proj_count: int = SpellData.compute_proj_count(bot, item)
+	var scale_mult: float = _scale_mult_for(item)
+	for i in proj_count:
+		var target: Node = candidates[i % candidates.size()].e
+		var p: Projectile = Projectile.spawn_fireball(dungeon.actor_layer, origin, target, damage, speed, sprite_path, element, dungeon, tint, scale_mult, bot)
+		if p != null:
+			p.bounce_mode = true
+			p.bounce_max = 4
+			p.bounce_falloff = 0.7
+	return true
+
+# Venom Cloud — INT poison DoT cloud. Drops at the nearest enemy's cell
+# (lobs to where they are). Per-tick damage = base × stat scaling at
+# spawn time (frozen for the cloud's lifetime so the cloud's damage
+# doesn't drift mid-tick when bot stat changes mid-tick). Hard 2/s
+# tick rate cap, hard 3-enemy max — both inside SpellCloud.
+static func _fire_venom_cloud(bot: Node, dungeon: Node, item: Dictionary) -> bool:
+	var arch: Dictionary = SpellData.archetype_def("spell_venom_cloud")
+	if arch.is_empty() or not is_instance_valid(bot) or dungeon == null:
+		return false
+	var range_cells: int = int(arch.get("range_cells", 5))
+	var candidates: Array = _enemies_in_range(bot, dungeon, range_cells)
+	if candidates.is_empty():
+		return false
+	candidates.sort_custom(func(a, b): return a.d < b.d)
+	var per_tick: int = SpellData.compute_damage(bot, item, item.get("_inst", null))
+	var element: String = String(arch.get("element", "poison"))
+	var dt: String = SpellData.damage_type_for_element(element)
+	# Lifetime scales with spell_duration_pct, capped (StatCalc cap is +100%).
+	var lifetime: float = 8.0 * (1.0 + float(bot.spell_duration_pct) / 100.0)
+	# Radius scales with spell_area_pct.
+	var radius_cells: float = 2.0 * (1.0 + float(bot.spell_area_pct) / 100.0)
+	var target_cell: Vector2 = candidates[0].e.position
+	var color := _visual_color_for_item(item, "poison")
+	color.a = 0.55
+	SpellCloud.spawn_cloud(dungeon, target_cell, per_tick, dt, radius_cells, lifetime, color, bot)
+	return true
+
+# Stormcaller Totem — DEX lightning turret. Drops at bot's feet, zaps
+# nearest enemy every 0.6s for 4s × duration_pct.
+static func _fire_stormcaller_totem(bot: Node, dungeon: Node, item: Dictionary) -> bool:
+	var arch: Dictionary = SpellData.archetype_def("spell_stormcaller_totem")
+	if arch.is_empty() or not is_instance_valid(bot) or dungeon == null:
+		return false
+	var damage: int = SpellData.compute_damage(bot, item, item.get("_inst", null))
+	var lifetime: float = 4.0 * (1.0 + float(bot.spell_duration_pct) / 100.0)
+	var radius_cells: float = float(arch.get("range_cells", 4))
+	var element: String = String(arch.get("element", "thunderous"))
+	var dt: String = SpellData.damage_type_for_element(element)
+	var color := _visual_color_for_item(item, "thunderous")
+	var origin: Vector2 = bot.position + Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5)
+	SpellTotem.spawn_totem(dungeon, origin, damage, radius_cells, lifetime, 0.6, dt, color, bot)
+	return true
+
+# Curse of Brittlebone — DEX multi-target debuff. Targets nearest enemy
+# + spell_proj_bonus extras. Applies "cursed" status for 4s × dur_pct.
+# 0 direct damage (1 to register kill log, but only if compute_damage
+# rolls non-zero).
+static func _fire_curse_brittlebone(bot: Node, dungeon: Node, item: Dictionary) -> bool:
+	var arch: Dictionary = SpellData.archetype_def("spell_curse_brittlebone")
+	if arch.is_empty() or not is_instance_valid(bot) or dungeon == null:
+		return false
+	var range_cells: int = int(arch.get("range_cells", 6))
+	var candidates: Array = _enemies_in_range(bot, dungeon, range_cells)
+	if candidates.is_empty():
+		return false
+	candidates.sort_custom(func(a, b): return a.d < b.d)
+	# Curse landing damage stays 1 (just to register the kill-log path).
+	var direct_dmg: int = 1
+	var dt: String = SpellData.damage_type_for_element(String(arch.get("element", "dark")))
+	var dur: float = 4.0 * (1.0 + float(bot.spell_duration_pct) / 100.0)
+	# Multi-target — base 1 + spell_proj_bonus.
+	var n: int = mini(candidates.size(), 1 + int(bot.spell_proj_bonus))
+	for i in n:
+		var e: Node = candidates[i].e
+		if not is_instance_valid(e) or not e.is_alive:
+			continue
+		if e.has_method("add_status"):
+			e.add_status("cursed", dur)
+		if e.has_method("take_damage"):
+			e.take_damage(direct_dmg, bot, dt)
+	# Visual: dark ring around bot pulses outward to suggest the debuff
+	# wave. Color carries the curse's dark-purple identity.
+	var color := _visual_color_for_item(item, "dark")
+	var origin: Vector2 = bot.position + Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5)
+	SpellAoe.spawn_ring(dungeon.actor_layer, origin, float(range_cells) * float(C.TILE_SIZE) * 0.7, color)
+	return true
+
+# Wrath Charge — STR self-buff. Adds "wrath" status for HARD 4s window.
+# of_lingering MUST NOT extend it (a10 §3.2 prop-5 rescope: fixed 4s
+# OR the +50% becomes always-on at endgame). The fixed window is what
+# keeps the rescope's +20%/+20% honest.
+const _WRATH_FIXED_DURATION_S := 4.0
+
+static func _fire_wrath_charge(bot: Node, _dungeon: Node, _item: Dictionary) -> bool:
+	if not is_instance_valid(bot):
+		return false
+	if not bot.has_method("add_status"):
+		return false
+	bot.add_status("wrath", _WRATH_FIXED_DURATION_S)
+	return true
+
+# Echo Lance — DEX bouncing-once projectile. Hits one target, ricochets
+# to nearest unhit enemy within 4 cells at full damage (no falloff).
+static func _fire_echo_lance(bot: Node, dungeon: Node, item: Dictionary) -> bool:
+	var arch: Dictionary = SpellData.archetype_def("spell_echo_lance")
+	if arch.is_empty() or not is_instance_valid(bot) or dungeon == null:
+		return false
+	var range_cells: int = int(arch.get("range_cells", 8))
+	var candidates: Array = _enemies_in_range(bot, dungeon, range_cells)
+	if candidates.is_empty():
+		return false
+	candidates.sort_custom(func(a, b): return a.d < b.d)
+	var damage: int = SpellData.compute_damage(bot, item, item.get("_inst", null))
+	var sprite_path: String = String(arch.get("projectile", ""))
+	var element: String = String(arch.get("element", "thunderous"))
+	var base_speed: float = float(arch.get("projectile_speed", 480.0))
+	var speed: float = base_speed * (1.0 + float(bot.spell_proj_speed_pct) / 100.0)
+	var tint: Color = _visual_color_for_item(item, "thunderous")
+	var origin: Vector2 = bot.position + Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5)
+	var proj_count: int = SpellData.compute_proj_count(bot, item)
+	var scale_mult: float = _scale_mult_for(item)
+	for i in proj_count:
+		var target: Node = candidates[i % candidates.size()].e
+		var p: Projectile = Projectile.spawn_fireball(dungeon.actor_layer, origin, target, damage, speed, sprite_path, element, dungeon, tint, scale_mult, bot)
+		if p != null:
+			p.bounce_mode = true
+			p.bounce_max = 1
+			p.bounce_falloff = 1.0  # no falloff — exactly 1 ricochet, full damage
+	return true
+
+# Wisp Servant — INT interim orbiter. Spawns proj_count wisps that
+# orbit the bot and zap nearest enemies. Real minion AI is Tier-3.
+static func _fire_wisp_servant(bot: Node, dungeon: Node, item: Dictionary) -> bool:
+	var arch: Dictionary = SpellData.archetype_def("spell_wisp_servant")
+	if arch.is_empty() or not is_instance_valid(bot) or dungeon == null:
+		return false
+	var damage: int = SpellData.compute_damage(bot, item, item.get("_inst", null))
+	var lifetime: float = 6.0 * (1.0 + float(bot.spell_duration_pct) / 100.0)
+	var sprite_path: String = String(arch.get("projectile", ""))
+	var element: String = String(arch.get("element", ""))
+	var color := _visual_color_for_item(item, "arcane")
+	var n: int = SpellData.compute_proj_count(bot, item)
+	# Stagger orbit phases so multiple wisps fan around the bot.
+	for i in n:
+		var phase: float = TAU * float(i) / float(maxi(1, n))
+		SpellWisp.spawn_wisp(dungeon, bot, damage, lifetime, 1.0, 36.0, phase,
+			SpellData.damage_type_for_element(element), element, sprite_path, color, bot)
+	return true
+
+# Ember Bloom — INT fire DoT patch. Reuses SpellCloud with fire dmg.
+static func _fire_ember_bloom(bot: Node, dungeon: Node, item: Dictionary) -> bool:
+	var arch: Dictionary = SpellData.archetype_def("spell_ember_bloom")
+	if arch.is_empty() or not is_instance_valid(bot) or dungeon == null:
+		return false
+	var range_cells: int = int(arch.get("range_cells", 4))
+	var candidates: Array = _enemies_in_range(bot, dungeon, range_cells)
+	if candidates.is_empty():
+		return false
+	candidates.sort_custom(func(a, b): return a.d < b.d)
+	var per_tick: int = SpellData.compute_damage(bot, item, item.get("_inst", null))
+	var element: String = String(arch.get("element", "fire"))
+	var dt: String = SpellData.damage_type_for_element(element)
+	var lifetime: float = 5.0 * (1.0 + float(bot.spell_duration_pct) / 100.0)
+	var radius_cells: float = 1.5 * (1.0 + float(bot.spell_area_pct) / 100.0)
+	var target_cell: Vector2 = candidates[0].e.position
+	var color := _visual_color_for_item(item, "fire")
+	color.a = 0.55
+	SpellCloud.spawn_cloud(dungeon, target_cell, per_tick, dt, radius_cells, lifetime, color, bot)
 	return true
 
 # Resolve the visual color for a spell instance — read flavor_tags

@@ -503,6 +503,103 @@ func test_s9_block_caps_at_30_chance_and_20_amount() -> void:
 		"block_amount soft-caps at 20")
 
 # ---------------------------------------------------------------------
+# S10 — 8 new spell archetypes (a05 D + a10 §3.2 rescopes)
+# ---------------------------------------------------------------------
+
+func test_s10_archetypes_registered() -> void:
+	# Sanity — every new archetype must be in SpellData.ARCHETYPES so
+	# spell_system._dispatch_fire's match arms don't silently drop casts.
+	for aid in [
+		"spell_bone_spear", "spell_venom_cloud", "spell_stormcaller_totem",
+		"spell_curse_brittlebone", "spell_wrath_charge", "spell_echo_lance",
+		"spell_wisp_servant", "spell_ember_bloom",
+	]:
+		assert_true(SpellData.is_spell_archetype(aid),
+			"S10 archetype %s must be registered" % aid)
+
+func test_s10_cursed_amplifies_incoming_15pct() -> void:
+	# Curse of Brittlebone (a05 prop-4 + a10 §3.2 rescope to +15%) —
+	# defender taking damage while "cursed" eats +15% raw before
+	# mitigation. Verifies the new amp path in _apply_typed_damage.
+	# Use bot-typed defender so add_status is allowed (status overlay
+	# is gated on VideoSettings.gfx.ench).
+	var d: _StubBotDefender = _make_bot_defender(1000, 0, [], {})
+	# Bypass the VideoSettings gate by writing the status entry directly.
+	d._statuses["cursed"] = {"expires_at": 0.0, "sprite": null}
+	var dealt: int = d.take_damage(100, null, "fire")
+	# Pre-amp 100 fire damage; with no resists, mit_sum=0, post: 100×1.15 = 115.
+	assert_eq(dealt, 115, "cursed amplifies +15% on incoming")
+	d.free()
+
+func test_s10_cursed_halves_armor_on_physical() -> void:
+	# Cursed targets ALSO take -50% effective armor on physical hits.
+	# Defender: 100 HP, 20 armor, cursed status.
+	var d: _StubBotDefender = _make_bot_defender(1000, 20, [], {})
+	d._statuses["cursed"] = {"expires_at": 0.0, "sprite": null}
+	var dealt: int = d.take_damage(100, null, "physical")
+	# 100 × 1.15 = 115 raw; mit_sum=0; post_mit=115; eff_armor 20→10
+	# (cursed half); dmg = 115 - 10 = 105.
+	assert_eq(dealt, 105, "cursed halves effective armor on physical")
+	d.free()
+
+func test_s10_wrath_status_registered() -> void:
+	# Wrath Charge writes "wrath" status; status registry must know it.
+	assert_true(StatusOverlay.has_status("wrath"),
+		"wrath status must be registered for buff visibility")
+	assert_true(StatusOverlay.has_status("cursed"),
+		"cursed status must be registered for debuff visibility")
+
+func test_s10_spell_tomes_present() -> void:
+	# Every new archetype has at least 5 tomes spanning rarities.
+	# Catches mis-injection regressions and keeps the loot pool honest.
+	var items: Array = []
+	if FileAccess.file_exists("res://data/items.json"):
+		var f: FileAccess = FileAccess.open("res://data/items.json", FileAccess.READ)
+		if f != null:
+			var doc: Variant = JSON.parse_string(f.get_as_text())
+			if doc is Dictionary and doc.has("items"):
+				items = doc["items"]
+	var counts: Dictionary = {}
+	for it in items:
+		var bt: String = String(it.get("base_type", ""))
+		if bt in [
+			"spell_bone_spear", "spell_venom_cloud", "spell_stormcaller_totem",
+			"spell_curse_brittlebone", "spell_wrath_charge", "spell_echo_lance",
+			"spell_wisp_servant", "spell_ember_bloom",
+		]:
+			counts[bt] = int(counts.get(bt, 0)) + 1
+	assert_eq(counts.size(), 8, "all 8 new archetypes present in items.json")
+	for arch in counts.keys():
+		assert_gte(int(counts[arch]), 5,
+			"%s should have ≥5 tomes (got %d)" % [arch, counts[arch]])
+
+func test_s10_wrath_charge_archetype_zero_damage() -> void:
+	# Wrath Charge declares damage=0 in archetype — it's a self-buff,
+	# never deals direct damage. Lock so a future "let's add a thorn"
+	# regression doesn't quietly break the rescope.
+	var arch: Dictionary = SpellData.archetype_def("spell_wrath_charge")
+	assert_eq(int(arch.get("damage", -1)), 0,
+		"Wrath Charge archetype damage must stay 0 (self-buff only)")
+
+func test_s10_curse_brittlebone_zero_direct_damage() -> void:
+	# Curse direct damage stays at 1 — just enough for kill log routing.
+	# The actual power is the +15% amp + -50% armor on the cursed enemy.
+	var arch: Dictionary = SpellData.archetype_def("spell_curse_brittlebone")
+	assert_eq(int(arch.get("damage", -1)), 1,
+		"Curse archetype damage must be 1 (kill-log register only)")
+
+func test_s10_cloud_per_tick_base_within_rescope() -> void:
+	# a10 §3.2 rescope: venom_cloud 1.5/tick, ember_bloom 2.0/tick.
+	# Archetype baseline rounds to 2 each (compute_damage rolls items'
+	# damage_min/max; archetype default is the floor when item omits).
+	var venom: Dictionary = SpellData.archetype_def("spell_venom_cloud")
+	var ember: Dictionary = SpellData.archetype_def("spell_ember_bloom")
+	assert_lte(int(venom.get("damage", 99)), 2,
+		"venom_cloud per-tick base ≤ 2 (a10 rescope)")
+	assert_lte(int(ember.get("damage", 99)), 2,
+		"ember_bloom per-tick base ≤ 2 (a10 rescope)")
+
+# ---------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------
 
