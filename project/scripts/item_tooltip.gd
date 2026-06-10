@@ -280,8 +280,10 @@ func render_for(item_def: Dictionary, instance: Variant, db: Dictionary) -> void
 		var evasion: int = int(item.get("evasion", 0))
 		if armor > 0:
 			_vbox.add_child(_make_label("Armor: %d" % armor, 13, COLOR_BODY, false))
+			_maybe_emit_stat_desc("armor")
 		if evasion > 0:
 			_vbox.add_child(_make_label("Evasion: +%d%%" % evasion, 13, COLOR_BODY, false))
+			_maybe_emit_stat_desc("evasion")
 		if armor > 0 or evasion > 0:
 			_vbox.add_child(_make_separator())
 	# S5 race-anchor: render the requires_innate_tag requirement line
@@ -404,13 +406,16 @@ func _render_damage_block() -> void:
 	var dtype_label: String = dtype.capitalize() if dtype != "physical" else "Physical"
 	var dmg_color: Color = UITheme.damage_type_color(dtype)
 	_vbox.add_child(_make_label("%d-%d %s" % [dmin, dmax, dtype_label], 14, dmg_color, true))
+	_maybe_emit_stat_desc("damage")
 	# Speed (weapons) / cooldown (spells).
 	if slot == "weapon":
 		var sp: float = float(item.get("speed", 1.0))
 		_vbox.add_child(_make_label("%.2fs Attack Speed" % sp, 12, COLOR_BODY, false))
+		_maybe_emit_stat_desc("attack_speed")
 	elif slot == "spell":
 		var cd: float = float(item.get("spell_cooldown", 3.0))
 		_vbox.add_child(_make_label("%.1fs Cooldown" % cd, 12, COLOR_BODY, false))
+		_maybe_emit_stat_desc("spell_cooldown")
 		# PLAYTEST #7 — surface the scaling primary stat so the player can
 		# tell at a glance whether a Fireball Tome scales Str/Dex/Int.
 		# Color matches the HUD spell-cell border (red/green/blue) so the
@@ -470,17 +475,36 @@ func _build_affix_lines() -> Array:
 
 # Plain-English description of what an affix's stat does. Returns null
 # when the stat has no description (so the tooltip stays compact for
-# self-explanatory stats like "+5 HP"). Rendered dim + small under the
-# stat line. PLAYTEST 2026-06-10 #2.
+# self-explanatory stats like "+5 HP"). PLAYTEST 2026-06-10 #2.
 func _make_affix_description_label(def: Dictionary) -> Label:
 	var stat: String = String(def.get("stat", ""))
+	return _make_stat_description_label(stat)
+
+# Same shape as _make_affix_description_label but keyed directly by stat
+# string — used for base-stat lines (Damage/Armor/Evasion etc) where
+# there's no affix def to look up. Returns null on unknown stats.
+func _make_stat_description_label(stat: String) -> Label:
 	var description: String = AffixSystem.description_for_stat(stat)
 	if description == "":
 		return null
-	var lbl := _make_label(description, 10, Color(0.65, 0.62, 0.5), false)
+	# Slightly brighter than the alt debug-detail line so the description
+	# reads as content, not metadata. Indent + leading "→" telegraphs
+	# attachment to the line above.
+	var lbl := _make_label("→ " + description, 11, Color(0.85, 0.82, 0.70), false)
 	lbl.custom_minimum_size = Vector2(TOOLTIP_W - PADDING * 2, 0)
 	lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	return lbl
+
+# Conditional emit — when Alt is held AND we have a description for
+# this stat, append a description label to the vbox. No-op otherwise.
+# Use this under any base-stat line (damage/armor/evasion/etc) so the
+# alt-held tooltip actually explains what the stat does to the player.
+func _maybe_emit_stat_desc(stat: String) -> void:
+	if not UILayout.alt_held():
+		return
+	var lbl: Label = _make_stat_description_label(stat)
+	if lbl != null:
+		_vbox.add_child(lbl)
 
 # Alt-extended detail line — surfaces the underlying mechanics of an
 # affix roll for build inspection. Renders dim + smaller below the

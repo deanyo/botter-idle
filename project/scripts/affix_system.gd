@@ -272,6 +272,9 @@ static func format_affix_lines(affixes: Array) -> Array:
 # held in the tooltip — players read flavor names like "of Bloodletting"
 # without knowing they're seeing lifesteal. PLAYTEST 2026-06-10 #2.
 const _STAT_DESCRIPTIONS := {
+	"damage": "Min-max physical damage per swing or cast.",
+	"attack_speed": "Seconds between swings — lower is faster.",
+	"spell_cooldown": "Seconds between casts — lower is faster.",
 	"hp": "Boosts max health.",
 	"hp_regen": "Restores HP every second.",
 	"str": "+1.5% HP and scales melee damage.",
