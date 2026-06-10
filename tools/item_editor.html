@@ -642,14 +642,33 @@ const slotState = {}; // id -> {manifest, items, dirty}
 const CACHE_BUSTER = '?_v=' + Date.now();
 function noCache(url) { return url + (url.includes('?') ? '&' : '') + '_v=' + Date.now(); }
 
+// Robust JSON fetch with diagnostic errors. The bare `fetch().then(r => r.json())`
+// pattern hides the URL on parse failure — when GitHub Pages returns
+// an HTML 404 page mid-deploy, the user just sees "JSON.parse: unexpected
+// character at line 1 column 1" with no clue which file failed. Wrap so
+// the error surface includes URL + HTTP status + a snippet of the body.
+async function fetchJson(url) {
+  const r = await fetch(noCache(url));
+  const text = await r.text();
+  if (!r.ok) {
+    throw new Error(`${url} → HTTP ${r.status} ${r.statusText}`);
+  }
+  try {
+    return JSON.parse(text);
+  } catch (e) {
+    const snippet = text.slice(0, 80).replace(/\s+/g, ' ');
+    throw new Error(`${url} → not JSON (got: "${snippet}…"). Try a hard refresh (Cmd-Shift-R / Ctrl-F5).`);
+  }
+}
+
 // ---------- Boot ----------
 async function init() {
   setStatus('Loading…');
   try {
-    atlas = await fetch(noCache(ATLAS_PATH)).then(r=>r.json());
+    atlas = await fetchJson(ATLAS_PATH);
     // Fetch affixes registry — drives the affix-pool UI for every item.
     try {
-      const a = await fetch(noCache(AFFIXES_PATH)).then(r => r.json());
+      const a = await fetchJson(AFFIXES_PATH);
       affixesRegistry.affixes = a.affixes || [];
       affixesRegistry.byId = {};
       for (const af of affixesRegistry.affixes) affixesRegistry.byId[af.id] = af;
@@ -661,6 +680,7 @@ async function init() {
     setStatus('');
   } catch(e) {
     setStatus('Load error: '+e.message, true);
+    console.error('Load error:', e);
   }
 }
 
@@ -757,11 +777,7 @@ async function loadSlot(slot) {
       return;
     }
     try {
-      const manifests = await Promise.all(manifestPaths.map(p =>
-        fetch(noCache(p)).then(r => {
-          if (!r.ok) throw new Error('HTTP ' + r.status + ' for ' + p);
-          return r.json();
-        })));
+      const manifests = await Promise.all(manifestPaths.map(p => fetchJson(p)));
       // Merge: first manifest wins on top-level metadata (base_types,
       // flavor_tags); items[] from every manifest concatenate.
       manifest = JSON.parse(JSON.stringify(manifests[0]));
