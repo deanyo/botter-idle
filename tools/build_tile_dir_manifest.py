@@ -36,7 +36,21 @@ DIRS = [
     ('assets/tiles/wall',            '.png'),
     ('assets/tiles/overlays',        '.png'),
     ('assets/tiles/sigils',          '.png'),
+    # Full items + paperdoll trees so the item editor picker can
+    # filter to actually-shipped sprites. The picker previously
+    # listed every DCSS atlas entry, which let authors pick a tile
+    # that wasn't copied into project/assets/tiles/items/ — runtime
+    # resolved to a missing file → blank icon.
+    ('assets/tiles/items',           '.png'),
     ('assets/tiles/items/artefacts', '.png'),
+    ('assets/tiles/items/spells',    '.png'),
+    ('assets/tiles/player/weapons',  '.png'),
+    ('assets/tiles/player/body',     '.png'),
+    ('assets/tiles/player/helm',     '.png'),
+    ('assets/tiles/player/shield',   '.png'),
+    ('assets/tiles/player/boots',    '.png'),
+    ('assets/tiles/player/gloves',   '.png'),
+    ('assets/tiles/player/cloak',    '.png'),
 ]
 
 manifest = {}

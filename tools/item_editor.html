@@ -670,10 +670,48 @@ async function fetchJson(url) {
 }
 
 // ---------- Boot ----------
+// Set of basenames that EXIST in project/assets/tiles/items/ (with
+// optional subdir prefix for artefacts/spells). The picker filters
+// its candidate list against this — picking a tile that doesn't ship
+// produces a blank inventory icon at runtime, which used to be a
+// silent failure mode the user only noticed in the editor preview.
+//
+// Schema: a Set of strings like
+//   "urand_air_new.png"             (top-level)
+//   "artefacts/wpn_urand_axe_of_woe.png"  (subdir)
+// matching what items.json's `tile` field expects.
+let shippedTiles = new Set();
+// Same shape, for player overlays — keys are bare basenames since
+// paperdoll_renderer.gd::_resolve_overlay strips path before looking
+// in player/<slot_dir>/<stem>.png.
+let shippedOverlays = {weapons: new Set(), body: new Set(), helm: new Set(),
+                      shield: new Set(), boots: new Set(), gloves: new Set(),
+                      cloak: new Set()};
+
 async function init() {
   setStatus('Loading…');
   try {
     atlas = await fetchJson(ATLAS_PATH);
+    // Fetch the tile-dir manifest (built by tools/build_tile_dir_
+    // manifest.py — checked in). Use it to constrain the picker to
+    // sprites that actually exist on disk + ship in the build.
+    try {
+      const tdm = await fetchJson('../project/data/tile_dir_manifest.json');
+      const top = (tdm['res://assets/tiles/items/'] || []);
+      const arte = (tdm['res://assets/tiles/items/artefacts/'] || []);
+      const spells = (tdm['res://assets/tiles/items/spells/'] || []);
+      shippedTiles = new Set([
+        ...top,
+        ...arte.map(n => 'artefacts/' + n),
+        ...spells.map(n => 'spells/' + n),
+      ]);
+      for (const sub of ['weapons','body','helm','shield','boots','gloves','cloak']) {
+        const arr = tdm['res://assets/tiles/player/' + sub + '/'] || [];
+        shippedOverlays[sub] = new Set(arr);
+      }
+    } catch (e) {
+      console.warn('tile_dir_manifest.json missing — picker will show ALL atlas tiles (including unshipped):', e);
+    }
     // Fetch affixes registry — drives the affix-pool UI for every item.
     try {
       const a = await fetchJson(AFFIXES_PATH);
@@ -1765,10 +1803,44 @@ function _isGenericOverlay(slotId, basename) {
   return false;
 }
 
+// Resolve the basename a picked atlas key would store on the item.
+// Mirrors the on-disk layout under project/assets/tiles/items/:
+//   - artefact subfolder -> "artefacts/wpn_<stem>.png" or "artefacts/<stem>.png"
+//   - spell subfolder -> "spells/<stem>.png"
+//   - everything else -> "<stem>.png"
+// Returns null when no shipped file matches the atlas key. Lets the
+// picker hide tiles that would render blank at runtime.
+function shippedBasenameForAtlasKey(atlasKey) {
+  const stem = atlasKey.split('/').pop();          // e.g. "urand_axe_of_woe.png"
+  const isArtefact = atlasKey.includes('/artefact/');
+  const isSpell = atlasKey.includes('/spells/') || atlasKey.includes('/spell/');
+  // Try direct stem at top level first (the common case).
+  if (shippedTiles.has(stem)) return stem;
+  // Artefact: try "artefacts/<stem>" and "artefacts/wpn_<stem>" /
+  // "artefacts/arm_<stem>" — sync_items.py historically prefixed
+  // weapons with `wpn_` and armor with `arm_` when copying into the
+  // artefacts subdir.
+  if (isArtefact) {
+    if (shippedTiles.has('artefacts/' + stem)) return 'artefacts/' + stem;
+    const withWpn = 'artefacts/wpn_' + stem;
+    if (shippedTiles.has(withWpn)) return withWpn;
+    const withArm = 'artefacts/arm_' + stem;
+    if (shippedTiles.has(withArm)) return withArm;
+  }
+  if (isSpell && shippedTiles.has('spells/' + stem)) return 'spells/' + stem;
+  return null;
+}
+
 function buildWeaponTileList() {
   // Pull all atlas paths under any of the active slot's picker_roots
   // (inventory icons) and overlay_roots (paperdoll overlays). Both
   // lists rebuild when activeSlot changes via switchSlot.
+  //
+  // Inventory tiles are filtered to ones that EXIST in
+  // project/assets/tiles/items/ — picks that resolve to a missing file
+  // render as blank icons at runtime, which used to be a silent
+  // failure mode. shippedTiles is loaded from tile_dir_manifest.json
+  // at boot.
   //
   // Overlay list is filtered to GENERIC positional sprites — strips
   // out character-named one-offs (aragorn, frodo) and shape-specific
@@ -1778,13 +1850,26 @@ function buildWeaponTileList() {
   // common item. 2026-06-05.
   const invRoots = activeSlot.picker_roots || [];
   const ovRoots = activeSlot.overlay_roots || [];
+  // Each entry stores the atlas-key (for the thumbnail URL) and the
+  // basename that would land on the item. Only keep atlas keys that
+  // resolve to a shipped file. Skip the filter when shippedTiles
+  // hasn't loaded (e.g. running from local file:// without the
+  // manifest available) so the picker still works in that fallback.
+  const filterByShipped = shippedTiles.size > 0;
   allWeaponTiles = Object.keys(atlas)
     .filter(k => invRoots.some(r => k.startsWith(r)))
+    .filter(k => !filterByShipped || shippedBasenameForAtlasKey(k) !== null)
     .sort();
+  // Player overlays use bare stems (no subdir prefix). Filter against
+  // shippedOverlays[<slot_dir>] to mirror what paperdoll_renderer
+  // can actually render.
+  const slotDir = (activeSlot.overlay_roots && activeSlot.overlay_roots[0] || '').replace('player/','').replace(/\/$/,'');
+  const overlaySet = shippedOverlays[slotDir];
   allOverlayTiles = Object.keys(atlas)
     .filter(k => ovRoots.some(r => k.startsWith(r)))
     .filter(k => !k.includes('/artefact/'))
     .filter(k => _isGenericOverlay(activeSlot.id, k.split('/').pop().replace('.png', '')))
+    .filter(k => !filterByShipped || !overlaySet || overlaySet.has(k.split('/').pop()))
     .sort();
 }
 
@@ -1910,15 +1995,22 @@ function renderPicker() {
     cell.onclick = () => {
       const it = items.find(x=>x.id===pickerItemId);
       if (it) {
-        const basename = path.split('/').pop();
         if (pickerMode === 'overlay') {
-          // Store stem (no .png extension) so it matches paperdoll
-          // resolver's `stem + ".png"` concatenation.
-          const stem = basename.replace(/\.png$/, '');
+          // Paperdoll overlay: store the bare stem (no .png) so it
+          // matches paperdoll_renderer's `stem + ".png"` concatenation.
+          const stem = path.split('/').pop().replace(/\.png$/, '');
           setOverlayField(pickerItemId, stem);
           const inp = document.getElementById('overlay-path-input');
           if (inp) inp.value = stem;
         } else {
+          // Inventory icon: resolve to the basename that's actually
+          // shipped under project/assets/tiles/items/. Some sprites
+          // live in subdirs (artefacts/, spells/) and some artefact
+          // weapons ship with a `wpn_` / `arm_` prefix that the DCSS
+          // atlas doesn't carry. shippedBasenameForAtlasKey handles
+          // all the variants. Falls back to the raw basename when the
+          // shipped manifest hasn't loaded.
+          const basename = shippedBasenameForAtlasKey(path) || path.split('/').pop();
           setField(pickerItemId, 'tile', basename);
           const inp = document.getElementById('tile-path-input');
           if (inp) inp.value = basename;

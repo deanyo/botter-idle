@@ -58,6 +58,7 @@ jobs:
           cp project/data/enemies.json          _site/project/data/
           cp project/data/species.json          _site/project/data/
           cp project/data/spell_archetypes.json _site/project/data/
+          cp project/data/tile_dir_manifest.json _site/project/data/
           mkdir -p _site/project/assets
           cp -R project/assets/tiles _site/project/assets/tiles
           # Full DCSS tile pack (CC0). ~35 MB. Atlas viewer + item
