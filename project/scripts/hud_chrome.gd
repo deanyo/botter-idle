@@ -344,6 +344,26 @@ func _process(_delta: float) -> void:
 	if alt_now != _hud_alt_was_held:
 		_hud_tooltip.render_for(_hud_hover_cell.item, _hud_hover_cell.inst, _items_db_cache)
 		_hud_alt_was_held = alt_now
+	# Re-clamp the primary tooltip every frame using its actual size.
+	# Tooltip height resolves async after render (Godot's autosize doesn't
+	# settle in the same frame), so the initial clamp underestimated and
+	# tall tooltips painted off the bottom edge. Mirrors outpost.gd:185.
+	_hud_tooltip.position = _hud_clamp_tooltip(get_viewport().get_mouse_position() + Vector2(16, 16), _hud_tooltip.size)
+	# Re-flow compare tooltips: stacked Y offsets need each panel's actual
+	# height (initial layout assumed 220 for every cell). Without this a
+	# pair of tall ring tooltips overlap each other.
+	if not _hud_compare_tooltips.is_empty():
+		var view: Vector2 = get_viewport().get_visible_rect().size
+		var t_right_edge: float = _hud_tooltip.position.x + _hud_tooltip.size.x
+		var place_right: bool = t_right_edge + 8.0 + ItemTooltip.TOOLTIP_W <= view.x - 4.0
+		var x_offset: float = ItemTooltip.TOOLTIP_W + 8.0 if place_right else -(ItemTooltip.TOOLTIP_W + 8.0)
+		var y_offset: float = 0.0
+		for cmp in _hud_compare_tooltips:
+			if cmp == null or not is_instance_valid(cmp):
+				continue
+			var pos: Vector2 = _hud_tooltip.position + Vector2(x_offset, y_offset)
+			cmp.position = _hud_clamp_tooltip(pos, cmp.size)
+			y_offset += cmp.size.y + 8.0
 	# Shift-compare: spawn / dismiss compare panels live as Shift is
 	# pressed / released. Mirrors outpost behavior. 2026-06-07.
 	var shift_now: bool = UILayout.shift_held()
@@ -396,8 +416,10 @@ func _hud_show_compare_tooltips(cell: ItemCell) -> void:
 		add_child(cmp)
 		cmp.render_for(_items_db_cache[equipped_id], equipped_inst, _items_db_cache)
 		var pos: Vector2 = _hud_tooltip.position + Vector2(x_offset, y_offset)
-		pos.x = clampf(pos.x, 4.0, max(4.0, view.x - ItemTooltip.TOOLTIP_W - 4.0))
-		pos.y = clampf(pos.y, 4.0, max(4.0, view.y - 220.0))
+		# Initial clamp uses a generous height estimate; the per-frame
+		# re-clamp loop in _process refines once the tooltip's actual
+		# size has resolved.
+		pos = _hud_clamp_tooltip(pos, Vector2(ItemTooltip.TOOLTIP_W, 220))
 		cmp.position = pos
 		_hud_compare_tooltips.append(cmp)
 		y_offset += 220.0
@@ -408,12 +430,10 @@ func _hud_destroy_compare_tooltips() -> void:
 			t.queue_free()
 	_hud_compare_tooltips.clear()
 
-func _hud_clamp_tooltip(anchor: Vector2) -> Vector2:
+func _hud_clamp_tooltip(anchor: Vector2, sz: Vector2 = Vector2(ItemTooltip.TOOLTIP_W, 240)) -> Vector2:
 	var view: Vector2 = get_viewport().get_visible_rect().size
-	var sz_w: float = float(ItemTooltip.TOOLTIP_W)
-	var sz_h: float = 240.0
-	var px: float = clampf(anchor.x, 4.0, max(4.0, view.x - sz_w - 4.0))
-	var py: float = clampf(anchor.y, 4.0, max(4.0, view.y - sz_h - 4.0))
+	var px: float = clampf(anchor.x, 4.0, max(4.0, view.x - sz.x - 4.0))
+	var py: float = clampf(anchor.y, 4.0, max(4.0, view.y - sz.y - 4.0))
 	return Vector2(px, py)
 
 # Compatibility check for paperdoll drops in-game. Mirrors outpost.

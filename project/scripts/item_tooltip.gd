@@ -191,6 +191,11 @@ func render_for(item_def: Dictionary, instance: Variant, db: Dictionary) -> void
 		var blend: float = clampf(abs(quality_mult - 1.0) / 0.20, 0.0, 1.0)
 		title_color = rarity_col.lerp(q_col, 0.35 * blend)
 	var title := _make_label(disp_name, 16, title_color, true)
+	# Long meta-prefixed names ("Primal Ancient Celestial Boots of the
+	# Vanguard") used to overflow the fixed-width frame. Wrap to the
+	# tooltip's interior width so they paint inside the panel.
+	title.custom_minimum_size = Vector2(TOOLTIP_W - PADDING * 2, 0)
+	title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_vbox.add_child(title)
 	# Border thickness escalates with rarity so the panel reads as
 	# "weight" before the player starts parsing text.

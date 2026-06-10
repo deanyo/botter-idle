@@ -183,6 +183,21 @@ func _process(_delta: float) -> void:
 	# Keep tooltip glued near cursor so it doesn't hover off the cell.
 	if _tooltip != null and is_instance_valid(_tooltip):
 		_tooltip.position = _clamp_tooltip_position(_compute_anchor(_hover_cell), _tooltip.size)
+	# Re-flow compare tooltips: stacked Y offsets need each panel's
+	# actual height. Initial layout assumed 220 per cell which left tall
+	# multi-affix rings overlapping each other.
+	if _tooltip != null and is_instance_valid(_tooltip) and not _compare_tooltips.is_empty():
+		var view: Vector2 = get_viewport().get_visible_rect().size
+		var t_right_edge: float = _tooltip.position.x + _tooltip.size.x
+		var place_right: bool = t_right_edge + 8.0 + ItemTooltip.TOOLTIP_W <= view.x - 4.0
+		var x_offset: float = ItemTooltip.TOOLTIP_W + 8.0 if place_right else -(ItemTooltip.TOOLTIP_W + 8.0)
+		var y_offset: float = 0.0
+		for cmp in _compare_tooltips:
+			if cmp == null or not is_instance_valid(cmp):
+				continue
+			var pos: Vector2 = _tooltip.position + Vector2(x_offset, y_offset)
+			cmp.position = _clamp_tooltip_position(pos, cmp.size)
+			y_offset += cmp.size.y + 8.0
 
 func _show_main_tooltip(cell: ItemCell) -> void:
 	if _tooltip != null and is_instance_valid(_tooltip):

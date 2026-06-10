@@ -831,7 +831,19 @@ drop on reload erodes trust.
 "copy DCSS behavior."
 
 ### 4. Tooltips render partially offscreen, especially with shift-compare
-**Status:** `untriaged`
+**Status:** `triaged → fixed` (Phase 3 tooltip layout, 2026-06-10)
+
+Three changes:
+- hud_chrome.gd `_hud_clamp_tooltip` now accepts a size param (defaults
+  to TOOLTIP_W × 240 for the initial render, where the actual size
+  hasn't resolved yet). Mirrors outpost.gd's existing signature.
+- hud_chrome.gd `_process` re-clamps the primary tooltip every frame
+  using the actual `_hud_tooltip.size`. Mirrors outpost.gd:185 — that
+  path already worked, the HUD path was missing it.
+- Both `_process` paths now re-flow stacked compare tooltips using
+  each panel's *actual* height (was hardcoded 220 per panel, which let
+  tall multi-affix ring tooltips overlap each other and the bottom
+  margin clamp to 220 of slack ignored taller panels).
 
 Tooltip positioning doesn't clamp to viewport edges. Worst when
 shift-compare is active (two tooltips side-by-side). Need:
@@ -897,7 +909,14 @@ estimate fallback (200–240px) handles typical single/dual-stat items
 safely.
 
 ### 5. Items with long names overflow tooltip bounds
-**Status:** `untriaged`
+**Status:** `triaged → fixed` (Phase 3 tooltip layout, 2026-06-10)
+
+Fix: item_tooltip.gd:193 sets the title label's
+`custom_minimum_size = (TOOLTIP_W - PADDING * 2, 0)` and `autowrap_mode
+= AUTOWRAP_WORD_SMART`. Long meta-prefixed names ("Primal Ancient
+Celestial Boots of the Vanguard") now wrap inside the panel instead
+of painting outside it. Other body labels (desc/blurb/flavor) were
+already wrapped; title was the only outlier.
 
 Tooltip width is fixed (or min-width-bounded) and long item names
 exceed it, painting outside the tooltip frame. Either widen the
