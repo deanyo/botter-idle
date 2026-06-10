@@ -450,21 +450,12 @@ func _build_affix_lines() -> Array:
 		var gold: Color = Color(1.0, 0.85, 0.30)
 		var line_color: Color = stat_col.lerp(gold, 0.35)
 		out.append(_make_label(line_text, 12, line_color, false))
-		# Always-visible description on opaque named-effect affixes (of the
-		# Tempest, of the Hunter, etc). Player shouldn't need to hold Alt to
-		# learn what their item does. Plain stat affixes (+5 HP) skip this
-		# since they're self-explanatory.
-		if AffixSystem.is_named_effect_stat(String(def.get("stat", ""))):
-			var inline_desc: Label = _make_stat_description_label(String(def.get("stat", "")))
-			if inline_desc != null:
-				out.append(inline_desc)
 		if alt_held:
-			# Alt-held: descriptions on EVERY affix (including the simple
-			# stat ones), plus the existing debug-detail line.
-			if not AffixSystem.is_named_effect_stat(String(def.get("stat", ""))):
-				var desc_lbl: Label = _make_affix_description_label(def)
-				if desc_lbl != null:
-					out.append(desc_lbl)
+			# Alt-held: mathematical description for every affix + the
+			# existing debug-detail line.
+			var desc_lbl: Label = _make_affix_description_label(def)
+			if desc_lbl != null:
+				out.append(desc_lbl)
 			out.append(_make_alt_line(def, rolled, true))
 	# Rolled affixes — colored by their stat per the affix-editor map.
 	if typeof(inst) == TYPE_DICTIONARY:
@@ -477,17 +468,10 @@ func _build_affix_lines() -> Array:
 			var line_text: String = _format_affix_line(def, af_inst)
 			var line_color: Color = UITheme.affix_stat_color(String(def.get("stat", "")))
 			out.append(_make_label(line_text, 12, line_color, false))
-			# Same always-visible description for opaque named-effect
-			# affixes on rolled (non-implicit) instances.
-			if AffixSystem.is_named_effect_stat(String(def.get("stat", ""))):
-				var inline_desc_2: Label = _make_stat_description_label(String(def.get("stat", "")))
-				if inline_desc_2 != null:
-					out.append(inline_desc_2)
 			if alt_held:
-				if not AffixSystem.is_named_effect_stat(String(def.get("stat", ""))):
-					var desc_lbl_2: Label = _make_affix_description_label(def)
-					if desc_lbl_2 != null:
-						out.append(desc_lbl_2)
+				var desc_lbl_2: Label = _make_affix_description_label(def)
+				if desc_lbl_2 != null:
+					out.append(desc_lbl_2)
 				out.append(_make_alt_line(def, af_inst, false))
 	return out
 
