@@ -1284,3 +1284,49 @@ Files to investigate first:
 <!-- New playtest sessions append below. Keep this comment as the
      insertion marker so future-me drops new dated sections in the
      right place. -->
+
+## 2026-06-11 — outpost inventory UX
+
+### 1. Inventory pane needs filter-by-affix and sort-by-ilevel
+**Status:** `untriaged`
+
+Player observation: when sifting through a fat inventory in the
+outpost, the existing filter chips (slot / rarity / favorites)
+and sort modes (recency / rarity / slot / name) don't cover two
+common needs:
+
+- **Filter by affix** — "show me everything with `of_crit`" or
+  "everything with any element-pct affix." Today the player has
+  to open each item's tooltip and scan. With S4's 11 new affixes
+  + S11's 12 boss-anchor implicits, the affix surface area is
+  big enough that text-search-by-affix becomes the fastest way
+  to compare candidate gear.
+- **Sort by item level (iLvl)** — already computed (see
+  `item_level.gd`), already shown on the tooltip, but missing
+  from `_SORT_OPTIONS` so the player can't actually rank by it.
+  Useful for "what's my best ring" without manually opening
+  each tooltip.
+
+Files to touch:
+- `scripts/outpost.gd:1112-1118` — `_SORT_OPTIONS` const, add
+  an `ilvl` entry; `_render_inventory` already has a sort
+  switch around line 1265, add the case.
+- `scripts/outpost.gd:1128-1169` — `_build_filter_chips`, add
+  an OptionButton or text-search field for affix filter.
+  Pulling the affix list from `AffixSystem.get_all_affix_ids()`
+  (or equivalent) gives a dropdown of every authored affix;
+  alternatively a free-text search field that matches against
+  affix.id / affix.name (substring) is friendlier for the
+  S4/S11 named affixes ("hunter", "scribe", "phylactery").
+
+Recommend the search-field approach: a single text input that
+filters by substring against item.name + every affix.id +
+every affix.name. Cheap to implement, scales naturally as more
+affixes ship, and doesn't bloat the chip row visually.
+
+Empirical signal that this matters: the new boss-anchor T1
+uniques shipped this morning carry mechanics-heavy implicits
+(of_polymorph, of_phylactery, of_dancing). A player who
+remembers "I picked up Sigmund's Sickle yesterday" can't
+quickly find it without scrolling — slot=weapon + rarity=epic
++ name-sort still mixes 30+ items.
