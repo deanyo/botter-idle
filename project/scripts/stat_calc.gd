@@ -317,8 +317,11 @@ static func compute(
 		# / of_storm / of_zealot / of_venom / of_shadow). Each writes to
 		# `<elem>_dmg_pct`; we accumulate into spell_element_pct keyed by
 		# element so spell_data.gd:181 can read elem_mult per spell.
+		# Lightning is the one element where the spell-side identifier
+		# ("thunderous") differs from the affix stat key ("lightning_dmg_pct"
+		# post-2026-06-11 rename), so the lookup key is mapped explicitly.
 		for elem in SPELL_ELEMENTS:
-			var key: String = elem + "_dmg_pct"
+			var key: String = ("lightning_dmg_pct" if elem == "thunderous" else elem + "_dmg_pct")
 			var add: float = float(slot_sums.get(key, 0))
 			if add != 0.0:
 				spell_element_pct[elem] = float(spell_element_pct[elem]) + add

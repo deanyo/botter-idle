@@ -303,7 +303,7 @@ const _STAT_DESCRIPTIONS := {
 	# Element-coded spell-school masteries.
 	"fire_dmg_pct": "Multiplies fire-element spell damage by 1 + {N}/100.",
 	"cold_dmg_pct": "Multiplies cold-element spell damage by 1 + {N}/100.",
-	"thunderous_dmg_pct": "Multiplies lightning-element spell damage by 1 + {N}/100.",
+	"lightning_dmg_pct": "Multiplies lightning-element spell damage by 1 + {N}/100.",
 	"holy_dmg_pct": "Multiplies holy-element spell damage by 1 + {N}/100.",
 	"poison_dmg_pct": "Multiplies poison-element spell damage by 1 + {N}/100.",
 	"dark_dmg_pct": "Multiplies dark-element spell damage by 1 + {N}/100.",
@@ -438,7 +438,7 @@ static func _format_stat_line(stat: String, v: int) -> String:
 		"block_amount": return "+%d Block Amount" % v
 		"fire_dmg_pct": return "+%d%% Fire Damage" % v
 		"cold_dmg_pct": return "+%d%% Cold Damage" % v
-		"thunderous_dmg_pct": return "+%d%% Lightning Damage" % v
+		"lightning_dmg_pct": return "+%d%% Lightning Damage" % v
 		"holy_dmg_pct": return "+%d%% Holy Damage" % v
 		"poison_dmg_pct": return "+%d%% Poison Damage" % v
 		"dark_dmg_pct": return "+%d%% Dark Damage" % v
