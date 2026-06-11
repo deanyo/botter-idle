@@ -91,6 +91,28 @@ ups, not audit findings.
 
 ---
 
+2026-06-11 (balance pass beat 1.A — outpost filter-by-affix +
+sort-by-ilvl shipped). The outpost inventory chip row gained a
+`Search affix or name` LineEdit and an `Item level (high → low)`
+sort entry. Substring search (case-insensitive) matches against
+the item base name, every implicit affix id and display name, and
+every rolled affix id and display name on the instance — so typing
+`crit` filters to anything carrying a crit affix, and typing the
+name of a boss-anchor implicit (e.g. `phylactery`) finds the one
+unique that rolls it without scrolling 30+ epics. The ilvl sort
+uses `ItemLevel.compute(item, inst).level` with rarity then name
+as tiebreakers. Both ride on top of the existing slot/rarity/
+favorites filters; empty query short-circuits so default behavior
+is unchanged. Implementation in `project/scripts/outpost.gd:1095`
+(state field), `:1113-1119` (sort options), `:1172-1183` (LineEdit
+chip), `:1200-1230` (`_passes_filter` + new
+`_matches_affix_query`), `:1318-1330` (ilvl branch in
+`_render_inventory` sort match). Gating tool for the rest of the
+balance pass — every Beat-1 affix add and unique-differentiation
+batch becomes searchable in-hand.
+
+---
+
 Earlier 2026-06-09 (Tier 3 dungeon.gd split — sixth and final
 extraction shipped: ShowcaseRunner pulled out of the 3179-LOC
 dungeon. **The dungeon.gd Tier 3 split is COMPLETE** — what remains

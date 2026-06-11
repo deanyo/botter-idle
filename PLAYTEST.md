@@ -1288,7 +1288,11 @@ Files to investigate first:
 ## 2026-06-11 — outpost inventory UX
 
 ### 1. Inventory pane needs filter-by-affix and sort-by-ilevel
-**Status:** `untriaged`
+**Status:** `fixed` — shipped 2026-06-11 as balance-pass beat 1.A.
+Search field + ilvl sort entry live in `outpost.gd::_build_filter_chips`
++ `_render_inventory`. Substring search matches item base name +
+implicit + rolled affix ids/names; ilvl ordering pulls from
+`ItemLevel.compute(item, inst).level`.
 
 Player observation: when sifting through a fat inventory in the
 outpost, the existing filter chips (slot / rarity / favorites)

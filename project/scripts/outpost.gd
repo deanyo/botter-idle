@@ -1092,6 +1092,7 @@ func _build_inventory_pane(x: int, y: int, w: int, h: int) -> void:
 var _filter_slot: String = "all"
 var _filter_rarity: String = "all"
 var _filter_favorites: bool = false
+var _filter_affix_query: String = ""
 
 const _SLOT_FILTER_OPTIONS := [
 	{ "id": "all",    "label": "All slots" },
@@ -1112,6 +1113,7 @@ const _SLOT_FILTER_OPTIONS := [
 const _SORT_OPTIONS := [
 	{ "id": "recency", "label": "Recently dropped" },
 	{ "id": "rarity",  "label": "Rarity (high → low)" },
+	{ "id": "ilvl",    "label": "Item level (high → low)" },
 	{ "id": "slot",    "label": "Slot grouping" },
 	{ "id": "name",    "label": "Name (A → Z)" },
 ]
@@ -1167,6 +1169,18 @@ func _build_filter_chips(parent: Container) -> void:
 		_render_inventory()
 	)
 	parent.add_child(fav_btn)
+	# Affix / name search. Substring-match (case-insensitive) against
+	# item base name, every implicit affix id+name, and every rolled
+	# affix id+name on the instance. Empty string = no filter.
+	var search_edit := LineEdit.new()
+	search_edit.placeholder_text = "Search affix or name"
+	search_edit.custom_minimum_size = Vector2(180, 0)
+	search_edit.clear_button_enabled = true
+	search_edit.text_changed.connect(func(s):
+		_filter_affix_query = String(s).strip_edges().to_lower()
+		_render_inventory()
+	)
+	parent.add_child(search_edit)
 
 # Returns true if `inst` should render given the active filters.
 func _passes_filter(inst: Dictionary, item: Dictionary) -> bool:
@@ -1183,7 +1197,36 @@ func _passes_filter(inst: Dictionary, item: Dictionary) -> bool:
 			return false
 	if _filter_favorites and not bool(inst.get("favorite", false)):
 		return false
+	if _filter_affix_query != "":
+		if not _matches_affix_query(inst, item, _filter_affix_query):
+			return false
 	return true
+
+# Returns true if the lowercased query is a substring of the item's
+# base name, any implicit affix id/name, or any rolled affix id/name.
+# Used by the outpost search-by-affix filter (PLAYTEST 2026-06-11 #1).
+func _matches_affix_query(inst: Dictionary, item: Dictionary, q: String) -> bool:
+	if q == "":
+		return true
+	if String(item.get("name", "")).to_lower().find(q) >= 0:
+		return true
+	for af_id in item.get("implicit_affixes", []):
+		var sid: String = String(af_id)
+		if sid.to_lower().find(q) >= 0:
+			return true
+		var def: Dictionary = AffixSystem.get_affix_def(sid)
+		if String(def.get("name", "")).to_lower().find(q) >= 0:
+			return true
+	for entry in inst.get("affixes", []):
+		if typeof(entry) != TYPE_DICTIONARY:
+			continue
+		var sid2: String = String(entry.get("id", ""))
+		if sid2.to_lower().find(q) >= 0:
+			return true
+		var def2: Dictionary = AffixSystem.get_affix_def(sid2)
+		if String(def2.get("name", "")).to_lower().find(q) >= 0:
+			return true
+	return false
 
 # ============================================================================
 # Render
@@ -1265,6 +1308,18 @@ func _render_inventory() -> void:
 	match _sort_mode:
 		"rarity":
 			triples.sort_custom(func(a, b):
+				var ra: int = int(rarity_rank.get(String(a.item.get("rarity", "")), 0))
+				var rb: int = int(rarity_rank.get(String(b.item.get("rarity", "")), 0))
+				if ra != rb:
+					return ra > rb
+				return String(a.item.get("name", "")) < String(b.item.get("name", ""))
+			)
+		"ilvl":
+			triples.sort_custom(func(a, b):
+				var la: int = int(ItemLevel.compute(a.item, a.inst).get("level", 0))
+				var lb: int = int(ItemLevel.compute(b.item, b.inst).get("level", 0))
+				if la != lb:
+					return la > lb
 				var ra: int = int(rarity_rank.get(String(a.item.get("rarity", "")), 0))
 				var rb: int = int(rarity_rank.get(String(b.item.get("rarity", "")), 0))
 				if ra != rb:
