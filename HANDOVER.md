@@ -91,6 +91,28 @@ ups, not audit findings.
 
 ---
 
+2026-06-11 (balance pass beat 1.D — 31 legendary clones gain
+identity via `implicit_affixes`). The audit's A1 stat-clone
+findings (5 demon_blade variants at dmg=122-215/spd=0.9, 9 long_sword
+variants at dmg=71-131/spd=0.7, 13 body armors at armor=48/ev=12,
+4 vampires_tooth/dagger variants at dmg=48-107/spd=0.55) — all
+sharing affix_pool keys before this beat — now carry per-name
+`implicit_affixes` arrays. Implicits flow through
+`stat_calc.gd::_realize_implicit` and the per-affix-id DR pipeline,
+so the differentiation registers as real combat numbers. Spot-check:
+`/duel demon_blade -- demon_blade_umbral` shows +8% damage-output
+gap purely from implicit choice. `/duel eos -- jihad` (lair) shows
+-17% damage gap from element + implicit interaction. Picks favored
+weapon/armor-applies_to affixes by flavor (e.g. `arc_blade` got
+`of_storms` since it's the only lightning long_sword; `armor_of_zhor`
+got `of_regen + of_vitality` matching its lore; `chilly_death` got
+`of_frost + of_finesse` as cold-rapier identity). Every legendary
+in these 4 clusters now has a distinct on-equip mechanical signature
+that the outpost search field (1.A) can isolate by typing the
+implicit affix name.
+
+---
+
 2026-06-11 (balance pass beat 1.C remainder — `elf_spire_tome`
 schema repair + `green_dragon_inverse` re-tier + 3 quarterstaff
 1H retags shipped). `elf_spire_tome` (the only one of 224 spell

@@ -1416,7 +1416,9 @@
       ],
       "unique": true,
       "enchant_chance": 0.0,
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_storms"
+      ],
       "affix_pool": {
         "of_might": 25,
         "of_finesse": 15,
@@ -1463,7 +1465,10 @@
       ],
       "unique": true,
       "enchant_chance": 0.0,
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_lifesteal",
+        "of_bloodletting"
+      ],
       "affix_pool": {
         "of_might": 25,
         "of_finesse": 15,
@@ -1509,7 +1514,10 @@
       ],
       "unique": true,
       "enchant_chance": 0.0,
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_frost",
+        "of_finesse"
+      ],
       "affix_pool": {
         "of_might": 25,
         "of_finesse": 15,
@@ -1609,7 +1617,9 @@
       ],
       "unique": false,
       "enchant_chance": 0.15,
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_embers"
+      ],
       "affix_pool": {
         "of_might": 25,
         "of_finesse": 15,
@@ -1663,7 +1673,10 @@
       ],
       "unique": true,
       "enchant_chance": 0.0,
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_shadows",
+        "of_might"
+      ],
       "affix_pool": {
         "of_might": 25,
         "of_finesse": 15,
@@ -1711,7 +1724,10 @@
       ],
       "unique": true,
       "enchant_chance": 0.0,
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_embers",
+        "of_haste"
+      ],
       "affix_pool": {
         "of_might": 25,
         "of_finesse": 15,
@@ -1804,7 +1820,10 @@
       ],
       "unique": true,
       "enchant_chance": 0.0,
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_devotion",
+        "of_might"
+      ],
       "affix_pool": {
         "of_might": 25,
         "of_finesse": 15,
@@ -1852,7 +1871,10 @@
       ],
       "unique": true,
       "enchant_chance": 0.0,
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_shadows",
+        "of_lifesteal"
+      ],
       "affix_pool": {
         "of_might": 25,
         "of_finesse": 15,
@@ -2000,7 +2022,10 @@
       ],
       "unique": true,
       "enchant_chance": 0.0,
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_echoes",
+        "of_finesse"
+      ],
       "affix_pool": {
         "of_might": 25,
         "of_finesse": 15,
@@ -2096,7 +2121,10 @@
       ],
       "unique": true,
       "enchant_chance": 0.0,
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_embers",
+        "of_executioner"
+      ],
       "affix_pool": {
         "of_might": 25,
         "of_finesse": 15,
@@ -2144,7 +2172,10 @@
       ],
       "unique": true,
       "enchant_chance": 0.0,
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_might",
+        "of_berserker_rage"
+      ],
       "affix_pool": {
         "of_might": 25,
         "of_finesse": 15,
@@ -2192,7 +2223,10 @@
       ],
       "unique": true,
       "enchant_chance": 0.0,
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_shadows",
+        "of_lifesteal"
+      ],
       "affix_pool": {
         "of_might": 25,
         "of_finesse": 15,
@@ -3380,7 +3414,10 @@
       ],
       "unique": true,
       "enchant_chance": 0.0,
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_regen",
+        "of_vitality"
+      ],
       "affix_pool": {
         "of_might": 15,
         "of_finesse": 12,
@@ -3461,7 +3498,10 @@
       ],
       "unique": true,
       "enchant_chance": 0.0,
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_might",
+        "of_fire_resist"
+      ],
       "affix_pool": {
         "of_might": 15,
         "of_finesse": 12,
@@ -3550,7 +3590,10 @@
       ],
       "unique": true,
       "enchant_chance": 0.0,
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_finesse",
+        "of_cold_resist"
+      ],
       "affix_pool": {
         "of_might": 15,
         "of_finesse": 12,
@@ -3640,7 +3683,10 @@
       ],
       "unique": true,
       "enchant_chance": 0.0,
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_might",
+        "of_the_bear"
+      ],
       "affix_pool": {
         "of_might": 15,
         "of_finesse": 12,
@@ -3854,7 +3900,10 @@
       ],
       "unique": true,
       "enchant_chance": 0.0,
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_finesse",
+        "of_lightning_resist"
+      ],
       "affix_pool": {
         "of_might": 15,
         "of_finesse": 12,
@@ -3894,7 +3943,10 @@
       ],
       "unique": true,
       "enchant_chance": 0.0,
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_wisdom",
+        "of_regen"
+      ],
       "affix_pool": {
         "of_might": 15,
         "of_finesse": 12,
@@ -3934,7 +3986,10 @@
       ],
       "unique": true,
       "enchant_chance": 0.0,
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_wisdom",
+        "of_dark_resist"
+      ],
       "affix_pool": {
         "of_might": 15,
         "of_finesse": 12,
@@ -3975,7 +4030,10 @@
       ],
       "unique": true,
       "enchant_chance": 0.0,
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_dark_resist",
+        "of_finesse"
+      ],
       "affix_pool": {
         "of_might": 15,
         "of_finesse": 12,
@@ -4067,7 +4125,10 @@
       ],
       "unique": true,
       "enchant_chance": 0.0,
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_fire_resist",
+        "of_regen"
+      ],
       "affix_pool": {
         "of_might": 15,
         "of_finesse": 12,
@@ -18064,7 +18125,10 @@
         "shadow"
       ],
       "id": "demon_blade_umbral",
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_shadows",
+        "of_lifesteal"
+      ],
       "item_tier": 5,
       "lore": "The dark that settles on it cannot be polished off.",
       "name": "Umbral Demon Blade",
@@ -18180,7 +18244,10 @@
         "holy"
       ],
       "id": "robe_of_folly_rosegold",
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_wisdom",
+        "of_holy_resist"
+      ],
       "item_tier": 5,
       "lore": "An alloy out of fashion in this century. The shine is unmistakable.",
       "name": "Rose-gold Robe of Folly",
@@ -18616,7 +18683,8 @@
       ],
       "id": "vampires_tooth_spectral",
       "implicit_affixes": [
-        "of_lifesteal"
+        "of_lifesteal",
+        "of_shadows"
       ],
       "item_tier": 5,
       "lore": "It is somehow always slightly cooler than its surroundings.",
@@ -19049,7 +19117,10 @@
         "willpower"
       ],
       "id": "robe_of_folly_prismatic",
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_wisdom",
+        "of_finesse"
+      ],
       "item_tier": 5,
       "lore": "Every glance reveals a new color, each one a real one \u2014 somewhere.",
       "name": "Prismatic Robe of Folly",
@@ -19747,7 +19818,8 @@
       ],
       "id": "vampires_tooth_obsidian",
       "implicit_affixes": [
-        "of_lifesteal"
+        "of_lifesteal",
+        "of_sharpness"
       ],
       "item_tier": 5,
       "lore": "Volcanic glass, edge-flaked razor-sharp by patient hands.",
@@ -20846,7 +20918,10 @@
         "willpower"
       ],
       "id": "robe_of_misfortune_verdant",
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_wisdom",
+        "of_poison_resist"
+      ],
       "item_tier": 5,
       "lore": "Vines crawl over the haft, seeking soil that is not there.",
       "name": "Verdant Robe of Misfortune",
@@ -20904,7 +20979,10 @@
         "fire"
       ],
       "id": "sword_of_power_crimson",
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_might",
+        "of_bloodletting"
+      ],
       "item_tier": 5,
       "lore": "Forged in dragonfire, the metal still glows when blood spills near it.",
       "name": "Crimson Sword of Power",
@@ -21307,7 +21385,10 @@
         "demon"
       ],
       "id": "demon_blade_embered",
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_embers",
+        "of_haste"
+      ],
       "item_tier": 5,
       "lore": "Carries its own slow heat. Embers drift from it when struck.",
       "name": "Embered Demon Blade",
@@ -23542,7 +23623,10 @@
         "brutal"
       ],
       "id": "sword_of_power_bone",
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_might",
+        "of_sharpness"
+      ],
       "item_tier": 5,
       "lore": "Shaped from the long bones of something old. It still aches in the cold.",
       "name": "Bone Sword of Power",
@@ -23676,7 +23760,10 @@
         "regen"
       ],
       "id": "robe_of_clouds_ironclad",
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_the_bear",
+        "of_lightning_resist"
+      ],
       "item_tier": 5,
       "lore": "Plain forged iron, but heavier than the metal alone explains.",
       "name": "Ironclad Robe of Clouds",
