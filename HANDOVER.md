@@ -91,6 +91,33 @@ ups, not audit findings.
 
 ---
 
+2026-06-11 (balance pass beat 1.E partial — 5 thin-cell fills + 5
+race-anchor uniques, 10 new items.json entries). A4 §A thin-cell
+proposals shipped to fill the 5-cell skinny-pool gap (gloves common,
+gloves uncommon, cloak common, shield common, amulet common): `iron_token`
+(STR-flagged common amulet), `student_mantle` (INT-flagged common cloak),
+`padded_targe` (mixed-stat common buckler with block_chance/amount),
+`silk_handwraps` (DEX-coded common gloves), `acolyte_handwraps` (INT-coded
+uncommon gloves). Items pool 687 → 697. A4 §B race-anchor proposals
+shipped for the 5 species under-anchored after S5: `demonspawn_pyre_mantle`
+(legendary cloak, fire+demon, biome_pool=["forge","pandemonium"]),
+`gargoyle_basalt_visor` (epic helm, stone — fills the gargoyle head-slot
+gap), `elf_archmagi_focus` (legendary amulet, scholar, biome_pool=["elf"]),
+`tengu_galewing_pendant` (epic amulet, windborn — non-cloak speed delivery),
+`halfling_lucky_treads` (rare boots, lucky — fills boots-rare cell + delivers
+loot identity via `of_plunder` implicit). Per-affix slot eligibility
+strictly respected in pools; off-slot implicits used where existing precedent
+exists (e.g. `vampire_nightshade_cloak` carries cloak-illegal `of_lifesteal`
+as implicit). Race-anchors 24 species → 5 species gain a second anchor.
+Validation: items.json parses, 697 items, all 10 load through ItemsDb
+preload + roll affixes correctly via AffixSystem, check_damage_ceiling
+clean (150 weapons within 220/245 cap), audit_data_integrity 6 pre-existing
+THIN_DESIGNS warnings only (all in cells A4 left for follow-up batches),
+check_before_commit 5/5 PASS, /grind 5 zero ERROR / push_error / parse
+warnings.
+
+---
+
 2026-06-11 (balance pass beat 1.K — lightning resistance spread,
 1→9 enemies). Synthesis Top-5 finding 1.5 root-caused: pre-pass,
 1 of 125 enemies (`blue_devil`) had any lightning resistance and

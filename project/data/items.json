@@ -36664,6 +36664,432 @@
       "biome_pool": [
         "zot"
       ]
+    },
+    {
+      "id": "iron_token",
+      "name": "Iron Token",
+      "slot": "amulet",
+      "rarity": "common",
+      "tile": "agate.png",
+      "base_type": "amulet_strength",
+      "item_tier": 1,
+      "flavor_tags": [
+        "lordly"
+      ],
+      "lore": "A pierced slug of pig iron. Heavier than it looks.",
+      "drop_weights": [
+        80,
+        15,
+        0,
+        0,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_might": 30,
+        "of_finesse": 12,
+        "of_wisdom": 12,
+        "of_vitality": 20,
+        "of_str_mastery": 16,
+        "of_regen": 14,
+        "of_haste": 10,
+        "of_lifesteal": 10,
+        "of_berserker_rage": 10,
+        "of_executioner": 8,
+        "of_hunter": 8,
+        "of_warding": 8
+      }
+    },
+    {
+      "id": "student_mantle",
+      "name": "Student's Mantle",
+      "slot": "cloak",
+      "rarity": "common",
+      "tile": "cloak_3.png",
+      "base_type": "cloak",
+      "armor": 1,
+      "evasion": 6,
+      "item_tier": 1,
+      "flavor_tags": [],
+      "lore": "Ink-stained at the cuffs. Stitched by someone in a hurry.",
+      "drop_weights": [
+        55,
+        30,
+        8,
+        0,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_might": 8,
+        "of_finesse": 10,
+        "of_wisdom": 30,
+        "of_vitality": 14,
+        "of_the_cat": 14,
+        "of_fire_resist": 10,
+        "of_cold_resist": 10,
+        "of_lightning_resist": 10,
+        "of_holy_resist": 8,
+        "of_poison_resist": 8,
+        "of_dark_resist": 8,
+        "of_resonance": 16,
+        "of_lingering": 16,
+        "of_quickcast": 18,
+        "of_channeling": 14,
+        "of_regen": 8
+      }
+    },
+    {
+      "id": "padded_targe",
+      "name": "Padded Targe",
+      "slot": "shield",
+      "rarity": "common",
+      "tile": "buckler_2_new.png",
+      "base_type": "buckler",
+      "armor": 4,
+      "evasion": 4,
+      "item_tier": 1,
+      "flavor_tags": [],
+      "lore": "Boiled leather over a willow disc. Tougher than it sounds.",
+      "drop_weights": [
+        70,
+        25,
+        3,
+        0,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_might": 18,
+        "of_finesse": 14,
+        "of_wisdom": 10,
+        "of_the_bear": 22,
+        "of_fire_resist": 12,
+        "of_cold_resist": 12,
+        "of_lightning_resist": 12,
+        "of_holy_resist": 8,
+        "of_poison_resist": 10,
+        "of_dark_resist": 8,
+        "of_warding": 14,
+        "of_bulwark": 14
+      },
+      "default_tint": {
+        "hue": 28,
+        "sat": 0.7,
+        "mode": "colorize",
+        "colorize_strength": 0.4
+      },
+      "block_chance": 8,
+      "block_amount": 6
+    },
+    {
+      "id": "silk_handwraps",
+      "name": "Silk Handwraps",
+      "slot": "gloves",
+      "rarity": "common",
+      "tile": "glove_3_old.png",
+      "base_type": "gloves",
+      "armor": 1,
+      "evasion": 6,
+      "item_tier": 1,
+      "flavor_tags": [],
+      "lore": "Wrapped tight around the knuckles. Quiet on the wrist.",
+      "drop_weights": [
+        60,
+        30,
+        5,
+        0,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_might": 10,
+        "of_finesse": 26,
+        "of_wisdom": 8,
+        "of_the_bear": 8,
+        "of_the_cat": 22,
+        "of_sharpness": 14,
+        "of_embers": 8,
+        "of_frost": 8,
+        "of_storms": 8,
+        "of_devotion": 6,
+        "of_venom": 8,
+        "of_shadows": 8,
+        "of_crit": 22,
+        "of_haste": 22,
+        "of_lifesteal": 10,
+        "of_velocity": 16,
+        "of_hunter": 10,
+        "of_executioner": 10
+      }
+    },
+    {
+      "id": "acolyte_handwraps",
+      "name": "Acolyte's Handwraps",
+      "slot": "gloves",
+      "rarity": "uncommon",
+      "tile": "glove_3_new.png",
+      "base_type": "gloves",
+      "armor": 2,
+      "evasion": 7,
+      "item_tier": 2,
+      "flavor_tags": [
+        "faith"
+      ],
+      "lore": "Wrapped each morning, with a prayer pressed into the knot.",
+      "drop_weights": [
+        20,
+        50,
+        22,
+        2,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_might": 8,
+        "of_finesse": 12,
+        "of_wisdom": 26,
+        "of_the_bear": 10,
+        "of_the_cat": 14,
+        "of_sharpness": 8,
+        "of_devotion": 18,
+        "of_holy_resist": 14,
+        "of_zealot": 14,
+        "of_channeling": 18,
+        "of_quickcast": 14,
+        "of_velocity": 12,
+        "of_lifesteal": 8,
+        "of_hunter": 8
+      }
+    },
+    {
+      "id": "demonspawn_pyre_mantle",
+      "name": "Pyre-Stitched Mantle",
+      "slot": "cloak",
+      "rarity": "legendary",
+      "tile": "cloak_4.png",
+      "base_type": "cloak",
+      "armor": 4,
+      "evasion": 14,
+      "item_tier": 5,
+      "flavor_tags": [
+        "fire",
+        "demon"
+      ],
+      "lore": "Cinders sewn into the lining. Smoulders in the dark.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        4,
+        18
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "requires_innate_tag": "demon",
+      "implicit_affixes": [
+        "of_pyromancer",
+        "of_embers"
+      ],
+      "affix_pool": {
+        "of_pyromancer": 16,
+        "of_fire_resist": 12,
+        "of_resonance": 10,
+        "of_lingering": 10,
+        "of_channeling": 12,
+        "of_haste": 8
+      },
+      "default_tint": {
+        "hue": 5,
+        "sat": 1.5,
+        "mode": "colorize",
+        "colorize_strength": 0.65
+      },
+      "biome_pool": [
+        "forge",
+        "pandemonium"
+      ]
+    },
+    {
+      "id": "gargoyle_basalt_visor",
+      "name": "Basalt Visor",
+      "slot": "helm",
+      "rarity": "epic",
+      "tile": "helmet_4_visor.png",
+      "base_type": "helmet",
+      "armor": 18,
+      "evasion": 6,
+      "item_tier": 4,
+      "flavor_tags": [
+        "fortified",
+        "petrify"
+      ],
+      "lore": "Cooled lava cut and bound. Heavier than the wearer's head.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        12,
+        30
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "requires_innate_tag": "stone",
+      "implicit_affixes": [
+        "of_the_bear",
+        "of_warding"
+      ],
+      "affix_pool": {
+        "of_the_bear": 18,
+        "of_vitality": 12,
+        "of_regen": 10,
+        "of_fire_resist": 10,
+        "of_cold_resist": 10,
+        "of_lightning_resist": 10,
+        "of_holy_resist": 8,
+        "of_poison_resist": 8,
+        "of_dark_resist": 8
+      },
+      "default_tint": {
+        "hue": 0,
+        "sat": 0.0,
+        "mode": "normal"
+      }
+    },
+    {
+      "id": "elf_archmagi_focus",
+      "name": "Archmagi's Focus",
+      "slot": "amulet",
+      "rarity": "legendary",
+      "tile": "crystal_white.png",
+      "base_type": "amulet_magic_regeneration",
+      "item_tier": 5,
+      "flavor_tags": [
+        "arcane",
+        "wisdom"
+      ],
+      "lore": "A facet cut so finely it sings when a spell is spoken near it.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        4,
+        18
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "requires_innate_tag": "scholar",
+      "implicit_affixes": [
+        "of_int_mastery",
+        "of_channeling"
+      ],
+      "affix_pool": {
+        "of_int_mastery": 18,
+        "of_channeling": 16,
+        "of_resonance": 12,
+        "of_lingering": 12,
+        "of_quickcast": 12,
+        "of_velocity": 10,
+        "of_wisdom": 14
+      },
+      "default_tint": {
+        "hue": 200,
+        "sat": 0.8,
+        "mode": "normal"
+      },
+      "biome_pool": [
+        "elf"
+      ]
+    },
+    {
+      "id": "tengu_galewing_pendant",
+      "name": "Galewing Pendant",
+      "slot": "amulet",
+      "rarity": "epic",
+      "tile": "urand_air_new.png",
+      "base_type": "amulet_acrobat",
+      "item_tier": 4,
+      "flavor_tags": [
+        "swiftness",
+        "precision"
+      ],
+      "lore": "A feather pinned in glass. Always pointing into the wind.",
+      "drop_weights": [
+        0,
+        0,
+        8,
+        28,
+        18
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "requires_innate_tag": "windborn",
+      "implicit_affixes": [
+        "of_haste",
+        "of_velocity"
+      ],
+      "affix_pool": {
+        "of_haste": 16,
+        "of_velocity": 14,
+        "of_finesse": 14,
+        "of_quickcast": 12,
+        "of_dex_mastery": 10
+      },
+      "default_tint": {
+        "hue": 195,
+        "sat": 0.9,
+        "mode": "normal"
+      }
+    },
+    {
+      "id": "halfling_lucky_treads",
+      "name": "Lucky Treads",
+      "slot": "boots",
+      "rarity": "rare",
+      "tile": "boots_3_stripe_new.png",
+      "base_type": "sandals",
+      "armor": 5,
+      "evasion": 12,
+      "item_tier": 3,
+      "flavor_tags": [
+        "fortune",
+        "footwork"
+      ],
+      "lore": "Worn-in soles. Always step on the right side of the doorway.",
+      "drop_weights": [
+        0,
+        8,
+        40,
+        30,
+        8
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "requires_innate_tag": "lucky",
+      "implicit_affixes": [
+        "of_plunder"
+      ],
+      "affix_pool": {
+        "of_finesse": 14,
+        "of_haste": 14,
+        "of_the_cat": 12,
+        "of_regen": 8
+      },
+      "default_tint": {
+        "hue": 50,
+        "sat": 1.1,
+        "mode": "normal"
+      }
     }
   ]
 }
