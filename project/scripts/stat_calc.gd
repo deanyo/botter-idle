@@ -465,6 +465,11 @@ static func compute(
 	crit_multiplier_pct = clampf(crit_multiplier_pct, 0.0, 35.0)
 	block_chance = clampf(block_chance, 0.0, 30.0)
 	block_amount = clampi(block_amount, 0, 20)
+	# `of_plunder` and `of_prospecting` both write `gold_drop_pct`; per-affix-id
+	# DR is keyed by id so they additively stack (a02 §A2-double-dip-019, a11
+	# G5). Hard-clamp the summed total so amulet+weapon stacks can't run past
+	# 50%.
+	gold_drop_pct = clampf(gold_drop_pct, 0.0, 50.0)
 
 	var attack_interval: float = max(0.15, weapon_speed / (1.0 + haste_pct / 100.0))
 

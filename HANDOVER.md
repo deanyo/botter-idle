@@ -91,6 +91,29 @@ ups, not audit findings.
 
 ---
 
+2026-06-11 (balance pass beat 1.G curve fixes — 5 affix tier
+flatlines + gold_drop_pct hard clamp). Five affix curves
+re-tuned per A2 audit: `of_berserker` `[[3,5],[5,8],[8,12],[12,16],[16,20]]`
+(was T4=T5=20 flatline), `of_sundering`
+`[[2,3],[4,5],[5,7],[7,9],[9,12]]` (was T4=T5=10 flatline),
+`of_multicast` `[[1,1],[1,2],[2,2],[2,3],[2,4]]` (was T1=T2=T3=1
+identical; preserves the PLAYTEST 2026-06-09 #9 +0-rule by flooring
+every tier at 1), `of_regen` `[[1,1],[1,2],[2,3],[3,5],[5,7]]` (was
+T4-T5 capped at 4-6), `of_vitality` T5 max 160→130 per A10 cap (a
+6-slot legendary stack now resolves to ~390 HP from rolls instead
+of ~480, restoring ceiling headroom against `of_might`-driven STR
+HP-mults). Plus a hard clamp of `gold_drop_pct` at 50 in
+`stat_calc.gd::compute` post-summation — `of_plunder` and
+`of_prospecting` both write the same stat key but per-affix-id DR
+keys by id, so a plunder T5 amulet + prospecting amulet + prospecting
+weapon stack would otherwise reach 65%+ with no ceiling. Clamp
+verified at runtime via direct probe. /sweep loaded all 5 of_berserker
+tiers cleanly on the new curve. Cluster 1.G items 5-10 ship; items
+1-3 (id-collision renames) remain open pending a v9→v10 save
+migration scaffold.
+
+---
+
 2026-06-11 (balance pass beat 1.D — 31 legendary clones gain
 identity via `implicit_affixes`). The audit's A1 stat-clone
 findings (5 demon_blade variants at dmg=122-215/spd=0.9, 9 long_sword
