@@ -91,6 +91,29 @@ ups, not audit findings.
 
 ---
 
+2026-06-11 (balance pass beat 1.K — lightning resistance spread,
+1→9 enemies). Synthesis Top-5 finding 1.5 root-caused: pre-pass,
+1 of 125 enemies (`blue_devil`) had any lightning resistance and
+zero were lightning-vulnerable, leaving lightning the only
+structurally pure-positive element with no biome leverage. Now 9
+of 125 (7.2%, lower bound of A5's 10% target) carry a `lightning`
+key in their `resistances` dict: 5 T4-T5 construct/armored/warded
+entries at +50 (`iron_dragon`, `stone_giant`, `quicksilver_dragon`,
+`vampire_knight`, `ancient_lich`) which cluster in
+zot/depths/vaults/abyss/labyrinth, and 3 swamp/snake aquatic
+entries at -25 (`water_moccasin`, `hydra`, `swamp_dragon`).
+Composition path is unchanged — `actor.gd:474-477` already reads
+`resistances[damage_type]` element-agnostically and folds it into
+`elem_mit` exactly like fire/cold/holy/poison/dark; runtime probe
+confirmed +50 halves a 100-dmg lightning hit and -25 amps it to
+125. The result: chain_lightning / spell_static_field / echo_lance
+/ stormcaller_totem / `of_storm` and `of_storms_pct` lightning
+builds now have biome shape — neutral in lair/forest, walled in
+zot endgame, vulnerable in swamp. Symmetric to fire-vulnerable
+slime jellies and holy-vulnerable crypt undead.
+
+---
+
 2026-06-11 (balance pass beat 1.G curve fixes — 5 affix tier
 flatlines + gold_drop_pct hard clamp). Five affix curves
 re-tuned per A2 audit: `of_berserker` `[[3,5],[5,8],[8,12],[12,16],[16,20]]`
