@@ -117,9 +117,11 @@ func _ready() -> void:
 	_class_glyph.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_class_glyph.modulate = Color(1, 1, 1, 0)
 	add_child(_class_glyph)
-	# Block (🚫) overlay for species-blocked / can't-afford cells.
+	# Block overlay for species-blocked / can't-afford cells. Uses U+2718
+	# (✘) — DejaVu Sans carries it; the U+1F6AB emoji we used pre-bundled-
+	# font is outside the bundled DejaVu glyph set so it boxed on web.
 	_block_label = Label.new()
-	_block_label.text = "🚫"
+	_block_label.text = "✘"
 	_block_label.position = Vector2.ZERO
 	_block_label.size = Vector2(cell_size, cell_size)
 	_block_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER

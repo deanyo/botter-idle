@@ -319,7 +319,7 @@ func _build_layout() -> void:
 	add_child(title)
 	# Shop button — top-right, opens the shop screen.
 	var shop_btn := Button.new()
-	shop_btn.text = "🏪 Shop"
+	shop_btn.text = "⌂ Shop"
 	shop_btn.position = Vector2(int(view.x) - 140, 16)
 	shop_btn.size = Vector2(120, 32)
 	shop_btn.add_theme_font_size_override("font_size", 14)

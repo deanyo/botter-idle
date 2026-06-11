@@ -363,6 +363,37 @@ def main() -> int:
                 f"(inventory tile renders, but the bot will look unequipped)"
             )
 
+    # ── 6g. Bundled UI font glyph coverage ──────────────────────────
+    # Surfaces user-facing string literals containing characters the
+    # bundled DejaVu Sans font lacks — those render as tofu boxes on
+    # the Compatibility-renderer + WASM web build (Firefox / Chrome
+    # both affected). Skipped silently when fonttools isn't installed
+    # (CI installs it; local devs without it just don't get the warning).
+    font_path = REPO / "project" / "assets" / "fonts" / "DejaVuSans.ttf"
+    if font_path.exists():
+        try:
+            from fontTools.ttLib import TTFont  # type: ignore
+            cmap = TTFont(str(font_path))["cmap"].getBestCmap()
+            for gd in SCRIPTS.glob("*.gd"):
+                lines = gd.read_text().split("\n")
+                for line_no, line in enumerate(lines, start=1):
+                    if line.lstrip().startswith("#"):
+                        continue
+                    for m in re.finditer(r'"([^"\n]+)"', line):
+                        s = m.group(1)
+                        for ch in s:
+                            cp = ord(ch)
+                            if cp >= 0x80 and cp not in cmap:
+                                issues.append(
+                                    f"MISSING_GLYPH  {gd.name}:{line_no} "
+                                    f"{ch!r} (U+{cp:04X}) in string "
+                                    f"{s!r} — DejaVu Sans lacks this "
+                                    f"codepoint; web build will tofu-box"
+                                )
+                                break
+        except ImportError:
+            pass  # fonttools unavailable — skip the check
+
     # ── 7. Sanity: KNOWN_CATEGORIES match affix_system.gd ───────────
     # Read the GD source and pull the exact dict so the linter doesn't
     # drift behind code edits.

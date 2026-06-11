@@ -319,7 +319,7 @@ func _build_stock_pane(x: int, y: int, w: int, h: int) -> void:
 	zone_border.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_sell_zone.add_child(zone_border)
 	var zone_lbl := Label.new()
-	zone_lbl.text = "💰 SELL ZONE\nDrop items here for gold"
+	zone_lbl.text = "$ SELL ZONE\nDrop items here for gold"
 	zone_lbl.size = _sell_zone.size
 	zone_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	zone_lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER

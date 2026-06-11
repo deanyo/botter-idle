@@ -1028,7 +1028,7 @@ func _build_debug() -> void:
 	# debug_dump_requested so the dungeon can write a comprehensive
 	# floor report for triage. 2026-06-05.
 	debug_dump_btn = Button.new()
-	debug_dump_btn.text = "📋 Dump floor"
+	debug_dump_btn.text = "Dump floor"
 	debug_dump_btn.add_theme_font_size_override("font_size", 11)
 	debug_dump_btn.position = Vector2(6, 0)  # repositioned each frame in update_debug
 	debug_dump_btn.size = Vector2(110, 22)
@@ -1203,7 +1203,7 @@ func _build_fullscreen_button() -> void:
 	# on viewport resize via the existing resize hook.
 	var btn := Button.new()
 	btn.name = "FullscreenBtn"
-	btn.text = "⛶"
+	btn.text = "⇱"
 	btn.tooltip_text = "Toggle fullscreen"
 	btn.add_theme_font_size_override("font_size", 18)
 	btn.size = Vector2(32, 32)
