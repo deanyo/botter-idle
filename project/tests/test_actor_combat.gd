@@ -600,6 +600,148 @@ func test_s10_cloud_per_tick_base_within_rescope() -> void:
 		"ember_bloom per-tick base ≤ 2 (a10 rescope)")
 
 # ---------------------------------------------------------------------
+# S11 — Boss-anchor uniques + biome-targeted drops (a07 §6.1-6.12)
+# ---------------------------------------------------------------------
+
+func test_s11_all_12_boss_anchors_present_in_items_db() -> void:
+	# Sanity: every boss-anchor unique is in ItemsDb, declares boss_drop +
+	# biome_pool + implicit_affixes, and is unique:true (so run_dropped_uniques
+	# de-dupes on drop). If any of these slip, the loot pipeline silently
+	# breaks for the affected boss.
+	ItemsDb.preload_all()
+	var db: Dictionary = ItemsDb.items()
+	var expected: Array = [
+		"sigmunds_sickle", "blorks_pickaxe", "eustachio_dancing_sword",
+		"kirkes_pendant", "grums_wolfclaw_gauntlets", "psyche_holy_censer",
+		"lernaean_hydra_cloak", "ilsuiw_trident", "aizul_serpent_knife",
+		"boris_phylactery", "frederick_vault_key_ring", "tiamat_five_heads",
+	]
+	for aid in expected:
+		assert_true(db.has(aid), "ItemsDb missing boss anchor: %s" % aid)
+		var item: Dictionary = db[aid]
+		assert_true(bool(item.get("unique", false)),
+			"%s must be unique:true" % aid)
+		assert_ne(String(item.get("boss_drop", "")), "",
+			"%s must declare boss_drop" % aid)
+		var bp: Variant = item.get("biome_pool", null)
+		assert_true(bp is Array and not (bp as Array).is_empty(),
+			"%s must declare a non-empty biome_pool" % aid)
+		var implicits: Variant = item.get("implicit_affixes", [])
+		assert_true(implicits is Array and not (implicits as Array).is_empty(),
+			"%s must declare implicit_affixes (the unique mechanic)" % aid)
+
+func test_s11_boss_drop_fields_reference_real_enemies() -> void:
+	# Linter mirrors this in CI, but lock it as a runtime regression too —
+	# the dungeon's _pick_boss_anchor_id matches enemy.enemy_id against
+	# items_db boss_drop verbatim. A typo never spawns the anchor.
+	ItemsDb.preload_all()
+	var db: Dictionary = ItemsDb.items()
+	var enemies_path := "res://data/enemies.json"
+	var f: FileAccess = FileAccess.open(enemies_path, FileAccess.READ)
+	assert_not_null(f, "enemies.json readable")
+	var enemies: Dictionary = JSON.parse_string(f.get_as_text())
+	for id in db.keys():
+		var bd: String = String(db[id].get("boss_drop", ""))
+		if bd == "":
+			continue
+		assert_true(enemies.has(bd),
+			"item %s boss_drop=%s must be a real enemy id" % [id, bd])
+
+func test_s11_biome_pool_field_filters_out_anchors_from_normal_drops() -> void:
+	# A boss-anchor item can never be picked by the normal rarity loot
+	# table — the LootFactory.pick_loot_id boss_drop guard short-circuits
+	# even when biome_pool would otherwise match. This protects against
+	# random T1 runs accidentally rolling Sigmund's Sickle from a chest.
+	ItemsDb.preload_all()
+	var db: Dictionary = ItemsDb.items()
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 42
+	var ran: Array = []
+	for _i in 200:
+		var picked: String = LootFactory.pick_loot_id(rng, "legendary", db, 1, [], false, "dungeon")
+		if picked != "":
+			ran.append(picked)
+	for aid in ["sigmunds_sickle", "blorks_pickaxe", "eustachio_dancing_sword"]:
+		assert_false(aid in ran,
+			"boss-anchor %s must not appear in normal pick_loot_id rolls" % aid)
+
+func test_s11_phylactery_revives_at_pct_max_hp_once_per_floor() -> void:
+	# of_phylactery (Boris): once-per-floor revive at 25% max_hp on lethal
+	# damage. Gates on revive_used_this_floor mutex (S2 a11 §2.11). Set
+	# the field directly to skip recompute_stats; the bot stub doesn't
+	# carry an items_db.
+	var d: _StubBotDefender = _make_bot_defender(200, 0, [], {})
+	d.phylactery_revive_pct = 25.0
+	d.revive_used_this_floor = false
+	# Lethal hit — should NOT die.
+	d.take_damage(500, null, "physical")
+	assert_true(d.is_alive, "phylactery prevents the lethal hit")
+	assert_eq(d.hp, 50, "revives to 25% of max_hp (200×0.25=50)")
+	assert_true(d.revive_used_this_floor,
+		"revive_used_this_floor flag set after revive consumes")
+	# Second lethal hit on the same floor — should die (mutex held).
+	d.take_damage(500, null, "physical")
+	assert_false(d.is_alive,
+		"second lethal hit kills (revive_used_this_floor mutex)")
+	d.free()
+
+func test_s11_phylactery_does_not_fire_when_field_zero() -> void:
+	# Without phylactery_revive_pct, lethal damage kills as normal — proves
+	# the gate is actually reading the field, not always-on.
+	var d: _StubBotDefender = _make_bot_defender(100, 0, [], {})
+	d.phylactery_revive_pct = 0.0
+	d.revive_used_this_floor = false
+	d.take_damage(500, null, "physical")
+	assert_false(d.is_alive,
+		"no revive when phylactery_revive_pct=0 → bot dies as normal")
+	d.free()
+
+func test_s11_anchor_regen_folds_into_hp_regen() -> void:
+	# Psyche's Holy Censer (of_holy_anchor) writes anchor_regen which
+	# bot.recompute_stats adds to hp_regen_per_sec. Feed StatCalc directly
+	# with a stub equipped dict to confirm the dict carries the field.
+	ItemsDb.preload_all()
+	var db: Dictionary = ItemsDb.items()
+	var psyche: Dictionary = db.get("psyche_holy_censer", {})
+	assert_false(psyche.is_empty(), "psyche_holy_censer present in items_db")
+	var equipped: Dictionary = {"helm": {"base_id": "psyche_holy_censer", "affixes": []}}
+	var d: Dictionary = StatCalc.compute(equipped, db, {}, "human", 1, 0, 0, [])
+	assert_almost_eq(float(d.get("anchor_regen", -1.0)), 3.0, 0.001,
+		"psyche_holy_censer rolls of_holy_anchor with anchor_regen=3")
+
+func test_s11_extra_chests_per_floor_reads_from_vault_key_ring() -> void:
+	# Frederick's Vault-Key Ring (of_vault_key) bumps extra_chests_per_floor
+	# by 1. Dungeon._populate_floor reads bot.extra_chests_per_floor and
+	# adds it to chest_count.
+	ItemsDb.preload_all()
+	var db: Dictionary = ItemsDb.items()
+	var ring: Dictionary = db.get("frederick_vault_key_ring", {})
+	assert_false(ring.is_empty(), "frederick_vault_key_ring present in items_db")
+	var equipped: Dictionary = {"ring": {"base_id": "frederick_vault_key_ring", "affixes": []}}
+	var d: Dictionary = StatCalc.compute(equipped, db, {}, "human", 1, 0, 0, [])
+	assert_eq(int(d.get("extra_chests_per_floor", -1)), 1,
+		"vault-key ring grants +1 extra_chests_per_floor")
+
+func test_s11_tiamat_grants_three_resists_and_fifth_cast_pct() -> void:
+	# Tiamat's Five Heads bundles fire/cold/poison resists + fifth_cast_pct.
+	# All four implicits should land on a wearer simultaneously.
+	ItemsDb.preload_all()
+	var db: Dictionary = ItemsDb.items()
+	var helm: Dictionary = db.get("tiamat_five_heads", {})
+	assert_false(helm.is_empty(), "tiamat_five_heads present in items_db")
+	var equipped: Dictionary = {"helm": {"base_id": "tiamat_five_heads", "affixes": []}}
+	var d: Dictionary = StatCalc.compute(equipped, db, {}, "human", 1, 0, 0, [])
+	var res: Dictionary = d.get("resistances", {})
+	assert_gte(float(res.get("fire", 0.0)), 1.0,
+		"tiamat grants fire resist via implicit")
+	assert_gte(float(res.get("cold", 0.0)), 1.0,
+		"tiamat grants cold resist via implicit")
+	assert_gte(float(res.get("poison", 0.0)), 1.0,
+		"tiamat grants poison resist via implicit")
+	assert_almost_eq(float(d.get("fifth_cast_pct", -1.0)), 15.0, 0.001,
+		"tiamat sets fifth_cast_pct=15 (a10 §3.2 rescope)")
+
+# ---------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------
 

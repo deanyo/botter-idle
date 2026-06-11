@@ -56,6 +56,8 @@ STAT_CALC_GD = SCRIPTS / "stat_calc.gd"
 SPELL_DATA_GD = SCRIPTS / "spell_data.gd"
 AFFIX_SYSTEM_GD = SCRIPTS / "affix_system.gd"
 SPECIES_JSON = DATA / "species.json"
+ENEMIES_JSON = DATA / "enemies.json"
+BIOMES_JSON = DATA / "biomes.json"
 
 # Categories accepted in base_type_affixes.json — must match the
 # _CATEGORY_EXPANSION dict in scripts/affix_system.gd. Keep in sync.
@@ -279,6 +281,35 @@ def main() -> int:
                 f"requires_innate_tag {rt!r} appears on no species "
                 f"(implicits will silently mute for every character)"
             )
+
+    # ── 6f. boss_drop / biome_pool references resolve ──────────────
+    # S11 boss-anchor schema (a07 §9.1, §9.2). `boss_drop` must name a
+    # real enemy id (so the dungeon code path actually fires); `biome_pool`
+    # must list real biome ids (so the loot filter can match). A typo
+    # silently breaks the whole anchor — never spawns from any boss.
+    enemies_doc = _load_json(ENEMIES_JSON)
+    biomes_doc = _load_json(BIOMES_JSON)
+    enemy_ids: set[str] = set(enemies_doc.keys()) if isinstance(enemies_doc, dict) else set()
+    biome_ids: set[str] = set()
+    if isinstance(biomes_doc, dict):
+        biomes_block = biomes_doc.get("biomes", {})
+        if isinstance(biomes_block, dict):
+            biome_ids = set(biomes_block.keys())
+    for it in items_doc.get("items", []):
+        bd = it.get("boss_drop")
+        if bd and bd not in enemy_ids:
+            issues.append(
+                f"UNKNOWN_BOSS_DROP item {it.get('id', '?')!r} "
+                f"boss_drop {bd!r} is not a known enemy id"
+            )
+        bp = it.get("biome_pool")
+        if isinstance(bp, list):
+            for b in bp:
+                if b not in biome_ids:
+                    issues.append(
+                        f"UNKNOWN_BIOME_POOL item {it.get('id', '?')!r} "
+                        f"biome_pool entry {b!r} is not a known biome id"
+                    )
 
     # ── 6e. Item tile files exist on disk ───────────────────────────
     # An item's `tile` field names a PNG under project/assets/tiles/items/

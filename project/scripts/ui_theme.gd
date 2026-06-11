@@ -394,6 +394,12 @@ const FLAVOR_COLORS := {
 	"feast":       Color(0.55, 0.85, 0.45),   # ravenous green
 	"first_blood": Color(0.95, 0.55, 0.40),   # opening-strike coral
 	"petrify":     Color(0.65, 0.65, 0.55),   # petrified stone
+	# S11 boss-anchor flavor colors (a07 §6.1-6.12). Used by the boss
+	# anchor uniques' display flavor_tags — no combat mechanic of their
+	# own, just the chrome surface.
+	"bloody":      Color(0.75, 0.20, 0.25),   # arterial red
+	"bloodlust":   Color(0.95, 0.30, 0.40),   # battle red
+	"tide":        Color(0.45, 0.75, 0.95),   # tidal blue
 }
 # Priority order — wired-mechanic flavors first because their COLOR
 # carries the most meaning. Decorative-but-wired ones below. Anything

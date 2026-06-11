@@ -394,6 +394,79 @@
       "name": "of Bulwark",  "stat": "block_amount",
       "applies_to": ["shield","gloves"],
       "tiers": [[1,2],[2,4],[4,7],[7,11],[11,16]]
+    },
+
+    {
+      "id": "of_bleed_on_miss",  "family": "archetype", "kind": "flag",
+      "name": "of the Sickle",   "stat": "bleed_on_miss",
+      "applies_to": ["weapon"],
+      "tiers": [[1,1],[1,1],[1,1],[1,1],[1,1]]
+    },
+    {
+      "id": "of_prospecting",    "family": "archetype", "kind": "pct",
+      "name": "of Prospecting",  "stat": "gold_drop_pct",
+      "applies_to": ["weapon","amulet"],
+      "tiers": [[20,20],[20,20],[20,20],[20,20],[20,20]]
+    },
+    {
+      "id": "of_dancing",        "family": "archetype", "kind": "flag",
+      "name": "of the Dance",    "stat": "dancing_blade",
+      "applies_to": ["weapon"],
+      "tiers": [[1,1],[1,1],[1,1],[1,1],[1,1]]
+    },
+    {
+      "id": "of_polymorph",      "family": "archetype", "kind": "flag",
+      "name": "of Polymorph",    "stat": "polymorph_first_kill",
+      "applies_to": ["amulet"],
+      "tiers": [[1,1],[1,1],[1,1],[1,1],[1,1]]
+    },
+    {
+      "id": "of_wolf_kinship",   "family": "archetype", "kind": "pct",
+      "name": "of Wolf Kinship", "stat": "wolf_kinship_pct",
+      "applies_to": ["gloves"],
+      "tiers": [[15,15],[15,15],[15,15],[15,15],[15,15]]
+    },
+    {
+      "id": "of_holy_anchor",    "family": "archetype", "kind": "flat",
+      "name": "of Holy Anchor",  "stat": "anchor_regen",
+      "applies_to": ["helm"],
+      "tiers": [[3,3],[3,3],[3,3],[3,3],[3,3]]
+    },
+    {
+      "id": "of_serpent_growth", "family": "archetype", "kind": "flat",
+      "name": "of Serpent Growth", "stat": "hp_per_kill_cap",
+      "applies_to": ["cloak"],
+      "tiers": [[200,200],[200,200],[200,200],[200,200],[200,200]]
+    },
+    {
+      "id": "of_tidesong",       "family": "archetype", "kind": "pct",
+      "name": "of Tidesong",     "stat": "tidesong_water_pct",
+      "applies_to": ["weapon"],
+      "tiers": [[25,25],[25,25],[25,25],[25,25],[25,25]]
+    },
+    {
+      "id": "of_serpent_venom",  "family": "archetype", "kind": "flag",
+      "name": "of Serpent Venom","stat": "venom_on_hit",
+      "applies_to": ["weapon"],
+      "tiers": [[1,1],[1,1],[1,1],[1,1],[1,1]]
+    },
+    {
+      "id": "of_phylactery",     "family": "archetype", "kind": "pct",
+      "name": "of the Phylactery","stat": "phylactery_revive_pct",
+      "applies_to": ["amulet"],
+      "tiers": [[25,25],[25,25],[25,25],[25,25],[25,25]]
+    },
+    {
+      "id": "of_vault_key",      "family": "archetype", "kind": "flat",
+      "name": "of the Vault Key","stat": "extra_chests_per_floor",
+      "applies_to": ["ring"],
+      "tiers": [[1,1],[1,1],[1,1],[1,1],[1,1]]
+    },
+    {
+      "id": "of_five_heads",     "family": "archetype", "kind": "pct",
+      "name": "of the Five Heads","stat": "fifth_cast_pct",
+      "applies_to": ["helm"],
+      "tiers": [[15,15],[15,15],[15,15],[15,15],[15,15]]
     }
   ]
 }

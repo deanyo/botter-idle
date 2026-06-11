@@ -186,6 +186,18 @@ static func test_fire_spell(bot: Node, dungeon: Node, item: Dictionary) -> void:
 
 static func _dispatch_fire(bot: Node, dungeon: Node, item: Dictionary) -> void:
 	var base_type: String = String(item.get("base_type", ""))
+	# S11 of_five_heads (a07 §6.12 Tiamat). Every 5th spell cast on a floor
+	# carries a +fifth_cast_pct% damage bonus (the 5-heads theme). Pre-cast
+	# write to the ephemeral lane composes through the +30% per-cast
+	# ceiling alongside Wrath / Sage / synergy. Counter advances per cast
+	# regardless of whether the dispatch fires or holds; resets at floor
+	# build via dungeon.gd alongside the other per-floor counters.
+	var fifth_active: bool = false
+	if bot != null and "fifth_cast_pct" in bot and float(bot.fifth_cast_pct) > 0.0:
+		bot.spell_cast_count += 1
+		if bot.spell_cast_count % 5 == 0:
+			bot.ephemeral_spell_dmg_pct += float(bot.fifth_cast_pct)
+			fifth_active = true
 	var fired: bool = false
 	match base_type:
 		"spell_fireball":
@@ -227,6 +239,12 @@ static func _dispatch_fire(bot: Node, dungeon: Node, item: Dictionary) -> void:
 	if fired:
 		_fire_count += 1
 		_fire_by_arch[base_type] = int(_fire_by_arch.get(base_type, 0)) + 1
+	# Unwind the of_five_heads ephemeral bump — fire functions read
+	# ephemeral_spell_dmg_pct synchronously inside compute_damage, so
+	# clearing here keeps the next cast's lane clean (additive layers
+	# from Wrath / Sage / synergy still recompute per cast).
+	if fifth_active and bot != null:
+		bot.ephemeral_spell_dmg_pct = maxf(0.0, bot.ephemeral_spell_dmg_pct - float(bot.fifth_cast_pct))
 
 # Fire a Fireball: one (or N with proj_count) homing projectile per cast,
 # each picks the nearest live enemy and seeks. If no enemies in range,

@@ -113,6 +113,21 @@ static func compute(
 	var spell_tome_drop_pct: float = 0.0        # of_scribe
 	var str_dmg_per5_peak_pct: float = 0.0      # of_berserker_rage — peak (10-rank) %
 	var synergy_pct: float = 0.0                # of_synergy — hybrid all-dmg
+	# S11 boss-anchor implicit-affix accumulators (a07 §6.1-6.12). One
+	# field per implicit_affix on the 12 boss-anchor uniques. Flag-kind
+	# affixes ride a bool; pct/flat affixes accumulate normally and read
+	# directly off bot.* in combat / dungeon hot paths.
+	var bleed_on_miss: bool = false
+	var dancing_blade: bool = false
+	var polymorph_first_kill: bool = false
+	var venom_on_hit: bool = false
+	var wolf_kinship_pct: float = 0.0
+	var anchor_regen: float = 0.0
+	var hp_per_kill_cap: int = 0
+	var tidesong_water_pct: float = 0.0
+	var phylactery_revive_pct: float = 0.0
+	var extra_chests_per_floor: int = 0
+	var fifth_cast_pct: float = 0.0
 
 	# Bot upgrades — gold-sink purchases. Pre-2026-06-06 combat_training
 	# (atk) and toughening (def) were never read here; players spent gold
@@ -282,6 +297,22 @@ static func compute(
 		spell_tome_drop_pct += float(slot_sums.get("spell_tome_drop_pct", 0))
 		str_dmg_per5_peak_pct += float(slot_sums.get("str_dmg_per5_peak_pct", 0))
 		synergy_pct += float(slot_sums.get("synergy_pct", 0))
+		# S11 boss-anchor implicit-affix accumulators (a07 §6.1-6.12).
+		# Flag-kind affixes return 1 from _scaled_affix_sums when present,
+		# which we treat as a boolean OR (any equipped source enables it).
+		# Pct/flat affixes flow through the same DR + qmult scaling as
+		# every other affix, then get clamped against a07's rescoped caps.
+		bleed_on_miss = bleed_on_miss or float(slot_sums.get("bleed_on_miss", 0)) > 0.0
+		dancing_blade = dancing_blade or float(slot_sums.get("dancing_blade", 0)) > 0.0
+		polymorph_first_kill = polymorph_first_kill or float(slot_sums.get("polymorph_first_kill", 0)) > 0.0
+		venom_on_hit = venom_on_hit or float(slot_sums.get("venom_on_hit", 0)) > 0.0
+		wolf_kinship_pct += float(slot_sums.get("wolf_kinship_pct", 0))
+		anchor_regen += float(slot_sums.get("anchor_regen", 0))
+		hp_per_kill_cap += int(round(float(slot_sums.get("hp_per_kill_cap", 0))))
+		tidesong_water_pct += float(slot_sums.get("tidesong_water_pct", 0))
+		phylactery_revive_pct += float(slot_sums.get("phylactery_revive_pct", 0))
+		extra_chests_per_floor += int(round(float(slot_sums.get("extra_chests_per_floor", 0))))
+		fifth_cast_pct += float(slot_sums.get("fifth_cast_pct", 0))
 		# Per-element spell-damage affixes (of_pyromancer / of_cryomancer
 		# / of_storm / of_zealot / of_venom / of_shadow). Each writes to
 		# `<elem>_dmg_pct`; we accumulate into spell_element_pct keyed by
@@ -545,6 +576,18 @@ static func compute(
 	# three families are intentionally identity-aligned (a02 P-19 rescope
 	# per a10 §3.2): rewards balanced loadouts vs mono-stat builds.
 	out["synergy_active"] = _has_synergy_triplet(equipped, items_db)
+	# S11 boss-anchor implicit-affix outputs.
+	out["bleed_on_miss"] = bleed_on_miss
+	out["dancing_blade"] = dancing_blade
+	out["polymorph_first_kill"] = polymorph_first_kill
+	out["venom_on_hit"] = venom_on_hit
+	out["wolf_kinship_pct"] = wolf_kinship_pct
+	out["anchor_regen"] = anchor_regen
+	out["hp_per_kill_cap"] = hp_per_kill_cap
+	out["tidesong_water_pct"] = tidesong_water_pct
+	out["phylactery_revive_pct"] = phylactery_revive_pct
+	out["extra_chests_per_floor"] = extra_chests_per_floor
+	out["fifth_cast_pct"] = fifth_cast_pct
 	out["move_speed"] = move_speed
 	out["aggro_bonus"] = vision_count + sp_aggro_flat
 	out["loot_rarity_bonus"] = loot_rarity_bonus
@@ -579,6 +622,10 @@ static func _initial_dict() -> Dictionary:
 		"sundering_per_stack": 0, "bloodletting_per_stack": 0,
 		"gold_drop_pct": 0.0, "spell_tome_drop_pct": 0.0,
 		"str_dmg_per5_peak_pct": 0.0, "synergy_pct": 0.0, "synergy_active": false,
+		"bleed_on_miss": false, "dancing_blade": false, "polymorph_first_kill": false,
+		"venom_on_hit": false, "wolf_kinship_pct": 0.0, "anchor_regen": 0.0,
+		"hp_per_kill_cap": 0, "tidesong_water_pct": 0.0, "phylactery_revive_pct": 0.0,
+		"extra_chests_per_floor": 0, "fifth_cast_pct": 0.0,
 		"move_speed": _BASE_MOVE_SPEED, "aggro_bonus": 0,
 		"loot_rarity_bonus": 0.0, "xp_gain_pct": 0.0,
 		"alloc_str": 0, "alloc_dex": 0, "alloc_int": 0, "unspent_points": 0,

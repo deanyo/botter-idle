@@ -87,6 +87,30 @@ var ephemeral_spell_dmg_pct: float = 0.0
 # floor_started so the next floor restores the budget. Without the
 # mutex, stacking 3+ revive sources turns boss fights into auto-clear.
 var revive_used_this_floor: bool = false
+# S11 boss-anchor unique state (a07 §6.1-6.12). One field per implicit
+# affix, copied back from StatCalc.compute. Combat / dungeon hot paths
+# read these directly. Per-floor counters (cast_count, kill_hp_grant,
+# polymorph_used, dancing-blade reentry guard) are reset by the
+# floor_started signal handler.
+var bleed_on_miss: bool = false
+var dancing_blade: bool = false
+var polymorph_first_kill: bool = false
+var wolf_kinship_pct: float = 0.0
+var anchor_regen: float = 0.0
+var hp_per_kill_cap: int = 0
+var tidesong_water_pct: float = 0.0
+var venom_on_hit: bool = false
+var phylactery_revive_pct: float = 0.0
+var extra_chests_per_floor: int = 0
+var fifth_cast_pct: float = 0.0
+# Per-floor counters for the boss-anchor mechanics. Reset on floor_started
+# via dungeon.gd alongside revive_used_this_floor.
+var polymorph_used_this_floor: bool = false
+var hp_per_kill_granted_this_floor: int = 0
+var spell_cast_count: int = 0
+# Reentry guard for of_dancing — without this the proc-fired strike
+# could itself proc, recursing one or two more times when the dice land.
+var _dancing_blade_active: bool = false
 # S5 race-anchor state. `_last_move_at_msec` tracks the last frame the
 # bot took a step — `petrify` flavor reads it to grant -25% phys DR
 # while stationary (Gargoyle Stoneflesh Plate). `_last_kill_at_msec`
@@ -478,6 +502,21 @@ func recompute_stats() -> void:
 	str_dmg_per5_peak_pct = float(d.get("str_dmg_per5_peak_pct", 0.0))
 	synergy_pct = float(d.get("synergy_pct", 0.0))
 	synergy_active = bool(d.get("synergy_active", false))
+	# S11 boss-anchor implicits.
+	bleed_on_miss = bool(d.get("bleed_on_miss", false))
+	dancing_blade = bool(d.get("dancing_blade", false))
+	polymorph_first_kill = bool(d.get("polymorph_first_kill", false))
+	wolf_kinship_pct = float(d.get("wolf_kinship_pct", 0.0))
+	anchor_regen = float(d.get("anchor_regen", 0.0))
+	hp_per_kill_cap = int(d.get("hp_per_kill_cap", 0))
+	tidesong_water_pct = float(d.get("tidesong_water_pct", 0.0))
+	venom_on_hit = bool(d.get("venom_on_hit", false))
+	phylactery_revive_pct = float(d.get("phylactery_revive_pct", 0.0))
+	extra_chests_per_floor = int(d.get("extra_chests_per_floor", 0))
+	fifth_cast_pct = float(d.get("fifth_cast_pct", 0.0))
+	# anchor_regen folds into hp_regen so the regen tick already in actor.gd
+	# picks it up alongside species + worn-tag regen.
+	hp_regen_per_sec = float(d.hp_regen) + anchor_regen
 	move_speed = float(d.move_speed)
 	aggro_bonus = int(d.aggro_bonus)
 	# Legacy Actor fields combat-log paths read.

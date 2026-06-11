@@ -347,6 +347,18 @@ func resolve_swing(typed: Dictionary, attacker: Actor = null) -> int:
 				attacker.is_alive = false
 				attacker._play_death_then_emit()
 	if hp <= 0 and is_alive:
+		# S11 of_phylactery (a07 §6.10 Boris's Phylactery). Once-per-floor
+		# revive at phylactery_revive_pct% max HP on lethal damage. Gates
+		# on the same revive_used_this_floor mutex S2 set up so stacking
+		# of_phoenix + Last Heart + Phylactery still yields ONE revive
+		# per floor (a11 §2.11 / a10 §5.2). Bot-only.
+		if self is Bot:
+			var bot_pl: Bot = self as Bot
+			if bot_pl.phylactery_revive_pct > 0.0 and not bot_pl.revive_used_this_floor:
+				bot_pl.revive_used_this_floor = true
+				hp = maxi(1, int(round(float(max_hp) * bot_pl.phylactery_revive_pct / 100.0)))
+				_update_hp_bar()
+				return dealt_total
 		is_alive = false
 		_play_death_then_emit()
 	return dealt_total
@@ -492,6 +504,28 @@ func combat_defense_tags() -> Array:
 # Find one cell-adjacent (8-direction) live actor to `near`, excluding
 # `near` itself and `self`. Used by the `thunderous` chain mechanic.
 # Returns null if nothing adjacent. Cheap O(siblings) — actor_layer has
+# Dungeon-grid lookup helper for actor positional queries (e.g. of_tidesong
+# wants "is the defender standing on water"). Actor's parent is ActorLayer
+# whose parent is Dungeon. Returns false if the chain doesn't resolve or
+# the cell is out of bounds.
+func _is_cell_water(cell: Vector2i) -> bool:
+	var parent: Node = get_parent()
+	if parent == null:
+		return false
+	var d: Node = parent.get_parent()
+	if d == null or not "grid" in d:
+		return false
+	var g: Variant = d.grid
+	if not (g is Array) or (g as Array).is_empty():
+		return false
+	var rows: Array = g
+	if cell.y < 0 or cell.y >= rows.size():
+		return false
+	var row: Array = rows[cell.y]
+	if cell.x < 0 or cell.x >= row.size():
+		return false
+	return int(row[cell.x]) == C.T_WATER
+
 # the bot + ~5-15 enemies, so the linear scan is fine.
 func _find_adjacent_actor(near: Actor, skip: Dictionary = {}) -> Actor:
 	if not is_instance_valid(near):
@@ -670,6 +704,18 @@ func attempt_attack(other: Actor, delta: float) -> int:
 		# at 2 per a10 P-11 rescope. Status-overlay backed for HUD legibility.
 		if bot_self.sundering_per_stack > 0 and is_instance_valid(other):
 			other.add_sunder_stack(bot_self.sundering_per_stack)
+		# S11 of_wolf_kinship (a07 §6.5 Grum). +15% damage vs wolf-family
+		# enemies (wolf, hound, hell hound, wolf spider). Reads the
+		# defender's enemy_id; matches DCSS's wolf-family roster.
+		if bot_self.wolf_kinship_pct > 0.0 and is_instance_valid(other) and other is Enemy:
+			var oid: String = String((other as Enemy).enemy_id)
+			if oid in ["wolf", "hound", "hell_hound", "wolf_spider"]:
+				ephemeral_sum += bot_self.wolf_kinship_pct / 100.0
+		# S11 of_tidesong (a07 §6.8 Ilsuiw). +25% damage vs targets standing
+		# on a water tile. Cell-to-tile lookup via the dungeon grid.
+		if bot_self.tidesong_water_pct > 0.0 and is_instance_valid(other) and other is Enemy:
+			if _is_cell_water((other as Enemy).cell):
+				ephemeral_sum += bot_self.tidesong_water_pct / 100.0
 	var dmg_mult: float = 1.0 + minf(0.30, maxf(0.0, ephemeral_sum))
 
 	# Item-overhaul v2: weapon damage is a roll over [damage_min,
@@ -830,6 +876,25 @@ func attempt_attack(other: Actor, delta: float) -> int:
 					bot_kk.hp = clampi(bot_kk.hp + applied, 0, bot_kk.max_hp)
 					bot_kk._feast_window_heal += applied
 					bot_kk._update_hp_bar()
+		# S11 of_serpent_growth (a07 §6.7 Hydra-Scale Cloak). +1 max HP per
+		# kill on this floor up to hp_per_kill_cap. Both max_hp and hp grow
+		# so the bot benefits immediately — refunds the kill's combat
+		# state. Counter resets each floor (dungeon._floor_started reset).
+		if bot_kk.hp_per_kill_cap > 0 and bot_kk.hp_per_kill_granted_this_floor < bot_kk.hp_per_kill_cap:
+			bot_kk.hp_per_kill_granted_this_floor += 1
+			bot_kk.max_hp += 1
+			bot_kk.hp = mini(bot_kk.hp + 1, bot_kk.max_hp)
+			bot_kk._update_hp_bar()
+		# S11 of_polymorph (a07 §6.4 Kirke's Pendant). First kill each
+		# floor splits the kill into a "friendly slime" that strikes the
+		# nearest adjacent live enemy for a flat-50-ATK splash (a10 6.4
+		# rescope from "60% bot ATK" → 50 absolute cap so the splash
+		# can't scale with endgame Minotaur ATK and break ceiling).
+		if bot_kk.polymorph_first_kill and not bot_kk.polymorph_used_this_floor:
+			bot_kk.polymorph_used_this_floor = true
+			var nearby: Actor = _find_adjacent_actor(other)
+			if nearby != null and nearby.is_alive:
+				nearby.take_damage(50, self)
 	# of_bloodletting (a02 P-9 rescoped to flat values): on-crit, apply
 	# a flat-DPS bleed for 4 seconds. Stack count caps at 4 per a02 spec;
 	# refreshes duration on re-crit. Uses the existing bleeding status
@@ -840,6 +905,35 @@ func attempt_attack(other: Actor, delta: float) -> int:
 			# 4 ticks × 1s = 4s total. Per-tick = bloodletting_per_stack.
 			# Stacks cap implicit via add_bloodletting helper.
 			other.add_bloodletting(bot_bl.bloodletting_per_stack)
+	# S11 of_bleed_on_miss (a07 §6.1 Sigmund's Sickle). On a missed swing
+	# (dealt == 0 — defender evaded/blocked), apply a 3s bleed (4 dmg/s).
+	# Compensates daggers/scythes for swings that whiff against high-evasion
+	# enemies. Bot-only so monster swings don't bleed the bot.
+	if dealt == 0 and self is Bot and is_instance_valid(other) and other.is_alive:
+		if (self as Bot).bleed_on_miss:
+			other.add_bloodletting(4)
+	# S11 of_serpent_venom (a07 §6.9 Aizul's Snake-Fang Knife). Each landed
+	# melee hit applies a stack of poison via the existing add_poison helper
+	# (3 ticks × 0.5s, max 5 stacks via the cap inside add_poison). Mirrors
+	# how the `poison` flavor tag composes — but venom_on_hit is unconditional
+	# (no +pct damage chain), purely the DoT layer.
+	if dealt > 0 and self is Bot and is_instance_valid(other) and other.is_alive:
+		if (self as Bot).venom_on_hit:
+			var per_tick: int = maxi(1, int(round(float(other.max_hp) * 0.02)))
+			other.add_poison(per_tick, 3, 0.5)
+	# S11 of_dancing (a07 §6.3 Eustachio's Dancing Sword). 25% chance on a
+	# successful hit to fire an extra weapon-damage strike at the same
+	# target. Reentry-guarded via _dancing_blade_active so the proc'd strike
+	# can't itself proc. Bot-only.
+	if dealt > 0 and self is Bot and is_instance_valid(other) and other.is_alive:
+		var bot_db: Bot = self as Bot
+		if bot_db.dancing_blade and not bot_db._dancing_blade_active and randf() < 0.25:
+			bot_db._dancing_blade_active = true
+			# Extra strike at half raw damage (avoids double-cresting the
+			# +30% ephemeral cap; same shape as `dual` flavor's off-hand).
+			var dance_dmg: int = maxi(1, int(round(float(raw) * 0.5)))
+			other.take_damage(dance_dmg, self)
+			bot_db._dancing_blade_active = false
 	# of_echoes (a02 P-8): every Nth swing echoes 50% damage to the same
 	# target. echo_min_n is the smallest N rolled across gear (smaller =
 	# more frequent). Echo skips crit + ephemeral re-resolve to avoid

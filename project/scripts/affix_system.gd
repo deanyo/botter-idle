@@ -356,6 +356,19 @@ const _STAT_DESCRIPTIONS := {
 	"spell_sandblast_blind": "Sandblast: hit enemies have +30% miss chance for 3s.",
 	"spell_shatter_aftershock": "Shatter: triggers a delayed AoE 0.6s after impact.",
 	"spell_drain_buff": "Cast: gain a 4s self-buff that converts {N}% of damage dealt into healing.",
+	# S11 boss-anchor unique mechanics (a07 §6.1-6.12). Each maps 1:1 to one
+	# implicit_affix on a single boss-anchor item.
+	"bleed_on_miss": "On a missed melee swing: 100% chance to apply a 3s bleed (4 dmg/s).",
+	"dancing_blade": "On melee hit: 25% chance to fire an extra weapon-damage strike at the same target.",
+	"polymorph_first_kill": "First kill each floor splits into a friendly slime (50 ATK, 1 floor lifespan).",
+	"wolf_kinship_pct": "+{N}% damage to wolf-family enemies (wolf, hound, hell hound, wolf spider).",
+	"anchor_regen": "+{N} HP/sec regeneration while equipped.",
+	"hp_per_kill_cap": "+1 max HP per kill on this floor (cap +{N}; resets each floor).",
+	"tidesong_water_pct": "+{N}% damage to enemies standing on water tiles.",
+	"venom_on_hit": "Each melee hit applies 1 stack of poison (3 ticks × 0.5s, max 5 stacks).",
+	"phylactery_revive_pct": "Once per floor: revive at {N}% max HP on lethal damage.",
+	"extra_chests_per_floor": "+{N} chest spawned each floor.",
+	"fifth_cast_pct": "Every 5th spell cast deals +{N}% damage (counter resets each floor).",
 }
 
 static func description_for_stat(stat: String) -> String:
@@ -386,6 +399,18 @@ const _NAMED_EFFECT_STATS := {
 	"spell_sandblast_blind": true,
 	"spell_shatter_aftershock": true,
 	"spell_drain_buff": true,
+	# S11 boss-anchor opaque-name flavors → always emit description.
+	"bleed_on_miss": true,
+	"dancing_blade": true,
+	"polymorph_first_kill": true,
+	"wolf_kinship_pct": true,
+	"anchor_regen": true,
+	"hp_per_kill_cap": true,
+	"tidesong_water_pct": true,
+	"venom_on_hit": true,
+	"phylactery_revive_pct": true,
+	"extra_chests_per_floor": true,
+	"fifth_cast_pct": true,
 }
 
 static func is_named_effect_stat(stat: String) -> bool:
@@ -559,6 +584,12 @@ const ENCHANT_BLURBS := {
 	"feast":       "On kill, heal +2% max HP (capped at 50% MHP/s).",
 	"first_blood": "+20% damage on the first swing of a new encounter.",
 	"petrify":     "-25% physical damage taken while stationary.",
+	# S11 boss-anchor display flavors (a07 §6.1-6.12). Decorative — these
+	# tags color the inventory chrome but do not carry their own combat
+	# mechanic; the unique's behavior lives in implicit_affixes.
+	"bloody":      "Stained with old blood.",
+	"bloodlust":   "Hungry for the next kill.",
+	"tide":        "Heavy with sea-spray.",
 }
 
 static func sum_affix_stats(affixes: Array) -> Dictionary:

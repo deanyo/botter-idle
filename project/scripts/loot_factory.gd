@@ -124,6 +124,7 @@ static func pick_loot_id(
 	src_tier: int,
 	run_dropped_uniques: Array,
 	allow_spell: bool = true,
+	active_biome: String = "",
 ) -> String:
 	var idx: int = src_tier - 1
 	var pools: Dictionary = {}  # slot → Array[Dict]
@@ -132,6 +133,19 @@ static func pick_loot_id(
 		if String(item.get("rarity", "")) != rarity:
 			continue
 		if bool(item.get("unique", false)) and run_dropped_uniques.has(id):
+			continue
+		# S11 biome_pool filter (a07 §9.2). Items with a biome_pool list
+		# only roll when the active biome matches. Items without the
+		# field stay biome-agnostic (back-compat).
+		if active_biome != "":
+			var bp: Variant = item.get("biome_pool", null)
+			if bp is Array and not (bp as Array).is_empty():
+				if not (active_biome in (bp as Array)):
+					continue
+		# S11 boss_drop filter — these items only drop via the boss-anchor
+		# code path in dungeon._maybe_drop_item; never via the normal
+		# rarity table.
+		if String(item.get("boss_drop", "")) != "":
 			continue
 		var slot: String = String(item.get("slot", ""))
 		if slot == "":
@@ -220,6 +234,10 @@ static func pick_loot_id_for_slot(
 		if String(item.get("rarity", "")) != rarity:
 			continue
 		if bool(item.get("unique", false)) and run_dropped_uniques.has(id):
+			continue
+		# S11 boss_drop filter — boss-anchor items only drop via the
+		# explicit boss-anchor code path, never via slot rolls.
+		if String(item.get("boss_drop", "")) != "":
 			continue
 		var dw: Array = item.get("drop_weights", [])
 		var w: float

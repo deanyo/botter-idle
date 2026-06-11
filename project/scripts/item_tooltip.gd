@@ -682,6 +682,11 @@ const _ARCHETYPE_DESCRIPTIONS := {
 	"frostbite":     "Frost Nova roots enemies for 1s",
 	"storm_brand":   "Chain Lightning chains +2 times",
 	"radiance":      "Holy Beam length +50% but cooldown +30%",
+	# S11 boss-anchor implicit-affix flag tooltips (a07 §6.1-6.12).
+	"of_bleed_on_miss": "Missed swings inflict a 3s bleed",
+	"of_dancing":       "25% chance on hit to fire a free strike",
+	"of_polymorph":     "First kill each floor splashes 50 dmg adjacent",
+	"of_serpent_venom": "Each hit applies a poison stack (max 5)",
 }
 
 func _pretty_slot_label(slot_id: String) -> String:

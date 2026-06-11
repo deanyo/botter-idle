@@ -597,6 +597,13 @@ func _async_build_floor() -> void:
 	# revive items the bot is wearing.
 	if is_instance_valid(bot):
 		bot.revive_used_this_floor = false
+		# S11 boss-anchor per-floor counters reset (a07 §6).
+		# polymorph_used_this_floor:  Kirke's Pendant first-kill split
+		# hp_per_kill_granted_this_floor: Hydra-Scale Cloak +HP cap
+		# spell_cast_count: Tiamat's 5th-cast counter
+		bot.polymorph_used_this_floor = false
+		bot.hp_per_kill_granted_this_floor = 0
+		bot.spell_cast_count = 0
 	floor_started.emit(current_floor)
 
 	# Debug-jump screenshot mode: after a short settle delay, save the
@@ -1093,6 +1100,10 @@ func _spawn_enemies() -> void:
 		chest_count += 1 + portal_loot_bias
 	# Treasure Hoard adds one chest per floor.
 	chest_count += int(RunModifiers.sum_effect(active_modifiers, "extra_chests_per_floor", 0.0))
+	# S11 of_vault_key (a07 §6.11 Frederick's Vault-Key Ring). Each equipped
+	# ring with the affix bumps chest_count by its rolled value (1).
+	if is_instance_valid(bot):
+		chest_count += int(bot.extra_chests_per_floor)
 	# Hunted modifier: extra elite on the targeted floor.
 	if RunModifiers.has_extra_miniboss_on(active_modifiers, current_floor):
 		var elite_id2: String = _pick_miniboss_id(pool)
@@ -1534,11 +1545,27 @@ func _maybe_drop_item(e: Enemy) -> void:
 	)
 	for _i in drop_count:
 		var rarity: String = _roll_drop_rarity(e.is_boss or e.is_miniboss or e.pack_tier == Enemy.PACK_RARE)
-		var picked: String = LootFactory.pick_loot_id(rng, rarity, items_db, _source_tier(), run_dropped_uniques, allow_spell)
+		var picked: String = LootFactory.pick_loot_id(rng, rarity, items_db, _source_tier(), run_dropped_uniques, allow_spell, String(current_biome.get("id", "")))
 		if picked == "":
 			continue
 		var instance: Dictionary = LootFactory.create_item_instance(rng, picked, items_db)
 		_spawn_loot_drop(instance, e.cell)
+	# S11 boss-anchor unique drop (a07 §6). On boss kills, look up any
+	# items.json entry whose `boss_drop` matches this enemy's id. First
+	# kill of the boss drops the anchor as a guaranteed bonus; subsequent
+	# kills fall back to the normal pool. Tracking lives in
+	# `run_dropped_uniques` (already gates uniques across the run, so
+	# the anchor naturally won't double-drop).
+	if e.is_boss:
+		var anchor_id: String = _pick_boss_anchor_id(e.enemy_id)
+		if anchor_id != "":
+			var anchor_inst: Dictionary = LootFactory.create_item_instance(rng, anchor_id, items_db)
+			_spawn_loot_drop(anchor_inst, e.cell)
+			run_dropped_uniques.append(anchor_id)
+			GrindLog.log_line("[s11-anchor] enemy=%s anchor=%s biome=%s floor=%d" % [
+				String(e.enemy_id), anchor_id,
+				String(current_biome.get("id", "?")), current_floor,
+			])
 	# of_scribe (a02 P-28): boss kills carry a chance to spawn an extra
 	# spell tome. Roll happens AFTER the standard loot for-loop so the
 	# bonus is purely additive (never replaces a normal drop). Rolls
@@ -1550,6 +1577,29 @@ func _maybe_drop_item(e: Enemy) -> void:
 			if bonus_id != "":
 				var bonus_inst: Dictionary = LootFactory.create_item_instance(rng, bonus_id, items_db)
 				_spawn_loot_drop(bonus_inst, e.cell)
+
+func _pick_boss_anchor_id(enemy_id: String) -> String:
+	# S11 boss-anchor lookup (a07 §6, §9.1). Walk items_db once for any
+	# entry whose `boss_drop` matches the boss enemy_id. Branch bosses
+	# get an "_boss" suffix at spawn (dungeon._spawn_branch_boss:1219), so
+	# match either the raw enemy_id or its trimmed form. Returns "" if
+	# no anchor is authored OR the anchor was already dropped this run.
+	# Linear scan is fine — items_db is ~700 entries and this fires at
+	# most twice per run.
+	var trimmed: String = enemy_id
+	if trimmed.ends_with("_boss"):
+		trimmed = trimmed.substr(0, trimmed.length() - 5)
+	for id in items_db.keys():
+		var def: Dictionary = items_db[id]
+		var bd: String = String(def.get("boss_drop", ""))
+		if bd == "":
+			continue
+		if bd != enemy_id and bd != trimmed:
+			continue
+		if run_dropped_uniques.has(id):
+			continue
+		return String(id)
+	return ""
 
 func _spawn_loot_drop(instance: Dictionary, at_cell: Vector2i) -> void:
 	var base_id: String = String(instance.get("base_id", ""))
@@ -1595,7 +1645,7 @@ func _apply_vault_results(results: Dictionary) -> void:
 	for entry in loot_marks:
 		var cell: Vector2i = entry.cell if typeof(entry) == TYPE_DICTIONARY else entry
 		var rarity: String = _roll_drop_rarity(false)
-		var picked: String = LootFactory.pick_loot_id(rng, rarity, items_db, _source_tier(), run_dropped_uniques, true)
+		var picked: String = LootFactory.pick_loot_id(rng, rarity, items_db, _source_tier(), run_dropped_uniques, true, String(current_biome.get("id", "")))
 		if picked == "":
 			continue
 		var inst: Dictionary = LootFactory.create_item_instance(rng, picked, items_db)
@@ -2347,7 +2397,7 @@ func _on_chest_opened(chest: Chest, n: int, bias: int) -> void:
 	var chest_world: Vector2 = chest.position + Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5)
 	for i in n:
 		var rarity: String = LootFactory.roll_rarity_with_bias(rng, _source_tier(), current_floor, bias)
-		var picked: String = LootFactory.pick_loot_id(rng, rarity, items_db, _source_tier(), run_dropped_uniques, true)
+		var picked: String = LootFactory.pick_loot_id(rng, rarity, items_db, _source_tier(), run_dropped_uniques, true, String(current_biome.get("id", "")))
 		if picked == "":
 			continue
 		var inst: Dictionary = LootFactory.create_item_instance(rng, picked, items_db)
