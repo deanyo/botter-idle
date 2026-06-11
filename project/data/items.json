@@ -1496,8 +1496,8 @@
       "tile": "urand_chilly_death_new.png",
       "base_type": "rapier",
       "weapon_class": "1H",
-      "damage_min": 48,
-      "damage_max": 107,
+      "damage_min": 60,
+      "damage_max": 119,
       "damage_type": "cold",
       "speed": 0.55,
       "item_tier": 5,
@@ -37088,6 +37088,382 @@
       "default_tint": {
         "hue": 50,
         "sat": 1.1,
+        "mode": "normal"
+      }
+    },
+    {
+      "id": "frost_dagger",
+      "name": "Frost Dagger",
+      "slot": "weapon",
+      "rarity": "uncommon",
+      "tile": "dagger_3.png",
+      "base_type": "dagger",
+      "weapon_class": "1H",
+      "damage_min": 10,
+      "damage_max": 18,
+      "damage_type": "cold",
+      "speed": 0.5,
+      "item_tier": 2,
+      "flavor_tags": [
+        "cold"
+      ],
+      "lore": "The blade fogs the air around it. Easy to lose grip on a cold morning.",
+      "drop_weights": [
+        10,
+        65,
+        20,
+        3,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_might": 18,
+        "of_finesse": 18,
+        "of_sharpness": 22,
+        "of_frost": 30,
+        "of_crit": 22,
+        "of_haste": 16,
+        "of_lifesteal": 10,
+        "of_quickcast": 8,
+        "of_channeling": 8
+      },
+      "default_tint": {
+        "hue": 195,
+        "sat": 1.1,
+        "mode": "normal"
+      }
+    },
+    {
+      "id": "frostgrim",
+      "name": "Frostgrim",
+      "slot": "weapon",
+      "rarity": "rare",
+      "tile": "battle_axe_3.png",
+      "base_type": "battle_axe",
+      "weapon_class": "2H",
+      "damage_min": 60,
+      "damage_max": 103,
+      "damage_type": "cold",
+      "speed": 1.1,
+      "item_tier": 3,
+      "flavor_tags": [
+        "cold"
+      ],
+      "lore": "The grim cleaver. Where it lands, the wound never warms.",
+      "drop_weights": [
+        0,
+        15,
+        60,
+        22,
+        3
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_might": 30,
+        "of_finesse": 12,
+        "of_sharpness": 25,
+        "of_frost": 35,
+        "of_crit": 18,
+        "of_haste": 10,
+        "of_lifesteal": 12,
+        "of_berserker": 10,
+        "of_executioner": 10,
+        "of_sundering": 10,
+        "of_bloodletting": 8
+      },
+      "default_tint": {
+        "hue": 200,
+        "sat": 1.0,
+        "mode": "normal"
+      }
+    },
+    {
+      "id": "glacial_bardiche",
+      "name": "Glacial Bardiche",
+      "slot": "weapon",
+      "rarity": "epic",
+      "tile": "bardiche_4.png",
+      "base_type": "bardiche",
+      "weapon_class": "2H",
+      "damage_min": 95,
+      "damage_max": 170,
+      "damage_type": "cold",
+      "speed": 1.05,
+      "item_tier": 4,
+      "flavor_tags": [
+        "cold"
+      ],
+      "lore": "The haft is rimed thicker than the head. Slow, patient, fatal.",
+      "drop_weights": [
+        0,
+        0,
+        8,
+        55,
+        38
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "implicit_affixes": [
+        "of_frost"
+      ],
+      "affix_pool": {
+        "of_might": 28,
+        "of_finesse": 10,
+        "of_sharpness": 28,
+        "of_frost": 38,
+        "of_crit": 18,
+        "of_haste": 8,
+        "of_lifesteal": 10,
+        "of_berserker": 10,
+        "of_executioner": 12,
+        "of_sundering": 12,
+        "of_bloodletting": 8,
+        "of_cold_resist": 12
+      },
+      "default_tint": {
+        "hue": 205,
+        "sat": 1.0,
+        "mode": "normal"
+      }
+    },
+    {
+      "id": "rime_spear",
+      "name": "Rime Spear",
+      "slot": "weapon",
+      "rarity": "epic",
+      "tile": "spear_5.png",
+      "base_type": "spear",
+      "weapon_class": "1H",
+      "damage_min": 50,
+      "damage_max": 95,
+      "damage_type": "cold",
+      "speed": 0.7,
+      "item_tier": 5,
+      "flavor_tags": [
+        "cold"
+      ],
+      "lore": "Touch the haft and your hand sticks to it. Pull, and you leave skin behind.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        14,
+        70
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "implicit_affixes": [
+        "of_frost"
+      ],
+      "affix_pool": {
+        "of_might": 24,
+        "of_finesse": 18,
+        "of_sharpness": 28,
+        "of_frost": 40,
+        "of_crit": 22,
+        "of_haste": 14,
+        "of_lifesteal": 12,
+        "of_quickcast": 10,
+        "of_channeling": 10,
+        "of_cold_resist": 12,
+        "of_executioner": 10,
+        "of_hunter": 8
+      },
+      "default_tint": {
+        "hue": 195,
+        "sat": 1.05,
+        "mode": "normal"
+      }
+    },
+    {
+      "id": "viper_fang",
+      "name": "Viper Fang",
+      "slot": "weapon",
+      "rarity": "uncommon",
+      "tile": "dagger_6.png",
+      "base_type": "dagger",
+      "weapon_class": "1H",
+      "damage_min": 9,
+      "damage_max": 17,
+      "damage_type": "poison",
+      "speed": 0.5,
+      "item_tier": 2,
+      "flavor_tags": [
+        "poison"
+      ],
+      "lore": "Hollow-ground. The groove holds something that drips slow and green.",
+      "drop_weights": [
+        10,
+        65,
+        20,
+        3,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_might": 18,
+        "of_finesse": 22,
+        "of_sharpness": 22,
+        "of_venom": 32,
+        "of_crit": 22,
+        "of_haste": 16,
+        "of_lifesteal": 10,
+        "of_quickcast": 8,
+        "of_channeling": 8
+      },
+      "default_tint": {
+        "hue": 110,
+        "sat": 1.1,
+        "mode": "normal"
+      }
+    },
+    {
+      "id": "venomtongue",
+      "name": "Venomtongue",
+      "slot": "weapon",
+      "rarity": "rare",
+      "tile": "dagger_new.png",
+      "base_type": "dagger",
+      "weapon_class": "1H",
+      "damage_min": 27,
+      "damage_max": 48,
+      "damage_type": "poison",
+      "speed": 0.55,
+      "item_tier": 3,
+      "flavor_tags": [
+        "poison"
+      ],
+      "lore": "The serrations whisper when drawn. Wipe the blade and the whisper does not stop.",
+      "drop_weights": [
+        0,
+        15,
+        60,
+        22,
+        3
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_might": 22,
+        "of_finesse": 22,
+        "of_sharpness": 28,
+        "of_venom": 35,
+        "of_crit": 22,
+        "of_haste": 14,
+        "of_lifesteal": 14,
+        "of_bleed_on_miss": 10,
+        "of_bloodletting": 10,
+        "of_executioner": 8,
+        "of_quickcast": 8
+      },
+      "default_tint": {
+        "hue": 100,
+        "sat": 1.15,
+        "mode": "normal"
+      }
+    },
+    {
+      "id": "viper_lance",
+      "name": "Viper Lance",
+      "slot": "weapon",
+      "rarity": "epic",
+      "tile": "spear_3.png",
+      "base_type": "spear",
+      "weapon_class": "1H",
+      "damage_min": 45,
+      "damage_max": 82,
+      "damage_type": "poison",
+      "speed": 0.7,
+      "item_tier": 4,
+      "flavor_tags": [
+        "poison"
+      ],
+      "lore": "The point bears a fang sigil. Stuck enemies wilt before they bleed out.",
+      "drop_weights": [
+        0,
+        0,
+        8,
+        55,
+        38
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "implicit_affixes": [
+        "of_venom"
+      ],
+      "affix_pool": {
+        "of_might": 24,
+        "of_finesse": 18,
+        "of_sharpness": 28,
+        "of_venom": 38,
+        "of_crit": 20,
+        "of_haste": 12,
+        "of_lifesteal": 12,
+        "of_executioner": 10,
+        "of_hunter": 10,
+        "of_bleed_on_miss": 10,
+        "of_bloodletting": 10,
+        "of_poison_resist": 12
+      },
+      "default_tint": {
+        "hue": 95,
+        "sat": 1.1,
+        "mode": "normal"
+      }
+    },
+    {
+      "id": "scourgevine",
+      "name": "Scourgevine",
+      "slot": "weapon",
+      "rarity": "epic",
+      "tile": "bullwhip_old.png",
+      "base_type": "whip",
+      "weapon_class": "1H",
+      "damage_min": 50,
+      "damage_max": 95,
+      "damage_type": "poison",
+      "speed": 0.65,
+      "item_tier": 5,
+      "flavor_tags": [
+        "poison"
+      ],
+      "lore": "Braided from briar that never lost its sap. Each lash leaves welts that bloom.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        14,
+        70
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "implicit_affixes": [
+        "of_venom"
+      ],
+      "affix_pool": {
+        "of_might": 22,
+        "of_finesse": 24,
+        "of_sharpness": 26,
+        "of_venom": 40,
+        "of_crit": 22,
+        "of_haste": 18,
+        "of_lifesteal": 12,
+        "of_quickcast": 10,
+        "of_channeling": 10,
+        "of_poison_resist": 10,
+        "of_executioner": 10,
+        "of_bleed_on_miss": 10
+      },
+      "default_tint": {
+        "hue": 105,
+        "sat": 1.15,
         "mode": "normal"
       }
     }
