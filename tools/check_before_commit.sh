@@ -63,6 +63,18 @@ if ! python3 "$REPO/tools/audit_data_integrity.py" >"$DI_LOG" 2>&1; then
     cat "$DI_LOG" >&2
     FAIL=1
 fi
+# Weapon damage-ceiling tripwire. Asserts damage_max <= 220 and raw DPS
+# (damage_max / speed) <= 245 across every weapon in items.json. Caps
+# from balance pass 2026-06-11 §A10 R1. Without this, future content
+# passes can silently re-introduce the doomed_executioner / warlord_
+# battle_axe shape (305/298 damage_max → ~3× the 400-peak ceiling
+# after blessing+crit stacks).
+DCEIL_LOG="$LOG_DIR/${TS}_damage_ceiling.log"
+if ! python3 "$REPO/tools/check_damage_ceiling.py" >"$DCEIL_LOG" 2>&1; then
+    echo "FAIL: weapon damage ceiling violation (see $DCEIL_LOG)" >&2
+    cat "$DCEIL_LOG" >&2
+    FAIL=1
+fi
 
 # 3. GUT test suite. Discovers project/tests/test_*.gd and runs every
 # test_* function. Locks: StatCalc unification (blessing kinds,

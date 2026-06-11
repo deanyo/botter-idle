@@ -91,6 +91,29 @@ ups, not audit findings.
 
 ---
 
+2026-06-11 (balance pass beat 1.B + first 1.C ceiling fixes —
+weapon damage-ceiling tripwire + 2H legendary nerfs shipped).
+`tools/check_damage_ceiling.py` walks `project/data/items.json`
+and asserts `damage_max <= 220` and raw DPS (`damage_max / speed`)
+`<= 245` across every weapon. Caps come from balance-pass
+2026-06-11 §A10 R1 — the 220 figure is the explicit "cap to ship"
+for 2H legendaries; the 245 DPS guard mirrors the existing 1H
+legendary ceiling (demon_blade at 239 raw DPS). Wired into
+`tools/check_before_commit.sh` after `audit_data_integrity.py` so
+a future content pass that re-introduces the doomed_executioner /
+warlord_battle_axe shape (305 / 298 dmax → ~3× the 400-peak hit
+target after blessing+crit stacks) fails pre-commit.
+`doomed_executioner.damage_max` 305→220 (damage_min 175→126);
+`warlord_battle_axe.damage_max` 298→220 (damage_min 167→123) —
+both 2H legendaries now sidegrade `triple_sword` (epic 2H, dmax
+209). Validation: the tripwire trips on a throwaway dmax=250
+edit, restores green after revert. /duel doomed_executioner vs
+triple_sword (10 seeds, level=30 forge): total damage dealt
+10724 vs 10091 — 6.3% delta, sidegrade as A10 specified. Pre-
+nerf the gap was ~50%.
+
+---
+
 2026-06-11 (balance pass beat 1.A — outpost filter-by-affix +
 sort-by-ilvl shipped). The outpost inventory chip row gained a
 `Search affix or name` LineEdit and an `Item level (high → low)`
