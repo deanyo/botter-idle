@@ -91,6 +91,26 @@ ups, not audit findings.
 
 ---
 
+2026-06-11 (balance pass beat 1.C remainder — `elf_spire_tome`
+schema repair + `green_dragon_inverse` re-tier + 3 quarterstaff
+1H retags shipped). `elf_spire_tome` (the only one of 224 spell
+items missing damage fields — would null-deref on cast) gained
+`primary_stat=int / damage_min=20 / damage_max=35 / damage_type=
+dark / spell_cooldown=14.0` per A1 finding 11. `green_dragon_inverse`
+demoted from `legendary` → `epic` to match its armor=30/ev=7
+statline (legendary median is 48/12) per A1 finding 9. The three
+quarterstaff-base items (`quarterstaff` common, `metal_staff`
+uncommon, `metal_staff_nightblue` uncommon) were all at speed=0.8
+but tagged `weapon_class=2H`, which made them 8-12 std devs faster
+than the 2H median — retagged to `1H` per A1 finding 6.
+`sigmunds_sickle` (T1 boss anchor, 2H spd=0.7) intentionally
+preserved. Beat 1.C is now complete. Validation: items.json parses
+clean (687 items), `tools/check_damage_ceiling.py` exits 0 (150/150
+weapons), `tools/audit_data_integrity.py` no new warnings, /grind 5
+zero ERROR / push_error / parse warnings on the affected items.
+
+---
+
 2026-06-11 (balance pass beat 1.B + first 1.C ceiling fixes —
 weapon damage-ceiling tripwire + 2H legendary nerfs shipped).
 `tools/check_damage_ceiling.py` walks `project/data/items.json`
