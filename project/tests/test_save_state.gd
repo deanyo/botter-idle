@@ -193,9 +193,14 @@ func _scrub_test_files() -> void:
 		var p: String = SaveState.DEBUG_PATH + ext
 		if FileAccess.file_exists(p):
 			d.remove(p)
-	# Quarantine residue from prior runs.
+	# Quarantine residue from prior runs. test_future_version_save_quarantined_on_load
+	# writes a save with schema_version > current, which the loader renames
+	# to .future-v<N>-<ts>; without explicit cleanup these accumulate
+	# indefinitely (one per test invocation × one per pre-commit run).
 	for fname: String in d.get_files():
 		if fname.begins_with("botter_save_debug.json.corrupted-"):
+			d.remove(fname)
+		if fname.begins_with("botter_save_debug.json.future-"):
 			d.remove(fname)
 
 func test_atomic_write_creates_final_and_no_tmp_after_save() -> void:
@@ -421,6 +426,62 @@ func test_future_version_save_quarantined_on_load() -> void:
 			found_future = true
 			break
 	assert_true(found_future, "future-version save preserved as .future-v<n>-<ts>")
+
+# ---------------------------------------------------------------------
+# Equipped slot backfill — ensures every load has the 14 canonical
+# slot keys regardless of input shape. Repairs the "spriggan with
+# just a spell" symptom seen on 2026-06-11 where char[1]/char[2]
+# saved with sparse equipped dicts (only ring/spell*/gloves/cloak,
+# no weapon/armor/helm/boots/shield/amulet). Bot.apply_gear copies
+# whatever shape comes in, so any read from a missing slot returned
+# null and stayed null.
+# ---------------------------------------------------------------------
+
+func test_load_backfills_missing_slot_keys() -> void:
+	var save := SaveState._default()
+	save["equipped"] = {
+		"ring": null, "gloves": null, "cloak": null,
+		"spell1": null, "spell2": null, "spell3": null,
+		"spell4": null, "spell5": null,
+	}
+	var wrapper := {"characters": [save], "active": 0}
+	var f := FileAccess.open(SaveState.DEBUG_PATH, FileAccess.WRITE)
+	f.store_string(JSON.stringify(wrapper))
+	f.close()
+	var loaded := SaveState.load_state()
+	var equipped: Dictionary = loaded["equipped"]
+	for sk in ["weapon", "armor", "helm", "boots", "shield",
+	           "gloves", "cloak", "ring", "amulet",
+	           "spell1", "spell2", "spell3", "spell4", "spell5"]:
+		assert_true(equipped.has(sk),
+			"slot key '%s' present after backfill" % sk)
+		assert_eq(equipped[sk], null,
+			"slot '%s' defaults to null when missing" % sk)
+
+func test_load_does_not_overwrite_existing_slots() -> void:
+	# Backfill must NOT clobber slots that already have items —
+	# only fills missing keys.
+	var save := SaveState._default()
+	save["equipped"]["weapon"] = {
+		"base_id": "rusty_dagger",
+		"instance_id": "live_weapon",
+		"affixes": [],
+	}
+	# Drop a couple of slot keys to exercise the partial backfill.
+	save["equipped"].erase("helm")
+	save["equipped"].erase("amulet")
+	var wrapper := {"characters": [save], "active": 0}
+	var f := FileAccess.open(SaveState.DEBUG_PATH, FileAccess.WRITE)
+	f.store_string(JSON.stringify(wrapper))
+	f.close()
+	var loaded := SaveState.load_state()
+	var equipped: Dictionary = loaded["equipped"]
+	assert_eq(String(equipped["weapon"]["base_id"]), "rusty_dagger",
+		"existing weapon preserved through backfill")
+	assert_true(equipped.has("helm"), "missing helm key restored")
+	assert_eq(equipped["helm"], null, "restored helm defaults to null")
+	assert_true(equipped.has("amulet"), "missing amulet key restored")
+	assert_eq(equipped["amulet"], null, "restored amulet defaults to null")
 
 # ---------------------------------------------------------------------
 # Forward-compat: unknown keys preserved

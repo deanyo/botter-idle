@@ -123,6 +123,7 @@ static func _finalize_loaded_wrapper(raw: Dictionary) -> Dictionary:
 		for k in _default().keys():
 			if not legacy.has(k):
 				legacy[k] = _default()[k]
+		_backfill_equipped_slots(legacy)
 		_validate_loaded_state(legacy)
 		return {"characters": [legacy], "active": 0}
 	var chars: Array = raw.get("characters", [])
@@ -133,11 +134,37 @@ static func _finalize_loaded_wrapper(raw: Dictionary) -> Dictionary:
 		for k in _default().keys():
 			if not ch.has(k):
 				ch[k] = _default()[k]
+		_backfill_equipped_slots(ch)
 		_validate_loaded_state(ch)
 	if chars.is_empty():
 		chars.append(_default())
 	var active: int = clampi(int(raw.get("active", 0)), 0, chars.size() - 1)
 	return {"characters": chars, "active": active}
+
+# Ensure every character's `equipped` dict has every canonical slot
+# key, defaulting any missing one to null. Idempotent.
+#
+# Why this runs unconditionally on every load (not just v0→v7
+# migration): saves on disk at schema_version 9 have already passed
+# the migration chain, so a one-shot backfill there wouldn't repair
+# them. Some characters in the wild ended up with sparse equipped
+# dicts ({ring, spell1..5, gloves, cloak} but no weapon/armor/helm/
+# boots/shield/amulet) — bot.apply_gear copies that sparse dict, then
+# every `equipped.get("weapon", null)` resolves to null forever, so
+# the bot renders as "spriggan with just a spell." The original
+# v0→v7 migration backfilled gloves/cloak/spell* but never the
+# six base ARPG slots. Backfilling on every load patches the
+# in-the-wild broken saves AND any future regression that produces
+# a sparse dict (cheap belt-and-suspenders — the `not has(k)` probe
+# is no-op for healthy saves).
+static func _backfill_equipped_slots(state: Dictionary) -> void:
+	var equipped: Dictionary = state.get("equipped", {})
+	for sk in ["weapon", "armor", "helm", "boots", "shield",
+	           "gloves", "cloak", "ring", "amulet",
+	           "spell1", "spell2", "spell3", "spell4", "spell5"]:
+		if not equipped.has(sk):
+			equipped[sk] = null
+	state["equipped"] = equipped
 
 # Walk equipped + inventory, evict any item whose base_id no longer
 # exists in items.json. Orphaned items are pushed to state.orphaned_items
