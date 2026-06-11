@@ -26,6 +26,9 @@ AI-assisted iteration with Claude Code (Anthropic).
   handle in `NOTICE.md`.
 - **Godot Engine (MIT)** — https://godotengine.org/
 - **GUT — Godot Unit Test (MIT)** — https://github.com/bitwes/Gut
+- **DejaVu Sans (Bitstream Vera-derived, free license)** — UI font
+  bundled for Unicode-symbol glyph coverage on Compatibility-renderer
+  web builds. https://dejavu-fonts.github.io/
 
 ## Special thanks
 

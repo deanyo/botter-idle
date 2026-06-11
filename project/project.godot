@@ -28,6 +28,15 @@ window/size/viewport_height=900
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 
+[gui]
+
+; DejaVu Sans covers the symbol glyphs the UI uses (⛶ → · × ✕) which
+; Godot's bundled NotoSans subset omits — those rendered as tofu boxes
+; on the Compatibility-renderer + WASM web build. Setting it as the
+; default font fixes them globally across every Label/Button without
+; per-call font overrides.
+theme/custom_font="res://assets/fonts/DejaVuSans.ttf"
+
 [input]
 
 ui_skip={
