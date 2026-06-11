@@ -747,6 +747,9 @@
     "min_floor": 9,
     "tier": 5,
     "boss": false,
+    "resistances": {
+      "lightning": 50
+    },
     "visual_scale": 1.5,
     "visual_anchor": "ground"
   },
@@ -783,6 +786,7 @@
       "cold": 25,
       "dark": 50,
       "holy": -40,
+      "lightning": 50,
       "poison": 50
     }
   },
@@ -1043,6 +1047,7 @@
     "boss": false,
     "resistances": {
       "cold": -25,
+      "lightning": -25,
       "poison": 25
     }
   },
@@ -1102,6 +1107,9 @@
     "min_floor": 9,
     "tier": 4,
     "boss": false,
+    "resistances": {
+      "lightning": -25
+    },
     "visual_scale": 1.5,
     "visual_anchor": "ground"
   },
@@ -1192,6 +1200,9 @@
     "min_floor": 9,
     "tier": 4,
     "boss": false,
+    "resistances": {
+      "lightning": -25
+    },
     "visual_scale": 1.5,
     "visual_anchor": "ground"
   },
@@ -1317,6 +1328,7 @@
       "cold": 50,
       "dark": 75,
       "holy": -50,
+      "lightning": 50,
       "poison": 75
     }
   },
@@ -1426,6 +1438,9 @@
     "min_floor": 9,
     "tier": 4,
     "boss": false,
+    "resistances": {
+      "lightning": 50
+    },
     "visual_scale": 1.5,
     "visual_anchor": "ground"
   },
@@ -1512,6 +1527,9 @@
     "min_floor": 9,
     "tier": 5,
     "boss": false,
+    "resistances": {
+      "lightning": 50
+    },
     "visual_scale": 1.55,
     "visual_anchor": "ground"
   },
