@@ -91,6 +91,37 @@ ups, not audit findings.
 
 ---
 
+2026-06-11 (balance pass beat 1.E cold/poison element coverage — 8
+new weapons + chilly_death flagship rebalance). A1-coverage-005 root-
+caused: pre-pass the 150-weapon pool had exactly 1 cold weapon
+(`chilly_death` T5 legendary) and 1 poison weapon (`serpent_scourge` T5
+legendary). Bots committing to a cold/poison physical-weapon archetype
+had nothing at any earlier tier and a single legendary at endgame.
+Shipped 4 cold weapons across the tier ladder (`frost_dagger` T2 unc,
+`frostgrim` T3 rare battle_axe, `glacial_bardiche` T4 epic bardiche
+with `of_frost` implicit, `rime_spear` T5 epic spear with `of_frost`
+implicit) and 4 poison weapons (`viper_fang` T2 unc dagger,
+`venomtongue` T3 rare dagger, `viper_lance` T4 epic spear with
+`of_venom` implicit, `scourgevine` T5 epic whip with `of_venom`
+implicit). Statlines anchored on existing tier templates (frostgrim
+mirrors steel_battle_axe T3 rare 60-103/spd 1.1; viper_lance mirrors
+steel-spear T3 → mithril_longsword T4 epic shape 45-82/spd 0.7).
+Affix pools strictly slot-eligible per affixes.json applies_to —
+`of_frost`/`of_venom` (flat-extra) carry the elemental flavor on
+weapons; `of_envenom`/`of_zealot` (pct, amulet/ring/helm/etc only)
+deliberately kept off weapons. Plus deferred-from-1.D `chilly_death`
+rebalance: damage 48-107 → 60-119, mirroring serpent_scourge/wyrmbane
+single-element-flagship template per A1 finding 4. Items pool
+697 → 705. Validation: check_damage_ceiling clean (158/158 weapons
+within 220/245 cap), audit_data_integrity 6 pre-existing thin-cell
+warnings only, check_before_commit 5/5 PASS, /grind 5 zero errors,
+runtime probe confirms all 9 items load through ItemsDb and roll
+affixes via AffixSystem, /duel chilly_death vs wyrmbane (both now
+60-119) shows asymmetric biome matchup correctly (cold neutral vs
+holy-resistant lair fauna).
+
+---
+
 2026-06-11 (balance pass beat 1.E partial — 5 thin-cell fills + 5
 race-anchor uniques, 10 new items.json entries). A4 §A thin-cell
 proposals shipped to fill the 5-cell skinny-pool gap (gloves common,
