@@ -1334,3 +1334,544 @@ uniques shipped this morning carry mechanics-heavy implicits
 remembers "I picked up Sigmund's Sickle yesterday" can't
 quickly find it without scrolling — slot=weapon + rarity=epic
 + name-sort still mixes 30+ items.
+
+---
+
+## 2026-06-11 — second session, two playtesters
+
+Status legend: `untriaged` | `triaged → fixed` | `triaged → TODO` |
+`triaged → next-session-brief` | `triaged → deferred` | `triaged →
+not-a-bug`.
+
+### 2. Race-gated affixes — color alone doesn't tell the player if they fire
+**Status:** `untriaged`
+
+Concrete examples from the player:
+- **Troll hide armor** — "requires regen heritage" — shows
+  the gate line **green** when the player is a Troll. Player:
+  *"is it working?"* Green presumably = active, but the
+  player can't be sure.
+- **Wisp-Lance** — "requires fae heritage" — shows **yellow**
+  on the player's current bot. Yellow = ??? — partial match?
+  inactive? warning? Player guess: *"so it doesn't work?"*
+
+So race-gated affixes already have a 3-state(?) color system
+(green/yellow/red?), but the **legend isn't visible to the
+player** — they're inferring meaning from color alone and
+guessing wrong. This is the readability gap, not the
+mechanics: the gate may well be working correctly; the player
+just can't tell.
+
+Player's own proposed fix: **hold-Alt should explain**. Pairs
+naturally with the existing Alt-hold expansion pattern (item
+tooltip detail, affix tier-band breakdown — see 2026-06-10 #2
+which already wired Alt-hold to show affix descriptions).
+
+Concrete fixes:
+- **Alt-hold expands the heritage line** with a one-liner like
+  "✓ Active — your species (Troll) has Regen heritage" or
+  "✗ Muted — requires Fae heritage; you are Human." Reuse the
+  same dim-secondary-line pattern as affix descriptions.
+- **Resolve the yellow state explicitly.** What does yellow
+  mean today? Partial heritage match? Inactive-but-equippable?
+  A different tier? Whatever it is, the Alt-hold copy needs to
+  spell it out rather than rely on the color encoding.
+- **Tag muted affix lines** in the main tooltip body with a
+  strikethrough / dim color so the player sees per-affix which
+  are firing without needing Alt — color carries the at-a-
+  glance signal, Alt explains *why*.
+- **Glossary**: "Regen heritage = Troll, Ogre, Naga (etc)" /
+  "Fae heritage = Spriggan, Felid, Faerie Dragon (etc)" — show
+  this on Alt-hover of the heritage-tag line itself, so the
+  player can verify against their own race at the point of
+  decision.
+
+Triage step: read the current heritage gate render code to
+confirm what the colors actually mean (and whether the gate
+is wired into combat/stats properly — same sanity-check
+shape as #4). Likely lives in `item_tooltip.gd` near the
+existing requirement render path. Cluster with 2026-06-09 #2
+(STR/DEX/INT explanation), #7 (spell scaling stat
+illegibility), and 2026-06-10 #2 (affix opacity) — all the
+same "code knows, player doesn't" pattern.
+
+### 3. On-sprite regen icon redundant; inventory buff list lacks tooltips
+**Status:** `untriaged` — partially overlaps 2026-06-09 #3.
+
+Player explicitly: "as a player, I have no need to see the
+regen icon etc above my sprite, the top buff bar and inventory
+buff list is enough."
+
+2026-06-09 #3 already disabled the on-sprite layer in HIGH /
+MEDIUM presets — but if this player still sees it, either (a)
+they're on LOW preset (which kept it on for legacy reasons), or
+(b) regen specifically slips through. Verify: does regen
+respect `gfx.ench` gate?
+
+Second half: top-screen buff bar has hover tooltips wired
+(hud_chrome.gd:1349-1351) but the **inventory buff list** does
+not. Player wants hover-explanation parity — pause-screen
+inventory buff list should show "what does Jiyva regen do" the
+same way the top bar does. Pairs with 2026-06-09 #3 partial
+("hover tooltips on buff bar still TODO" — extend the same fix
+to the inventory list).
+
+### 4. 40% altar rarity buff — sanity-check the math is wired
+**Status:** `untriaged` — sanity-check ask, not a confirmed bug.
+
+Player picked up a 40% rarity altar buff, but didn't notice
+much effect on subsequent drops. Player flagged this as a
+**sanity check** — confirm the math is actually hooked up.
+
+Triage path:
+- Grep the altar-blessing apply path; confirm rarity_pct
+  reaches `loot_factory.pick_loot_id()` (or wherever the
+  rarity weight roll happens).
+- If wired: 40% on top of a low base rate is mathematically
+  real but invisible across a single floor's worth of drops.
+  Not necessarily a bug — close as `not-a-bug` with a note,
+  or add a visible cue (floating "+rarity" indicator on
+  each drop, HUD line "rarity bonus active: +40%") so future
+  players don't hit the same perception gap.
+- If not wired: that's the bug — fix the apply path.
+
+### 5. 2-hander should visually X out the shield slot
+**Status:** `untriaged`
+
+When the bot is wielding a 2H weapon, the shield slot in the
+paperdoll is functionally locked but doesn't show it visually.
+Player expects a greyed-out / red-X / strike-through
+treatment so they don't try to drag a shield in. Same shape
+as the octopode "no body armor" affordance from 2026-06-09 #8
+— slot affordances need to render the disallowed state, not
+just silently reject.
+
+Easy fix: in `hud_chrome.gd`'s paperdoll cell render path,
+check if the equipped weapon is 2H (item base data flag) and
+overlay a disabled-slot visual on the shield cell. Pair with
+the octopode/naga slot conversion surfacing — same visual
+language ("this slot is unavailable for your current build").
+
+### 6. Octopode ring slots arranged confusingly
+**Status:** `untriaged`
+
+Player chose octopode (4 ring slots) and the slot layout in
+the paperdoll arranged them strangely — specifically, a shield
+slot is interleaved between rings instead of all rings
+grouping together. Fix: re-order the octopode/naga paperdoll
+layout so converted ring slots cluster contiguously, with the
+disallowed-and-converted slots either hidden or visually
+demoted (see #5 above for the visual-language pattern).
+
+### 7. Octopode feels "slightly hard mode"
+**Status:** `untriaged`
+
+Player reports octopode plays slightly harder than baseline
+species, presumably because it loses three armor slots
+(body / boots / helm) in exchange for three extra rings.
+Question: is the tradeoff balanced?
+
+Empirical check: run a `/sweep` or `/duel` of octopode vs.
+human on the same seeds with a comparable starting loadout,
+look at end-floor + survival rate. If octopode wins less
+often, the ring-slot bonus isn't compensating for the lost
+armor. Solutions: tune octopode's stat baseline up (HP/DEF
+buff), or buff ring rolls when wearing 4 rings, or accept
+the asymmetry as intended hard-mode flavor.
+
+DCSS precedent: octopode in DCSS is also "slightly hard" by
+design — slot constraints are part of the species fantasy.
+Accept-as-design is a valid answer; the ask is to make the
+choice **informed** (paired with 2026-06-09 #8 — show slot
+limitations on character_create).
+
+### 8. Outpost has filter-by-affix; in-game inventory does not
+**Status:** `untriaged`
+
+Outpost inventory pane shipped filter-by-affix + sort-by-ilevel
+this morning (see 2026-06-11 #1 above). The in-game pause-
+inventory still lacks both. Player wants parity — filter +
+sort the same way mid-run as they do back at base. Code-side,
+the filter/sort logic in `outpost.gd::_build_filter_chips` /
+`_render_inventory` could likely be extracted to a shared
+helper and hooked into the HUD inventory render path.
+
+### 9. Loot items bounce in sync — looks robotic
+**Status:** `untriaged`
+
+When loot is on the floor (unrooted) all items bounce on the
+same frame, in perfect lockstep. Reads as machine-generated.
+Easy polish: add a per-item phase offset
+(e.g., `bounce_phase = (instance_id_hash) * TAU`) so each item
+animates on its own rhythm. The visual diversity makes a
+chest-spilled-on-the-floor scene feel organic rather than
+synchronized.
+
+### 10. Bot walks past loot — let player click to prioritize
+**Status:** `untriaged`
+
+Player observation: bot sometimes walks away from a clearly
+visible item without picking it up (likely a rarity/loot-filter
+threshold + AI-priority interaction).
+
+Proposed feature: let the player **click an unpicked loot item**
+on the floor to mark it priority. The bot then routes to it
+next. Visual: clicked item gets a "selected" highlight (pulse,
+border, indicator) until pickup.
+
+This is a strong gameplay-loop improvement — gives the player
+agency in the autopilot loop without breaking the
+"watch-the-bot-play" core fantasy. Pairs with 2026-06-09 #6
+(Football Manager-style behaviour config) — same theme of
+"player nudges the bot's priorities mid-run." Worth a session
+brief.
+
+### 11. Damage / healing / DPS breakdown tab — "THIS IS A BIG WIN"
+**Status:** `untriaged`
+
+Player explicitly flagged this as a BIG WIN. Wants a tab in
+the in-game HUD showing combat statistics:
+- Damage breakdown: spell dmg vs. auto-attack dmg, totals
+  per source.
+- Healing done.
+- Bar graph (WoW-Recount-style) where each bar is segmented
+  by **damage type** — e.g., a fireball bar that's 60% fire,
+  40% smite, color-coded.
+
+This is exactly the kind of "I want to feel my build" payoff
+that idle/autobattler games live or die on. Player can see
+"my fireball is doing 70% of my damage" and infers "I should
+buff INT / fire-dmg-pct" without opening a wiki.
+
+Implementation shape:
+- Damage events already flow through `actor.gd::take_damage`
+  and `apply_combat_text` paths — add a logger that
+  bucket-sums by source + damage type per run.
+- New HUD tab (alongside Buffs / Inventory / Spells) with
+  a bar-graph render. Reuse the existing tab infra
+  (hud_chrome.gd's tab system).
+- Persist the per-run breakdown into the run_report screen
+  too, so end-of-run shows the same data.
+
+DCSS doesn't have this (it's roguelike-minimal), so this is
+Botter-original. Leaning into DCSS-as-design-source is the
+rule, but exception applies here — DCSS is a single-session
+roguelike where you forget the run; we're an idle game where
+the player wants to **understand** their build. Recount-style
+breakdowns are the genre standard for that.
+
+Worth its own session brief — likely a multi-beat feature
+(logger → tab UI → end-of-run integration → balance-tuning UX
+where players can A/B builds with hard data).
+
+### 12. No XP bar visible
+**Status:** `untriaged`
+
+Player wants an XP bar. Verify: does the current HUD show one?
+If yes, where is it and is it just hard to find? If no, add
+one to the stats panel or under the HP/MP bars. XP-to-next-level
+is core RPG furniture — "level 12, 47% to next" is a baseline
+expectation.
+
+Quick check: search `hud_chrome.gd` for an XP/level progress
+bar render. If absent, add one — `RunState.xp` /
+`RunState.xp_to_next` (or equivalent) likely already track the
+data.
+
+### 13. MAJOR BUG — bot stops picking up loot in late tier 1
+**Status:** `untriaged` — **MAJOR**
+
+Both playtesters independently hit a bug where, sometime in
+late tier 1 (might be elsewhere), the bot completely stops
+picking up loot. Items drop, the bot ignores all of them.
+Reproduces across both testers, so it's not a one-off
+transient.
+
+This is severe — a bot that won't loot is functionally a
+failed run.
+
+Investigation directions:
+- **Loot-filter state corruption**: does `loot_filter_min_rank`
+  get bumped to a value that filters out all drops? Check
+  whether a stat upgrade or floor transition resets / breaks
+  the filter threshold.
+- **Inventory cap hit silently**: 2026-06-10 #7 raised the
+  cap to 200 and added shop enforcement, but the run-loop
+  auto-salvage path may now have a regression where the
+  pickup-blocked state isn't auto-salvaging back below cap.
+  If `pending_salvage_check` flag latches stuck-true after a
+  failed flush, pickups halt.
+- **AI target selection**: `dungeon.gd::_nearest_interactable`
+  or its priority-reweight logic may have a state where loot
+  is filtered out as "skip" (LootDrop.should_skip()) but no
+  alternative target is selected, leaving the bot wandering.
+- **State saved across floors**: a run-state field controlling
+  pickup behavior (e.g., from a curse, status effect, or
+  altar buff) may persist past intent.
+
+Repro plan for next session: launch a `/grind 1 --mortal` (or
+play live) starting fresh-save tier 1, watch loot-pickup
+behavior across floors 1-7, log every loot-drop spawn + every
+bot-picks-up event. The first floor the bot stops picking up
+is the diagnostic clue. Add `[loot]` / `[ai]` log tags around
+`_nearest_interactable` and `LootDrop.should_skip` if they
+aren't already there.
+
+This jumps to the top of the bug queue — players don't
+forgive a game where loot doesn't loot.
+
+### 14. XP balancing — can players AFK-stat-stack into new tiers?
+**Status:** `untriaged`
+
+Player concern: can I just AFK my way into new tiers by
+stacking Strength etc., without thinking about gear? If so,
+the build/loot game stops mattering — the optimal play
+becomes idle the level slider, ignore drops, walk in.
+
+This is an XP/levelling balance question. The bot gains XP
+→ stat points → primary stats → derived combat stats. If
+stat-scaling alone outpaces the per-floor enemy difficulty
+multiplier (~1.10–1.12 per floor per CLAUDE.md), then gear
+becomes optional and the loot loop is decorative.
+
+Triage path:
+- Empirical first: `/playthrough --equip naked --upgrade
+  stats-only --advance auto` — simulate a player who never
+  equips a single drop, only spends stat points on Str.
+  Measure: what tier do they reach? If they clear tier 3,
+  that's confirmed broken.
+- Compare against `/playthrough --equip greedy --upgrade
+  stats-only` (auto-equip best drops, also stat-stack) — gap
+  between the two is the gear value. If small, gear isn't
+  load-bearing.
+- Inspect `stat_calc.gd` STR scaling — currently +1.5% HP
+  per excess STR point. Stacked to 50+ points, that's +75%
+  HP, which combined with melee scaling could trivialise
+  early tiers.
+- If confirmed, levers: cap STR/DEX/INT at a soft ceiling
+  with diminishing returns past N (DCSS does this — stat
+  bonuses curve off), or weight floor-difficulty multiplier
+  to also scale with player level so AFK-levelling doesn't
+  break the encounter math.
+
+Pairs with 2026-06-09 #2 (STR/DEX/INT explanation) — once
+the stats are legible, players will absolutely test if
+they can break the curve.
+
+### 15. Inverse / prismatic / etc — make these ROLL on items, not be authored
+**Status:** `untriaged`
+
+Player observation: the game has special item types like
+`inverse` and `prismatic` (verify in items.json — these are
+hard-coded as authored items in the item-editor today).
+Player's design ask: it would be **10× more fun** if these
+were **rolls on items**, with subsequent gameplay effects,
+rather than being authored items.
+
+Reframe: today, `inverse_dagger` (or whatever) is its own
+distinct item entry in items.json. The player's vision: any
+weapon could roll an "inverse" modifier as part of generation,
+and that modifier carries a mechanical effect.
+
+This is the **affix vs. base-item distinction**. Botter's
+affix system rolls flavor + mechanic onto items already (see
+2026-06-10 #2 — "of bloodletting" → lifesteal_pct). The ask
+is to extend that pattern to the meta-modifier slots that
+are currently authored: `inverse`, `prismatic`, etc., become
+*rollable affixes* with a meaningful effect rather than
+fixed entries on a hand-curated list.
+
+Design shape worth thinking through:
+- **What is the effect?** Today the meta-rarity tints are
+  cosmetic-ish (per the affix_system.gd flow). Player wants
+  them to *do something*. Examples:
+  - **Inverse**: stats invert thresholds — high HP becomes
+    low HP triggers, lifesteal becomes leech-on-being-hit,
+    etc. Strong identity.
+  - **Prismatic**: damage type rotates per-hit (fire → cold
+    → lightning → poison cycle). Couples with elemental
+    affix-pct stats so prismatic gear synergises with
+    multi-element builds.
+  - Etc — each meta-prefix wants its own signature mechanic.
+- **As a rollable suffix-tier**: meta-rarity slot becomes a
+  rare bonus roll (~1-2% chance on legendary, ~0.5% on
+  epic, etc.), separate from the regular affix slots, with
+  its own tier of mechanical effect.
+- **Pairs with rarity-system rework** — already on the
+  triage list (2026-06-10 second session #1, "tier-1 floors
+  are a sea of blue with no rarity variety"). If rarity
+  ladder gets retuned, meta-prefixes become a natural
+  capstone: rarity governs base power, meta-prefix governs
+  build-defining identity.
+
+Files to investigate:
+- `data/items.json` — confirm what `inverse` / `prismatic`
+  look like today (authored entries vs. modifiers?).
+- `scripts/affix_system.gd` — the affix roll path; this
+  is where a new meta-affix tier would land.
+- `scripts/loot_factory.gd::create_item_instance` — where
+  item rolls happen at drop time; meta-prefix roll would
+  hook in here.
+- Item editor (`tools/item_editor.html`?) — the authoring
+  tool that currently treats these as base entries.
+
+This is a larger design beat — likely wants its own session
+brief. The reward is huge though: it converts a hand-
+authored cosmetic system into a **gameplay generator**, and
+that's exactly the leverage idle games need (more variety
+without more authoring work). Pairs naturally with
+CLAUDE.md's "data-driven, code reads doesn't hardcode"
+principle.
+
+### 16. Add downward + diagonal swing animations; should crit be noticeable?
+**Status:** `untriaged`
+
+Player observation: the existing **overhead thrust** and
+**horizontal** swings look good. Two questions:
+
+1. **Should we add downward + diagonal swing variants?**
+   Today the swing-style picker (bot.gd:822 `_play_swing_horizontal`,
+   :841 `_play_swing_overhead_chop`, :864
+   `_play_swing_upward_thrust`) covers three arcs. Adding
+   downward chop and the four diagonal arcs (NE/NW/SE/SW)
+   would give the bot a much richer combat silhouette —
+   different weapons / enemy positions / hit angles could
+   pick a more contextually correct arc. Currently the same
+   three-arc rotation across every encounter reads as
+   repetitive once you've watched a few floors.
+2. **Should crits be visually noticeable?** Right now (verify)
+   crit hits go through the same swing animation as a normal
+   hit, only the damage number color/size differs. Player ask:
+   make crits *feel* punchy — distinct swing variant (bigger
+   arc, slower windup, screen-shake punch, crit-flash on
+   weapon, brief hit-stop, stronger impact particle, etc).
+   Idle-game feedback loop demands legible "this hit was
+   special" without needing to read the floating number.
+
+Design shape:
+- **Swing variant selection**: weapon kind (1H sword vs
+  2H axe vs polearm vs dagger) + enemy relative position
+  (above / below / level / diagonal) → picks one of N arcs.
+  Today only horizontal-vs-overhead-vs-thrust is selected;
+  could expand to a small lookup table.
+- **Crit feedback layered, not exclusive**: crit doesn't
+  *replace* the swing — it adds (a) bigger arc multiplier,
+  (b) brief screen-shake + hit-stop (~50ms freeze), (c)
+  crit-flash overlay on the weapon sprite, (d) stronger
+  impact particle. Stack on top of the existing crit damage
+  number popup.
+- **CLAUDE.md gate**: this is pure visual polish, so on web
+  it should respect `gfx.*` settings — heavy crit effects
+  (screen-shake, hit-stop, big particles) skip on LOW
+  preset, stay on for MEDIUM/HIGH. See video_settings.gd.
+
+Files to touch:
+- `bot.gd:820-882` — three existing swing functions; add
+  `_play_swing_downward_chop`, `_play_swing_diagonal_<dir>`
+  helpers. Match the `_facing_x`-aware rotation pattern
+  fixed in PLAYTEST 2026-06-09 #1 so left-facing arcs flip
+  cleanly.
+- `bot.gd::attempt_attack` (or wherever the swing is
+  picked) — extend the swing-style selection with the new
+  variants based on weapon kind + relative enemy position.
+- Crit detection lives in `actor.gd::take_damage` (or
+  attacker side via `attempt_attack`) — already flagged in
+  the damage event. Plumb the flag back into the swing
+  call so the animator can branch on `is_crit`.
+- `video_settings.gd` — new `gfx.crit_punch` toggle (default
+  on for HIGH/MEDIUM, off for LOW + web LOW).
+
+DCSS precedent: DCSS doesn't animate combat (ASCII roots),
+so this is Botter-original UX work. Action games (Diablo,
+PoE, Hades) all do crit-punch + diagonal swings — the
+genre-standard expectation is real.
+
+Worth pairing with the "build feel" cluster (2026-06-11 #11
+Recount-style breakdown, race-identity #7) — same theme of
+"make the player feel their build hitting hard." A visible
+crit punch + a damage breakdown tab together turn "watching
+my numbers go up" into "watching my build *do* a thing."
+
+### 17. Duplicate items dropping — two identical entries adjacent in inventory
+**Status:** `untriaged`
+
+Player observed two identical items sitting side-by-side in
+inventory. Generation-side bug, not balance — the item-stack
+dedup or the loot-roll path is producing the same
+`(base_id, affix_seed, rarity)` tuple twice without merging.
+
+Possible roots (in suspicion order):
+- **Vault stamper double-fires fixed-loot.** Some `.des` vaults
+  carry hard-coded loot tables; if `vault_stamper.gd` runs the
+  loot phase twice (e.g., vault overlap, re-entry, or a `sub`
+  vault inheriting parent loot) the same item rolls twice with
+  the same seed slice.
+- **Chest spill not deduping.** A chest that drops N items may
+  roll on the same floor RNG state and produce the same item
+  twice in a single open. Check `chest.gd::_drop_loot` — does it
+  advance the seed between drops?
+- **Loot-factory roll collision.** `loot_factory.gd::create_item_instance`
+  uses an RNG; if seeded from a deterministic-but-stable source
+  (e.g., enemy id) two enemies of the same kind dying in the
+  same frame could roll identical items. Verify the seed source.
+- **Inventory render dedup gap.** Less likely (the items are
+  *separate* entries the player can see), but worth a sanity
+  check — if HUD inventory render walks `RunState.inventory`
+  without dedupe and the underlying array has a duplicate
+  reference, the visual would match the report.
+
+Repro plan: `/grind 3 --mortal` with extra `[loot]` tags around
+loot-id roll + inventory-add; grep the log for any
+`<base_id>+<affix_seed>` tuple that appears twice within ~1s.
+First repro session is the diagnostic.
+
+This is **outside the balance pass** — generation/loot bug, not
+itemization. Top-of-queue for the next bug session along with
+2026-06-11 second-session #13 (loot-pickup halt). Both erode
+player trust in the loot loop.
+
+### 18. Dungeon (T1 baseline) feels visually flat next to orc/mines
+**Status:** `untriaged` — design polish, not a bug.
+
+Player observation: orc/mines biome (Lair tier, warm tones,
+torch glow, vault density) reads as **incredible** vs. T1
+dungeon, which reads as boring grey corridors. The visual gap
+discourages new players from getting through T1 to the more
+vibrant biomes.
+
+Reframe: dungeon austerity is intentional baseline (everything
+else is supposed to feel like a step up), but "intentional
+baseline" doesn't have to mean "drab." DCSS's D:1 isn't lush
+either — but it *does* carry decor variety (cobwebs, blood,
+broken pillars, occasional gilt) that breaks up uniform grey.
+
+Cheap wins, all single-edits to `biomes.json::dungeon`:
+- **Floor accents at ~12% sprinkle density.** The tile catalog
+  already has dungeon-flavored overlays (cracks, puddles, dust
+  patches, faded blood splatters) under
+  `assets/tiles/overlays/`. Wire them as `floor_accent` entries
+  the way slime/lair already do — no new art needed.
+- **Warm modulate nudge.** Dungeon's grey reads cold (likely
+  neutral or slight blue). Shift modulate to ~0.95R/0.92G/0.88B
+  (warm-grey, the same direction orc/lair sit). Single field
+  in `biomes.json::dungeon::modulate`.
+- **Occasional campfire prop in larger rooms.** `assets/tiles/features/`
+  has campfire sprites already used by lair; add to dungeon's
+  `ambient_decor` with a low spawn weight so 1 in 4-5 rooms
+  carries one. The flicker light alone makes a corridor feel
+  inhabited.
+- **Vault density check.** Confirm dungeon's vault_themes pool
+  isn't undersized — if dungeon rolls fewer/smaller vaults than
+  lair/orc, that's a structural reason it feels emptier beyond
+  just palette.
+
+Files: `project/data/biomes.json` (dungeon entry), tile catalog
+already has the assets. ~30 LOC of JSON edits + one `/screenshot
+dungeon` to verify.
+
+**Out of balance-pass scope** — promote to TODO.md as a polish
+item under a "Beat 1 visual" header, or queue for a focused biome-
+polish session. The reverse-direction question (should orc/lair
+feel *more* visually distinct from dungeon, or should dungeon
+catch up?) is worth answering: catching dungeon up is cheaper
+and respects the existing visual hierarchy.
