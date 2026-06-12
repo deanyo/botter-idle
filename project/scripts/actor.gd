@@ -1143,8 +1143,6 @@ func _update_hp_bar() -> void:
 func add_status(id: String, duration: float = 1.0) -> void:
 	if not _StatusOverlay.has_status(id):
 		return
-	if not VideoSettings.is_effect_enabled("ench"):
-		return
 	# Refresh existing status — bump timer, leave sprite alone.
 	if _statuses.has(id):
 		var existing: Dictionary = _statuses[id]
@@ -1156,6 +1154,16 @@ func add_status(id: String, duration: float = 1.0) -> void:
 			existing["expires_at"] = 0.0
 		else:
 			existing["expires_at"] = max(float(existing.get("expires_at", 0.0)), new_expiry)
+		return
+	# When the "ench" visual toggle is off, register the status logically
+	# (so DoT scheduling, has_status checks, and mechanic reads still work)
+	# but skip the sprite/overlay layer. DoTs are gameplay, not visual flair.
+	if not VideoSettings.is_effect_enabled("ench"):
+		var now_no_vis: float = float(Time.get_ticks_msec()) / 1000.0
+		_statuses[id] = {
+			"expires_at": now_no_vis + duration if duration > 0.0 else 0.0,
+			"sprite": null,
+		}
 		return
 	# New status — instantiate overlay sprite + register.
 	var def: Dictionary = _StatusOverlay.get_def(id)
