@@ -54,7 +54,25 @@ static func _load_wrapper() -> Dictionary:
 			_quarantine_future(path, future_v)
 			if primary_existed:
 				last_load_warnings.append("save_from_future_build")
+			# Don't fall to defaults yet — quarantine just promoted a
+			# future-v file we can't read, but there might be older
+			# `.future-vN` files at our current schema we CAN recover.
+			# Skip _default() and let the recovery branch run below.
+			var recovered_after_q: Variant = _try_recover_quarantined()
+			if typeof(recovered_after_q) == TYPE_DICTIONARY:
+				last_load_warnings.append("save_recovered_from_quarantine")
+				return _finalize_loaded_wrapper(recovered_after_q)
 			return {"characters": [_default()], "active": 0}
+		# Primary loads cleanly. But: the player may have a stale primary
+		# (e.g. CDN-downgrade race wrote a fresh _default() into primary
+		# after quarantining their real save) AND a `.future-vN` quarantine
+		# file that holds their actual progress. Compare mtimes — if a
+		# quarantine file is newer AND its schema is ≤ ours, prefer it.
+		# Avoids "lost progress" symptom on CDN flip.
+		var quarantine_pick: Variant = _try_pick_newer_quarantine(path)
+		if typeof(quarantine_pick) == TYPE_DICTIONARY:
+			last_load_warnings.append("save_recovered_from_quarantine")
+			return _finalize_loaded_wrapper(quarantine_pick)
 		return _finalize_loaded_wrapper(primary)
 	if primary_existed:
 		_quarantine_corrupted(path)
@@ -80,7 +98,121 @@ static func _load_wrapper() -> Dictionary:
 		# to "could not be loaded" — there was no recovery available.
 		last_load_warnings.erase("save_recovered_from_backup")
 		last_load_warnings.append("save_could_not_be_loaded")
+	# Last-ditch recovery: check for any `.future-v<N>-<ts>` files left
+	# behind by a previous downgrade. These are the symptom of an itch.io
+	# CDN deploy-race: player loads new build vN+1, saves at schema N+1,
+	# CDN serves a stale build vN to a tab they had open, vN sees the
+	# vN+1 save and quarantines it as `.future-vN+1-<ts>`. Then vN
+	# returns _default() → "lvl 1 spriggan with starter dagger" symptom.
+	# When the player force-refreshes back to the current build, the
+	# original primary file is still missing and they STILL get _default().
+	# Recover by scanning for any `.future-v<N>-*` whose N is ≤ our current
+	# SCHEMA_VERSION (we can safely migrate forward); pick the newest by
+	# the trailing timestamp and load it. Idempotent: once recovered, the
+	# subsequent save_state writes a healthy primary again, so the next
+	# load doesn't need this branch.
+	var recovered: Variant = _try_recover_quarantined()
+	if typeof(recovered) == TYPE_DICTIONARY:
+		last_load_warnings.append("save_recovered_from_quarantine")
+		return _finalize_loaded_wrapper(recovered)
 	return {"characters": [_default()], "active": 0}
+
+# Walk the quarantine list. Return the first `.future-vN-<ts>` whose
+# schema is ≤ ours AND whose timestamp is strictly newer than the
+# primary's mtime. Used when primary loads but is suspected stale (CDN
+# downgrade overwrote a real save with a `_default()` after quarantining).
+# Returns the parsed dict of the winning quarantine, or null when no
+# quarantine is fresher than primary. The quarantine file is renamed
+# back to primary so subsequent loads + saves operate on it normally.
+static func _try_pick_newer_quarantine(primary_path: String) -> Variant:
+	var primary_ts: int = int(FileAccess.get_modified_time(primary_path))
+	var d := DirAccess.open("user://")
+	if d == null:
+		return null
+	var basename: String = primary_path.get_file()
+	var prefix: String = basename + ".future-v"
+	var newest_fname: String = ""
+	var newest_ts: int = primary_ts
+	for fname in d.get_files():
+		if not fname.begins_with(prefix):
+			continue
+		var rest: String = fname.substr(prefix.length())
+		var dash: int = rest.find("-")
+		if dash <= 0:
+			continue
+		var n_str: String = rest.substr(0, dash)
+		if not n_str.is_valid_int() or int(n_str) > SCHEMA_VERSION:
+			continue
+		var q_ts: int = int(FileAccess.get_modified_time("user://" + String(fname)))
+		if q_ts > newest_ts:
+			newest_ts = q_ts
+			newest_fname = String(fname)
+	if newest_fname == "":
+		return null
+	var parsed: Variant = _try_load_file("user://" + newest_fname)
+	if typeof(parsed) != TYPE_DICTIONARY:
+		return null
+	# Promote: stash the stale primary as .stale-<ts> for forensics, then
+	# rename quarantine into primary's slot.
+	var stale_name: String = "%s.stale-%d" % [basename, primary_ts]
+	if FileAccess.file_exists(primary_path):
+		d.rename(basename, stale_name)
+	d.rename(newest_fname, basename)
+	return parsed
+
+# Find any `botter_save.json.future-v<N>-<ts>` in user:// whose schema
+# version is ≤ our current SCHEMA_VERSION, sorted newest-first by the
+# trailing timestamp suffix. Returns the parsed dict of the first one
+# we can read, or null if none exist or none parse cleanly.
+#
+# We deliberately accept N == SCHEMA_VERSION too — the file was authored
+# at a "future" version relative to whoever quarantined it, but at our
+# current version it migrates as a no-op. Files with N > our current
+# version are still skipped (we'd just re-quarantine them anyway).
+static func _try_recover_quarantined() -> Variant:
+	var d := DirAccess.open("user://")
+	if d == null:
+		return null
+	var path: String = _path()
+	var basename: String = path.get_file()
+	var prefix: String = basename + ".future-v"
+	var candidates: Array = []
+	for fname in d.get_files():
+		if not fname.begins_with(prefix):
+			continue
+		# Filename shape: <basename>.future-v<N>-<ts>. Parse N from after
+		# the prefix up to the next "-" so we don't try to migrate-down
+		# a save written by a build with a higher schema than ours.
+		var rest: String = fname.substr(prefix.length())
+		var dash: int = rest.find("-")
+		if dash <= 0:
+			continue
+		var n_str: String = rest.substr(0, dash)
+		if not n_str.is_valid_int():
+			continue
+		var n: int = int(n_str)
+		if n > SCHEMA_VERSION:
+			continue
+		var ts_str: String = rest.substr(dash + 1)
+		var ts: int = int(ts_str) if ts_str.is_valid_int() else 0
+		candidates.append({"fname": fname, "n": n, "ts": ts})
+	if candidates.is_empty():
+		return null
+	# Newest first by timestamp (so a player who rapid-fire-quarantined
+	# a few times across CDN flips picks up the most recent state).
+	candidates.sort_custom(func(a, b): return int(a.ts) > int(b.ts))
+	for c in candidates:
+		var full: String = "user://" + String(c.fname)
+		var parsed: Variant = _try_load_file(full)
+		if typeof(parsed) == TYPE_DICTIONARY:
+			# Promote it back to primary so subsequent saves write
+			# alongside the recovered file. Fail-soft: if the rename
+			# can't go through we still return the parsed dict so the
+			# in-memory load succeeds; next save_state writes a healthy
+			# primary anyway.
+			d.rename(String(c.fname), _path().get_file())
+			return parsed
+	return null
 
 # Read + parse one file. Returns the parsed dict, or null on any failure
 # (file missing, open failed, JSON parse failed, top-level not a dict).

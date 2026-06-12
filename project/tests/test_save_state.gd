@@ -202,6 +202,10 @@ func _scrub_test_files() -> void:
 			d.remove(fname)
 		if fname.begins_with("botter_save_debug.json.future-"):
 			d.remove(fname)
+		# Recovery promotes a quarantine and renames the stale primary
+		# to .stale-<ts>; scrub those too.
+		if fname.begins_with("botter_save_debug.json.stale-"):
+			d.remove(fname)
 
 func test_atomic_write_creates_final_and_no_tmp_after_save() -> void:
 	# Happy path: a successful save leaves <path> on disk and no <path>.tmp
@@ -482,6 +486,115 @@ func test_load_does_not_overwrite_existing_slots() -> void:
 	assert_eq(equipped["helm"], null, "restored helm defaults to null")
 	assert_true(equipped.has("amulet"), "missing amulet key restored")
 	assert_eq(equipped["amulet"], null, "restored amulet defaults to null")
+
+# ---------------------------------------------------------------------
+# Quarantine recovery — repairs the CDN-downgrade save-loss regression.
+# Symptom: itch.io serves a stale older build to a tab right after a
+# new build push. The older build sees the new save's higher
+# schema_version, quarantines it as `.future-v<N>-<ts>`, and returns
+# defaults. When the player force-refreshes back to the current build,
+# the primary save is gone and the quarantine sits unused.
+#
+# Fix path 1 (Test E): no primary, only `.future-v<N>` files in the
+# directory — pick the newest one whose N ≤ ours, restore as primary.
+# Fix path 2 (Test F): healthy primary + a fresher `.future-v<N>`
+# quarantine — prefer the quarantine (the primary is likely a fresh
+# `_default()` written by the older build after it nuked the real
+# save).
+# ---------------------------------------------------------------------
+
+func test_load_recovers_from_quarantine_when_no_primary() -> void:
+	# Set up: only a `.future-vN-<ts>` file exists in user://, no primary.
+	# Loader should find it, parse it, migrate forward, and rename it
+	# back to primary.
+	var save := SaveState._default()
+	save["gold"] = 4242
+	save["level"] = 17
+	var wrapper := {"characters": [save], "active": 0}
+	var qpath: String = SaveState.DEBUG_PATH + ".future-v%d-1717000000" % SaveState.SCHEMA_VERSION
+	var f := FileAccess.open(qpath, FileAccess.WRITE)
+	f.store_string(JSON.stringify(wrapper))
+	f.close()
+	# No primary exists.
+	assert_false(FileAccess.file_exists(SaveState.DEBUG_PATH),
+		"sanity: no primary file before recovery")
+	var loaded := SaveState.load_state()
+	# Recovered the gold + level we wrote into the quarantine.
+	assert_eq(int(loaded["gold"]), 4242,
+		"recovered save's gold survived through quarantine")
+	assert_eq(int(loaded["level"]), 17,
+		"recovered save's level survived through quarantine")
+	assert_true("save_recovered_from_quarantine" in loaded.get("last_load_warnings", []),
+		"save_recovered_from_quarantine warning surfaced")
+	# Quarantine file was promoted back to primary.
+	assert_true(FileAccess.file_exists(SaveState.DEBUG_PATH),
+		"quarantine promoted back to primary after recovery")
+	assert_false(FileAccess.file_exists(qpath),
+		"quarantine file removed after promotion")
+
+func test_load_prefers_newer_quarantine_over_stale_primary() -> void:
+	# Set up: a stale `_default()`-shaped primary AND a newer (by mtime)
+	# `.future-vN-<ts>` quarantine. The quarantine should win — primary
+	# is what an older build wrote after it nuked the real save.
+	var stale := SaveState._default()
+	stale["gold"] = 0
+	stale["level"] = 1
+	var stale_wrapper := {"characters": [stale], "active": 0}
+	var f := FileAccess.open(SaveState.DEBUG_PATH, FileAccess.WRITE)
+	f.store_string(JSON.stringify(stale_wrapper))
+	f.close()
+	# Tick the clock so the quarantine's mtime is strictly greater than
+	# primary's. Godot's get_modified_time has 1-second resolution.
+	OS.delay_msec(1100)
+	var real := SaveState._default()
+	real["gold"] = 9999
+	real["level"] = 50
+	var real_wrapper := {"characters": [real], "active": 0}
+	var qpath: String = SaveState.DEBUG_PATH + ".future-v%d-1717000001" % SaveState.SCHEMA_VERSION
+	var f2 := FileAccess.open(qpath, FileAccess.WRITE)
+	f2.store_string(JSON.stringify(real_wrapper))
+	f2.close()
+	var loaded := SaveState.load_state()
+	# Loader picked the newer quarantine.
+	assert_eq(int(loaded["gold"]), 9999,
+		"newer quarantine's gold preferred over stale primary")
+	assert_eq(int(loaded["level"]), 50,
+		"newer quarantine's level preferred over stale primary")
+	assert_true("save_recovered_from_quarantine" in loaded.get("last_load_warnings", []),
+		"recovery warning surfaced when newer quarantine wins")
+	# Stale primary kept aside as `.stale-<ts>` for forensics.
+	var d := DirAccess.open("user://")
+	var found_stale := false
+	for fname: String in d.get_files():
+		if fname.begins_with("botter_save_debug.json.stale-"):
+			found_stale = true
+			break
+	assert_true(found_stale, "stale primary preserved as .stale-<ts>")
+
+func test_load_keeps_primary_when_quarantine_older() -> void:
+	# Set up: a healthy primary AND an older quarantine. Primary should
+	# win — quarantine is residue from a previous incident, not fresher
+	# state. We don't want to clobber a good primary with stale data.
+	var stale_q := SaveState._default()
+	stale_q["gold"] = 1
+	var stale_q_wrapper := {"characters": [stale_q], "active": 0}
+	var qpath: String = SaveState.DEBUG_PATH + ".future-v%d-1717000000" % SaveState.SCHEMA_VERSION
+	var f := FileAccess.open(qpath, FileAccess.WRITE)
+	f.store_string(JSON.stringify(stale_q_wrapper))
+	f.close()
+	OS.delay_msec(1100)
+	var fresh_primary := SaveState._default()
+	fresh_primary["gold"] = 8888
+	var fresh_wrapper := {"characters": [fresh_primary], "active": 0}
+	var f2 := FileAccess.open(SaveState.DEBUG_PATH, FileAccess.WRITE)
+	f2.store_string(JSON.stringify(fresh_wrapper))
+	f2.close()
+	var loaded := SaveState.load_state()
+	# Loader kept the primary because the quarantine wasn't fresher.
+	assert_eq(int(loaded["gold"]), 8888,
+		"primary preferred when quarantine is older")
+	assert_false("save_recovered_from_quarantine" in loaded.get("last_load_warnings", []),
+		"no recovery warning when primary wins")
 
 # ---------------------------------------------------------------------
 # Forward-compat: unknown keys preserved

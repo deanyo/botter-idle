@@ -1875,3 +1875,72 @@ polish session. The reverse-direction question (should orc/lair
 feel *more* visually distinct from dungeon, or should dungeon
 catch up?) is worth answering: catching dungeon up is cheaper
 and respects the existing visual hierarchy.
+
+
+## 2026-06-12 — save loss after build push (URGENT)
+
+Status legend: `untriaged` | `triaged → fixed` | `triaged → TODO` |
+`triaged → next-session-brief` | `triaged → deferred` | `triaged →
+not-a-bug`.
+
+### 1. Save resets to lvl 1 spriggan after a new build push
+**Status:** `triaged → fixed (commit <SHA>, 2026-06-12)`
+
+Multiple playtesters reporting their save vanishes after a
+`/deploy-web` push: they load into the next session and the
+character reverts to a level-1 spriggan. The 535a135 fix from
+2026-06-11 closed the sparse-equipped variant, but the symptom
+came back this session — same surface, different cause.
+
+**Root cause:** itch.io CDN deploy-race. When the CDN serves a
+stale older build to a player who already saved at the new
+schema, the older build sees `schema_version > SCHEMA_VERSION`,
+quarantines the save as `botter_save.json.future-v<N>-<ts>`, and
+returns `_default()`. From the player's perspective, when they
+force-refresh back to the current build, the primary save is
+gone (renamed to .future-vN) and the loader still hands back
+`_default()` because primary doesn't exist. The
+`save_state.gd:240` push_error fires once, no UI surface reads
+`last_load_warnings = ["save_from_future_build"]`, the player
+just sees a fresh spriggan.
+
+CLAUDE.md flagged this exact CDN-stale-cache class of failure
+("Chrome served v3 while butler dashboard reported v13"). The
+v9→v10 schema bump in commit 2c05084 (yesterday) is what
+amplified the latent case into a player-facing one — every
+schema bump opens a window during which downgrade-quarantines
+can happen.
+
+**Fix:** auto-recover from `.future-v<N>-<ts>` quarantines whose
+N ≤ current SCHEMA_VERSION. Two paths in `_load_wrapper`:
+
+1. **No-primary branch** — primary file is missing OR was
+   quarantined this load; before falling back to `_default()`,
+   scan user:// for any `.future-v<N>-*` and recover the newest
+   one we can read (rename it back to primary in the process).
+
+2. **Stale-primary branch** — primary loads cleanly, but a
+   `.future-v<N>-<ts>` quarantine has a strictly newer mtime AND
+   N ≤ ours. Prefer the quarantine (the primary is likely a
+   `_default()` an older build wrote after nuking the real save).
+   Stale primary preserved as `.stale-<ts>` for forensics.
+
+Both branches surface a `save_recovered_from_quarantine` warning.
+Subsequent saves write a fresh primary alongside, so the
+recovery branch is dormant on healthy loads.
+
+Three GUT regressions cover the three relevant shapes
+(`test_load_recovers_from_quarantine_when_no_primary`,
+`test_load_prefers_newer_quarantine_over_stale_primary`,
+`test_load_keeps_primary_when_quarantine_older` — the last
+guards against falsely promoting a stale quarantine when the
+primary is the real fresher state).
+
+Files: `project/scripts/save_state.gd` adds
+`_try_recover_quarantined()` + `_try_pick_newer_quarantine()`,
+extends `_load_wrapper` to call them in two places.
+`project/tests/test_save_state.gd` adds the regression tests +
+extends `_scrub_test_files` to clean `.stale-` residue.
+
+This makes future schema bumps safe by default — a downgrade
+during the deploy-race no longer destroys progress.

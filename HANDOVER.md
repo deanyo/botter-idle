@@ -235,6 +235,32 @@ slime jellies and holy-vulnerable crypt undead.
 
 ---
 
+2026-06-12 (save-loss recovery — CDN-downgrade quarantine
+auto-restore). Players reported their saves resetting to lvl-1
+spriggan after `/deploy-web` pushes. Root cause: itch.io CDN
+serves a stale older build to tabs already holding a save at the
+new schema; old build quarantines as `.future-v<N>-<ts>` and
+returns `_default()`; even after the player force-refreshes
+back to the current build the primary save is gone. The 2c05084
+v9→v10 schema bump amplified this latent case into a
+player-facing one.
+
+`SaveState._load_wrapper` now auto-recovers `.future-v<N>-*`
+files whose N ≤ SCHEMA_VERSION, in two places: (1) the
+no-primary branch picks the newest readable quarantine before
+falling back to `_default()`; (2) when primary loads but a
+`.future-v<N>` exists with strictly newer mtime, the loader
+prefers the quarantine (renames stale primary to `.stale-<ts>`
+for forensics, then promotes the quarantine in). Both surface
+`save_recovered_from_quarantine` in last_load_warnings. Three
+GUT regressions
+(test_load_recovers_from_quarantine_when_no_primary,
+test_load_prefers_newer_quarantine_over_stale_primary,
+test_load_keeps_primary_when_quarantine_older). Future schema
+bumps are now safe by default against the CDN-downgrade window.
+
+---
+
 2026-06-12 (balance pass beat 1.G items 1-3 close — pct-affix
 collision renames + v9→v10 save migration). Three pct-side
 elemental affixes renamed to retire the one-letter collisions
