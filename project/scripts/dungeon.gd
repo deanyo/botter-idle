@@ -1610,6 +1610,7 @@ func _spawn_loot_drop(instance: Dictionary, at_cell: Vector2i) -> void:
 	actor_layer.add_child(drop)
 	loot_drops.append(drop)
 	interactables.append(drop)
+	GrindLog.log_line("[loot] f=%d rarity=%s base=%s" % [current_floor, String(items_db[base_id].get("rarity", "common")), base_id])
 
 func _spawn_chest(at_cell: Vector2i, drops: int = 2, bias: int = 0) -> void:
 	var chest := Chest.new()
@@ -2422,6 +2423,7 @@ func _spawn_loot_drop_get(instance: Dictionary, at_cell: Vector2i) -> LootDrop:
 	actor_layer.add_child(drop)
 	loot_drops.append(drop)
 	interactables.append(drop)
+	GrindLog.log_line("[loot] f=%d rarity=%s base=%s" % [current_floor, String(items_db[base_id].get("rarity", "common")), base_id])
 	return drop
 
 func _adjacent_walkable_cell(center: Vector2i, idx: int) -> Vector2i:
