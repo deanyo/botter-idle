@@ -102,10 +102,10 @@ name-driven implicits each, keyed off the flavor suffix from
 `item_generator.gd` flavor table — frostbound/azure→cold (of_frost,
 of_finesse / of_cryomancer + of_cold_resist), ironclad→armor or
 lightning (of_might + of_executioner / of_wisdom +
-of_lightning_resist), jadeforged→poison (of_envenom +
+of_lightning_resist), jadeforged→poison (of_pestcaller +
 of_poison_resist), sunsteel/rosegold→holy (of_zealot +
 of_holy_resist), mossy→poison (of_venom + of_finesse),
-obsidian/shadowed/spectral→dark (of_shadow + of_dark_resist /
+obsidian/shadowed/spectral→dark (of_nightcaller + of_dark_resist /
 of_dark_resist + of_phylactery), prismatic→multi-stat. All
 slot-eligible per `affixes.json::applies_to`. (2) **42
 epic/rare/uncommon recolors culled** by setting
@@ -171,7 +171,7 @@ mirrors steel_battle_axe T3 rare 60-103/spd 1.1; viper_lance mirrors
 steel-spear T3 → mithril_longsword T4 epic shape 45-82/spd 0.7).
 Affix pools strictly slot-eligible per affixes.json applies_to —
 `of_frost`/`of_venom` (flat-extra) carry the elemental flavor on
-weapons; `of_envenom`/`of_zealot` (pct, amulet/ring/helm/etc only)
+weapons; `of_pestcaller`/`of_zealot` (pct, amulet/ring/helm/etc only)
 deliberately kept off weapons. Plus deferred-from-1.D `chilly_death`
 rebalance: damage 48-107 → 60-119, mirroring serpent_scourge/wyrmbane
 single-element-flagship template per A1 finding 4. Items pool
@@ -228,10 +228,38 @@ Composition path is unchanged — `actor.gd:474-477` already reads
 `elem_mit` exactly like fire/cold/holy/poison/dark; runtime probe
 confirmed +50 halves a 100-dmg lightning hit and -25 amps it to
 125. The result: chain_lightning / spell_static_field / echo_lance
-/ stormcaller_totem / `of_storm` and `of_storms_pct` lightning
+/ stormcaller_totem / `of_thundercaller` and `of_storms` lightning
 builds now have biome shape — neutral in lair/forest, walled in
 zot endgame, vulnerable in swamp. Symmetric to fire-vulnerable
 slime jellies and holy-vulnerable crypt undead.
+
+---
+
+2026-06-12 (balance pass beat 1.G items 1-3 close — pct-affix
+collision renames + v9→v10 save migration). Three pct-side
+elemental affixes renamed to retire the one-letter collisions
+with their range-side counterparts: `of_storm` →
+`of_thundercaller` (lightning_dmg_pct), `of_shadow` →
+`of_nightcaller` (dark_dmg_pct), `of_envenom` → `of_pestcaller`
+(poison_dmg_pct). Range-side `of_storms` / `of_shadows` /
+`of_venom` (the lightning_extra / dark_extra / poison_extra
+survivors) keep their ids and statlines. New `_migrate_to_v10` in
+`save_state.gd` walks every save's equipped slots + inventory and
+rewrites rolled affix instances by id; `SCHEMA_VERSION` 9 → 10.
+Idempotent — re-running on a v10 save matches no ids and is a
+no-op. Bulk rewrite covers `affixes.json` (3 entries),
+`stat_calc.gd` (`_SYNERGY_INT` + comments), `ui_theme.gd`
+flavor-tag mapping (1 entry), `items.json` 947 hits across
+`affix_pool` and `extra_pool` blocks, `tools/items_amulets_manifest.json`
+126 hits, `tools/items_rings_manifest.json` 151 hits,
+`tools/items_helms_manifest.json` 1 hit, `tools/s10_inject_spell_archetypes.py` 7 hits,
+plus the matching test rename in `test_affix_system.gd`. End-to-end
+runtime probe of a synthetic v9 save with all three old ids equipped
++ inventoried verified the migration: post-`_migrate` schema_version
+is 10, the three stale ids are gone, the range-side `of_storms`
+neighbor is untouched, and a second `_migrate` call is a no-op.
+Cluster 1.G now has 7 of 10 sub-items shipped; the remaining
+1.H/1.L/1.M items are independent.
 
 ---
 
@@ -253,8 +281,8 @@ keys by id, so a plunder T5 amulet + prospecting amulet + prospecting
 weapon stack would otherwise reach 65%+ with no ceiling. Clamp
 verified at runtime via direct probe. /sweep loaded all 5 of_berserker
 tiers cleanly on the new curve. Cluster 1.G items 5-10 ship; items
-1-3 (id-collision renames) remain open pending a v9→v10 save
-migration scaffold.
+1-3 (id-collision renames) followed up the next day with a
+v9→v10 save migration — see the 2026-06-12 entry above.
 
 ---
 
@@ -953,9 +981,10 @@ mechanic does not work" issues + 1 user-reported buff-bar bug:
   after flat upgrade, def_pct multiplies armor after flat upgrade,
   aggro_flat surfaces in the aggro_bonus output.
 - **Element-damage builds buildable.** Six new affix entries —
-  `of_pyromancer` (fire), `of_cryomancer` (cold), `of_storm`
-  (thunderous), `of_zealot` (holy), `of_venom` (poison), `of_shadow`
-  (dark) — each rolling 4-45% on amulet/ring/helm/gloves/cloak/spell.
+  `of_pyromancer` (fire), `of_cryomancer` (cold), `of_thundercaller`
+  (lightning), `of_zealot` (holy), `of_pestcaller` (poison),
+  `of_nightcaller` (dark) — each rolling 4-45% on
+  amulet/ring/helm/gloves/cloak/spell.
   StatCalc folds the per-element sums into `spell_element_pct[<elem>]`
   with a 100% per-element soft cap. `spell_data.gd:181-182` was
   already reading `bot.spell_element_pct[arch.element]` to scale

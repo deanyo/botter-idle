@@ -564,7 +564,7 @@ const _AFFIX_FLAVOR_MAP := {
 	"of_static":         "lightning",
 	"of_radiance":       "holy",
 	"of_venom":          "poison",
-	"of_shadow":         "dark",
+	"of_nightcaller":    "dark",
 }
 
 # Tags whose payload comes from item enchants OR rolled affixes that

@@ -214,37 +214,38 @@ func test_format_stat_line_drops_legacy_atk_def_cases() -> void:
 # survival, base_type category expansion, of_multicast non-zero floor.
 # ---------------------------------------------------------------------
 
-func test_of_envenom_replaces_pct_venom_no_collision() -> void:
-	# Pre-fix: two affixes shared id "of_venom" — range (poison_extra)
-	# and pct (poison_dmg_pct). Loader silently dropped one. Post-fix
-	# the pct version is renamed to of_envenom; both must coexist with
-	# distinct ids and distinct stat keys.
+func test_pct_poison_affix_id_distinct_from_range_venom() -> void:
+	# Two affixes used to share id "of_venom" — range (poison_extra) and
+	# pct (poison_dmg_pct). v8 renamed the pct version to of_envenom; v10
+	# (2026-06-12) renamed it again to of_pestcaller to kill the residual
+	# of_venom / of_envenom one-letter collision. Range keeps of_venom;
+	# pct lives at of_pestcaller. Both must resolve with distinct stats.
 	var range_def: Dictionary = AffixSystem.get_affix_def("of_venom")
-	var pct_def: Dictionary = AffixSystem.get_affix_def("of_envenom")
+	var pct_def: Dictionary = AffixSystem.get_affix_def("of_pestcaller")
 	assert_false(range_def.is_empty(), "of_venom (range) survives the rename")
-	assert_false(pct_def.is_empty(), "of_envenom (pct) is reachable post-rename")
+	assert_false(pct_def.is_empty(), "of_pestcaller (pct) is reachable post-rename")
 	assert_eq(String(range_def.get("stat", "")), "poison_extra",
 		"of_venom keeps poison_extra range stat")
 	assert_eq(String(pct_def.get("stat", "")), "poison_dmg_pct",
-		"of_envenom owns poison_dmg_pct")
+		"of_pestcaller owns poison_dmg_pct")
 
 func test_element_pct_affixes_can_roll_on_jewelry() -> void:
-	# Pre-fix: of_pyromancer / of_cryomancer / of_storm / of_zealot /
-	# of_envenom / of_shadow appeared in zero items' affix_pool — pure
-	# dead code. Post-fix every ring/amulet/spell pool carries them.
-	# Statistical: across 200 legendary ring rolls (5 affixes each =
-	# 1000 picks), at least one element-pct id should land.
+	# Pre-fix: of_pyromancer / of_cryomancer / of_thundercaller /
+	# of_zealot / of_pestcaller / of_nightcaller appeared in zero items'
+	# affix_pool — pure dead code. Post-fix every ring/amulet/spell pool
+	# carries them. Statistical: across 200 legendary ring rolls (5
+	# affixes each = 1000 picks), at least one element-pct id should land.
 	var rng := RandomNumberGenerator.new()
 	var saw: bool = false
-	var element_ids := ["of_pyromancer", "of_cryomancer", "of_storm",
-		"of_zealot", "of_envenom", "of_shadow"]
+	var element_ids := ["of_pyromancer", "of_cryomancer", "of_thundercaller",
+		"of_zealot", "of_pestcaller", "of_nightcaller"]
 	for s in 200:
 		rng.seed = s
 		var item := {
 			"slot": "ring", "rarity": "legendary", "base_type": "ring",
 			"affix_pool": {
-				"of_pyromancer": 8, "of_cryomancer": 8, "of_storm": 8,
-				"of_zealot": 8, "of_envenom": 8, "of_shadow": 8,
+				"of_pyromancer": 8, "of_cryomancer": 8, "of_thundercaller": 8,
+				"of_zealot": 8, "of_pestcaller": 8, "of_nightcaller": 8,
 				"of_might": 8, "of_finesse": 8,
 			},
 		}

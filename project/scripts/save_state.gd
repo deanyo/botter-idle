@@ -408,7 +408,7 @@ static func delete_character(idx: int) -> void:
 # instance of this). Versioned chain replaces probe gating with explicit
 # `if v < N` ordering. Starting at 7 acknowledges the historic bumps so
 # any future references to "older save shapes" use real version numbers.
-const SCHEMA_VERSION := 9
+const SCHEMA_VERSION := 10
 
 # In-place migrations applied on load. Idempotent — once schema_version
 # matches SCHEMA_VERSION, every step short-circuits.
@@ -429,6 +429,9 @@ static func _migrate(state: Dictionary) -> void:
 	if v < 9:
 		_migrate_to_v9(state)
 		v = 9
+	if v < 10:
+		_migrate_to_v10(state)
+		v = 10
 	state["schema_version"] = SCHEMA_VERSION
 
 # v0 → v7: subsumes every historic probe-based migration into one step.
@@ -577,6 +580,24 @@ static func _migrate_to_v9(state: Dictionary) -> void:
 	if int(state.get("inventory_cap", 50)) <= 50:
 		state["inventory_cap"] = 200
 
+# v9 → v10: rename three pct-side affix ids to kill the residual
+# one-letter collisions with their range-side counterparts.
+#   of_storm   (lightning_dmg_pct) → of_thundercaller
+#   of_shadow  (dark_dmg_pct)      → of_nightcaller
+#   of_envenom (poison_dmg_pct)    → of_pestcaller
+# The range-side `of_storms` / `of_shadows` / `of_venom` ids are the
+# survivors and are NOT renamed here — they keep their data shape.
+# All three pct affixes are pure pct-kind (kind="pct"), so rolled
+# instances on disk lack `value_min`/`value_max`. Idempotent: once
+# stamped at v10, re-running this step matches no ids and is a no-op.
+static func _migrate_to_v10(state: Dictionary) -> void:
+	var equipped: Dictionary = state.get("equipped", {})
+	for slot in equipped.keys():
+		_v10_migrate_inst(equipped[slot])
+	var inventory: Array = state.get("inventory", [])
+	for inst in inventory:
+		_v10_migrate_inst(inst)
+
 static func _v8_migrate_inst(inst: Variant) -> void:
 	if typeof(inst) != TYPE_DICTIONARY:
 		return
@@ -591,6 +612,25 @@ static func _v8_migrate_inst(inst: Variant) -> void:
 		# Range version carries value_min + value_max; pct does not.
 		if not af.has("value_min") and not af.has("value_max"):
 			af["id"] = "of_envenom"
+
+const _V10_RENAMES := {
+	"of_storm":   "of_thundercaller",
+	"of_shadow":  "of_nightcaller",
+	"of_envenom": "of_pestcaller",
+}
+
+static func _v10_migrate_inst(inst: Variant) -> void:
+	if typeof(inst) != TYPE_DICTIONARY:
+		return
+	var affixes: Variant = inst.get("affixes", null)
+	if typeof(affixes) != TYPE_ARRAY:
+		return
+	for af in affixes:
+		if typeof(af) != TYPE_DICTIONARY:
+			continue
+		var id: String = String(af.get("id", ""))
+		if _V10_RENAMES.has(id):
+			af["id"] = String(_V10_RENAMES[id])
 
 # Flush the underlying user:// filesystem to durable storage. No-op on
 # Steam / desktop / mobile (Godot's FileAccess.flush + close already

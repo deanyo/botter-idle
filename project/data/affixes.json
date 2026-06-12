@@ -286,8 +286,8 @@
       "tiers": [[4,8],[8,14],[14,22],[22,32],[32,45]]
     },
     {
-      "id": "of_storm",      "family": "generic", "kind": "pct",
-      "name": "of Storm",    "stat": "lightning_dmg_pct",
+      "id": "of_thundercaller", "family": "generic", "kind": "pct",
+      "name": "of the Thundercaller", "stat": "lightning_dmg_pct",
       "applies_to": ["amulet","ring","helm","gloves","cloak","spell"],
       "tiers": [[4,8],[8,14],[14,22],[22,32],[32,45]]
     },
@@ -298,14 +298,14 @@
       "tiers": [[4,8],[8,14],[14,22],[22,32],[32,45]]
     },
     {
-      "id": "of_envenom",    "family": "generic", "kind": "pct",
-      "name": "of Envenom",  "stat": "poison_dmg_pct",
+      "id": "of_pestcaller", "family": "generic", "kind": "pct",
+      "name": "of the Pestcaller", "stat": "poison_dmg_pct",
       "applies_to": ["amulet","ring","helm","gloves","cloak","spell"],
       "tiers": [[4,8],[8,14],[14,22],[22,32],[32,45]]
     },
     {
-      "id": "of_shadow",     "family": "generic", "kind": "pct",
-      "name": "of Shadow",   "stat": "dark_dmg_pct",
+      "id": "of_nightcaller", "family": "generic", "kind": "pct",
+      "name": "of the Nightcaller", "stat": "dark_dmg_pct",
       "applies_to": ["amulet","ring","helm","gloves","cloak","spell"],
       "tiers": [[4,8],[8,14],[14,22],[22,32],[32,45]]
     },

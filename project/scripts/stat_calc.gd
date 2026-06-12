@@ -315,7 +315,7 @@ static func compute(
 		extra_chests_per_floor += int(round(float(slot_sums.get("extra_chests_per_floor", 0))))
 		fifth_cast_pct += float(slot_sums.get("fifth_cast_pct", 0))
 		# Per-element spell-damage affixes (of_pyromancer / of_cryomancer
-		# / of_storm / of_zealot / of_venom / of_shadow). Each writes to
+		# / of_thundercaller / of_zealot / of_pestcaller / of_nightcaller). Each writes to
 		# `<elem>_dmg_pct`; we accumulate into spell_element_pct keyed by
 		# element so spell_data.gd:181 can read elem_mult per spell.
 		# Lightning is the one element where the spell-side identifier
@@ -712,10 +712,10 @@ static func _scaled_affix_sums(affixes: Array, qmult_affix: float, source_count:
 # (matched to PLAYTEST #2 / #7 stat-identity work):
 #   STR: of_might / of_str_mastery / of_berserker / of_berserker_rage / of_sundering / of_bloodletting
 #   DEX: of_finesse / of_dex_mastery / of_haste / of_crit / of_hunter / of_echoes / of_velocity
-#   INT: of_wisdom / of_int_mastery / of_channeling / of_quickcast / of_resonance / of_lingering / of_sage / of_tempest / of_pyromancer / of_cryomancer / of_storm / of_zealot / of_envenom / of_shadow
+#   INT: of_wisdom / of_int_mastery / of_channeling / of_quickcast / of_resonance / of_lingering / of_sage / of_tempest / of_pyromancer / of_cryomancer / of_thundercaller / of_zealot / of_pestcaller / of_nightcaller
 const _SYNERGY_STR := ["of_might", "of_str_mastery", "of_berserker", "of_berserker_rage", "of_sundering", "of_bloodletting"]
 const _SYNERGY_DEX := ["of_finesse", "of_dex_mastery", "of_haste", "of_crit", "of_hunter", "of_echoes", "of_velocity"]
-const _SYNERGY_INT := ["of_wisdom", "of_int_mastery", "of_channeling", "of_quickcast", "of_resonance", "of_lingering", "of_sage", "of_tempest", "of_pyromancer", "of_cryomancer", "of_storm", "of_zealot", "of_envenom", "of_shadow"]
+const _SYNERGY_INT := ["of_wisdom", "of_int_mastery", "of_channeling", "of_quickcast", "of_resonance", "of_lingering", "of_sage", "of_tempest", "of_pyromancer", "of_cryomancer", "of_thundercaller", "of_zealot", "of_pestcaller", "of_nightcaller"]
 
 static func _has_synergy_triplet(equipped: Dictionary, items_db: Dictionary) -> bool:
 	var str_seen: bool = false

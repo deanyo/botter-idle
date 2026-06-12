@@ -37,10 +37,10 @@ BASE_POOL: dict[str, int] = {
     "of_lifesteal": 6,
     "of_pyromancer": 8,
     "of_cryomancer": 8,
-    "of_storm": 8,
+    "of_thundercaller": 8,
     "of_zealot": 8,
-    "of_envenom": 8,
-    "of_shadow": 8,
+    "of_pestcaller": 8,
+    "of_nightcaller": 8,
     "of_sage": 8,
     "of_hunter": 8,
     "of_tempest": 8,
@@ -93,7 +93,7 @@ ARCHETYPES = {
         "tile": "spells/books/dark_green.png",
         "tiers": {1: (1, 1), 2: (1, 2), 3: (2, 2), 4: (2, 3), 5: (3, 3)},
         "cooldown": {1: 7.0, 2: 6.2, 3: 5.5, 4: 4.8, 5: 4.2},
-        "extra_pool": {"of_envenom": 30},
+        "extra_pool": {"of_pestcaller": 30},
     },
     # stormcaller_totem: DEX lightning turret. 12 dmg/zap baseline; tier
     # ramps 8-18 dmg/zap.
@@ -107,7 +107,7 @@ ARCHETYPES = {
         "tile": "spells/books/metal_blue.png",
         "tiers": {1: (8, 10), 2: (10, 12), 3: (12, 14), 4: (14, 16), 5: (16, 18)},
         "cooldown": {1: 9.0, 2: 8.0, 3: 7.0, 4: 6.5, 5: 6.0},
-        "extra_pool": {"of_storm": 30, "of_storms": 8},
+        "extra_pool": {"of_thundercaller": 30, "of_storms": 8},
     },
     # curse_brittlebone: DEX debuff (0 dmg). Tier scales duration via
     # spell_duration_pct on item — but for now just per-tier curve on
@@ -122,7 +122,7 @@ ARCHETYPES = {
         "tile": "spells/books/dark_blue.png",
         "tiers": {1: (1, 1), 2: (1, 1), 3: (1, 1), 4: (1, 1), 5: (1, 1)},
         "cooldown": {1: 12.0, 2: 11.0, 3: 10.0, 4: 9.0, 5: 8.0},
-        "extra_pool": {"of_shadow": 22},
+        "extra_pool": {"of_nightcaller": 22},
     },
     # wrath_charge: STR self-buff (0 dmg).
     "spell_wrath_charge": {
@@ -148,7 +148,7 @@ ARCHETYPES = {
         "tile": "spells/scrolls/scroll.png",
         "tiers": {1: (7, 9), 2: (8, 11), 3: (10, 13), 4: (12, 15), 5: (14, 17)},
         "cooldown": {1: 4.0, 2: 3.4, 3: 2.8, 4: 2.2, 5: 1.6},
-        "extra_pool": {"of_storm": 22, "of_executioner": 8},
+        "extra_pool": {"of_thundercaller": 22, "of_executioner": 8},
     },
     # wisp_servant: INT interim orbiter. Base 4 dmg/zap; tier 3-7.
     "spell_wisp_servant": {
