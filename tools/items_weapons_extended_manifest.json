@@ -3049,9 +3049,9 @@
         "sat": 0.8
       },
       "drop_weights": [
-        25,
-        60,
-        12,
+        0,
+        0,
+        0,
         0,
         0
       ],
@@ -3227,10 +3227,10 @@
         "sat": 0.636
       },
       "drop_weights": [
-        3,
-        25,
-        60,
-        12,
+        0,
+        0,
+        0,
+        0,
         0
       ],
       "enchant_chance": 0.1,
@@ -3286,10 +3286,10 @@
         "sat": 1.07
       },
       "drop_weights": [
-        3,
-        25,
-        60,
-        12,
+        0,
+        0,
+        0,
+        0,
         0
       ],
       "enchant_chance": 0.1,
@@ -3345,9 +3345,9 @@
         "sat": 0.762
       },
       "drop_weights": [
-        25,
-        60,
-        12,
+        0,
+        0,
+        0,
         0,
         0
       ],
@@ -3405,9 +3405,9 @@
         "sat": 1.011
       },
       "drop_weights": [
-        25,
-        60,
-        12,
+        0,
+        0,
+        0,
         0,
         0
       ],
@@ -3524,10 +3524,10 @@
       },
       "drop_weights": [
         0,
-        3,
-        25,
-        60,
-        12
+        0,
+        0,
+        0,
+        0
       ],
       "enchant_chance": 0.18,
       "flavor_tags": [
@@ -3587,10 +3587,10 @@
       },
       "drop_weights": [
         0,
-        3,
-        25,
-        60,
-        12
+        0,
+        0,
+        0,
+        0
       ],
       "enchant_chance": 0.18,
       "flavor_tags": [
@@ -3648,10 +3648,10 @@
         "sat": 1.066
       },
       "drop_weights": [
-        3,
-        25,
-        60,
-        12,
+        0,
+        0,
+        0,
+        0,
         0
       ],
       "enchant_chance": 0.1,
@@ -4036,7 +4036,10 @@
         "fire"
       ],
       "id": "firestarter_ironclad",
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_might",
+        "of_executioner"
+      ],
       "item_tier": 5,
       "lore": "Plain forged iron, but heavier than the metal alone explains.",
       "name": "Ironclad Firestarter",

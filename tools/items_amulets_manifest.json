@@ -1648,10 +1648,10 @@
         "sat": 0.939
       },
       "drop_weights": [
-        3,
-        25,
-        60,
-        12,
+        0,
+        0,
+        0,
+        0,
         0
       ],
       "enchant_chance": 0.18,
@@ -1727,7 +1727,10 @@
         "dark"
       ],
       "id": "cekugob_amulet_obsidian",
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_dark_resist",
+        "of_phylactery"
+      ],
       "item_tier": 5,
       "lore": "Volcanic glass, edge-flaked razor-sharp by patient hands.",
       "name": "Obsidian Cekugob's Amulet",
@@ -1786,7 +1789,10 @@
         "holy"
       ],
       "id": "amulet_finger_rosegold",
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_zealot",
+        "of_holy_resist"
+      ],
       "item_tier": 5,
       "lore": "An alloy out of fashion in this century. The shine is unmistakable.",
       "name": "Rose-gold The Finger",
@@ -1910,9 +1916,9 @@
       "drop_weights": [
         0,
         0,
-        3,
-        25,
-        60
+        0,
+        0,
+        0
       ],
       "enchant_chance": 0.18,
       "flavor_tags": [
@@ -2041,7 +2047,10 @@
         "dark"
       ],
       "id": "cekugob_amulet_shadowed",
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_shadow",
+        "of_dark_resist"
+      ],
       "item_tier": 5,
       "lore": "Hard to see in dim light, even when held directly before you.",
       "name": "Shadowed Cekugob's Amulet",
@@ -2249,7 +2258,10 @@
         "cold"
       ],
       "id": "stone_2_red_voidwrought_frostbound",
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_cryomancer",
+        "of_cold_resist"
+      ],
       "item_tier": 3,
       "lore": "A rime of ice will not melt, no matter how warm the room.",
       "name": "Frostbound Voidwrought Bleeding Stone",
@@ -2317,7 +2329,10 @@
         "holy"
       ],
       "id": "crystal_red_sunsteel",
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_zealot",
+        "of_holy_resist"
+      ],
       "item_tier": 4,
       "lore": "The metal is warm even at midnight. Undead dare not touch it.",
       "name": "Sunsteel Bloodstone Pendant",
@@ -2385,7 +2400,10 @@
         "dark"
       ],
       "id": "stone_2_red_voidwrought_spectral",
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_shadow",
+        "of_dark_resist"
+      ],
       "item_tier": 3,
       "lore": "It is somehow always slightly cooler than its surroundings.",
       "name": "Spectral Voidwrought Bleeding Stone",
@@ -2441,10 +2459,10 @@
       },
       "drop_weights": [
         0,
-        3,
-        25,
-        60,
-        12
+        0,
+        0,
+        0,
+        0
       ],
       "enchant_chance": 0.18,
       "flavor_tags": [
@@ -2513,10 +2531,10 @@
         ]
       },
       "drop_weights": [
-        3,
-        25,
-        60,
-        12,
+        0,
+        0,
+        0,
+        0,
         0
       ],
       "enchant_chance": 0.1,
@@ -2593,7 +2611,10 @@
         "poison"
       ],
       "id": "face_amulet_gold_jadeforged",
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_envenom",
+        "of_poison_resist"
+      ],
       "item_tier": 4,
       "lore": "Carved from one piece of imperial jade. Fault-lines make patterns.",
       "name": "Jade-forged Saintly Visage",

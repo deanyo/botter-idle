@@ -17110,9 +17110,9 @@
         "sat": 0.8
       },
       "drop_weights": [
-        25,
-        60,
-        12,
+        0,
+        0,
+        0,
         0,
         0
       ],
@@ -17163,10 +17163,10 @@
         "sat": 0.66
       },
       "drop_weights": [
-        3,
-        25,
-        60,
-        12,
+        0,
+        0,
+        0,
+        0,
         0
       ],
       "enchant_chance": 0.1,
@@ -17325,8 +17325,8 @@
         "sat": 0.991
       },
       "drop_weights": [
-        60,
-        12,
+        0,
+        0,
         0,
         0,
         0
@@ -17392,10 +17392,10 @@
         "sat": 0.939
       },
       "drop_weights": [
-        3,
-        25,
-        60,
-        12,
+        0,
+        0,
+        0,
+        0,
         0
       ],
       "enchant_chance": 0.18,
@@ -17471,7 +17471,10 @@
         "dark"
       ],
       "id": "cekugob_amulet_obsidian",
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_dark_resist",
+        "of_phylactery"
+      ],
       "item_tier": 5,
       "lore": "Volcanic glass, edge-flaked razor-sharp by patient hands.",
       "name": "Obsidian Cekugob's Amulet",
@@ -17518,10 +17521,10 @@
       },
       "drop_weights": [
         0,
-        3,
-        25,
-        60,
-        12
+        0,
+        0,
+        0,
+        0
       ],
       "enchant_chance": 0.18,
       "flavor_tags": [
@@ -17579,10 +17582,10 @@
         "sat": 0.696
       },
       "drop_weights": [
-        3,
-        25,
-        60,
-        12,
+        0,
+        0,
+        0,
+        0,
         0
       ],
       "enchant_chance": 0.1,
@@ -17642,10 +17645,10 @@
         "sat": 0.636
       },
       "drop_weights": [
-        3,
-        25,
-        60,
-        12,
+        0,
+        0,
+        0,
+        0,
         0
       ],
       "enchant_chance": 0.1,
@@ -17767,8 +17770,8 @@
         "sat": 0.863
       },
       "drop_weights": [
-        60,
-        12,
+        0,
+        0,
         0,
         0,
         0
@@ -17834,8 +17837,8 @@
         "sat": 0.667
       },
       "drop_weights": [
-        60,
-        12,
+        0,
+        0,
         0,
         0,
         0
@@ -17903,7 +17906,10 @@
         "fire"
       ],
       "id": "firestarter_ironclad",
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_might",
+        "of_executioner"
+      ],
       "item_tier": 5,
       "lore": "Plain forged iron, but heavier than the metal alone explains.",
       "name": "Ironclad Firestarter",
@@ -18183,10 +18189,10 @@
         "sat": 0.858
       },
       "drop_weights": [
-        3,
-        25,
-        60,
-        12,
+        0,
+        0,
+        0,
+        0,
         0
       ],
       "enchant_chance": 0.18,
@@ -18242,10 +18248,10 @@
         "sat": 1.171
       },
       "drop_weights": [
-        3,
-        25,
-        60,
-        12,
+        0,
+        0,
+        0,
+        0,
         0
       ],
       "enchant_chance": 0.1,
@@ -18461,10 +18467,10 @@
         "sat": 1.07
       },
       "drop_weights": [
-        3,
-        25,
-        60,
-        12,
+        0,
+        0,
+        0,
+        0,
         0
       ],
       "enchant_chance": 0.1,
@@ -18626,9 +18632,9 @@
         "sat": 0.762
       },
       "drop_weights": [
-        25,
-        60,
-        12,
+        0,
+        0,
+        0,
         0,
         0
       ],
@@ -18699,7 +18705,10 @@
         "holy"
       ],
       "id": "amulet_finger_rosegold",
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_zealot",
+        "of_holy_resist"
+      ],
       "item_tier": 5,
       "lore": "An alloy out of fashion in this century. The shine is unmistakable.",
       "name": "Rose-gold The Finger",
@@ -19081,9 +19090,9 @@
         "sat": 1.011
       },
       "drop_weights": [
-        25,
-        60,
-        12,
+        0,
+        0,
+        0,
         0,
         0
       ],
@@ -19202,10 +19211,10 @@
       },
       "drop_weights": [
         0,
-        3,
-        25,
-        60,
-        12
+        0,
+        0,
+        0,
+        0
       ],
       "enchant_chance": 0.1,
       "evasion": 7,
@@ -19488,7 +19497,10 @@
         "dark"
       ],
       "id": "phantom_aegis_obsidian",
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_dark_resist",
+        "of_warding"
+      ],
       "item_tier": 5,
       "lore": "Volcanic glass, edge-flaked razor-sharp by patient hands.",
       "name": "Obsidian Phantom Aegis",
@@ -19602,9 +19614,9 @@
         "sat": 0.791
       },
       "drop_weights": [
-        25,
-        60,
-        12,
+        0,
+        0,
+        0,
         0,
         0
       ],
@@ -19717,10 +19729,10 @@
         "sat": 0.957
       },
       "drop_weights": [
-        3,
-        25,
-        60,
-        12,
+        0,
+        0,
+        0,
+        0,
         0
       ],
       "enchant_chance": 0.1,
@@ -19846,9 +19858,9 @@
       "drop_weights": [
         0,
         0,
-        3,
-        25,
-        60
+        0,
+        0,
+        0
       ],
       "enchant_chance": 0.18,
       "flavor_tags": [
@@ -19948,10 +19960,10 @@
         "sat": 0.921
       },
       "drop_weights": [
-        3,
-        25,
-        60,
-        12,
+        0,
+        0,
+        0,
+        0,
         0
       ],
       "enchant_chance": 0.18,
@@ -20049,8 +20061,8 @@
         "sat": 0.793
       },
       "drop_weights": [
-        60,
-        12,
+        0,
+        0,
         0,
         0,
         0
@@ -20164,10 +20176,10 @@
         "sat": 0.805
       },
       "drop_weights": [
-        3,
-        25,
-        60,
-        12,
+        0,
+        0,
+        0,
+        0,
         0
       ],
       "enchant_chance": 0.18,
@@ -20214,10 +20226,10 @@
         "sat": 0.843
       },
       "drop_weights": [
-        3,
-        25,
-        60,
-        12,
+        0,
+        0,
+        0,
+        0,
         0
       ],
       "enchant_chance": 0.18,
@@ -20666,7 +20678,10 @@
         "cold"
       ],
       "id": "ruby_ring_frostbound",
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_frost",
+        "of_finesse"
+      ],
       "item_tier": 4,
       "lore": "A rime of ice will not melt, no matter how warm the room.",
       "name": "Frostbound Ruby Ring",
@@ -20720,7 +20735,10 @@
         "thorns"
       ],
       "id": "gong_shield_prismatic",
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_might",
+        "of_warding"
+      ],
       "item_tier": 5,
       "lore": "Every glance reveals a new color, each one a real one \u2014 somewhere.",
       "name": "Prismatic The Gong",
@@ -20765,9 +20783,9 @@
         ]
       },
       "drop_weights": [
-        25,
-        60,
-        12,
+        0,
+        0,
+        0,
         0,
         0
       ],
@@ -20831,10 +20849,10 @@
         "sat": 0.645
       },
       "drop_weights": [
-        3,
-        25,
-        60,
-        12,
+        0,
+        0,
+        0,
+        0,
         0
       ],
       "enchant_chance": 0.1,
@@ -20896,7 +20914,10 @@
         "fortified"
       ],
       "id": "large_kite_prismatic",
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_finesse",
+        "of_warding"
+      ],
       "item_tier": 3,
       "lore": "Every glance reveals a new color, each one a real one \u2014 somewhere.",
       "name": "Prismatic Large Kite",
@@ -21010,10 +21031,10 @@
       },
       "drop_weights": [
         0,
-        3,
-        25,
-        60,
-        12
+        0,
+        0,
+        0,
+        0
       ],
       "enchant_chance": 0.1,
       "flavor_tags": [
@@ -21070,9 +21091,9 @@
       "drop_weights": [
         0,
         0,
-        3,
-        25,
-        60
+        0,
+        0,
+        0
       ],
       "enchant_chance": 0.18,
       "flavor_tags": [
@@ -21144,7 +21165,10 @@
         "dark"
       ],
       "id": "cekugob_amulet_shadowed",
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_shadow",
+        "of_dark_resist"
+      ],
       "item_tier": 5,
       "lore": "Hard to see in dim light, even when held directly before you.",
       "name": "Shadowed Cekugob's Amulet",
@@ -21256,8 +21280,8 @@
         ]
       },
       "drop_weights": [
-        60,
-        12,
+        0,
+        0,
         0,
         0,
         0
@@ -21575,10 +21599,10 @@
       },
       "drop_weights": [
         0,
-        3,
-        25,
-        60,
-        12
+        0,
+        0,
+        0,
+        0
       ],
       "enchant_chance": 0.18,
       "flavor_tags": [
@@ -21650,7 +21674,10 @@
         "poison"
       ],
       "id": "silver_rapier_mossy_prismatic",
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_venom",
+        "of_finesse"
+      ],
       "item_tier": 3,
       "lore": "Every glance reveals a new color, each one a real one \u2014 somewhere.",
       "name": "Prismatic Mossy Silver Rapier",
@@ -21722,7 +21749,10 @@
         "cold"
       ],
       "id": "stone_2_red_voidwrought_frostbound",
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_cryomancer",
+        "of_cold_resist"
+      ],
       "item_tier": 3,
       "lore": "A rime of ice will not melt, no matter how warm the room.",
       "name": "Frostbound Voidwrought Bleeding Stone",
@@ -21790,7 +21820,10 @@
         "holy"
       ],
       "id": "crystal_red_sunsteel",
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_zealot",
+        "of_holy_resist"
+      ],
       "item_tier": 4,
       "lore": "The metal is warm even at midnight. Undead dare not touch it.",
       "name": "Sunsteel Bloodstone Pendant",
@@ -21929,7 +21962,10 @@
         "dark"
       ],
       "id": "stone_2_red_voidwrought_spectral",
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_shadow",
+        "of_dark_resist"
+      ],
       "item_tier": 3,
       "lore": "It is somehow always slightly cooler than its surroundings.",
       "name": "Spectral Voidwrought Bleeding Stone",
@@ -21986,7 +22022,10 @@
         "cold"
       ],
       "id": "dwarven_buckler_2_frostbound_prismatic",
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_might",
+        "of_cold_resist"
+      ],
       "item_tier": 3,
       "lore": "Every glance reveals a new color, each one a real one \u2014 somewhere.",
       "name": "Prismatic Frostbound Dwarven Roundel",
@@ -22078,9 +22117,9 @@
         ]
       },
       "drop_weights": [
-        25,
-        60,
-        12,
+        0,
+        0,
+        0,
         0,
         0
       ],
@@ -22149,7 +22188,10 @@
         "cold"
       ],
       "id": "runed_scimitar_frostbound",
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_frost",
+        "of_finesse"
+      ],
       "item_tier": 4,
       "lore": "A rime of ice will not melt, no matter how warm the room.",
       "name": "Frostbound Runed Scimitar",
@@ -22220,7 +22262,10 @@
         "willpower"
       ],
       "id": "mage_ring_ironclad",
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_wisdom",
+        "of_lightning_resist"
+      ],
       "item_tier": 5,
       "lore": "Plain forged iron, but heavier than the metal alone explains.",
       "name": "Ironclad Ring of the Mage",
@@ -22322,7 +22367,10 @@
         "holy"
       ],
       "id": "bullseye_sunsteel",
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_holy_resist",
+        "of_warding"
+      ],
       "item_tier": 5,
       "lore": "The metal is warm even at midnight. Undead dare not touch it.",
       "name": "Sunsteel Bullseye",
@@ -22420,10 +22468,10 @@
         ]
       },
       "drop_weights": [
-        3,
-        25,
-        60,
-        12,
+        0,
+        0,
+        0,
+        0,
         0
       ],
       "enchant_chance": 0.1,
@@ -22491,7 +22539,10 @@
         "dark"
       ],
       "id": "crown_of_dyrovepreva_obsidian",
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_shadow",
+        "of_dark_resist"
+      ],
       "item_tier": 5,
       "lore": "Volcanic glass, edge-flaked razor-sharp by patient hands.",
       "name": "Obsidian Crown of Dyrovepreva",
@@ -22605,10 +22656,10 @@
         "sat": 0.731
       },
       "drop_weights": [
-        3,
-        25,
-        60,
-        12,
+        0,
+        0,
+        0,
+        0,
         0
       ],
       "enchant_chance": 0.18,
@@ -22717,8 +22768,8 @@
         "sat": 0.909
       },
       "drop_weights": [
-        60,
-        12,
+        0,
+        0,
         0,
         0,
         0
@@ -22789,7 +22840,10 @@
         "cold"
       ],
       "id": "elven_broadsword_frostbound",
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_frost",
+        "of_finesse"
+      ],
       "item_tier": 4,
       "lore": "A rime of ice will not melt, no matter how warm the room.",
       "name": "Frostbound Elven Broadsword",
@@ -22909,10 +22963,10 @@
       },
       "drop_weights": [
         0,
-        3,
-        25,
-        60,
-        12
+        0,
+        0,
+        0,
+        0
       ],
       "enchant_chance": 0.18,
       "flavor_tags": [
@@ -23037,10 +23091,10 @@
       },
       "drop_weights": [
         0,
-        3,
-        25,
-        60,
-        12
+        0,
+        0,
+        0,
+        0
       ],
       "enchant_chance": 0.18,
       "flavor_tags": [
@@ -23165,9 +23219,9 @@
         ]
       },
       "drop_weights": [
-        25,
-        60,
-        12,
+        0,
+        0,
+        0,
         0,
         0
       ],
@@ -23302,10 +23356,10 @@
         ]
       },
       "drop_weights": [
-        3,
-        25,
-        60,
-        12,
+        0,
+        0,
+        0,
+        0,
         0
       ],
       "enchant_chance": 0.1,
@@ -23350,8 +23404,8 @@
         "sat": 0.979
       },
       "drop_weights": [
-        60,
-        12,
+        0,
+        0,
         0,
         0,
         0
@@ -23402,8 +23456,8 @@
         "sat": 0.66
       },
       "drop_weights": [
-        60,
-        12,
+        0,
+        0,
         0,
         0,
         0
@@ -23483,7 +23537,10 @@
         "poison"
       ],
       "id": "face_amulet_gold_jadeforged",
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_envenom",
+        "of_poison_resist"
+      ],
       "item_tier": 4,
       "lore": "Carved from one piece of imperial jade. Fault-lines make patterns.",
       "name": "Jade-forged Saintly Visage",
@@ -23532,10 +23589,10 @@
       },
       "drop_weights": [
         0,
-        3,
-        25,
-        60,
-        12
+        0,
+        0,
+        0,
+        0
       ],
       "enchant_chance": 0.18,
       "flavor_tags": [
@@ -23584,10 +23641,10 @@
       },
       "drop_weights": [
         0,
-        3,
-        25,
-        60,
-        12
+        0,
+        0,
+        0,
+        0
       ],
       "enchant_chance": 0.18,
       "evasion": 15,
@@ -23633,8 +23690,8 @@
         "sat": 1.166
       },
       "drop_weights": [
-        60,
-        12,
+        0,
+        0,
         0,
         0,
         0
@@ -23691,10 +23748,10 @@
         "sat": 1.066
       },
       "drop_weights": [
-        3,
-        25,
-        60,
-        12,
+        0,
+        0,
+        0,
+        0,
         0
       ],
       "enchant_chance": 0.1,
@@ -23773,7 +23830,10 @@
         "poison"
       ],
       "id": "emerald_ring_jadeforged",
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_envenom",
+        "of_poison_resist"
+      ],
       "item_tier": 4,
       "lore": "Carved from one piece of imperial jade. Fault-lines make patterns.",
       "name": "Jade-forged Emerald Ring",

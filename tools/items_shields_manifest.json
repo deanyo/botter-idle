@@ -1545,10 +1545,10 @@
       },
       "drop_weights": [
         0,
-        3,
-        25,
-        60,
-        12
+        0,
+        0,
+        0,
+        0
       ],
       "enchant_chance": 0.1,
       "evasion": 7,
@@ -1612,7 +1612,10 @@
         "dark"
       ],
       "id": "phantom_aegis_obsidian",
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_dark_resist",
+        "of_warding"
+      ],
       "item_tier": 5,
       "lore": "Volcanic glass, edge-flaked razor-sharp by patient hands.",
       "name": "Obsidian Phantom Aegis",
@@ -1707,10 +1710,10 @@
         "sat": 0.921
       },
       "drop_weights": [
-        3,
-        25,
-        60,
-        12,
+        0,
+        0,
+        0,
+        0,
         0
       ],
       "enchant_chance": 0.18,
@@ -1832,7 +1835,10 @@
         "thorns"
       ],
       "id": "gong_shield_prismatic",
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_might",
+        "of_warding"
+      ],
       "item_tier": 5,
       "lore": "Every glance reveals a new color, each one a real one \u2014 somewhere.",
       "name": "Prismatic The Gong",
@@ -1887,7 +1893,10 @@
         "fortified"
       ],
       "id": "large_kite_prismatic",
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_finesse",
+        "of_warding"
+      ],
       "item_tier": 3,
       "lore": "Every glance reveals a new color, each one a real one \u2014 somewhere.",
       "name": "Prismatic Large Kite",
@@ -1946,7 +1955,10 @@
         "cold"
       ],
       "id": "dwarven_buckler_2_frostbound_prismatic",
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_might",
+        "of_cold_resist"
+      ],
       "item_tier": 3,
       "lore": "Every glance reveals a new color, each one a real one \u2014 somewhere.",
       "name": "Prismatic Frostbound Dwarven Roundel",
@@ -1998,7 +2010,10 @@
         "holy"
       ],
       "id": "bullseye_sunsteel",
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_holy_resist",
+        "of_warding"
+      ],
       "item_tier": 5,
       "lore": "The metal is warm even at midnight. Undead dare not touch it.",
       "name": "Sunsteel Bullseye",
@@ -2040,10 +2055,10 @@
         ]
       },
       "drop_weights": [
-        3,
-        25,
-        60,
-        12,
+        0,
+        0,
+        0,
+        0,
         0
       ],
       "enchant_chance": 0.1,

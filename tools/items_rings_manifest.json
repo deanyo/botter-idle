@@ -2284,8 +2284,8 @@
         "sat": 0.667
       },
       "drop_weights": [
-        60,
-        12,
+        0,
+        0,
         0,
         0,
         0
@@ -2424,7 +2424,10 @@
         "cold"
       ],
       "id": "ruby_ring_frostbound",
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_frost",
+        "of_finesse"
+      ],
       "item_tier": 4,
       "lore": "A rime of ice will not melt, no matter how warm the room.",
       "name": "Frostbound Ruby Ring",
@@ -2478,10 +2481,10 @@
         "sat": 0.645
       },
       "drop_weights": [
-        3,
-        25,
-        60,
-        12,
+        0,
+        0,
+        0,
+        0,
         0
       ],
       "enchant_chance": 0.1,
@@ -2763,7 +2766,10 @@
         "willpower"
       ],
       "id": "mage_ring_ironclad",
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_wisdom",
+        "of_lightning_resist"
+      ],
       "item_tier": 5,
       "lore": "Plain forged iron, but heavier than the metal alone explains.",
       "name": "Ironclad Ring of the Mage",
@@ -2950,10 +2956,10 @@
       },
       "drop_weights": [
         0,
-        3,
-        25,
-        60,
-        12
+        0,
+        0,
+        0,
+        0
       ],
       "enchant_chance": 0.18,
       "flavor_tags": [
@@ -3022,9 +3028,9 @@
         ]
       },
       "drop_weights": [
-        25,
-        60,
-        12,
+        0,
+        0,
+        0,
         0,
         0
       ],
@@ -3166,7 +3172,10 @@
         "poison"
       ],
       "id": "emerald_ring_jadeforged",
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_envenom",
+        "of_poison_resist"
+      ],
       "item_tier": 4,
       "lore": "Carved from one piece of imperial jade. Fault-lines make patterns.",
       "name": "Jade-forged Emerald Ring",

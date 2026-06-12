@@ -2322,10 +2322,10 @@
       },
       "drop_weights": [
         0,
-        3,
-        25,
-        60,
-        12
+        0,
+        0,
+        0,
+        0
       ],
       "enchant_chance": 0.18,
       "flavor_tags": [
@@ -2383,10 +2383,10 @@
         "sat": 0.696
       },
       "drop_weights": [
-        3,
-        25,
-        60,
-        12,
+        0,
+        0,
+        0,
+        0,
         0
       ],
       "enchant_chance": 0.1,
@@ -2446,8 +2446,8 @@
         "sat": 0.863
       },
       "drop_weights": [
-        60,
-        12,
+        0,
+        0,
         0,
         0,
         0
@@ -2574,10 +2574,10 @@
         "sat": 0.858
       },
       "drop_weights": [
-        3,
-        25,
-        60,
-        12,
+        0,
+        0,
+        0,
+        0,
         0
       ],
       "enchant_chance": 0.18,
@@ -2633,10 +2633,10 @@
         "sat": 1.171
       },
       "drop_weights": [
-        3,
-        25,
-        60,
-        12,
+        0,
+        0,
+        0,
+        0,
         0
       ],
       "enchant_chance": 0.1,
@@ -2933,9 +2933,9 @@
         "sat": 0.791
       },
       "drop_weights": [
-        25,
-        60,
-        12,
+        0,
+        0,
+        0,
         0,
         0
       ],
@@ -2993,10 +2993,10 @@
         "sat": 0.957
       },
       "drop_weights": [
-        3,
-        25,
-        60,
-        12,
+        0,
+        0,
+        0,
+        0,
         0
       ],
       "enchant_chance": 0.1,
@@ -3176,10 +3176,10 @@
       },
       "drop_weights": [
         0,
-        3,
-        25,
-        60,
-        12
+        0,
+        0,
+        0,
+        0
       ],
       "enchant_chance": 0.1,
       "flavor_tags": [
@@ -3236,9 +3236,9 @@
       "drop_weights": [
         0,
         0,
-        3,
-        25,
-        60
+        0,
+        0,
+        0
       ],
       "enchant_chance": 0.18,
       "flavor_tags": [
@@ -3310,7 +3310,10 @@
         "poison"
       ],
       "id": "silver_rapier_mossy_prismatic",
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_venom",
+        "of_finesse"
+      ],
       "item_tier": 3,
       "lore": "Every glance reveals a new color, each one a real one \u2014 somewhere.",
       "name": "Prismatic Mossy Silver Rapier",
@@ -3370,7 +3373,10 @@
         "cold"
       ],
       "id": "runed_scimitar_frostbound",
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_frost",
+        "of_finesse"
+      ],
       "item_tier": 4,
       "lore": "A rime of ice will not melt, no matter how warm the room.",
       "name": "Frostbound Runed Scimitar",
@@ -3417,10 +3423,10 @@
         "sat": 0.731
       },
       "drop_weights": [
-        3,
-        25,
-        60,
-        12,
+        0,
+        0,
+        0,
+        0,
         0
       ],
       "enchant_chance": 0.18,
@@ -3476,8 +3482,8 @@
         "sat": 0.909
       },
       "drop_weights": [
-        60,
-        12,
+        0,
+        0,
         0,
         0,
         0
@@ -3548,7 +3554,10 @@
         "cold"
       ],
       "id": "elven_broadsword_frostbound",
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_frost",
+        "of_finesse"
+      ],
       "item_tier": 4,
       "lore": "A rime of ice will not melt, no matter how warm the room.",
       "name": "Frostbound Elven Broadsword",
