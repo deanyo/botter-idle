@@ -91,6 +91,38 @@ ups, not audit findings.
 
 ---
 
+2026-06-12 (balance pass beat 1.F — 73 recolor_of items triaged:
+20 promoted, 42 culled, cluster 1.F closed). A1-recolor-016 root-
+caused: 73 recolor_of items inflated the loot pool by ~11% without
+adding mechanical depth — only 7 (vampires_tooth + folly + cloud
+recolors) carried `implicit_affixes`. The other 66 were pure
+cosmetic variants inheriting the parent's `affix_pool`. Shipped a
+two-track triage: (1) **20 legendary recolors promoted** with 2
+name-driven implicits each, keyed off the flavor suffix from
+`item_generator.gd` flavor table — frostbound/azure→cold (of_frost,
+of_finesse / of_cryomancer + of_cold_resist), ironclad→armor or
+lightning (of_might + of_executioner / of_wisdom +
+of_lightning_resist), jadeforged→poison (of_envenom +
+of_poison_resist), sunsteel/rosegold→holy (of_zealot +
+of_holy_resist), mossy→poison (of_venom + of_finesse),
+obsidian/shadowed/spectral→dark (of_shadow + of_dark_resist /
+of_dark_resist + of_phylactery), prismatic→multi-stat. All
+slot-eligible per `affixes.json::applies_to`. (2) **42
+epic/rare/uncommon recolors culled** by setting
+`drop_weights=[0,0,0,0,0]` — out of loot pool, schema preserved so
+existing save references don't crash. Final recolor pool: 73 total
+= 42 culled + 31 in-pool (27 with implicits including 7 pre-
+existing + 4 prior 1.F demoted prismatics). /duel verified
+implicits compose: `runed_scimitar_frostbound` vs parent in glacier
++12.3% from of_frost+of_finesse; `firestarter_ironclad` vs parent
+in lair +28.5% from of_might+of_executioner. **1.F cluster fully
+closed (5 of 5 sub-items shipped over 4 sessions today and
+yesterday — `requires_innate_tag` on starters,
+`strip_audit_residue.py`, T1 legendary recolor demote, 2H
+epic→legendary promotes, this recolor promote/cull).**
+
+---
+
 2026-06-12 (balance pass beat 1.F — 5 2H epic weapons promoted to
 legendary + manifest backlog catch-up). A1-2H-collapse-021 root-
 caused: pre-pass, 2H legendary count was 3 (warlord_battle_axe,
