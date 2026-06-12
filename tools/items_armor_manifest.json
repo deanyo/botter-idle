@@ -1143,7 +1143,10 @@
       ],
       "unique": true,
       "enchant_chance": 0.0,
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_might",
+        "of_the_bear"
+      ],
       "affix_pool": {
         "of_might": 15,
         "of_finesse": 12,
@@ -1183,7 +1186,10 @@
       ],
       "unique": true,
       "enchant_chance": 0.0,
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_wisdom",
+        "of_regen"
+      ],
       "affix_pool": {
         "of_might": 15,
         "of_finesse": 12,
@@ -1223,7 +1229,10 @@
       ],
       "unique": true,
       "enchant_chance": 0.0,
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_wisdom",
+        "of_dark_resist"
+      ],
       "affix_pool": {
         "of_might": 15,
         "of_finesse": 12,
@@ -1632,7 +1641,10 @@
       ],
       "unique": true,
       "enchant_chance": 0.0,
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_finesse",
+        "of_lightning_resist"
+      ],
       "affix_pool": {
         "of_might": 15,
         "of_finesse": 12,
@@ -1673,7 +1685,10 @@
       ],
       "unique": true,
       "enchant_chance": 0.0,
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_finesse",
+        "of_cold_resist"
+      ],
       "affix_pool": {
         "of_might": 15,
         "of_finesse": 12,
@@ -1718,7 +1733,10 @@
       ],
       "unique": true,
       "enchant_chance": 0.0,
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_fire_resist",
+        "of_regen"
+      ],
       "affix_pool": {
         "of_might": 15,
         "of_finesse": 12,
@@ -1759,7 +1777,10 @@
       ],
       "unique": true,
       "enchant_chance": 0.0,
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_might",
+        "of_fire_resist"
+      ],
       "affix_pool": {
         "of_might": 15,
         "of_finesse": 12,
@@ -1799,7 +1820,10 @@
       ],
       "unique": true,
       "enchant_chance": 0.0,
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_regen",
+        "of_vitality"
+      ],
       "affix_pool": {
         "of_might": 15,
         "of_finesse": 12,
@@ -1840,7 +1864,10 @@
       ],
       "unique": true,
       "enchant_chance": 0.0,
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_dark_resist",
+        "of_finesse"
+      ],
       "affix_pool": {
         "of_might": 15,
         "of_finesse": 12,
@@ -1897,7 +1924,10 @@
         "holy"
       ],
       "id": "robe_of_folly_rosegold",
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_wisdom",
+        "of_holy_resist"
+      ],
       "item_tier": 5,
       "lore": "An alloy out of fashion in this century. The shine is unmistakable.",
       "name": "Rose-gold Robe of Folly",
@@ -1905,12 +1935,6 @@
       "slot": "armor",
       "tile": "urand_folly.png",
       "unique": true,
-      "_balance_bumps": {
-        "of_devotion": 22,
-        "of_haste": 18,
-        "of_lifesteal": 12,
-        "of_quickcast": 15
-      },
       "recolor_of": "robe_of_folly"
     },
     {
@@ -1955,16 +1979,10 @@
       "item_tier": 4,
       "lore": "Looking at it too long inverts what you saw before.",
       "name": "Inverse Green Dragon Scales",
-      "rarity": "legendary",
+      "rarity": "epic",
       "slot": "armor",
       "tile": "green_dragon_scale_mail.png",
-      "unique": false,
-      "_balance_bumps": {
-        "of_finesse": 18,
-        "of_int_mastery": 18,
-        "of_quickcast": 14,
-        "of_resonance": 14
-      }
+      "unique": false
     },
     {
       "affix_pool": {
@@ -2009,7 +2027,10 @@
         "willpower"
       ],
       "id": "robe_of_folly_prismatic",
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_wisdom",
+        "of_finesse"
+      ],
       "item_tier": 5,
       "lore": "Every glance reveals a new color, each one a real one \u2014 somewhere.",
       "name": "Prismatic Robe of Folly",
@@ -2017,16 +2038,6 @@
       "slot": "armor",
       "tile": "urand_folly.png",
       "unique": true,
-      "_balance_bumps": {
-        "of_embers": 18,
-        "of_frost": 18,
-        "of_storms": 18,
-        "of_devotion": 18,
-        "of_venom": 18,
-        "of_shadows": 18,
-        "of_sharpness": 18
-      },
-      "_rebalance_v5": true,
       "recolor_of": "robe_of_folly"
     },
     {
@@ -2073,13 +2084,7 @@
       "rarity": "uncommon",
       "slot": "armor",
       "tile": "leather_armor_1.png",
-      "unique": false,
-      "_balance_bumps": {
-        "of_shadows": 32,
-        "of_dark_resist": 22,
-        "of_lifesteal": 18,
-        "of_might": 12
-      }
+      "unique": false
     },
     {
       "affix_pool": {
@@ -2129,12 +2134,6 @@
       "slot": "armor",
       "tile": "banded_mail_1.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_devotion": 22,
-        "of_haste": 18,
-        "of_lifesteal": 12,
-        "of_quickcast": 15
-      },
       "recolor_of": "banded_mail"
     },
     {
@@ -2183,13 +2182,7 @@
       "rarity": "epic",
       "slot": "armor",
       "tile": "orcish_platemail.png",
-      "unique": false,
-      "_balance_bumps": {
-        "of_devotion": 28,
-        "of_holy_resist": 18,
-        "of_channeling": 15,
-        "of_quickcast": 12
-      }
+      "unique": false
     },
     {
       "affix_pool": {
@@ -2227,20 +2220,17 @@
         "willpower"
       ],
       "id": "robe_of_misfortune_verdant",
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_wisdom",
+        "of_poison_resist"
+      ],
       "item_tier": 5,
       "lore": "Vines crawl over the haft, seeking soil that is not there.",
       "name": "Verdant Robe of Misfortune",
       "rarity": "legendary",
       "slot": "armor",
       "tile": "urand_misfortune.png",
-      "unique": true,
-      "_balance_bumps": {
-        "of_regen": 18,
-        "of_vitality": 22,
-        "of_the_bear": 15,
-        "of_poison_resist": 18
-      }
+      "unique": true
     },
     {
       "affix_pool": {
@@ -2292,12 +2282,6 @@
       "slot": "armor",
       "tile": "robe_1_new.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_the_bear": 30,
-        "of_vitality": 22,
-        "of_might": 14,
-        "of_sharpness": 14
-      },
       "recolor_of": "scout_robe"
     },
     {
@@ -2343,7 +2327,10 @@
         "regen"
       ],
       "id": "robe_of_clouds_ironclad",
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_the_bear",
+        "of_lightning_resist"
+      ],
       "item_tier": 5,
       "lore": "Plain forged iron, but heavier than the metal alone explains.",
       "name": "Ironclad Robe of Clouds",
@@ -2351,12 +2338,6 @@
       "slot": "armor",
       "tile": "urand_clouds.png",
       "unique": true,
-      "_balance_bumps": {
-        "of_the_bear": 30,
-        "of_vitality": 22,
-        "of_might": 14,
-        "of_sharpness": 14
-      },
       "recolor_of": "robe_of_clouds"
     },
     {
@@ -2405,12 +2386,6 @@
       "slot": "armor",
       "tile": "animal_skin_1_new.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_venom": 22,
-        "of_finesse": 18,
-        "of_dex_mastery": 14,
-        "of_crit": 15
-      },
       "recolor_of": "tattered_hide"
     },
     {
@@ -2459,12 +2434,6 @@
       "slot": "armor",
       "tile": "orcish_leather_armor.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_embers": 30,
-        "of_quickcast": 14,
-        "of_fire_resist": 22,
-        "of_channeling": 10
-      },
       "recolor_of": "orcish_leather"
     },
     {

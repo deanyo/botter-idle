@@ -91,6 +91,37 @@ ups, not audit findings.
 
 ---
 
+2026-06-12 (balance pass beat 1.F — 5 2H epic weapons promoted to
+legendary + manifest backlog catch-up). A1-2H-collapse-021 root-
+caused: pre-pass, 2H legendary count was 3 (warlord_battle_axe,
+doomed_executioner, sigmunds_sickle T1 anchor) vs 28 1H legendaries.
+With cluster 1.D differentiating the 1H legendaries, the 2H slot was
+the visibly thinnest legendary lane in the pool — players running 2H
+builds hit the same 2-3 legendaries every endgame run. Shipped 5
+promotions: `triple_sword` (physical, of_sharpness + of_executioner),
+`executioner_axe` (physical, of_executioner + of_bloodletting),
+`reapers_scythe` (dark, of_shadows + of_bloodletting),
+`blessed_claymore` (holy, of_devotion + of_might), `glacial_bardiche`
+(cold, of_frost + of_finesse — was the 1.E new T4 epic). Element
+coverage in the 2H legendary slot now spans physical / dark / holy /
+cold (was 100% physical). 2H legendary count 3 → 8. No statline
+changes — all 5 already sat under A10 R1's `damage_max ≤ 220` cap, so
+promotion is rarity epic→legendary + item_tier 4→5 + drop_weights
+normalized to `[0,0,0,15,40]` + 2 implicit_affixes per item for
+identity. /duel sidegrade verified across multiple biomes:
+triple_sword vs warlord_battle_axe in forge (both physical) +6.7%;
+reapers_scythe vs warlord in lair (dark flexes vs beasts) +25.8%, in
+crypt (undead dark-resist) -29%; blessed_claymore vs warlord in crypt
++21.8%. First reapers iteration with `of_lifesteal` ran away in lair
+(+520% — survival multiplier was the issue, not flat damage); swap to
+`of_bloodletting` keeps dark/death flavor in budget. Same session
+flushed pre-existing manifest backlog: `_balance_bumps` etc residue
+from earlier 1.F strip + 1.D body-armor implicits propagated via
+`sync_manifests_from_items_json.py`; bundled into the same commit
+since both are 1.F cluster cleanup.
+
+---
+
 2026-06-11 (balance pass beat 1.E cold/poison element coverage — 8
 new weapons + chilly_death flagship rebalance). A1-coverage-005 root-
 caused: pre-pass the 150-weapon pool had exactly 1 cold weapon

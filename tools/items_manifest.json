@@ -544,8 +544,7 @@
         "of_bloodletting": 8,
         "of_berserker_rage": 8,
         "of_executioner": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "iron_falchion",
@@ -852,8 +851,7 @@
         "of_bloodletting": 8,
         "of_berserker_rage": 8,
         "of_executioner": 8
-      },
-      "_rebalance_v6": true
+      }
     },
     {
       "id": "iron_longsword",
@@ -1316,8 +1314,7 @@
         "of_bloodletting": 8,
         "of_berserker_rage": 8,
         "of_executioner": 8
-      },
-      "_rebalance_v6": true
+      }
     },
     {
       "id": "runed_scimitar",
@@ -1610,7 +1607,9 @@
       ],
       "unique": false,
       "enchant_chance": 0.15,
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_embers"
+      ],
       "affix_pool": {
         "of_might": 25,
         "of_finesse": 15,
@@ -1634,8 +1633,7 @@
         "of_bloodletting": 8,
         "of_berserker_rage": 8,
         "of_executioner": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "singing_sword",
@@ -1664,7 +1662,10 @@
       ],
       "unique": true,
       "enchant_chance": 0.0,
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_echoes",
+        "of_finesse"
+      ],
       "affix_pool": {
         "of_might": 25,
         "of_finesse": 15,
@@ -1692,8 +1693,8 @@
       "tile": "urand_chilly_death_new.png",
       "base_type": "rapier",
       "weapon_class": "1H",
-      "damage_min": 48,
-      "damage_max": 107,
+      "damage_min": 60,
+      "damage_max": 119,
       "damage_type": "cold",
       "speed": 0.55,
       "item_tier": 5,
@@ -1710,7 +1711,10 @@
       ],
       "unique": true,
       "enchant_chance": 0.0,
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_frost",
+        "of_finesse"
+      ],
       "affix_pool": {
         "of_might": 25,
         "of_finesse": 15,
@@ -1757,7 +1761,10 @@
       ],
       "unique": true,
       "enchant_chance": 0.0,
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_lifesteal",
+        "of_bloodletting"
+      ],
       "affix_pool": {
         "of_might": 25,
         "of_finesse": 15,
@@ -1804,7 +1811,10 @@
       ],
       "unique": true,
       "enchant_chance": 0.0,
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_shadows",
+        "of_might"
+      ],
       "affix_pool": {
         "of_might": 25,
         "of_finesse": 15,
@@ -1822,8 +1832,7 @@
         "of_channeling": 8,
         "of_quickcast": 8,
         "of_executioner": 8
-      },
-      "_rebalance_v6": true
+      }
     },
     {
       "id": "knife_of_accuracy",
@@ -1876,8 +1885,7 @@
         "of_bloodletting": 8,
         "of_berserker_rage": 8,
         "of_executioner": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "spriggans_knife",
@@ -1924,8 +1932,7 @@
         "of_channeling": 8,
         "of_quickcast": 8,
         "of_executioner": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "vampires_tooth",
@@ -2004,7 +2011,9 @@
       ],
       "unique": true,
       "enchant_chance": 0.0,
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_storms"
+      ],
       "affix_pool": {
         "of_might": 25,
         "of_finesse": 15,
@@ -2051,7 +2060,10 @@
       ],
       "unique": true,
       "enchant_chance": 0.0,
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_embers",
+        "of_haste"
+      ],
       "affix_pool": {
         "of_might": 25,
         "of_finesse": 15,
@@ -2098,7 +2110,10 @@
       ],
       "unique": true,
       "enchant_chance": 0.0,
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_devotion",
+        "of_might"
+      ],
       "affix_pool": {
         "of_might": 25,
         "of_finesse": 15,
@@ -2146,7 +2161,10 @@
       ],
       "unique": true,
       "enchant_chance": 0.0,
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_embers",
+        "of_executioner"
+      ],
       "affix_pool": {
         "of_might": 25,
         "of_finesse": 15,
@@ -2164,8 +2182,7 @@
         "of_channeling": 8,
         "of_quickcast": 8,
         "of_executioner": 8
-      },
-      "_rebalance_v6": true
+      }
     },
     {
       "id": "sword_of_power",
@@ -2194,7 +2211,10 @@
       ],
       "unique": true,
       "enchant_chance": 0.0,
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_might",
+        "of_berserker_rage"
+      ],
       "affix_pool": {
         "of_might": 25,
         "of_finesse": 15,
@@ -2242,7 +2262,10 @@
       ],
       "unique": true,
       "enchant_chance": 0.0,
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_shadows",
+        "of_lifesteal"
+      ],
       "affix_pool": {
         "of_might": 25,
         "of_finesse": 15,
@@ -2320,13 +2343,6 @@
       "tile": "falchion_5.png",
       "unique": false,
       "weapon_class": "1H",
-      "_balance_bumps": {
-        "of_embers": 35,
-        "of_might": 18,
-        "of_lifesteal": 12,
-        "of_fire_resist": 18,
-        "of_haste": 12
-      },
       "recolor_of": "runed_falchion"
     },
     {
@@ -2390,12 +2406,6 @@
       "tile": "rapier_2.png",
       "unique": false,
       "weapon_class": "1H",
-      "_balance_bumps": {
-        "of_venom": 28,
-        "of_poison_resist": 22,
-        "of_regen": 14,
-        "of_vitality": 15
-      },
       "recolor_of": "silver_rapier"
     },
     {
@@ -2457,12 +2467,6 @@
       "tile": "knife.png",
       "unique": false,
       "weapon_class": "1H",
-      "_balance_bumps": {
-        "of_venom": 28,
-        "of_poison_resist": 22,
-        "of_regen": 14,
-        "of_vitality": 15
-      },
       "recolor_of": "bone_knife"
     },
     {
@@ -2520,7 +2524,10 @@
         "shadow"
       ],
       "id": "demon_blade_umbral",
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_shadows",
+        "of_lifesteal"
+      ],
       "item_tier": 5,
       "lore": "The dark that settles on it cannot be polished off.",
       "name": "Umbral Demon Blade",
@@ -2529,14 +2536,7 @@
       "speed": 0.9,
       "tile": "demon_blade.png",
       "unique": false,
-      "weapon_class": "1H",
-      "_balance_bumps": {
-        "of_shadows": 30,
-        "of_dark_resist": 22,
-        "of_int_mastery": 14,
-        "of_channeling": 14
-      },
-      "_rebalance_v5": true
+      "weapon_class": "1H"
     },
     {
       "affix_pool": {
@@ -2595,12 +2595,6 @@
       "tile": "long_sword_1_new.png",
       "unique": false,
       "weapon_class": "1H",
-      "_balance_bumps": {
-        "of_venom": 22,
-        "of_finesse": 18,
-        "of_dex_mastery": 14,
-        "of_crit": 15
-      },
       "recolor_of": "iron_longsword"
     },
     {
@@ -2660,13 +2654,6 @@
       "tile": "falchion_3.png",
       "unique": false,
       "weapon_class": "1H",
-      "_balance_bumps": {
-        "of_embers": 35,
-        "of_might": 18,
-        "of_lifesteal": 12,
-        "of_fire_resist": 18,
-        "of_haste": 12
-      },
       "recolor_of": "steel_falchion"
     },
     {
@@ -2714,7 +2701,8 @@
       ],
       "id": "vampires_tooth_spectral",
       "implicit_affixes": [
-        "of_lifesteal"
+        "of_lifesteal",
+        "of_shadows"
       ],
       "item_tier": 5,
       "lore": "It is somehow always slightly cooler than its surroundings.",
@@ -2725,12 +2713,6 @@
       "tile": "spwpn_vampires_tooth.png",
       "unique": true,
       "weapon_class": "1H",
-      "_balance_bumps": {
-        "of_frost": 22,
-        "of_dark_resist": 18,
-        "of_finesse": 15,
-        "of_dex_mastery": 12
-      },
       "recolor_of": "vampires_tooth"
     },
     {
@@ -2789,13 +2771,7 @@
       "speed": 0.65,
       "tile": "falchion_2_new.png",
       "unique": false,
-      "weapon_class": "1H",
-      "_balance_bumps": {
-        "of_shadows": 26,
-        "of_finesse": 14,
-        "of_lifesteal": 14,
-        "of_dark_resist": 14
-      }
+      "weapon_class": "1H"
     },
     {
       "affix_pool": {
@@ -2854,14 +2830,7 @@
       "speed": 0.6,
       "tile": "katana.png",
       "unique": false,
-      "weapon_class": "1H",
-      "_balance_bumps": {
-        "of_storms": 22,
-        "of_lightning_resist": 18,
-        "of_might": 14,
-        "of_haste": 12
-      },
-      "_rebalance_v6": true
+      "weapon_class": "1H"
     },
     {
       "affix_pool": {
@@ -2914,7 +2883,8 @@
       ],
       "id": "vampires_tooth_obsidian",
       "implicit_affixes": [
-        "of_lifesteal"
+        "of_lifesteal",
+        "of_sharpness"
       ],
       "item_tier": 5,
       "lore": "Volcanic glass, edge-flaked razor-sharp by patient hands.",
@@ -2925,12 +2895,6 @@
       "tile": "spwpn_vampires_tooth.png",
       "unique": true,
       "weapon_class": "1H",
-      "_balance_bumps": {
-        "of_shadows": 22,
-        "of_the_bear": 22,
-        "of_dark_resist": 18,
-        "of_vitality": 18
-      },
       "recolor_of": "vampires_tooth"
     },
     {
@@ -2991,12 +2955,6 @@
       "tile": "elven_dagger.png",
       "unique": false,
       "weapon_class": "1H",
-      "_balance_bumps": {
-        "of_frost": 35,
-        "of_cold_resist": 22,
-        "of_quickcast": 18,
-        "of_crit": 15
-      },
       "recolor_of": "elven_dagger"
     },
     {
@@ -3056,12 +3014,6 @@
       "tile": "falchion_3.png",
       "unique": false,
       "weapon_class": "1H",
-      "_balance_bumps": {
-        "of_embers": 30,
-        "of_quickcast": 14,
-        "of_fire_resist": 22,
-        "of_channeling": 10
-      },
       "recolor_of": "steel_falchion"
     },
     {
@@ -3107,7 +3059,10 @@
         "fire"
       ],
       "id": "sword_of_power_crimson",
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_might",
+        "of_bloodletting"
+      ],
       "item_tier": 5,
       "lore": "Forged in dragonfire, the metal still glows when blood spills near it.",
       "name": "Crimson Sword of Power",
@@ -3117,13 +3072,6 @@
       "tile": "spwpn_sword_of_power_new.png",
       "unique": true,
       "weapon_class": "1H",
-      "_balance_bumps": {
-        "of_embers": 35,
-        "of_might": 18,
-        "of_lifesteal": 12,
-        "of_fire_resist": 18,
-        "of_haste": 12
-      },
       "recolor_of": "sword_of_power"
     },
     {
@@ -3174,7 +3122,10 @@
         "demon"
       ],
       "id": "demon_blade_embered",
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_embers",
+        "of_haste"
+      ],
       "item_tier": 5,
       "lore": "Carries its own slow heat. Embers drift from it when struck.",
       "name": "Embered Demon Blade",
@@ -3184,13 +3135,6 @@
       "tile": "demon_blade.png",
       "unique": false,
       "weapon_class": "1H",
-      "_balance_bumps": {
-        "of_embers": 30,
-        "of_quickcast": 14,
-        "of_fire_resist": 22,
-        "of_channeling": 10
-      },
-      "_rebalance_v5": true,
       "recolor_of": "demon_blade"
     },
     {
@@ -3252,12 +3196,6 @@
       "tile": "long_sword_2.png",
       "unique": false,
       "weapon_class": "1H",
-      "_balance_bumps": {
-        "of_venom": 28,
-        "of_poison_resist": 22,
-        "of_regen": 14,
-        "of_vitality": 15
-      },
       "recolor_of": "steel_longsword"
     },
     {
@@ -3319,13 +3257,6 @@
       "tile": "ancient_sword.png",
       "unique": false,
       "weapon_class": "1H",
-      "_balance_bumps": {
-        "of_embers": 35,
-        "of_might": 18,
-        "of_lifesteal": 12,
-        "of_fire_resist": 18,
-        "of_haste": 12
-      },
       "recolor_of": "ancient_sword"
     },
     {
@@ -3389,16 +3320,6 @@
       "tile": "rapier_2.png",
       "unique": false,
       "weapon_class": "1H",
-      "_balance_bumps": {
-        "of_embers": 18,
-        "of_frost": 18,
-        "of_storms": 18,
-        "of_devotion": 18,
-        "of_venom": 18,
-        "of_shadows": 18,
-        "of_sharpness": 18
-      },
-      "_rebalance_v5": true,
       "recolor_of": "silver_rapier"
     },
     {
@@ -3459,12 +3380,6 @@
       "tile": "scimitar_2.png",
       "unique": false,
       "weapon_class": "1H",
-      "_balance_bumps": {
-        "of_frost": 35,
-        "of_cold_resist": 22,
-        "of_quickcast": 18,
-        "of_crit": 15
-      },
       "recolor_of": "runed_scimitar"
     },
     {
@@ -3523,12 +3438,6 @@
       "tile": "scimitar_1_new.png",
       "unique": false,
       "weapon_class": "1H",
-      "_balance_bumps": {
-        "of_devotion": 22,
-        "of_haste": 18,
-        "of_lifesteal": 12,
-        "of_quickcast": 15
-      },
       "recolor_of": "scimitar"
     },
     {
@@ -3588,12 +3497,6 @@
       "tile": "knife.png",
       "unique": false,
       "weapon_class": "1H",
-      "_balance_bumps": {
-        "of_lifesteal": 30,
-        "of_might": 15,
-        "of_shadows": 18,
-        "of_dark_resist": 15
-      },
       "recolor_of": "bone_knife"
     },
     {
@@ -3655,12 +3558,6 @@
       "tile": "elven_broadsword.png",
       "unique": false,
       "weapon_class": "1H",
-      "_balance_bumps": {
-        "of_frost": 35,
-        "of_cold_resist": 22,
-        "of_quickcast": 18,
-        "of_crit": 15
-      },
       "recolor_of": "elven_broadsword"
     },
     {
@@ -3709,7 +3606,10 @@
         "brutal"
       ],
       "id": "sword_of_power_bone",
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_might",
+        "of_sharpness"
+      ],
       "item_tier": 5,
       "lore": "Shaped from the long bones of something old. It still aches in the cold.",
       "name": "Bone Sword of Power",
@@ -3718,13 +3618,7 @@
       "speed": 0.7,
       "tile": "spwpn_sword_of_power_new.png",
       "unique": true,
-      "weapon_class": "1H",
-      "_balance_bumps": {
-        "of_shadows": 22,
-        "of_might": 14,
-        "of_finesse": 14,
-        "of_lifesteal": 12
-      }
+      "weapon_class": "1H"
     },
     {
       "id": "demonspawn_hellsigil_brand",
@@ -3891,6 +3785,224 @@
         "of_finesse": 10,
         "of_storms": 8,
         "of_executioner": 8
+      }
+    },
+    {
+      "id": "eustachio_dancing_sword",
+      "name": "Eustachio's Dancing Sword",
+      "slot": "weapon",
+      "rarity": "epic",
+      "tile": "long_sword_1_new.png",
+      "base_type": "long_sword",
+      "weapon_class": "1H",
+      "damage_min": 6,
+      "damage_max": 10,
+      "damage_type": "physical",
+      "speed": 0.5,
+      "item_tier": 1,
+      "flavor_tags": [
+        "arcane",
+        "precision"
+      ],
+      "lore": "The blade leads. Eustachio was, quite literally, just along for the ride.",
+      "drop_weights": [
+        35,
+        0,
+        0,
+        0,
+        0
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "implicit_affixes": [
+        "of_dancing",
+        "of_finesse"
+      ],
+      "affix_pool": {
+        "of_finesse": 22,
+        "of_haste": 18,
+        "of_crit": 16,
+        "of_sharpness": 14
+      },
+      "boss_drop": "boss_eustachio",
+      "biome_pool": [
+        "dungeon_dark"
+      ]
+    },
+    {
+      "id": "aizul_serpent_knife",
+      "name": "Aizul's Snake-Fang Knife",
+      "slot": "weapon",
+      "rarity": "rare",
+      "tile": "dagger_3.png",
+      "base_type": "dagger",
+      "weapon_class": "1H",
+      "damage_min": 5,
+      "damage_max": 9,
+      "damage_type": "physical",
+      "speed": 0.4,
+      "item_tier": 3,
+      "flavor_tags": [
+        "poison",
+        "precision"
+      ],
+      "lore": "Carved from a single tooth. Still drips, faintly, in dry air.",
+      "drop_weights": [
+        0,
+        0,
+        30,
+        0,
+        0
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "implicit_affixes": [
+        "of_serpent_venom",
+        "of_finesse"
+      ],
+      "affix_pool": {
+        "of_finesse": 22,
+        "of_crit": 16,
+        "of_venom": 18,
+        "of_poison_resist": 12
+      },
+      "boss_drop": "boss_aizul",
+      "biome_pool": [
+        "snake"
+      ]
+    },
+    {
+      "id": "frost_dagger",
+      "name": "Frost Dagger",
+      "slot": "weapon",
+      "rarity": "uncommon",
+      "tile": "dagger_3.png",
+      "base_type": "dagger",
+      "weapon_class": "1H",
+      "damage_min": 10,
+      "damage_max": 18,
+      "damage_type": "cold",
+      "speed": 0.5,
+      "item_tier": 2,
+      "flavor_tags": [
+        "cold"
+      ],
+      "lore": "The blade fogs the air around it. Easy to lose grip on a cold morning.",
+      "drop_weights": [
+        10,
+        65,
+        20,
+        3,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_might": 18,
+        "of_finesse": 18,
+        "of_sharpness": 22,
+        "of_frost": 30,
+        "of_crit": 22,
+        "of_haste": 16,
+        "of_lifesteal": 10,
+        "of_quickcast": 8,
+        "of_channeling": 8
+      },
+      "default_tint": {
+        "hue": 195,
+        "sat": 1.1,
+        "mode": "normal"
+      }
+    },
+    {
+      "id": "viper_fang",
+      "name": "Viper Fang",
+      "slot": "weapon",
+      "rarity": "uncommon",
+      "tile": "dagger_6.png",
+      "base_type": "dagger",
+      "weapon_class": "1H",
+      "damage_min": 9,
+      "damage_max": 17,
+      "damage_type": "poison",
+      "speed": 0.5,
+      "item_tier": 2,
+      "flavor_tags": [
+        "poison"
+      ],
+      "lore": "Hollow-ground. The groove holds something that drips slow and green.",
+      "drop_weights": [
+        10,
+        65,
+        20,
+        3,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_might": 18,
+        "of_finesse": 22,
+        "of_sharpness": 22,
+        "of_venom": 32,
+        "of_crit": 22,
+        "of_haste": 16,
+        "of_lifesteal": 10,
+        "of_quickcast": 8,
+        "of_channeling": 8
+      },
+      "default_tint": {
+        "hue": 110,
+        "sat": 1.1,
+        "mode": "normal"
+      }
+    },
+    {
+      "id": "venomtongue",
+      "name": "Venomtongue",
+      "slot": "weapon",
+      "rarity": "rare",
+      "tile": "dagger_new.png",
+      "base_type": "dagger",
+      "weapon_class": "1H",
+      "damage_min": 27,
+      "damage_max": 48,
+      "damage_type": "poison",
+      "speed": 0.55,
+      "item_tier": 3,
+      "flavor_tags": [
+        "poison"
+      ],
+      "lore": "The serrations whisper when drawn. Wipe the blade and the whisper does not stop.",
+      "drop_weights": [
+        0,
+        15,
+        60,
+        22,
+        3
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_might": 22,
+        "of_finesse": 22,
+        "of_sharpness": 28,
+        "of_venom": 35,
+        "of_crit": 22,
+        "of_haste": 14,
+        "of_lifesteal": 14,
+        "of_bleed_on_miss": 10,
+        "of_bloodletting": 10,
+        "of_executioner": 8,
+        "of_quickcast": 8
+      },
+      "default_tint": {
+        "hue": 100,
+        "sat": 1.15,
+        "mode": "normal"
       }
     }
   ]

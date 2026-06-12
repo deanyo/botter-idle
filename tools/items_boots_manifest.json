@@ -837,12 +837,6 @@
       "slot": "boots",
       "tile": "low_boots.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_devotion": 30,
-        "of_holy_resist": 22,
-        "of_might": 18,
-        "of_regen": 12
-      },
       "recolor_of": "worn_sandals"
     },
     {
@@ -887,13 +881,7 @@
       "rarity": "uncommon",
       "slot": "boots",
       "tile": "boots_1_brown_new.png",
-      "unique": false,
-      "_balance_bumps": {
-        "of_shadows": 32,
-        "of_dark_resist": 22,
-        "of_lifesteal": 18,
-        "of_might": 12
-      }
+      "unique": false
     },
     {
       "affix_pool": {
@@ -942,13 +930,7 @@
       "rarity": "uncommon",
       "slot": "boots",
       "tile": "boots_iron_2.png",
-      "unique": false,
-      "_balance_bumps": {
-        "of_holy_resist": 18,
-        "of_devotion": 14,
-        "of_finesse": 14,
-        "of_wisdom": 12
-      }
+      "unique": false
     },
     {
       "affix_pool": {
@@ -994,13 +976,7 @@
       "rarity": "rare",
       "slot": "boots",
       "tile": "boots_3_stripe_new.png",
-      "unique": false,
-      "_balance_bumps": {
-        "of_finesse": 18,
-        "of_int_mastery": 18,
-        "of_quickcast": 14,
-        "of_resonance": 14
-      }
+      "unique": false
     },
     {
       "affix_pool": {
@@ -1051,16 +1027,6 @@
       "slot": "boots",
       "tile": "low_boots.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_embers": 18,
-        "of_frost": 18,
-        "of_storms": 18,
-        "of_devotion": 18,
-        "of_venom": 18,
-        "of_shadows": 18,
-        "of_sharpness": 18
-      },
-      "_rebalance_v5": true,
       "recolor_of": "worn_sandals"
     },
     {
@@ -1111,12 +1077,6 @@
       "slot": "boots",
       "tile": "boots_iron_2.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_the_bear": 30,
-        "of_vitality": 22,
-        "of_might": 14,
-        "of_sharpness": 14
-      },
       "recolor_of": "earthshaker_treads"
     },
     {
@@ -1149,6 +1109,46 @@
       ],
       "affix_pool": {
         "of_finesse": 14
+      }
+    },
+    {
+      "id": "halfling_lucky_treads",
+      "name": "Lucky Treads",
+      "slot": "boots",
+      "rarity": "rare",
+      "tile": "boots_3_stripe_new.png",
+      "base_type": "sandals",
+      "armor": 5,
+      "evasion": 12,
+      "item_tier": 3,
+      "flavor_tags": [
+        "fortune",
+        "footwork"
+      ],
+      "lore": "Worn-in soles. Always step on the right side of the doorway.",
+      "drop_weights": [
+        0,
+        8,
+        40,
+        30,
+        8
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "requires_innate_tag": "lucky",
+      "implicit_affixes": [
+        "of_plunder"
+      ],
+      "affix_pool": {
+        "of_finesse": 14,
+        "of_haste": 14,
+        "of_the_cat": 12,
+        "of_regen": 8
+      },
+      "default_tint": {
+        "hue": 50,
+        "sat": 1.1,
+        "mode": "normal"
       }
     }
   ]

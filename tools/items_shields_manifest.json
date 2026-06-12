@@ -1400,12 +1400,6 @@
       "slot": "shield",
       "tile": "urand_bullseye.png",
       "unique": true,
-      "_balance_bumps": {
-        "of_finesse": 18,
-        "of_int_mastery": 18,
-        "of_quickcast": 14,
-        "of_resonance": 14
-      },
       "block_chance": 15,
       "block_amount": 10
     },
@@ -1460,12 +1454,6 @@
       "slot": "shield",
       "tile": "elven_buckler_2.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_holy_resist": 18,
-        "of_devotion": 14,
-        "of_finesse": 14,
-        "of_wisdom": 12
-      },
       "block_chance": 8,
       "block_amount": 5
     },
@@ -1523,12 +1511,6 @@
       "slot": "shield",
       "tile": "dwarven_buckler_2.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_shadows": 30,
-        "of_dark_resist": 22,
-        "of_int_mastery": 14,
-        "of_channeling": 14
-      },
       "block_chance": 8,
       "block_amount": 5
     },
@@ -1582,12 +1564,6 @@
       "slot": "shield",
       "tile": "large_shield_2_new.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_the_bear": 30,
-        "of_vitality": 22,
-        "of_might": 14,
-        "of_sharpness": 14
-      },
       "recolor_of": "tower_shield",
       "block_chance": 25,
       "block_amount": 20
@@ -1645,12 +1621,6 @@
       "slot": "shield",
       "tile": "shield_3.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_shadows": 22,
-        "of_the_bear": 22,
-        "of_dark_resist": 18,
-        "of_vitality": 18
-      },
       "recolor_of": "phantom_aegis",
       "block_chance": 15,
       "block_amount": 10
@@ -1707,12 +1677,6 @@
       "slot": "shield",
       "tile": "shield_donald.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_shadows": 22,
-        "of_might": 14,
-        "of_finesse": 14,
-        "of_lifesteal": 12
-      },
       "block_chance": 20,
       "block_amount": 15
     },
@@ -1765,12 +1729,6 @@
       "slot": "shield",
       "tile": "dwarven_buckler_2.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_frost": 35,
-        "of_cold_resist": 22,
-        "of_quickcast": 18,
-        "of_crit": 15
-      },
       "recolor_of": "dwarven_buckler_2",
       "block_chance": 8,
       "block_amount": 5
@@ -1827,12 +1785,6 @@
       "slot": "shield",
       "tile": "shield_1_elven.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_shadows": 22,
-        "of_might": 14,
-        "of_finesse": 14,
-        "of_lifesteal": 12
-      },
       "block_chance": 15,
       "block_amount": 10
     },
@@ -1888,16 +1840,6 @@
       "slot": "shield",
       "tile": "urand_gong.png",
       "unique": true,
-      "_balance_bumps": {
-        "of_embers": 18,
-        "of_frost": 18,
-        "of_storms": 18,
-        "of_devotion": 18,
-        "of_venom": 18,
-        "of_shadows": 18,
-        "of_sharpness": 18
-      },
-      "_rebalance_v5": true,
       "recolor_of": "gong_shield",
       "block_chance": 8,
       "block_amount": 5
@@ -1953,16 +1895,6 @@
       "slot": "shield",
       "tile": "large_shield_1_new.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_embers": 18,
-        "of_frost": 18,
-        "of_storms": 18,
-        "of_devotion": 18,
-        "of_venom": 18,
-        "of_shadows": 18,
-        "of_sharpness": 18
-      },
-      "_rebalance_v5": true,
       "recolor_of": "large_kite",
       "block_chance": 20,
       "block_amount": 15
@@ -2022,16 +1954,6 @@
       "slot": "shield",
       "tile": "dwarven_buckler_2.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_embers": 18,
-        "of_frost": 18,
-        "of_storms": 18,
-        "of_devotion": 18,
-        "of_venom": 18,
-        "of_shadows": 18,
-        "of_sharpness": 18
-      },
-      "_rebalance_v5": true,
       "recolor_of": "dwarven_buckler_2",
       "block_chance": 8,
       "block_amount": 5
@@ -2084,12 +2006,6 @@
       "slot": "shield",
       "tile": "urand_bullseye.png",
       "unique": true,
-      "_balance_bumps": {
-        "of_devotion": 30,
-        "of_holy_resist": 22,
-        "of_might": 18,
-        "of_regen": 12
-      },
       "recolor_of": "bullseye",
       "block_chance": 15,
       "block_amount": 10
@@ -2145,15 +2061,54 @@
       "slot": "shield",
       "tile": "dwarven_buckler_2.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_the_bear": 30,
-        "of_vitality": 22,
-        "of_might": 14,
-        "of_sharpness": 14
-      },
       "recolor_of": "dwarven_buckler_2",
       "block_chance": 8,
       "block_amount": 5
+    },
+    {
+      "id": "padded_targe",
+      "name": "Padded Targe",
+      "slot": "shield",
+      "rarity": "common",
+      "tile": "buckler_2_new.png",
+      "base_type": "buckler",
+      "armor": 4,
+      "evasion": 4,
+      "item_tier": 1,
+      "flavor_tags": [],
+      "lore": "Boiled leather over a willow disc. Tougher than it sounds.",
+      "drop_weights": [
+        70,
+        25,
+        3,
+        0,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_might": 18,
+        "of_finesse": 14,
+        "of_wisdom": 10,
+        "of_the_bear": 22,
+        "of_fire_resist": 12,
+        "of_cold_resist": 12,
+        "of_lightning_resist": 12,
+        "of_holy_resist": 8,
+        "of_poison_resist": 10,
+        "of_dark_resist": 8,
+        "of_warding": 14,
+        "of_bulwark": 14
+      },
+      "default_tint": {
+        "hue": 28,
+        "sat": 0.7,
+        "mode": "colorize",
+        "colorize_strength": 0.4
+      },
+      "block_chance": 8,
+      "block_amount": 6
     }
   ]
 }

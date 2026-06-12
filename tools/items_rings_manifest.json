@@ -2238,13 +2238,7 @@
       "rarity": "epic",
       "slot": "ring",
       "tile": "ring_gold_white.png",
-      "unique": false,
-      "_balance_bumps": {
-        "of_storms": 22,
-        "of_lightning_resist": 18,
-        "of_might": 14,
-        "of_haste": 12
-      }
+      "unique": false
     },
     {
       "affix_pool": {
@@ -2310,12 +2304,6 @@
       "slot": "ring",
       "tile": "copper.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_venom": 28,
-        "of_poison_resist": 22,
-        "of_regen": 14,
-        "of_vitality": 15
-      },
       "recolor_of": "copper_ring"
     },
     {
@@ -2378,13 +2366,7 @@
       "rarity": "legendary",
       "slot": "ring",
       "tile": "urand_octoring.png",
-      "unique": true,
-      "_balance_bumps": {
-        "of_finesse": 18,
-        "of_int_mastery": 18,
-        "of_quickcast": 14,
-        "of_resonance": 14
-      }
+      "unique": true
     },
     {
       "affix_pool": {
@@ -2450,12 +2432,6 @@
       "slot": "ring",
       "tile": "ruby.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_frost": 35,
-        "of_cold_resist": 22,
-        "of_quickcast": 18,
-        "of_crit": 15
-      },
       "recolor_of": "ruby_ring"
     },
     {
@@ -2522,12 +2498,6 @@
       "slot": "ring",
       "tile": "moonstone.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_shadows": 26,
-        "of_dark_resist": 18,
-        "of_finesse": 14,
-        "of_quickcast": 12
-      },
       "recolor_of": "moonstone_ring"
     },
     {
@@ -2591,16 +2561,6 @@
       "slot": "ring",
       "tile": "bronze.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_embers": 18,
-        "of_frost": 18,
-        "of_storms": 18,
-        "of_devotion": 18,
-        "of_venom": 18,
-        "of_shadows": 18,
-        "of_sharpness": 18
-      },
-      "_rebalance_v5": true,
       "recolor_of": "bronze_ring"
     },
     {
@@ -2671,13 +2631,7 @@
       "rarity": "epic",
       "slot": "ring",
       "tile": "ring_twisted.png",
-      "unique": false,
-      "_balance_bumps": {
-        "of_holy_resist": 18,
-        "of_devotion": 14,
-        "of_finesse": 14,
-        "of_wisdom": 12
-      }
+      "unique": false
     },
     {
       "affix_pool": {
@@ -2748,13 +2702,7 @@
       "rarity": "epic",
       "slot": "ring",
       "tile": "agate.png",
-      "unique": false,
-      "_balance_bumps": {
-        "of_shadows": 30,
-        "of_dark_resist": 22,
-        "of_int_mastery": 14,
-        "of_channeling": 14
-      }
+      "unique": false
     },
     {
       "affix_pool": {
@@ -2823,12 +2771,6 @@
       "slot": "ring",
       "tile": "urand_mage.png",
       "unique": true,
-      "_balance_bumps": {
-        "of_the_bear": 30,
-        "of_vitality": 22,
-        "of_might": 14,
-        "of_sharpness": 14
-      },
       "recolor_of": "mage_ring"
     },
     {
@@ -2898,13 +2840,7 @@
       "rarity": "legendary",
       "slot": "ring",
       "tile": "urand_mage.png",
-      "unique": true,
-      "_balance_bumps": {
-        "of_shadows": 30,
-        "of_dark_resist": 22,
-        "of_int_mastery": 14,
-        "of_channeling": 14
-      }
+      "unique": true
     },
     {
       "affix_pool": {
@@ -2968,13 +2904,7 @@
       "rarity": "epic",
       "slot": "ring",
       "tile": "steel.png",
-      "unique": false,
-      "_balance_bumps": {
-        "of_finesse": 18,
-        "of_int_mastery": 18,
-        "of_quickcast": 14,
-        "of_resonance": 14
-      }
+      "unique": false
     },
     {
       "affix_pool": {
@@ -3040,13 +2970,6 @@
       "slot": "ring",
       "tile": "ring_ivory.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_embers": 35,
-        "of_might": 18,
-        "of_lifesteal": 12,
-        "of_fire_resist": 18,
-        "of_haste": 12
-      },
       "recolor_of": "ivory_ring"
     },
     {
@@ -3119,12 +3042,6 @@
       "slot": "ring",
       "tile": "agate.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_shadows": 22,
-        "of_the_bear": 22,
-        "of_dark_resist": 18,
-        "of_vitality": 18
-      },
       "recolor_of": "agate_ring"
     },
     {
@@ -3190,16 +3107,6 @@
       "slot": "ring",
       "tile": "brass.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_embers": 18,
-        "of_frost": 18,
-        "of_storms": 18,
-        "of_devotion": 18,
-        "of_venom": 18,
-        "of_shadows": 18,
-        "of_sharpness": 18
-      },
-      "_rebalance_v5": true,
       "recolor_of": "brass_ring"
     },
     {
@@ -3267,12 +3174,6 @@
       "slot": "ring",
       "tile": "emerald.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_venom": 22,
-        "of_finesse": 18,
-        "of_dex_mastery": 14,
-        "of_crit": 15
-      },
       "recolor_of": "emerald_ring"
     },
     {
@@ -3376,6 +3277,43 @@
         "of_resonance": 10,
         "of_executioner": 8
       }
+    },
+    {
+      "id": "frederick_vault_key_ring",
+      "name": "Frederick's Vault-Key Ring",
+      "slot": "ring",
+      "rarity": "legendary",
+      "tile": "ring_gold_white.png",
+      "base_type": "ring_keys",
+      "item_tier": 4,
+      "flavor_tags": [
+        "fortune"
+      ],
+      "lore": "Heavy with keys. Frederick collected them. Frederick was, eventually, collected.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        40,
+        0
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "implicit_affixes": [
+        "of_vault_key",
+        "of_plunder"
+      ],
+      "affix_pool": {
+        "of_might": 14,
+        "of_finesse": 14,
+        "of_wisdom": 14,
+        "of_plunder": 18,
+        "of_scribe": 12
+      },
+      "boss_drop": "boss_frederick",
+      "biome_pool": [
+        "vaults"
+      ]
     }
   ]
 }

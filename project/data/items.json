@@ -12894,7 +12894,7 @@
       "id": "executioner_axe",
       "name": "Executioner's Axe",
       "slot": "weapon",
-      "rarity": "epic",
+      "rarity": "legendary",
       "tile": "executioner_axe_1.png",
       "base_type": "executioner_axe",
       "weapon_class": "2H",
@@ -12902,7 +12902,7 @@
       "damage_max": 216,
       "damage_type": "physical",
       "speed": 1.2,
-      "item_tier": 4,
+      "item_tier": 5,
       "flavor_tags": [
         "ponderous",
         "brutal"
@@ -12911,13 +12911,16 @@
       "drop_weights": [
         0,
         0,
-        10,
-        30,
+        0,
+        15,
         40
       ],
       "unique": false,
       "enchant_chance": 0.15,
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_executioner",
+        "of_bloodletting"
+      ],
       "affix_pool": {
         "of_might": 25,
         "of_finesse": 15,
@@ -14289,7 +14292,7 @@
       "id": "reapers_scythe",
       "name": "Reaper's Scythe",
       "slot": "weapon",
-      "rarity": "epic",
+      "rarity": "legendary",
       "tile": "scythe_3.png",
       "base_type": "scythe",
       "weapon_class": "2H",
@@ -14297,7 +14300,7 @@
       "damage_max": 179,
       "damage_type": "dark",
       "speed": 1.0,
-      "item_tier": 4,
+      "item_tier": 5,
       "flavor_tags": [
         "dark",
         "death"
@@ -14306,13 +14309,16 @@
       "drop_weights": [
         0,
         0,
+        0,
         15,
-        35,
-        30
+        40
       ],
       "unique": false,
       "enchant_chance": 0.15,
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_shadows",
+        "of_bloodletting"
+      ],
       "affix_pool": {
         "of_might": 25,
         "of_finesse": 15,
@@ -14547,7 +14553,7 @@
       "id": "blessed_claymore",
       "name": "Blessed Claymore",
       "slot": "weapon",
-      "rarity": "epic",
+      "rarity": "legendary",
       "tile": "claymore_blessed.png",
       "base_type": "claymore",
       "weapon_class": "2H",
@@ -14555,7 +14561,7 @@
       "damage_max": 157,
       "damage_type": "holy",
       "speed": 1.05,
-      "item_tier": 4,
+      "item_tier": 5,
       "flavor_tags": [
         "holy"
       ],
@@ -14563,13 +14569,16 @@
       "drop_weights": [
         0,
         0,
-        10,
-        35,
+        0,
+        15,
         40
       ],
       "unique": false,
       "enchant_chance": 0.15,
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_devotion",
+        "of_might"
+      ],
       "affix_pool": {
         "of_might": 25,
         "of_finesse": 15,
@@ -14651,7 +14660,7 @@
       "id": "triple_sword",
       "name": "Triple Sword",
       "slot": "weapon",
-      "rarity": "epic",
+      "rarity": "legendary",
       "tile": "triple_sword_2.png",
       "base_type": "triple_sword",
       "weapon_class": "2H",
@@ -14659,7 +14668,7 @@
       "damage_max": 209,
       "damage_type": "physical",
       "speed": 1.1,
-      "item_tier": 4,
+      "item_tier": 5,
       "flavor_tags": [
         "dual",
         "brutal"
@@ -14668,13 +14677,16 @@
       "drop_weights": [
         0,
         0,
-        10,
-        30,
+        0,
+        15,
         40
       ],
       "unique": false,
       "enchant_chance": 0.15,
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_sharpness",
+        "of_executioner"
+      ],
       "affix_pool": {
         "of_might": 25,
         "of_finesse": 15,
@@ -36395,7 +36407,7 @@
       "id": "glacial_bardiche",
       "name": "Glacial Bardiche",
       "slot": "weapon",
-      "rarity": "epic",
+      "rarity": "legendary",
       "tile": "bardiche_4.png",
       "base_type": "bardiche",
       "weapon_class": "2H",
@@ -36403,7 +36415,7 @@
       "damage_max": 170,
       "damage_type": "cold",
       "speed": 1.05,
-      "item_tier": 4,
+      "item_tier": 5,
       "flavor_tags": [
         "cold"
       ],
@@ -36411,14 +36423,15 @@
       "drop_weights": [
         0,
         0,
-        8,
-        55,
-        38
+        0,
+        15,
+        40
       ],
       "unique": false,
       "enchant_chance": 0.15,
       "implicit_affixes": [
-        "of_frost"
+        "of_frost",
+        "of_finesse"
       ],
       "affix_pool": {
         "of_might": 28,

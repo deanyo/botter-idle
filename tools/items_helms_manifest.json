@@ -1619,12 +1619,6 @@
       "slot": "helm",
       "tile": "green_mask.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_shadows": 26,
-        "of_dark_resist": 18,
-        "of_finesse": 14,
-        "of_quickcast": 12
-      },
       "recolor_of": "green_mask"
     },
     {
@@ -1678,13 +1672,7 @@
       "rarity": "legendary",
       "slot": "helm",
       "tile": "helmet_art_3.png",
-      "unique": false,
-      "_balance_bumps": {
-        "of_shadows": 26,
-        "of_finesse": 14,
-        "of_lifesteal": 14,
-        "of_dark_resist": 14
-      }
+      "unique": false
     },
     {
       "affix_pool": {
@@ -1733,13 +1721,7 @@
       "rarity": "legendary",
       "slot": "helm",
       "tile": "helmet_ego_1.png",
-      "unique": false,
-      "_balance_bumps": {
-        "of_finesse": 18,
-        "of_int_mastery": 18,
-        "of_quickcast": 14,
-        "of_resonance": 14
-      }
+      "unique": false
     },
     {
       "affix_pool": {
@@ -1793,13 +1775,7 @@
       "rarity": "legendary",
       "slot": "helm",
       "tile": "urand_dyrovepreva_new.png",
-      "unique": true,
-      "_balance_bumps": {
-        "of_shadows": 22,
-        "of_might": 14,
-        "of_finesse": 14,
-        "of_lifesteal": 12
-      }
+      "unique": true
     },
     {
       "affix_pool": {
@@ -1854,12 +1830,6 @@
       "slot": "helm",
       "tile": "helmet_2_etched.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_the_bear": 30,
-        "of_vitality": 22,
-        "of_might": 14,
-        "of_sharpness": 14
-      },
       "recolor_of": "etched_helm"
     },
     {
@@ -1914,13 +1884,7 @@
       "rarity": "legendary",
       "slot": "helm",
       "tile": "urand_pondering_new.png",
-      "unique": true,
-      "_balance_bumps": {
-        "of_shadows": 22,
-        "of_might": 14,
-        "of_finesse": 14,
-        "of_lifesteal": 12
-      }
+      "unique": true
     },
     {
       "affix_pool": {
@@ -1976,13 +1940,7 @@
       "rarity": "rare",
       "slot": "helm",
       "tile": "wizard_hat_1.png",
-      "unique": false,
-      "_balance_bumps": {
-        "of_shadows": 22,
-        "of_might": 14,
-        "of_finesse": 14,
-        "of_lifesteal": 12
-      }
+      "unique": false
     },
     {
       "affix_pool": {
@@ -2038,12 +1996,6 @@
       "slot": "helm",
       "tile": "urand_dyrovepreva_new.png",
       "unique": true,
-      "_balance_bumps": {
-        "of_shadows": 22,
-        "of_the_bear": 22,
-        "of_dark_resist": 18,
-        "of_vitality": 18
-      },
       "recolor_of": "crown_of_dyrovepreva"
     },
     {
@@ -2097,13 +2049,7 @@
       "rarity": "epic",
       "slot": "helm",
       "tile": "green_mask.png",
-      "unique": false,
-      "_balance_bumps": {
-        "of_shadows": 26,
-        "of_finesse": 14,
-        "of_lifesteal": 14,
-        "of_dark_resist": 14
-      }
+      "unique": false
     },
     {
       "id": "minotaur_horn_helm",
@@ -2217,6 +2163,133 @@
         "of_pyromancer": 18,
         "of_int_mastery": 14,
         "of_executioner": 8
+      },
+      "default_tint": {
+        "hue": 0,
+        "sat": 0.0,
+        "mode": "normal"
+      }
+    },
+    {
+      "id": "psyche_holy_censer",
+      "name": "Psyche's Holy Censer",
+      "slot": "helm",
+      "rarity": "epic",
+      "tile": "helm_cap.png",
+      "base_type": "helm",
+      "armor": 4,
+      "evasion": 1,
+      "item_tier": 2,
+      "flavor_tags": [
+        "faith",
+        "regen"
+      ],
+      "lore": "Smolders eternally. Psyche believed the smoke kept her sane. It did not.",
+      "drop_weights": [
+        0,
+        25,
+        5,
+        0,
+        0
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "implicit_affixes": [
+        "of_holy_anchor",
+        "of_holy_resist"
+      ],
+      "affix_pool": {
+        "of_wisdom": 16,
+        "of_vitality": 18,
+        "of_holy_resist": 18,
+        "of_regen": 16
+      },
+      "boss_drop": "boss_psyche",
+      "biome_pool": [
+        "temple"
+      ]
+    },
+    {
+      "id": "tiamat_five_heads",
+      "name": "Tiamat's Five Heads",
+      "slot": "helm",
+      "rarity": "legendary",
+      "tile": "crested_helmet.png",
+      "base_type": "helm",
+      "armor": 12,
+      "evasion": 4,
+      "item_tier": 5,
+      "flavor_tags": [
+        "fire_res",
+        "cold_res",
+        "willpower"
+      ],
+      "lore": "Five heads. Five jaws. Five voices, none quieting.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        0,
+        30
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "implicit_affixes": [
+        "of_five_heads",
+        "of_fire_resist",
+        "of_cold_resist",
+        "of_poison_resist"
+      ],
+      "affix_pool": {
+        "of_wisdom": 20,
+        "of_vitality": 22,
+        "of_channeling": 16,
+        "of_quickcast": 14
+      },
+      "boss_drop": "boss_tiamat",
+      "biome_pool": [
+        "zot"
+      ]
+    },
+    {
+      "id": "gargoyle_basalt_visor",
+      "name": "Basalt Visor",
+      "slot": "helm",
+      "rarity": "epic",
+      "tile": "helmet_4_visor.png",
+      "base_type": "helmet",
+      "armor": 18,
+      "evasion": 6,
+      "item_tier": 4,
+      "flavor_tags": [
+        "fortified",
+        "petrify"
+      ],
+      "lore": "Cooled lava cut and bound. Heavier than the wearer's head.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        12,
+        30
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "requires_innate_tag": "stone",
+      "implicit_affixes": [
+        "of_the_bear",
+        "of_warding"
+      ],
+      "affix_pool": {
+        "of_the_bear": 18,
+        "of_vitality": 12,
+        "of_regen": 10,
+        "of_fire_resist": 10,
+        "of_cold_resist": 10,
+        "of_lightning_resist": 10,
+        "of_holy_resist": 8,
+        "of_poison_resist": 8,
+        "of_dark_resist": 8
       },
       "default_tint": {
         "hue": 0,

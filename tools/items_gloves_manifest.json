@@ -633,13 +633,7 @@
       "rarity": "rare",
       "slot": "gloves",
       "tile": "glove_4_gauntlets.png",
-      "unique": false,
-      "_balance_bumps": {
-        "of_shadows": 30,
-        "of_dark_resist": 22,
-        "of_int_mastery": 14,
-        "of_channeling": 14
-      }
+      "unique": false
     },
     {
       "affix_pool": {
@@ -699,12 +693,6 @@
       "slot": "gloves",
       "tile": "glove_1_new.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_frost": 35,
-        "of_cold_resist": 22,
-        "of_quickcast": 18,
-        "of_crit": 15
-      },
       "recolor_of": "dwarven_gloves"
     },
     {
@@ -764,13 +752,7 @@
       "rarity": "rare",
       "slot": "gloves",
       "tile": "glove_1_new.png",
-      "unique": false,
-      "_balance_bumps": {
-        "of_finesse": 18,
-        "of_int_mastery": 18,
-        "of_quickcast": 14,
-        "of_resonance": 14
-      }
+      "unique": false
     },
     {
       "affix_pool": {
@@ -825,16 +807,6 @@
       "slot": "gloves",
       "tile": "glove_2_old.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_embers": 18,
-        "of_frost": 18,
-        "of_storms": 18,
-        "of_devotion": 18,
-        "of_venom": 18,
-        "of_shadows": 18,
-        "of_sharpness": 18
-      },
-      "_rebalance_v5": true,
       "recolor_of": "studded_gloves"
     },
     {
@@ -916,6 +888,128 @@
         "hue": 25,
         "sat": 1.0,
         "mode": "normal"
+      }
+    },
+    {
+      "id": "grums_wolfclaw_gauntlets",
+      "name": "Grum's Wolfclaw Gauntlets",
+      "slot": "gloves",
+      "rarity": "rare",
+      "tile": "glove_4_gauntlets.png",
+      "base_type": "gauntlets",
+      "armor": 4,
+      "evasion": 2,
+      "item_tier": 2,
+      "flavor_tags": [
+        "bloodlust"
+      ],
+      "lore": "The wolves recognized them. Grum did not survive that recognition.",
+      "drop_weights": [
+        0,
+        30,
+        0,
+        0,
+        0
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "implicit_affixes": [
+        "of_wolf_kinship",
+        "of_might"
+      ],
+      "affix_pool": {
+        "of_might": 22,
+        "of_finesse": 14,
+        "of_sharpness": 16,
+        "of_haste": 10
+      },
+      "boss_drop": "boss_grum",
+      "biome_pool": [
+        "orc"
+      ]
+    },
+    {
+      "id": "silk_handwraps",
+      "name": "Silk Handwraps",
+      "slot": "gloves",
+      "rarity": "common",
+      "tile": "glove_3_old.png",
+      "base_type": "gloves",
+      "armor": 1,
+      "evasion": 6,
+      "item_tier": 1,
+      "flavor_tags": [],
+      "lore": "Wrapped tight around the knuckles. Quiet on the wrist.",
+      "drop_weights": [
+        60,
+        30,
+        5,
+        0,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_might": 10,
+        "of_finesse": 26,
+        "of_wisdom": 8,
+        "of_the_bear": 8,
+        "of_the_cat": 22,
+        "of_sharpness": 14,
+        "of_embers": 8,
+        "of_frost": 8,
+        "of_storms": 8,
+        "of_devotion": 6,
+        "of_venom": 8,
+        "of_shadows": 8,
+        "of_crit": 22,
+        "of_haste": 22,
+        "of_lifesteal": 10,
+        "of_velocity": 16,
+        "of_hunter": 10,
+        "of_executioner": 10
+      }
+    },
+    {
+      "id": "acolyte_handwraps",
+      "name": "Acolyte's Handwraps",
+      "slot": "gloves",
+      "rarity": "uncommon",
+      "tile": "glove_3_new.png",
+      "base_type": "gloves",
+      "armor": 2,
+      "evasion": 7,
+      "item_tier": 2,
+      "flavor_tags": [
+        "faith"
+      ],
+      "lore": "Wrapped each morning, with a prayer pressed into the knot.",
+      "drop_weights": [
+        20,
+        50,
+        22,
+        2,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.05,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_might": 8,
+        "of_finesse": 12,
+        "of_wisdom": 26,
+        "of_the_bear": 10,
+        "of_the_cat": 14,
+        "of_sharpness": 8,
+        "of_devotion": 18,
+        "of_holy_resist": 14,
+        "of_zealot": 14,
+        "of_channeling": 18,
+        "of_quickcast": 14,
+        "of_velocity": 12,
+        "of_lifesteal": 8,
+        "of_hunter": 8
       }
     }
   ]

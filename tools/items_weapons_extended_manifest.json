@@ -526,8 +526,8 @@
       "tile": "battle_axe_7.png",
       "base_type": "battle_axe",
       "weapon_class": "2H",
-      "damage_min": 167,
-      "damage_max": 298,
+      "damage_min": 123,
+      "damage_max": 220,
       "damage_type": "physical",
       "speed": 1.1,
       "item_tier": 5,
@@ -733,7 +733,7 @@
       "id": "executioner_axe",
       "name": "Executioner's Axe",
       "slot": "weapon",
-      "rarity": "epic",
+      "rarity": "legendary",
       "tile": "executioner_axe_1.png",
       "base_type": "executioner_axe",
       "weapon_class": "2H",
@@ -741,7 +741,7 @@
       "damage_max": 216,
       "damage_type": "physical",
       "speed": 1.2,
-      "item_tier": 4,
+      "item_tier": 5,
       "flavor_tags": [
         "ponderous",
         "brutal"
@@ -750,13 +750,16 @@
       "drop_weights": [
         0,
         0,
-        10,
-        30,
+        0,
+        15,
         40
       ],
       "unique": false,
       "enchant_chance": 0.15,
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_executioner",
+        "of_bloodletting"
+      ],
       "affix_pool": {
         "of_might": 25,
         "of_finesse": 15,
@@ -790,8 +793,8 @@
       "tile": "executioner_axe_5.png",
       "base_type": "executioner_axe",
       "weapon_class": "2H",
-      "damage_min": 175,
-      "damage_max": 305,
+      "damage_min": 126,
+      "damage_max": 220,
       "damage_type": "physical",
       "speed": 1.2,
       "item_tier": 5,
@@ -834,8 +837,7 @@
         "of_bloodletting": 8,
         "of_berserker_rage": 8,
         "of_executioner": 8
-      },
-      "_rebalance_v6": true
+      }
     },
     {
       "id": "club",
@@ -1296,8 +1298,7 @@
         "of_bloodletting": 8,
         "of_berserker_rage": 8,
         "of_executioner": 8
-      },
-      "_rebalance_v6": true
+      }
     },
     {
       "id": "runed_eveningstar",
@@ -1350,8 +1351,7 @@
         "of_bloodletting": 8,
         "of_berserker_rage": 8,
         "of_executioner": 8
-      },
-      "_rebalance_v6": true
+      }
     },
     {
       "id": "flail",
@@ -1609,8 +1609,7 @@
         "of_bloodletting": 8,
         "of_berserker_rage": 8,
         "of_executioner": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "giant_club",
@@ -1663,8 +1662,7 @@
         "of_bloodletting": 8,
         "of_berserker_rage": 8,
         "of_executioner": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "spear",
@@ -2021,8 +2019,7 @@
         "of_bloodletting": 8,
         "of_berserker_rage": 8,
         "of_executioner": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "runed_bardiche",
@@ -2128,14 +2125,13 @@
         "of_bloodletting": 8,
         "of_berserker_rage": 8,
         "of_executioner": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "reapers_scythe",
       "name": "Reaper's Scythe",
       "slot": "weapon",
-      "rarity": "epic",
+      "rarity": "legendary",
       "tile": "scythe_3.png",
       "base_type": "scythe",
       "weapon_class": "2H",
@@ -2143,7 +2139,7 @@
       "damage_max": 179,
       "damage_type": "dark",
       "speed": 1.0,
-      "item_tier": 4,
+      "item_tier": 5,
       "flavor_tags": [
         "dark",
         "death"
@@ -2152,13 +2148,16 @@
       "drop_weights": [
         0,
         0,
+        0,
         15,
-        35,
-        30
+        40
       ],
       "unique": false,
       "enchant_chance": 0.15,
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_shadows",
+        "of_bloodletting"
+      ],
       "affix_pool": {
         "of_might": 25,
         "of_finesse": 15,
@@ -2393,7 +2392,7 @@
       "id": "blessed_claymore",
       "name": "Blessed Claymore",
       "slot": "weapon",
-      "rarity": "epic",
+      "rarity": "legendary",
       "tile": "claymore_blessed.png",
       "base_type": "claymore",
       "weapon_class": "2H",
@@ -2401,7 +2400,7 @@
       "damage_max": 157,
       "damage_type": "holy",
       "speed": 1.05,
-      "item_tier": 4,
+      "item_tier": 5,
       "flavor_tags": [
         "holy"
       ],
@@ -2409,13 +2408,16 @@
       "drop_weights": [
         0,
         0,
-        10,
-        35,
+        0,
+        15,
         40
       ],
       "unique": false,
       "enchant_chance": 0.15,
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_devotion",
+        "of_might"
+      ],
       "affix_pool": {
         "of_might": 25,
         "of_finesse": 15,
@@ -2497,7 +2499,7 @@
       "id": "triple_sword",
       "name": "Triple Sword",
       "slot": "weapon",
-      "rarity": "epic",
+      "rarity": "legendary",
       "tile": "triple_sword_2.png",
       "base_type": "triple_sword",
       "weapon_class": "2H",
@@ -2505,7 +2507,7 @@
       "damage_max": 209,
       "damage_type": "physical",
       "speed": 1.1,
-      "item_tier": 4,
+      "item_tier": 5,
       "flavor_tags": [
         "dual",
         "brutal"
@@ -2514,13 +2516,16 @@
       "drop_weights": [
         0,
         0,
-        10,
-        30,
+        0,
+        15,
         40
       ],
       "unique": false,
       "enchant_chance": 0.15,
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_sharpness",
+        "of_executioner"
+      ],
       "affix_pool": {
         "of_might": 25,
         "of_finesse": 15,
@@ -2553,7 +2558,7 @@
       "rarity": "common",
       "tile": "quarterstaff_2.png",
       "base_type": "quarterstaff",
-      "weapon_class": "2H",
+      "weapon_class": "1H",
       "damage_min": 16,
       "damage_max": 28,
       "damage_type": "physical",
@@ -2603,7 +2608,7 @@
       "rarity": "uncommon",
       "tile": "quarterstaff_3.png",
       "base_type": "quarterstaff",
-      "weapon_class": "2H",
+      "weapon_class": "1H",
       "damage_min": 25,
       "damage_max": 43,
       "damage_type": "physical",
@@ -2800,8 +2805,7 @@
         "of_bloodletting": 8,
         "of_berserker_rage": 8,
         "of_executioner": 8
-      },
-      "_rebalance_v6": true
+      }
     },
     {
       "id": "demon_whip",
@@ -2855,8 +2859,7 @@
         "of_bloodletting": 8,
         "of_berserker_rage": 8,
         "of_executioner": 8
-      },
-      "_rebalance_v6": true
+      }
     },
     {
       "id": "ankus",
@@ -2906,8 +2909,7 @@
         "of_bloodletting": 8,
         "of_berserker_rage": 8,
         "of_executioner": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "cutlass",
@@ -3009,8 +3011,7 @@
         "of_bloodletting": 8,
         "of_berserker_rage": 8,
         "of_executioner": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "affix_pool": {
@@ -3070,12 +3071,6 @@
       "tile": "halberd_1.png",
       "unique": false,
       "weapon_class": "2H",
-      "_balance_bumps": {
-        "of_venom": 22,
-        "of_finesse": 18,
-        "of_dex_mastery": 14,
-        "of_crit": 15
-      },
       "recolor_of": "halberd"
     },
     {
@@ -3133,13 +3128,7 @@
       "speed": 0.8,
       "tile": "quarterstaff_3.png",
       "unique": false,
-      "weapon_class": "2H",
-      "_balance_bumps": {
-        "of_finesse": 18,
-        "of_int_mastery": 18,
-        "of_quickcast": 14,
-        "of_resonance": 14
-      }
+      "weapon_class": "1H"
     },
     {
       "affix_pool": {
@@ -3198,13 +3187,7 @@
       "speed": 1.15,
       "tile": "broad_axe_1.png",
       "unique": false,
-      "weapon_class": "2H",
-      "_balance_bumps": {
-        "of_shadows": 32,
-        "of_dark_resist": 22,
-        "of_lifesteal": 18,
-        "of_might": 12
-      }
+      "weapon_class": "2H"
     },
     {
       "affix_pool": {
@@ -3265,12 +3248,6 @@
       "tile": "spear_3.png",
       "unique": false,
       "weapon_class": "1H",
-      "_balance_bumps": {
-        "of_venom": 28,
-        "of_poison_resist": 22,
-        "of_regen": 14,
-        "of_vitality": 15
-      },
       "recolor_of": "steel_spear"
     },
     {
@@ -3331,12 +3308,6 @@
       "tile": "claymore.png",
       "unique": false,
       "weapon_class": "2H",
-      "_balance_bumps": {
-        "of_frost": 30,
-        "of_finesse": 15,
-        "of_quickcast": 14,
-        "of_cold_resist": 22
-      },
       "recolor_of": "claymore"
     },
     {
@@ -3396,12 +3367,6 @@
       "tile": "hammer_2_new.png",
       "unique": false,
       "weapon_class": "1H",
-      "_balance_bumps": {
-        "of_devotion": 22,
-        "of_haste": 18,
-        "of_lifesteal": 12,
-        "of_quickcast": 15
-      },
       "recolor_of": "warhammer"
     },
     {
@@ -3461,12 +3426,6 @@
       "tile": "greatsword_1_new.png",
       "unique": false,
       "weapon_class": "2H",
-      "_balance_bumps": {
-        "of_venom": 22,
-        "of_finesse": 18,
-        "of_dex_mastery": 14,
-        "of_crit": 15
-      },
       "recolor_of": "greatsword"
     },
     {
@@ -3526,13 +3485,7 @@
       "speed": 0.6,
       "tile": "bullwhip_old.png",
       "unique": false,
-      "weapon_class": "1H",
-      "_balance_bumps": {
-        "of_devotion": 28,
-        "of_holy_resist": 18,
-        "of_channeling": 15,
-        "of_quickcast": 12
-      }
+      "weapon_class": "1H"
     },
     {
       "affix_pool": {
@@ -3593,12 +3546,6 @@
       "tile": "broad_axe_5.png",
       "unique": false,
       "weapon_class": "2H",
-      "_balance_bumps": {
-        "of_frost": 30,
-        "of_finesse": 15,
-        "of_quickcast": 14,
-        "of_cold_resist": 22
-      },
       "recolor_of": "runed_broad_axe"
     },
     {
@@ -3663,12 +3610,6 @@
       "tile": "bardiche_4.png",
       "unique": false,
       "weapon_class": "2H",
-      "_balance_bumps": {
-        "of_venom": 28,
-        "of_poison_resist": 22,
-        "of_regen": 14,
-        "of_vitality": 15
-      },
       "recolor_of": "runed_bardiche"
     },
     {
@@ -3730,14 +3671,6 @@
       "tile": "giant_club_new.png",
       "unique": false,
       "weapon_class": "2H",
-      "_balance_bumps": {
-        "of_embers": 35,
-        "of_might": 18,
-        "of_lifesteal": 12,
-        "of_fire_resist": 18,
-        "of_haste": 12
-      },
-      "_rebalance_v5": true,
       "recolor_of": "giant_club"
     },
     {
@@ -3938,7 +3871,10 @@
       ],
       "unique": true,
       "enchant_chance": 0.0,
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_shadows",
+        "of_lifesteal"
+      ],
       "affix_pool": {
         "of_might": 25,
         "of_finesse": 15,
@@ -4110,13 +4046,375 @@
       "tile": "urand_firestarter.png",
       "unique": true,
       "weapon_class": "1H",
-      "_balance_bumps": {
-        "of_the_bear": 30,
-        "of_vitality": 22,
-        "of_might": 14,
+      "recolor_of": "firestarter"
+    },
+    {
+      "id": "sigmunds_sickle",
+      "name": "Sigmund's Sickle",
+      "slot": "weapon",
+      "rarity": "legendary",
+      "tile": "scythe_3.png",
+      "base_type": "scythe",
+      "weapon_class": "2H",
+      "damage_min": 6,
+      "damage_max": 12,
+      "damage_type": "physical",
+      "speed": 0.7,
+      "item_tier": 1,
+      "flavor_tags": [
+        "bloody",
+        "precision"
+      ],
+      "lore": "Sigmund swung this in his prime. The prime was brief.",
+      "drop_weights": [
+        40,
+        0,
+        0,
+        0,
+        0
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "implicit_affixes": [
+        "of_bleed_on_miss",
+        "of_sharpness"
+      ],
+      "affix_pool": {
+        "of_might": 25,
+        "of_sharpness": 20,
+        "of_crit": 15,
+        "of_bloodletting": 12
+      },
+      "boss_drop": "boss_sigmund",
+      "biome_pool": [
+        "dungeon"
+      ]
+    },
+    {
+      "id": "blorks_pickaxe",
+      "name": "Blork's Pickaxe",
+      "slot": "weapon",
+      "rarity": "rare",
+      "tile": "ankus.png",
+      "base_type": "mace",
+      "weapon_class": "1H",
+      "damage_min": 7,
+      "damage_max": 11,
+      "damage_type": "physical",
+      "speed": 0.7,
+      "item_tier": 1,
+      "flavor_tags": [
+        "fortune"
+      ],
+      "lore": "Smells of mineshaft. Strikes earth like it was promised something.",
+      "drop_weights": [
+        40,
+        0,
+        0,
+        0,
+        0
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "implicit_affixes": [
+        "of_prospecting",
+        "of_sharpness"
+      ],
+      "affix_pool": {
+        "of_might": 20,
+        "of_plunder": 22,
+        "of_sharpness": 16,
+        "of_crit": 12
+      },
+      "boss_drop": "boss_blork",
+      "biome_pool": [
+        "mines"
+      ]
+    },
+    {
+      "id": "ilsuiw_trident",
+      "name": "Ilsuiw's Mermaid Trident",
+      "slot": "weapon",
+      "rarity": "legendary",
+      "tile": "spear_3.png",
+      "base_type": "spear",
+      "weapon_class": "1H",
+      "damage_min": 12,
+      "damage_max": 18,
+      "damage_type": "physical",
+      "speed": 0.7,
+      "item_tier": 3,
+      "flavor_tags": [
+        "cold",
+        "tide"
+      ],
+      "lore": "Bites cold. Salt. Hums when the wielder steps on wet stone.",
+      "drop_weights": [
+        0,
+        0,
+        30,
+        0,
+        0
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "implicit_affixes": [
+        "of_tidesong",
+        "of_frost"
+      ],
+      "affix_pool": {
+        "of_might": 20,
+        "of_finesse": 16,
+        "of_frost": 18,
         "of_sharpness": 14
       },
-      "recolor_of": "firestarter"
+      "boss_drop": "boss_ilsuiw",
+      "biome_pool": [
+        "shoals"
+      ]
+    },
+    {
+      "id": "frostgrim",
+      "name": "Frostgrim",
+      "slot": "weapon",
+      "rarity": "rare",
+      "tile": "battle_axe_3.png",
+      "base_type": "battle_axe",
+      "weapon_class": "2H",
+      "damage_min": 60,
+      "damage_max": 103,
+      "damage_type": "cold",
+      "speed": 1.1,
+      "item_tier": 3,
+      "flavor_tags": [
+        "cold"
+      ],
+      "lore": "The grim cleaver. Where it lands, the wound never warms.",
+      "drop_weights": [
+        0,
+        15,
+        60,
+        22,
+        3
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_might": 30,
+        "of_finesse": 12,
+        "of_sharpness": 25,
+        "of_frost": 35,
+        "of_crit": 18,
+        "of_haste": 10,
+        "of_lifesteal": 12,
+        "of_berserker": 10,
+        "of_executioner": 10,
+        "of_sundering": 10,
+        "of_bloodletting": 8
+      },
+      "default_tint": {
+        "hue": 200,
+        "sat": 1.0,
+        "mode": "normal"
+      }
+    },
+    {
+      "id": "glacial_bardiche",
+      "name": "Glacial Bardiche",
+      "slot": "weapon",
+      "rarity": "legendary",
+      "tile": "bardiche_4.png",
+      "base_type": "bardiche",
+      "weapon_class": "2H",
+      "damage_min": 95,
+      "damage_max": 170,
+      "damage_type": "cold",
+      "speed": 1.05,
+      "item_tier": 5,
+      "flavor_tags": [
+        "cold"
+      ],
+      "lore": "The haft is rimed thicker than the head. Slow, patient, fatal.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        15,
+        40
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "implicit_affixes": [
+        "of_frost",
+        "of_finesse"
+      ],
+      "affix_pool": {
+        "of_might": 28,
+        "of_finesse": 10,
+        "of_sharpness": 28,
+        "of_frost": 38,
+        "of_crit": 18,
+        "of_haste": 8,
+        "of_lifesteal": 10,
+        "of_berserker": 10,
+        "of_executioner": 12,
+        "of_sundering": 12,
+        "of_bloodletting": 8,
+        "of_cold_resist": 12
+      },
+      "default_tint": {
+        "hue": 205,
+        "sat": 1.0,
+        "mode": "normal"
+      }
+    },
+    {
+      "id": "rime_spear",
+      "name": "Rime Spear",
+      "slot": "weapon",
+      "rarity": "epic",
+      "tile": "spear_5.png",
+      "base_type": "spear",
+      "weapon_class": "1H",
+      "damage_min": 50,
+      "damage_max": 95,
+      "damage_type": "cold",
+      "speed": 0.7,
+      "item_tier": 5,
+      "flavor_tags": [
+        "cold"
+      ],
+      "lore": "Touch the haft and your hand sticks to it. Pull, and you leave skin behind.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        14,
+        70
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "implicit_affixes": [
+        "of_frost"
+      ],
+      "affix_pool": {
+        "of_might": 24,
+        "of_finesse": 18,
+        "of_sharpness": 28,
+        "of_frost": 40,
+        "of_crit": 22,
+        "of_haste": 14,
+        "of_lifesteal": 12,
+        "of_quickcast": 10,
+        "of_channeling": 10,
+        "of_cold_resist": 12,
+        "of_executioner": 10,
+        "of_hunter": 8
+      },
+      "default_tint": {
+        "hue": 195,
+        "sat": 1.05,
+        "mode": "normal"
+      }
+    },
+    {
+      "id": "viper_lance",
+      "name": "Viper Lance",
+      "slot": "weapon",
+      "rarity": "epic",
+      "tile": "spear_3.png",
+      "base_type": "spear",
+      "weapon_class": "1H",
+      "damage_min": 45,
+      "damage_max": 82,
+      "damage_type": "poison",
+      "speed": 0.7,
+      "item_tier": 4,
+      "flavor_tags": [
+        "poison"
+      ],
+      "lore": "The point bears a fang sigil. Stuck enemies wilt before they bleed out.",
+      "drop_weights": [
+        0,
+        0,
+        8,
+        55,
+        38
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "implicit_affixes": [
+        "of_venom"
+      ],
+      "affix_pool": {
+        "of_might": 24,
+        "of_finesse": 18,
+        "of_sharpness": 28,
+        "of_venom": 38,
+        "of_crit": 20,
+        "of_haste": 12,
+        "of_lifesteal": 12,
+        "of_executioner": 10,
+        "of_hunter": 10,
+        "of_bleed_on_miss": 10,
+        "of_bloodletting": 10,
+        "of_poison_resist": 12
+      },
+      "default_tint": {
+        "hue": 95,
+        "sat": 1.1,
+        "mode": "normal"
+      }
+    },
+    {
+      "id": "scourgevine",
+      "name": "Scourgevine",
+      "slot": "weapon",
+      "rarity": "epic",
+      "tile": "bullwhip_old.png",
+      "base_type": "whip",
+      "weapon_class": "1H",
+      "damage_min": 50,
+      "damage_max": 95,
+      "damage_type": "poison",
+      "speed": 0.65,
+      "item_tier": 5,
+      "flavor_tags": [
+        "poison"
+      ],
+      "lore": "Braided from briar that never lost its sap. Each lash leaves welts that bloom.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        14,
+        70
+      ],
+      "unique": false,
+      "enchant_chance": 0.15,
+      "implicit_affixes": [
+        "of_venom"
+      ],
+      "affix_pool": {
+        "of_might": 22,
+        "of_finesse": 24,
+        "of_sharpness": 26,
+        "of_venom": 40,
+        "of_crit": 22,
+        "of_haste": 18,
+        "of_lifesteal": 12,
+        "of_quickcast": 10,
+        "of_channeling": 10,
+        "of_poison_resist": 10,
+        "of_executioner": 10,
+        "of_bleed_on_miss": 10
+      },
+      "default_tint": {
+        "hue": 105,
+        "sat": 1.15,
+        "mode": "normal"
+      }
     }
   ]
 }
