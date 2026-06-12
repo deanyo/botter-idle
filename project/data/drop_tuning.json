@@ -28,6 +28,14 @@
   },
 
   "tier_drop_band": {
-    "_doc": "Reserved for future per-tier loot bias controls. Empty for now."
+    "_doc": "Per-tier × floor-band rarity weights consumed by loot_factory.gd::roll_rarity (Beat-2 §2.A wires consumption — Beat-1 §1.I authors the data). Each entry is [common, uncommon, rare, epic, legendary] weight at that source tier × floor band. Beat-2 wiring also applies boss_step (boss kills bump rarity by N tiers) / elite_step / trash_ceiling (trash mobs cap at this rarity). Source: balance_pass_2026-06-11 A7-pool-001/002/004 + synthesis §2.4.",
+    "T1": { "1-3": [30, 50, 15, 4, 1],   "4-6": [25, 45, 22, 6, 2] },
+    "T2": { "1-3": [22, 38, 28, 9, 3],   "4-6": [18, 32, 30, 14, 6] },
+    "T3": { "1-3": [15, 28, 30, 18, 9],  "4-6": [10, 22, 30, 22, 16] },
+    "T4": { "1-3": [8, 18, 28, 24, 22],  "4-6": [4, 12, 24, 28, 32] },
+    "T5": { "1-3": [3, 10, 22, 28, 37],  "4-6": [0, 6, 18, 30, 46] },
+    "boss_step": 1,
+    "elite_step": 1,
+    "trash_ceiling": "uncommon"
   }
 }
