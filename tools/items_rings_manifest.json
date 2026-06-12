@@ -2574,9 +2574,9 @@
         "sat": 1.0
       },
       "drop_weights": [
-        60,
-        12,
-        0,
+        55,
+        35,
+        5,
         0,
         0
       ],
@@ -2587,7 +2587,7 @@
       "item_tier": 1,
       "lore": "Every glance reveals a new color, each one a real one \u2014 somewhere.",
       "name": "Prismatic Bronze Ring",
-      "rarity": "legendary",
+      "rarity": "uncommon",
       "slot": "ring",
       "tile": "bronze.png",
       "unique": false,
@@ -3171,9 +3171,9 @@
         "sat": 1.0
       },
       "drop_weights": [
-        60,
-        12,
-        0,
+        55,
+        35,
+        5,
         0,
         0
       ],
@@ -3186,7 +3186,7 @@
       "item_tier": 1,
       "lore": "Every glance reveals a new color, each one a real one \u2014 somewhere.",
       "name": "Prismatic Brass Ring",
-      "rarity": "legendary",
+      "rarity": "uncommon",
       "slot": "ring",
       "tile": "brass.png",
       "unique": false,
