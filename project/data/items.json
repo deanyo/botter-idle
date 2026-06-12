@@ -352,8 +352,7 @@
         "of_bloodletting": 8,
         "of_berserker_rage": 8,
         "of_executioner": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "iron_falchion",
@@ -710,8 +709,7 @@
         "of_bloodletting": 8,
         "of_berserker_rage": 8,
         "of_executioner": 8
-      },
-      "_rebalance_v6": true
+      }
     },
     {
       "id": "scimitar",
@@ -1075,8 +1073,7 @@
         "of_bloodletting": 8,
         "of_berserker_rage": 8,
         "of_executioner": 8
-      },
-      "_rebalance_v6": true
+      }
     },
     {
       "id": "knife_of_accuracy",
@@ -1129,8 +1126,7 @@
         "of_bloodletting": 8,
         "of_berserker_rage": 8,
         "of_executioner": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "mithril_longsword",
@@ -1643,8 +1639,7 @@
         "of_bloodletting": 8,
         "of_berserker_rage": 8,
         "of_executioner": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "doom_knight_blade",
@@ -1694,8 +1689,7 @@
         "of_channeling": 8,
         "of_quickcast": 8,
         "of_executioner": 8
-      },
-      "_rebalance_v6": true
+      }
     },
     {
       "id": "eos",
@@ -2090,8 +2084,7 @@
         "of_channeling": 8,
         "of_quickcast": 8,
         "of_executioner": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "sword_of_cerebov",
@@ -2142,8 +2135,7 @@
         "of_channeling": 8,
         "of_quickcast": 8,
         "of_executioner": 8
-      },
-      "_rebalance_v6": true
+      }
     },
     {
       "id": "sword_of_power",
@@ -13003,8 +12995,7 @@
         "of_bloodletting": 8,
         "of_berserker_rage": 8,
         "of_executioner": 8
-      },
-      "_rebalance_v6": true
+      }
     },
     {
       "id": "club",
@@ -13465,8 +13456,7 @@
         "of_bloodletting": 8,
         "of_berserker_rage": 8,
         "of_executioner": 8
-      },
-      "_rebalance_v6": true
+      }
     },
     {
       "id": "runed_eveningstar",
@@ -13519,8 +13509,7 @@
         "of_bloodletting": 8,
         "of_berserker_rage": 8,
         "of_executioner": 8
-      },
-      "_rebalance_v6": true
+      }
     },
     {
       "id": "flail",
@@ -13778,8 +13767,7 @@
         "of_bloodletting": 8,
         "of_berserker_rage": 8,
         "of_executioner": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "giant_club",
@@ -13832,8 +13820,7 @@
         "of_bloodletting": 8,
         "of_berserker_rage": 8,
         "of_executioner": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "spear",
@@ -14190,8 +14177,7 @@
         "of_bloodletting": 8,
         "of_berserker_rage": 8,
         "of_executioner": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "runed_bardiche",
@@ -14297,8 +14283,7 @@
         "of_bloodletting": 8,
         "of_berserker_rage": 8,
         "of_executioner": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "reapers_scythe",
@@ -14969,8 +14954,7 @@
         "of_bloodletting": 8,
         "of_berserker_rage": 8,
         "of_executioner": 8
-      },
-      "_rebalance_v6": true
+      }
     },
     {
       "id": "demon_whip",
@@ -15024,8 +15008,7 @@
         "of_bloodletting": 8,
         "of_berserker_rage": 8,
         "of_executioner": 8
-      },
-      "_rebalance_v6": true
+      }
     },
     {
       "id": "ankus",
@@ -15075,8 +15058,7 @@
         "of_bloodletting": 8,
         "of_berserker_rage": 8,
         "of_executioner": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "cutlass",
@@ -15178,8 +15160,7 @@
         "of_bloodletting": 8,
         "of_berserker_rage": 8,
         "of_executioner": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "spell_fireball",
@@ -15293,8 +15274,7 @@
         "hue": 0.0,
         "sat": 0.85,
         "mode": "colorize"
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "spell_holy_beam",
@@ -15468,8 +15448,7 @@
         "hue": 210.0,
         "sat": 0.85,
         "mode": "colorize"
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "starter_human_spell",
@@ -15579,7 +15558,6 @@
         "sat": 0.85,
         "mode": "colorize"
       },
-      "_rebalance_v5": true,
       "requires_innate_tag": "forest"
     },
     {
@@ -15635,7 +15613,6 @@
         "sat": 0.85,
         "mode": "colorize"
       },
-      "_rebalance_v5": true,
       "requires_innate_tag": "bovine"
     },
     {
@@ -15691,7 +15668,6 @@
         "sat": 0.85,
         "mode": "colorize"
       },
-      "_rebalance_v5": true,
       "requires_innate_tag": "serpentine"
     },
     {
@@ -15802,7 +15778,6 @@
         "sat": 0.85,
         "mode": "colorize"
       },
-      "_rebalance_v5": true,
       "requires_innate_tag": "regen"
     },
     {
@@ -15858,7 +15833,6 @@
         "sat": 0.85,
         "mode": "colorize"
       },
-      "_rebalance_v5": true,
       "requires_innate_tag": "aquatic"
     },
     {
@@ -15914,7 +15888,6 @@
         "sat": 0.85,
         "mode": "colorize"
       },
-      "_rebalance_v5": true,
       "requires_innate_tag": "demon"
     },
     {
@@ -16025,7 +15998,6 @@
         "sat": 0.85,
         "mode": "colorize"
       },
-      "_rebalance_v5": true,
       "requires_innate_tag": "ancient"
     },
     {
@@ -16301,7 +16273,6 @@
         "sat": 0.85,
         "mode": "colorize"
       },
-      "_rebalance_v5": true,
       "requires_innate_tag": "scavenger"
     },
     {
@@ -16351,8 +16322,7 @@
         "of_zealot": 8,
         "of_envenom": 8,
         "of_shadow": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "spell_fireball_comet",
@@ -16454,8 +16424,7 @@
         "of_zealot": 8,
         "of_envenom": 8,
         "of_shadow": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "spell_chain_lightning_brand",
@@ -16726,8 +16695,7 @@
         "hue": 30.0,
         "sat": 0.85,
         "mode": "colorize"
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "spell_drain",
@@ -16988,8 +16956,7 @@
         "of_zealot": 8,
         "of_envenom": 8,
         "of_shadow": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "soulhunger",
@@ -17153,12 +17120,6 @@
       "tile": "halberd_1.png",
       "unique": false,
       "weapon_class": "2H",
-      "_balance_bumps": {
-        "of_venom": 22,
-        "of_finesse": 18,
-        "of_dex_mastery": 14,
-        "of_crit": 15
-      },
       "recolor_of": "halberd"
     },
     {
@@ -17212,12 +17173,6 @@
       "slot": "helm",
       "tile": "green_mask.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_shadows": 26,
-        "of_dark_resist": 18,
-        "of_finesse": 14,
-        "of_quickcast": 12
-      },
       "recolor_of": "green_mask"
     },
     {
@@ -17275,13 +17230,7 @@
       "speed": 0.8,
       "tile": "quarterstaff_3.png",
       "unique": false,
-      "weapon_class": "1H",
-      "_balance_bumps": {
-        "of_finesse": 18,
-        "of_int_mastery": 18,
-        "of_quickcast": 14,
-        "of_resonance": 14
-      }
+      "weapon_class": "1H"
     },
     {
       "affix_pool": {
@@ -17340,13 +17289,7 @@
       "speed": 1.15,
       "tile": "broad_axe_1.png",
       "unique": false,
-      "weapon_class": "2H",
-      "_balance_bumps": {
-        "of_shadows": 32,
-        "of_dark_resist": 22,
-        "of_lifesteal": 18,
-        "of_might": 12
-      }
+      "weapon_class": "2H"
     },
     {
       "affix_pool": {
@@ -17391,12 +17334,6 @@
       "slot": "boots",
       "tile": "low_boots.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_devotion": 30,
-        "of_holy_resist": 22,
-        "of_might": 18,
-        "of_regen": 12
-      },
       "recolor_of": "worn_sandals"
     },
     {
@@ -17463,12 +17400,6 @@
       "slot": "amulet",
       "tile": "stone_2_red.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_venom": 22,
-        "of_finesse": 18,
-        "of_dex_mastery": 14,
-        "of_crit": 15
-      },
       "recolor_of": "stone_2_red"
     },
     {
@@ -17536,12 +17467,6 @@
       "slot": "amulet",
       "tile": "urand_cekugob_new.png",
       "unique": true,
-      "_balance_bumps": {
-        "of_shadows": 22,
-        "of_the_bear": 22,
-        "of_dark_resist": 18,
-        "of_vitality": 18
-      },
       "recolor_of": "cekugob_amulet"
     },
     {
@@ -17602,13 +17527,6 @@
       "tile": "falchion_5.png",
       "unique": false,
       "weapon_class": "1H",
-      "_balance_bumps": {
-        "of_embers": 35,
-        "of_might": 18,
-        "of_lifesteal": 12,
-        "of_fire_resist": 18,
-        "of_haste": 12
-      },
       "recolor_of": "runed_falchion"
     },
     {
@@ -17672,12 +17590,6 @@
       "tile": "rapier_2.png",
       "unique": false,
       "weapon_class": "1H",
-      "_balance_bumps": {
-        "of_venom": 28,
-        "of_poison_resist": 22,
-        "of_regen": 14,
-        "of_vitality": 15
-      },
       "recolor_of": "silver_rapier"
     },
     {
@@ -17739,12 +17651,6 @@
       "tile": "spear_3.png",
       "unique": false,
       "weapon_class": "1H",
-      "_balance_bumps": {
-        "of_venom": 28,
-        "of_poison_resist": 22,
-        "of_regen": 14,
-        "of_vitality": 15
-      },
       "recolor_of": "steel_spear"
     },
     {
@@ -17809,13 +17715,7 @@
       "rarity": "epic",
       "slot": "ring",
       "tile": "ring_gold_white.png",
-      "unique": false,
-      "_balance_bumps": {
-        "of_storms": 22,
-        "of_lightning_resist": 18,
-        "of_might": 14,
-        "of_haste": 12
-      }
+      "unique": false
     },
     {
       "affix_pool": {
@@ -17876,12 +17776,6 @@
       "tile": "knife.png",
       "unique": false,
       "weapon_class": "1H",
-      "_balance_bumps": {
-        "of_venom": 28,
-        "of_poison_resist": 22,
-        "of_regen": 14,
-        "of_vitality": 15
-      },
       "recolor_of": "bone_knife"
     },
     {
@@ -17948,12 +17842,6 @@
       "slot": "ring",
       "tile": "copper.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_venom": 28,
-        "of_poison_resist": 22,
-        "of_regen": 14,
-        "of_vitality": 15
-      },
       "recolor_of": "copper_ring"
     },
     {
@@ -18013,12 +17901,6 @@
       "tile": "urand_firestarter.png",
       "unique": true,
       "weapon_class": "1H",
-      "_balance_bumps": {
-        "of_the_bear": 30,
-        "of_vitality": 22,
-        "of_might": 14,
-        "of_sharpness": 14
-      },
       "recolor_of": "firestarter"
     },
     {
@@ -18077,13 +17959,7 @@
       "rarity": "uncommon",
       "slot": "cloak",
       "tile": "cloak_1_leather.png",
-      "unique": false,
-      "_balance_bumps": {
-        "of_shadows": 30,
-        "of_dark_resist": 22,
-        "of_int_mastery": 14,
-        "of_channeling": 14
-      }
+      "unique": false
     },
     {
       "affix_pool": {
@@ -18152,14 +18028,7 @@
       "speed": 0.9,
       "tile": "demon_blade.png",
       "unique": false,
-      "weapon_class": "1H",
-      "_balance_bumps": {
-        "of_shadows": 30,
-        "of_dark_resist": 22,
-        "of_int_mastery": 14,
-        "of_channeling": 14
-      },
-      "_rebalance_v5": true
+      "weapon_class": "1H"
     },
     {
       "affix_pool": {
@@ -18209,12 +18078,6 @@
       "slot": "shield",
       "tile": "urand_bullseye.png",
       "unique": true,
-      "_balance_bumps": {
-        "of_finesse": 18,
-        "of_int_mastery": 18,
-        "of_quickcast": 14,
-        "of_resonance": 14
-      },
       "block_chance": 15,
       "block_amount": 10
     },
@@ -18270,12 +18133,6 @@
       "slot": "armor",
       "tile": "urand_folly.png",
       "unique": true,
-      "_balance_bumps": {
-        "of_devotion": 22,
-        "of_haste": 18,
-        "of_lifesteal": 12,
-        "of_quickcast": 15
-      },
       "recolor_of": "robe_of_folly"
     },
     {
@@ -18335,12 +18192,6 @@
       "tile": "long_sword_1_new.png",
       "unique": false,
       "weapon_class": "1H",
-      "_balance_bumps": {
-        "of_venom": 22,
-        "of_finesse": 18,
-        "of_dex_mastery": 14,
-        "of_crit": 15
-      },
       "recolor_of": "iron_longsword"
     },
     {
@@ -18400,13 +18251,6 @@
       "tile": "falchion_3.png",
       "unique": false,
       "weapon_class": "1H",
-      "_balance_bumps": {
-        "of_embers": 35,
-        "of_might": 18,
-        "of_lifesteal": 12,
-        "of_fire_resist": 18,
-        "of_haste": 12
-      },
       "recolor_of": "steel_falchion"
     },
     {
@@ -18451,13 +18295,7 @@
       "rarity": "uncommon",
       "slot": "boots",
       "tile": "boots_1_brown_new.png",
-      "unique": false,
-      "_balance_bumps": {
-        "of_shadows": 32,
-        "of_dark_resist": 22,
-        "of_lifesteal": 18,
-        "of_might": 12
-      }
+      "unique": false
     },
     {
       "affix_pool": {
@@ -18509,13 +18347,7 @@
       "rarity": "rare",
       "slot": "cloak",
       "tile": "cloak_2.png",
-      "unique": false,
-      "_balance_bumps": {
-        "of_storms": 32,
-        "of_lightning_resist": 20,
-        "of_haste": 18,
-        "of_velocity": 14
-      }
+      "unique": false
     },
     {
       "affix_pool": {
@@ -18579,13 +18411,7 @@
       "rarity": "rare",
       "slot": "gloves",
       "tile": "glove_4_gauntlets.png",
-      "unique": false,
-      "_balance_bumps": {
-        "of_shadows": 30,
-        "of_dark_resist": 22,
-        "of_int_mastery": 14,
-        "of_channeling": 14
-      }
+      "unique": false
     },
     {
       "affix_pool": {
@@ -18645,12 +18471,6 @@
       "tile": "claymore.png",
       "unique": false,
       "weapon_class": "2H",
-      "_balance_bumps": {
-        "of_frost": 30,
-        "of_finesse": 15,
-        "of_quickcast": 14,
-        "of_cold_resist": 22
-      },
       "recolor_of": "claymore"
     },
     {
@@ -18710,12 +18530,6 @@
       "tile": "spwpn_vampires_tooth.png",
       "unique": true,
       "weapon_class": "1H",
-      "_balance_bumps": {
-        "of_frost": 22,
-        "of_dark_resist": 18,
-        "of_finesse": 15,
-        "of_dex_mastery": 12
-      },
       "recolor_of": "vampires_tooth"
     },
     {
@@ -18763,13 +18577,7 @@
       "rarity": "epic",
       "slot": "armor",
       "tile": "green_dragon_scale_mail.png",
-      "unique": false,
-      "_balance_bumps": {
-        "of_finesse": 18,
-        "of_int_mastery": 18,
-        "of_quickcast": 14,
-        "of_resonance": 14
-      }
+      "unique": false
     },
     {
       "affix_pool": {
@@ -18828,12 +18636,6 @@
       "tile": "hammer_2_new.png",
       "unique": false,
       "weapon_class": "1H",
-      "_balance_bumps": {
-        "of_devotion": 22,
-        "of_haste": 18,
-        "of_lifesteal": 12,
-        "of_quickcast": 15
-      },
       "recolor_of": "warhammer"
     },
     {
@@ -18893,12 +18695,6 @@
       "slot": "amulet",
       "tile": "urand_finger.png",
       "unique": true,
-      "_balance_bumps": {
-        "of_devotion": 22,
-        "of_haste": 18,
-        "of_lifesteal": 12,
-        "of_quickcast": 15
-      },
       "recolor_of": "amulet_finger"
     },
     {
@@ -18957,13 +18753,7 @@
       "rarity": "uncommon",
       "slot": "cloak",
       "tile": "cloak_2.png",
-      "unique": false,
-      "_balance_bumps": {
-        "of_shadows": 30,
-        "of_dark_resist": 22,
-        "of_int_mastery": 14,
-        "of_channeling": 14
-      }
+      "unique": false
     },
     {
       "affix_pool": {
@@ -19016,12 +18806,6 @@
       "slot": "shield",
       "tile": "elven_buckler_2.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_holy_resist": 18,
-        "of_devotion": 14,
-        "of_finesse": 14,
-        "of_wisdom": 12
-      },
       "block_chance": 8,
       "block_amount": 5
     },
@@ -19081,13 +18865,7 @@
       "speed": 0.65,
       "tile": "falchion_2_new.png",
       "unique": false,
-      "weapon_class": "1H",
-      "_balance_bumps": {
-        "of_shadows": 26,
-        "of_finesse": 14,
-        "of_lifesteal": 14,
-        "of_dark_resist": 14
-      }
+      "weapon_class": "1H"
     },
     {
       "affix_pool": {
@@ -19143,16 +18921,6 @@
       "slot": "armor",
       "tile": "urand_folly.png",
       "unique": true,
-      "_balance_bumps": {
-        "of_embers": 18,
-        "of_frost": 18,
-        "of_storms": 18,
-        "of_devotion": 18,
-        "of_venom": 18,
-        "of_shadows": 18,
-        "of_sharpness": 18
-      },
-      "_rebalance_v5": true,
       "recolor_of": "robe_of_folly"
     },
     {
@@ -19209,12 +18977,6 @@
       "slot": "shield",
       "tile": "dwarven_buckler_2.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_shadows": 30,
-        "of_dark_resist": 22,
-        "of_int_mastery": 14,
-        "of_channeling": 14
-      },
       "block_chance": 8,
       "block_amount": 5
     },
@@ -19269,13 +19031,7 @@
       "rarity": "legendary",
       "slot": "helm",
       "tile": "helmet_art_3.png",
-      "unique": false,
-      "_balance_bumps": {
-        "of_shadows": 26,
-        "of_finesse": 14,
-        "of_lifesteal": 14,
-        "of_dark_resist": 14
-      }
+      "unique": false
     },
     {
       "affix_pool": {
@@ -19334,12 +19090,6 @@
       "tile": "greatsword_1_new.png",
       "unique": false,
       "weapon_class": "2H",
-      "_balance_bumps": {
-        "of_venom": 22,
-        "of_finesse": 18,
-        "of_dex_mastery": 14,
-        "of_crit": 15
-      },
       "recolor_of": "greatsword"
     },
     {
@@ -19407,13 +19157,7 @@
       "rarity": "legendary",
       "slot": "amulet",
       "tile": "crystal_white.png",
-      "unique": false,
-      "_balance_bumps": {
-        "of_shadows": 32,
-        "of_dark_resist": 22,
-        "of_lifesteal": 18,
-        "of_might": 12
-      }
+      "unique": false
     },
     {
       "affix_pool": {
@@ -19465,12 +19209,6 @@
       "slot": "shield",
       "tile": "large_shield_2_new.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_the_bear": 30,
-        "of_vitality": 22,
-        "of_might": 14,
-        "of_sharpness": 14
-      },
       "recolor_of": "tower_shield",
       "block_chance": 25,
       "block_amount": 20
@@ -19535,13 +19273,7 @@
       "rarity": "legendary",
       "slot": "ring",
       "tile": "urand_octoring.png",
-      "unique": true,
-      "_balance_bumps": {
-        "of_finesse": 18,
-        "of_int_mastery": 18,
-        "of_quickcast": 14,
-        "of_resonance": 14
-      }
+      "unique": true
     },
     {
       "affix_pool": {
@@ -19590,13 +19322,7 @@
       "rarity": "legendary",
       "slot": "helm",
       "tile": "helmet_ego_1.png",
-      "unique": false,
-      "_balance_bumps": {
-        "of_finesse": 18,
-        "of_int_mastery": 18,
-        "of_quickcast": 14,
-        "of_resonance": 14
-      }
+      "unique": false
     },
     {
       "affix_pool": {
@@ -19655,14 +19381,7 @@
       "speed": 0.6,
       "tile": "katana.png",
       "unique": false,
-      "weapon_class": "1H",
-      "_balance_bumps": {
-        "of_storms": 22,
-        "of_lightning_resist": 18,
-        "of_might": 14,
-        "of_haste": 12
-      },
-      "_rebalance_v6": true
+      "weapon_class": "1H"
     },
     {
       "affix_pool": {
@@ -19711,13 +19430,7 @@
       "rarity": "uncommon",
       "slot": "boots",
       "tile": "boots_iron_2.png",
-      "unique": false,
-      "_balance_bumps": {
-        "of_holy_resist": 18,
-        "of_devotion": 14,
-        "of_finesse": 14,
-        "of_wisdom": 12
-      }
+      "unique": false
     },
     {
       "affix_pool": {
@@ -19772,12 +19485,6 @@
       "slot": "shield",
       "tile": "shield_3.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_shadows": 22,
-        "of_the_bear": 22,
-        "of_dark_resist": 18,
-        "of_vitality": 18
-      },
       "recolor_of": "phantom_aegis",
       "block_chance": 15,
       "block_amount": 10
@@ -19845,12 +19552,6 @@
       "tile": "spwpn_vampires_tooth.png",
       "unique": true,
       "weapon_class": "1H",
-      "_balance_bumps": {
-        "of_shadows": 22,
-        "of_the_bear": 22,
-        "of_dark_resist": 18,
-        "of_vitality": 18
-      },
       "recolor_of": "vampires_tooth"
     },
     {
@@ -19911,12 +19612,6 @@
       "tile": "elven_dagger.png",
       "unique": false,
       "weapon_class": "1H",
-      "_balance_bumps": {
-        "of_frost": 35,
-        "of_cold_resist": 22,
-        "of_quickcast": 18,
-        "of_crit": 15
-      },
       "recolor_of": "elven_dagger"
     },
     {
@@ -19971,12 +19666,6 @@
       "slot": "shield",
       "tile": "shield_donald.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_shadows": 22,
-        "of_might": 14,
-        "of_finesse": 14,
-        "of_lifesteal": 12
-      },
       "block_chance": 20,
       "block_amount": 15
     },
@@ -20037,12 +19726,6 @@
       "tile": "falchion_3.png",
       "unique": false,
       "weapon_class": "1H",
-      "_balance_bumps": {
-        "of_embers": 30,
-        "of_quickcast": 14,
-        "of_fire_resist": 22,
-        "of_channeling": 10
-      },
       "recolor_of": "steel_falchion"
     },
     {
@@ -20102,13 +19785,7 @@
       "speed": 0.6,
       "tile": "bullwhip_old.png",
       "unique": false,
-      "weapon_class": "1H",
-      "_balance_bumps": {
-        "of_devotion": 28,
-        "of_holy_resist": 18,
-        "of_channeling": 15,
-        "of_quickcast": 12
-      }
+      "weapon_class": "1H"
     },
     {
       "affix_pool": {
@@ -20176,12 +19853,6 @@
       "slot": "amulet",
       "tile": "penta_green.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_venom": 28,
-        "of_poison_resist": 22,
-        "of_regen": 14,
-        "of_vitality": 15
-      },
       "recolor_of": "penta_green"
     },
     {
@@ -20236,13 +19907,7 @@
       "rarity": "legendary",
       "slot": "helm",
       "tile": "urand_dyrovepreva_new.png",
-      "unique": true,
-      "_balance_bumps": {
-        "of_shadows": 22,
-        "of_might": 14,
-        "of_finesse": 14,
-        "of_lifesteal": 12
-      }
+      "unique": true
     },
     {
       "affix_pool": {
@@ -20293,12 +19958,6 @@
       "slot": "shield",
       "tile": "dwarven_buckler_2.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_frost": 35,
-        "of_cold_resist": 22,
-        "of_quickcast": 18,
-        "of_crit": 15
-      },
       "recolor_of": "dwarven_buckler_2",
       "block_chance": 8,
       "block_amount": 5
@@ -20347,13 +20006,7 @@
       "rarity": "uncommon",
       "slot": "armor",
       "tile": "leather_armor_1.png",
-      "unique": false,
-      "_balance_bumps": {
-        "of_shadows": 32,
-        "of_dark_resist": 22,
-        "of_lifesteal": 18,
-        "of_might": 12
-      }
+      "unique": false
     },
     {
       "affix_pool": {
@@ -20405,12 +20058,6 @@
       "slot": "cloak",
       "tile": "cloak_2.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_venom": 28,
-        "of_poison_resist": 22,
-        "of_regen": 14,
-        "of_vitality": 15
-      },
       "recolor_of": "travelers_cloak"
     },
     {
@@ -20465,12 +20112,6 @@
       "slot": "shield",
       "tile": "shield_1_elven.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_shadows": 22,
-        "of_might": 14,
-        "of_finesse": 14,
-        "of_lifesteal": 12
-      },
       "block_chance": 15,
       "block_amount": 10
     },
@@ -20532,12 +20173,6 @@
       "slot": "gloves",
       "tile": "glove_1_new.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_frost": 35,
-        "of_cold_resist": 22,
-        "of_quickcast": 18,
-        "of_crit": 15
-      },
       "recolor_of": "dwarven_gloves"
     },
     {
@@ -20588,12 +20223,6 @@
       "slot": "armor",
       "tile": "banded_mail_1.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_devotion": 22,
-        "of_haste": 18,
-        "of_lifesteal": 12,
-        "of_quickcast": 15
-      },
       "recolor_of": "banded_mail"
     },
     {
@@ -20642,13 +20271,7 @@
       "rarity": "epic",
       "slot": "armor",
       "tile": "orcish_platemail.png",
-      "unique": false,
-      "_balance_bumps": {
-        "of_devotion": 28,
-        "of_holy_resist": 18,
-        "of_channeling": 15,
-        "of_quickcast": 12
-      }
+      "unique": false
     },
     {
       "affix_pool": {
@@ -20707,13 +20330,7 @@
       "rarity": "legendary",
       "slot": "amulet",
       "tile": "urand_air_new.png",
-      "unique": true,
-      "_balance_bumps": {
-        "of_regen": 18,
-        "of_vitality": 22,
-        "of_the_bear": 15,
-        "of_poison_resist": 18
-      }
+      "unique": true
     },
     {
       "affix_pool": {
@@ -20772,13 +20389,7 @@
       "rarity": "rare",
       "slot": "gloves",
       "tile": "glove_1_new.png",
-      "unique": false,
-      "_balance_bumps": {
-        "of_finesse": 18,
-        "of_int_mastery": 18,
-        "of_quickcast": 14,
-        "of_resonance": 14
-      }
+      "unique": false
     },
     {
       "affix_pool": {
@@ -20824,13 +20435,7 @@
       "rarity": "rare",
       "slot": "boots",
       "tile": "boots_3_stripe_new.png",
-      "unique": false,
-      "_balance_bumps": {
-        "of_finesse": 18,
-        "of_int_mastery": 18,
-        "of_quickcast": 14,
-        "of_resonance": 14
-      }
+      "unique": false
     },
     {
       "affix_pool": {
@@ -20885,16 +20490,6 @@
       "slot": "gloves",
       "tile": "glove_2_old.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_embers": 18,
-        "of_frost": 18,
-        "of_storms": 18,
-        "of_devotion": 18,
-        "of_venom": 18,
-        "of_shadows": 18,
-        "of_sharpness": 18
-      },
-      "_rebalance_v5": true,
       "recolor_of": "studded_gloves"
     },
     {
@@ -20943,13 +20538,7 @@
       "rarity": "legendary",
       "slot": "armor",
       "tile": "urand_misfortune.png",
-      "unique": true,
-      "_balance_bumps": {
-        "of_regen": 18,
-        "of_vitality": 22,
-        "of_the_bear": 15,
-        "of_poison_resist": 18
-      }
+      "unique": true
     },
     {
       "affix_pool": {
@@ -21007,13 +20596,6 @@
       "tile": "spwpn_sword_of_power_new.png",
       "unique": true,
       "weapon_class": "1H",
-      "_balance_bumps": {
-        "of_embers": 35,
-        "of_might": 18,
-        "of_lifesteal": 12,
-        "of_fire_resist": 18,
-        "of_haste": 12
-      },
       "recolor_of": "sword_of_power"
     },
     {
@@ -21080,12 +20662,6 @@
       "slot": "ring",
       "tile": "ruby.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_frost": 35,
-        "of_cold_resist": 22,
-        "of_quickcast": 18,
-        "of_crit": 15
-      },
       "recolor_of": "ruby_ring"
     },
     {
@@ -21140,16 +20716,6 @@
       "slot": "shield",
       "tile": "urand_gong.png",
       "unique": true,
-      "_balance_bumps": {
-        "of_embers": 18,
-        "of_frost": 18,
-        "of_storms": 18,
-        "of_devotion": 18,
-        "of_venom": 18,
-        "of_shadows": 18,
-        "of_sharpness": 18
-      },
-      "_rebalance_v5": true,
       "recolor_of": "gong_shield",
       "block_chance": 8,
       "block_amount": 5
@@ -21207,12 +20773,6 @@
       "slot": "helm",
       "tile": "helmet_2_etched.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_the_bear": 30,
-        "of_vitality": 22,
-        "of_might": 14,
-        "of_sharpness": 14
-      },
       "recolor_of": "etched_helm"
     },
     {
@@ -21279,12 +20839,6 @@
       "slot": "ring",
       "tile": "moonstone.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_shadows": 26,
-        "of_dark_resist": 18,
-        "of_finesse": 14,
-        "of_quickcast": 12
-      },
       "recolor_of": "moonstone_ring"
     },
     {
@@ -21338,16 +20892,6 @@
       "slot": "shield",
       "tile": "large_shield_1_new.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_embers": 18,
-        "of_frost": 18,
-        "of_storms": 18,
-        "of_devotion": 18,
-        "of_venom": 18,
-        "of_shadows": 18,
-        "of_sharpness": 18
-      },
-      "_rebalance_v5": true,
       "recolor_of": "large_kite",
       "block_chance": 20,
       "block_amount": 15
@@ -21413,13 +20957,6 @@
       "tile": "demon_blade.png",
       "unique": false,
       "weapon_class": "1H",
-      "_balance_bumps": {
-        "of_embers": 30,
-        "of_quickcast": 14,
-        "of_fire_resist": 22,
-        "of_channeling": 10
-      },
-      "_rebalance_v5": true,
       "recolor_of": "demon_blade"
     },
     {
@@ -21481,12 +21018,6 @@
       "tile": "long_sword_2.png",
       "unique": false,
       "weapon_class": "1H",
-      "_balance_bumps": {
-        "of_venom": 28,
-        "of_poison_resist": 22,
-        "of_regen": 14,
-        "of_vitality": 15
-      },
       "recolor_of": "steel_longsword"
     },
     {
@@ -21548,13 +21079,6 @@
       "tile": "ancient_sword.png",
       "unique": false,
       "weapon_class": "1H",
-      "_balance_bumps": {
-        "of_embers": 35,
-        "of_might": 18,
-        "of_lifesteal": 12,
-        "of_fire_resist": 18,
-        "of_haste": 12
-      },
       "recolor_of": "ancient_sword"
     },
     {
@@ -21616,12 +21140,6 @@
       "slot": "amulet",
       "tile": "urand_cekugob_new.png",
       "unique": true,
-      "_balance_bumps": {
-        "of_shadows": 26,
-        "of_dark_resist": 18,
-        "of_finesse": 14,
-        "of_quickcast": 12
-      },
       "recolor_of": "cekugob_amulet"
     },
     {
@@ -21688,13 +21206,7 @@
       "rarity": "epic",
       "slot": "amulet",
       "tile": "stone_2_red.png",
-      "unique": false,
-      "_balance_bumps": {
-        "of_shadows": 32,
-        "of_dark_resist": 22,
-        "of_lifesteal": 18,
-        "of_might": 12
-      }
+      "unique": false
     },
     {
       "affix_pool": {
@@ -21753,12 +21265,6 @@
       "slot": "cloak",
       "tile": "cloak_2.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_the_bear": 30,
-        "of_vitality": 22,
-        "of_might": 14,
-        "of_sharpness": 14
-      },
       "recolor_of": "travelers_cloak_stormtouched"
     },
     {
@@ -21813,13 +21319,7 @@
       "rarity": "legendary",
       "slot": "helm",
       "tile": "urand_pondering_new.png",
-      "unique": true,
-      "_balance_bumps": {
-        "of_shadows": 22,
-        "of_might": 14,
-        "of_finesse": 14,
-        "of_lifesteal": 12
-      }
+      "unique": true
     },
     {
       "affix_pool": {
@@ -21882,16 +21382,6 @@
       "slot": "ring",
       "tile": "bronze.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_embers": 18,
-        "of_frost": 18,
-        "of_storms": 18,
-        "of_devotion": 18,
-        "of_venom": 18,
-        "of_shadows": 18,
-        "of_sharpness": 18
-      },
-      "_rebalance_v5": true,
       "recolor_of": "bronze_ring"
     },
     {
@@ -21962,13 +21452,7 @@
       "rarity": "epic",
       "slot": "ring",
       "tile": "ring_twisted.png",
-      "unique": false,
-      "_balance_bumps": {
-        "of_holy_resist": 18,
-        "of_devotion": 14,
-        "of_finesse": 14,
-        "of_wisdom": 12
-      }
+      "unique": false
     },
     {
       "affix_pool": {
@@ -22040,13 +21524,7 @@
       "rarity": "epic",
       "slot": "amulet",
       "tile": "celtic_red.png",
-      "unique": false,
-      "_balance_bumps": {
-        "of_shadows": 30,
-        "of_dark_resist": 22,
-        "of_int_mastery": 14,
-        "of_channeling": 14
-      }
+      "unique": false
     },
     {
       "affix_pool": {
@@ -22107,12 +21585,6 @@
       "tile": "broad_axe_5.png",
       "unique": false,
       "weapon_class": "2H",
-      "_balance_bumps": {
-        "of_frost": 30,
-        "of_finesse": 15,
-        "of_quickcast": 14,
-        "of_cold_resist": 22
-      },
       "recolor_of": "runed_broad_axe"
     },
     {
@@ -22176,16 +21648,6 @@
       "tile": "rapier_2.png",
       "unique": false,
       "weapon_class": "1H",
-      "_balance_bumps": {
-        "of_embers": 18,
-        "of_frost": 18,
-        "of_storms": 18,
-        "of_devotion": 18,
-        "of_venom": 18,
-        "of_shadows": 18,
-        "of_sharpness": 18
-      },
-      "_rebalance_v5": true,
       "recolor_of": "silver_rapier"
     },
     {
@@ -22256,12 +21718,6 @@
       "slot": "amulet",
       "tile": "stone_2_red.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_frost": 35,
-        "of_cold_resist": 22,
-        "of_quickcast": 18,
-        "of_crit": 15
-      },
       "recolor_of": "stone_2_red_voidwrought"
     },
     {
@@ -22330,12 +21786,6 @@
       "slot": "amulet",
       "tile": "crystal_red.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_devotion": 30,
-        "of_holy_resist": 22,
-        "of_might": 18,
-        "of_regen": 12
-      },
       "recolor_of": "crystal_red"
     },
     {
@@ -22407,13 +21857,7 @@
       "rarity": "epic",
       "slot": "ring",
       "tile": "agate.png",
-      "unique": false,
-      "_balance_bumps": {
-        "of_shadows": 30,
-        "of_dark_resist": 22,
-        "of_int_mastery": 14,
-        "of_channeling": 14
-      }
+      "unique": false
     },
     {
       "affix_pool": {
@@ -22481,12 +21925,6 @@
       "slot": "amulet",
       "tile": "stone_2_red.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_frost": 22,
-        "of_dark_resist": 18,
-        "of_finesse": 15,
-        "of_dex_mastery": 12
-      },
       "recolor_of": "stone_2_red_voidwrought"
     },
     {
@@ -22544,16 +21982,6 @@
       "slot": "shield",
       "tile": "dwarven_buckler_2.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_embers": 18,
-        "of_frost": 18,
-        "of_storms": 18,
-        "of_devotion": 18,
-        "of_venom": 18,
-        "of_shadows": 18,
-        "of_sharpness": 18
-      },
-      "_rebalance_v5": true,
       "recolor_of": "dwarven_buckler_2",
       "block_chance": 8,
       "block_amount": 5
@@ -22607,16 +22035,6 @@
       "slot": "boots",
       "tile": "low_boots.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_embers": 18,
-        "of_frost": 18,
-        "of_storms": 18,
-        "of_devotion": 18,
-        "of_venom": 18,
-        "of_shadows": 18,
-        "of_sharpness": 18
-      },
-      "_rebalance_v5": true,
       "recolor_of": "worn_sandals"
     },
     {
@@ -22669,12 +22087,6 @@
       "slot": "armor",
       "tile": "robe_1_new.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_the_bear": 30,
-        "of_vitality": 22,
-        "of_might": 14,
-        "of_sharpness": 14
-      },
       "recolor_of": "scout_robe"
     },
     {
@@ -22735,12 +22147,6 @@
       "tile": "scimitar_2.png",
       "unique": false,
       "weapon_class": "1H",
-      "_balance_bumps": {
-        "of_frost": 35,
-        "of_cold_resist": 22,
-        "of_quickcast": 18,
-        "of_crit": 15
-      },
       "recolor_of": "runed_scimitar"
     },
     {
@@ -22810,12 +22216,6 @@
       "slot": "ring",
       "tile": "urand_mage.png",
       "unique": true,
-      "_balance_bumps": {
-        "of_the_bear": 30,
-        "of_vitality": 22,
-        "of_might": 14,
-        "of_sharpness": 14
-      },
       "recolor_of": "mage_ring"
     },
     {
@@ -22868,13 +22268,7 @@
       "rarity": "epic",
       "slot": "cloak",
       "tile": "cloak_2.png",
-      "unique": false,
-      "_balance_bumps": {
-        "of_shadows": 26,
-        "of_finesse": 14,
-        "of_lifesteal": 14,
-        "of_dark_resist": 14
-      }
+      "unique": false
     },
     {
       "affix_pool": {
@@ -22924,12 +22318,6 @@
       "slot": "shield",
       "tile": "urand_bullseye.png",
       "unique": true,
-      "_balance_bumps": {
-        "of_devotion": 30,
-        "of_holy_resist": 22,
-        "of_might": 18,
-        "of_regen": 12
-      },
       "recolor_of": "bullseye",
       "block_chance": 15,
       "block_amount": 10
@@ -22988,13 +22376,7 @@
       "rarity": "rare",
       "slot": "helm",
       "tile": "wizard_hat_1.png",
-      "unique": false,
-      "_balance_bumps": {
-        "of_shadows": 22,
-        "of_might": 14,
-        "of_finesse": 14,
-        "of_lifesteal": 12
-      }
+      "unique": false
     },
     {
       "affix_pool": {
@@ -23047,12 +22429,6 @@
       "slot": "shield",
       "tile": "dwarven_buckler_2.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_the_bear": 30,
-        "of_vitality": 22,
-        "of_might": 14,
-        "of_sharpness": 14
-      },
       "recolor_of": "dwarven_buckler_2",
       "block_chance": 8,
       "block_amount": 5
@@ -23111,12 +22487,6 @@
       "slot": "helm",
       "tile": "urand_dyrovepreva_new.png",
       "unique": true,
-      "_balance_bumps": {
-        "of_shadows": 22,
-        "of_the_bear": 22,
-        "of_dark_resist": 18,
-        "of_vitality": 18
-      },
       "recolor_of": "crown_of_dyrovepreva"
     },
     {
@@ -23186,13 +22556,7 @@
       "rarity": "legendary",
       "slot": "ring",
       "tile": "urand_mage.png",
-      "unique": true,
-      "_balance_bumps": {
-        "of_shadows": 30,
-        "of_dark_resist": 22,
-        "of_int_mastery": 14,
-        "of_channeling": 14
-      }
+      "unique": true
     },
     {
       "affix_pool": {
@@ -23250,12 +22614,6 @@
       "tile": "scimitar_1_new.png",
       "unique": false,
       "weapon_class": "1H",
-      "_balance_bumps": {
-        "of_devotion": 22,
-        "of_haste": 18,
-        "of_lifesteal": 12,
-        "of_quickcast": 15
-      },
       "recolor_of": "scimitar"
     },
     {
@@ -23309,13 +22667,7 @@
       "rarity": "epic",
       "slot": "helm",
       "tile": "green_mask.png",
-      "unique": false,
-      "_balance_bumps": {
-        "of_shadows": 26,
-        "of_finesse": 14,
-        "of_lifesteal": 14,
-        "of_dark_resist": 14
-      }
+      "unique": false
     },
     {
       "affix_pool": {
@@ -23374,12 +22726,6 @@
       "tile": "knife.png",
       "unique": false,
       "weapon_class": "1H",
-      "_balance_bumps": {
-        "of_lifesteal": 30,
-        "of_might": 15,
-        "of_shadows": 18,
-        "of_dark_resist": 15
-      },
       "recolor_of": "bone_knife"
     },
     {
@@ -23441,12 +22787,6 @@
       "tile": "elven_broadsword.png",
       "unique": false,
       "weapon_class": "1H",
-      "_balance_bumps": {
-        "of_frost": 35,
-        "of_cold_resist": 22,
-        "of_quickcast": 18,
-        "of_crit": 15
-      },
       "recolor_of": "elven_broadsword"
     },
     {
@@ -23511,13 +22851,7 @@
       "rarity": "epic",
       "slot": "ring",
       "tile": "steel.png",
-      "unique": false,
-      "_balance_bumps": {
-        "of_finesse": 18,
-        "of_int_mastery": 18,
-        "of_quickcast": 14,
-        "of_resonance": 14
-      }
+      "unique": false
     },
     {
       "affix_pool": {
@@ -23583,13 +22917,6 @@
       "slot": "ring",
       "tile": "ring_ivory.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_embers": 35,
-        "of_might": 18,
-        "of_lifesteal": 12,
-        "of_fire_resist": 18,
-        "of_haste": 12
-      },
       "recolor_of": "ivory_ring"
     },
     {
@@ -23650,13 +22977,7 @@
       "speed": 0.7,
       "tile": "spwpn_sword_of_power_new.png",
       "unique": true,
-      "weapon_class": "1H",
-      "_balance_bumps": {
-        "of_shadows": 22,
-        "of_might": 14,
-        "of_finesse": 14,
-        "of_lifesteal": 12
-      }
+      "weapon_class": "1H"
     },
     {
       "affix_pool": {
@@ -23724,12 +23045,6 @@
       "slot": "amulet",
       "tile": "stone_2_green.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_embers": 30,
-        "of_quickcast": 14,
-        "of_fire_resist": 22,
-        "of_channeling": 10
-      },
       "recolor_of": "stone_2_green"
     },
     {
@@ -23786,12 +23101,6 @@
       "slot": "armor",
       "tile": "urand_clouds.png",
       "unique": true,
-      "_balance_bumps": {
-        "of_the_bear": 30,
-        "of_vitality": 22,
-        "of_might": 14,
-        "of_sharpness": 14
-      },
       "recolor_of": "robe_of_clouds"
     },
     {
@@ -23864,12 +23173,6 @@
       "slot": "ring",
       "tile": "agate.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_shadows": 22,
-        "of_the_bear": 22,
-        "of_dark_resist": 18,
-        "of_vitality": 18
-      },
       "recolor_of": "agate_ring"
     },
     {
@@ -23935,16 +23238,6 @@
       "slot": "ring",
       "tile": "brass.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_embers": 18,
-        "of_frost": 18,
-        "of_storms": 18,
-        "of_devotion": 18,
-        "of_venom": 18,
-        "of_shadows": 18,
-        "of_sharpness": 18
-      },
-      "_rebalance_v5": true,
       "recolor_of": "brass_ring"
     },
     {
@@ -24017,12 +23310,6 @@
       "slot": "amulet",
       "tile": "penta_orange.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_the_bear": 30,
-        "of_vitality": 22,
-        "of_might": 14,
-        "of_sharpness": 14
-      },
       "recolor_of": "penta_orange"
     },
     {
@@ -24071,12 +23358,6 @@
       "slot": "armor",
       "tile": "animal_skin_1_new.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_venom": 22,
-        "of_finesse": 18,
-        "of_dex_mastery": 14,
-        "of_crit": 15
-      },
       "recolor_of": "tattered_hide"
     },
     {
@@ -24130,12 +23411,6 @@
       "slot": "cloak",
       "tile": "cloak_1_leather.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_shadows": 26,
-        "of_dark_resist": 18,
-        "of_finesse": 14,
-        "of_quickcast": 12
-      },
       "recolor_of": "leather_cloak"
     },
     {
@@ -24204,12 +23479,6 @@
       "slot": "amulet",
       "tile": "face_1_gold.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_venom": 22,
-        "of_finesse": 18,
-        "of_dex_mastery": 14,
-        "of_crit": 15
-      },
       "recolor_of": "face_amulet_gold"
     },
     {
@@ -24274,12 +23543,6 @@
       "tile": "bardiche_4.png",
       "unique": false,
       "weapon_class": "2H",
-      "_balance_bumps": {
-        "of_venom": 28,
-        "of_poison_resist": 22,
-        "of_regen": 14,
-        "of_vitality": 15
-      },
       "recolor_of": "runed_bardiche"
     },
     {
@@ -24330,12 +23593,6 @@
       "slot": "boots",
       "tile": "boots_iron_2.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_the_bear": 30,
-        "of_vitality": 22,
-        "of_might": 14,
-        "of_sharpness": 14
-      },
       "recolor_of": "earthshaker_treads"
     },
     {
@@ -24384,12 +23641,6 @@
       "slot": "armor",
       "tile": "orcish_leather_armor.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_embers": 30,
-        "of_quickcast": 14,
-        "of_fire_resist": 22,
-        "of_channeling": 10
-      },
       "recolor_of": "orcish_leather"
     },
     {
@@ -24451,14 +23702,6 @@
       "tile": "giant_club_new.png",
       "unique": false,
       "weapon_class": "2H",
-      "_balance_bumps": {
-        "of_embers": 35,
-        "of_might": 18,
-        "of_lifesteal": 12,
-        "of_fire_resist": 18,
-        "of_haste": 12
-      },
-      "_rebalance_v5": true,
       "recolor_of": "giant_club"
     },
     {
@@ -24526,12 +23769,6 @@
       "slot": "ring",
       "tile": "emerald.png",
       "unique": false,
-      "_balance_bumps": {
-        "of_venom": 22,
-        "of_finesse": 18,
-        "of_dex_mastery": 14,
-        "of_crit": 15
-      },
       "recolor_of": "emerald_ring"
     },
     {
@@ -25399,8 +24636,7 @@
         "of_hunter": 8,
         "of_tempest": 8,
         "of_synergy": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "spell_axes_carving_dex",
@@ -25455,8 +24691,7 @@
         "of_hunter": 8,
         "of_tempest": 8,
         "of_synergy": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "spell_axes_sundering_str",
@@ -25511,8 +24746,7 @@
         "of_hunter": 8,
         "of_tempest": 8,
         "of_synergy": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "spell_axes_rending_int",
@@ -25567,8 +24801,7 @@
         "of_hunter": 8,
         "of_tempest": 8,
         "of_synergy": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "spell_axes_hacking_dex",
@@ -25623,8 +24856,7 @@
         "of_hunter": 8,
         "of_tempest": 8,
         "of_synergy": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "spell_axes_cleaving_dex",
@@ -25679,8 +24911,7 @@
         "of_hunter": 8,
         "of_tempest": 8,
         "of_synergy": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "spell_axes_whirling_str",
@@ -25735,8 +24966,7 @@
         "of_hunter": 8,
         "of_tempest": 8,
         "of_synergy": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "spell_axes_spinning_int",
@@ -25791,8 +25021,7 @@
         "of_hunter": 8,
         "of_tempest": 8,
         "of_synergy": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "spell_axes_brutal_dex",
@@ -25847,8 +25076,7 @@
         "of_hunter": 8,
         "of_tempest": 8,
         "of_synergy": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "spell_axes_threshing_int",
@@ -25903,8 +25131,7 @@
         "of_hunter": 8,
         "of_tempest": 8,
         "of_synergy": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "spell_axes_vortex_dex",
@@ -25959,8 +25186,7 @@
         "of_hunter": 8,
         "of_tempest": 8,
         "of_synergy": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "spell_axes_hewn_str",
@@ -26015,8 +25241,7 @@
         "of_hunter": 8,
         "of_tempest": 8,
         "of_synergy": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "spell_axes_furious_str",
@@ -26071,8 +25296,7 @@
         "of_hunter": 8,
         "of_tempest": 8,
         "of_synergy": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "spell_axes_cyclone_int",
@@ -26127,8 +25351,7 @@
         "of_hunter": 8,
         "of_tempest": 8,
         "of_synergy": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "spell_holy_beam_vigil_int",
@@ -27810,8 +27033,7 @@
         "of_hunter": 8,
         "of_tempest": 8,
         "of_synergy": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "spell_frost_nova_snowbound_int",
@@ -27869,8 +27091,7 @@
         "of_hunter": 8,
         "of_tempest": 8,
         "of_synergy": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "spell_frost_nova_freezing_dex",
@@ -27928,8 +27149,7 @@
         "of_hunter": 8,
         "of_tempest": 8,
         "of_synergy": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "spell_frost_nova_polar_str",
@@ -27987,8 +27207,7 @@
         "of_hunter": 8,
         "of_tempest": 8,
         "of_synergy": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "spell_frost_nova_bitterwind_int",
@@ -28046,8 +27265,7 @@
         "of_hunter": 8,
         "of_tempest": 8,
         "of_synergy": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "spell_frost_nova_cryogenic_str",
@@ -28105,8 +27323,7 @@
         "of_hunter": 8,
         "of_tempest": 8,
         "of_synergy": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "spell_frost_nova_icefall_dex",
@@ -28164,8 +27381,7 @@
         "of_hunter": 8,
         "of_tempest": 8,
         "of_synergy": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "spell_frost_nova_riming_int",
@@ -28223,8 +27439,7 @@
         "of_hunter": 8,
         "of_tempest": 8,
         "of_synergy": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "spell_frost_nova_wintertide_str",
@@ -28282,8 +27497,7 @@
         "of_hunter": 8,
         "of_tempest": 8,
         "of_synergy": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "spell_frost_nova_blizzardborn_int",
@@ -28341,8 +27555,7 @@
         "of_hunter": 8,
         "of_tempest": 8,
         "of_synergy": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "spell_frost_nova_frozen_dex",
@@ -28400,8 +27613,7 @@
         "of_hunter": 8,
         "of_tempest": 8,
         "of_synergy": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "spell_frost_nova_permafrost_str",
@@ -28459,8 +27671,7 @@
         "of_hunter": 8,
         "of_tempest": 8,
         "of_synergy": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "spell_frost_nova_whitefrost_str",
@@ -28518,8 +27729,7 @@
         "of_hunter": 8,
         "of_tempest": 8,
         "of_synergy": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "spell_frost_nova_numbing_dex",
@@ -28577,8 +27787,7 @@
         "of_hunter": 8,
         "of_tempest": 8,
         "of_synergy": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "spell_magic_dart_glyph_str",
@@ -30173,8 +29382,7 @@
         "of_hunter": 8,
         "of_tempest": 8,
         "of_synergy": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "spell_sandblast_cragblade_dex",
@@ -30229,8 +29437,7 @@
         "of_hunter": 8,
         "of_tempest": 8,
         "of_synergy": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "spell_sandblast_ironvein_str",
@@ -30285,8 +29492,7 @@
         "of_hunter": 8,
         "of_tempest": 8,
         "of_synergy": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "spell_sandblast_earthworn_int",
@@ -30341,8 +29547,7 @@
         "of_hunter": 8,
         "of_tempest": 8,
         "of_synergy": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "spell_sandblast_basalt_dex",
@@ -30397,8 +29602,7 @@
         "of_hunter": 8,
         "of_tempest": 8,
         "of_synergy": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "spell_sandblast_bedrock_int",
@@ -30453,8 +29657,7 @@
         "of_hunter": 8,
         "of_tempest": 8,
         "of_synergy": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "spell_sandblast_gravelstrike_str",
@@ -30509,8 +29712,7 @@
         "of_hunter": 8,
         "of_tempest": 8,
         "of_synergy": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "spell_sandblast_stoneborn_dex",
@@ -30565,8 +29767,7 @@
         "of_hunter": 8,
         "of_tempest": 8,
         "of_synergy": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "spell_sandblast_slate_int",
@@ -30621,8 +29822,7 @@
         "of_hunter": 8,
         "of_tempest": 8,
         "of_synergy": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "spell_sandblast_tectonic_str",
@@ -30677,8 +29877,7 @@
         "of_hunter": 8,
         "of_tempest": 8,
         "of_synergy": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "spell_sandblast_pebble_dex",
@@ -30733,8 +29932,7 @@
         "of_hunter": 8,
         "of_tempest": 8,
         "of_synergy": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "spell_sandblast_ridge_int",
@@ -30789,8 +29987,7 @@
         "of_hunter": 8,
         "of_tempest": 8,
         "of_synergy": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "spell_sandblast_granite_int",
@@ -30845,8 +30042,7 @@
         "of_hunter": 8,
         "of_tempest": 8,
         "of_synergy": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "spell_sandblast_riverstone_int",
@@ -30901,8 +30097,7 @@
         "of_hunter": 8,
         "of_tempest": 8,
         "of_synergy": 8
-      },
-      "_rebalance_v5": true
+      }
     },
     {
       "id": "spell_drain_wraith_int",
