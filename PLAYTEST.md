@@ -1884,7 +1884,7 @@ Status legend: `untriaged` | `triaged → fixed` | `triaged → TODO` |
 not-a-bug`.
 
 ### 1. Save resets to lvl 1 spriggan after a new build push
-**Status:** `triaged → fixed (commit <SHA>, 2026-06-12)`
+**Status:** `triaged → fixed (commit 92e8426, 2026-06-12)`
 
 Multiple playtesters reporting their save vanishes after a
 `/deploy-web` push: they load into the next session and the
