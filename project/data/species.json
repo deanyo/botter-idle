@@ -16,7 +16,7 @@
       "aggro_flat": 0,
       "xp_pct": 5,
       "loot_pct": 0,
-      "innate_tags": [],
+      "innate_tags": ["human"],
       "str_flat": 1,
       "dex_flat": 1,
       "int_flat": 1

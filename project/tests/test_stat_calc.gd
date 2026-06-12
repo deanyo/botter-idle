@@ -393,12 +393,14 @@ func test_s5_species_data_has_innate_tag_lookup() -> void:
 	assert_true(SpeciesData.has_innate_tag("vampire", "undead"),
 		"vampire also carries undead tag (shared with mummy)")
 	assert_false(SpeciesData.has_innate_tag("human", "vampiric"),
-		"human carries no innate_tags — every lookup false")
+		"human does not carry vampiric tag")
+	assert_true(SpeciesData.has_innate_tag("human", "human"),
+		"human carries 'human' self-tag (gates starter_human_spell per §1.F)")
 	assert_false(SpeciesData.has_innate_tag("vampire", ""),
 		"empty tag query returns false")
 	assert_false(SpeciesData.has_innate_tag("", "vampiric"),
 		"empty species query returns false")
-	# Sanity-check every species got tagged. Human is intentionally [].
+	# Sanity-check every species got tagged.
 	for sp in SpeciesData.all():
 		var sid: String = String(sp.id)
 		var has_any: bool = false
@@ -406,11 +408,7 @@ func test_s5_species_data_has_innate_tag_lookup() -> void:
 			has_any = SpeciesData.has_innate_tag(sid, String(t))
 			if has_any:
 				break
-		if sid == "human":
-			assert_eq(int((sp.get("innate_tags", []) as Array).size()), 0,
-				"human species defined with empty innate_tags")
-		else:
-			assert_true(has_any, "species %s has at least one innate_tag" % sid)
+		assert_true(has_any, "species %s has at least one innate_tag" % sid)
 
 # ---------------------------------------------------------------------
 # S9 — spell crit (a06 §3.1, a10 ×1.25 rescope).

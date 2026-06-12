@@ -206,8 +206,9 @@ static func compute(
 		# S5 race-anchor gate: an item with `requires_innate_tag` mutes
 		# its implicit_affixes when the wearer's species lacks the tag.
 		# Base stats (armor/damage) and rolled affixes still apply — only
-		# the unique mechanic is gated. Humans (no innate_tags) get the
-		# muted version, matching a04 §5.1's "baseline by design" rule.
+		# the unique mechanic is gated. Human carries the "human" self-tag
+		# (added 2026-06-12 with §1.F starter_human_spell gating) so any
+		# requires_innate_tag="human" item works for humans only.
 		var requires_tag: String = String(item.get("requires_innate_tag", ""))
 		var implicits_active: bool = true
 		if requires_tag != "":

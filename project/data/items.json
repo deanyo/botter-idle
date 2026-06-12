@@ -15523,7 +15523,8 @@
         "hue": 280.0,
         "sat": 0.85,
         "mode": "colorize"
-      }
+      },
+      "requires_innate_tag": "human"
     },
     {
       "id": "starter_spriggan_spell",
@@ -15578,7 +15579,8 @@
         "sat": 0.85,
         "mode": "colorize"
       },
-      "_rebalance_v5": true
+      "_rebalance_v5": true,
+      "requires_innate_tag": "forest"
     },
     {
       "id": "starter_minotaur_spell",
@@ -15633,7 +15635,8 @@
         "sat": 0.85,
         "mode": "colorize"
       },
-      "_rebalance_v5": true
+      "_rebalance_v5": true,
+      "requires_innate_tag": "bovine"
     },
     {
       "id": "starter_naga_spell",
@@ -15688,7 +15691,8 @@
         "sat": 0.85,
         "mode": "colorize"
       },
-      "_rebalance_v5": true
+      "_rebalance_v5": true,
+      "requires_innate_tag": "serpentine"
     },
     {
       "id": "starter_tengu_spell",
@@ -15742,7 +15746,8 @@
         "hue": 280.0,
         "sat": 0.85,
         "mode": "colorize"
-      }
+      },
+      "requires_innate_tag": "avian"
     },
     {
       "id": "starter_troll_spell",
@@ -15797,7 +15802,8 @@
         "sat": 0.85,
         "mode": "colorize"
       },
-      "_rebalance_v5": true
+      "_rebalance_v5": true,
+      "requires_innate_tag": "regen"
     },
     {
       "id": "starter_octopode_spell",
@@ -15852,7 +15858,8 @@
         "sat": 0.85,
         "mode": "colorize"
       },
-      "_rebalance_v5": true
+      "_rebalance_v5": true,
+      "requires_innate_tag": "aquatic"
     },
     {
       "id": "starter_demonspawn_spell",
@@ -15907,7 +15914,8 @@
         "sat": 0.85,
         "mode": "colorize"
       },
-      "_rebalance_v5": true
+      "_rebalance_v5": true,
+      "requires_innate_tag": "demon"
     },
     {
       "id": "starter_vampire_spell",
@@ -15961,7 +15969,8 @@
         "hue": 280.0,
         "sat": 0.85,
         "mode": "colorize"
-      }
+      },
+      "requires_innate_tag": "vampiric"
     },
     {
       "id": "starter_mummy_spell",
@@ -16016,7 +16025,8 @@
         "sat": 0.85,
         "mode": "colorize"
       },
-      "_rebalance_v5": true
+      "_rebalance_v5": true,
+      "requires_innate_tag": "ancient"
     },
     {
       "id": "starter_hill_orc_spell",
@@ -16070,7 +16080,8 @@
         "hue": 0.0,
         "sat": 0.85,
         "mode": "colorize"
-      }
+      },
+      "requires_innate_tag": "orcish"
     },
     {
       "id": "starter_deep_elf_spell",
@@ -16124,7 +16135,8 @@
         "hue": 280.0,
         "sat": 0.85,
         "mode": "colorize"
-      }
+      },
+      "requires_innate_tag": "elf"
     },
     {
       "id": "starter_gargoyle_spell",
@@ -16178,7 +16190,8 @@
         "hue": 0.0,
         "sat": 0.85,
         "mode": "colorize"
-      }
+      },
+      "requires_innate_tag": "construct"
     },
     {
       "id": "starter_halfling_spell",
@@ -16232,7 +16245,8 @@
         "hue": 280.0,
         "sat": 0.85,
         "mode": "colorize"
-      }
+      },
+      "requires_innate_tag": "lucky"
     },
     {
       "id": "starter_kobold_spell",
@@ -16287,7 +16301,8 @@
         "sat": 0.85,
         "mode": "colorize"
       },
-      "_rebalance_v5": true
+      "_rebalance_v5": true,
+      "requires_innate_tag": "scavenger"
     },
     {
       "id": "spell_axes_bleeding",
