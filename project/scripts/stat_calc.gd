@@ -161,6 +161,7 @@ static func compute(
 	var loot_quantity_pct: float = 0.0
 	var damage_taken_pct: float = 0.0
 	var dot_duration_pct: float = 0.0
+	var damage_vs_unique_pct: float = 0.0
 
 	# Bot upgrades — gold-sink purchases. Pre-2026-06-06 combat_training
 	# (atk) and toughening (def) were never read here; players spent gold
@@ -376,6 +377,7 @@ static func compute(
 		loot_quantity_pct += float(slot_sums.get("loot_quantity_pct", 0))
 		damage_taken_pct += float(slot_sums.get("damage_taken_pct", 0))
 		dot_duration_pct += float(slot_sums.get("dot_duration_pct", 0))
+		damage_vs_unique_pct += float(slot_sums.get("damage_vs_unique_pct", 0))
 		# Per-element spell-damage affixes (of_pyromancer / of_cryomancer
 		# / of_thundercaller / of_zealot / of_pestcaller / of_nightcaller). Each writes to
 		# `<elem>_dmg_pct`; we accumulate into spell_element_pct keyed by
@@ -661,6 +663,11 @@ static func compute(
 	# 4-tick bleed at +80% becomes 7 ticks (round up); +50% becomes
 	# 6 ticks. Reads at apply-time on the attacker side.
 	dot_duration_pct = clampf(dot_duration_pct, 0.0, 80.0)
+	# §2.E damage_vs_unique_pct — A6-newstat-016, a10 cap 40. Sibling
+	# to of_kingslayer's boss_dmg_pct lane: of_kingslayer fires vs
+	# is_boss / is_miniboss; this lane fires vs pack_tier == PACK_RARE
+	# (named pack-mod elites). Anti-elite-density build pivot.
+	damage_vs_unique_pct = clampf(damage_vs_unique_pct, 0.0, 40.0)
 	if low_hp_target_dmg_pct > 0.0 and glass_cannon_dmg_pct > 0.0:
 		if low_hp_target_dmg_pct >= glass_cannon_dmg_pct:
 			glass_cannon_dmg_pct = 0.0
@@ -821,6 +828,7 @@ static func compute(
 	out["loot_quantity_pct"] = loot_quantity_pct
 	out["damage_taken_pct"] = damage_taken_pct
 	out["dot_duration_pct"] = dot_duration_pct
+	out["damage_vs_unique_pct"] = damage_vs_unique_pct
 	out["move_speed"] = move_speed
 	out["aggro_bonus"] = vision_count + sp_aggro_flat
 	out["loot_rarity_bonus"] = loot_rarity_bonus
@@ -874,6 +882,7 @@ static func _initial_dict() -> Dictionary:
 		"doomstrike_dmg_pct": 0.0, "riposte_dmg_pct": 0.0, "high_hp_cdr_pct": 0.0,
 		"kill_streak_cdr_pct": 0.0, "crit_chain_pct": 0.0, "step_pulse_pct": 0.0,
 		"loot_quantity_pct": 0.0, "damage_taken_pct": 0.0, "dot_duration_pct": 0.0,
+		"damage_vs_unique_pct": 0.0,
 		"move_speed": _BASE_MOVE_SPEED, "aggro_bonus": 0,
 		"loot_rarity_bonus": 0.0, "xp_gain_pct": 0.0,
 		"alloc_str": 0, "alloc_dex": 0, "alloc_int": 0, "unspent_points": 0,

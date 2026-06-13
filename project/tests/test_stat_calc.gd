@@ -560,6 +560,7 @@ const _S12_CAPS := {
 	"loot_quantity_pct":        50.0,   # of_abundance        (a06-newstat-022, a11 hard clamp)
 	"damage_taken_pct":         40.0,   # of_obstinance       (a06-newstat-021)
 	"dot_duration_pct":         80.0,   # of_lingering_pestilence (a06-newstat-019)
+	"damage_vs_unique_pct":     40.0,   # of_unique_slayer    (a06-newstat-016)
 }
 
 # Map each capped stat key to an affix id known to write it. The probe
@@ -594,6 +595,7 @@ const _S12_STAT_TO_AFFIX := {
 	"loot_quantity_pct":        "of_abundance",
 	"damage_taken_pct":         "of_obstinance",
 	"dot_duration_pct":         "of_lingering_pestilence",
+	"damage_vs_unique_pct":     "of_unique_slayer",
 }
 
 # Slot to use for each affix when stuffing the test loadout. Picked
@@ -629,6 +631,7 @@ const _S12_AFFIX_TEST_SLOT := {
 	"of_abundance":           "amulet",
 	"of_obstinance":          "armor",
 	"of_lingering_pestilence": "amulet",
+	"of_unique_slayer":       "weapon",
 }
 
 # Build a synthetic items_db with one stub-item per slot needed by the

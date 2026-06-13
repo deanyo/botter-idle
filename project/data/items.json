@@ -1144,7 +1144,8 @@
         "of_first_strike": 8,
         "of_hunter_mark": 8,
         "of_riposte_strike": 5,
-        "of_chainspark": 5
+        "of_chainspark": 5,
+        "of_unique_slayer": 6
       }
     },
     {
@@ -9013,7 +9014,8 @@
         "of_tactician": 5,
         "of_chainspark": 5,
         "of_abundance": 5,
-        "of_lingering_pestilence": 5
+        "of_lingering_pestilence": 5,
+        "of_unique_slayer": 4
       }
     },
     {
@@ -12817,7 +12819,8 @@
         "of_drainblade": 5,
         "of_armor_breaker": 8,
         "of_vulnerability_mark": 8,
-        "of_doomstrike": 8
+        "of_doomstrike": 8,
+        "of_unique_slayer": 5
       }
     },
     {
@@ -13090,7 +13093,8 @@
         "of_kingslayer": 10,
         "of_avenger": 8,
         "of_armor_breaker": 8,
-        "of_doomstrike": 12
+        "of_doomstrike": 12,
+        "of_unique_slayer": 5
       }
     },
     {

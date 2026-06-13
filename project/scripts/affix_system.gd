@@ -398,6 +398,7 @@ const _STAT_DESCRIPTIONS := {
 	"loot_quantity_pct": "+{N}% chance to spawn an extra loot drop on each kill that drops loot. Hard cap 50.",
 	"damage_taken_pct": "Take {N}% less damage from all sources. Cap 40.",
 	"dot_duration_pct": "+{N}% duration on damage-over-time effects you apply (bleed, burn, poison, smite). Cap 80.",
+	"damage_vs_unique_pct": "+{N}% damage to rare-tier (named pack) enemies. Cap 40.",
 }
 
 static func description_for_stat(stat: String) -> String:
@@ -468,6 +469,7 @@ const _NAMED_EFFECT_STATS := {
 	"loot_quantity_pct": true,
 	"damage_taken_pct": true,
 	"dot_duration_pct": true,
+	"damage_vs_unique_pct": true,
 }
 
 static func is_named_effect_stat(stat: String) -> bool:

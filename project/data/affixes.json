@@ -636,6 +636,12 @@
       "name": "of Lingering Pestilence", "stat": "dot_duration_pct",
       "applies_to": ["amulet","ring","weapon","gloves"],
       "tiers": [[10,15],[15,25],[25,40],[40,55],[55,70]]
+    },
+    {
+      "id": "of_unique_slayer",  "family": "generic", "kind": "pct",
+      "name": "of Unique Slayer", "stat": "damage_vs_unique_pct",
+      "applies_to": ["weapon","gloves","amulet"],
+      "tiers": [[8,12],[14,18],[20,26],[26,32],[32,40]]
     }
   ]
 }

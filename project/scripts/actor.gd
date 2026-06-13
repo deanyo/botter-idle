@@ -831,6 +831,14 @@ func attempt_attack(other: Actor, delta: float) -> int:
 			var oe: Enemy = other as Enemy
 			if oe.is_boss or oe.is_miniboss:
 				ephemeral_sum += bot_self.boss_dmg_pct / 100.0
+		# §2.E damage_vs_unique_pct — sibling to kingslayer; fires vs
+		# pack_tier == PACK_RARE (named elite mobs). a06-newstat-016,
+		# a10 cap 40. Boss/miniboss already have boss_dmg_pct cover —
+		# this lane targets the elite-density middle ground.
+		if bot_self.damage_vs_unique_pct > 0.0 and is_instance_valid(other) and other is Enemy:
+			var oe2: Enemy = other as Enemy
+			if oe2.pack_tier == Enemy.PACK_RARE:
+				ephemeral_sum += bot_self.damage_vs_unique_pct / 100.0
 		# §1.H of_avenger — recently-hurt damage. 3s window after last
 		# hit; revenge status set on take_damage. revenge_dmg_pct already
 		# capped 50 in stat_calc.
