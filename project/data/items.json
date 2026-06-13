@@ -2017,7 +2017,8 @@
         "of_lifesteal": 15,
         "of_channeling": 8,
         "of_quickcast": 8,
-        "of_executioner": 8
+        "of_executioner": 8,
+        "of_lingering_pestilence": 6
       },
       "overlay": "bullwhip_new"
     },
@@ -2327,7 +2328,8 @@
         "of_avenger": 6,
         "of_first_strike": 5,
         "of_drainblade": 8,
-        "of_hunter_mark": 5
+        "of_hunter_mark": 5,
+        "of_lingering_pestilence": 6
       }
     },
     {
@@ -7957,7 +7959,8 @@
         "of_synergy": 8,
         "of_executioner": 8,
         "of_tactician": 5,
-        "of_abundance": 6
+        "of_abundance": 6,
+        "of_lingering_pestilence": 4
       }
     },
     {
@@ -9009,7 +9012,8 @@
         "of_overflowing_chalice": 5,
         "of_tactician": 5,
         "of_chainspark": 5,
-        "of_abundance": 5
+        "of_abundance": 5,
+        "of_lingering_pestilence": 5
       }
     },
     {

@@ -160,6 +160,7 @@ static func compute(
 	var step_pulse_pct: float = 0.0
 	var loot_quantity_pct: float = 0.0
 	var damage_taken_pct: float = 0.0
+	var dot_duration_pct: float = 0.0
 
 	# Bot upgrades — gold-sink purchases. Pre-2026-06-06 combat_training
 	# (atk) and toughening (def) were never read here; players spent gold
@@ -374,6 +375,7 @@ static func compute(
 		step_pulse_pct += float(slot_sums.get("step_pulse_pct", 0))
 		loot_quantity_pct += float(slot_sums.get("loot_quantity_pct", 0))
 		damage_taken_pct += float(slot_sums.get("damage_taken_pct", 0))
+		dot_duration_pct += float(slot_sums.get("dot_duration_pct", 0))
 		# Per-element spell-damage affixes (of_pyromancer / of_cryomancer
 		# / of_thundercaller / of_zealot / of_pestcaller / of_nightcaller). Each writes to
 		# `<elem>_dmg_pct`; we accumulate into spell_element_pct keyed by
@@ -652,6 +654,13 @@ static func compute(
 	# clamps 90 in the final_mit step. 5-source DR stack 30+22.5+15+7.5+7.5
 	# = 82.5 → clamp 40 here so the universal lane stays inside the design.
 	damage_taken_pct = clampf(damage_taken_pct, 0.0, 40.0)
+	# §2.E dot_duration_pct — A6-newstat-019, a10 cap 80. Scales the
+	# tick count of any DoT applied via add_burn / add_poison /
+	# add_bloodletting / add_smite — same DPS, longer total damage.
+	# 4-source DR stack with T5=70: 70+52.5+35+17.5 = 175 → clamp 80.
+	# 4-tick bleed at +80% becomes 7 ticks (round up); +50% becomes
+	# 6 ticks. Reads at apply-time on the attacker side.
+	dot_duration_pct = clampf(dot_duration_pct, 0.0, 80.0)
 	if low_hp_target_dmg_pct > 0.0 and glass_cannon_dmg_pct > 0.0:
 		if low_hp_target_dmg_pct >= glass_cannon_dmg_pct:
 			glass_cannon_dmg_pct = 0.0
@@ -811,6 +820,7 @@ static func compute(
 	out["step_pulse_pct"] = step_pulse_pct
 	out["loot_quantity_pct"] = loot_quantity_pct
 	out["damage_taken_pct"] = damage_taken_pct
+	out["dot_duration_pct"] = dot_duration_pct
 	out["move_speed"] = move_speed
 	out["aggro_bonus"] = vision_count + sp_aggro_flat
 	out["loot_rarity_bonus"] = loot_rarity_bonus
@@ -863,7 +873,7 @@ static func _initial_dict() -> Dictionary:
 		"thorns_flat": 0, "block_thorns_flat": 0, "first_hit_mark_pct": 0.0,
 		"doomstrike_dmg_pct": 0.0, "riposte_dmg_pct": 0.0, "high_hp_cdr_pct": 0.0,
 		"kill_streak_cdr_pct": 0.0, "crit_chain_pct": 0.0, "step_pulse_pct": 0.0,
-		"loot_quantity_pct": 0.0, "damage_taken_pct": 0.0,
+		"loot_quantity_pct": 0.0, "damage_taken_pct": 0.0, "dot_duration_pct": 0.0,
 		"move_speed": _BASE_MOVE_SPEED, "aggro_bonus": 0,
 		"loot_rarity_bonus": 0.0, "xp_gain_pct": 0.0,
 		"alloc_str": 0, "alloc_dex": 0, "alloc_int": 0, "unspent_points": 0,

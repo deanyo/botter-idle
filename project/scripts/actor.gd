@@ -1041,7 +1041,7 @@ func attempt_attack(other: Actor, delta: float) -> int:
 			# 3 ticks × 4% max_hp = 12% max_hp total over 1.5s. Refreshes
 			# duration on re-application; doesn't stack damage.
 			var per_tick: int = maxi(1, int(round(float(other.max_hp) * 0.04)))
-			other.add_burn(per_tick, 3, 0.5)
+			other.add_burn(per_tick, 3, 0.5, self)
 		if "cold" in tags and is_instance_valid(other) and other.is_alive and randf() < 0.15:
 			# 0.5s freeze — short window so the +20% on next swing only
 			# usually lands once, not the whole fight. Doesn't apply
@@ -1051,7 +1051,7 @@ func attempt_attack(other: Actor, delta: float) -> int:
 			# 4-tick poison DoT (similar shape to fire but slightly less
 			# per tick). Uses the existing `poisoned` ENCH overlay.
 			var poison_per_tick: int = maxi(1, int(round(float(other.max_hp) * 0.03)))
-			other.add_poison(poison_per_tick, 4, 0.5)
+			other.add_poison(poison_per_tick, 4, 0.5, self)
 	# Stealth single-strike consumed.
 	if has_status("stealthy"):
 		remove_status("stealthy")
@@ -1145,7 +1145,7 @@ func attempt_attack(other: Actor, delta: float) -> int:
 		if bot_bl.bloodletting_per_stack > 0:
 			# 4 ticks × 1s = 4s total. Per-tick = bloodletting_per_stack.
 			# Stacks cap implicit via add_bloodletting helper.
-			other.add_bloodletting(bot_bl.bloodletting_per_stack)
+			other.add_bloodletting(bot_bl.bloodletting_per_stack, self)
 		# §1.H of_hunter_mark (a02 P-009, a11 G7) — on-crit, apply 4s
 		# "marked" status to target. Read at typed-damage-application time
 		# so all subsequent hits (melee, spells, DoTs) read the amp.
@@ -1171,20 +1171,20 @@ func attempt_attack(other: Actor, delta: float) -> int:
 	if dealt > 0 and self is Bot and is_instance_valid(other) and other.is_alive:
 		var bot_se: Bot = self as Bot
 		if bot_se.weapon_bleed_per_sec > 0:
-			other.add_bloodletting(bot_se.weapon_bleed_per_sec)
+			other.add_bloodletting(bot_se.weapon_bleed_per_sec, self)
 		# §1.H of_zealous_strike (a02 P-022): every landed hit applies a 3s
 		# holy DoT. Same true-damage tick path as bleeding via a distinct
 		# "smite" status. Composes with bleeding on the same target — they
 		# tick independently and read separately in the HUD overlay.
 		if bot_se.holy_dot_per_sec > 0:
-			other.add_smite(bot_se.holy_dot_per_sec)
+			other.add_smite(bot_se.holy_dot_per_sec, self)
 	# S11 of_bleed_on_miss (a07 §6.1 Sigmund's Sickle). On a missed swing
 	# (dealt == 0 — defender evaded/blocked), apply a 3s bleed (4 dmg/s).
 	# Compensates daggers/scythes for swings that whiff against high-evasion
 	# enemies. Bot-only so monster swings don't bleed the bot.
 	if dealt == 0 and self is Bot and is_instance_valid(other) and other.is_alive:
 		if (self as Bot).bleed_on_miss:
-			other.add_bloodletting(4)
+			other.add_bloodletting(4, self)
 		# §1.H of_riposte_strike (a09-conditional-001). On evade/block,
 		# counter-strike for riposte_dmg_pct% of weapon damage. Per-second
 		# proc cap via _last_riposte_msec; re-entry guard via _riposte_active
@@ -1209,7 +1209,7 @@ func attempt_attack(other: Actor, delta: float) -> int:
 	if dealt > 0 and self is Bot and is_instance_valid(other) and other.is_alive:
 		if (self as Bot).venom_on_hit:
 			var per_tick: int = maxi(1, int(round(float(other.max_hp) * 0.02)))
-			other.add_poison(per_tick, 3, 0.5)
+			other.add_poison(per_tick, 3, 0.5, self)
 	# S11 of_dancing (a07 §6.3 Eustachio's Dancing Sword). 25% chance on a
 	# successful hit to fire an extra weapon-damage strike at the same
 	# target. Reentry-guarded via _dancing_blade_active so the proc'd strike
@@ -1328,7 +1328,7 @@ func _apply_base_type_proc(target: Actor, raw: int) -> void:
 	if bt == "dagger" or bt == "knife" or bt == "shiv":
 		if randf() < 0.40:
 			var bleed_per_tick: int = maxi(1, int(round(float(raw) * 0.08)))
-			target.add_poison(bleed_per_tick, 3, 0.6)  # reuse poison DoT shape
+			target.add_poison(bleed_per_tick, 3, 0.6, self)  # reuse poison DoT shape
 		return
 	# 1H swords + sabres — modest cleave: 60% damage to one adjacent foe.
 	if bt in ["short_sword", "long_sword", "scimitar", "falchion", "rapier", "sabre", "broad_sword"]:
@@ -1511,15 +1511,28 @@ func add_sunder_stack(per_stack_amount: int) -> void:
 # refresh duration. Routes through the existing DoT scheduler so HUD
 # overlay + tick math stays consistent. Bypasses immunity tags (bleed is
 # physical, not poison/fire, so poison_res / fire_res don't gate it).
-func add_bloodletting(per_tick: int) -> void:
-	_apply_dot_status("bleeding", per_tick, 4, 1.0)
+func add_bloodletting(per_tick: int, attacker: Actor = null) -> void:
+	_apply_dot_status("bleeding", per_tick, _scaled_dot_ticks(4, attacker), 1.0)
 
 # §1.H of_zealous_strike (a02 P-022): apply a 3s holy DoT on landed hits.
 # Same true-damage tick path as bleeding (DoTs bypass armor + resists by
 # design). Distinct status_id "smite" so the HUD overlay reads correctly
 # and a single defender can carry both bleeding + smite simultaneously.
-func add_smite(per_tick: int) -> void:
-	_apply_dot_status("smite", per_tick, 3, 1.0)
+func add_smite(per_tick: int, attacker: Actor = null) -> void:
+	_apply_dot_status("smite", per_tick, _scaled_dot_ticks(3, attacker), 1.0)
+
+# §2.E dot_duration_pct (a06-newstat-019, a10 cap 80). Scales tick count
+# by the attacker's dot_duration_pct — same DPS, longer total damage.
+# Mundane attackers / null attacker pass through unchanged.
+func _scaled_dot_ticks(base_ticks: int, attacker: Actor) -> int:
+	if attacker == null or not (attacker is Bot):
+		return base_ticks
+	var pct: float = float((attacker as Bot).dot_duration_pct)
+	if pct <= 0.0:
+		return base_ticks
+	# Round to nearest int, floor of base_ticks so a 70% bonus on a
+	# 4-tick base reads as 7 ticks (4 × 1.7 = 6.8 → 7).
+	return maxi(base_ticks, int(round(float(base_ticks) * (1.0 + pct / 100.0))))
 
 # §1.H of_warden_step (a02 P-026). Discharge a 2-tile AoE around the bot:
 # damage every sibling actor within Chebyshev radius 2 for step_pulse_pct
@@ -1564,19 +1577,19 @@ func _bot_emit_reflect(bot: Bot, requested: int, _attacker: Actor) -> int:
 		bot._thorns_emitted_in_window += emitted
 	return emitted
 
-func add_burn(per_tick: int, ticks: int, interval: float) -> void:
+func add_burn(per_tick: int, ticks: int, interval: float, attacker: Actor = null) -> void:
 	# fire_res grants immunity to burn DoT (matches DCSS rF+ stops
 	# being on fire). Resists are wired on every actor; non-bot
 	# actors return [] from combat_defense_tags so this is a no-op
 	# for them.
 	if "fire_res" in combat_defense_tags():
 		return
-	_apply_dot_status("burning", per_tick, ticks, interval)
+	_apply_dot_status("burning", per_tick, _scaled_dot_ticks(ticks, attacker), interval)
 
-func add_poison(per_tick: int, ticks: int, interval: float) -> void:
+func add_poison(per_tick: int, ticks: int, interval: float, attacker: Actor = null) -> void:
 	if "poison_res" in combat_defense_tags():
 		return
-	_apply_dot_status("poisoned", per_tick, ticks, interval)
+	_apply_dot_status("poisoned", per_tick, _scaled_dot_ticks(ticks, attacker), interval)
 
 func _apply_dot_status(status_id: String, per_tick: int, ticks: int, interval: float) -> void:
 	add_status(status_id, float(ticks) * interval)

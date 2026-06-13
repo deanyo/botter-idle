@@ -630,6 +630,12 @@
       "name": "of Obstinance",   "stat": "damage_taken_pct",
       "applies_to": ["armor","helm","cloak","boots","amulet"],
       "tiers": [[3,5],[6,9],[10,14],[15,22],[22,30]]
+    },
+    {
+      "id": "of_lingering_pestilence", "family": "generic", "kind": "pct",
+      "name": "of Lingering Pestilence", "stat": "dot_duration_pct",
+      "applies_to": ["amulet","ring","weapon","gloves"],
+      "tiers": [[10,15],[15,25],[25,40],[40,55],[55,70]]
     }
   ]
 }
