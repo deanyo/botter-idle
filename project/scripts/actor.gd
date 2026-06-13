@@ -645,6 +645,33 @@ func _find_adjacent_actor(near: Actor, skip: Dictionary = {}) -> Actor:
 				return c
 	return null
 
+# Find the nearest enemy (Chebyshev distance) within `radius` tiles of
+# `near`, excluding `near` and self. Returns null if none. Used by
+# §1.H of_chainspark and any future on-target chain primitives.
+func _find_nearest_within(near: Actor, radius: int, skip: Dictionary = {}) -> Actor:
+	if not is_instance_valid(near):
+		return null
+	var parent: Node = get_parent()
+	if parent == null:
+		return null
+	var best: Actor = null
+	var best_d: int = radius + 1
+	for child in parent.get_children():
+		if not (child is Actor) or child == near or child == self:
+			continue
+		var c: Actor = child as Actor
+		if not c.is_alive:
+			continue
+		if skip.has(c.get_instance_id()):
+			continue
+		var dx: int = absi(c.cell.x - near.cell.x)
+		var dy: int = absi(c.cell.y - near.cell.y)
+		var cheb: int = maxi(dx, dy)
+		if cheb > 0 and cheb <= radius and cheb < best_d:
+			best = c
+			best_d = cheb
+	return best
+
 func attempt_attack(other: Actor, delta: float) -> int:
 	# `stunned`: attacker skips this swing entirely. Sound enchant
 	# triggers it on a defender, so when that defender becomes the
@@ -1105,6 +1132,17 @@ func attempt_attack(other: Actor, delta: float) -> int:
 		# 4s window per a02 spec. Per-target gate via add_status overwrite.
 		if bot_bl.crit_mark_dmg_pct > 0.0:
 			other.add_status("marked", 4.0)
+		# §1.H of_chainspark (a02 P-014, a10 cap 50% of crit dmg). On-crit,
+		# find nearest enemy within 4 tiles of the primary target and zap
+		# them for crit_chain_pct% of the crit's damage. The chain hit
+		# routes through take_damage → resolve_swing so armor/mit/resists
+		# apply normally. Uses the bot's weapon_damage_type so element-
+		# flagged weapons chain in their own element.
+		if bot_bl.crit_chain_pct > 0.0:
+			var spark: Actor = _find_nearest_within(other, 4)
+			if spark != null and spark.is_alive:
+				var spark_dmg: int = maxi(1, int(round(float(dealt) * bot_bl.crit_chain_pct / 100.0)))
+				spark.take_damage(spark_dmg, self, bot_bl.weapon_damage_type)
 	# §1.H of_serrated_edge (a02 P-021): every landed hit applies a 4s
 	# bleed at flat dmg/sec. Non-stacking; re-applies refresh duration +
 	# per-tick (whichever is larger of bloodletting on-crit OR serrated

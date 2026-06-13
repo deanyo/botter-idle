@@ -606,6 +606,12 @@
       "name": "of the Tactician", "stat": "kill_streak_cdr_pct",
       "applies_to": ["spell","amulet","ring"],
       "tiers": [[1,2],[2,3],[3,4],[4,6],[5,7]]
+    },
+    {
+      "id": "of_chainspark",     "family": "generic", "kind": "pct",
+      "name": "of the Chainspark", "stat": "crit_chain_pct",
+      "applies_to": ["weapon","gloves","ring"],
+      "tiers": [[15,20],[20,28],[28,36],[36,44],[44,50]]
     }
   ]
 }

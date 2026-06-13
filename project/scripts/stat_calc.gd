@@ -156,6 +156,7 @@ static func compute(
 	var riposte_dmg_pct: float = 0.0
 	var high_hp_cdr_pct: float = 0.0
 	var kill_streak_cdr_pct: float = 0.0
+	var crit_chain_pct: float = 0.0
 
 	# Bot upgrades — gold-sink purchases. Pre-2026-06-06 combat_training
 	# (atk) and toughening (def) were never read here; players spent gold
@@ -366,6 +367,7 @@ static func compute(
 		riposte_dmg_pct += float(slot_sums.get("riposte_dmg_pct", 0))
 		high_hp_cdr_pct += float(slot_sums.get("high_hp_cdr_pct", 0))
 		kill_streak_cdr_pct += float(slot_sums.get("kill_streak_cdr_pct", 0))
+		crit_chain_pct += float(slot_sums.get("crit_chain_pct", 0))
 		# Per-element spell-damage affixes (of_pyromancer / of_cryomancer
 		# / of_thundercaller / of_zealot / of_pestcaller / of_nightcaller). Each writes to
 		# `<elem>_dmg_pct`; we accumulate into spell_element_pct keyed by
@@ -624,6 +626,8 @@ static func compute(
 	# tactician + chalice + raw cdr can co-exist at endgame: 60 + 20 + 28
 	# = 108 → clamps 80. Pack-clearing caster build pivot.
 	kill_streak_cdr_pct = clampf(kill_streak_cdr_pct, 0.0, 7.0)
+	# §1.H of_chainspark — A2 P-014, a10 cap 50% of crit dmg.
+	crit_chain_pct = clampf(crit_chain_pct, 0.0, 50.0)
 	if low_hp_target_dmg_pct > 0.0 and glass_cannon_dmg_pct > 0.0:
 		if low_hp_target_dmg_pct >= glass_cannon_dmg_pct:
 			glass_cannon_dmg_pct = 0.0
@@ -779,6 +783,7 @@ static func compute(
 	out["riposte_dmg_pct"] = riposte_dmg_pct
 	out["high_hp_cdr_pct"] = high_hp_cdr_pct
 	out["kill_streak_cdr_pct"] = kill_streak_cdr_pct
+	out["crit_chain_pct"] = crit_chain_pct
 	out["move_speed"] = move_speed
 	out["aggro_bonus"] = vision_count + sp_aggro_flat
 	out["loot_rarity_bonus"] = loot_rarity_bonus
@@ -830,7 +835,7 @@ static func _initial_dict() -> Dictionary:
 		"crit_mark_dmg_pct": 0.0, "recoup_pct": 0.0, "move_spell_dmg_pct": 0.0,
 		"thorns_flat": 0, "block_thorns_flat": 0, "first_hit_mark_pct": 0.0,
 		"doomstrike_dmg_pct": 0.0, "riposte_dmg_pct": 0.0, "high_hp_cdr_pct": 0.0,
-		"kill_streak_cdr_pct": 0.0,
+		"kill_streak_cdr_pct": 0.0, "crit_chain_pct": 0.0,
 		"move_speed": _BASE_MOVE_SPEED, "aggro_bonus": 0,
 		"loot_rarity_bonus": 0.0, "xp_gain_pct": 0.0,
 		"alloc_str": 0, "alloc_dex": 0, "alloc_int": 0, "unspent_points": 0,

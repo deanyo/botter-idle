@@ -1143,7 +1143,8 @@
         "of_executioner": 8,
         "of_first_strike": 8,
         "of_hunter_mark": 8,
-        "of_riposte_strike": 5
+        "of_riposte_strike": 5,
+        "of_chainspark": 5
       }
     },
     {
@@ -1449,7 +1450,8 @@
         "of_lifesteal": 15,
         "of_channeling": 8,
         "of_quickcast": 8,
-        "of_executioner": 8
+        "of_executioner": 8,
+        "of_chainspark": 8
       }
     },
     {
@@ -2067,7 +2069,8 @@
         "of_channeling": 8,
         "of_quickcast": 8,
         "of_executioner": 8,
-        "of_zealous_strike": 6
+        "of_zealous_strike": 6,
+        "of_chainspark": 5
       }
     },
     {
@@ -8998,7 +9001,8 @@
         "of_recoup": 5,
         "of_doomstrike": 5,
         "of_overflowing_chalice": 5,
-        "of_tactician": 5
+        "of_tactician": 5,
+        "of_chainspark": 5
       }
     },
     {
@@ -35681,7 +35685,8 @@
         "of_sharpness": 14,
         "of_butcher": 8,
         "of_first_strike": 6,
-        "of_riposte_strike": 5
+        "of_riposte_strike": 5,
+        "of_chainspark": 5
       },
       "boss_drop": "boss_eustachio",
       "biome_pool": [
