@@ -1715,7 +1715,8 @@
         "of_executioner": 8,
         "of_drainblade": 6,
         "of_vulnerability_mark": 6,
-        "of_doomstrike": 10
+        "of_doomstrike": 10,
+        "of_desperation": 5
       }
     },
     {
@@ -1918,7 +1919,8 @@
         "of_executioner": 8,
         "of_unwavering_focus": 8,
         "of_overflowing_chalice": 6,
-        "of_tactician": 6
+        "of_tactician": 6,
+        "of_desperation": 5
       }
     },
     {
@@ -2330,7 +2332,8 @@
         "of_first_strike": 5,
         "of_drainblade": 8,
         "of_hunter_mark": 5,
-        "of_lingering_pestilence": 6
+        "of_lingering_pestilence": 6,
+        "of_desperation": 6
       }
     },
     {
@@ -9015,7 +9018,8 @@
         "of_chainspark": 5,
         "of_abundance": 5,
         "of_lingering_pestilence": 5,
-        "of_unique_slayer": 4
+        "of_unique_slayer": 4,
+        "of_desperation": 4
       }
     },
     {

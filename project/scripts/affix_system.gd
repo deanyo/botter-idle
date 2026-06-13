@@ -399,6 +399,7 @@ const _STAT_DESCRIPTIONS := {
 	"damage_taken_pct": "Take {N}% less damage from all sources. Cap 40.",
 	"dot_duration_pct": "+{N}% duration on damage-over-time effects you apply (bleed, burn, poison, smite). Cap 80.",
 	"damage_vs_unique_pct": "+{N}% damage to rare-tier (named pack) enemies. Cap 40.",
+	"low_hp_dmg_pct": "+{N}% damage while below 40% HP. Cap 30. (Mutex with glass_cannon_dmg_pct.)",
 }
 
 static func description_for_stat(stat: String) -> String:
@@ -470,6 +471,7 @@ const _NAMED_EFFECT_STATS := {
 	"damage_taken_pct": true,
 	"dot_duration_pct": true,
 	"damage_vs_unique_pct": true,
+	"low_hp_dmg_pct": true,
 }
 
 static func is_named_effect_stat(stat: String) -> bool:

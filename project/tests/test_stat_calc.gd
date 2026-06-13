@@ -561,6 +561,7 @@ const _S12_CAPS := {
 	"damage_taken_pct":         40.0,   # of_obstinance       (a06-newstat-021)
 	"dot_duration_pct":         80.0,   # of_lingering_pestilence (a06-newstat-019)
 	"damage_vs_unique_pct":     40.0,   # of_unique_slayer    (a06-newstat-016)
+	"low_hp_dmg_pct":           30.0,   # of_desperation      (a06-newstat-014)
 }
 
 # Map each capped stat key to an affix id known to write it. The probe
@@ -596,6 +597,7 @@ const _S12_STAT_TO_AFFIX := {
 	"damage_taken_pct":         "of_obstinance",
 	"dot_duration_pct":         "of_lingering_pestilence",
 	"damage_vs_unique_pct":     "of_unique_slayer",
+	"low_hp_dmg_pct":           "of_desperation",
 }
 
 # Slot to use for each affix when stuffing the test loadout. Picked
@@ -632,6 +634,7 @@ const _S12_AFFIX_TEST_SLOT := {
 	"of_obstinance":          "armor",
 	"of_lingering_pestilence": "amulet",
 	"of_unique_slayer":       "weapon",
+	"of_desperation":         "weapon",
 }
 
 # Build a synthetic items_db with one stub-item per slot needed by the
@@ -745,6 +748,49 @@ func test_s12_executioner_pact_glass_cannon_mutex_solo_each_passes_through() -> 
 		"glass_cannon solo: not zeroed by absent executioner_pact")
 	assert_almost_eq(float(d_g.get("low_hp_target_dmg_pct", -1.0)), 0.0, 0.001,
 		"executioner_pact stays 0 when only glass_cannon is rolled")
+
+func test_s12_low_hp_dmg_glass_cannon_mutex_larger_wins() -> void:
+	# §2.E low_hp_dmg_pct ⊥ glass_cannon_dmg_pct. Same shape as the
+	# executioner_pact ⊥ glass_cannon mutex but on the SELF-HP axis:
+	# both can't be active gates at the same time (HP can't be <40 AND
+	# >80 simultaneously), but the mutex enforces build-identity by
+	# zeroing the smaller contribution. Resolved AFTER the
+	# executioner_pact mutex above, so a triplet loadout (exec + glass +
+	# desperation) resolves deterministically.
+	var fake_db: Dictionary = _s12_fake_db()
+	var save := _bare_save("human")
+	# desperation 28 > glass_cannon 22 — desperation survives.
+	var equipped_a: Dictionary = {
+		"weapon": {
+			"base_id": "__s12_test_weapon", "rarity": "legendary",
+			"affixes": [{"id": "of_desperation", "value": 28}],
+		},
+		"amulet": {
+			"base_id": "__s12_test_amulet", "rarity": "legendary",
+			"affixes": [{"id": "of_glass_cannon", "value": 22}],
+		},
+	}
+	var d_a: Dictionary = StatCalc.compute(equipped_a, fake_db, save, "human", 1, 0, 0, [])
+	assert_almost_eq(float(d_a.get("low_hp_dmg_pct", -1.0)), 28.0, 0.001,
+		"desperation (28) > glass_cannon (22) → desperation survives")
+	assert_almost_eq(float(d_a.get("glass_cannon_dmg_pct", -1.0)), 0.0, 0.001,
+		"desperation > glass_cannon → glass_cannon zeroed")
+	# Inverse: glass_cannon 25 > desperation 12 — glass survives.
+	var equipped_b: Dictionary = {
+		"weapon": {
+			"base_id": "__s12_test_weapon", "rarity": "legendary",
+			"affixes": [{"id": "of_desperation", "value": 12}],
+		},
+		"amulet": {
+			"base_id": "__s12_test_amulet", "rarity": "legendary",
+			"affixes": [{"id": "of_glass_cannon", "value": 25}],
+		},
+	}
+	var d_b: Dictionary = StatCalc.compute(equipped_b, fake_db, save, "human", 1, 0, 0, [])
+	assert_almost_eq(float(d_b.get("low_hp_dmg_pct", -1.0)), 0.0, 0.001,
+		"glass_cannon (25) > desperation (12) → desperation zeroed")
+	assert_almost_eq(float(d_b.get("glass_cannon_dmg_pct", -1.0)), 25.0, 0.001,
+		"glass_cannon (25) > desperation (12) → glass_cannon survives")
 
 func test_s12_first_hit_mark_sums_with_crit_mark_into_marked_amp_lane() -> void:
 	# Both of_hunter_mark (on-crit) and of_vulnerability_mark (first-hit)

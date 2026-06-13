@@ -825,6 +825,14 @@ func attempt_attack(other: Actor, delta: float) -> int:
 		if bot_self.glass_cannon_dmg_pct > 0.0 and bot_self.max_hp > 0:
 			if float(bot_self.hp) / float(bot_self.max_hp) > 0.80:
 				ephemeral_sum += bot_self.glass_cannon_dmg_pct / 100.0
+		# §2.E of_desperation — self-low-hp damage. <40% HP threshold per
+		# a06-newstat-014, capped 30. Mutex pair with glass_cannon_dmg_pct
+		# resolved in stat_calc. Couples with §1.H of_revenant (low-hp DR)
+		# for the panic-mode build pivot — bot below 40% HP is now both
+		# tougher AND deadlier.
+		if bot_self.low_hp_dmg_pct > 0.0 and bot_self.max_hp > 0:
+			if float(bot_self.hp) / float(bot_self.max_hp) < 0.40:
+				ephemeral_sum += bot_self.low_hp_dmg_pct / 100.0
 		# §1.H of_kingslayer — boss/elite/miniboss damage. Per a02 P-004,
 		# capped 40. Reads the target's is_boss / is_miniboss flag (Enemy).
 		if bot_self.boss_dmg_pct > 0.0 and is_instance_valid(other) and other is Enemy:

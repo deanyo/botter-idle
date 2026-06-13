@@ -642,6 +642,12 @@
       "name": "of Unique Slayer", "stat": "damage_vs_unique_pct",
       "applies_to": ["weapon","gloves","amulet"],
       "tiers": [[8,12],[14,18],[20,26],[26,32],[32,40]]
+    },
+    {
+      "id": "of_desperation",    "family": "generic", "kind": "pct",
+      "name": "of Desperation",  "stat": "low_hp_dmg_pct",
+      "applies_to": ["weapon","gloves","amulet","ring"],
+      "tiers": [[6,10],[10,14],[14,20],[20,25],[25,30]]
     }
   ]
 }

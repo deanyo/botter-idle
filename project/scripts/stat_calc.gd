@@ -162,6 +162,7 @@ static func compute(
 	var damage_taken_pct: float = 0.0
 	var dot_duration_pct: float = 0.0
 	var damage_vs_unique_pct: float = 0.0
+	var low_hp_dmg_pct: float = 0.0
 
 	# Bot upgrades — gold-sink purchases. Pre-2026-06-06 combat_training
 	# (atk) and toughening (def) were never read here; players spent gold
@@ -378,6 +379,7 @@ static func compute(
 		damage_taken_pct += float(slot_sums.get("damage_taken_pct", 0))
 		dot_duration_pct += float(slot_sums.get("dot_duration_pct", 0))
 		damage_vs_unique_pct += float(slot_sums.get("damage_vs_unique_pct", 0))
+		low_hp_dmg_pct += float(slot_sums.get("low_hp_dmg_pct", 0))
 		# Per-element spell-damage affixes (of_pyromancer / of_cryomancer
 		# / of_thundercaller / of_zealot / of_pestcaller / of_nightcaller). Each writes to
 		# `<elem>_dmg_pct`; we accumulate into spell_element_pct keyed by
@@ -668,6 +670,23 @@ static func compute(
 	# is_boss / is_miniboss; this lane fires vs pack_tier == PACK_RARE
 	# (named pack-mod elites). Anti-elite-density build pivot.
 	damage_vs_unique_pct = clampf(damage_vs_unique_pct, 0.0, 40.0)
+	# §2.E low_hp_dmg_pct — A6-newstat-014, a10 cap 30. Self-low-HP
+	# damage scaler (gates on bot HP < 40%). Forms a mutex pair with
+	# glass_cannon_dmg_pct (self > 80%) per the synthesis: although
+	# the HP gates are mutually exclusive in practice, the mutex
+	# enforces build-identity (commit to glass-cannon offense OR
+	# low-HP panic). Resolved post-clamp the same way executioner_pact
+	# ⊥ glass_cannon is — larger contribution wins.
+	low_hp_dmg_pct = clampf(low_hp_dmg_pct, 0.0, 30.0)
+	if low_hp_dmg_pct > 0.0 and glass_cannon_dmg_pct > 0.0:
+		# Note: this mutex runs AFTER the executioner_pact ⊥ glass_cannon
+		# resolution above. If glass_cannon already lost to executioner_pact
+		# (== 0), this branch is a no-op for low_hp_dmg_pct. If it survived,
+		# the larger of {low_hp_dmg_pct, glass_cannon_dmg_pct} wins.
+		if low_hp_dmg_pct >= glass_cannon_dmg_pct:
+			glass_cannon_dmg_pct = 0.0
+		else:
+			low_hp_dmg_pct = 0.0
 	if low_hp_target_dmg_pct > 0.0 and glass_cannon_dmg_pct > 0.0:
 		if low_hp_target_dmg_pct >= glass_cannon_dmg_pct:
 			glass_cannon_dmg_pct = 0.0
@@ -829,6 +848,7 @@ static func compute(
 	out["damage_taken_pct"] = damage_taken_pct
 	out["dot_duration_pct"] = dot_duration_pct
 	out["damage_vs_unique_pct"] = damage_vs_unique_pct
+	out["low_hp_dmg_pct"] = low_hp_dmg_pct
 	out["move_speed"] = move_speed
 	out["aggro_bonus"] = vision_count + sp_aggro_flat
 	out["loot_rarity_bonus"] = loot_rarity_bonus
@@ -882,7 +902,7 @@ static func _initial_dict() -> Dictionary:
 		"doomstrike_dmg_pct": 0.0, "riposte_dmg_pct": 0.0, "high_hp_cdr_pct": 0.0,
 		"kill_streak_cdr_pct": 0.0, "crit_chain_pct": 0.0, "step_pulse_pct": 0.0,
 		"loot_quantity_pct": 0.0, "damage_taken_pct": 0.0, "dot_duration_pct": 0.0,
-		"damage_vs_unique_pct": 0.0,
+		"damage_vs_unique_pct": 0.0, "low_hp_dmg_pct": 0.0,
 		"move_speed": _BASE_MOVE_SPEED, "aggro_bonus": 0,
 		"loot_rarity_bonus": 0.0, "xp_gain_pct": 0.0,
 		"alloc_str": 0, "alloc_dex": 0, "alloc_int": 0, "unspent_points": 0,
