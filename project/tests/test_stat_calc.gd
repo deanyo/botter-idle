@@ -513,3 +513,246 @@ func _bare_save(species: String) -> Dictionary:
 		"stat_points_unspent": 0,
 		"bot_upgrades": {},
 	}
+
+# ---------------------------------------------------------------------
+# S12 §1.H — conditional/triggered affix caps + mutex framework.
+#
+# Pins every cap and the executioner_pact ⊥ glass_cannon mutex shipped
+# in 2026-06-13's §1.H wave. Each test stuffs a single (or paired) lane
+# with an oversized roll and asserts the post-clamp stat_calc output
+# matches the design cap. Deliberately breaking a cap (e.g. raising
+# `low_hp_target_dmg_pct = clampf(... 40)` to 80) MUST trip these.
+# ---------------------------------------------------------------------
+
+# All §1.H caps as of 2026-06-13. Keys map to stat-key in the StatCalc
+# output dict; values are the design cap. Anything that adds a §1.H
+# affix or moves a cap MUST update this table to keep the regression
+# net honest.
+const _S12_CAPS := {
+	"low_hp_target_dmg_pct":    40.0,   # of_executioner_pact (a02 P-001)
+	"glass_cannon_dmg_pct":     30.0,   # of_glass_cannon     (a02 P-002)
+	"low_hp_dr_pct":            28.0,   # of_revenant         (a02 P-003)
+	"boss_dmg_pct":             40.0,   # of_kingslayer       (a02 P-004)
+	"pack_dmg_per_enemy_pct":   10.0,   # of_butcher          (a02 P-005)
+	"first_hit_pct":           120.0,   # of_first_strike     (a02 P-006)
+	"revenge_dmg_pct":          50.0,   # of_avenger          (a02 P-007)
+	"crit_mark_dmg_pct":        40.0,   # of_hunter_mark      (a02 P-009)
+	"thorns_flat":              25.0,   # of_thorns           (a02 P-010)
+	"recoup_pct":               28.0,   # of_recoup           (a02 P-011)
+	"doomstrike_dmg_pct":      100.0,   # of_doomstrike       (a02 P-013)
+	"crit_chain_pct":           50.0,   # of_chainspark       (a02 P-014)
+	"move_spell_dmg_pct":       40.0,   # of_smoldering_step  (a02 P-015)
+	"high_hp_cdr_pct":          20.0,   # of_overflowing_chalice (a02 P-016)
+	"spell_resist_pen_pct":     35.0,   # of_unwavering_focus (a02 P-017)
+	"melee_armor_pen_pct":      50.0,   # of_armor_breaker    (a02 P-018)
+	"full_hp_armor_pct":        75.0,   # of_unbroken         (a02 P-020)
+	"weapon_bleed_per_sec":     16.0,   # of_serrated_edge    (a02 P-021)
+	"holy_dot_per_sec":         20.0,   # of_zealous_strike   (a02 P-022)
+	"hp_per_kill_flat":         30.0,   # of_drainblade       (a02 P-023)
+	"kill_streak_cdr_pct":       7.0,   # of_tactician        (a02 P-024)
+	"block_thorns_flat":        50.0,   # of_aegis_thorns     (a02 P-025)
+	"step_pulse_pct":           80.0,   # of_warden_step      (a02 P-026)
+	"first_hit_mark_pct":       25.0,   # of_vulnerability_mark (a09-cond-002)
+	"riposte_dmg_pct":          60.0,   # of_riposte_strike   (a09-cond-001)
+}
+
+# Map each capped stat key to an affix id known to write it. The probe
+# test stuffs a slot with this id at oversized raw value and verifies
+# the post-clamp output matches the design cap.
+const _S12_STAT_TO_AFFIX := {
+	"low_hp_target_dmg_pct":    "of_executioner_pact",
+	"glass_cannon_dmg_pct":     "of_glass_cannon",
+	"low_hp_dr_pct":            "of_revenant",
+	"boss_dmg_pct":             "of_kingslayer",
+	"pack_dmg_per_enemy_pct":   "of_butcher",
+	"first_hit_pct":            "of_first_strike",
+	"revenge_dmg_pct":          "of_avenger",
+	"crit_mark_dmg_pct":        "of_hunter_mark",
+	"thorns_flat":              "of_thorns",
+	"recoup_pct":               "of_recoup",
+	"doomstrike_dmg_pct":       "of_doomstrike",
+	"crit_chain_pct":           "of_chainspark",
+	"move_spell_dmg_pct":       "of_smoldering_step",
+	"high_hp_cdr_pct":          "of_overflowing_chalice",
+	"spell_resist_pen_pct":     "of_unwavering_focus",
+	"melee_armor_pen_pct":      "of_armor_breaker",
+	"full_hp_armor_pct":        "of_unbroken",
+	"weapon_bleed_per_sec":     "of_serrated_edge",
+	"holy_dot_per_sec":         "of_zealous_strike",
+	"hp_per_kill_flat":         "of_drainblade",
+	"kill_streak_cdr_pct":      "of_tactician",
+	"block_thorns_flat":        "of_aegis_thorns",
+	"step_pulse_pct":           "of_warden_step",
+	"first_hit_mark_pct":       "of_vulnerability_mark",
+	"riposte_dmg_pct":          "of_riposte_strike",
+}
+
+# Slot to use for each affix when stuffing the test loadout. Picked
+# from the affix's `applies_to` array, defaulting to the first eligible
+# entry. Centralizing this here means a future affix-eligibility move
+# only updates one place.
+const _S12_AFFIX_TEST_SLOT := {
+	"of_executioner_pact":    "weapon",
+	"of_glass_cannon":        "amulet",
+	"of_revenant":            "armor",
+	"of_kingslayer":          "weapon",
+	"of_butcher":             "weapon",
+	"of_first_strike":        "weapon",
+	"of_avenger":             "weapon",
+	"of_hunter_mark":         "weapon",
+	"of_thorns":              "armor",
+	"of_recoup":              "amulet",
+	"of_doomstrike":          "weapon",
+	"of_chainspark":          "weapon",
+	"of_smoldering_step":     "boots",
+	"of_overflowing_chalice": "amulet",
+	"of_unwavering_focus":    "amulet",
+	"of_armor_breaker":       "weapon",
+	"of_unbroken":            "armor",
+	"of_serrated_edge":       "weapon",
+	"of_zealous_strike":      "weapon",
+	"of_drainblade":          "weapon",
+	"of_tactician":           "amulet",
+	"of_aegis_thorns":        "shield",
+	"of_warden_step":         "boots",
+	"of_vulnerability_mark":  "weapon",
+	"of_riposte_strike":      "weapon",
+}
+
+# Build a synthetic items_db with one stub-item per slot needed by the
+# §1.H test loadouts. Keeps the fake-db construction in one place so
+# every cap test reads from the same fixture.
+func _s12_fake_db() -> Dictionary:
+	var fake_db: Dictionary = items_db.duplicate(true)
+	for slot in ["weapon", "amulet", "armor", "boots", "shield", "ring", "gloves", "helm", "cloak", "spell"]:
+		var stub_id: String = "__s12_test_" + slot
+		var entry: Dictionary = {
+			"id": stub_id, "slot": slot, "rarity": "legendary",
+			"flavor_tags": [], "implicit_affixes": [],
+		}
+		# Weapons need damage stats so StatCalc's weapon-branch survives.
+		if slot == "weapon":
+			entry["damage_min"] = 5
+			entry["damage_max"] = 10
+			entry["speed"] = 1.0
+			entry["damage_type"] = "physical"
+			entry["weapon_class"] = "1H"
+		fake_db[stub_id] = entry
+	return fake_db
+
+func _s12_loadout(stat_key: String, raw_value: int) -> Dictionary:
+	var affix_id: String = String(_S12_STAT_TO_AFFIX[stat_key])
+	var slot: String = String(_S12_AFFIX_TEST_SLOT[affix_id])
+	return {
+		slot: {
+			"base_id": "__s12_test_" + slot, "rarity": "legendary",
+			"affixes": [{"id": affix_id, "value": raw_value}],
+		},
+	}
+
+func test_s12_caps_enforced_per_lane() -> void:
+	# Every cap in _S12_CAPS gets an oversized raw roll and is asserted
+	# against the design ceiling. One assert per lane keeps regressions
+	# specific (failure name == stat key).
+	var fake_db: Dictionary = _s12_fake_db()
+	var save := _bare_save("human")
+	for stat_key in _S12_CAPS.keys():
+		var cap: float = float(_S12_CAPS[stat_key])
+		var equipped: Dictionary = _s12_loadout(stat_key, 999)
+		var d: Dictionary = StatCalc.compute(equipped, fake_db, save, "human", 1, 0, 0, [])
+		assert_almost_eq(float(d.get(stat_key, -1.0)), cap, 0.001,
+			"§1.H cap pinned: %s = %.1f" % [stat_key, cap])
+
+func test_s12_executioner_pact_glass_cannon_mutex_larger_wins() -> void:
+	# A11 G6: of_executioner_pact ⊥ of_glass_cannon. Both rolled, the
+	# larger contribution wins; the loser zeros. Resolved post-clamp in
+	# stat_calc.compute so eligibility filters can stay loose.
+	var fake_db: Dictionary = _s12_fake_db()
+	var save := _bare_save("human")
+	# executioner_pact 35 > glass_cannon 25 — exec wins.
+	var equipped_a: Dictionary = {
+		"weapon": {
+			"base_id": "__s12_test_weapon", "rarity": "legendary",
+			"affixes": [{"id": "of_executioner_pact", "value": 35}],
+		},
+		"amulet": {
+			"base_id": "__s12_test_amulet", "rarity": "legendary",
+			"affixes": [{"id": "of_glass_cannon", "value": 25}],
+		},
+	}
+	var d_a: Dictionary = StatCalc.compute(equipped_a, fake_db, save, "human", 1, 0, 0, [])
+	assert_almost_eq(float(d_a.get("low_hp_target_dmg_pct", -1.0)), 35.0, 0.001,
+		"executioner_pact (35) > glass_cannon (25) → exec survives")
+	assert_almost_eq(float(d_a.get("glass_cannon_dmg_pct", -1.0)), 0.0, 0.001,
+		"executioner_pact > glass_cannon → glass_cannon zeroed")
+	# Inverse: glass_cannon 25 > executioner_pact 15 — glass survives.
+	var equipped_b: Dictionary = {
+		"weapon": {
+			"base_id": "__s12_test_weapon", "rarity": "legendary",
+			"affixes": [{"id": "of_executioner_pact", "value": 15}],
+		},
+		"amulet": {
+			"base_id": "__s12_test_amulet", "rarity": "legendary",
+			"affixes": [{"id": "of_glass_cannon", "value": 25}],
+		},
+	}
+	var d_b: Dictionary = StatCalc.compute(equipped_b, fake_db, save, "human", 1, 0, 0, [])
+	assert_almost_eq(float(d_b.get("low_hp_target_dmg_pct", -1.0)), 0.0, 0.001,
+		"glass_cannon (25) > executioner_pact (15) → exec zeroed")
+	assert_almost_eq(float(d_b.get("glass_cannon_dmg_pct", -1.0)), 25.0, 0.001,
+		"glass_cannon (25) > executioner_pact (15) → glass survives")
+
+func test_s12_executioner_pact_glass_cannon_mutex_solo_each_passes_through() -> void:
+	# Mutex framework must NOT zero the surviving lane when only one of
+	# the pair is rolled — that would silently break all single-source
+	# loadouts. Sanity check both sides solo.
+	var fake_db: Dictionary = _s12_fake_db()
+	var save := _bare_save("human")
+	var solo_exec: Dictionary = {
+		"weapon": {
+			"base_id": "__s12_test_weapon", "rarity": "legendary",
+			"affixes": [{"id": "of_executioner_pact", "value": 30}],
+		},
+	}
+	var d_e: Dictionary = StatCalc.compute(solo_exec, fake_db, save, "human", 1, 0, 0, [])
+	assert_almost_eq(float(d_e.get("low_hp_target_dmg_pct", -1.0)), 30.0, 0.001,
+		"executioner_pact solo: not zeroed by absent glass_cannon")
+	assert_almost_eq(float(d_e.get("glass_cannon_dmg_pct", -1.0)), 0.0, 0.001,
+		"glass_cannon stays 0 when only executioner_pact is rolled")
+	var solo_glass: Dictionary = {
+		"amulet": {
+			"base_id": "__s12_test_amulet", "rarity": "legendary",
+			"affixes": [{"id": "of_glass_cannon", "value": 22}],
+		},
+	}
+	var d_g: Dictionary = StatCalc.compute(solo_glass, fake_db, save, "human", 1, 0, 0, [])
+	assert_almost_eq(float(d_g.get("glass_cannon_dmg_pct", -1.0)), 22.0, 0.001,
+		"glass_cannon solo: not zeroed by absent executioner_pact")
+	assert_almost_eq(float(d_g.get("low_hp_target_dmg_pct", -1.0)), 0.0, 0.001,
+		"executioner_pact stays 0 when only glass_cannon is rolled")
+
+func test_s12_first_hit_mark_sums_with_crit_mark_into_marked_amp_lane() -> void:
+	# Both of_hunter_mark (on-crit) and of_vulnerability_mark (first-hit)
+	# write into the marked-amp lane that actor.gd::_apply_typed_damage
+	# reads when has_status("marked"). The sum must surface — independent
+	# clamping per source means a paired loadout reaches their summed
+	# nominal totals (40 + 25 = 65) without either being clamped to the
+	# other's cap. (The marked-amp APPLICATION at hit-time isn't tested
+	# here — that's an actor.gd combat-resolution test; this test pins
+	# only the StatCalc accumulator output.)
+	var fake_db: Dictionary = _s12_fake_db()
+	var save := _bare_save("human")
+	var equipped: Dictionary = {
+		"weapon": {
+			"base_id": "__s12_test_weapon", "rarity": "legendary",
+			"affixes": [
+				{"id": "of_hunter_mark", "value": 40},
+				{"id": "of_vulnerability_mark", "value": 25},
+			],
+		},
+	}
+	var d: Dictionary = StatCalc.compute(equipped, fake_db, save, "human", 1, 0, 0, [])
+	assert_almost_eq(float(d.get("crit_mark_dmg_pct", -1.0)), 40.0, 0.001,
+		"of_hunter_mark hits its 40 cap")
+	assert_almost_eq(float(d.get("first_hit_mark_pct", -1.0)), 25.0, 0.001,
+		"of_vulnerability_mark hits its 25 cap")
