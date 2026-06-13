@@ -392,6 +392,7 @@ const _STAT_DESCRIPTIONS := {
 	"doomstrike_dmg_pct": "Every 5th swing deals +{N}% damage. Cannot crit. Cap 100.",
 	"riposte_dmg_pct": "When your swing is evaded or blocked: counter-strike for {N}% of weapon damage. Procs once per second.",
 	"high_hp_cdr_pct": "+{N}% spell cooldown reduction while above 90% HP. Cap 20.",
+	"kill_streak_cdr_pct": "Each kill (3s window) adds a stack (cap 4). Each stack: +{N}% spell CDR. Cap 7/stack.",
 }
 
 static func description_for_stat(stat: String) -> String:
@@ -456,6 +457,7 @@ const _NAMED_EFFECT_STATS := {
 	"doomstrike_dmg_pct": true,
 	"riposte_dmg_pct": true,
 	"high_hp_cdr_pct": true,
+	"kill_streak_cdr_pct": true,
 }
 
 static func is_named_effect_stat(stat: String) -> bool:

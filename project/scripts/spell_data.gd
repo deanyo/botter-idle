@@ -435,6 +435,17 @@ static func compute_cooldown(bot: Node, item: Dictionary) -> float:
 	if chalice > 0.0 and "max_hp" in bot and "hp" in bot and int(bot.max_hp) > 0:
 		if float(bot.hp) / float(bot.max_hp) >= 0.90:
 			cdr += chalice
+	# §1.H of_tactician (a02 P-024). Aged kill-streak stacks; each adds
+	# kill_streak_cdr_pct to the cdr lane. Stacks expire as a unit when
+	# _tactician_expires_at lapses; if expired, reset to 0 here so the
+	# next read sees the cleared state without needing a separate ticker.
+	var tact_pct: float = float(bot.get("kill_streak_cdr_pct")) if bot.get("kill_streak_cdr_pct") != null else 0.0
+	if tact_pct > 0.0 and "_tactician_stacks" in bot:
+		var now_t: float = float(Time.get_ticks_msec()) / 1000.0
+		if now_t > float(bot._tactician_expires_at):
+			bot._tactician_stacks = 0
+		if int(bot._tactician_stacks) > 0:
+			cdr += tact_pct * float(bot._tactician_stacks)
 	# of_tempest cd-penalty leg (a02 P-10): subtracted from cdr — the
 	# affix trades cooldown speed for spell damage. Net cdr can go
 	# negative (longer cooldowns); clamp at -50% so a stacked Tempest

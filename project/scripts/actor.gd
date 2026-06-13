@@ -1037,6 +1037,12 @@ func attempt_attack(other: Actor, delta: float) -> int:
 		if bot_kk.berserker_peak_pct > 0.0:
 			bot_kk._berserker_stacks = mini(bot_kk._berserker_stacks + 1, 5)
 			bot_kk._berserker_expires_at = float(Time.get_ticks_msec()) / 1000.0 + 3.0
+		# §1.H of_tactician — same shape, cap 4, 3s window. Independent
+		# stacks/timer from of_berserker so the two affixes layer cleanly
+		# (one feeds melee ephemeral, the other feeds spell CDR).
+		if bot_kk.kill_streak_cdr_pct > 0.0:
+			bot_kk._tactician_stacks = mini(bot_kk._tactician_stacks + 1, 4)
+			bot_kk._tactician_expires_at = float(Time.get_ticks_msec()) / 1000.0 + 3.0
 		# S5 race-anchor: stamp last-kill time for first_blood encounter
 		# gating, and feed `feast` worn-tag (Troll Hide) the on-kill heal
 		# subject to a 50% MHP/s rolling-window cap so a 5-mob pack clear

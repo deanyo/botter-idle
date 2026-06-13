@@ -134,6 +134,12 @@ var doomstrike_dmg_pct: float = 0.0
 var _doomstrike_swing_count: int = 0
 var riposte_dmg_pct: float = 0.0
 var high_hp_cdr_pct: float = 0.0
+var kill_streak_cdr_pct: float = 0.0
+# §1.H of_tactician kill-streak state. Mirrors of_berserker's
+# _berserker_stacks shape: stack on kill, 3s window since last kill,
+# cap 4. Read in spell_data.compute_cooldown.
+var _tactician_stacks: int = 0
+var _tactician_expires_at: float = 0.0
 # §1.H of_riposte_strike per-second proc rate-limit. Tracks last
 # riposte timestamp; counter-swings only fire if ≥1s elapsed.
 var _last_riposte_msec: int = 0
@@ -591,6 +597,7 @@ func recompute_stats() -> void:
 	doomstrike_dmg_pct = float(d.get("doomstrike_dmg_pct", 0.0))
 	riposte_dmg_pct = float(d.get("riposte_dmg_pct", 0.0))
 	high_hp_cdr_pct = float(d.get("high_hp_cdr_pct", 0.0))
+	kill_streak_cdr_pct = float(d.get("kill_streak_cdr_pct", 0.0))
 	# anchor_regen folds into hp_regen so the regen tick already in actor.gd
 	# picks it up alongside species + worn-tag regen.
 	hp_regen_per_sec = float(d.hp_regen) + anchor_regen
