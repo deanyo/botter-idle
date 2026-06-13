@@ -36,9 +36,31 @@ static func ancient_chance() -> float:
 
 # Quality tail-weight multiplier (applied to Rusted/Worn/Battered AND
 # Mastercrafted/Masterwork tail entries).
+# §2.B (S12): the single tail_weight_mult collapsed both ends of the
+# quality curve into one knob — boosting low-quality drops always
+# ALSO boosted the top-tier (Masterwork/Sublime). Split into
+# low_quality_tail_mult + high_quality_tail_mult so the authoring
+# portal can dial each tail independently. Legacy `tail_weight_mult`
+# is honored as a fallback for both halves to avoid breaking saves /
+# JSON-edits that haven't migrated.
 static func quality_tail_mult() -> float:
 	_ensure_loaded()
 	return float(_data.get("quality", {}).get("tail_weight_mult", 1.0))
+
+static func low_quality_tail_mult() -> float:
+	_ensure_loaded()
+	var q: Dictionary = _data.get("quality", {})
+	# Split key wins; fall through to legacy single key.
+	if q.has("low_quality_tail_mult"):
+		return float(q["low_quality_tail_mult"])
+	return float(q.get("tail_weight_mult", 1.0))
+
+static func high_quality_tail_mult() -> float:
+	_ensure_loaded()
+	var q: Dictionary = _data.get("quality", {})
+	if q.has("high_quality_tail_mult"):
+		return float(q["high_quality_tail_mult"])
+	return float(q.get("tail_weight_mult", 1.0))
 
 # Enchant rolls. global_chance_mult scales every item's authored
 # enchant_chance; combo_chance is the secondary roll AFTER the first

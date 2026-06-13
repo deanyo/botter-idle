@@ -75,15 +75,32 @@ const SPELL_TIERS := [
 # naming; everything else uses GEAR_TIERS.
 static func roll(slot: String, rng: RandomNumberGenerator) -> Dictionary:
 	var table: Array = SPELL_TIERS if slot == "spell" else GEAR_TIERS
+	# §2.B (S12) — split tail weight scaling. Low-quality entries
+	# (mult < 0.95, the "bad-roll" bottom 5 names) scale by
+	# low_quality_tail_mult; high-quality entries (mult > 1.15, the
+	# "great-roll" top 5 names) scale by high_quality_tail_mult.
+	# Mid-range stays at authored weight.
+	var low_mult: float = DropTuning.low_quality_tail_mult()
+	var high_mult: float = DropTuning.high_quality_tail_mult()
 	var total_w: float = 0.0
+	var weights: Array = []
 	for t in table:
-		total_w += float(t.weight)
+		var w: float = float(t.weight)
+		var m: float = float(t.mult)
+		if m < 0.95:
+			w *= low_mult
+		elif m > 1.15:
+			w *= high_mult
+		weights.append(w)
+		total_w += w
+	if total_w <= 0.0:
+		return table[8]  # fallback to Standard if all weights zero'd
 	var r: float = rng.randf() * total_w
 	var acc: float = 0.0
-	for t in table:
-		acc += float(t.weight)
+	for i in range(table.size()):
+		acc += weights[i]
 		if r <= acc:
-			return t
+			return table[i]
 	return table[8]  # fallback to Standard
 
 # Look up a tier by name across both tables. Returns the dict or
