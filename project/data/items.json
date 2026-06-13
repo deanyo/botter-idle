@@ -3515,7 +3515,8 @@
         "of_revenant": 8,
         "of_unbroken": 8,
         "of_thorns": 8,
-        "of_obstinance": 6
+        "of_obstinance": 6,
+        "of_steadfast": 5
       }
     },
     {
@@ -4121,7 +4122,9 @@
       "unique": true,
       "enchant_chance": 0.0,
       "implicit_affixes": [
-        "of_fire_resist"
+        "of_fire_resist",
+        "of_iron_aegis",
+        "of_warding"
       ],
       "affix_pool": {
         "of_might": 16,
@@ -5483,7 +5486,8 @@
         "of_unbroken": 5,
         "of_unwavering_focus": 8,
         "of_recoup": 5,
-        "of_obstinance": 5
+        "of_obstinance": 5,
+        "of_iron_aegis": 4
       }
     },
     {
@@ -6718,7 +6722,9 @@
       ],
       "unique": true,
       "enchant_chance": 0.0,
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_iron_aegis"
+      ],
       "affix_pool": {
         "of_might": 16,
         "of_finesse": 8,
@@ -6808,7 +6814,10 @@
       ],
       "unique": true,
       "enchant_chance": 0.0,
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_warding",
+        "of_bulwark"
+      ],
       "affix_pool": {
         "of_might": 16,
         "of_finesse": 8,
@@ -6856,7 +6865,10 @@
       ],
       "unique": true,
       "enchant_chance": 0.0,
-      "implicit_affixes": [],
+      "implicit_affixes": [
+        "of_warding",
+        "of_steadfast"
+      ],
       "affix_pool": {
         "of_might": 16,
         "of_finesse": 8,
@@ -7222,7 +7234,9 @@
         "of_regen": 10,
         "of_berserker": 8,
         "of_smoldering_step": 5,
-        "of_warden_step": 5
+        "of_warden_step": 5,
+        "of_devastation": 4,
+        "of_steadfast": 4
       }
     },
     {
@@ -7964,7 +7978,8 @@
         "of_executioner": 8,
         "of_tactician": 5,
         "of_abundance": 6,
-        "of_lingering_pestilence": 4
+        "of_lingering_pestilence": 4,
+        "of_devastation": 5
       }
     },
     {
@@ -9019,7 +9034,8 @@
         "of_abundance": 5,
         "of_lingering_pestilence": 5,
         "of_unique_slayer": 4,
-        "of_desperation": 4
+        "of_desperation": 4,
+        "of_devastation": 5
       }
     },
     {
@@ -11634,7 +11650,9 @@
         "of_sundering": 8,
         "of_berserker_rage": 8,
         "of_executioner": 8,
-        "of_bulwark": 8
+        "of_bulwark": 8,
+        "of_iron_aegis": 5,
+        "of_steadfast": 4
       }
     },
     {
@@ -11685,7 +11703,8 @@
         "of_sundering": 8,
         "of_berserker_rage": 8,
         "of_executioner": 8,
-        "of_bulwark": 8
+        "of_bulwark": 8,
+        "of_iron_aegis": 5
       }
     },
     {
@@ -32459,7 +32478,8 @@
         "of_recoup": 5,
         "of_smoldering_step": 5,
         "of_warden_step": 5,
-        "of_abundance": 4
+        "of_abundance": 4,
+        "of_devastation": 4
       },
       "default_tint": {
         "hue": 270,

@@ -402,6 +402,10 @@ const _STAT_DESCRIPTIONS := {
 	"low_hp_dmg_pct": "+{N}% damage while below 40% HP. Cap 30. (Mutex with glass_cannon_dmg_pct.)",
 }
 
+# Note: of_devastation / of_iron_aegis / of_steadfast write into already-
+# documented stat keys (crit_multiplier_pct / block_chance / block_amount).
+# Their descriptions live above; no new entries needed.
+
 static func description_for_stat(stat: String) -> String:
 	return String(_STAT_DESCRIPTIONS.get(stat, ""))
 
