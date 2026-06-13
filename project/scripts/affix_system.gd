@@ -390,6 +390,7 @@ const _STAT_DESCRIPTIONS := {
 	"block_thorns_flat": "On block: reflect {N} damage back at the attacker. Shield-only. Cap 50.",
 	"first_hit_mark_pct": "First hit on each enemy applies a 3s mark: target takes +{N}% damage from all sources. Cap 25.",
 	"doomstrike_dmg_pct": "Every 5th swing deals +{N}% damage. Cannot crit. Cap 100.",
+	"riposte_dmg_pct": "When your swing is evaded or blocked: counter-strike for {N}% of weapon damage. Procs once per second.",
 }
 
 static func description_for_stat(stat: String) -> String:
@@ -452,6 +453,7 @@ const _NAMED_EFFECT_STATS := {
 	"block_thorns_flat": true,
 	"first_hit_mark_pct": true,
 	"doomstrike_dmg_pct": true,
+	"riposte_dmg_pct": true,
 }
 
 static func is_named_effect_stat(stat: String) -> bool:

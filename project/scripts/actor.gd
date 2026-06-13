@@ -1121,6 +1121,22 @@ func attempt_attack(other: Actor, delta: float) -> int:
 	if dealt == 0 and self is Bot and is_instance_valid(other) and other.is_alive:
 		if (self as Bot).bleed_on_miss:
 			other.add_bloodletting(4)
+		# §1.H of_riposte_strike (a09-conditional-001). On evade/block,
+		# counter-strike for riposte_dmg_pct% of weapon damage. Per-second
+		# proc cap via _last_riposte_msec; re-entry guard via _riposte_active
+		# so the counter-swing's own resolve_swing can't fire another riposte
+		# if the target ALSO dodges it. Routes through take_damage so existing
+		# armor / mit / DoT pipes apply.
+		var bot_rs: Bot = self as Bot
+		if bot_rs.riposte_dmg_pct > 0.0 and not bot_rs._riposte_active:
+			var now_rs: int = Time.get_ticks_msec()
+			if now_rs - bot_rs._last_riposte_msec >= 1000:
+				bot_rs._last_riposte_msec = now_rs
+				bot_rs._riposte_active = true
+				var weap_avg: int = int(round(float(bot_rs.damage_min + bot_rs.damage_max) * 0.5))
+				var rip_dmg: int = maxi(1, int(round(float(weap_avg) * bot_rs.riposte_dmg_pct / 100.0)))
+				other.take_damage(rip_dmg, self, bot_rs.weapon_damage_type)
+				bot_rs._riposte_active = false
 	# S11 of_serpent_venom (a07 §6.9 Aizul's Snake-Fang Knife). Each landed
 	# melee hit applies a stack of poison via the existing add_poison helper
 	# (3 ticks × 0.5s, max 5 stacks via the cap inside add_poison). Mirrors

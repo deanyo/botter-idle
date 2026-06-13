@@ -153,6 +153,7 @@ static func compute(
 	var block_thorns_flat: int = 0
 	var first_hit_mark_pct: float = 0.0
 	var doomstrike_dmg_pct: float = 0.0
+	var riposte_dmg_pct: float = 0.0
 
 	# Bot upgrades — gold-sink purchases. Pre-2026-06-06 combat_training
 	# (atk) and toughening (def) were never read here; players spent gold
@@ -360,6 +361,7 @@ static func compute(
 		block_thorns_flat += int(round(float(slot_sums.get("block_thorns_flat", 0))))
 		first_hit_mark_pct += float(slot_sums.get("first_hit_mark_pct", 0))
 		doomstrike_dmg_pct += float(slot_sums.get("doomstrike_dmg_pct", 0))
+		riposte_dmg_pct += float(slot_sums.get("riposte_dmg_pct", 0))
 		# Per-element spell-damage affixes (of_pyromancer / of_cryomancer
 		# / of_thundercaller / of_zealot / of_pestcaller / of_nightcaller). Each writes to
 		# `<elem>_dmg_pct`; we accumulate into spell_element_pct keyed by
@@ -600,6 +602,12 @@ static func compute(
 	# swing (a10 design rule — prevents the boost from compounding crit).
 	# 3-source DR stack: 100 + 75 + 50 = 225, hard-clamped 100.
 	doomstrike_dmg_pct = clampf(doomstrike_dmg_pct, 0.0, 100.0)
+	# §1.H of_riposte_strike — A9-conditional-001 (DCSS Fencer's Riposte
+	# shape, re-tiered). Counter-strike on evade/block. Per A2 W1 spec
+	# 25-60% pct of weapon damage; cap 60. Per-second proc cap enforced
+	# via _last_riposte_msec on the bot in attempt_attack hot path.
+	# 2-source DR stack 60+45 = 105, hard-clamped 60.
+	riposte_dmg_pct = clampf(riposte_dmg_pct, 0.0, 60.0)
 	if low_hp_target_dmg_pct > 0.0 and glass_cannon_dmg_pct > 0.0:
 		if low_hp_target_dmg_pct >= glass_cannon_dmg_pct:
 			glass_cannon_dmg_pct = 0.0
@@ -752,6 +760,7 @@ static func compute(
 	out["block_thorns_flat"] = block_thorns_flat
 	out["first_hit_mark_pct"] = first_hit_mark_pct
 	out["doomstrike_dmg_pct"] = doomstrike_dmg_pct
+	out["riposte_dmg_pct"] = riposte_dmg_pct
 	out["move_speed"] = move_speed
 	out["aggro_bonus"] = vision_count + sp_aggro_flat
 	out["loot_rarity_bonus"] = loot_rarity_bonus
@@ -802,7 +811,7 @@ static func _initial_dict() -> Dictionary:
 		"spell_resist_pen_pct": 0.0,
 		"crit_mark_dmg_pct": 0.0, "recoup_pct": 0.0, "move_spell_dmg_pct": 0.0,
 		"thorns_flat": 0, "block_thorns_flat": 0, "first_hit_mark_pct": 0.0,
-		"doomstrike_dmg_pct": 0.0,
+		"doomstrike_dmg_pct": 0.0, "riposte_dmg_pct": 0.0,
 		"move_speed": _BASE_MOVE_SPEED, "aggro_bonus": 0,
 		"loot_rarity_bonus": 0.0, "xp_gain_pct": 0.0,
 		"alloc_str": 0, "alloc_dex": 0, "alloc_int": 0, "unspent_points": 0,
