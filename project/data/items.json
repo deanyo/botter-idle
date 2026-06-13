@@ -506,7 +506,8 @@
         "of_sundering": 8,
         "of_bloodletting": 8,
         "of_berserker_rage": 8,
-        "of_executioner": 8
+        "of_executioner": 8,
+        "of_butcher": 6
       }
     },
     {
@@ -758,7 +759,8 @@
         "of_sundering": 8,
         "of_bloodletting": 8,
         "of_berserker_rage": 8,
-        "of_executioner": 8
+        "of_executioner": 8,
+        "of_butcher": 6
       }
     },
     {
@@ -1481,7 +1483,8 @@
         "of_lifesteal": 15,
         "of_channeling": 8,
         "of_quickcast": 8,
-        "of_executioner": 8
+        "of_executioner": 8,
+        "of_executioner_pact": 8
       }
     },
     {
@@ -1738,7 +1741,8 @@
         "of_lifesteal": 15,
         "of_channeling": 8,
         "of_quickcast": 8,
-        "of_executioner": 8
+        "of_executioner": 8,
+        "of_kingslayer": 10
       }
     },
     {
@@ -2235,7 +2239,8 @@
         "of_lifesteal": 15,
         "of_channeling": 8,
         "of_quickcast": 8,
-        "of_executioner": 8
+        "of_executioner": 8,
+        "of_executioner_pact": 10
       }
     },
     {
@@ -2285,7 +2290,9 @@
         "of_lifesteal": 15,
         "of_channeling": 8,
         "of_quickcast": 8,
-        "of_executioner": 8
+        "of_executioner": 8,
+        "of_executioner_pact": 10,
+        "of_butcher": 8
       }
     },
     {
@@ -3462,7 +3469,8 @@
         "of_holy_resist": 8,
         "of_poison_resist": 10,
         "of_dark_resist": 8,
-        "of_regen": 15
+        "of_regen": 15,
+        "of_revenant": 8
       }
     },
     {
@@ -3994,7 +4002,8 @@
         "of_holy_resist": 8,
         "of_poison_resist": 10,
         "of_dark_resist": 8,
-        "of_regen": 15
+        "of_regen": 15,
+        "of_revenant": 8
       }
     },
     {
@@ -4133,7 +4142,8 @@
         "of_holy_resist": 8,
         "of_poison_resist": 10,
         "of_dark_resist": 8,
-        "of_regen": 15
+        "of_regen": 15,
+        "of_revenant": 8
       }
     },
     {
@@ -5420,7 +5430,8 @@
         "of_resonance": 12,
         "of_channeling": 12,
         "of_crit": 12,
-        "of_executioner": 8
+        "of_executioner": 8,
+        "of_glass_cannon": 8
       }
     },
     {
@@ -8931,7 +8942,8 @@
         "of_tempest": 8,
         "of_bloodletting": 8,
         "of_synergy": 8,
-        "of_executioner": 8
+        "of_executioner": 8,
+        "of_glass_cannon": 8
       }
     },
     {
@@ -12730,7 +12742,8 @@
         "of_sundering": 8,
         "of_bloodletting": 8,
         "of_berserker_rage": 8,
-        "of_executioner": 8
+        "of_executioner": 8,
+        "of_kingslayer": 12
       }
     },
     {
@@ -12997,7 +13010,9 @@
         "of_sundering": 8,
         "of_bloodletting": 8,
         "of_berserker_rage": 8,
-        "of_executioner": 8
+        "of_executioner": 8,
+        "of_executioner_pact": 12,
+        "of_kingslayer": 10
       }
     },
     {
@@ -14341,7 +14356,8 @@
         "of_sundering": 8,
         "of_bloodletting": 8,
         "of_berserker_rage": 8,
-        "of_executioner": 8
+        "of_executioner": 8,
+        "of_executioner_pact": 12
       }
     },
     {
@@ -14601,7 +14617,8 @@
         "of_sundering": 8,
         "of_bloodletting": 8,
         "of_berserker_rage": 8,
-        "of_executioner": 8
+        "of_executioner": 8,
+        "of_kingslayer": 12
       }
     },
     {
@@ -14709,7 +14726,8 @@
         "of_sundering": 8,
         "of_bloodletting": 8,
         "of_berserker_rage": 8,
-        "of_executioner": 8
+        "of_executioner": 8,
+        "of_kingslayer": 8
       }
     },
     {
@@ -35589,7 +35607,8 @@
         "of_finesse": 22,
         "of_haste": 18,
         "of_crit": 16,
-        "of_sharpness": 14
+        "of_sharpness": 14,
+        "of_butcher": 8
       },
       "boss_drop": "boss_eustachio",
       "biome_pool": [

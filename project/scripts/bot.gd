@@ -103,6 +103,15 @@ var venom_on_hit: bool = false
 var phylactery_revive_pct: float = 0.0
 var extra_chests_per_floor: int = 0
 var fifth_cast_pct: float = 0.0
+# §1.H attempt_attack-shape conditional affixes (a02 P-001..005, a10).
+# Each rides ephemeral_sum (offensive) or mit_sum (defensive). Mutex
+# pair (low_hp_target_dmg ⊥ glass_cannon) resolved in stat_calc; one
+# of the two will be 0 if both rolled.
+var low_hp_target_dmg_pct: float = 0.0
+var glass_cannon_dmg_pct: float = 0.0
+var low_hp_dr_pct: float = 0.0
+var boss_dmg_pct: float = 0.0
+var pack_dmg_per_enemy_pct: float = 0.0
 # Per-floor counters for the boss-anchor mechanics. Reset on floor_started
 # via dungeon.gd alongside revive_used_this_floor.
 var polymorph_used_this_floor: bool = false
@@ -514,6 +523,12 @@ func recompute_stats() -> void:
 	phylactery_revive_pct = float(d.get("phylactery_revive_pct", 0.0))
 	extra_chests_per_floor = int(d.get("extra_chests_per_floor", 0))
 	fifth_cast_pct = float(d.get("fifth_cast_pct", 0.0))
+	# §1.H attempt_attack-shape conditional affixes.
+	low_hp_target_dmg_pct = float(d.get("low_hp_target_dmg_pct", 0.0))
+	glass_cannon_dmg_pct = float(d.get("glass_cannon_dmg_pct", 0.0))
+	low_hp_dr_pct = float(d.get("low_hp_dr_pct", 0.0))
+	boss_dmg_pct = float(d.get("boss_dmg_pct", 0.0))
+	pack_dmg_per_enemy_pct = float(d.get("pack_dmg_per_enemy_pct", 0.0))
 	# anchor_regen folds into hp_regen so the regen tick already in actor.gd
 	# picks it up alongside species + worn-tag regen.
 	hp_regen_per_sec = float(d.hp_regen) + anchor_regen

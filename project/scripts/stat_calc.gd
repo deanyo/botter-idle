@@ -128,6 +128,16 @@ static func compute(
 	var phylactery_revive_pct: float = 0.0
 	var extra_chests_per_floor: int = 0
 	var fifth_cast_pct: float = 0.0
+	# §1.H attempt_attack-shape conditional affixes (a02 P-001..005, a10 caps).
+	# All flow through ephemeral_sum / mit_sum so the +30% per-swing and
+	# armor / pre-armor lanes already absorb them. Kingslayer & butcher are
+	# offensive ephemeral; revenant is defensive (mit_sum); executioner_pact
+	# / glass_cannon are mutex (asserted post-rollup, see below).
+	var low_hp_target_dmg_pct: float = 0.0
+	var glass_cannon_dmg_pct: float = 0.0
+	var low_hp_dr_pct: float = 0.0
+	var boss_dmg_pct: float = 0.0
+	var pack_dmg_per_enemy_pct: float = 0.0
 
 	# Bot upgrades — gold-sink purchases. Pre-2026-06-06 combat_training
 	# (atk) and toughening (def) were never read here; players spent gold
@@ -314,6 +324,12 @@ static func compute(
 		phylactery_revive_pct += float(slot_sums.get("phylactery_revive_pct", 0))
 		extra_chests_per_floor += int(round(float(slot_sums.get("extra_chests_per_floor", 0))))
 		fifth_cast_pct += float(slot_sums.get("fifth_cast_pct", 0))
+		# §1.H accumulators.
+		low_hp_target_dmg_pct += float(slot_sums.get("low_hp_target_dmg_pct", 0))
+		glass_cannon_dmg_pct += float(slot_sums.get("glass_cannon_dmg_pct", 0))
+		low_hp_dr_pct += float(slot_sums.get("low_hp_dr_pct", 0))
+		boss_dmg_pct += float(slot_sums.get("boss_dmg_pct", 0))
+		pack_dmg_per_enemy_pct += float(slot_sums.get("pack_dmg_per_enemy_pct", 0))
 		# Per-element spell-damage affixes (of_pyromancer / of_cryomancer
 		# / of_thundercaller / of_zealot / of_pestcaller / of_nightcaller). Each writes to
 		# `<elem>_dmg_pct`; we accumulate into spell_element_pct keyed by
@@ -472,6 +488,24 @@ static func compute(
 	# 50%.
 	gold_drop_pct = clampf(gold_drop_pct, 0.0, 50.0)
 
+	# §1.H caps (a10 tightened values). Each conditional rides ephemeral_sum
+	# or mit_sum so the +30% per-swing / per-hit ceiling absorbs the upper
+	# tail; per-affix peaks below match A2's rescoped caps verbatim. The
+	# executioner_pact ⊥ glass_cannon mutex (a11 G6) is enforced here:
+	# whichever contributes more wins, the other zeroes. Clean asymmetric
+	# rule means a slot that rolls both (eligibility overlaps on amulet)
+	# pays for the conflict instead of double-dipping.
+	low_hp_target_dmg_pct = clampf(low_hp_target_dmg_pct, 0.0, 40.0)
+	glass_cannon_dmg_pct = clampf(glass_cannon_dmg_pct, 0.0, 30.0)
+	low_hp_dr_pct = clampf(low_hp_dr_pct, 0.0, 28.0)
+	boss_dmg_pct = clampf(boss_dmg_pct, 0.0, 40.0)
+	pack_dmg_per_enemy_pct = clampf(pack_dmg_per_enemy_pct, 0.0, 10.0)
+	if low_hp_target_dmg_pct > 0.0 and glass_cannon_dmg_pct > 0.0:
+		if low_hp_target_dmg_pct >= glass_cannon_dmg_pct:
+			glass_cannon_dmg_pct = 0.0
+		else:
+			low_hp_target_dmg_pct = 0.0
+
 	var attack_interval: float = max(0.15, weapon_speed / (1.0 + haste_pct / 100.0))
 
 	# Worn-tag passive bonuses — vitality / regen / faith on regen,
@@ -597,6 +631,12 @@ static func compute(
 	out["phylactery_revive_pct"] = phylactery_revive_pct
 	out["extra_chests_per_floor"] = extra_chests_per_floor
 	out["fifth_cast_pct"] = fifth_cast_pct
+	# §1.H attempt_attack-shape conditional outputs (a02 P-001..005, a10).
+	out["low_hp_target_dmg_pct"] = low_hp_target_dmg_pct
+	out["glass_cannon_dmg_pct"] = glass_cannon_dmg_pct
+	out["low_hp_dr_pct"] = low_hp_dr_pct
+	out["boss_dmg_pct"] = boss_dmg_pct
+	out["pack_dmg_per_enemy_pct"] = pack_dmg_per_enemy_pct
 	out["move_speed"] = move_speed
 	out["aggro_bonus"] = vision_count + sp_aggro_flat
 	out["loot_rarity_bonus"] = loot_rarity_bonus
@@ -635,6 +675,8 @@ static func _initial_dict() -> Dictionary:
 		"venom_on_hit": false, "wolf_kinship_pct": 0.0, "anchor_regen": 0.0,
 		"hp_per_kill_cap": 0, "tidesong_water_pct": 0.0, "phylactery_revive_pct": 0.0,
 		"extra_chests_per_floor": 0, "fifth_cast_pct": 0.0,
+		"low_hp_target_dmg_pct": 0.0, "glass_cannon_dmg_pct": 0.0,
+		"low_hp_dr_pct": 0.0, "boss_dmg_pct": 0.0, "pack_dmg_per_enemy_pct": 0.0,
 		"move_speed": _BASE_MOVE_SPEED, "aggro_bonus": 0,
 		"loot_rarity_bonus": 0.0, "xp_gain_pct": 0.0,
 		"alloc_str": 0, "alloc_dex": 0, "alloc_int": 0, "unspent_points": 0,

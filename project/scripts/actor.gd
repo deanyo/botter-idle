@@ -409,6 +409,14 @@ func _apply_typed_damage(raw: int, damage_type: String, attacker: Actor, def_tag
 		# `acrobat`: -17% when below 30% HP.
 		if "acrobat" in def_tags and max_hp > 0 and float(hp) / float(max_hp) <= 0.30:
 			mit_sum += 0.17
+		# §1.H of_revenant — low-hp damage reduction. <40% HP threshold per
+		# a02 P-003, cap 28 in stat_calc. Same lane as acrobat so the
+		# +30% mit ceiling absorbs the upper tail (acrobat 17 + revenant 28
+		# would otherwise hit 45% pre-cap).
+		if self is Bot and max_hp > 0 and float(hp) / float(max_hp) < 0.40:
+			var bot_rv: Bot = self as Bot
+			if bot_rv.low_hp_dr_pct > 0.0:
+				mit_sum += bot_rv.low_hp_dr_pct / 100.0
 		# `guardian`: flat -10% damage taken — backup armor.
 		if "guardian" in def_tags:
 			mit_sum += 0.10
@@ -668,6 +676,46 @@ func attempt_attack(other: Actor, delta: float) -> int:
 		if bot_self.hunter_pct > 0.0 and is_instance_valid(other) and other.max_hp > 0:
 			if float(other.hp) / float(other.max_hp) >= 0.8:
 				ephemeral_sum += bot_self.hunter_pct / 100.0
+		# §1.H of_executioner_pact — low-hp target damage. <30% HP threshold
+		# per a02 P-001, capped 40 in stat_calc. Mirror of of_hunter shape.
+		if bot_self.low_hp_target_dmg_pct > 0.0 and is_instance_valid(other) and other.max_hp > 0:
+			if float(other.hp) / float(other.max_hp) < 0.30:
+				ephemeral_sum += bot_self.low_hp_target_dmg_pct / 100.0
+		# §1.H of_glass_cannon — self-high-hp damage. >80% HP threshold
+		# per a02 P-002, capped 30. Mutex with low_hp_target_dmg_pct
+		# resolved in stat_calc (whichever is larger wins; the other is 0).
+		if bot_self.glass_cannon_dmg_pct > 0.0 and bot_self.max_hp > 0:
+			if float(bot_self.hp) / float(bot_self.max_hp) > 0.80:
+				ephemeral_sum += bot_self.glass_cannon_dmg_pct / 100.0
+		# §1.H of_kingslayer — boss/elite/miniboss damage. Per a02 P-004,
+		# capped 40. Reads the target's is_boss / is_miniboss flag (Enemy).
+		if bot_self.boss_dmg_pct > 0.0 and is_instance_valid(other) and other is Enemy:
+			var oe: Enemy = other as Enemy
+			if oe.is_boss or oe.is_miniboss:
+				ephemeral_sum += bot_self.boss_dmg_pct / 100.0
+		# §1.H of_butcher — pack-density damage. Per a02 P-005, +X% per
+		# enemy within 3 tiles, cap 5 enemies (so cap-tier T5×5=+50%).
+		# Walks sibling actors — parent owns bot + enemies, identical to
+		# _find_adjacent_actor's traversal. Linear scan over ~5-15 enemies
+		# is cheap; keeps the affix free of dungeon back-references.
+		if bot_self.pack_dmg_per_enemy_pct > 0.0:
+			var p: Node = get_parent()
+			if p != null:
+				var nearby: int = 0
+				for child in p.get_children():
+					if not (child is Enemy):
+						continue
+					var ce: Enemy = child as Enemy
+					if not ce.is_alive:
+						continue
+					var dx: int = absi(ce.cell.x - bot_self.cell.x)
+					var dy: int = absi(ce.cell.y - bot_self.cell.y)
+					if dx <= 3 and dy <= 3 and (dx + dy) > 0:
+						nearby += 1
+						if nearby >= 5:
+							break
+				if nearby > 0:
+					ephemeral_sum += (bot_self.pack_dmg_per_enemy_pct / 100.0) * float(nearby)
 		# of_berserker — on-kill stacks. _berserker_stacks ages out via
 		# 3s window; each stack contributes berserker_peak_pct/5 (peak
 		# pct is the 5-stack total). Mirrors `rage` shape.

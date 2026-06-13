@@ -467,6 +467,37 @@
       "name": "of the Five Heads","stat": "fifth_cast_pct",
       "applies_to": ["helm"],
       "tiers": [[15,15],[15,15],[15,15],[15,15],[15,15]]
+    },
+
+    {
+      "id": "of_executioner_pact", "family": "generic", "kind": "pct",
+      "name": "of the Executioner's Pact", "stat": "low_hp_target_dmg_pct",
+      "applies_to": ["weapon","gloves","amulet"],
+      "tiers": [[8,12],[14,18],[20,26],[26,32],[32,40]]
+    },
+    {
+      "id": "of_glass_cannon",   "family": "generic", "kind": "pct",
+      "name": "of the Glass Cannon", "stat": "glass_cannon_dmg_pct",
+      "applies_to": ["amulet","ring","helm","gloves"],
+      "tiers": [[6,10],[12,15],[15,20],[20,25],[25,30]]
+    },
+    {
+      "id": "of_revenant",       "family": "generic", "kind": "pct",
+      "name": "of the Revenant", "stat": "low_hp_dr_pct",
+      "applies_to": ["armor","helm","cloak","boots"],
+      "tiers": [[5,8],[10,14],[15,20],[20,25],[25,28]]
+    },
+    {
+      "id": "of_kingslayer",     "family": "generic", "kind": "pct",
+      "name": "of the Kingslayer", "stat": "boss_dmg_pct",
+      "applies_to": ["weapon","gloves","amulet","spell"],
+      "tiers": [[8,12],[14,18],[20,26],[26,32],[32,40]]
+    },
+    {
+      "id": "of_butcher",        "family": "generic", "kind": "pct",
+      "name": "of the Butcher",  "stat": "pack_dmg_per_enemy_pct",
+      "applies_to": ["weapon","gloves","amulet"],
+      "tiers": [[2,3],[3,5],[5,7],[6,8],[7,10]]
     }
   ]
 }

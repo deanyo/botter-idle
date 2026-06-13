@@ -369,6 +369,12 @@ const _STAT_DESCRIPTIONS := {
 	"phylactery_revive_pct": "Once per floor: revive at {N}% max HP on lethal damage.",
 	"extra_chests_per_floor": "+{N} chest spawned each floor.",
 	"fifth_cast_pct": "Every 5th spell cast deals +{N}% damage (counter resets each floor).",
+	# §1.H attempt_attack-shape conditional affixes (a02 P-001..005, a10 caps).
+	"low_hp_target_dmg_pct": "+{N}% damage to enemies below 30% HP. Cap 40.",
+	"glass_cannon_dmg_pct": "+{N}% damage while above 80% HP. Cap 30. (Mutex with low_hp_target_dmg_pct.)",
+	"low_hp_dr_pct": "Take {N}% less damage while below 40% HP. Cap 28.",
+	"boss_dmg_pct": "+{N}% damage to bosses, elites, and uniques. Cap 40.",
+	"pack_dmg_per_enemy_pct": "+{N}% damage per enemy within 3 tiles (cap 5 enemies).",
 }
 
 static func description_for_stat(stat: String) -> String:
@@ -411,6 +417,11 @@ const _NAMED_EFFECT_STATS := {
 	"phylactery_revive_pct": true,
 	"extra_chests_per_floor": true,
 	"fifth_cast_pct": true,
+	"low_hp_target_dmg_pct": true,
+	"glass_cannon_dmg_pct": true,
+	"low_hp_dr_pct": true,
+	"boss_dmg_pct": true,
+	"pack_dmg_per_enemy_pct": true,
 }
 
 static func is_named_effect_stat(stat: String) -> bool:
