@@ -141,6 +141,7 @@ static func compute(
 	var full_hp_armor_pct: float = 0.0
 	var weapon_bleed_per_sec: int = 0
 	var holy_dot_per_sec: int = 0
+	var revenge_dmg_pct: float = 0.0
 
 	# Bot upgrades — gold-sink purchases. Pre-2026-06-06 combat_training
 	# (atk) and toughening (def) were never read here; players spent gold
@@ -336,6 +337,7 @@ static func compute(
 		full_hp_armor_pct += float(slot_sums.get("full_hp_armor_pct", 0))
 		weapon_bleed_per_sec += int(round(float(slot_sums.get("weapon_bleed_per_sec", 0))))
 		holy_dot_per_sec += int(round(float(slot_sums.get("holy_dot_per_sec", 0))))
+		revenge_dmg_pct += float(slot_sums.get("revenge_dmg_pct", 0))
 		# Per-element spell-damage affixes (of_pyromancer / of_cryomancer
 		# / of_thundercaller / of_zealot / of_pestcaller / of_nightcaller). Each writes to
 		# `<elem>_dmg_pct`; we accumulate into spell_element_pct keyed by
@@ -515,6 +517,10 @@ static func compute(
 	# §1.H of_zealous_strike — 3s × 17/sec = 51 total/cast for top-tier
 	# weapon-only T5; cap at 20 per source (DR'd across slots).
 	holy_dot_per_sec = clampi(holy_dot_per_sec, 0, 20)
+	# §1.H of_avenger — A2 P-007 cap 50. Reactive offense; couples with
+	# of_revenant (low-hp panic). Both can co-activate during the same
+	# low-HP window after a hit lands.
+	revenge_dmg_pct = clampf(revenge_dmg_pct, 0.0, 50.0)
 	if low_hp_target_dmg_pct > 0.0 and glass_cannon_dmg_pct > 0.0:
 		if low_hp_target_dmg_pct >= glass_cannon_dmg_pct:
 			glass_cannon_dmg_pct = 0.0
@@ -655,6 +661,7 @@ static func compute(
 	out["full_hp_armor_pct"] = full_hp_armor_pct
 	out["weapon_bleed_per_sec"] = weapon_bleed_per_sec
 	out["holy_dot_per_sec"] = holy_dot_per_sec
+	out["revenge_dmg_pct"] = revenge_dmg_pct
 	out["move_speed"] = move_speed
 	out["aggro_bonus"] = vision_count + sp_aggro_flat
 	out["loot_rarity_bonus"] = loot_rarity_bonus
@@ -698,6 +705,7 @@ static func _initial_dict() -> Dictionary:
 		"full_hp_armor_pct": 0.0,
 		"weapon_bleed_per_sec": 0,
 		"holy_dot_per_sec": 0,
+		"revenge_dmg_pct": 0.0,
 		"move_speed": _BASE_MOVE_SPEED, "aggro_bonus": 0,
 		"loot_rarity_bonus": 0.0, "xp_gain_pct": 0.0,
 		"alloc_str": 0, "alloc_dex": 0, "alloc_int": 0, "unspent_points": 0,

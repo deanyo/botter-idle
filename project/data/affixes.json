@@ -516,6 +516,12 @@
       "name": "of the Zealous Strike", "stat": "holy_dot_per_sec",
       "applies_to": ["weapon","gloves","amulet"],
       "tiers": [[3,4],[5,6],[7,9],[10,13],[13,17]]
+    },
+    {
+      "id": "of_avenger",        "family": "generic", "kind": "pct",
+      "name": "of the Avenger",  "stat": "revenge_dmg_pct",
+      "applies_to": ["weapon","gloves","ring"],
+      "tiers": [[10,15],[16,20],[20,28],[28,35],[35,45]]
     }
   ]
 }

@@ -346,6 +346,15 @@ func resolve_swing(typed: Dictionary, attacker: Actor = null) -> int:
 			if attacker.hp <= 0:
 				attacker.is_alive = false
 				attacker._play_death_then_emit()
+	# §1.H of_avenger (a02 P-007). After taking damage, the bot enters a
+	# 3-second "revenge" window where attempt_attack reads revenge_dmg_pct
+	# into ephemeral_sum. Re-applying refreshes the 3s timer. Bot-only;
+	# enemies have no revenge_dmg_pct field. Status_overlay registers the
+	# rage.png icon so the buff bar reads "Revenge".
+	if dealt_total > 0 and self is Bot and is_alive:
+		var bot_av: Bot = self as Bot
+		if bot_av.revenge_dmg_pct > 0.0:
+			add_status("revenge", 3.0)
 	if hp <= 0 and is_alive:
 		# S11 of_phylactery (a07 §6.10 Boris's Phylactery). Once-per-floor
 		# revive at phylactery_revive_pct% max HP on lethal damage. Gates
@@ -703,6 +712,11 @@ func attempt_attack(other: Actor, delta: float) -> int:
 			var oe: Enemy = other as Enemy
 			if oe.is_boss or oe.is_miniboss:
 				ephemeral_sum += bot_self.boss_dmg_pct / 100.0
+		# §1.H of_avenger — recently-hurt damage. 3s window after last
+		# hit; revenge status set on take_damage. revenge_dmg_pct already
+		# capped 50 in stat_calc.
+		if bot_self.revenge_dmg_pct > 0.0 and has_status("revenge"):
+			ephemeral_sum += bot_self.revenge_dmg_pct / 100.0
 		# §1.H of_butcher — pack-density damage. Per a02 P-005, +X% per
 		# enemy within 3 tiles, cap 5 enemies (so cap-tier T5×5=+50%).
 		# Walks sibling actors — parent owns bot + enemies, identical to
