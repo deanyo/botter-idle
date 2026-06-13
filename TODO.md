@@ -21,6 +21,21 @@ follow-ups. The orchestrator file at
 `~/claude/game-audit/prompts/SESSION.md` is archived; future sessions
 don't need it.
 
+**Balance pass 2026-06-11 — Beat 1 DONE (2026-06-13).** All ungated
+Beat-1 clusters shipped (§1.A through §1.M). of_predator is
+deferred-with-blocker to §2.E (needs A6 combat_move_speed_pct
+primitive). Active state file lives at
+`~/claude/game-audit/balance_pass_2026-06-11/CHECKLIST.md` — the
+recommended next move is **Beat 2 §2.D stat_calc.gd unit tests**
+(`project/tests/test_stat_calc.gd`), which is the gating dependency
+for the §2.E stat-plumbing wave (crit_multiplier_pct affixes,
+block_chance/amount uniques, spell_pierce_pct, pack_density_pct,
+low_hp_dmg_pct/high_hp_dmg_pct mutex pair, dot_duration_pct,
+damage_taken_pct, aura_radius_pct, damage_vs_boss/unique, and the
+loot_quantity_pct hard clamp — none of which can land without §2.D's
+caps-and-output assertions in place). §2.J mana-economy is its own
+independent plan-mode workstream that can also run.
+
 The active backlog below is the live agenda — pick the highest-leverage
 item or anything from PLAYTEST.md that the playtester surfaced.
 

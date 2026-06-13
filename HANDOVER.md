@@ -4,13 +4,17 @@ Point-in-time snapshot of what's actually shipping. Updated as we go. The
 durable rules and process live in `CLAUDE.md`; the roadmap and open work
 items live in `TODO.md`.
 
-Last refresh: 2026-06-09 (Tier 2 attribution shipped — final session
-of the Botter audit. Vault filenames stripped of DCSS contributor
-handles, LICENSE / NOTICE.md / CREDITS.md added at repo root, in-game
-Credits screen wired into main menu, README + .gitignore refreshed,
-export_presets.cfg tracked + vault exclude_filter asserted at
-deploy time. **The Botter multi-agent audit is CLOSED** — no NEXT
-tier; future work is open-ended).
+Last refresh: 2026-06-13 (Balance pass Beat 1 done-criteria met.
+All ungated Beat-1 clusters closed: §1.A outpost search/sort, §1.B
+ceiling-check CI guard, §1.C items ceiling fixes + schema repair,
+§1.D clone differentiation, §1.E race-anchors + thin-cell + element
+coverage, §1.F items cleanup, §1.G affix renames + curve fixes,
+§1.H 25-of-26 conditional/triggered affixes (predator deferred to
+§2.E), §1.I drop_tuning band data, §1.J grind-rarity-histogram
+skill, §1.K lightning-resistance spread, §1.L regen monster mod
+wire, §1.M branch-picker tooltips. Beat-2 work is gated on §2.D
+stat_calc unit tests per synthesis sequencing rule. Audit closure
+context preserved below.).
 
 `project/data/vaults/` now uses opaque per-theme IDs
 (`vault_<theme>_NNNN.json`) instead of `des_<author>_*.json`. The
@@ -88,6 +92,47 @@ sessions shipped sequentially over two days:
 GUT 0 → 132 tests, ~933 → ~2745 asserts. The audit is closed;
 remaining open work in TODO.md is balance / UI / dev-tool follow-
 ups, not audit findings.
+
+---
+
+2026-06-13 (balance pass Beat 1 — done-criteria met). All Beat-1
+ungated clusters closed today:
+  • 1.H Conditional/triggered affix expansion: 25 of 26 shipped
+    (executioner_pact, glass_cannon, revenant, kingslayer, butcher,
+    unbroken, serrated_edge, zealous_strike, avenger, first_strike,
+    drainblade, armor_breaker, unwavering_focus, hunter_mark, recoup,
+    smoldering_step, thorns, aegis_thorns, vulnerability_mark,
+    doomstrike, riposte_strike, overflowing_chalice, tactician,
+    chainspark, warden_step). of_predator deferred-with-blocker to
+    §2.E (needs A6 combat_move_speed_pct primitive). Mutex pair
+    (executioner_pact ⊥ glass_cannon) resolved post-clamp in
+    stat_calc; A11 G1/G4/G7 caps enforced (recovery rolling-window,
+    reflect-emission rolling-window, marked-amp lane).
+  • 1.L `regenerating` monster mod: was a no-op stub, now wired
+    via Enemy.hp_regen_per_sec + _regen_accum drained in
+    dungeon._tick_enemies (ticks fractional regen → integer HP at
+    1.0 boundary, capped at max_hp).
+  • 1.M Branch-picker tooltips (PoE-Map style): outpost.gd cards
+    now surface tier badge + status (kills toward unlock) + boss +
+    top-6 enemy roster + vault themes + boss-anchor / biome_pool
+    notable-loot list + active run modifiers. Pre-computed on picker
+    build to avoid hover-time JSON walks.
+22 commits across 2026-06-13. 12 deploys to itch (v42 → v61). Each
+commit passes the full pre-commit gauntlet (check_before_commit.sh
+PASS, GUT 3029 asserts, audit_data_integrity no issues, 5-run grind
+zero ERROR / push_error / parse warnings). Twenty-run grind smoke
+(`/grind 20`) confirms no schema regressions. Beat-1 done-criteria
+checks marked complete; remaining open Beat-2/3 work is gated on
+§2.D unit tests per the synthesis sequencing rule.
+
+New combat-event entry points added in actor.gd (one-off consumers
+each, NOT a unified event bus): on-target chain via
+_find_nearest_within (of_chainspark), every-N-cells pulse via
+_warden_step_pulse (of_warden_step), reflect-emission rolling-window
+via _bot_emit_reflect (of_thorns + of_aegis_thorns). Future Beat-3
+§3.B per-archetype event-hook work can refactor these into an
+explicit dispatch table without breaking call sites. New status
+overlay rows: smite, revenge, marked, recouping.
 
 ---
 
