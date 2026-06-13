@@ -509,7 +509,8 @@
         "of_executioner": 8,
         "of_butcher": 6,
         "of_serrated_edge": 6,
-        "of_first_strike": 8
+        "of_first_strike": 8,
+        "of_hunter_mark": 5
       }
     },
     {
@@ -562,7 +563,8 @@
         "of_bloodletting": 8,
         "of_berserker_rage": 8,
         "of_executioner": 8,
-        "of_first_strike": 6
+        "of_first_strike": 6,
+        "of_hunter_mark": 5
       }
     },
     {
@@ -1135,7 +1137,8 @@
         "of_bloodletting": 8,
         "of_berserker_rage": 8,
         "of_executioner": 8,
-        "of_first_strike": 8
+        "of_first_strike": 8,
+        "of_hunter_mark": 8
       }
     },
     {
@@ -2311,7 +2314,8 @@
         "of_serrated_edge": 8,
         "of_avenger": 6,
         "of_first_strike": 5,
-        "of_drainblade": 8
+        "of_drainblade": 8,
+        "of_hunter_mark": 5
       }
     },
     {
@@ -5455,7 +5459,8 @@
         "of_executioner": 8,
         "of_glass_cannon": 8,
         "of_unbroken": 5,
-        "of_unwavering_focus": 8
+        "of_unwavering_focus": 8,
+        "of_recoup": 5
       }
     },
     {
@@ -7187,7 +7192,8 @@
         "of_the_cat": 26,
         "of_haste": 26,
         "of_regen": 10,
-        "of_berserker": 8
+        "of_berserker": 8,
+        "of_smoldering_step": 5
       }
     },
     {
@@ -7983,7 +7989,8 @@
         "of_bloodletting": 8,
         "of_synergy": 8,
         "of_executioner": 8,
-        "of_avenger": 5
+        "of_avenger": 5,
+        "of_recoup": 5
       }
     },
     {
@@ -8971,7 +8978,8 @@
         "of_executioner": 8,
         "of_glass_cannon": 8,
         "of_avenger": 5,
-        "of_unwavering_focus": 5
+        "of_unwavering_focus": 5,
+        "of_recoup": 5
       }
     },
     {
@@ -32399,7 +32407,9 @@
       ],
       "affix_pool": {
         "of_lifesteal": 14,
-        "of_finesse": 10
+        "of_finesse": 10,
+        "of_recoup": 5,
+        "of_smoldering_step": 5
       },
       "default_tint": {
         "hue": 270,
@@ -36421,7 +36431,8 @@
         "of_finesse": 14,
         "of_haste": 14,
         "of_the_cat": 12,
-        "of_regen": 8
+        "of_regen": 8,
+        "of_smoldering_step": 6
       },
       "default_tint": {
         "hue": 50,

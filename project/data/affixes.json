@@ -546,6 +546,24 @@
       "name": "of Unwavering Focus", "stat": "spell_resist_pen_pct",
       "applies_to": ["spell","amulet","helm"],
       "tiers": [[6,8],[10,14],[14,20],[20,26],[26,35]]
+    },
+    {
+      "id": "of_hunter_mark",    "family": "generic", "kind": "pct",
+      "name": "of the Hunter's Mark", "stat": "crit_mark_dmg_pct",
+      "applies_to": ["weapon","ring","gloves"],
+      "tiers": [[10,15],[15,20],[20,25],[25,32],[32,40]]
+    },
+    {
+      "id": "of_recoup",         "family": "generic", "kind": "pct",
+      "name": "of Recoup",       "stat": "recoup_pct",
+      "applies_to": ["amulet","ring","cloak","helm"],
+      "tiers": [[5,8],[8,12],[12,17],[17,22],[22,28]]
+    },
+    {
+      "id": "of_smoldering_step","family": "generic", "kind": "pct",
+      "name": "of the Smoldering Step", "stat": "move_spell_dmg_pct",
+      "applies_to": ["boots","cloak"],
+      "tiers": [[8,12],[12,18],[18,25],[25,32],[32,40]]
     }
   ]
 }

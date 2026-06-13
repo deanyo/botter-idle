@@ -120,6 +120,15 @@ var first_hit_pct: float = 0.0
 var hp_per_kill_flat: int = 0
 var melee_armor_pen_pct: float = 0.0
 var spell_resist_pen_pct: float = 0.0
+var crit_mark_dmg_pct: float = 0.0
+var recoup_pct: float = 0.0
+var move_spell_dmg_pct: float = 0.0
+# §1.H of_recoup heal-over-time bucket. take_damage adds the rolled
+# heal pool here (recoup_pct/100 × dealt); _process drains it across
+# the configured 4s window. Pre-existing hp_regen_per_sec ticker
+# governs delivery; bucket unit is fractional HP.
+var _recoup_bucket: float = 0.0
+var _recoup_window_remaining: float = 0.0
 # §1.H of_first_strike per-floor target tracker. Keys are Enemy
 # instance_ids; presence means "this enemy has been hit at least once
 # this floor." Reset on floor_started in dungeon._build_floor.
@@ -549,6 +558,9 @@ func recompute_stats() -> void:
 	hp_per_kill_flat = int(d.get("hp_per_kill_flat", 0))
 	melee_armor_pen_pct = float(d.get("melee_armor_pen_pct", 0.0))
 	spell_resist_pen_pct = float(d.get("spell_resist_pen_pct", 0.0))
+	crit_mark_dmg_pct = float(d.get("crit_mark_dmg_pct", 0.0))
+	recoup_pct = float(d.get("recoup_pct", 0.0))
+	move_spell_dmg_pct = float(d.get("move_spell_dmg_pct", 0.0))
 	# anchor_regen folds into hp_regen so the regen tick already in actor.gd
 	# picks it up alongside species + worn-tag regen.
 	hp_regen_per_sec = float(d.hp_regen) + anchor_regen
@@ -956,14 +968,33 @@ func _play_swing_upward_thrust() -> void:
 	_weapon_swing_tween.parallel().tween_property(weapon_sprite, "scale", Vector2(1, 1), 0.14)
 
 func _process(delta: float) -> void:
-	if not is_alive or hp_regen_per_sec <= 0.0:
+	if not is_alive:
 		return
-	_regen_accum += delta * hp_regen_per_sec
-	if _regen_accum >= 1.0:
-		var ticks: int = int(_regen_accum)
-		_regen_accum -= float(ticks)
-		hp = mini(max_hp, hp + ticks)
-		_update_hp_bar()
+	if hp_regen_per_sec > 0.0:
+		_regen_accum += delta * hp_regen_per_sec
+		if _regen_accum >= 1.0:
+			var ticks: int = int(_regen_accum)
+			_regen_accum -= float(ticks)
+			hp = mini(max_hp, hp + ticks)
+			_update_hp_bar()
+	# §1.H of_recoup bucket drain. _recoup_window_remaining > 0 means
+	# the 4s heal window is active; drain bucket proportionally each
+	# frame and apply integer HP gain whenever a whole point accumulates.
+	# When the window expires, leftover fractional bucket dumps as 1 HP
+	# (so a 3-HP bucket doesn't quietly evaporate at the tail).
+	if _recoup_window_remaining > 0.0 and _recoup_bucket > 0.0:
+		var drain: float = _recoup_bucket * (delta / _recoup_window_remaining)
+		_recoup_window_remaining -= delta
+		if _recoup_window_remaining <= 0.0:
+			drain = _recoup_bucket
+			_recoup_window_remaining = 0.0
+		_recoup_bucket -= drain
+		if drain >= 1.0 and hp < max_hp:
+			var heal: int = int(drain)
+			hp = mini(max_hp, hp + heal)
+			_update_hp_bar()
+			if not has_status("recouping") and _recoup_window_remaining > 0.0:
+				add_status("recouping", _recoup_window_remaining)
 
 func take_damage(raw: int, attacker: Actor = null, damage_type: String = "") -> int:
 	# Grind/audit invincibility — set by main.gd when auto_grind is active.

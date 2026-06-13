@@ -146,6 +146,9 @@ static func compute(
 	var hp_per_kill_flat: int = 0
 	var melee_armor_pen_pct: float = 0.0
 	var spell_resist_pen_pct: float = 0.0
+	var crit_mark_dmg_pct: float = 0.0
+	var recoup_pct: float = 0.0
+	var move_spell_dmg_pct: float = 0.0
 
 	# Bot upgrades — gold-sink purchases. Pre-2026-06-06 combat_training
 	# (atk) and toughening (def) were never read here; players spent gold
@@ -346,6 +349,9 @@ static func compute(
 		hp_per_kill_flat += int(round(float(slot_sums.get("hp_per_kill_flat", 0))))
 		melee_armor_pen_pct += float(slot_sums.get("melee_armor_pen_pct", 0))
 		spell_resist_pen_pct += float(slot_sums.get("spell_resist_pen_pct", 0))
+		crit_mark_dmg_pct += float(slot_sums.get("crit_mark_dmg_pct", 0))
+		recoup_pct += float(slot_sums.get("recoup_pct", 0))
+		move_spell_dmg_pct += float(slot_sums.get("move_spell_dmg_pct", 0))
 		# Per-element spell-damage affixes (of_pyromancer / of_cryomancer
 		# / of_thundercaller / of_zealot / of_pestcaller / of_nightcaller). Each writes to
 		# `<elem>_dmg_pct`; we accumulate into spell_element_pct keyed by
@@ -552,6 +558,18 @@ static func compute(
 	# both flow through the same elem_mit lane). resist_pct is reduced
 	# multiplicatively before mit_sum composition.
 	spell_resist_pen_pct = clampf(spell_resist_pen_pct, 0.0, 35.0)
+	# §1.H of_hunter_mark — A2 P-009 cap 40 (a10 rescope from 70). a11 G7
+	# enforces only highest-mark per target (handled at apply-time, not here).
+	crit_mark_dmg_pct = clampf(crit_mark_dmg_pct, 0.0, 40.0)
+	# §1.H of_recoup — A2 P-011 cap 28 (a10 rescope). A11 G1: total recovery
+	# sources clamped at max_hp×0.10/s emitted. Per-source cap holds the
+	# 4s heal-over-time within budget — at endgame max_hp 1500, T5 28% =
+	# 420 HP/4s = 105/s = 7% max_hp/s, well under the G1 ceiling.
+	recoup_pct = clampf(recoup_pct, 0.0, 28.0)
+	# §1.H of_smoldering_step — A2 P-015 cap 40 (a10). Spell-only damage
+	# multiplier gated on bot.is_moving. Composes with spell_damage_pct
+	# soft cap (120) so the additive layer can't cascade past 160 effective.
+	move_spell_dmg_pct = clampf(move_spell_dmg_pct, 0.0, 40.0)
 	if low_hp_target_dmg_pct > 0.0 and glass_cannon_dmg_pct > 0.0:
 		if low_hp_target_dmg_pct >= glass_cannon_dmg_pct:
 			glass_cannon_dmg_pct = 0.0
@@ -697,6 +715,9 @@ static func compute(
 	out["hp_per_kill_flat"] = hp_per_kill_flat
 	out["melee_armor_pen_pct"] = melee_armor_pen_pct
 	out["spell_resist_pen_pct"] = spell_resist_pen_pct
+	out["crit_mark_dmg_pct"] = crit_mark_dmg_pct
+	out["recoup_pct"] = recoup_pct
+	out["move_spell_dmg_pct"] = move_spell_dmg_pct
 	out["move_speed"] = move_speed
 	out["aggro_bonus"] = vision_count + sp_aggro_flat
 	out["loot_rarity_bonus"] = loot_rarity_bonus
@@ -745,6 +766,7 @@ static func _initial_dict() -> Dictionary:
 		"hp_per_kill_flat": 0,
 		"melee_armor_pen_pct": 0.0,
 		"spell_resist_pen_pct": 0.0,
+		"crit_mark_dmg_pct": 0.0, "recoup_pct": 0.0, "move_spell_dmg_pct": 0.0,
 		"move_speed": _BASE_MOVE_SPEED, "aggro_bonus": 0,
 		"loot_rarity_bonus": 0.0, "xp_gain_pct": 0.0,
 		"alloc_str": 0, "alloc_dex": 0, "alloc_int": 0, "unspent_points": 0,

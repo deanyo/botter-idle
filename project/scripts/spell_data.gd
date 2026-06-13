@@ -389,6 +389,16 @@ static func compute_damage(bot: Node, item: Dictionary, inst: Variant = null) ->
 	# baked at the cast site, of_lingering must NOT extend it.
 	if bot.has_method("has_status") and bot.has_status("wrath"):
 		eph_pct += 20.0
+	# §1.H of_smoldering_step (a02 P-015) — spell damage while moving.
+	# Reads bot._last_move_at_msec stamp set in step_movement; ≤400ms ago
+	# qualifies as "moving" (matches the petrify pattern). Folds through
+	# the ephemeral lane so the +30% per-cast ceiling absorbs the upper
+	# tail when stacked with sage/synergy/wrath.
+	var mv_pct: float = float(bot.get("move_spell_dmg_pct")) if bot.get("move_spell_dmg_pct") != null else 0.0
+	if mv_pct > 0.0 and bot.get("_last_move_at_msec") != null:
+		var since_move_spell: int = Time.get_ticks_msec() - int(bot.get("_last_move_at_msec"))
+		if since_move_spell <= 400:
+			eph_pct += mv_pct
 	var eph_mult: float = 1.0 + minf(0.30, maxf(0.0, eph_pct / 100.0))
 	var dmg: float = base_dmg * stat_mult * dmg_mult * elem_mult * class_mult * eph_mult
 	# S9 spell crit (a06 §3.1, a10 rescope to ×1.25 base + half-rate crit-

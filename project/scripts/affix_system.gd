@@ -383,6 +383,9 @@ const _STAT_DESCRIPTIONS := {
 	"hp_per_kill_flat": "+{N} HP per kill. Counts toward the +max_hp/floor cap (of_serpent_growth).",
 	"melee_armor_pen_pct": "Your melee attacks ignore {N}% of enemy armor. Cap 50.",
 	"spell_resist_pen_pct": "Elemental hits ignore {N}% of enemy resistance. Cap 35.",
+	"crit_mark_dmg_pct": "On crit: mark target for 4s. Marked enemies take +{N}% damage. Cap 40.",
+	"recoup_pct": "After taking damage: heal {N}% of damage taken over 4s. Cap 28.",
+	"move_spell_dmg_pct": "+{N}% spell damage while moving. Cap 40.",
 }
 
 static func description_for_stat(stat: String) -> String:
@@ -438,6 +441,9 @@ const _NAMED_EFFECT_STATS := {
 	"hp_per_kill_flat": true,
 	"melee_armor_pen_pct": true,
 	"spell_resist_pen_pct": true,
+	"crit_mark_dmg_pct": true,
+	"recoup_pct": true,
+	"move_spell_dmg_pct": true,
 }
 
 static func is_named_effect_stat(stat: String) -> bool:

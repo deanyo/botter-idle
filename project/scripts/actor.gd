@@ -355,6 +355,15 @@ func resolve_swing(typed: Dictionary, attacker: Actor = null) -> int:
 		var bot_av: Bot = self as Bot
 		if bot_av.revenge_dmg_pct > 0.0:
 			add_status("revenge", 3.0)
+		# §1.H of_recoup (a02 P-011, a11 G1). Add a recoup bucket = pct × dealt
+		# scheduled to drain over 4s in bot._process. Re-applying ADDs to the
+		# pool and refreshes the window; pre-existing pool drains alongside the
+		# new addition so heavy hits stack pacing rather than restart.
+		if bot_av.recoup_pct > 0.0:
+			var add_pool: float = float(dealt_total) * bot_av.recoup_pct / 100.0
+			bot_av._recoup_bucket += add_pool
+			bot_av._recoup_window_remaining = 4.0
+			add_status("recouping", 4.0)
 	if hp <= 0 and is_alive:
 		# S11 of_phylactery (a07 §6.10 Boris's Phylactery). Once-per-floor
 		# revive at phylactery_revive_pct% max HP on lethal damage. Gates
@@ -464,6 +473,18 @@ func _apply_typed_damage(raw: int, damage_type: String, attacker: Actor, def_tag
 	var raw_amped: float = float(raw)
 	if has_status("cursed"):
 		raw_amped *= 1.15
+	# §1.H of_hunter_mark (a02 P-009, a11 G7). Marked enemies take +X%
+	# damage from all sources for 4s. Mark applied at on-crit site below.
+	# Per-target gate: only the highest crit_mark_dmg_pct attacker's mark
+	# applies (we read the attacker's value; multiple attackers would each
+	# apply their own status, but the LATEST refresh wins by status overlay
+	# semantics — _apply_dot_status overwrites — so the design is: latest
+	# crit lands the active mark. iron_shot pierce: the same status fires
+	# on each pierced target since it's per-defender, not per-source-event).
+	if has_status("marked") and attacker != null and attacker is Bot:
+		var bot_hm: Bot = attacker as Bot
+		if bot_hm.crit_mark_dmg_pct > 0.0:
+			raw_amped *= 1.0 + bot_hm.crit_mark_dmg_pct / 100.0
 	if damage_type == "physical":
 		# Apply mit_sum first, then armor flat-subtract. Floor of 1 so
 		# a fully mitigated hit still pings the HP bar.
@@ -1017,6 +1038,12 @@ func attempt_attack(other: Actor, delta: float) -> int:
 			# 4 ticks × 1s = 4s total. Per-tick = bloodletting_per_stack.
 			# Stacks cap implicit via add_bloodletting helper.
 			other.add_bloodletting(bot_bl.bloodletting_per_stack)
+		# §1.H of_hunter_mark (a02 P-009, a11 G7) — on-crit, apply 4s
+		# "marked" status to target. Read at typed-damage-application time
+		# so all subsequent hits (melee, spells, DoTs) read the amp.
+		# 4s window per a02 spec. Per-target gate via add_status overwrite.
+		if bot_bl.crit_mark_dmg_pct > 0.0:
+			other.add_status("marked", 4.0)
 	# §1.H of_serrated_edge (a02 P-021): every landed hit applies a 4s
 	# bleed at flat dmg/sec. Non-stacking; re-applies refresh duration +
 	# per-tick (whichever is larger of bloodletting on-crit OR serrated
