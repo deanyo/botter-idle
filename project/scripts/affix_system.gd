@@ -386,6 +386,8 @@ const _STAT_DESCRIPTIONS := {
 	"crit_mark_dmg_pct": "On crit: mark target for 4s. Marked enemies take +{N}% damage. Cap 40.",
 	"recoup_pct": "After taking damage: heal {N}% of damage taken over 4s. Cap 28.",
 	"move_spell_dmg_pct": "+{N}% spell damage while moving. Cap 40.",
+	"thorns_flat": "Reflects {N} damage back at the attacker on every hit you take. Cap 25.",
+	"block_thorns_flat": "On block: reflect {N} damage back at the attacker. Shield-only. Cap 50.",
 }
 
 static func description_for_stat(stat: String) -> String:
@@ -444,6 +446,8 @@ const _NAMED_EFFECT_STATS := {
 	"crit_mark_dmg_pct": true,
 	"recoup_pct": true,
 	"move_spell_dmg_pct": true,
+	"thorns_flat": true,
+	"block_thorns_flat": true,
 }
 
 static func is_named_effect_stat(stat: String) -> bool:

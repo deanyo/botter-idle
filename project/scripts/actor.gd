@@ -302,6 +302,19 @@ func resolve_swing(typed: Dictionary, attacker: Actor = null) -> int:
 				if int(typed[k]) > amt:
 					full_block = false
 					break
+			# §1.H of_aegis_thorns (a02 P-025, a11 G4) — on either block path,
+			# reflect block_thorns_flat back at the attacker through the same
+			# rolling-emission cap as of_thorns. Fires on full AND partial block.
+			if bot_block.block_thorns_flat > 0 and attacker != null \
+					and is_instance_valid(attacker) and attacker.is_alive:
+				var emitted_blk: int = _bot_emit_reflect(bot_block, bot_block.block_thorns_flat, attacker)
+				if emitted_blk > 0:
+					attacker.hp = maxi(0, attacker.hp - emitted_blk)
+					attacker.damaged.emit(attacker, emitted_blk)
+					attacker._update_hp_bar()
+					if attacker.hp <= 0 and attacker.is_alive:
+						attacker.is_alive = false
+						attacker._play_death_then_emit()
 			if full_block:
 				if fx and is_alive:
 					fx.hit_squish()
@@ -346,6 +359,24 @@ func resolve_swing(typed: Dictionary, attacker: Actor = null) -> int:
 			if attacker.hp <= 0:
 				attacker.is_alive = false
 				attacker._play_death_then_emit()
+	# §1.H of_thorns (a02 P-010, a11 G4) — flat reflect per-hit. Bot-side
+	# only. Per-hit cap: 30% of dealt_total (so a 5-dmg trash mob can't
+	# eat a 25-flat reflect for 500% effective). Rolling-window cap: ≤
+	# max_hp×0.05/s emitted summed across thorns_flat + block_thorns_flat.
+	if dealt_total > 0 and self is Bot and is_alive and attacker != null \
+			and is_instance_valid(attacker) and attacker.is_alive:
+		var bot_th: Bot = self as Bot
+		if bot_th.thorns_flat > 0:
+			var per_hit_cap: int = maxi(1, int(round(float(dealt_total) * 0.30)))
+			var capped_thorn: int = mini(bot_th.thorns_flat, per_hit_cap)
+			var emitted: int = _bot_emit_reflect(bot_th, capped_thorn, attacker)
+			if emitted > 0:
+				attacker.hp = maxi(0, attacker.hp - emitted)
+				attacker.damaged.emit(attacker, emitted)
+				attacker._update_hp_bar()
+				if attacker.hp <= 0 and attacker.is_alive:
+					attacker.is_alive = false
+					attacker._play_death_then_emit()
 	# §1.H of_avenger (a02 P-007). After taking damage, the bot enters a
 	# 3-second "revenge" window where attempt_attack reads revenge_dmg_pct
 	# into ephemeral_sum. Re-applying refreshes the 3s timer. Bot-only;
@@ -1385,6 +1416,24 @@ func add_bloodletting(per_tick: int) -> void:
 # and a single defender can carry both bleeding + smite simultaneously.
 func add_smite(per_tick: int) -> void:
 	_apply_dot_status("smite", per_tick, 3, 1.0)
+
+# §1.H a11 G4 reflect-emission window. Both of_thorns and of_aegis_thorns
+# feed this bucket on the bot. Returns the actually-allowed emission
+# (clamped to remaining budget for the active 1s window). Window resets
+# when ≥1s has elapsed since it opened.
+func _bot_emit_reflect(bot: Bot, requested: int, _attacker: Actor) -> int:
+	if requested <= 0 or bot.max_hp <= 0:
+		return 0
+	var now_ms: int = Time.get_ticks_msec()
+	if now_ms - bot._thorns_window_started_msec >= 1000:
+		bot._thorns_window_started_msec = now_ms
+		bot._thorns_emitted_in_window = 0
+	var window_cap: int = maxi(1, int(round(float(bot.max_hp) * 0.05)))
+	var allowed: int = maxi(0, window_cap - bot._thorns_emitted_in_window)
+	var emitted: int = mini(requested, allowed)
+	if emitted > 0:
+		bot._thorns_emitted_in_window += emitted
+	return emitted
 
 func add_burn(per_tick: int, ticks: int, interval: float) -> void:
 	# fire_res grants immunity to burn DoT (matches DCSS rF+ stops

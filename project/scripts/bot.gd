@@ -123,6 +123,14 @@ var spell_resist_pen_pct: float = 0.0
 var crit_mark_dmg_pct: float = 0.0
 var recoup_pct: float = 0.0
 var move_spell_dmg_pct: float = 0.0
+var thorns_flat: int = 0
+var block_thorns_flat: int = 0
+# §1.H a11 G4: rolling-window emission cap on reflect sources. Sum of
+# of_thorns + of_aegis_thorns reflect emitted per second ≤ max_hp×0.05.
+# resolve_swing accumulates _thorns_emitted in the active window; when
+# the window expires (>1s since first emission) the bucket resets.
+var _thorns_emitted_in_window: int = 0
+var _thorns_window_started_msec: int = 0
 # §1.H of_recoup heal-over-time bucket. take_damage adds the rolled
 # heal pool here (recoup_pct/100 × dealt); _process drains it across
 # the configured 4s window. Pre-existing hp_regen_per_sec ticker
@@ -561,6 +569,8 @@ func recompute_stats() -> void:
 	crit_mark_dmg_pct = float(d.get("crit_mark_dmg_pct", 0.0))
 	recoup_pct = float(d.get("recoup_pct", 0.0))
 	move_spell_dmg_pct = float(d.get("move_spell_dmg_pct", 0.0))
+	thorns_flat = int(d.get("thorns_flat", 0))
+	block_thorns_flat = int(d.get("block_thorns_flat", 0))
 	# anchor_regen folds into hp_regen so the regen tick already in actor.gd
 	# picks it up alongside species + worn-tag regen.
 	hp_regen_per_sec = float(d.hp_regen) + anchor_regen

@@ -3495,7 +3495,8 @@
         "of_dark_resist": 8,
         "of_regen": 15,
         "of_revenant": 8,
-        "of_unbroken": 8
+        "of_unbroken": 8,
+        "of_thorns": 8
       }
     },
     {
@@ -4169,7 +4170,8 @@
         "of_dark_resist": 8,
         "of_regen": 15,
         "of_revenant": 8,
-        "of_unbroken": 6
+        "of_unbroken": 6,
+        "of_thorns": 5
       }
     },
     {
@@ -5864,7 +5866,8 @@
         "of_poison_resist": 10,
         "of_dark_resist": 8,
         "of_warding": 8,
-        "of_bulwark": 8
+        "of_bulwark": 8,
+        "of_aegis_thorns": 8
       },
       "default_tint": {
         "hue": 90,
@@ -6659,7 +6662,8 @@
         "of_dark_resist": 8,
         "of_warding": 8,
         "of_bulwark": 8,
-        "of_unbroken": 8
+        "of_unbroken": 8,
+        "of_aegis_thorns": 10
       },
       "default_tint": {
         "hue": 200.0,
@@ -6752,7 +6756,8 @@
         "of_poison_resist": 10,
         "of_dark_resist": 8,
         "of_warding": 8,
-        "of_bulwark": 8
+        "of_bulwark": 8,
+        "of_aegis_thorns": 8
       },
       "block_chance": 8,
       "block_amount": 5
@@ -6892,7 +6897,8 @@
         "of_poison_resist": 10,
         "of_dark_resist": 8,
         "of_warding": 8,
-        "of_bulwark": 8
+        "of_bulwark": 8,
+        "of_aegis_thorns": 8
       },
       "default_tint": {
         "hue": 270,

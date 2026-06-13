@@ -149,6 +149,8 @@ static func compute(
 	var crit_mark_dmg_pct: float = 0.0
 	var recoup_pct: float = 0.0
 	var move_spell_dmg_pct: float = 0.0
+	var thorns_flat: int = 0
+	var block_thorns_flat: int = 0
 
 	# Bot upgrades — gold-sink purchases. Pre-2026-06-06 combat_training
 	# (atk) and toughening (def) were never read here; players spent gold
@@ -352,6 +354,8 @@ static func compute(
 		crit_mark_dmg_pct += float(slot_sums.get("crit_mark_dmg_pct", 0))
 		recoup_pct += float(slot_sums.get("recoup_pct", 0))
 		move_spell_dmg_pct += float(slot_sums.get("move_spell_dmg_pct", 0))
+		thorns_flat += int(round(float(slot_sums.get("thorns_flat", 0))))
+		block_thorns_flat += int(round(float(slot_sums.get("block_thorns_flat", 0))))
 		# Per-element spell-damage affixes (of_pyromancer / of_cryomancer
 		# / of_thundercaller / of_zealot / of_pestcaller / of_nightcaller). Each writes to
 		# `<elem>_dmg_pct`; we accumulate into spell_element_pct keyed by
@@ -570,6 +574,17 @@ static func compute(
 	# multiplier gated on bot.is_moving. Composes with spell_damage_pct
 	# soft cap (120) so the additive layer can't cascade past 160 effective.
 	move_spell_dmg_pct = clampf(move_spell_dmg_pct, 0.0, 40.0)
+	# §1.H of_thorns — A2 P-010 cap 25, a11 G4 enforcement (per-hit reflect
+	# capped at 30% of incoming hit AND total reflect emission ≤ max_hp×0.05/s
+	# rolling). Per-source cap holds at 25 here so a 4-source DR stack
+	# (25+18.75+12.5+6.25 = 62.5) clamps to 25 — matches the per-source cap.
+	# The 30%-of-hit + rolling-emission caps live at the resolve_swing site.
+	thorns_flat = clampi(thorns_flat, 0, 25)
+	# §1.H of_aegis_thorns — A2 P-025 cap 50. Shield-only so 1-source max
+	# T5 = 42 stays under cap; 2-source DR stack (42+31.5 = 73.5) clamps 50.
+	# A11 G4 same rolling-emission ceiling shared with of_thorns; both feed
+	# the same _thorns_emission_window bucket on the bot.
+	block_thorns_flat = clampi(block_thorns_flat, 0, 50)
 	if low_hp_target_dmg_pct > 0.0 and glass_cannon_dmg_pct > 0.0:
 		if low_hp_target_dmg_pct >= glass_cannon_dmg_pct:
 			glass_cannon_dmg_pct = 0.0
@@ -718,6 +733,8 @@ static func compute(
 	out["crit_mark_dmg_pct"] = crit_mark_dmg_pct
 	out["recoup_pct"] = recoup_pct
 	out["move_spell_dmg_pct"] = move_spell_dmg_pct
+	out["thorns_flat"] = thorns_flat
+	out["block_thorns_flat"] = block_thorns_flat
 	out["move_speed"] = move_speed
 	out["aggro_bonus"] = vision_count + sp_aggro_flat
 	out["loot_rarity_bonus"] = loot_rarity_bonus
@@ -767,6 +784,7 @@ static func _initial_dict() -> Dictionary:
 		"melee_armor_pen_pct": 0.0,
 		"spell_resist_pen_pct": 0.0,
 		"crit_mark_dmg_pct": 0.0, "recoup_pct": 0.0, "move_spell_dmg_pct": 0.0,
+		"thorns_flat": 0, "block_thorns_flat": 0,
 		"move_speed": _BASE_MOVE_SPEED, "aggro_bonus": 0,
 		"loot_rarity_bonus": 0.0, "xp_gain_pct": 0.0,
 		"alloc_str": 0, "alloc_dex": 0, "alloc_int": 0, "unspent_points": 0,

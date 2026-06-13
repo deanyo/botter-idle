@@ -564,6 +564,18 @@
       "name": "of the Smoldering Step", "stat": "move_spell_dmg_pct",
       "applies_to": ["boots","cloak"],
       "tiers": [[8,12],[12,18],[18,25],[25,32],[32,40]]
+    },
+    {
+      "id": "of_thorns",         "family": "generic", "kind": "flat",
+      "name": "of Thorns",       "stat": "thorns_flat",
+      "applies_to": ["armor","shield","helm","gloves"],
+      "tiers": [[2,4],[5,7],[8,11],[11,15],[15,20]]
+    },
+    {
+      "id": "of_aegis_thorns",   "family": "generic", "kind": "flat",
+      "name": "of Aegis Thorns", "stat": "block_thorns_flat",
+      "applies_to": ["shield"],
+      "tiers": [[5,8],[10,14],[16,22],[22,30],[30,42]]
     }
   ]
 }
