@@ -582,6 +582,12 @@
       "name": "of the Vulnerability Mark", "stat": "first_hit_mark_pct",
       "applies_to": ["weapon"],
       "tiers": [[6,8],[10,12],[12,16],[15,20],[18,25]]
+    },
+    {
+      "id": "of_doomstrike",     "family": "generic", "kind": "pct",
+      "name": "of the Doomstrike", "stat": "doomstrike_dmg_pct",
+      "applies_to": ["weapon","gloves","ring"],
+      "tiers": [[30,45],[45,60],[60,75],[75,90],[85,100]]
     }
   ]
 }

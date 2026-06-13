@@ -152,6 +152,7 @@ static func compute(
 	var thorns_flat: int = 0
 	var block_thorns_flat: int = 0
 	var first_hit_mark_pct: float = 0.0
+	var doomstrike_dmg_pct: float = 0.0
 
 	# Bot upgrades — gold-sink purchases. Pre-2026-06-06 combat_training
 	# (atk) and toughening (def) were never read here; players spent gold
@@ -358,6 +359,7 @@ static func compute(
 		thorns_flat += int(round(float(slot_sums.get("thorns_flat", 0))))
 		block_thorns_flat += int(round(float(slot_sums.get("block_thorns_flat", 0))))
 		first_hit_mark_pct += float(slot_sums.get("first_hit_mark_pct", 0))
+		doomstrike_dmg_pct += float(slot_sums.get("doomstrike_dmg_pct", 0))
 		# Per-element spell-damage affixes (of_pyromancer / of_cryomancer
 		# / of_thundercaller / of_zealot / of_pestcaller / of_nightcaller). Each writes to
 		# `<elem>_dmg_pct`; we accumulate into spell_element_pct keyed by
@@ -593,6 +595,11 @@ static func compute(
 	# adds to the mark amp lane. Per-target gate via _first_strike_hit_ids
 	# means stacking sources still only fires once per enemy. Cap 25.
 	first_hit_mark_pct = clampf(first_hit_mark_pct, 0.0, 25.0)
+	# §1.H of_doomstrike — A2 P-013, a10 cap 100 (rescope from 200). Every
+	# 5th swing fires at +X% damage; crit suppressed on the doomstrike
+	# swing (a10 design rule — prevents the boost from compounding crit).
+	# 3-source DR stack: 100 + 75 + 50 = 225, hard-clamped 100.
+	doomstrike_dmg_pct = clampf(doomstrike_dmg_pct, 0.0, 100.0)
 	if low_hp_target_dmg_pct > 0.0 and glass_cannon_dmg_pct > 0.0:
 		if low_hp_target_dmg_pct >= glass_cannon_dmg_pct:
 			glass_cannon_dmg_pct = 0.0
@@ -744,6 +751,7 @@ static func compute(
 	out["thorns_flat"] = thorns_flat
 	out["block_thorns_flat"] = block_thorns_flat
 	out["first_hit_mark_pct"] = first_hit_mark_pct
+	out["doomstrike_dmg_pct"] = doomstrike_dmg_pct
 	out["move_speed"] = move_speed
 	out["aggro_bonus"] = vision_count + sp_aggro_flat
 	out["loot_rarity_bonus"] = loot_rarity_bonus
@@ -794,6 +802,7 @@ static func _initial_dict() -> Dictionary:
 		"spell_resist_pen_pct": 0.0,
 		"crit_mark_dmg_pct": 0.0, "recoup_pct": 0.0, "move_spell_dmg_pct": 0.0,
 		"thorns_flat": 0, "block_thorns_flat": 0, "first_hit_mark_pct": 0.0,
+		"doomstrike_dmg_pct": 0.0,
 		"move_speed": _BASE_MOVE_SPEED, "aggro_bonus": 0,
 		"loot_rarity_bonus": 0.0, "xp_gain_pct": 0.0,
 		"alloc_str": 0, "alloc_dex": 0, "alloc_int": 0, "unspent_points": 0,

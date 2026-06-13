@@ -930,9 +930,26 @@ func attempt_attack(other: Actor, delta: float) -> int:
 		var combo_mult_full: float = dmg_mult * str_mult
 		for k in typed.keys():
 			typed[k] = int(round(float(typed[k]) * combo_mult_full))
+	# §1.H of_doomstrike (a02 P-013, a10 cap 100): every 5th swing fires
+	# at +X% damage AND has crit suppressed (a10 design rule prevents the
+	# boost from compounding crit). Counter increments per swing; resets
+	# at 5 ≤ count. Bot-only.
+	var is_doomstrike: bool = false
+	if self is Bot:
+		var bot_ds: Bot = self as Bot
+		if bot_ds.doomstrike_dmg_pct > 0.0:
+			bot_ds._doomstrike_swing_count += 1
+			if bot_ds._doomstrike_swing_count >= 5:
+				bot_ds._doomstrike_swing_count = 0
+				is_doomstrike = true
+				var ds_mult: float = 1.0 + bot_ds.doomstrike_dmg_pct / 100.0
+				for k in typed.keys():
+					typed[k] = int(round(float(typed[k]) * ds_mult))
 	var crit: bool = false
 	# Combo crit bonus (e.g. Judgement +10%).
 	var roll_chance: float = crit_chance + crit_bonus + EnchantCombos.crit_bonus_for(combo_id)
+	if is_doomstrike:
+		roll_chance = 0.0
 	if roll_chance > 0.0 and randf() * 100.0 < roll_chance:
 		# S9 crit_multiplier_pct (a06 §2.1). Bot reads its own field; mundane
 		# actors fall back to the const 1.5×. Cap is enforced in stat_calc

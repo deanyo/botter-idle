@@ -1707,7 +1707,8 @@
         "of_quickcast": 8,
         "of_executioner": 8,
         "of_drainblade": 6,
-        "of_vulnerability_mark": 6
+        "of_vulnerability_mark": 6,
+        "of_doomstrike": 10
       }
     },
     {
@@ -8987,7 +8988,8 @@
         "of_glass_cannon": 8,
         "of_avenger": 5,
         "of_unwavering_focus": 5,
-        "of_recoup": 5
+        "of_recoup": 5,
+        "of_doomstrike": 5
       }
     },
     {
@@ -12790,7 +12792,8 @@
         "of_kingslayer": 12,
         "of_drainblade": 5,
         "of_armor_breaker": 8,
-        "of_vulnerability_mark": 8
+        "of_vulnerability_mark": 8,
+        "of_doomstrike": 8
       }
     },
     {
@@ -13062,7 +13065,8 @@
         "of_executioner_pact": 12,
         "of_kingslayer": 10,
         "of_avenger": 8,
-        "of_armor_breaker": 8
+        "of_armor_breaker": 8,
+        "of_doomstrike": 12
       }
     },
     {
@@ -13368,7 +13372,8 @@
         "of_berserker_rage": 8,
         "of_executioner": 8,
         "of_armor_breaker": 5,
-        "of_vulnerability_mark": 5
+        "of_vulnerability_mark": 5,
+        "of_doomstrike": 6
       }
     },
     {
