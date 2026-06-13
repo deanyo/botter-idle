@@ -376,6 +376,11 @@ func _build_layout() -> void:
 
 func _build_branch_picker(x: int, y: int, w: int, h: int) -> void:
 	_make_panel(x, y, w, h, "Deploy — choose a branch")
+	# §1.M: pre-compute the per-branch tooltip cache once at picker-build
+	# time. Hover-time JSON walks would FPS-tank otherwise (each hover
+	# would re-walk biomes.json + items.json + bosses_killed). The cache
+	# lives on the outpost instance for the picker's lifetime.
+	_branch_tooltip_cache = _build_branch_tooltip_cache()
 	# Horizontal scroll so all 24 branches fit even at narrow widths.
 	var scroll := ScrollContainer.new()
 	scroll.position = Vector2(x + 12, y + 32)
@@ -540,19 +545,145 @@ func _make_branch_card(branch_id: String, is_unlocked: bool, tier: int) -> Contr
 			cr_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 			cr_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
 			btn.add_child(cr_lbl)
-		# Tooltip kept for full modifier descriptions (hover for detail).
-		var tooltip: String = "%s — CR %d recommended" % [display, int(biome.get("cr_recommended", 0))]
-		var mod_tip: String = RunModifiers.format_tooltip(mods)
-		if mod_tip != "":
-			tooltip += "\n\n" + mod_tip
-		btn.tooltip_text = tooltip
+		# §1.M tooltip — pulled from the per-picker cache populated in
+		# _build_branch_picker. Surfaces tier + status + enemies + boss +
+		# vault themes + loot-bias + run-modifiers in plain text (Godot's
+		# native tooltip handles wrapping + positioning + clipping).
+		btn.tooltip_text = String(_branch_tooltip_cache.get(branch_id, "%s — Tier %d" % [display, tier]))
 		btn.pressed.connect(func(): deploy_pressed.emit(branch_id))
 	else:
 		btn.disabled = true
-		btn.tooltip_text = "%s — locked. Clear all branches in the previous tier to unlock." % display
+		btn.tooltip_text = String(_branch_tooltip_cache.get(branch_id, "%s — locked. Clear all branches in the previous tier to unlock." % display))
 		# Locked overlay: fade the card.
 		btn.modulate = Color(0.55, 0.55, 0.55, 1.0)
 	return btn
+
+# §1.M PoE-Map-style branch tooltip cache. One walk per picker open; the
+# returned dict maps every branch id (across all 5 tiers) to a fully
+# formatted plain-text tooltip ready for `tooltip_text`. Walks biomes.json
+# for enemy_pool / vault_themes / boss_id, items.json for boss-anchor
+# + biome_pool sample names, save state for unlock + boss-kill progress.
+# Plain text (newlines + section headers) — Godot's native Tooltip
+# control handles wrapping + positioning + clipping for free; matches
+# the existing outpost convention (no RichTextLabel-based tooltip
+# layer exists today).
+func _build_branch_tooltip_cache() -> Dictionary:
+	var out: Dictionary = {}
+	var unlocked: Array = state.get("unlocked_branches", ["dungeon"])
+	var bosses_killed: Dictionary = state.get("bosses_killed", {})
+	var enemy_db: Dictionary = ItemsDb.enemies()
+	# One pass over items.json bucketing by biome_pool / boss_drop —
+	# beats per-branch nested filtering by an order of magnitude.
+	var items_by_branch: Dictionary = {}
+	var items_by_boss: Dictionary = {}
+	for it in items_db.values():
+		if not (it is Dictionary):
+			continue
+		var bp_v: Variant = it.get("biome_pool", null)
+		if bp_v is Array:
+			for b in bp_v:
+				var key: String = String(b)
+				if not items_by_branch.has(key):
+					items_by_branch[key] = []
+				(items_by_branch[key] as Array).append(String(it.get("name", it.get("id", "?"))))
+		var bd: String = String(it.get("boss_drop", ""))
+		if bd != "":
+			if not items_by_boss.has(bd):
+				items_by_boss[bd] = []
+			(items_by_boss[bd] as Array).append(String(it.get("name", it.get("id", "?"))))
+	const KILLS_PER_BRANCH_TO_UNLOCK_NEXT_TIER: int = 2
+	for tier in [1, 2, 3, 4, 5]:
+		for branch_id in TIER_BRANCHES.get(tier, []):
+			out[branch_id] = _format_branch_tooltip(
+				String(branch_id), int(tier), unlocked.has(branch_id),
+				bosses_killed, enemy_db, items_by_branch, items_by_boss,
+				KILLS_PER_BRANCH_TO_UNLOCK_NEXT_TIER,
+			)
+	return out
+
+func _format_branch_tooltip(
+	branch_id: String, tier: int, is_unlocked: bool,
+	bosses_killed: Dictionary, enemy_db: Dictionary,
+	items_by_branch: Dictionary, items_by_boss: Dictionary,
+	kills_required: int,
+) -> String:
+	var biome: Dictionary = BiomeData.get_biome(branch_id)
+	var display: String = String(biome.get("display_name", branch_id.capitalize()))
+	if display.to_lower().begins_with("the "):
+		display = display.substr(4)
+	var pretty: String = display.capitalize() if display == display.to_lower() else display
+	var lines: Array = []
+	# Header — name + tier badge.
+	lines.append("%s   [Tier %d]" % [pretty, tier])
+	lines.append("CR %d recommended" % int(biome.get("cr_recommended", 0)))
+	# Status line — unlocked or locked + progress toward unlock.
+	if is_unlocked:
+		var kills_here: int = int(bosses_killed.get(branch_id, 0))
+		if tier < 5:
+			lines.append("Status: Unlocked  (boss kills: %d / %d toward next tier)" % [kills_here, kills_required])
+		else:
+			lines.append("Status: Unlocked  (boss kills: %d)" % kills_here)
+	else:
+		lines.append("Status: LOCKED — clear all tier %d branches twice to unlock." % maxi(1, tier - 1))
+	# Boss line.
+	var boss_id: String = String(biome.get("boss_id", ""))
+	if boss_id != "":
+		var boss_def: Dictionary = enemy_db.get(boss_id, {})
+		var boss_name: String = String(boss_def.get("name", boss_id))
+		lines.append("")
+		lines.append("Boss: %s" % boss_name)
+	# Enemy pool — top 6 by list-position (biomes.json doesn't store
+	# weights for enemy_pool; first entries are the canonical roster).
+	var pool: Array = biome.get("enemy_pool", [])
+	if pool.size() > 0:
+		var shown: Array = []
+		var max_shown: int = mini(6, pool.size())
+		for i in range(max_shown):
+			var eid: String = String(pool[i])
+			var edef: Dictionary = enemy_db.get(eid, {})
+			shown.append(String(edef.get("name", eid)))
+		var line: String = "Enemies: " + ", ".join(shown)
+		if pool.size() > max_shown:
+			line += "  +%d more" % (pool.size() - max_shown)
+		lines.append("")
+		lines.append(line)
+	# Vault themes.
+	var themes: Array = biome.get("vault_themes", [])
+	if themes.size() > 0:
+		lines.append("Vault themes: " + ", ".join(themes.map(func(t): return String(t).capitalize())))
+	# Loot bias — boss-anchor uniques first (most distinctive), then
+	# 2-3 biome_pool samples. Cap total at 3 names so the tooltip
+	# stays compact.
+	var loot_lines: Array = []
+	if boss_id != "" and items_by_boss.has(boss_id):
+		var ba: Array = items_by_boss[boss_id]
+		for i in range(mini(2, ba.size())):
+			loot_lines.append(String(ba[i]) + " (boss anchor)")
+	if items_by_branch.has(branch_id):
+		var bp: Array = items_by_branch[branch_id]
+		for i in range(mini(3 - loot_lines.size(), bp.size())):
+			var nm: String = String(bp[i])
+			# Don't repeat boss-anchor entries already surfaced above.
+			var seen: bool = false
+			for l in loot_lines:
+				if String(l).begins_with(nm):
+					seen = true
+					break
+			if not seen:
+				loot_lines.append(nm)
+	if not loot_lines.is_empty():
+		lines.append("")
+		lines.append("Notable loot: " + ", ".join(loot_lines))
+	# Run-modifier list (active for THIS picker session). Leverages the
+	# existing RunModifiers.format_tooltip helper so the descriptions
+	# match the rest of the UI.
+	if is_unlocked:
+		var mods: Array = state.get("branch_modifiers", {}).get(branch_id, [])
+		var mod_tip: String = RunModifiers.format_tooltip(mods)
+		if mod_tip != "":
+			lines.append("")
+			lines.append(mod_tip)
+	return "\n".join(lines)
 
 func _make_panel(x: int, y: int, w: int, h: int, header: String) -> void:
 	var bg := ColorRect.new()
@@ -1092,6 +1223,9 @@ func _build_inventory_pane(x: int, y: int, w: int, h: int) -> void:
 var _filter_slot: String = "all"
 var _filter_rarity: String = "all"
 var _filter_favorites: bool = false
+# §1.M branch-picker tooltip cache. branch_id → pre-formatted tooltip
+# string. Built once in _build_branch_picker; consumed in _make_branch_card.
+var _branch_tooltip_cache: Dictionary = {}
 var _filter_affix_query: String = ""
 
 const _SLOT_FILTER_OPTIONS := [
