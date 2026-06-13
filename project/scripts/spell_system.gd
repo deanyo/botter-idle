@@ -243,6 +243,10 @@ static func _dispatch_fire(bot: Node, dungeon: Node, item: Dictionary) -> void:
 			fired = _fire_curse_brittlebone(bot, dungeon, item)
 		"spell_bolt_long_cd":
 			fired = _fire_fireball(bot, dungeon, item)
+		"spell_blade_dance":
+			fired = _fire_holy_beam(bot, dungeon, item)
+		"spell_static_field":
+			fired = _fire_stormcaller_totem(bot, dungeon, item)
 	if fired:
 		_fire_count += 1
 		_fire_by_arch[base_type] = int(_fire_by_arch.get(base_type, 0)) + 1
@@ -383,7 +387,13 @@ static func _fire_chain_lightning(bot: Node, dungeon: Node, item: Dictionary) ->
 # cone (cells within range_cells AND within ±60° of facing). area_pct
 # widens the cone angle. Damage applies once per enemy.
 static func _fire_holy_beam(bot: Node, dungeon: Node, item: Dictionary) -> bool:
-	var arch: Dictionary = SpellData.archetype_def("spell_holy_beam")
+	# §2.F generalized: read base_type so spell_blade_dance (DEX physical
+	# multi-hit cone) can ride this same dispatcher with its own
+	# damage / range / element from archetype_def. Cone shape is identical;
+	# the differentiator is primary_stat (str→dex) and damage_type
+	# (holy→physical).
+	var base_type: String = String(item.get("base_type", "spell_holy_beam"))
+	var arch: Dictionary = SpellData.archetype_def(base_type)
 	if arch.is_empty() or not is_instance_valid(bot) or dungeon == null:
 		return false
 	var range_cells: int = int(arch.get("range_cells", 4))
@@ -427,9 +437,15 @@ static func _fire_holy_beam(bot: Node, dungeon: Node, item: Dictionary) -> bool:
 			hits += 1
 	if hits == 0:
 		return false
-	# Holy beam — bright searing-ray sprites painted over a gold/white
-	# volume. Per-flavor visual presets in spell_aoe.gd.
-	SpellAoe.spawn_cone(dungeon.actor_layer, origin, facing, max_dist, cone_half_angle, _visual_color_for_item(item, "holy"), "holy")
+	# §2.F: pick visual flavor by archetype's element/trail. Holy beam
+	# stays gold/white; spell_blade_dance reads as a steel-edge sweep
+	# (no element → "physical" routes through the trail_flavor for the
+	# cone preset). Default fallback "holy" preserves the original
+	# behavior for spell_holy_beam since arch.trail_flavor == "holy".
+	var cone_flavor: String = String(arch.get("trail_flavor", "holy"))
+	if cone_flavor == "":
+		cone_flavor = "holy"
+	SpellAoe.spawn_cone(dungeon.actor_layer, origin, facing, max_dist, cone_half_angle, _visual_color_for_item(item, cone_flavor), cone_flavor)
 	return true
 
 # Spinning Axes — spawns N orbiting axe sprites that circle the bot for
@@ -785,7 +801,13 @@ static func _fire_venom_cloud(bot: Node, dungeon: Node, item: Dictionary) -> boo
 # Stormcaller Totem — DEX lightning turret. Drops at bot's feet, zaps
 # nearest enemy every 0.6s for 4s × duration_pct.
 static func _fire_stormcaller_totem(bot: Node, dungeon: Node, item: Dictionary) -> bool:
-	var arch: Dictionary = SpellData.archetype_def("spell_stormcaller_totem")
+	# §2.F generalized: read base_type so spell_static_field (DEX
+	# lightning persistent zone) can ride this same dispatcher.
+	# Both shapes spawn a SpellTotem at bot's feet that zaps nearest
+	# enemy; per-archetype tuning (cooldown, damage, lifetime, range)
+	# comes from archetype_def.
+	var base_type: String = String(item.get("base_type", "spell_stormcaller_totem"))
+	var arch: Dictionary = SpellData.archetype_def(base_type)
 	if arch.is_empty() or not is_instance_valid(bot) or dungeon == null:
 		return false
 	var damage: int = SpellData.compute_damage(bot, item, item.get("_inst", null))

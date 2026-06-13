@@ -308,6 +308,38 @@ const ARCHETYPES := {
 		"element": "fire",
 		"projectile_speed": 360.0,
 	},
+	# blade_dance: DEX physical multi-hit cone. Same cone shape as
+	# spell_holy_beam (rides _fire_holy_beam via base_type passthrough)
+	# but DEX-coded with physical damage_type. Differentiates from
+	# spell_sandblast (STR physical cone) by primary_stat — sandblast
+	# punishes static caster STR builds, blade_dance opens the same
+	# shape for kiting DEX builds.
+	"spell_blade_dance": {
+		"primary_stat": "dex",
+		"cooldown": 2.4,
+		"damage": 24,
+		"range_cells": 4,
+		"projectile": "",
+		"trail_flavor": "physical",
+		"element": "",
+		"projectile_speed": 0.0,
+	},
+	# static_field: DEX lightning persistent zone. Rides
+	# _fire_stormcaller_totem via base_type passthrough — same SpellTotem
+	# machinery (drop at feet, zaps nearest enemy on a tick), shorter
+	# cooldown / smaller damage / shorter range so the static_field
+	# reads as a "constant background DPS lane" archetype while
+	# stormcaller_totem keeps its bursty boss-room identity.
+	"spell_static_field": {
+		"primary_stat": "dex",
+		"cooldown": 4.5,
+		"damage": 8,
+		"range_cells": 3,
+		"projectile": "",
+		"trail_flavor": "thunderous",
+		"element": "thunderous",
+		"projectile_speed": 0.0,
+	},
 }
 
 static func archetype_def(base_type: String) -> Dictionary:
