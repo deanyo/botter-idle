@@ -972,6 +972,12 @@ func attempt_attack(other: Actor, delta: float) -> int:
 		var bot_se: Bot = self as Bot
 		if bot_se.weapon_bleed_per_sec > 0:
 			other.add_bloodletting(bot_se.weapon_bleed_per_sec)
+		# §1.H of_zealous_strike (a02 P-022): every landed hit applies a 3s
+		# holy DoT. Same true-damage tick path as bleeding via a distinct
+		# "smite" status. Composes with bleeding on the same target — they
+		# tick independently and read separately in the HUD overlay.
+		if bot_se.holy_dot_per_sec > 0:
+			other.add_smite(bot_se.holy_dot_per_sec)
 	# S11 of_bleed_on_miss (a07 §6.1 Sigmund's Sickle). On a missed swing
 	# (dealt == 0 — defender evaded/blocked), apply a 3s bleed (4 dmg/s).
 	# Compensates daggers/scythes for swings that whiff against high-evasion
@@ -1291,6 +1297,13 @@ func add_sunder_stack(per_stack_amount: int) -> void:
 # physical, not poison/fire, so poison_res / fire_res don't gate it).
 func add_bloodletting(per_tick: int) -> void:
 	_apply_dot_status("bleeding", per_tick, 4, 1.0)
+
+# §1.H of_zealous_strike (a02 P-022): apply a 3s holy DoT on landed hits.
+# Same true-damage tick path as bleeding (DoTs bypass armor + resists by
+# design). Distinct status_id "smite" so the HUD overlay reads correctly
+# and a single defender can carry both bleeding + smite simultaneously.
+func add_smite(per_tick: int) -> void:
+	_apply_dot_status("smite", per_tick, 3, 1.0)
 
 func add_burn(per_tick: int, ticks: int, interval: float) -> void:
 	# fire_res grants immunity to burn DoT (matches DCSS rF+ stops

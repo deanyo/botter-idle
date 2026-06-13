@@ -43,6 +43,8 @@ const STATUSES := {
 		"label": "Wounded", "desc": "Below 30% HP — retreat or finish the fight." },
 	"bleeding": { "icon": "blood.png",  "tint": Color(0.75, 0.10, 0.10), "pulse": true, "z": 4,
 		"label": "Bleeding", "desc": "Taking flat physical damage over time (of_bloodletting)." },
+	"smite":    { "icon": "halo.png",   "tint": Color(1.0, 0.95, 0.55), "pulse": true,  "z": 4,
+		"label": "Smite", "desc": "Taking flat holy damage over time (of_zealous_strike)." },
 	"shielded": { "icon": "ward.png",   "tint": Color(0.6, 0.85, 1), "pulse": false, "z": 8,
 		"label": "Shielded", "desc": "Reducing or absorbing damage." },
 	"stunned":  { "icon": "rage.png",   "tint": Color(1, 0.9, 0.4), "pulse": true,   "z": 9,

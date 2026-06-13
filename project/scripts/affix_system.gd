@@ -377,6 +377,7 @@ const _STAT_DESCRIPTIONS := {
 	"pack_dmg_per_enemy_pct": "+{N}% damage per enemy within 3 tiles (cap 5 enemies).",
 	"full_hp_armor_pct": "+{N}% armor while at full HP. Cap 75.",
 	"weapon_bleed_per_sec": "Each landed hit applies a 4s bleed dealing {N} physical/sec.",
+	"holy_dot_per_sec": "Each landed hit applies a 3s holy burn dealing {N} holy/sec.",
 }
 
 static func description_for_stat(stat: String) -> String:
@@ -426,6 +427,7 @@ const _NAMED_EFFECT_STATS := {
 	"pack_dmg_per_enemy_pct": true,
 	"full_hp_armor_pct": true,
 	"weapon_bleed_per_sec": true,
+	"holy_dot_per_sec": true,
 }
 
 static func is_named_effect_stat(stat: String) -> bool:
