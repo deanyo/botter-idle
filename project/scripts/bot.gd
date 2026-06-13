@@ -137,6 +137,7 @@ var high_hp_cdr_pct: float = 0.0
 var kill_streak_cdr_pct: float = 0.0
 var crit_chain_pct: float = 0.0
 var step_pulse_pct: float = 0.0
+var loot_quantity_pct: float = 0.0
 # §1.H of_warden_step cell-traversal counter. Increments when the bot
 # moves to a new cell (path_index advances in step_movement). Fires
 # the pulse on cell 8 and resets to 0. Independent of frame rate.
@@ -607,6 +608,7 @@ func recompute_stats() -> void:
 	kill_streak_cdr_pct = float(d.get("kill_streak_cdr_pct", 0.0))
 	crit_chain_pct = float(d.get("crit_chain_pct", 0.0))
 	step_pulse_pct = float(d.get("step_pulse_pct", 0.0))
+	loot_quantity_pct = float(d.get("loot_quantity_pct", 0.0))
 	# anchor_regen folds into hp_regen so the regen tick already in actor.gd
 	# picks it up alongside species + worn-tag regen.
 	hp_regen_per_sec = float(d.hp_regen) + anchor_regen

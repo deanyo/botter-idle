@@ -395,6 +395,7 @@ const _STAT_DESCRIPTIONS := {
 	"kill_streak_cdr_pct": "Each kill (3s window) adds a stack (cap 4). Each stack: +{N}% spell CDR. Cap 7/stack.",
 	"crit_chain_pct": "On crit: chain to the nearest enemy within 4 tiles for {N}% of the crit's damage. Cap 50.",
 	"step_pulse_pct": "Every 8 cells walked: discharge a 2-tile AoE for {N}% of weapon damage. Cap 80.",
+	"loot_quantity_pct": "+{N}% chance to spawn an extra loot drop on each kill that drops loot. Hard cap 50.",
 }
 
 static func description_for_stat(stat: String) -> String:
@@ -462,6 +463,7 @@ const _NAMED_EFFECT_STATS := {
 	"kill_streak_cdr_pct": true,
 	"crit_chain_pct": true,
 	"step_pulse_pct": true,
+	"loot_quantity_pct": true,
 }
 
 static func is_named_effect_stat(stat: String) -> bool:

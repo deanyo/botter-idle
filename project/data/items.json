@@ -7952,7 +7952,8 @@
         "of_bloodletting": 8,
         "of_synergy": 8,
         "of_executioner": 8,
-        "of_tactician": 5
+        "of_tactician": 5,
+        "of_abundance": 6
       }
     },
     {
@@ -9003,7 +9004,8 @@
         "of_doomstrike": 5,
         "of_overflowing_chalice": 5,
         "of_tactician": 5,
-        "of_chainspark": 5
+        "of_chainspark": 5,
+        "of_abundance": 5
       }
     },
     {
@@ -32440,7 +32442,8 @@
         "of_finesse": 10,
         "of_recoup": 5,
         "of_smoldering_step": 5,
-        "of_warden_step": 5
+        "of_warden_step": 5,
+        "of_abundance": 4
       },
       "default_tint": {
         "hue": 270,
@@ -36466,7 +36469,8 @@
         "of_the_cat": 12,
         "of_regen": 8,
         "of_smoldering_step": 6,
-        "of_warden_step": 6
+        "of_warden_step": 6,
+        "of_abundance": 5
       },
       "default_tint": {
         "hue": 50,

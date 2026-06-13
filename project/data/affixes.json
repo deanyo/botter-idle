@@ -618,6 +618,12 @@
       "name": "of the Warden Step", "stat": "step_pulse_pct",
       "applies_to": ["boots","cloak"],
       "tiers": [[20,28],[28,38],[38,50],[50,65],[65,80]]
+    },
+    {
+      "id": "of_abundance",      "family": "generic", "kind": "pct",
+      "name": "of Abundance",    "stat": "loot_quantity_pct",
+      "applies_to": ["amulet","cloak","ring"],
+      "tiers": [[5,8],[8,12],[12,18],[18,25],[25,32]]
     }
   ]
 }

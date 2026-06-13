@@ -1554,6 +1554,19 @@ func _maybe_drop_item(e: Enemy) -> void:
 			continue
 		var instance: Dictionary = LootFactory.create_item_instance(rng, picked, items_db)
 		_spawn_loot_drop(instance, e.cell)
+	# §2.E loot_quantity_pct (a06-newstat-022, a11 hard clamp 50). One
+	# additional drop roll after the standard drop_count loop. Reads bot
+	# field; no-op when 0. Independent additive — rare-leader's
+	# drop_count=2 + a 50% loot_quantity roll yields 2 or 3 drops, never
+	# multiplicative. Quantity affix can't change drop *rarity* (stays in
+	# loot_rarity_bonus's lane).
+	if is_instance_valid(bot) and float(bot.loot_quantity_pct) > 0.0:
+		if rng.randf() * 100.0 < float(bot.loot_quantity_pct):
+			var bonus_rarity: String = _roll_drop_rarity(e.is_boss or e.is_miniboss or e.pack_tier == Enemy.PACK_RARE)
+			var bonus_picked: String = LootFactory.pick_loot_id(rng, bonus_rarity, items_db, _source_tier(), run_dropped_uniques, allow_spell, String(current_biome.get("id", "")))
+			if bonus_picked != "":
+				var bonus_inst: Dictionary = LootFactory.create_item_instance(rng, bonus_picked, items_db)
+				_spawn_loot_drop(bonus_inst, e.cell)
 	# S11 boss-anchor unique drop (a07 §6). On boss kills, look up any
 	# items.json entry whose `boss_drop` matches this enemy's id. First
 	# kill of the boss drops the anchor as a guaranteed bonus; subsequent
