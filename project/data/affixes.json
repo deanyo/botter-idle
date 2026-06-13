@@ -576,6 +576,12 @@
       "name": "of Aegis Thorns", "stat": "block_thorns_flat",
       "applies_to": ["shield"],
       "tiers": [[5,8],[10,14],[16,22],[22,30],[30,42]]
+    },
+    {
+      "id": "of_vulnerability_mark", "family": "generic", "kind": "pct",
+      "name": "of the Vulnerability Mark", "stat": "first_hit_mark_pct",
+      "applies_to": ["weapon"],
+      "tiers": [[6,8],[10,12],[12,16],[15,20],[18,25]]
     }
   ]
 }

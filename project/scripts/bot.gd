@@ -125,6 +125,7 @@ var recoup_pct: float = 0.0
 var move_spell_dmg_pct: float = 0.0
 var thorns_flat: int = 0
 var block_thorns_flat: int = 0
+var first_hit_mark_pct: float = 0.0
 # §1.H a11 G4: rolling-window emission cap on reflect sources. Sum of
 # of_thorns + of_aegis_thorns reflect emitted per second ≤ max_hp×0.05.
 # resolve_swing accumulates _thorns_emitted in the active window; when
@@ -571,6 +572,7 @@ func recompute_stats() -> void:
 	move_spell_dmg_pct = float(d.get("move_spell_dmg_pct", 0.0))
 	thorns_flat = int(d.get("thorns_flat", 0))
 	block_thorns_flat = int(d.get("block_thorns_flat", 0))
+	first_hit_mark_pct = float(d.get("first_hit_mark_pct", 0.0))
 	# anchor_regen folds into hp_regen so the regen tick already in actor.gd
 	# picks it up alongside species + worn-tag regen.
 	hp_regen_per_sec = float(d.hp_regen) + anchor_regen

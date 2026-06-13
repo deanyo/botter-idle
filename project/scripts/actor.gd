@@ -504,18 +504,17 @@ func _apply_typed_damage(raw: int, damage_type: String, attacker: Actor, def_tag
 	var raw_amped: float = float(raw)
 	if has_status("cursed"):
 		raw_amped *= 1.15
-	# §1.H of_hunter_mark (a02 P-009, a11 G7). Marked enemies take +X%
-	# damage from all sources for 4s. Mark applied at on-crit site below.
-	# Per-target gate: only the highest crit_mark_dmg_pct attacker's mark
-	# applies (we read the attacker's value; multiple attackers would each
-	# apply their own status, but the LATEST refresh wins by status overlay
-	# semantics — _apply_dot_status overwrites — so the design is: latest
-	# crit lands the active mark. iron_shot pierce: the same status fires
-	# on each pierced target since it's per-defender, not per-source-event).
+	# §1.H of_hunter_mark (a02 P-009, a11 G7) + of_vulnerability_mark
+	# (a09-cond-002). Marked enemies take +X% damage from all sources for
+	# 4s. of_hunter_mark applies on-crit; of_vulnerability_mark applies on
+	# first-hit-per-target (see attempt_attack first-strike branch). Both
+	# attacker-side accumulators sum into the marked-amp lane. Per-target
+	# gate: only the LATEST refresh status sits active.
 	if has_status("marked") and attacker != null and attacker is Bot:
 		var bot_hm: Bot = attacker as Bot
-		if bot_hm.crit_mark_dmg_pct > 0.0:
-			raw_amped *= 1.0 + bot_hm.crit_mark_dmg_pct / 100.0
+		var amp: float = bot_hm.crit_mark_dmg_pct + bot_hm.first_hit_mark_pct
+		if amp > 0.0:
+			raw_amped *= 1.0 + amp / 100.0
 	if damage_type == "physical":
 		# Apply mit_sum first, then armor flat-subtract. Floor of 1 so
 		# a fully mitigated hit still pings the HP bar.
@@ -796,10 +795,18 @@ func attempt_attack(other: Actor, delta: float) -> int:
 		# can't blast a single hit past 4× weapon damage. Mark target as
 		# hit AFTER the swing so the same swing's ephemeral lane gets the
 		# bonus. Per-floor reset cleared via dungeon._build_floor.
-		if bot_self.first_hit_pct > 0.0 and is_instance_valid(other):
+		# §1.H of_vulnerability_mark (a09-cond-002) shares the same
+		# per-target gate but applies the "marked" status to the target
+		# instead of an attacker-side ephemeral amp — durable across
+		# multi-hit follow-up (DoTs, allies, spells all read marked).
+		if (bot_self.first_hit_pct > 0.0 or bot_self.first_hit_mark_pct > 0.0) \
+				and is_instance_valid(other):
 			var oid: int = other.get_instance_id()
 			if not bot_self._first_strike_hit_ids.has(oid):
-				ephemeral_sum += bot_self.first_hit_pct / 100.0
+				if bot_self.first_hit_pct > 0.0:
+					ephemeral_sum += bot_self.first_hit_pct / 100.0
+				if bot_self.first_hit_mark_pct > 0.0:
+					other.add_status("marked", 4.0)
 				bot_self._first_strike_hit_ids[oid] = true
 		# §1.H of_butcher — pack-density damage. Per a02 P-005, +X% per
 		# enemy within 3 tiles, cap 5 enemies (so cap-tier T5×5=+50%).
