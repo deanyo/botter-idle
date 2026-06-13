@@ -558,6 +558,7 @@ const _S12_CAPS := {
 	# cap extends this table in the same commit so the regression
 	# net stays current.
 	"loot_quantity_pct":        50.0,   # of_abundance        (a06-newstat-022, a11 hard clamp)
+	"damage_taken_pct":         40.0,   # of_obstinance       (a06-newstat-021)
 }
 
 # Map each capped stat key to an affix id known to write it. The probe
@@ -590,6 +591,7 @@ const _S12_STAT_TO_AFFIX := {
 	"first_hit_mark_pct":       "of_vulnerability_mark",
 	"riposte_dmg_pct":          "of_riposte_strike",
 	"loot_quantity_pct":        "of_abundance",
+	"damage_taken_pct":         "of_obstinance",
 }
 
 # Slot to use for each affix when stuffing the test loadout. Picked
@@ -623,6 +625,7 @@ const _S12_AFFIX_TEST_SLOT := {
 	"of_vulnerability_mark":  "weapon",
 	"of_riposte_strike":      "weapon",
 	"of_abundance":           "amulet",
+	"of_obstinance":          "armor",
 }
 
 # Build a synthetic items_db with one stub-item per slot needed by the

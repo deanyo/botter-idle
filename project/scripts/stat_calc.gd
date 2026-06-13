@@ -159,6 +159,7 @@ static func compute(
 	var crit_chain_pct: float = 0.0
 	var step_pulse_pct: float = 0.0
 	var loot_quantity_pct: float = 0.0
+	var damage_taken_pct: float = 0.0
 
 	# Bot upgrades — gold-sink purchases. Pre-2026-06-06 combat_training
 	# (atk) and toughening (def) were never read here; players spent gold
@@ -372,6 +373,7 @@ static func compute(
 		crit_chain_pct += float(slot_sums.get("crit_chain_pct", 0))
 		step_pulse_pct += float(slot_sums.get("step_pulse_pct", 0))
 		loot_quantity_pct += float(slot_sums.get("loot_quantity_pct", 0))
+		damage_taken_pct += float(slot_sums.get("damage_taken_pct", 0))
 		# Per-element spell-damage affixes (of_pyromancer / of_cryomancer
 		# / of_thundercaller / of_zealot / of_pestcaller / of_nightcaller). Each writes to
 		# `<elem>_dmg_pct`; we accumulate into spell_element_pct keyed by
@@ -642,6 +644,14 @@ static func compute(
 	# coast past 50%). 4-source DR stack with T5=32 would natively reach
 	# 32+24+16+8 = 80 → clamp 50.
 	loot_quantity_pct = clampf(loot_quantity_pct, 0.0, 50.0)
+	# §2.E damage_taken_pct — A6-newstat-021, a10 cap 40. Universal DR
+	# lane that composes with worn-tag mit (warding/acrobat/guardian/petrify
+	# etc) and resist_pct in actor.gd::resolve_swing's mit_sum. Per
+	# A11-G3 the additive +90% mit ceiling absorbs the upper tail —
+	# damage_taken at 40 + acrobat 17 + warding 20 + petrify 25 = 102 →
+	# clamps 90 in the final_mit step. 5-source DR stack 30+22.5+15+7.5+7.5
+	# = 82.5 → clamp 40 here so the universal lane stays inside the design.
+	damage_taken_pct = clampf(damage_taken_pct, 0.0, 40.0)
 	if low_hp_target_dmg_pct > 0.0 and glass_cannon_dmg_pct > 0.0:
 		if low_hp_target_dmg_pct >= glass_cannon_dmg_pct:
 			glass_cannon_dmg_pct = 0.0
@@ -800,6 +810,7 @@ static func compute(
 	out["crit_chain_pct"] = crit_chain_pct
 	out["step_pulse_pct"] = step_pulse_pct
 	out["loot_quantity_pct"] = loot_quantity_pct
+	out["damage_taken_pct"] = damage_taken_pct
 	out["move_speed"] = move_speed
 	out["aggro_bonus"] = vision_count + sp_aggro_flat
 	out["loot_rarity_bonus"] = loot_rarity_bonus
@@ -852,7 +863,7 @@ static func _initial_dict() -> Dictionary:
 		"thorns_flat": 0, "block_thorns_flat": 0, "first_hit_mark_pct": 0.0,
 		"doomstrike_dmg_pct": 0.0, "riposte_dmg_pct": 0.0, "high_hp_cdr_pct": 0.0,
 		"kill_streak_cdr_pct": 0.0, "crit_chain_pct": 0.0, "step_pulse_pct": 0.0,
-		"loot_quantity_pct": 0.0,
+		"loot_quantity_pct": 0.0, "damage_taken_pct": 0.0,
 		"move_speed": _BASE_MOVE_SPEED, "aggro_bonus": 0,
 		"loot_rarity_bonus": 0.0, "xp_gain_pct": 0.0,
 		"alloc_str": 0, "alloc_dex": 0, "alloc_int": 0, "unspent_points": 0,

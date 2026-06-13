@@ -478,6 +478,14 @@ func _apply_typed_damage(raw: int, damage_type: String, attacker: Actor, def_tag
 			var bot_rv: Bot = self as Bot
 			if bot_rv.low_hp_dr_pct > 0.0:
 				mit_sum += bot_rv.low_hp_dr_pct / 100.0
+		# §2.E damage_taken_pct — universal DR lane (a06-newstat-021, a10
+		# cap 40). No conditional gate; reads bot field unconditionally.
+		# Composes additively with worn-tag mit + resist_pct + revenant
+		# in the final_mit clamp at +90% ceiling.
+		if self is Bot:
+			var bot_dt: Bot = self as Bot
+			if bot_dt.damage_taken_pct > 0.0:
+				mit_sum += bot_dt.damage_taken_pct / 100.0
 		# `guardian`: flat -10% damage taken — backup armor.
 		if "guardian" in def_tags:
 			mit_sum += 0.10

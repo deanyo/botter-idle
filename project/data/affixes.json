@@ -624,6 +624,12 @@
       "name": "of Abundance",    "stat": "loot_quantity_pct",
       "applies_to": ["amulet","cloak","ring"],
       "tiers": [[5,8],[8,12],[12,18],[18,25],[25,32]]
+    },
+    {
+      "id": "of_obstinance",     "family": "generic", "kind": "pct",
+      "name": "of Obstinance",   "stat": "damage_taken_pct",
+      "applies_to": ["armor","helm","cloak","boots","amulet"],
+      "tiers": [[3,5],[6,9],[10,14],[15,22],[22,30]]
     }
   ]
 }

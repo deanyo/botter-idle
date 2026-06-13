@@ -3508,7 +3508,8 @@
         "of_regen": 15,
         "of_revenant": 8,
         "of_unbroken": 8,
-        "of_thorns": 8
+        "of_thorns": 8,
+        "of_obstinance": 6
       }
     },
     {
@@ -4183,7 +4184,8 @@
         "of_regen": 15,
         "of_revenant": 8,
         "of_unbroken": 6,
-        "of_thorns": 5
+        "of_thorns": 5,
+        "of_obstinance": 5
       }
     },
     {
@@ -5474,7 +5476,8 @@
         "of_glass_cannon": 8,
         "of_unbroken": 5,
         "of_unwavering_focus": 8,
-        "of_recoup": 5
+        "of_recoup": 5,
+        "of_obstinance": 5
       }
     },
     {
@@ -6910,7 +6913,8 @@
         "of_dark_resist": 8,
         "of_warding": 8,
         "of_bulwark": 8,
-        "of_aegis_thorns": 8
+        "of_aegis_thorns": 8,
+        "of_obstinance": 5
       },
       "default_tint": {
         "hue": 270,
