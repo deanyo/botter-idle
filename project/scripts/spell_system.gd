@@ -236,6 +236,13 @@ static func _dispatch_fire(bot: Node, dungeon: Node, item: Dictionary) -> void:
 			fired = _fire_wisp_servant(bot, dungeon, item)
 		"spell_ember_bloom":
 			fired = _fire_ember_bloom(bot, dungeon, item)
+		# §2.F (S12) passthrough archetypes — ride existing dispatchers.
+		"spell_choking_cloud":
+			fired = _fire_venom_cloud(bot, dungeon, item)
+		"spell_curse_frailty":
+			fired = _fire_curse_brittlebone(bot, dungeon, item)
+		"spell_bolt_long_cd":
+			fired = _fire_fireball(bot, dungeon, item)
 	if fired:
 		_fire_count += 1
 		_fire_by_arch[base_type] = int(_fire_by_arch.get(base_type, 0)) + 1
@@ -251,7 +258,11 @@ static func _dispatch_fire(bot: Node, dungeon: Node, item: Dictionary) -> void:
 # the cast is wasted (cooldown still resets — intentional, prevents
 # infinite-charge cheese while exploring empty corridors).
 static func _fire_fireball(bot: Node, dungeon: Node, item: Dictionary) -> bool:
-	var arch: Dictionary = SpellData.archetype_def("spell_fireball")
+	# §2.F generalized: read base_type so spell_bolt_long_cd (long-CD
+	# heavy single-shot) can ride this dispatcher with its own
+	# damage / cooldown / range / sprite from archetype_def.
+	var base_type: String = String(item.get("base_type", "spell_fireball"))
+	var arch: Dictionary = SpellData.archetype_def(base_type)
 	if arch.is_empty() or not is_instance_valid(bot) or dungeon == null:
 		return false
 	var range_cells: int = int(arch.get("range_cells", 8))
@@ -276,7 +287,7 @@ static func _fire_fireball(bot: Node, dungeon: Node, item: Dictionary) -> bool:
 	var damage: int = SpellData.compute_damage(bot, item, item.get("_inst", null))
 	# Per-flavor sprite picker — fire flavor gets a real flame sprite,
 	# cold gets iceblast, holy gets holy_flame, etc. 2026-06-05.
-	var sprite_path: String = _resolve_sprite_path(item, "spell_fireball", String(arch.get("projectile", "")))
+	var sprite_path: String = _resolve_sprite_path(item, base_type, String(arch.get("projectile", "")))
 	var element: String = String(arch.get("element", ""))
 	var base_speed: float = float(arch.get("projectile_speed", 320.0))
 	var speed: float = base_speed * (1.0 + float(bot.spell_proj_speed_pct) / 100.0)
@@ -746,7 +757,11 @@ static func _fire_bone_spear(bot: Node, dungeon: Node, item: Dictionary) -> bool
 # doesn't drift mid-tick when bot stat changes mid-tick). Hard 2/s
 # tick rate cap, hard 3-enemy max — both inside SpellCloud.
 static func _fire_venom_cloud(bot: Node, dungeon: Node, item: Dictionary) -> bool:
-	var arch: Dictionary = SpellData.archetype_def("spell_venom_cloud")
+	# §2.F generalized: read base_type from the item so spell_choking_cloud
+	# (dark) can ride this same dispatcher with a different element.
+	# spell_venom_cloud → poison (existing); spell_choking_cloud → dark.
+	var base_type: String = String(item.get("base_type", "spell_venom_cloud"))
+	var arch: Dictionary = SpellData.archetype_def(base_type)
 	if arch.is_empty() or not is_instance_valid(bot) or dungeon == null:
 		return false
 	var range_cells: int = int(arch.get("range_cells", 5))
@@ -762,7 +777,7 @@ static func _fire_venom_cloud(bot: Node, dungeon: Node, item: Dictionary) -> boo
 	# Radius scales with spell_area_pct.
 	var radius_cells: float = 2.0 * (1.0 + float(bot.spell_area_pct) / 100.0)
 	var target_cell: Vector2 = candidates[0].e.position
-	var color := _visual_color_for_item(item, "poison")
+	var color := _visual_color_for_item(item, element if element != "" else "poison")
 	color.a = 0.55
 	SpellCloud.spawn_cloud(dungeon, target_cell, per_tick, dt, radius_cells, lifetime, color, bot)
 	return true
@@ -788,7 +803,12 @@ static func _fire_stormcaller_totem(bot: Node, dungeon: Node, item: Dictionary) 
 # 0 direct damage (1 to register kill log, but only if compute_damage
 # rolls non-zero).
 static func _fire_curse_brittlebone(bot: Node, dungeon: Node, item: Dictionary) -> bool:
-	var arch: Dictionary = SpellData.archetype_def("spell_curse_brittlebone")
+	# §2.F generalized: read base_type so spell_curse_frailty (INT-coded)
+	# can ride this dispatcher. brittlebone is DEX, frailty is INT —
+	# different primary_stat in archetype_def + different display name,
+	# same dark-debuff combat shape (cursed status + multi-target).
+	var base_type: String = String(item.get("base_type", "spell_curse_brittlebone"))
+	var arch: Dictionary = SpellData.archetype_def(base_type)
 	if arch.is_empty() or not is_instance_valid(bot) or dungeon == null:
 		return false
 	var range_cells: int = int(arch.get("range_cells", 6))

@@ -262,6 +262,52 @@ const ARCHETYPES := {
 		"element": "fire",
 		"projectile_speed": 0.0,
 	},
+	# §2.F (S12) — 3 new archetypes ride existing dispatchers via the
+	# base_type passthrough refactor in spell_system.gd. Cheap content
+	# adds; no new combat hot-paths.
+	#
+	# choking_cloud: INT dark DoT cloud. Same SpellCloud machinery as
+	# venom_cloud but dark-flavored. Lets a dark-spec INT build pair
+	# this with curse_brittlebone for "cursed-cloud" pacing.
+	"spell_choking_cloud": {
+		"primary_stat": "int",
+		"cooldown": 4.5,
+		"damage": 2,
+		"range_cells": 5,
+		"projectile": "",
+		"trail_flavor": "dark",
+		"element": "dark",
+		"projectile_speed": 0.0,
+	},
+	# curse_frailty: INT version of curse_brittlebone. Same cursed-status
+	# multi-target debuff but INT-coded (lets pure-INT casters access
+	# the curse archetype without rolling DEX). Same dur, same range.
+	"spell_curse_frailty": {
+		"primary_stat": "int",
+		"cooldown": 8.0,
+		"damage": 1,
+		"range_cells": 6,
+		"projectile": "",
+		"trail_flavor": "dark",
+		"element": "dark",
+		"projectile_speed": 0.0,
+	},
+	# bolt_long_cd: INT projectile with ≥10s base CD. Unblocks the dead
+	# skip-cast path in spell_system — the bot's AI has a "skip cast if
+	# CD too long for current encounter" branch that never fires today
+	# because no archetype has long enough CD. Heavy single-shot damage
+	# rewards the trade. Routes through fireball dispatcher (homing
+	# projectile) by adding a passthrough.
+	"spell_bolt_long_cd": {
+		"primary_stat": "int",
+		"cooldown": 12.0,
+		"damage": 80,
+		"range_cells": 10,
+		"projectile": "res://assets/tiles/projectiles/fireball.png",
+		"trail_flavor": "fire",
+		"element": "fire",
+		"projectile_speed": 360.0,
+	},
 }
 
 static func archetype_def(base_type: String) -> Dictionary:
