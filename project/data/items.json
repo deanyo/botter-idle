@@ -921,7 +921,8 @@
         "of_berserker_rage": 8,
         "of_executioner": 8,
         "of_serrated_edge": 5,
-        "of_avenger": 5
+        "of_avenger": 5,
+        "of_armor_breaker": 5
       }
     },
     {
@@ -12768,7 +12769,8 @@
         "of_berserker_rage": 8,
         "of_executioner": 8,
         "of_kingslayer": 12,
-        "of_drainblade": 5
+        "of_drainblade": 5,
+        "of_armor_breaker": 8
       }
     },
     {
@@ -12981,7 +12983,8 @@
         "of_sundering": 8,
         "of_bloodletting": 8,
         "of_berserker_rage": 8,
-        "of_executioner": 8
+        "of_executioner": 8,
+        "of_armor_breaker": 8
       }
     },
     {
@@ -13038,7 +13041,8 @@
         "of_executioner": 8,
         "of_executioner_pact": 12,
         "of_kingslayer": 10,
-        "of_avenger": 8
+        "of_avenger": 8,
+        "of_armor_breaker": 8
       }
     },
     {
@@ -13342,7 +13346,8 @@
         "of_sundering": 8,
         "of_bloodletting": 8,
         "of_berserker_rage": 8,
-        "of_executioner": 8
+        "of_executioner": 8,
+        "of_armor_breaker": 5
       }
     },
     {
@@ -14754,7 +14759,8 @@
         "of_bloodletting": 8,
         "of_berserker_rage": 8,
         "of_executioner": 8,
-        "of_kingslayer": 8
+        "of_kingslayer": 8,
+        "of_armor_breaker": 6
       }
     },
     {

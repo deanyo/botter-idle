@@ -118,6 +118,7 @@ var holy_dot_per_sec: int = 0
 var revenge_dmg_pct: float = 0.0
 var first_hit_pct: float = 0.0
 var hp_per_kill_flat: int = 0
+var melee_armor_pen_pct: float = 0.0
 # §1.H of_first_strike per-floor target tracker. Keys are Enemy
 # instance_ids; presence means "this enemy has been hit at least once
 # this floor." Reset on floor_started in dungeon._build_floor.
@@ -545,6 +546,7 @@ func recompute_stats() -> void:
 	revenge_dmg_pct = float(d.get("revenge_dmg_pct", 0.0))
 	first_hit_pct = float(d.get("first_hit_pct", 0.0))
 	hp_per_kill_flat = int(d.get("hp_per_kill_flat", 0))
+	melee_armor_pen_pct = float(d.get("melee_armor_pen_pct", 0.0))
 	# anchor_regen folds into hp_regen so the regen tick already in actor.gd
 	# picks it up alongside species + worn-tag regen.
 	hp_regen_per_sec = float(d.hp_regen) + anchor_regen

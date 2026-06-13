@@ -144,6 +144,7 @@ static func compute(
 	var revenge_dmg_pct: float = 0.0
 	var first_hit_pct: float = 0.0
 	var hp_per_kill_flat: int = 0
+	var melee_armor_pen_pct: float = 0.0
 
 	# Bot upgrades — gold-sink purchases. Pre-2026-06-06 combat_training
 	# (atk) and toughening (def) were never read here; players spent gold
@@ -342,6 +343,7 @@ static func compute(
 		revenge_dmg_pct += float(slot_sums.get("revenge_dmg_pct", 0))
 		first_hit_pct += float(slot_sums.get("first_hit_pct", 0))
 		hp_per_kill_flat += int(round(float(slot_sums.get("hp_per_kill_flat", 0))))
+		melee_armor_pen_pct += float(slot_sums.get("melee_armor_pen_pct", 0))
 		# Per-element spell-damage affixes (of_pyromancer / of_cryomancer
 		# / of_thundercaller / of_zealot / of_pestcaller / of_nightcaller). Each writes to
 		# `<elem>_dmg_pct`; we accumulate into spell_element_pct keyed by
@@ -536,6 +538,12 @@ static func compute(
 	# emitted — drainblade is per-kill (not per-second), well under the
 	# rolling cap. 3-source DR stack: 24 + 18 + 12 = 54, hard-clamped 30.
 	hp_per_kill_flat = clampi(hp_per_kill_flat, 0, 30)
+	# §1.H of_armor_breaker — A2 P-018 cap 50. STR-coded melee answer to
+	# spell-pen. Applied to attacker's eff_armor lookup against the defender,
+	# multiplicatively (eff_armor *= 1 - pen/100). Composes with of_sundering
+	# (flat strip) — both reduce the same eff_armor; sundering is consumed
+	# per-stack, pen is permanent-while-equipped.
+	melee_armor_pen_pct = clampf(melee_armor_pen_pct, 0.0, 50.0)
 	if low_hp_target_dmg_pct > 0.0 and glass_cannon_dmg_pct > 0.0:
 		if low_hp_target_dmg_pct >= glass_cannon_dmg_pct:
 			glass_cannon_dmg_pct = 0.0
@@ -679,6 +687,7 @@ static func compute(
 	out["revenge_dmg_pct"] = revenge_dmg_pct
 	out["first_hit_pct"] = first_hit_pct
 	out["hp_per_kill_flat"] = hp_per_kill_flat
+	out["melee_armor_pen_pct"] = melee_armor_pen_pct
 	out["move_speed"] = move_speed
 	out["aggro_bonus"] = vision_count + sp_aggro_flat
 	out["loot_rarity_bonus"] = loot_rarity_bonus
@@ -725,6 +734,7 @@ static func _initial_dict() -> Dictionary:
 		"revenge_dmg_pct": 0.0,
 		"first_hit_pct": 0.0,
 		"hp_per_kill_flat": 0,
+		"melee_armor_pen_pct": 0.0,
 		"move_speed": _BASE_MOVE_SPEED, "aggro_bonus": 0,
 		"loot_rarity_bonus": 0.0, "xp_gain_pct": 0.0,
 		"alloc_str": 0, "alloc_dex": 0, "alloc_int": 0, "unspent_points": 0,

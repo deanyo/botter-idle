@@ -495,6 +495,15 @@ func _apply_typed_damage(raw: int, damage_type: String, attacker: Actor, def_tag
 		# armor target with both stacks reads as ~25 armor.
 		if has_status("cursed"):
 			eff_armor = int(float(eff_armor) * 0.5)
+		# §1.H of_armor_breaker (a02 P-018) — attacker-side armor pen, cap 50.
+		# Applied last so it lands on already-sundered/cursed armor; the
+		# composed shape is "everything stacks multiplicatively from the
+		# defender's nominal armor down." Bot-only attacker; enemies have no
+		# melee_armor_pen_pct field.
+		if attacker != null and attacker is Bot:
+			var bot_atk: Bot = attacker as Bot
+			if bot_atk.melee_armor_pen_pct > 0.0:
+				eff_armor = int(round(float(eff_armor) * (1.0 - bot_atk.melee_armor_pen_pct / 100.0)))
 		dmg = maxi(1, post_mit - eff_armor)
 	else:
 		var resist_pct: float = 0.0
