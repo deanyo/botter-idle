@@ -139,6 +139,7 @@ static func compute(
 	var boss_dmg_pct: float = 0.0
 	var pack_dmg_per_enemy_pct: float = 0.0
 	var full_hp_armor_pct: float = 0.0
+	var weapon_bleed_per_sec: int = 0
 
 	# Bot upgrades — gold-sink purchases. Pre-2026-06-06 combat_training
 	# (atk) and toughening (def) were never read here; players spent gold
@@ -332,6 +333,7 @@ static func compute(
 		boss_dmg_pct += float(slot_sums.get("boss_dmg_pct", 0))
 		pack_dmg_per_enemy_pct += float(slot_sums.get("pack_dmg_per_enemy_pct", 0))
 		full_hp_armor_pct += float(slot_sums.get("full_hp_armor_pct", 0))
+		weapon_bleed_per_sec += int(round(float(slot_sums.get("weapon_bleed_per_sec", 0))))
 		# Per-element spell-damage affixes (of_pyromancer / of_cryomancer
 		# / of_thundercaller / of_zealot / of_pestcaller / of_nightcaller). Each writes to
 		# `<elem>_dmg_pct`; we accumulate into spell_element_pct keyed by
@@ -503,6 +505,11 @@ static func compute(
 	boss_dmg_pct = clampf(boss_dmg_pct, 0.0, 40.0)
 	pack_dmg_per_enemy_pct = clampf(pack_dmg_per_enemy_pct, 0.0, 10.0)
 	full_hp_armor_pct = clampf(full_hp_armor_pct, 0.0, 75.0)
+	# §1.H of_serrated_edge — A2 P-021 cap 16 per source (DR'd across slots).
+	# Weapon-only so a max stack is 1×T5 (14) at base + meta_mult/qmult lift,
+	# capped at 16 here for safety. Composes with of_bloodletting on-crit by
+	# overwriting the per-tick value (whichever is larger wins per-frame).
+	weapon_bleed_per_sec = clampi(weapon_bleed_per_sec, 0, 16)
 	if low_hp_target_dmg_pct > 0.0 and glass_cannon_dmg_pct > 0.0:
 		if low_hp_target_dmg_pct >= glass_cannon_dmg_pct:
 			glass_cannon_dmg_pct = 0.0
@@ -641,6 +648,7 @@ static func compute(
 	out["boss_dmg_pct"] = boss_dmg_pct
 	out["pack_dmg_per_enemy_pct"] = pack_dmg_per_enemy_pct
 	out["full_hp_armor_pct"] = full_hp_armor_pct
+	out["weapon_bleed_per_sec"] = weapon_bleed_per_sec
 	out["move_speed"] = move_speed
 	out["aggro_bonus"] = vision_count + sp_aggro_flat
 	out["loot_rarity_bonus"] = loot_rarity_bonus
@@ -682,6 +690,7 @@ static func _initial_dict() -> Dictionary:
 		"low_hp_target_dmg_pct": 0.0, "glass_cannon_dmg_pct": 0.0,
 		"low_hp_dr_pct": 0.0, "boss_dmg_pct": 0.0, "pack_dmg_per_enemy_pct": 0.0,
 		"full_hp_armor_pct": 0.0,
+		"weapon_bleed_per_sec": 0,
 		"move_speed": _BASE_MOVE_SPEED, "aggro_bonus": 0,
 		"loot_rarity_bonus": 0.0, "xp_gain_pct": 0.0,
 		"alloc_str": 0, "alloc_dex": 0, "alloc_int": 0, "unspent_points": 0,

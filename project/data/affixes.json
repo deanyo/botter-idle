@@ -504,6 +504,12 @@
       "name": "of the Unbroken", "stat": "full_hp_armor_pct",
       "applies_to": ["armor","shield","helm"],
       "tiers": [[15,22],[22,32],[32,45],[45,60],[60,75]]
+    },
+    {
+      "id": "of_serrated_edge",  "family": "generic", "kind": "flat",
+      "name": "of the Serrated Edge", "stat": "weapon_bleed_per_sec",
+      "applies_to": ["weapon"],
+      "tiers": [[2,3],[3,5],[5,7],[7,10],[10,14]]
     }
   ]
 }

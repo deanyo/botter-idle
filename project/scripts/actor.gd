@@ -963,6 +963,15 @@ func attempt_attack(other: Actor, delta: float) -> int:
 			# 4 ticks × 1s = 4s total. Per-tick = bloodletting_per_stack.
 			# Stacks cap implicit via add_bloodletting helper.
 			other.add_bloodletting(bot_bl.bloodletting_per_stack)
+	# §1.H of_serrated_edge (a02 P-021): every landed hit applies a 4s
+	# bleed at flat dmg/sec. Non-stacking; re-applies refresh duration +
+	# per-tick (whichever is larger of bloodletting on-crit OR serrated
+	# on-hit wins the per-tick value via _apply_dot_status overwrite).
+	# Bot-only and weapon-only by affix slot eligibility.
+	if dealt > 0 and self is Bot and is_instance_valid(other) and other.is_alive:
+		var bot_se: Bot = self as Bot
+		if bot_se.weapon_bleed_per_sec > 0:
+			other.add_bloodletting(bot_se.weapon_bleed_per_sec)
 	# S11 of_bleed_on_miss (a07 §6.1 Sigmund's Sickle). On a missed swing
 	# (dealt == 0 — defender evaded/blocked), apply a 3s bleed (4 dmg/s).
 	# Compensates daggers/scythes for swings that whiff against high-evasion

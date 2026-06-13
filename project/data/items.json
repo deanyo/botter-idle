@@ -507,7 +507,8 @@
         "of_bloodletting": 8,
         "of_berserker_rage": 8,
         "of_executioner": 8,
-        "of_butcher": 6
+        "of_butcher": 6,
+        "of_serrated_edge": 6
       }
     },
     {
@@ -760,7 +761,8 @@
         "of_bloodletting": 8,
         "of_berserker_rage": 8,
         "of_executioner": 8,
-        "of_butcher": 6
+        "of_butcher": 6,
+        "of_serrated_edge": 6
       }
     },
     {
@@ -915,7 +917,8 @@
         "of_sundering": 8,
         "of_bloodletting": 8,
         "of_berserker_rage": 8,
-        "of_executioner": 8
+        "of_executioner": 8,
+        "of_serrated_edge": 5
       }
     },
     {
@@ -1484,7 +1487,8 @@
         "of_channeling": 8,
         "of_quickcast": 8,
         "of_executioner": 8,
-        "of_executioner_pact": 8
+        "of_executioner_pact": 8,
+        "of_serrated_edge": 10
       }
     },
     {
@@ -2292,7 +2296,8 @@
         "of_quickcast": 8,
         "of_executioner": 8,
         "of_executioner_pact": 10,
-        "of_butcher": 8
+        "of_butcher": 8,
+        "of_serrated_edge": 8
       }
     },
     {

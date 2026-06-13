@@ -113,6 +113,7 @@ var low_hp_dr_pct: float = 0.0
 var boss_dmg_pct: float = 0.0
 var pack_dmg_per_enemy_pct: float = 0.0
 var full_hp_armor_pct: float = 0.0
+var weapon_bleed_per_sec: int = 0
 # Per-floor counters for the boss-anchor mechanics. Reset on floor_started
 # via dungeon.gd alongside revive_used_this_floor.
 var polymorph_used_this_floor: bool = false
@@ -531,6 +532,7 @@ func recompute_stats() -> void:
 	boss_dmg_pct = float(d.get("boss_dmg_pct", 0.0))
 	pack_dmg_per_enemy_pct = float(d.get("pack_dmg_per_enemy_pct", 0.0))
 	full_hp_armor_pct = float(d.get("full_hp_armor_pct", 0.0))
+	weapon_bleed_per_sec = int(d.get("weapon_bleed_per_sec", 0))
 	# anchor_regen folds into hp_regen so the regen tick already in actor.gd
 	# picks it up alongside species + worn-tag regen.
 	hp_regen_per_sec = float(d.hp_regen) + anchor_regen
