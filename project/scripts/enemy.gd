@@ -20,6 +20,12 @@ const PACK_MAGIC := 1
 const PACK_RARE := 2
 var pack_tier: int = PACK_NORMAL
 var pack_mods: Array[String] = []
+# §1.L regenerating monster mod (a06 cross-link). Pack mod sets this
+# from monster_mods.json::regenerating.hp_regen_per_sec; dungeon's
+# _tick_enemies accumulates fractional regen and adds whole HP when
+# the bucket crosses 1.0. Capped at max_hp.
+var hp_regen_per_sec: float = 0.0
+var _regen_accum: float = 0.0
 # Defender-side flavor tags coming from pack mods (e.g. ["vampiric"])
 # get folded into combat_defense_tags() so existing tag-driven combat
 # mechanics work without any per-mod special-case wiring.

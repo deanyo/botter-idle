@@ -2466,6 +2466,15 @@ func _tick_enemies(delta: float) -> void:
 			continue
 		# Tick ENCH overlays per-enemy. Cheap (skips when no statuses).
 		e.tick_statuses(delta)
+		# §1.L regenerating pack-mod tick. Accumulates fractional regen
+		# in _regen_accum; drains whole HP each time it crosses 1.0.
+		# No-op when the field is 0 (every non-Regenerating-pack enemy).
+		if e.hp_regen_per_sec > 0.0 and e.hp < e.max_hp:
+			e._regen_accum += e.hp_regen_per_sec * delta
+			if e._regen_accum >= 1.0:
+				var heal: int = int(floor(e._regen_accum))
+				e._regen_accum -= float(heal)
+				e.hp = mini(e.hp + heal, e.max_hp)
 		var dist: int = _chebyshev(e.cell, bot.cell)
 		if dist > e.aggro_range:
 			continue
@@ -3042,10 +3051,14 @@ func _apply_pack_mod(e: Enemy, mod: Dictionary) -> void:
 	var move_speed_mult: float = float(mod.get("move_speed_mult", 1.0))
 	if move_speed_mult != 1.0:
 		e.move_speed *= move_speed_mult
-	# hp_regen_per_sec: Actor doesn't tick its own regen (only Bot does),
-	# so a regenerating monster mod would need an enemy regen tick path.
-	# Stub for now — declared in monster_mods.json so the slot exists,
-	# but functionally a no-op until an enemy regen ticker lands. TODO.
+	# §1.L hp_regen_per_sec: stack onto the enemy's regen field so multiple
+	# regen sources (theoretically — only one mod authors it today) compose.
+	# Per-tick fractional accumulation lives on Enemy._regen_accum; the
+	# tick loop in _tick_enemies drains whole HP each frame the bucket
+	# crosses 1.0. Capped at max_hp; non-bot regen costs nothing on bots.
+	var regen_per_sec: float = float(mod.get("hp_regen_per_sec", 0.0))
+	if regen_per_sec > 0.0:
+		e.hp_regen_per_sec += regen_per_sec
 	for tag in mod.get("flavor_tags", []):
 		e.add_pack_defense_tag(String(tag))
 
