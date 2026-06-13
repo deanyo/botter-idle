@@ -508,7 +508,8 @@
         "of_berserker_rage": 8,
         "of_executioner": 8,
         "of_butcher": 6,
-        "of_serrated_edge": 6
+        "of_serrated_edge": 6,
+        "of_first_strike": 8
       }
     },
     {
@@ -560,7 +561,8 @@
         "of_sundering": 8,
         "of_bloodletting": 8,
         "of_berserker_rage": 8,
-        "of_executioner": 8
+        "of_executioner": 8,
+        "of_first_strike": 6
       }
     },
     {
@@ -1131,7 +1133,8 @@
         "of_sundering": 8,
         "of_bloodletting": 8,
         "of_berserker_rage": 8,
-        "of_executioner": 8
+        "of_executioner": 8,
+        "of_first_strike": 8
       }
     },
     {
@@ -2302,7 +2305,8 @@
         "of_executioner_pact": 10,
         "of_butcher": 8,
         "of_serrated_edge": 8,
-        "of_avenger": 6
+        "of_avenger": 6,
+        "of_first_strike": 5
       }
     },
     {
@@ -35627,7 +35631,8 @@
         "of_haste": 18,
         "of_crit": 16,
         "of_sharpness": 14,
-        "of_butcher": 8
+        "of_butcher": 8,
+        "of_first_strike": 6
       },
       "boss_drop": "boss_eustachio",
       "biome_pool": [

@@ -142,6 +142,7 @@ static func compute(
 	var weapon_bleed_per_sec: int = 0
 	var holy_dot_per_sec: int = 0
 	var revenge_dmg_pct: float = 0.0
+	var first_hit_pct: float = 0.0
 
 	# Bot upgrades — gold-sink purchases. Pre-2026-06-06 combat_training
 	# (atk) and toughening (def) were never read here; players spent gold
@@ -338,6 +339,7 @@ static func compute(
 		weapon_bleed_per_sec += int(round(float(slot_sums.get("weapon_bleed_per_sec", 0))))
 		holy_dot_per_sec += int(round(float(slot_sums.get("holy_dot_per_sec", 0))))
 		revenge_dmg_pct += float(slot_sums.get("revenge_dmg_pct", 0))
+		first_hit_pct += float(slot_sums.get("first_hit_pct", 0))
 		# Per-element spell-damage affixes (of_pyromancer / of_cryomancer
 		# / of_thundercaller / of_zealot / of_pestcaller / of_nightcaller). Each writes to
 		# `<elem>_dmg_pct`; we accumulate into spell_element_pct keyed by
@@ -521,6 +523,10 @@ static func compute(
 	# of_revenant (low-hp panic). Both can co-activate during the same
 	# low-HP window after a hit lands.
 	revenge_dmg_pct = clampf(revenge_dmg_pct, 0.0, 50.0)
+	# §1.H of_first_strike — per a02 P-006, per-target gate (caps abuse
+	# without an additional pct cap; cap at 120 here as headroom for the
+	# +30% per-swing ephemeral lane to absorb T5 single-source 110).
+	first_hit_pct = clampf(first_hit_pct, 0.0, 120.0)
 	if low_hp_target_dmg_pct > 0.0 and glass_cannon_dmg_pct > 0.0:
 		if low_hp_target_dmg_pct >= glass_cannon_dmg_pct:
 			glass_cannon_dmg_pct = 0.0
@@ -662,6 +668,7 @@ static func compute(
 	out["weapon_bleed_per_sec"] = weapon_bleed_per_sec
 	out["holy_dot_per_sec"] = holy_dot_per_sec
 	out["revenge_dmg_pct"] = revenge_dmg_pct
+	out["first_hit_pct"] = first_hit_pct
 	out["move_speed"] = move_speed
 	out["aggro_bonus"] = vision_count + sp_aggro_flat
 	out["loot_rarity_bonus"] = loot_rarity_bonus
@@ -706,6 +713,7 @@ static func _initial_dict() -> Dictionary:
 		"weapon_bleed_per_sec": 0,
 		"holy_dot_per_sec": 0,
 		"revenge_dmg_pct": 0.0,
+		"first_hit_pct": 0.0,
 		"move_speed": _BASE_MOVE_SPEED, "aggro_bonus": 0,
 		"loot_rarity_bonus": 0.0, "xp_gain_pct": 0.0,
 		"alloc_str": 0, "alloc_dex": 0, "alloc_int": 0, "unspent_points": 0,

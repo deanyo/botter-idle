@@ -717,6 +717,17 @@ func attempt_attack(other: Actor, delta: float) -> int:
 		# capped 50 in stat_calc.
 		if bot_self.revenge_dmg_pct > 0.0 and has_status("revenge"):
 			ephemeral_sum += bot_self.revenge_dmg_pct / 100.0
+		# §1.H of_first_strike — per-target one-time amp on the first hit
+		# this floor. Caps abuse via the per-target gate alone (a02 P-006);
+		# stat_calc clamps the source at 120 so a 5×T5 stack (DR'd 220)
+		# can't blast a single hit past 4× weapon damage. Mark target as
+		# hit AFTER the swing so the same swing's ephemeral lane gets the
+		# bonus. Per-floor reset cleared via dungeon._build_floor.
+		if bot_self.first_hit_pct > 0.0 and is_instance_valid(other):
+			var oid: int = other.get_instance_id()
+			if not bot_self._first_strike_hit_ids.has(oid):
+				ephemeral_sum += bot_self.first_hit_pct / 100.0
+				bot_self._first_strike_hit_ids[oid] = true
 		# §1.H of_butcher — pack-density damage. Per a02 P-005, +X% per
 		# enemy within 3 tiles, cap 5 enemies (so cap-tier T5×5=+50%).
 		# Walks sibling actors — parent owns bot + enemies, identical to

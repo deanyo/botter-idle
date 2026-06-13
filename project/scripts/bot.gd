@@ -116,6 +116,11 @@ var full_hp_armor_pct: float = 0.0
 var weapon_bleed_per_sec: int = 0
 var holy_dot_per_sec: int = 0
 var revenge_dmg_pct: float = 0.0
+var first_hit_pct: float = 0.0
+# §1.H of_first_strike per-floor target tracker. Keys are Enemy
+# instance_ids; presence means "this enemy has been hit at least once
+# this floor." Reset on floor_started in dungeon._build_floor.
+var _first_strike_hit_ids: Dictionary = {}
 # Per-floor counters for the boss-anchor mechanics. Reset on floor_started
 # via dungeon.gd alongside revive_used_this_floor.
 var polymorph_used_this_floor: bool = false
@@ -537,6 +542,7 @@ func recompute_stats() -> void:
 	weapon_bleed_per_sec = int(d.get("weapon_bleed_per_sec", 0))
 	holy_dot_per_sec = int(d.get("holy_dot_per_sec", 0))
 	revenge_dmg_pct = float(d.get("revenge_dmg_pct", 0.0))
+	first_hit_pct = float(d.get("first_hit_pct", 0.0))
 	# anchor_regen folds into hp_regen so the regen tick already in actor.gd
 	# picks it up alongside species + worn-tag regen.
 	hp_regen_per_sec = float(d.hp_regen) + anchor_regen

@@ -379,6 +379,7 @@ const _STAT_DESCRIPTIONS := {
 	"weapon_bleed_per_sec": "Each landed hit applies a 4s bleed dealing {N} physical/sec.",
 	"holy_dot_per_sec": "Each landed hit applies a 3s holy burn dealing {N} holy/sec.",
 	"revenge_dmg_pct": "After taking damage: +{N}% damage for 3s. Cap 50.",
+	"first_hit_pct": "Your first hit on each enemy deals +{N}% damage. Per-target gate, no stack.",
 }
 
 static func description_for_stat(stat: String) -> String:
@@ -430,6 +431,7 @@ const _NAMED_EFFECT_STATS := {
 	"weapon_bleed_per_sec": true,
 	"holy_dot_per_sec": true,
 	"revenge_dmg_pct": true,
+	"first_hit_pct": true,
 }
 
 static func is_named_effect_stat(stat: String) -> bool:

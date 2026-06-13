@@ -522,6 +522,12 @@
       "name": "of the Avenger",  "stat": "revenge_dmg_pct",
       "applies_to": ["weapon","gloves","ring"],
       "tiers": [[10,15],[16,20],[20,28],[28,35],[35,45]]
+    },
+    {
+      "id": "of_first_strike",   "family": "generic", "kind": "pct",
+      "name": "of the First Strike", "stat": "first_hit_pct",
+      "applies_to": ["weapon","gloves","amulet"],
+      "tiers": [[18,28],[30,45],[48,65],[65,85],[85,110]]
     }
   ]
 }
