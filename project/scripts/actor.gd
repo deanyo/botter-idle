@@ -464,6 +464,16 @@ func _apply_typed_damage(raw: int, damage_type: String, attacker: Actor, def_tag
 		# next read after _sunder_expires_at lapses; same shape as `rage`
 		# stacks on attackers.
 		var eff_armor: int = defense
+		# §1.H of_unbroken — armor scales with full-HP gate (a02 P-020,
+		# cap 75). Mirror of of_revenant shape but on the armor lane:
+		# defender at hp == max_hp gets +full_hp_armor_pct% effective armor.
+		# Lives BEFORE sunder so the sunder strip applies after the boost
+		# (sunder strips a fixed amount; boost-then-strip preserves the
+		# affix's purpose vs strip-then-boost).
+		if self is Bot and hp >= max_hp and max_hp > 0:
+			var bot_ub: Bot = self as Bot
+			if bot_ub.full_hp_armor_pct > 0.0:
+				eff_armor = int(round(float(eff_armor) * (1.0 + bot_ub.full_hp_armor_pct / 100.0)))
 		if _sunder_amount > 0:
 			var now_s: float = float(Time.get_ticks_msec()) / 1000.0
 			if now_s > _sunder_expires_at:

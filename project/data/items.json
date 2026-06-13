@@ -3470,7 +3470,8 @@
         "of_poison_resist": 10,
         "of_dark_resist": 8,
         "of_regen": 15,
-        "of_revenant": 8
+        "of_revenant": 8,
+        "of_unbroken": 8
       }
     },
     {
@@ -4143,7 +4144,8 @@
         "of_poison_resist": 10,
         "of_dark_resist": 8,
         "of_regen": 15,
-        "of_revenant": 8
+        "of_revenant": 8,
+        "of_unbroken": 6
       }
     },
     {
@@ -5431,7 +5433,8 @@
         "of_channeling": 12,
         "of_crit": 12,
         "of_executioner": 8,
-        "of_glass_cannon": 8
+        "of_glass_cannon": 8,
+        "of_unbroken": 5
       }
     },
     {
@@ -6629,7 +6632,8 @@
         "of_poison_resist": 10,
         "of_dark_resist": 8,
         "of_warding": 8,
-        "of_bulwark": 8
+        "of_bulwark": 8,
+        "of_unbroken": 8
       },
       "default_tint": {
         "hue": 200.0,

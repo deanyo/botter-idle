@@ -375,6 +375,7 @@ const _STAT_DESCRIPTIONS := {
 	"low_hp_dr_pct": "Take {N}% less damage while below 40% HP. Cap 28.",
 	"boss_dmg_pct": "+{N}% damage to bosses, elites, and uniques. Cap 40.",
 	"pack_dmg_per_enemy_pct": "+{N}% damage per enemy within 3 tiles (cap 5 enemies).",
+	"full_hp_armor_pct": "+{N}% armor while at full HP. Cap 75.",
 }
 
 static func description_for_stat(stat: String) -> String:
@@ -422,6 +423,7 @@ const _NAMED_EFFECT_STATS := {
 	"low_hp_dr_pct": true,
 	"boss_dmg_pct": true,
 	"pack_dmg_per_enemy_pct": true,
+	"full_hp_armor_pct": true,
 }
 
 static func is_named_effect_stat(stat: String) -> bool:

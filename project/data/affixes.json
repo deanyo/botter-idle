@@ -498,6 +498,12 @@
       "name": "of the Butcher",  "stat": "pack_dmg_per_enemy_pct",
       "applies_to": ["weapon","gloves","amulet"],
       "tiers": [[2,3],[3,5],[5,7],[6,8],[7,10]]
+    },
+    {
+      "id": "of_unbroken",       "family": "generic", "kind": "pct",
+      "name": "of the Unbroken", "stat": "full_hp_armor_pct",
+      "applies_to": ["armor","shield","helm"],
+      "tiers": [[15,22],[22,32],[32,45],[45,60],[60,75]]
     }
   ]
 }
