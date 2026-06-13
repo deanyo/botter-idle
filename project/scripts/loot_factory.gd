@@ -72,13 +72,54 @@ static func roll_rarity(
 	blessing_bonus: float,
 	mod_bonus: float,
 ) -> String:
-	if is_boss:
+	# §2.C back-compat shim — old bool callers route through the new
+	# enemy_class path. is_boss=true → "boss", is_boss=false → "trash"
+	# (the legacy two-class split). Elite tier needs an explicit
+	# class string from the caller.
+	var enemy_class: String = "boss" if is_boss else "trash"
+	return roll_rarity_for_class(rng, src_tier, current_floor, enemy_class, blessing_bonus, mod_bonus)
+
+# §2.C (S12) — three-class rarity rolling. enemy_class:
+#   "trash"  baseline drop curve (low rare-and-up tail).
+#   "elite"  intermediate — magic/rare-leader-tier mobs. Bias halfway
+#            between trash and boss so elite-density floors yield more
+#            magic gear without dipping into boss-tier (legendary).
+#   "boss"   high-tier curve unchanged from the legacy boss path
+#            (50% legendary / 35% epic / 15% rare).
+# Routes to roll_rarity_for_class so the §2.A roll_rarity rewrite (when
+# it ships) only needs one entry point to consume tier_drop_band.
+static func roll_rarity_for_class(
+	rng: RandomNumberGenerator,
+	src_tier: int,
+	current_floor: int,
+	enemy_class: String,
+	blessing_bonus: float,
+	mod_bonus: float,
+) -> String:
+	if enemy_class == "boss":
 		var boss_roll: float = rng.randf()
 		var rarity_b: String
 		if boss_roll < 0.5: rarity_b = "legendary"
 		elif boss_roll < 0.85: rarity_b = "epic"
 		else: rarity_b = "rare"
 		return clamp_rarity_to_tier(rarity_b, src_tier)
+	if enemy_class == "elite":
+		# Elite tier — between trash and boss. ~25% rare-or-better tail
+		# (vs trash's ~12% epic-or-better, vs boss's 100% rare-or-better).
+		# The bias is delivered as an extra negative offset on the trash
+		# curve so existing floor / blessing / mod bonuses still compose.
+		var floor_bonus_e: float = float(current_floor - 1) * 0.05
+		var tier_bonus_e: float = float(src_tier - 1) * 0.05
+		var elite_bias: float = 0.20  # equivalent to ~+4 floors of bonus
+		var r_e: float = rng.randf() - floor_bonus_e - blessing_bonus - tier_bonus_e - mod_bonus - elite_bias
+		var rarity_e: String
+		if r_e < 0.02: rarity_e = "legendary"
+		elif r_e < 0.10: rarity_e = "epic"
+		elif r_e < 0.25: rarity_e = "rare"
+		elif r_e < 0.55: rarity_e = "uncommon"
+		else: rarity_e = "common"
+		return clamp_rarity_to_tier(rarity_e, src_tier)
+	# Default = "trash" — legacy non-boss path verbatim.
 	var floor_bonus: float = float(current_floor - 1) * 0.05
 	var tier_bonus: float = float(src_tier - 1) * 0.05
 	var r: float = rng.randf() - floor_bonus - blessing_bonus - tier_bonus - mod_bonus

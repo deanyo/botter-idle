@@ -1548,7 +1548,10 @@ func _maybe_drop_item(e: Enemy) -> void:
 		or e.pack_tier == Enemy.PACK_MAGIC
 	)
 	for _i in drop_count:
-		var rarity: String = _roll_drop_rarity(e.is_boss or e.is_miniboss or e.pack_tier == Enemy.PACK_RARE)
+		# §2.C: route via the class-based path so PACK_MAGIC / PACK_RARE
+		# pull the elite tier (mid-bias) instead of collapsing into
+		# either trash (legacy false) or boss (legacy true with PACK_RARE).
+		var rarity: String = _roll_drop_rarity_for_enemy(e)
 		var picked: String = LootFactory.pick_loot_id(rng, rarity, items_db, _source_tier(), run_dropped_uniques, allow_spell, String(current_biome.get("id", "")))
 		if picked == "":
 			continue
@@ -1562,7 +1565,7 @@ func _maybe_drop_item(e: Enemy) -> void:
 	# loot_rarity_bonus's lane).
 	if is_instance_valid(bot) and float(bot.loot_quantity_pct) > 0.0:
 		if rng.randf() * 100.0 < float(bot.loot_quantity_pct):
-			var bonus_rarity: String = _roll_drop_rarity(e.is_boss or e.is_miniboss or e.pack_tier == Enemy.PACK_RARE)
+			var bonus_rarity: String = _roll_drop_rarity_for_enemy(e)
 			var bonus_picked: String = LootFactory.pick_loot_id(rng, bonus_rarity, items_db, _source_tier(), run_dropped_uniques, allow_spell, String(current_biome.get("id", "")))
 			if bonus_picked != "":
 				var bonus_inst: Dictionary = LootFactory.create_item_instance(rng, bonus_picked, items_db)
@@ -1758,9 +1761,27 @@ func _source_tier() -> int:
 # vault loot_marks. Chest pickups go through LootFactory.roll_rarity_with_bias
 # directly because they don't get blessing/mod bonuses.
 func _roll_drop_rarity(is_boss: bool) -> String:
+	# Legacy bool entry — routes to the new enemy-class path via
+	# LootFactory's back-compat shim. Kept so any vault loot_marks
+	# path that hasn't been migrated still works.
 	var blessing_bonus: float = bot.loot_rarity_bonus / 100.0 if is_instance_valid(bot) else 0.0
 	var mod_bonus: float = RunModifiers.sum_effect(active_modifiers, "rarity_bonus", 0.0)
 	return LootFactory.roll_rarity(rng, _source_tier(), current_floor, is_boss, blessing_bonus, mod_bonus)
+
+# §2.C (S12) — class-based drop-rarity entry point. Splits the legacy
+# 2-way bool (boss vs trash) into 3 classes (trash/elite/boss). Routes
+# the rest of the dungeon's loot path through this so per-class rarity
+# tables can land cleanly when §2.A roll_rarity rewrite ships.
+func _roll_drop_rarity_for_enemy(e: Enemy) -> String:
+	var enemy_class: String = "trash"
+	if is_instance_valid(e):
+		if e.is_boss or e.is_miniboss:
+			enemy_class = "boss"
+		elif e.pack_tier == Enemy.PACK_RARE or e.pack_tier == Enemy.PACK_MAGIC:
+			enemy_class = "elite"
+	var blessing_bonus: float = bot.loot_rarity_bonus / 100.0 if is_instance_valid(bot) else 0.0
+	var mod_bonus: float = RunModifiers.sum_effect(active_modifiers, "rarity_bonus", 0.0)
+	return LootFactory.roll_rarity_for_class(rng, _source_tier(), current_floor, enemy_class, blessing_bonus, mod_bonus)
 
 func _process(delta: float) -> void:
 	PerfMon.spike_tick()
