@@ -1913,7 +1913,8 @@
         "of_channeling": 8,
         "of_quickcast": 8,
         "of_executioner": 8,
-        "of_unwavering_focus": 8
+        "of_unwavering_focus": 8,
+        "of_overflowing_chalice": 6
       }
     },
     {
@@ -8993,7 +8994,8 @@
         "of_avenger": 5,
         "of_unwavering_focus": 5,
         "of_recoup": 5,
-        "of_doomstrike": 5
+        "of_doomstrike": 5,
+        "of_overflowing_chalice": 5
       }
     },
     {

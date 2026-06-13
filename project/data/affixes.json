@@ -594,6 +594,12 @@
       "name": "of the Riposte Strike", "stat": "riposte_dmg_pct",
       "applies_to": ["weapon","gloves"],
       "tiers": [[25,30],[30,38],[38,46],[46,54],[54,60]]
+    },
+    {
+      "id": "of_overflowing_chalice", "family": "generic", "kind": "pct",
+      "name": "of the Overflowing Chalice", "stat": "high_hp_cdr_pct",
+      "applies_to": ["spell","amulet"],
+      "tiers": [[3,5],[5,7],[7,11],[11,15],[15,20]]
     }
   ]
 }

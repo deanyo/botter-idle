@@ -425,12 +425,22 @@ static func compute_cooldown(bot: Node, item: Dictionary) -> float:
 	if bot == null:
 		return base_cd
 	var cdr: float = clampf(float(bot.spell_cdr_pct), 0.0, 60.0)
+	# §1.H of_overflowing_chalice (a02 P-016, a10 cap 20). Adds onto raw
+	# CDR while bot is at ≥90% HP — composes past the 60% spell_cdr_pct
+	# cap (raw 60 + chalice 20 = 80% net before tempest penalty). The
+	# 90%-HP gate makes this a "safe-window" affix; chip damage drops
+	# the bot below 90 and the affix dies until heal-back. Bot-only
+	# field; fallback 0.0 for actors that lack it.
+	var chalice: float = float(bot.get("high_hp_cdr_pct")) if bot.get("high_hp_cdr_pct") != null else 0.0
+	if chalice > 0.0 and "max_hp" in bot and "hp" in bot and int(bot.max_hp) > 0:
+		if float(bot.hp) / float(bot.max_hp) >= 0.90:
+			cdr += chalice
 	# of_tempest cd-penalty leg (a02 P-10): subtracted from cdr — the
 	# affix trades cooldown speed for spell damage. Net cdr can go
 	# negative (longer cooldowns); clamp at -50% so a stacked Tempest
 	# loadout doesn't grind a 1.5s spell to 4s+.
 	var penalty: float = float(bot.get("tempest_cd_penalty_pct")) if bot.get("tempest_cd_penalty_pct") != null else 0.0
-	var net_cdr: float = clampf(cdr - penalty, -50.0, 60.0)
+	var net_cdr: float = clampf(cdr - penalty, -50.0, 80.0)
 	return max(0.3, base_cd * (1.0 - net_cdr / 100.0))
 
 # Effective projectile-count: archetype-default + spell_proj_bonus +

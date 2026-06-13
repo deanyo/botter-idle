@@ -133,6 +133,7 @@ var doomstrike_dmg_pct: float = 0.0
 # the current floor."
 var _doomstrike_swing_count: int = 0
 var riposte_dmg_pct: float = 0.0
+var high_hp_cdr_pct: float = 0.0
 # §1.H of_riposte_strike per-second proc rate-limit. Tracks last
 # riposte timestamp; counter-swings only fire if ≥1s elapsed.
 var _last_riposte_msec: int = 0
@@ -589,6 +590,7 @@ func recompute_stats() -> void:
 	first_hit_mark_pct = float(d.get("first_hit_mark_pct", 0.0))
 	doomstrike_dmg_pct = float(d.get("doomstrike_dmg_pct", 0.0))
 	riposte_dmg_pct = float(d.get("riposte_dmg_pct", 0.0))
+	high_hp_cdr_pct = float(d.get("high_hp_cdr_pct", 0.0))
 	# anchor_regen folds into hp_regen so the regen tick already in actor.gd
 	# picks it up alongside species + worn-tag regen.
 	hp_regen_per_sec = float(d.hp_regen) + anchor_regen
