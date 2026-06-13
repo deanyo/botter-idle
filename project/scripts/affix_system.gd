@@ -380,6 +380,7 @@ const _STAT_DESCRIPTIONS := {
 	"holy_dot_per_sec": "Each landed hit applies a 3s holy burn dealing {N} holy/sec.",
 	"revenge_dmg_pct": "After taking damage: +{N}% damage for 3s. Cap 50.",
 	"first_hit_pct": "Your first hit on each enemy deals +{N}% damage. Per-target gate, no stack.",
+	"hp_per_kill_flat": "+{N} HP per kill. Counts toward the +max_hp/floor cap (of_serpent_growth).",
 }
 
 static func description_for_stat(stat: String) -> String:
@@ -432,6 +433,7 @@ const _NAMED_EFFECT_STATS := {
 	"holy_dot_per_sec": true,
 	"revenge_dmg_pct": true,
 	"first_hit_pct": true,
+	"hp_per_kill_flat": true,
 }
 
 static func is_named_effect_stat(stat: String) -> bool:

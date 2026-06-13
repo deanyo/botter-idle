@@ -1492,7 +1492,8 @@
         "of_quickcast": 8,
         "of_executioner": 8,
         "of_executioner_pact": 8,
-        "of_serrated_edge": 10
+        "of_serrated_edge": 10,
+        "of_drainblade": 8
       }
     },
     {
@@ -1699,7 +1700,8 @@
         "of_lifesteal": 15,
         "of_channeling": 8,
         "of_quickcast": 8,
-        "of_executioner": 8
+        "of_executioner": 8,
+        "of_drainblade": 6
       }
     },
     {
@@ -2306,7 +2308,8 @@
         "of_butcher": 8,
         "of_serrated_edge": 8,
         "of_avenger": 6,
-        "of_first_strike": 5
+        "of_first_strike": 5,
+        "of_drainblade": 8
       }
     },
     {
@@ -12764,7 +12767,8 @@
         "of_bloodletting": 8,
         "of_berserker_rage": 8,
         "of_executioner": 8,
-        "of_kingslayer": 12
+        "of_kingslayer": 12,
+        "of_drainblade": 5
       }
     },
     {

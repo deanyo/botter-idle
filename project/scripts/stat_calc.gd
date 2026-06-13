@@ -143,6 +143,7 @@ static func compute(
 	var holy_dot_per_sec: int = 0
 	var revenge_dmg_pct: float = 0.0
 	var first_hit_pct: float = 0.0
+	var hp_per_kill_flat: int = 0
 
 	# Bot upgrades — gold-sink purchases. Pre-2026-06-06 combat_training
 	# (atk) and toughening (def) were never read here; players spent gold
@@ -340,6 +341,7 @@ static func compute(
 		holy_dot_per_sec += int(round(float(slot_sums.get("holy_dot_per_sec", 0))))
 		revenge_dmg_pct += float(slot_sums.get("revenge_dmg_pct", 0))
 		first_hit_pct += float(slot_sums.get("first_hit_pct", 0))
+		hp_per_kill_flat += int(round(float(slot_sums.get("hp_per_kill_flat", 0))))
 		# Per-element spell-damage affixes (of_pyromancer / of_cryomancer
 		# / of_thundercaller / of_zealot / of_pestcaller / of_nightcaller). Each writes to
 		# `<elem>_dmg_pct`; we accumulate into spell_element_pct keyed by
@@ -527,6 +529,13 @@ static func compute(
 	# without an additional pct cap; cap at 120 here as headroom for the
 	# +30% per-swing ephemeral lane to absorb T5 single-source 110).
 	first_hit_pct = clampf(first_hit_pct, 0.0, 120.0)
+	# §1.H of_drainblade — A2 P-023 cap 30 per source. Per-kill flat HP
+	# gain composes with the existing of_serpent_growth +max_hp/floor cap;
+	# kills also bump max_hp via the existing hp_per_kill_granted_this_floor
+	# bookkeeping. A11 G1 mandates total recovery sources ≤ max_hp×0.10/s
+	# emitted — drainblade is per-kill (not per-second), well under the
+	# rolling cap. 3-source DR stack: 24 + 18 + 12 = 54, hard-clamped 30.
+	hp_per_kill_flat = clampi(hp_per_kill_flat, 0, 30)
 	if low_hp_target_dmg_pct > 0.0 and glass_cannon_dmg_pct > 0.0:
 		if low_hp_target_dmg_pct >= glass_cannon_dmg_pct:
 			glass_cannon_dmg_pct = 0.0
@@ -669,6 +678,7 @@ static func compute(
 	out["holy_dot_per_sec"] = holy_dot_per_sec
 	out["revenge_dmg_pct"] = revenge_dmg_pct
 	out["first_hit_pct"] = first_hit_pct
+	out["hp_per_kill_flat"] = hp_per_kill_flat
 	out["move_speed"] = move_speed
 	out["aggro_bonus"] = vision_count + sp_aggro_flat
 	out["loot_rarity_bonus"] = loot_rarity_bonus
@@ -714,6 +724,7 @@ static func _initial_dict() -> Dictionary:
 		"holy_dot_per_sec": 0,
 		"revenge_dmg_pct": 0.0,
 		"first_hit_pct": 0.0,
+		"hp_per_kill_flat": 0,
 		"move_speed": _BASE_MOVE_SPEED, "aggro_bonus": 0,
 		"loot_rarity_bonus": 0.0, "xp_gain_pct": 0.0,
 		"alloc_str": 0, "alloc_dex": 0, "alloc_int": 0, "unspent_points": 0,

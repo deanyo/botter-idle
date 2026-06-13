@@ -968,6 +968,14 @@ func attempt_attack(other: Actor, delta: float) -> int:
 			bot_kk.max_hp += 1
 			bot_kk.hp = mini(bot_kk.hp + 1, bot_kk.max_hp)
 			bot_kk._update_hp_bar()
+		# §1.H of_drainblade (a02 P-023): flat HP heal per kill. Caps via
+		# stat_calc clamp (30) + the existing serpent_growth cap on max_hp
+		# growth. A11 G1 recovery cap respected because per-kill !=
+		# per-second; sustained pack-clear at 1 kill/s = ≤30 hp/s ≤
+		# max_hp×0.10/s for any max_hp ≥ 300.
+		if bot_kk.hp_per_kill_flat > 0 and bot_kk.hp < bot_kk.max_hp:
+			bot_kk.hp = mini(bot_kk.hp + bot_kk.hp_per_kill_flat, bot_kk.max_hp)
+			bot_kk._update_hp_bar()
 		# S11 of_polymorph (a07 §6.4 Kirke's Pendant). First kill each
 		# floor splits the kill into a "friendly slime" that strikes the
 		# nearest adjacent live enemy for a flat-50-ATK splash (a10 6.4
