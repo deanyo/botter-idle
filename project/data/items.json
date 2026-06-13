@@ -7211,7 +7211,8 @@
         "of_haste": 26,
         "of_regen": 10,
         "of_berserker": 8,
-        "of_smoldering_step": 5
+        "of_smoldering_step": 5,
+        "of_warden_step": 5
       }
     },
     {
@@ -32438,7 +32439,8 @@
         "of_lifesteal": 14,
         "of_finesse": 10,
         "of_recoup": 5,
-        "of_smoldering_step": 5
+        "of_smoldering_step": 5,
+        "of_warden_step": 5
       },
       "default_tint": {
         "hue": 270,
@@ -36463,7 +36465,8 @@
         "of_haste": 14,
         "of_the_cat": 12,
         "of_regen": 8,
-        "of_smoldering_step": 6
+        "of_smoldering_step": 6,
+        "of_warden_step": 6
       },
       "default_tint": {
         "hue": 50,

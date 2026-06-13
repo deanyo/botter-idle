@@ -244,7 +244,19 @@ func step_movement(delta: float) -> void:
 	# `petrify` tag reads it to grant DR while stationary; only Bot
 	# carries the field, so guard the cast.
 	if self is Bot:
-		(self as Bot)._last_move_at_msec = Time.get_ticks_msec()
+		var bot_step: Bot = self as Bot
+		bot_step._last_move_at_msec = Time.get_ticks_msec()
+		# §1.H of_warden_step (a02 P-026, a10 cap 80). Increment cell-
+		# traversal counter when the bot enters a new cell; fire a 2-tile
+		# AoE pulse for X% of weapon damage on every 8th step. Visual
+		# reuses SpellAoe.spawn_ring; damage walks sibling actors within
+		# Chebyshev radius 2 of the bot.
+		if bot_step.step_pulse_pct > 0.0 and cell != bot_step._warden_last_cell:
+			bot_step._warden_last_cell = cell
+			bot_step._warden_step_count += 1
+			if bot_step._warden_step_count >= 8:
+				bot_step._warden_step_count = 0
+				_warden_step_pulse(bot_step)
 
 # Resolve a swing: avoidance gates ONCE, each typed component goes through
 # mitigation, returns (thorns/crystal) fire ONCE against the aggregated
@@ -1500,6 +1512,31 @@ func add_bloodletting(per_tick: int) -> void:
 # and a single defender can carry both bleeding + smite simultaneously.
 func add_smite(per_tick: int) -> void:
 	_apply_dot_status("smite", per_tick, 3, 1.0)
+
+# §1.H of_warden_step (a02 P-026). Discharge a 2-tile AoE around the bot:
+# damage every sibling actor within Chebyshev radius 2 for step_pulse_pct
+# of weapon damage average. Visual ring via SpellAoe.spawn_ring at the
+# bot's pixel position. Damage routes through take_damage so armor / mit
+# / DoT pipes all apply.
+func _warden_step_pulse(bot: Bot) -> void:
+	var parent: Node = get_parent()
+	if parent == null:
+		return
+	var weap_avg: int = int(round(float(bot.damage_min + bot.damage_max) * 0.5))
+	var pulse_dmg: int = maxi(1, int(round(float(weap_avg) * bot.step_pulse_pct / 100.0)))
+	for child in parent.get_children():
+		if not (child is Enemy):
+			continue
+		var ce: Enemy = child as Enemy
+		if not ce.is_alive:
+			continue
+		var dx: int = absi(ce.cell.x - bot.cell.x)
+		var dy: int = absi(ce.cell.y - bot.cell.y)
+		if maxi(dx, dy) <= 2 and (dx + dy) > 0:
+			ce.take_damage(pulse_dmg, bot, bot.weapon_damage_type)
+	# Visual ring — radius 2 cells in pixels.
+	var origin: Vector2 = bot.position + Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5)
+	SpellAoe.spawn_ring(parent, origin, float(C.TILE_SIZE) * 2.0, Color(1.0, 0.85, 0.40, 0.85))
 
 # §1.H a11 G4 reflect-emission window. Both of_thorns and of_aegis_thorns
 # feed this bucket on the bot. Returns the actually-allowed emission
