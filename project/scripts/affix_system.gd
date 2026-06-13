@@ -382,6 +382,7 @@ const _STAT_DESCRIPTIONS := {
 	"first_hit_pct": "Your first hit on each enemy deals +{N}% damage. Per-target gate, no stack.",
 	"hp_per_kill_flat": "+{N} HP per kill. Counts toward the +max_hp/floor cap (of_serpent_growth).",
 	"melee_armor_pen_pct": "Your melee attacks ignore {N}% of enemy armor. Cap 50.",
+	"spell_resist_pen_pct": "Elemental hits ignore {N}% of enemy resistance. Cap 35.",
 }
 
 static func description_for_stat(stat: String) -> String:
@@ -436,6 +437,7 @@ const _NAMED_EFFECT_STATS := {
 	"first_hit_pct": true,
 	"hp_per_kill_flat": true,
 	"melee_armor_pen_pct": true,
+	"spell_resist_pen_pct": true,
 }
 
 static func is_named_effect_stat(stat: String) -> bool:

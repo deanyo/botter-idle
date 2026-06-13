@@ -1902,7 +1902,8 @@
         "of_lifesteal": 15,
         "of_channeling": 8,
         "of_quickcast": 8,
-        "of_executioner": 8
+        "of_executioner": 8,
+        "of_unwavering_focus": 8
       }
     },
     {
@@ -5453,7 +5454,8 @@
         "of_crit": 12,
         "of_executioner": 8,
         "of_glass_cannon": 8,
-        "of_unbroken": 5
+        "of_unbroken": 5,
+        "of_unwavering_focus": 8
       }
     },
     {
@@ -8968,7 +8970,8 @@
         "of_synergy": 8,
         "of_executioner": 8,
         "of_glass_cannon": 8,
-        "of_avenger": 5
+        "of_avenger": 5,
+        "of_unwavering_focus": 5
       }
     },
     {

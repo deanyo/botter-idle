@@ -540,6 +540,12 @@
       "name": "of the Armor Breaker", "stat": "melee_armor_pen_pct",
       "applies_to": ["weapon","gloves"],
       "tiers": [[6,10],[12,15],[15,20],[20,28],[28,36]]
+    },
+    {
+      "id": "of_unwavering_focus", "family": "generic", "kind": "pct",
+      "name": "of Unwavering Focus", "stat": "spell_resist_pen_pct",
+      "applies_to": ["spell","amulet","helm"],
+      "tiers": [[6,8],[10,14],[14,20],[20,26],[26,35]]
     }
   ]
 }

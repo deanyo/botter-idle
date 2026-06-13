@@ -145,6 +145,7 @@ static func compute(
 	var first_hit_pct: float = 0.0
 	var hp_per_kill_flat: int = 0
 	var melee_armor_pen_pct: float = 0.0
+	var spell_resist_pen_pct: float = 0.0
 
 	# Bot upgrades — gold-sink purchases. Pre-2026-06-06 combat_training
 	# (atk) and toughening (def) were never read here; players spent gold
@@ -344,6 +345,7 @@ static func compute(
 		first_hit_pct += float(slot_sums.get("first_hit_pct", 0))
 		hp_per_kill_flat += int(round(float(slot_sums.get("hp_per_kill_flat", 0))))
 		melee_armor_pen_pct += float(slot_sums.get("melee_armor_pen_pct", 0))
+		spell_resist_pen_pct += float(slot_sums.get("spell_resist_pen_pct", 0))
 		# Per-element spell-damage affixes (of_pyromancer / of_cryomancer
 		# / of_thundercaller / of_zealot / of_pestcaller / of_nightcaller). Each writes to
 		# `<elem>_dmg_pct`; we accumulate into spell_element_pct keyed by
@@ -544,6 +546,12 @@ static func compute(
 	# (flat strip) — both reduce the same eff_armor; sundering is consumed
 	# per-stack, pen is permanent-while-equipped.
 	melee_armor_pen_pct = clampf(melee_armor_pen_pct, 0.0, 50.0)
+	# §1.H of_unwavering_focus — A2 P-017 cap 35 (a10 rescope from 50).
+	# Reduces defender's effective elemental resist on typed-elemental
+	# hits (spells + weapon-typed swings: of_embers / cold_extra etc.
+	# both flow through the same elem_mit lane). resist_pct is reduced
+	# multiplicatively before mit_sum composition.
+	spell_resist_pen_pct = clampf(spell_resist_pen_pct, 0.0, 35.0)
 	if low_hp_target_dmg_pct > 0.0 and glass_cannon_dmg_pct > 0.0:
 		if low_hp_target_dmg_pct >= glass_cannon_dmg_pct:
 			glass_cannon_dmg_pct = 0.0
@@ -688,6 +696,7 @@ static func compute(
 	out["first_hit_pct"] = first_hit_pct
 	out["hp_per_kill_flat"] = hp_per_kill_flat
 	out["melee_armor_pen_pct"] = melee_armor_pen_pct
+	out["spell_resist_pen_pct"] = spell_resist_pen_pct
 	out["move_speed"] = move_speed
 	out["aggro_bonus"] = vision_count + sp_aggro_flat
 	out["loot_rarity_bonus"] = loot_rarity_bonus
@@ -735,6 +744,7 @@ static func _initial_dict() -> Dictionary:
 		"first_hit_pct": 0.0,
 		"hp_per_kill_flat": 0,
 		"melee_armor_pen_pct": 0.0,
+		"spell_resist_pen_pct": 0.0,
 		"move_speed": _BASE_MOVE_SPEED, "aggro_bonus": 0,
 		"loot_rarity_bonus": 0.0, "xp_gain_pct": 0.0,
 		"alloc_str": 0, "alloc_dex": 0, "alloc_int": 0, "unspent_points": 0,

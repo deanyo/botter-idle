@@ -509,6 +509,18 @@ func _apply_typed_damage(raw: int, damage_type: String, attacker: Actor, def_tag
 		var resist_pct: float = 0.0
 		if "resistances" in self:
 			resist_pct = float(self.resistances.get(damage_type, 0))
+		# §1.H of_unwavering_focus (a02 P-017, a10 cap 35) — attacker-side
+		# spell-pen reduces defender's positive resistance multiplicatively
+		# before the elem_mit composition. Negative resistance (vulnerability)
+		# left untouched — pen "drilling through" doesn't make a vulnerable
+		# target less vulnerable. Bot-only attacker; weapon-typed-elemental
+		# riders (of_embers / cold_extra etc.) also pass through this lane,
+		# which is consistent with how of_armor_breaker applies to all
+		# physical hits (not just spells).
+		if attacker != null and attacker is Bot and resist_pct > 0.0:
+			var bot_atk_s: Bot = attacker as Bot
+			if bot_atk_s.spell_resist_pen_pct > 0.0:
+				resist_pct = resist_pct * (1.0 - bot_atk_s.spell_resist_pen_pct / 100.0)
 		# Resist pct joins the additive cap.
 		var elem_mit: float = clampf(mit_sum + resist_pct / 100.0, -0.50, 0.90)
 		dmg = maxi(1, int(round(raw_amped * (1.0 - elem_mit))))
