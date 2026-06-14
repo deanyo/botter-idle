@@ -1568,14 +1568,17 @@ func _maybe_drop_item(e: Enemy) -> void:
 		or e.pack_tier == Enemy.PACK_RARE
 		or e.pack_tier == Enemy.PACK_MAGIC
 	)
+	# Within-kill dedup buffer — same pattern as the chest opener.
+	var recent_picks: Array = []
 	for _i in drop_count:
 		# §2.C: route via the class-based path so PACK_MAGIC / PACK_RARE
 		# pull the elite tier (mid-bias) instead of collapsing into
 		# either trash (legacy false) or boss (legacy true with PACK_RARE).
 		var rarity: String = _roll_drop_rarity_for_enemy(e)
-		var picked: String = LootFactory.pick_loot_id(rng, rarity, items_db, _source_tier(), run_dropped_uniques, allow_spell, String(current_biome.get("id", "")))
+		var picked: String = LootFactory.pick_loot_id(rng, rarity, items_db, _source_tier(), run_dropped_uniques, allow_spell, String(current_biome.get("id", "")), recent_picks)
 		if picked == "":
 			continue
+		recent_picks.append(picked)
 		var instance: Dictionary = LootFactory.create_item_instance(rng, picked, items_db)
 		_spawn_loot_drop(instance, e.cell)
 	# §2.E loot_quantity_pct (a06-newstat-022, a11 hard clamp 50). One
@@ -1587,8 +1590,9 @@ func _maybe_drop_item(e: Enemy) -> void:
 	if is_instance_valid(bot) and float(bot.loot_quantity_pct) > 0.0:
 		if rng.randf() * 100.0 < float(bot.loot_quantity_pct):
 			var bonus_rarity: String = _roll_drop_rarity_for_enemy(e)
-			var bonus_picked: String = LootFactory.pick_loot_id(rng, bonus_rarity, items_db, _source_tier(), run_dropped_uniques, allow_spell, String(current_biome.get("id", "")))
+			var bonus_picked: String = LootFactory.pick_loot_id(rng, bonus_rarity, items_db, _source_tier(), run_dropped_uniques, allow_spell, String(current_biome.get("id", "")), recent_picks)
 			if bonus_picked != "":
+				recent_picks.append(bonus_picked)
 				var bonus_inst: Dictionary = LootFactory.create_item_instance(rng, bonus_picked, items_db)
 				_spawn_loot_drop(bonus_inst, e.cell)
 	# S11 boss-anchor unique drop (a07 §6). On boss kills, look up any
@@ -2496,11 +2500,16 @@ func _on_chest_opened(chest: Chest, n: int, bias: int) -> void:
 	run.note_chest_opened()
 	PerfMon.note_spike_context("chest_open n=%d bias=%d" % [n, bias])
 	var chest_world: Vector2 = chest.position + Vector2(C.TILE_SIZE * 0.5, C.TILE_SIZE * 0.5)
+	# Within-chest dedup buffer — accumulates base_ids picked so far
+	# this open so pick_loot_id can soft-down-weight them. Stops the
+	# "3× identical Honest Kite Shield" pattern in narrow-pool slots.
+	var recent_picks: Array = []
 	for i in n:
 		var rarity: String = LootFactory.roll_rarity_with_bias(rng, _source_tier(), current_floor, bias)
-		var picked: String = LootFactory.pick_loot_id(rng, rarity, items_db, _source_tier(), run_dropped_uniques, true, String(current_biome.get("id", "")))
+		var picked: String = LootFactory.pick_loot_id(rng, rarity, items_db, _source_tier(), run_dropped_uniques, true, String(current_biome.get("id", "")), recent_picks)
 		if picked == "":
 			continue
+		recent_picks.append(picked)
 		var inst: Dictionary = LootFactory.create_item_instance(rng, picked, items_db)
 		var spawn_cell: Vector2i = _adjacent_walkable_cell(chest.cell, i + 1)
 		var drop := _spawn_loot_drop_get(inst, spawn_cell)

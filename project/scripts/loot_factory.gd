@@ -198,6 +198,7 @@ static func pick_loot_id(
 	run_dropped_uniques: Array,
 	allow_spell: bool = true,
 	active_biome: String = "",
+	recent_picks: Array = [],
 ) -> String:
 	var idx: int = src_tier - 1
 	var pools: Dictionary = {}  # slot → Array[Dict]
@@ -236,6 +237,24 @@ static func pick_loot_id(
 		var p: Array = pools.get(slot, [])
 		p.append({"id": id, "weight": w})
 		pools[slot] = p
+	# Within-batch dedup: heavily down-weight base_ids that already
+	# dropped in this same batch (chest contents / kill-loop drops). The
+	# narrow common boot/ring/amulet pools (3 items each at common +
+	# uncommon) used to roll three identical Worn Sandals in a row when
+	# a chest spat 3 commons — visible to the player as "this is broken,"
+	# even though it was statistically expected. We multiply the weight
+	# by 0.05 instead of zeroing out so:
+	#   1. A 1-item-pool chest can still draw without going empty
+	#   2. The dedup is "soft" — a true 80% common-weighted item can
+	#      still repeat occasionally, just not 3-in-a-row
+	# Reference equality on base_id is what the player perceives as a
+	# "duplicate" — quality + tint + affixes all reroll independently.
+	if not recent_picks.is_empty():
+		for slot_key in pools.keys():
+			var slot_pool_pre: Array = pools[slot_key]
+			for entry in slot_pool_pre:
+				if String(entry.id) in recent_picks:
+					entry.weight = float(entry.weight) * 0.05
 	if pools.is_empty():
 		return ""
 	# Pick a slot first, weighted by SLOT_DROP_WEIGHTS but skipping
