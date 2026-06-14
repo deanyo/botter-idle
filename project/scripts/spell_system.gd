@@ -62,7 +62,46 @@ static func process_tick(bot: Node, dungeon: Node, delta: float, items_db: Dicti
 	if not "spell_cooldowns" in bot:
 		return
 	var cds: Dictionary = bot.spell_cooldowns
-	for slot in SPELL_SLOTS:
+	# §2.J (S12) — prefer-cheap iteration when mana-starved. Default
+	# order is SPELL_SLOTS (declaration order); when bot.mana is below
+	# any ready spell's cost, iterate in cost-ascending order so the
+	# cheapest castable spell fires first. Falls back to declaration
+	# order when mana is comfortable. Cooldown ticks for ALL slots
+	# either way — only the FIRE order changes.
+	var iter_order: Array = SPELL_SLOTS.duplicate()
+	if "mana" in bot and "mana_max" in bot and int(bot.mana_max) > 0:
+		var max_ready_cost: int = 0
+		for slot_p in SPELL_SLOTS:
+			var inst_p: Variant = bot.equipped.get(slot_p, null)
+			if typeof(inst_p) != TYPE_DICTIONARY:
+				continue
+			var bid_p: String = String(inst_p.get("base_id", ""))
+			if not items_db.has(bid_p):
+				continue
+			if float(cds.get(slot_p, 0.0)) - delta > 0.0:
+				continue  # not ready this tick — don't factor into starvation check
+			var c: int = SpellData.compute_mana_cost(bot, items_db[bid_p])
+			if c > max_ready_cost:
+				max_ready_cost = c
+		if int(bot.mana) < max_ready_cost:
+			# Starved — sort iteration by cost ASC so cheaper spells
+			# get to fire before expensive ones drain the pool.
+			iter_order.sort_custom(func(a: String, b: String) -> bool:
+				var ca: int = 99
+				var cb: int = 99
+				var ia: Variant = bot.equipped.get(a, null)
+				var ib: Variant = bot.equipped.get(b, null)
+				if typeof(ia) == TYPE_DICTIONARY:
+					var bia: String = String(ia.get("base_id", ""))
+					if items_db.has(bia):
+						ca = SpellData.compute_mana_cost(bot, items_db[bia])
+				if typeof(ib) == TYPE_DICTIONARY:
+					var bib: String = String(ib.get("base_id", ""))
+					if items_db.has(bib):
+						cb = SpellData.compute_mana_cost(bot, items_db[bib])
+				return ca < cb
+			)
+	for slot in iter_order:
 		var inst: Variant = bot.equipped.get(slot, null)
 		if typeof(inst) != TYPE_DICTIONARY:
 			continue

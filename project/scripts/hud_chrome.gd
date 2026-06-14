@@ -101,6 +101,10 @@ var lbl_name: Label
 var lbl_hp: Label
 var hp_bar_fill: ColorRect
 var hp_bar_bg: ColorRect
+# §2.J (S12) mana bar — sits below HP, parallel widget pattern.
+var lbl_mana: Label
+var mana_bar_fill: ColorRect
+var mana_bar_bg: ColorRect
 
 # Per-section clipping panels. Every dynamic widget lives inside one of
 # these so long item/affix/weapon names can't bleed past their section.
@@ -620,6 +624,28 @@ func _build_stats_pane(w: int, h: int) -> void:
 	hp_bar_fill.size = Vector2(inner_w, 6)
 	hp_bar_fill.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_stats_panel.add_child(hp_bar_fill)
+	# §2.J (S12) mana bar — caster-blue, sits 2px under the HP bar
+	# so the two read as a paired vital block. Color picked distinct
+	# from COL_HP red and any blessing-status gold so it's legible at
+	# a glance even in the busy boss-floor framing. Bar is the same
+	# inner_w / 6px height as HP for visual consistency.
+	mana_bar_bg = ColorRect.new()
+	mana_bar_bg.color = Color(0.05, 0.08, 0.18, 1.0)
+	mana_bar_bg.position = Vector2(inner_x, 52)
+	mana_bar_bg.size = Vector2(inner_w, 6)
+	mana_bar_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_stats_panel.add_child(mana_bar_bg)
+	mana_bar_fill = ColorRect.new()
+	mana_bar_fill.color = Color(0.30, 0.45, 0.85, 1.0)
+	mana_bar_fill.position = Vector2(inner_x, 52)
+	mana_bar_fill.size = Vector2(inner_w, 6)
+	mana_bar_fill.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_stats_panel.add_child(mana_bar_fill)
+	# Mana label sits inside the bar's footprint at +2 height — small
+	# (10pt) so it doesn't fight HP's 13pt for visual hierarchy.
+	lbl_mana = _add_label_to(_stats_panel, "Mana: 30/30", inner_x, 60, 10, Color(0.55, 0.70, 1.00))
+	lbl_mana.size = Vector2(inner_w, 14)
+	lbl_mana.clip_text = true
 
 	# Tab container — fills the panel below the header.
 	var tabs_y: int = HUD_HEADER_H
@@ -1460,6 +1486,10 @@ func _add_label_to(parent: Node, t: String, x: int, y: int, size: int, color: Co
 var _last_hp: int = -1
 var _last_max_hp: int = -1
 var _last_lvl: int = -1
+# §2.J cached previous values so the per-frame mana update only
+# repaints when something changed (matches HP cache shape).
+var _last_mana: int = -1
+var _last_mana_max: int = -1
 # Stale-period suppressor — feed StatCalc only when an input changed.
 # Pre-fix this called SaveState.load_state (file open + JSON parse) plus
 # StatCalc.compute every frame even when nothing relevant changed; the
@@ -1486,6 +1516,19 @@ func update_stats(bot_ref: Bot, place_str: String, _turn: int) -> void:
 		hp_bar_fill.color = COL_HP_LOW if hp_pct < 0.3 else COL_HP
 		_last_hp = bot_ref.hp
 		_last_max_hp = bot_ref.max_hp
+	# §2.J mana bar update — same dirty-flag pattern as HP. Only
+	# repaints when bot.mana or bot.mana_max changed. Hides the bar
+	# entirely when mana_max <= 0 (legacy save during migration race
+	# — recompute_stats normally writes mana_max ≥ 30).
+	if mana_bar_fill != null:
+		var bot_mana: int = int(bot_ref.mana) if "mana" in bot_ref else 0
+		var bot_mana_max: int = int(bot_ref.mana_max) if "mana_max" in bot_ref else 0
+		if bot_mana != _last_mana or bot_mana_max != _last_mana_max:
+			lbl_mana.text = "Mana: %d / %d" % [bot_mana, bot_mana_max]
+			var mana_pct: float = clampf(float(bot_mana) / maxf(1.0, float(bot_mana_max)), 0.0, 1.0)
+			mana_bar_fill.size = Vector2(mana_bar_bg.size.x * mana_pct, mana_bar_bg.size.y)
+			_last_mana = bot_mana
+			_last_mana_max = bot_mana_max
 	# Stats tab — recompute only when something feeding StatCalc has
 	# actually changed. bot.upgrade_state is the live save dict by
 	# reference (set in Bot.apply_gear), so we read it directly instead
