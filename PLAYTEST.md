@@ -1214,7 +1214,35 @@ Status legend: `untriaged` | `triaged → fixed` | `triaged → TODO` |
 not-a-bug`.
 
 ### 1. Tier-1 floors 1-3 are a sea of blue with no rarity variety
-**Status:** `untriaged`
+**Status:** `triaged → fixed (balance-pass 2.A + 2.C, 2026-06-13: ca2e5f6 + 9fddbca)`
+
+Resolution: confirmed empirically that the "sea of blue" was the
+**designed** A7-authored shape per the §1.I band weights
+([30, 50, 15, 4, 1] for T1 floors 1-3 + `trash_ceiling=uncommon`
+which caps trash-mob rare+ rolls down to uncommon). Pre-§2.A
+the loot pipeline had hardcoded thresholds that produced a
+similar curve by accident; §2.A wired the data path so the band
+weights are now the authored source of truth. §2.C split the
+single is_boss bool into trash/elite/boss so the per-class
+`boss_step` / `elite_step` (currently both 1) bump rare+ drops
+on the right enemies — generic mobs cap at uncommon, elites
+push into rare/epic, bosses guarantee rare-or-better.
+
+Empirical validation (`/grind-rarity-histogram 20 --tier 1`,
+post-2.A on commit ca2e5f6):
+- Floor 1: 23% common / 77% uncommon / 0% rare+ (154 drops)
+- Floor 2: 34% common / 66% uncommon / 0% rare+ (59 drops)
+- Floor 3: 50% common / 50% uncommon / 0% rare+ (4 drops)
+Matches A7's authored band ±~7pp (sample sizes are small at
+floor 2-3; floor-1 is the load-bearing target and matches well).
+Rare+ drops will appear once the bot is geared enough to engage
+elite-leader packs or downstream bosses.
+
+If the player still feels "no excitement" with rare+ visibly
+gated to elites/bosses, the next dial is `boss_step` / `elite_
+step` in `drop_tuning.json` (currently both 1; bumping to 2
+would push elites toward rare/epic averages). Authoring portal
+edit, no code change.
 
 Player observation: progressing through the game, the first three
 floors of tier 1 produce drops that are overwhelmingly **uncommon
