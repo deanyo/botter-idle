@@ -1684,6 +1684,47 @@ func _apply_vault_results(results: Dictionary) -> void:
 	var placed: Array = results.get("placed_vaults", [])
 	if not placed.is_empty():
 		_log("Notable: %s." % ", ".join(placed))
+	# §3.C (S12) — vault-only drops. For each placed vault on this
+	# floor, look up any items.json entry whose `vault_drop` matches
+	# the vault id. First time the vault is encountered this run,
+	# drop the anchor on a vault loot_mark cell (or, failing that,
+	# the first cell in the vault's footprint we know about). Tracked
+	# via the existing `run_dropped_uniques` gate so re-rolling the
+	# same vault later in the run won't re-drop the anchor. Q7 ship.
+	for vault_id_v in placed:
+		var anchor_id: String = _pick_vault_anchor_id(String(vault_id_v))
+		if anchor_id == "":
+			continue
+		# Spawn cell — prefer an authored loot_mark cell from the same
+		# vault if one exists; fallback to the bot's cell if the vault
+		# placed no loot_marks (degenerate case for spawn-only vaults).
+		var spawn_cell: Vector2i = bot.cell if is_instance_valid(bot) else Vector2i.ZERO
+		var loot_marks2: Array = results.get("loot_marks", [])
+		if loot_marks2.size() > 0:
+			var first: Variant = loot_marks2[0]
+			spawn_cell = first.cell if typeof(first) == TYPE_DICTIONARY else first
+		var anchor_inst: Dictionary = LootFactory.create_item_instance(rng, anchor_id, items_db)
+		_spawn_loot_drop(anchor_inst, spawn_cell)
+		run_dropped_uniques.append(anchor_id)
+		GrindLog.log_line("[s12-vault-anchor] vault=%s anchor=%s biome=%s floor=%d" % [
+			String(vault_id_v), anchor_id,
+			String(current_biome.get("id", "?")), current_floor,
+		])
+
+# §3.C vault-anchor lookup. Mirror of _pick_boss_anchor_id but keyed
+# on vault_id (e.g. "forge_lava_pit_5x5"). Returns "" if no anchor is
+# authored OR the anchor was already dropped this run.
+func _pick_vault_anchor_id(vault_id: String) -> String:
+	if vault_id == "":
+		return ""
+	for it_id in items_db.keys():
+		var def: Dictionary = items_db[it_id]
+		if String(def.get("vault_drop", "")) != vault_id:
+			continue
+		if run_dropped_uniques.has(it_id):
+			continue
+		return it_id
+	return ""
 
 func _place_statue(cell: Vector2i) -> void:
 	var tex: Texture2D = load("res://assets/tiles/features/statue_granite.png")

@@ -37262,6 +37262,190 @@
         "of_tempest": 8,
         "of_synergy": 8
       }
+    },
+    {
+      "id": "forge_pit_anvil",
+      "name": "Anvil of the Lava Pit",
+      "slot": "weapon",
+      "rarity": "legendary",
+      "tile": "mace_3_new.png",
+      "base_type": "great_mace",
+      "weapon_class": "2H",
+      "damage_min": 90,
+      "damage_max": 165,
+      "damage_type": "fire",
+      "speed": 1.05,
+      "item_tier": 5,
+      "flavor_tags": [
+        "fire",
+        "brutal"
+      ],
+      "lore": "Hammered glowing in the lava pit. Each strike remembers the heat.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "implicit_affixes": [
+        "of_embers",
+        "of_pyromancer"
+      ],
+      "affix_pool": {},
+      "vault_drop": "forge_lava_pit_5x5"
+    },
+    {
+      "id": "forge_bridge_warhammer",
+      "name": "Bridgekeeper's Warhammer",
+      "slot": "weapon",
+      "rarity": "legendary",
+      "tile": "hammer_3.png",
+      "base_type": "great_mace",
+      "weapon_class": "2H",
+      "damage_min": 95,
+      "damage_max": 170,
+      "damage_type": "physical",
+      "speed": 1.1,
+      "item_tier": 5,
+      "flavor_tags": [
+        "fire",
+        "brutal"
+      ],
+      "lore": "Last of the bridge-toll keepers. The hammer outlasted the bridge.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "implicit_affixes": [
+        "of_might",
+        "of_kingslayer"
+      ],
+      "affix_pool": {},
+      "vault_drop": "forge_lava_bridge_7x3"
+    },
+    {
+      "id": "glacier_shrine_amulet",
+      "name": "Amulet of the Ice Shrine",
+      "slot": "amulet",
+      "rarity": "legendary",
+      "tile": "cameo_blue.png",
+      "base_type": "amulet",
+      "item_tier": 5,
+      "flavor_tags": [
+        "cold"
+      ],
+      "lore": "Worn by the pilgrim who forgot why she came. Cold preserves both questions and answers.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "implicit_affixes": [
+        "of_cold_resist",
+        "of_cryomancer",
+        "of_recoup"
+      ],
+      "affix_pool": {},
+      "vault_drop": "glacier_ice_shrine_5x5"
+    },
+    {
+      "id": "lair_grove_cloak",
+      "name": "Cloak of the Tree Grove",
+      "slot": "cloak",
+      "rarity": "legendary",
+      "tile": "cloak_3.png",
+      "base_type": "cloak",
+      "item_tier": 5,
+      "flavor_tags": [
+        "regen",
+        "swiftness"
+      ],
+      "lore": "Stitched from leaves the grove kept after the season. Each one still drinks light.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "implicit_affixes": [
+        "of_regen",
+        "of_smoldering_step"
+      ],
+      "affix_pool": {},
+      "vault_drop": "lair_tree_grove_5x5"
+    },
+    {
+      "id": "shoals_tide_ring",
+      "name": "Ring of the Tide Pool",
+      "slot": "ring",
+      "rarity": "legendary",
+      "tile": "ring_black_onyx.png",
+      "base_type": "ring",
+      "item_tier": 5,
+      "flavor_tags": [
+        "cold"
+      ],
+      "lore": "Dropped in the pool by an aquatic visitor; salt does not weather it.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "implicit_affixes": [
+        "of_finesse",
+        "of_chainspark",
+        "of_avenger"
+      ],
+      "affix_pool": {},
+      "vault_drop": "shoals_tide_pool_5x5"
+    },
+    {
+      "id": "crypt_bone_helm",
+      "name": "Helm of the Bone Chamber",
+      "slot": "helm",
+      "rarity": "legendary",
+      "tile": "helm_crested.png",
+      "base_type": "helm",
+      "item_tier": 5,
+      "flavor_tags": [
+        "dark"
+      ],
+      "lore": "Crowned the most important mound. The chamber accepts no others.",
+      "drop_weights": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "unique": true,
+      "enchant_chance": 0.0,
+      "implicit_affixes": [
+        "of_dark_resist",
+        "of_int_mastery",
+        "of_tactician"
+      ],
+      "affix_pool": {},
+      "vault_drop": "crypt_bone_chamber_5x5"
     }
   ]
 }
