@@ -535,14 +535,26 @@ register as a legible UI signal.
   larger UI, player experience differs)
 
 ### 8. Race selection feels low-stakes; slot limitations not visible
-**Status:** `triaged → next-session-brief` (Phase 4, 2026-06-10) —
-two-part. The surfacing fix (show octopode/naga slot conversions on
-character_create) is a UI-cleanup beat using existing
-`SpeciesData.disallowed_slots()` / `slot_conversions()` data. The
-identity-mechanics half (per-race signature passives — felid forbids
-weapons, deep dwarf can't regen, etc) is a design pass that needs
-direction on which mechanics are worth porting and what the idle-
-game frame does with them. Bumped to its own brief.
+**Status:** `triaged → fixed (identity half: balance-pass 2.I,
+2026-06-14: 8fcfe98 + 3dfc767 + 521f54c + f4b207d + 8953623);
+surfacing half: triaged → TODO (character_create UI extension).`
+
+Resolution (identity half): all 15 species shipped a `signature`
+block in species.json with one mechanically-distinct passive per
+species. Stat-shape passives (human / spriggan / tengu / naga /
+demonspawn / vampire / halfling / deep_elf — batch 1) dispatch in
+StatCalc.compute. Combat-event passives (mummy bleed/poison/
+lifesteal-immune; hill_orc <30%-HP berserker rage; minotaur every-
+5th brute-swing armor pen; troll inverted-regen; gargoyle
+HP-scaling armor; octopode ring DR-skip; kobold scavenger gold)
+wire into actor.gd / dungeon.gd hot paths. Race choice now has
+mechanical identity beyond stat tweaks — a Hill Orc plays
+fundamentally different from a Halfling, a Mummy from a Troll.
+
+Surfacing half (UI display on character_create) remains a TODO —
+the data is present (`signature.desc` carries a one-line blurb
+per species), needs `character_create.gd` to render it next to
+the existing stats row. Bump to its own session.
 
 Player observation: **picking a race seems like a boring decision.**
 The current shape is stat tweaks (atk_pct / def_pct / hp_pct), some
@@ -1492,7 +1504,24 @@ disallowed-and-converted slots either hidden or visually
 demoted (see #5 above for the visual-language pattern).
 
 ### 7. Octopode feels "slightly hard mode"
-**Status:** `untriaged`
+**Status:** `triaged → fixed (balance-pass 2.I, 2026-06-14: 8953623)`
+
+Resolution: octopode signature passive shipped — ring affixes
+ignore per-affix-id DR with each other. Stacking the same affix
+across 4 rings now contributes at full 1.0× per ring (test
+pinned: 2 of_might × 12 = 24 STR, no DR) vs the legacy
+1.0+0.75+0.5+0.25 = 2.5× DR curve. The multi-ring slot is now
+mechanically meaningful, addressing the "three lost armor slots
+not compensated" concern. DCSS-precedent "slightly hard by
+design" still holds — the ring DR-skip is a buff, not a
+break-even — but the gap is closed enough to read as an
+intentional ring-stack archetype rather than a flat nerf.
+
+Empirical follow-up still warranted: run `/duel "species=octopode"
+-- "species=human" -N 20` once the playtester has time to verify
+within ±10% win rate. The PLAYTEST entry was the basis for
+shipping the passive as-described in the §2.I brief; further
+empirical validation is a polish-pass concern.
 
 Player reports octopode plays slightly harder than baseline
 species, presumably because it loses three armor slots
