@@ -197,7 +197,13 @@
       },
       "str_flat": 1,
       "dex_flat": 2,
-      "int_flat": 1
+      "int_flat": 1,
+      "signature": {
+        "id": "octopode_eight_arms",
+        "kind": "ring_dr_skip",
+        "value": 0,
+        "desc": "Ring affixes ignore per-affix-id DR with each other (rings stack at full effectiveness)."
+      }
     },
     {
       "id": "demonspawn",
@@ -422,7 +428,13 @@
       ],
       "str_flat": -2,
       "dex_flat": 4,
-      "int_flat": 0
+      "int_flat": 0,
+      "signature": {
+        "id": "kobold_scavenger",
+        "kind": "on_kill_extra_gold",
+        "value": 25,
+        "desc": "25% chance on kill to find extra gold (scavenger flavor)."
+      }
     }
   ]
 }

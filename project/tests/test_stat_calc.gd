@@ -990,6 +990,59 @@ func test_s12_hill_orc_rage_used_resets_per_floor() -> void:
 	assert_false(bot._hill_orc_rage_used, "floor_started resets rage availability")
 	bot.free()
 
+func test_s12_octopode_rings_skip_per_affix_dr() -> void:
+	# §2.I octopode: ring affixes ignore per-affix-id DR with each
+	# other. Same affix on multiple rings stacks at 1.0× per ring,
+	# instead of 1.0/0.75/0.5/0.25 normal DR.
+	# Setup: 2 rings each rolling of_might 12 (T5).
+	var fake_db: Dictionary = items_db.duplicate(true)
+	fake_db["__op_ring"] = {
+		"id": "__op_ring", "slot": "ring", "rarity": "legendary",
+		"flavor_tags": [], "implicit_affixes": [],
+	}
+	fake_db["__op_ring2"] = {
+		"id": "__op_ring2", "slot": "ring2", "rarity": "legendary",
+		"flavor_tags": [], "implicit_affixes": [],
+	}
+	var inst1 := {"base_id": "__op_ring", "rarity": "legendary",
+		"affixes": [{"id": "of_might", "value": 12}]}
+	var inst2 := {"base_id": "__op_ring2", "rarity": "legendary",
+		"affixes": [{"id": "of_might", "value": 12}]}
+	# Human comparison: 2 of_might at 12 each, with DR 1.0 + 0.75 = 1.75 → 21 STR added.
+	# Bare human STR = 5 + flat 1 + lvl 0 = 6. + 21 → 27.
+	var d_h: Dictionary = StatCalc.compute(
+		{"ring": inst1, "ring2": inst2}, fake_db,
+		_bare_save("human"), "human", 1, 0, 0
+	)
+	# Octopode: 2 rings each at 1.0× = 24 STR added (no DR).
+	# Bare octopode STR = 5 + flat (octopode str_flat in species.json)
+	# + lvl 0. We don't know octopode's str_flat without reading the
+	# data, so anchor on the DELTA between human and octopode rather
+	# than absolute values.
+	var d_o: Dictionary = StatCalc.compute(
+		{"ring": inst1, "ring2": inst2}, fake_db,
+		_bare_save("octopode"), "octopode", 1, 0, 0
+	)
+	# Bare-equip baselines (no rings):
+	var d_h_base: Dictionary = StatCalc.compute({}, fake_db, _bare_save("human"), "human", 1, 0, 0)
+	var d_o_base: Dictionary = StatCalc.compute({}, fake_db, _bare_save("octopode"), "octopode", 1, 0, 0)
+	# Human ring delta = 21 (12 × 1.0 + 12 × 0.75 = 21).
+	var human_delta: int = int(d_h.str) - int(d_h_base.str)
+	# Octopode ring delta = 24 (12 × 1.0 + 12 × 1.0 = 24, no DR).
+	var op_delta: int = int(d_o.str) - int(d_o_base.str)
+	# But §2.I human signature bumps highest stat by 5%, and rings
+	# pump STR. With STR 27 + 5% = 28.35 → 28; base 6 + 5% = 6.3 → 6.
+	# Delta becomes 28-6 = 22 (signature compresses by 1). Octopode
+	# has no highest-stat sig so its delta is clean 24. The TEST
+	# pin: octopode delta > human delta — DR skip is real and
+	# meaningful regardless of human's compression.
+	assert_gt(op_delta, human_delta,
+		"octopode ring stacking exceeds human (DR skip → %d > %d)" % [op_delta, human_delta])
+	# Stronger pin: octopode delta should be exactly 24 (no DR,
+	# no rounding loss for STR).
+	assert_eq(op_delta, 24,
+		"octopode 2 of_might × 12 = 24 STR (no DR — octopode delta=%d)" % op_delta)
+
 func test_s12_first_hit_mark_sums_with_crit_mark_into_marked_amp_lane() -> void:
 	# Both of_hunter_mark (on-crit) and of_vulnerability_mark (first-hit)
 	# write into the marked-amp lane that actor.gd::_apply_typed_damage

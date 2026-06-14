@@ -1465,6 +1465,16 @@ func _on_enemy_died(actor: Actor) -> void:
 	# Bosses + rare-tier packs still drop their own bigger pools below.
 	var gold_drop: int = int(round(float(rng.randi_range(1, 3) + current_floor / 2) * gold_mult))
 	bot.gold += gold_drop
+	# §2.I Kobold scavenger — on kill, 25% chance to roll an extra
+	# small gold drop (1-3 gold × current_floor scaling). Cheap
+	# always-on flavor; doesn't compete with affix-rolled extra-drop
+	# (loot_quantity_pct from of_abundance is item-tier, this is
+	# pure gold). Identity: "kobolds find things others miss."
+	if is_instance_valid(bot) and bot.species_id == "kobold":
+		if rng.randf() < 0.25:
+			var bonus_gold: int = int(round(float(rng.randi_range(1, 3) + current_floor / 2) * gold_mult))
+			bot.gold += bonus_gold
+			run.append_loot_log("Kobold scavenge: +%d gold" % bonus_gold)
 	run.note_kill(e.enemy_id)
 	run.append_loot_log("%s slain (+%d gold, +%d xp)" % [e.display_name, gold_drop, e.xp_reward])
 	if e.is_boss:

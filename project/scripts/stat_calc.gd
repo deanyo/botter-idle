@@ -254,19 +254,43 @@ static func compute(
 				combined_affixes.append(_realize_implicit(String(a), String(item.get("rarity", "common"))))
 		for a in inst.get("affixes", []):
 			combined_affixes.append(a)
+		# §2.I Octopode — ring affixes ignore per-affix-id DR WITH EACH
+		# OTHER. The species's load-bearing identity is the multi-ring
+		# slot (slot_conversions promotes ring/ring2/ring3/ring4); this
+		# passive makes that mechanically real. When the current slot is
+		# any ring AND species is octopode, we DON'T bump the shared
+		# source counter for that ring's affixes — rings stack with each
+		# other at full 1.0× rather than degrading. Non-ring slots still
+		# bump the shared counter normally, so rings + non-rings still DR.
+		var slot_is_ring: bool = String(slot).begins_with("ring")
+		var octopode_ring_skip: bool = species_id == "octopode" and slot_is_ring
 		# Bump source counts BEFORE summing so each affix instance gets
 		# its own DR slot. Two of_haste on the same item count as two
 		# sources (rare in practice — slots usually roll unique ids).
+		# Octopode-ring slots skip the bump but still pass a per-ring
+		# pseudo-rank (1) to _scaled_affix_sums via a separate dict.
 		for af in combined_affixes:
 			var aid: String = String(af.get("id", ""))
 			if aid == "":
 				continue
+			if octopode_ring_skip:
+				continue  # don't add ring affix to the shared counter
 			_affix_source_count[aid] = int(_affix_source_count.get(aid, 0)) + 1
 		# Apply DR-scaled affix sums, individually per affix so each
 		# instance can be weighted by its own source-count rank. We
 		# can't use AffixSystem.sum_affix_stats anymore (it pre-sums)
 		# — fold the same per-affix scaling logic inline.
-		var slot_sums: Dictionary = _scaled_affix_sums(combined_affixes, qmult_affix, _affix_source_count)
+		# Octopode-ring slots pass a fake all-1 source counter so each
+		# ring's affixes contribute at full 1.0× DR factor regardless of
+		# what other rings rolled.
+		var ranking: Dictionary = _affix_source_count
+		if octopode_ring_skip:
+			ranking = {}
+			for af in combined_affixes:
+				var aid: String = String(af.get("id", ""))
+				if aid != "":
+					ranking[aid] = 1
+		var slot_sums: Dictionary = _scaled_affix_sums(combined_affixes, qmult_affix, ranking)
 
 		str_stat += int(round(float(slot_sums.get("str", 0))))
 		dex_stat += int(round(float(slot_sums.get("dex", 0))))
