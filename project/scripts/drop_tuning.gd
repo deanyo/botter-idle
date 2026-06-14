@@ -89,3 +89,36 @@ static func tint_inverted_chance() -> float:
 static func tint_prismatic_chance() -> float:
 	_ensure_loaded()
 	return float(_data.get("tint_recolor", {}).get("prismatic_chance", 0.0005))
+
+# §2.A (S12) — band weights consumed by LootFactory.roll_rarity_for_class.
+# Per-tier × floor-band [common, uncommon, rare, epic, legendary] weights
+# authored under §1.I. Returns the matching band as a 5-int Array;
+# fallback to a hardcoded sane curve (mirrors the legacy hardcoded
+# rarity ladder at floor 1) if any key is missing so absence-of-data
+# can never crash a drop roll.
+static func tier_drop_band(src_tier: int, current_floor: int) -> Array:
+	_ensure_loaded()
+	var bands: Dictionary = _data.get("tier_drop_band", {})
+	var tier_key: String = "T%d" % clampi(src_tier, 1, 5)
+	var tier_bands: Dictionary = bands.get(tier_key, {})
+	# Floor band: 1-3 vs 4-6 per the authored shape.
+	var band_key: String = "1-3" if current_floor <= 3 else "4-6"
+	var weights: Variant = tier_bands.get(band_key, null)
+	if weights is Array and (weights as Array).size() == 5:
+		return weights
+	# Fallback — pre-§2.A baseline curve (matches the old hardcoded
+	# thresholds at floor 1, tier 1: 55% common / 30% unc / 15% rare /
+	# 8% epic / 2% legendary, normalized).
+	return [55, 30, 15, 8, 2]
+
+static func boss_step() -> int:
+	_ensure_loaded()
+	return int(_data.get("tier_drop_band", {}).get("boss_step", 1))
+
+static func elite_step() -> int:
+	_ensure_loaded()
+	return int(_data.get("tier_drop_band", {}).get("elite_step", 1))
+
+static func trash_ceiling() -> String:
+	_ensure_loaded()
+	return String(_data.get("tier_drop_band", {}).get("trash_ceiling", "uncommon"))

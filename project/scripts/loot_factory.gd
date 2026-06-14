@@ -96,40 +96,72 @@ static func roll_rarity_for_class(
 	blessing_bonus: float,
 	mod_bonus: float,
 ) -> String:
+	# §2.A (S12) — replaces the legacy hardcoded thresholds with a
+	# data-driven weighted pick from drop_tuning.tier_drop_band[T*][band].
+	# Each band is a 5-int weight array [common, uncommon, rare, epic,
+	# legendary]. The blessing/mod/floor/tier bonuses translate into a
+	# tail-weight bump for rare+ entries so the gate stays composable.
+	var weights: Array = DropTuning.tier_drop_band(src_tier, current_floor).duplicate()
+	# Compose external bonuses: each +0.05 on the legacy roll equals a
+	# ~5% upward shift toward rare+. Replicate by multiplying the
+	# rare/epic/legendary entries' weight by (1 + bonus×N).
+	# Mirrors the pre-§2.A "subtract from r" shape: blessing_bonus + mod_
+	# bonus stack additively. Cap composite at +0.5 so a stacked
+	# rarity-blessing bot can't blow out the curve.
+	var tail_bump: float = clampf(blessing_bonus + mod_bonus, 0.0, 0.5)
+	if tail_bump > 0.0:
+		var bump: float = 1.0 + tail_bump * 4.0
+		weights[2] = float(weights[2]) * bump  # rare
+		weights[3] = float(weights[3]) * bump  # epic
+		weights[4] = float(weights[4]) * bump  # legendary
+	# Class step — boss bumps every roll by boss_step rarity tiers,
+	# elite by elite_step. Implemented post-pick so the band table
+	# stays trash-baseline; the per-class step is the differentiator.
+	var rarity: String = _weighted_rarity_pick(rng, weights)
 	if enemy_class == "boss":
-		var boss_roll: float = rng.randf()
-		var rarity_b: String
-		if boss_roll < 0.5: rarity_b = "legendary"
-		elif boss_roll < 0.85: rarity_b = "epic"
-		else: rarity_b = "rare"
-		return clamp_rarity_to_tier(rarity_b, src_tier)
-	if enemy_class == "elite":
-		# Elite tier — between trash and boss. ~25% rare-or-better tail
-		# (vs trash's ~12% epic-or-better, vs boss's 100% rare-or-better).
-		# The bias is delivered as an extra negative offset on the trash
-		# curve so existing floor / blessing / mod bonuses still compose.
-		var floor_bonus_e: float = float(current_floor - 1) * 0.05
-		var tier_bonus_e: float = float(src_tier - 1) * 0.05
-		var elite_bias: float = 0.20  # equivalent to ~+4 floors of bonus
-		var r_e: float = rng.randf() - floor_bonus_e - blessing_bonus - tier_bonus_e - mod_bonus - elite_bias
-		var rarity_e: String
-		if r_e < 0.02: rarity_e = "legendary"
-		elif r_e < 0.10: rarity_e = "epic"
-		elif r_e < 0.25: rarity_e = "rare"
-		elif r_e < 0.55: rarity_e = "uncommon"
-		else: rarity_e = "common"
-		return clamp_rarity_to_tier(rarity_e, src_tier)
-	# Default = "trash" — legacy non-boss path verbatim.
-	var floor_bonus: float = float(current_floor - 1) * 0.05
-	var tier_bonus: float = float(src_tier - 1) * 0.05
-	var r: float = rng.randf() - floor_bonus - blessing_bonus - tier_bonus - mod_bonus
-	var rarity: String
-	if r < 0.02: rarity = "legendary"
-	elif r < 0.10: rarity = "epic"
-	elif r < 0.25: rarity = "rare"
-	elif r < 0.55: rarity = "uncommon"
-	else: rarity = "common"
+		rarity = _bump_rarity(rarity, DropTuning.boss_step())
+	elif enemy_class == "elite":
+		rarity = _bump_rarity(rarity, DropTuning.elite_step())
+	elif enemy_class == "trash":
+		# Trash ceiling — never roll above the configured cap.
+		rarity = _cap_rarity(rarity, DropTuning.trash_ceiling())
 	return clamp_rarity_to_tier(rarity, src_tier)
+
+# §2.A helper: weighted pick over [common, uncommon, rare, epic,
+# legendary]. Returns "common" if total weight is non-positive (shouldn't
+# happen with the authored data; defensive fallback).
+static func _weighted_rarity_pick(rng: RandomNumberGenerator, weights: Array) -> String:
+	const NAMES := ["common", "uncommon", "rare", "epic", "legendary"]
+	var total: float = 0.0
+	for w in weights:
+		total += float(w)
+	if total <= 0.0:
+		return "common"
+	var r: float = rng.randf() * total
+	var acc: float = 0.0
+	for i in range(NAMES.size()):
+		acc += float(weights[i])
+		if r <= acc:
+			return NAMES[i]
+	return NAMES[NAMES.size() - 1]
+
+# §2.A helper: bump a rarity up by N tiers (capped at "legendary").
+static func _bump_rarity(rarity: String, step: int) -> String:
+	if step <= 0:
+		return rarity
+	const ORDER := ["common", "uncommon", "rare", "epic", "legendary"]
+	var idx: int = int(RARITY_RANK.get(rarity, 0))
+	idx = mini(idx + step, ORDER.size() - 1)
+	return ORDER[idx]
+
+# §2.A helper: cap a rarity at the configured ceiling (e.g. trash_ceiling).
+static func _cap_rarity(rarity: String, ceiling: String) -> String:
+	var current_rank: int = int(RARITY_RANK.get(rarity, 0))
+	var cap_rank: int = int(RARITY_RANK.get(ceiling, 4))
+	if current_rank <= cap_rank:
+		return rarity
+	const ORDER := ["common", "uncommon", "rare", "epic", "legendary"]
+	return ORDER[cap_rank]
 
 # Chest-pickup variant. Same source-tier clamp as roll_rarity so
 # entering a wizlab portal on Floor 2 of the dungeon doesn't dump
