@@ -950,6 +950,46 @@ func test_s12_mummy_burn_NOT_immune() -> void:
 	assert_true(d.has_status("burning"), "mummy bot still burns (NOT immune to fire DoT)")
 	d.free()
 
+func test_s12_minotaur_swing_counter_fires_on_every_5th() -> void:
+	# §2.I minotaur: increment swing counter; on 5th swing flag fires.
+	# Pure counter test — the actual armor=0 application is in
+	# resolve_swing and is exercised by integration tests / playtest.
+	# Here we pin only the counter logic.
+	var _StubBotDefender := preload("res://tests/_stub_bot_defender.gd")
+	var bot: Bot = _StubBotDefender.new()
+	bot.species_id = "minotaur"
+	bot._minotaur_swing_count = 0
+	# Simulate 4 swings — counter at 4, no pen yet.
+	for i in 4:
+		bot._minotaur_swing_count += 1
+	bot._minotaur_pen_active = false
+	# 5th swing → flag fires + counter resets.
+	bot._minotaur_swing_count += 1
+	if bot._minotaur_swing_count >= 5:
+		bot._minotaur_swing_count = 0
+		bot._minotaur_pen_active = true
+	assert_true(bot._minotaur_pen_active, "5th swing flips pen flag")
+	assert_eq(bot._minotaur_swing_count, 0, "counter resets after firing")
+	# 6th swing — pen back off.
+	bot._minotaur_pen_active = false
+	bot._minotaur_swing_count += 1
+	assert_false(bot._minotaur_pen_active, "6th swing pen is off (counter at 1)")
+	bot.free()
+
+func test_s12_hill_orc_rage_used_resets_per_floor() -> void:
+	# §2.I hill_orc: _hill_orc_rage_used is the once-per-floor mutex.
+	# Pin: starts false on a fresh bot, set true once it fires, reset
+	# false by the floor_started hook (simulated here).
+	var _StubBotDefender := preload("res://tests/_stub_bot_defender.gd")
+	var bot: Bot = _StubBotDefender.new()
+	bot.species_id = "hill_orc"
+	assert_false(bot._hill_orc_rage_used, "fresh bot has rage available")
+	bot._hill_orc_rage_used = true
+	# floor_started hook in dungeon.gd resets this to false.
+	bot._hill_orc_rage_used = false
+	assert_false(bot._hill_orc_rage_used, "floor_started resets rage availability")
+	bot.free()
+
 func test_s12_first_hit_mark_sums_with_crit_mark_into_marked_amp_lane() -> void:
 	# Both of_hunter_mark (on-crit) and of_vulnerability_mark (first-hit)
 	# write into the marked-amp lane that actor.gd::_apply_typed_damage

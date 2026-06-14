@@ -413,6 +413,24 @@ func resolve_swing(typed: Dictionary, attacker: Actor = null) -> int:
 			bot_av._recoup_bucket += add_pool
 			bot_av._recoup_window_remaining = 4.0
 			add_status("recouping", 4.0)
+		# §2.I Hill Orc — berserker rage trigger. Once per floor, when
+		# the bot crosses below 30% HP, fire a 8-second self-buff
+		# ("rage" status). attempt_attack hot path reads has_status
+		# ("rage") to apply +50% atk_pct + +50% haste, reusing the
+		# existing rage mechanism that worn-tag rage already uses for
+		# its on-kill stacking — but here it's a single fixed-duration
+		# burst, no per-kill stacks. Reset on floor_started.
+		if bot_av.species_id == "hill_orc" and not bot_av._hill_orc_rage_used \
+				and bot_av.max_hp > 0:
+			if float(bot_av.hp) / float(bot_av.max_hp) < 0.30:
+				bot_av._hill_orc_rage_used = true
+				# 8-second "berserk" status. attempt_attack reads
+				# has_status("berserk") for both the +50% atk lane (via
+				# ephemeral_sum) and the +50% haste lane (via the
+				# attack_interval shortcut). Independent from worn-tag
+				# rage's per-kill stacking — this is a single fixed
+				# burst, not a stack ramp.
+				add_status("berserk", 8.0)
 	if hp <= 0 and is_alive:
 		# S11 of_phylactery (a07 §6.10 Boris's Phylactery). Once-per-floor
 		# revive at phylactery_revive_pct% max HP on lethal damage. Gates
@@ -581,6 +599,12 @@ func _apply_typed_damage(raw: int, damage_type: String, attacker: Actor, def_tag
 			var bot_atk: Bot = attacker as Bot
 			if bot_atk.melee_armor_pen_pct > 0.0:
 				eff_armor = int(round(float(eff_armor) * (1.0 - bot_atk.melee_armor_pen_pct / 100.0)))
+			# §2.I Minotaur brute-swing — every 5th hit ignores enemy
+			# armor entirely. Set by attempt_attack swing-counter just
+			# before resolve_swing fires; after the eff_armor read the
+			# bot path resets the flag below at swing end.
+			if bot_atk._minotaur_pen_active:
+				eff_armor = 0
 		dmg = maxi(1, post_mit - eff_armor)
 	else:
 		var resist_pct: float = 0.0
@@ -709,7 +733,14 @@ func attempt_attack(other: Actor, delta: float) -> int:
 	attack_cooldown -= delta
 	if attack_cooldown > 0.0:
 		return 0
-	attack_cooldown = attack_interval
+	# §2.I Hill Orc berserker rage haste leg — +50% attack speed
+	# while "berserk" status ticks. Shortens the swing interval at
+	# the source site so the existing haste-stack composition stays
+	# intact. Bot-only.
+	var interval: float = attack_interval
+	if self is Bot and has_status("berserk"):
+		interval = interval / 1.50
+	attack_cooldown = interval
 	# `blinded`: 30% chance to fan-out the swing entirely. Sandblast's
 	# Blinding Grit affix applies it. Eats the cooldown either way so
 	# the blind ticks down on missed swings too. Spell expansion 2026-06-04.
@@ -930,6 +961,24 @@ func attempt_attack(other: Actor, delta: float) -> int:
 		# duration baked in at the cast site, not via spell_duration_pct.
 		if has_status("wrath"):
 			ephemeral_sum += 0.20
+		# §2.I Hill Orc berserker rage — +50% atk while "berserk"
+		# status ticks (set by take_damage when bot crosses below 30%
+		# HP, once per floor). Composed through the ephemeral_sum lane
+		# but its 0.50 contribution alone exceeds the +30% per-swing
+		# cap — that's intentional per the brief ("+50% atk_pct +50%
+		# haste"). Bypass the cap by post-applying the rage multiplier
+		# AFTER the ephemeral_sum clamp below.
+		# §2.I Minotaur — every 5th swing ignores enemy armor entirely.
+		# Independent counter from of_doomstrike's. Increments here +
+		# stamps a transient bool on the attacker (cleared at the swing
+		# end below) so resolve_swing's eff_armor branch can read it
+		# across the function boundary.
+		bot_self._minotaur_pen_active = false
+		if bot_self.species_id == "minotaur":
+			bot_self._minotaur_swing_count += 1
+			if bot_self._minotaur_swing_count >= 5:
+				bot_self._minotaur_swing_count = 0
+				bot_self._minotaur_pen_active = true
 		# of_sundering — apply target armor-stack debuff BEFORE clamping
 		# ephemeral_sum, so the next-swing reduction shows as the same
 		# arch shape as armor on the defender's side. Stack count caps
@@ -949,6 +998,13 @@ func attempt_attack(other: Actor, delta: float) -> int:
 			if _is_cell_water((other as Enemy).cell):
 				ephemeral_sum += bot_self.tidesong_water_pct / 100.0
 	var dmg_mult: float = 1.0 + minf(0.30, maxf(0.0, ephemeral_sum))
+	# §2.I Hill Orc berserker rage layered AFTER the +30% ephemeral
+	# clamp. The brief specifies +50% atk_pct, which exceeds the
+	# per-swing ceiling — that's the species's load-bearing identity:
+	# panic-mode burst that briefly ignores the cap, gated by
+	# once-per-floor + 8-second window + below-30%-HP entry condition.
+	if self is Bot and has_status("berserk"):
+		dmg_mult *= 1.50
 
 	# Item-overhaul v2: weapon damage is a roll over [damage_min,
 	# damage_max] of weapon_damage_type. extra_damage adds typed bonus

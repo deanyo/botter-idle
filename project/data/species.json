@@ -77,7 +77,13 @@
       ],
       "str_flat": 5,
       "dex_flat": 0,
-      "int_flat": -2
+      "int_flat": -2,
+      "signature": {
+        "id": "minotaur_brute_swing",
+        "kind": "every_nth_armor_pen",
+        "value": 5,
+        "desc": "Every 5th hit ignores enemy armor entirely."
+      }
     },
     {
       "id": "naga",
@@ -293,7 +299,18 @@
       ],
       "str_flat": 4,
       "dex_flat": 0,
-      "int_flat": 0
+      "int_flat": 0,
+      "signature": {
+        "id": "hill_orc_berserker_rage",
+        "kind": "low_hp_rage",
+        "value": 50,
+        "params": {
+          "haste_pct": 50,
+          "duration_s": 8.0,
+          "threshold_pct": 30
+        },
+        "desc": "At <30% HP: +50% damage and +50% haste for 8s. Once per floor."
+      }
     },
     {
       "id": "deep_elf",

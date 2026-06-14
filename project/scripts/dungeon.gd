@@ -603,6 +603,8 @@ func _async_build_floor() -> void:
 		# spell_cast_count: Tiamat's 5th-cast counter
 		bot.polymorph_used_this_floor = false
 		bot.hp_per_kill_granted_this_floor = 0
+		# §2.I Hill Orc — reset the once-per-floor rage trigger.
+		bot._hill_orc_rage_used = false
 		bot.spell_cast_count = 0
 		# §1.H of_first_strike per-floor reset. Stale instance_ids would
 		# accumulate across floors otherwise; the dictionary is small but

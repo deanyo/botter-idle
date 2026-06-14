@@ -132,6 +132,14 @@ var doomstrike_dmg_pct: float = 0.0
 # between floors — feel is "every 5 swings", not "every 5 swings of
 # the current floor."
 var _doomstrike_swing_count: int = 0
+# §2.I (S12) Minotaur — every 5th swing ignores enemy armor. Independent
+# counter from doomstrike's so each fires on its own cadence.
+var _minotaur_swing_count: int = 0
+var _minotaur_pen_active: bool = false
+# §2.I Hill Orc — once-per-floor low-HP rage trigger. _hill_orc_rage_used
+# resets on floor_started. While active, "rage" status is up and the
+# attempt_attack hot path reads it for the +50% atk + +50% haste lanes.
+var _hill_orc_rage_used: bool = false
 var riposte_dmg_pct: float = 0.0
 var high_hp_cdr_pct: float = 0.0
 var kill_streak_cdr_pct: float = 0.0
