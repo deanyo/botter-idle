@@ -1,11 +1,16 @@
 class_name BranchTooltip
-extends Control
+extends PanelContainer
 
 # Item-tooltip-styled branch tooltip used by the Outpost dungeon-deploy
 # picker. Mirrors ItemTooltip's structure (rarity border, title in rarity
 # color, separators, color-coded modifier lines, italic flavor block) so
 # the deploy buttons feel like inspecting a magic item — not a flat
 # string. Caller passes a structured data dict to render().
+#
+# Extends PanelContainer so the tooltip self-sizes synchronously off
+# its child VBoxContainer's minimum size — Godot's _make_custom_tooltip
+# samples the returned Control's size BEFORE any process_frame, so a
+# plain Control + post-render await yields a 1px-wide tooltip.
 #
 # Data shape:
 #   {
@@ -28,6 +33,7 @@ const TOOLTIP_W := 280
 const PADDING := 10
 const LINE_GAP := 4
 
+const COL_BG := Color(0.05, 0.04, 0.02, 0.94)
 const COL_BODY := Color(0.92, 0.92, 0.85)
 const COL_DIM := Color(0.65, 0.62, 0.5)
 const COL_HEADER := Color(0.92, 0.78, 0.45)         # amber section headers
@@ -39,9 +45,9 @@ const COL_UNLOCKED := Color(0.55, 0.95, 0.55)
 const COL_LOCKED := Color(0.95, 0.50, 0.40)
 const COL_HOTKEY := Color(0.5, 0.5, 0.45)
 
-# Modifier category colors — match the player's mental model:
+# Modifier category colors:
 #   reward = gold (loot/gold/chest stuff)
-#   danger = red  (more enemies, harder enemies, extra elites)
+#   danger = red (more enemies, harder enemies, extra elites)
 #   utility = blue (structural — endless, etc.)
 const COL_MOD_REWARD := Color(1.00, 0.85, 0.30)
 const COL_MOD_DANGER := Color(0.95, 0.45, 0.40)
@@ -49,43 +55,45 @@ const COL_MOD_UTILITY := Color(0.55, 0.85, 1.00)
 const COL_MOD_NEUTRAL := Color(0.85, 0.85, 0.75)
 
 var _vbox: VBoxContainer = null
-var _bg: ColorRect = null
-var _border: ReferenceRect = null
+var _border_color: Color = COL_HEADER
+var _border_width: float = 1.5
 var _glow_color: Color = Color(0, 0, 0, 0)
 var _glow_alpha: float = 0.0
 var _glow_pulse_t: float = 0.0
 var _is_high_tier: bool = false
 
-func _ready() -> void:
+func _init() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	z_index = 200
 	custom_minimum_size = Vector2(TOOLTIP_W, 0)
-	_bg = ColorRect.new()
-	_bg.color = Color(0.05, 0.04, 0.02, 0.94)
-	_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_bg.anchor_right = 1.0
-	_bg.anchor_bottom = 1.0
-	add_child(_bg)
-	_border = ReferenceRect.new()
-	_border.border_color = COL_HEADER
-	_border.border_width = 1.5
-	_border.editor_only = false
-	_border.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_border.anchor_right = 1.0
-	_border.anchor_bottom = 1.0
-	add_child(_border)
+	# A transparent StyleBox so PanelContainer doesn't paint its default
+	# theme — we render bg + border via _draw to keep the rounded /
+	# rarity-tinted look identical to ItemTooltip.
+	var sb := StyleBoxEmpty.new()
+	sb.content_margin_left = PADDING
+	sb.content_margin_right = PADDING
+	sb.content_margin_top = PADDING
+	sb.content_margin_bottom = PADDING
+	add_theme_stylebox_override("panel", sb)
 	_vbox = VBoxContainer.new()
-	_vbox.position = Vector2(PADDING, PADDING)
 	_vbox.add_theme_constant_override("separation", LINE_GAP)
 	_vbox.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(_vbox)
 	set_process(true)
 
-# Layered halo behind the panel — same shape as ItemTooltip's draw, so
-# both surfaces feel like the same family of UI affordance. Pulses on
-# rare+ branches.
+# Background fill + rarity-tinted border + layered halo. Drawn in _draw
+# so panel sizing happens through PanelContainer's normal Container
+# layout — no manual resize needed.
 func _draw() -> void:
-	if _glow_color.a <= 0.001 or size.x <= 0.0 or size.y <= 0.0:
+	if size.x <= 0.0 or size.y <= 0.0:
+		return
+	# Solid fill behind the panel content.
+	draw_rect(Rect2(Vector2.ZERO, size), COL_BG, true)
+	# Border at rarity color + tier-scaled thickness.
+	draw_rect(Rect2(Vector2.ZERO, size), _border_color, false, _border_width)
+	# Layered glow halo — escalates with rarity. Skipped when alpha is 0
+	# (commons get a clean cut, no halo).
+	if _glow_alpha <= 0.001:
 		return
 	var layers: int = 6
 	var pulse: float = 1.0
@@ -109,11 +117,8 @@ func render(data: Dictionary) -> void:
 		return
 	var rarity: String = String(data.get("rarity", "common"))
 	var rarity_col: Color = UITheme.rarity_color(rarity)
-	_border.border_color = rarity_col
-	# Border thickness escalates with tier so T5 deploys read as
-	# "weight" before the player parses any text — same pattern as
-	# ItemTooltip's rarity-thickness mapping.
-	_border.border_width = {
+	_border_color = rarity_col
+	_border_width = {
 		"common": 1.0, "uncommon": 1.5, "rare": 2.0,
 		"epic": 2.5, "legendary": 3.0,
 	}.get(rarity, 1.5)
@@ -148,7 +153,10 @@ func render(data: Dictionary) -> void:
 	var is_unlocked: bool = bool(data.get("is_unlocked", false))
 	var status_line: String = String(data.get("status_line", ""))
 	if is_unlocked and status_line != "":
-		_vbox.add_child(_make_label(status_line, 12, COL_UNLOCKED, true))
+		var s_lbl := _make_label(status_line, 12, COL_UNLOCKED, true)
+		s_lbl.custom_minimum_size = Vector2(TOOLTIP_W - PADDING * 2, 0)
+		s_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		_vbox.add_child(s_lbl)
 	elif not is_unlocked:
 		var lock_hint: String = String(data.get("lock_hint", "LOCKED"))
 		var lock_lbl := _make_label(lock_hint, 12, COL_LOCKED, true)
@@ -196,11 +204,13 @@ func render(data: Dictionary) -> void:
 			if anchor:
 				loot_text += "  (boss anchor)"
 			var loot_color: Color = COL_LOOT_ANCHOR if anchor else COL_LOOT_BIOME
-			_vbox.add_child(_make_label(loot_text, 12, loot_color, anchor))
-	# Run modifiers — each one a colored "+ Name" line plus dim wrapped
-	# desc beneath. Color reflects category (reward/danger/utility) so
-	# the player reads "this deploy is loaded with gold and danger" at
-	# a glance instead of parsing a wall of plain text.
+			var loot_lbl := _make_label(loot_text, 12, loot_color, anchor)
+			loot_lbl.custom_minimum_size = Vector2(TOOLTIP_W - PADDING * 2, 0)
+			loot_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+			_vbox.add_child(loot_lbl)
+	# Run modifiers — colored "+ Name" line + dim wrapped desc beneath.
+	# Color reflects category (reward/danger/utility) so the player
+	# reads "this deploy is loaded with gold and danger" at a glance.
 	var modifiers: Array = data.get("modifiers", [])
 	if modifiers.size() > 0:
 		_vbox.add_child(_make_separator())
@@ -222,10 +232,6 @@ func render(data: Dictionary) -> void:
 	if is_unlocked:
 		_vbox.add_child(_make_separator())
 		_vbox.add_child(_make_label("[Click] deploy", 10, COL_HOTKEY, false))
-	# Resize to content.
-	await get_tree().process_frame
-	if is_instance_valid(self) and is_instance_valid(_vbox):
-		size = Vector2(TOOLTIP_W, _vbox.size.y + PADDING * 2)
 
 func _modifier_color(category: String) -> Color:
 	match category:

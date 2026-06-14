@@ -416,6 +416,16 @@ func _render_damage_block() -> void:
 		var cd: float = float(item.get("spell_cooldown", 3.0))
 		_vbox.add_child(_make_label("%.1fs Cooldown" % cd, 12, COLOR_BODY, false))
 		_maybe_emit_stat_desc("spell_cooldown")
+		# §2.J — surface base mana cost from the archetype table. Without
+		# this the player has no way to read what each spell costs from
+		# its hover tooltip (Blood Arc, Apprentice Fireball etc all hit
+		# this path). Caster-blue so it telegraphs the mana resource. The
+		# value is the BASE cost — character-specific mana_cost_pct is
+		# applied at cast time, but the base is what every other spell
+		# tooltip in the game (HUD, character-create, run report) shows.
+		var base_type_v: String = String(item.get("base_type", ""))
+		var mana_cost_v: int = int(SpellData._MANA_COST_TABLE.get(base_type_v, 6))
+		_vbox.add_child(_make_label("%d Mana" % mana_cost_v, 12, Color(0.55, 0.75, 1.00), false))
 		# PLAYTEST #7 — surface the scaling primary stat so the player can
 		# tell at a glance whether a Fireball Tome scales Str/Dex/Int.
 		# Color matches the HUD spell-cell border (red/green/blue) so the
