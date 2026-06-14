@@ -265,7 +265,13 @@
       ],
       "str_flat": -2,
       "dex_flat": -2,
-      "int_flat": 6
+      "int_flat": 6,
+      "signature": {
+        "id": "mummy_dryflesh",
+        "kind": "undead_immunities",
+        "value": 0,
+        "desc": "Immune to bleed, poison, and lifesteal-against (dry bone yields no blood)."
+      }
     },
     {
       "id": "hill_orc",

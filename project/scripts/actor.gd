@@ -1054,7 +1054,11 @@ func attempt_attack(other: Actor, delta: float) -> int:
 	# (dealt<=0) don't heal. `fire` applies a 3-tick burn DoT to the
 	# target dealing 4% of their max_hp per tick (0.5s interval).
 	if dealt > 0 and not tags.is_empty():
-		if "vampiric" in tags and is_alive:
+		# §2.I mummy: defender (other) is a Mummy bot → no lifesteal,
+		# regardless of attacker tag. Dry bone yields no blood.
+		var defender_is_mummy: bool = is_instance_valid(other) and other is Bot \
+				and (other as Bot).species_id == "mummy"
+		if "vampiric" in tags and is_alive and not defender_is_mummy:
 			var heal: int = int(round(float(dealt) * 0.08))
 			if heal > 0:
 				hp = clampi(hp + heal, 0, max_hp)
@@ -1539,7 +1543,15 @@ func add_sunder_stack(per_stack_amount: int) -> void:
 # refresh duration. Routes through the existing DoT scheduler so HUD
 # overlay + tick math stays consistent. Bypasses immunity tags (bleed is
 # physical, not poison/fire, so poison_res / fire_res don't gate it).
+# §2.I (S12): true when self is a Mummy bot. Used to short-circuit
+# bleed / poison / lifesteal-against effects per the mummy signature
+# (undead-immune to status that fights regen). Cheap inline check.
+func _is_mummy_defender() -> bool:
+	return self is Bot and (self as Bot).species_id == "mummy"
+
 func add_bloodletting(per_tick: int, attacker: Actor = null) -> void:
+	if _is_mummy_defender():
+		return  # §2.I mummy: bleed-immune
 	_apply_dot_status("bleeding", per_tick, _scaled_dot_ticks(4, attacker), 1.0)
 
 # §1.H of_zealous_strike (a02 P-022): apply a 3s holy DoT on landed hits.
@@ -1606,6 +1618,9 @@ func _bot_emit_reflect(bot: Bot, requested: int, _attacker: Actor) -> int:
 	return emitted
 
 func add_burn(per_tick: int, ticks: int, interval: float, attacker: Actor = null) -> void:
+	# §2.I mummy: NOT immune to burn — fire still cooks dry bone. Only
+	# bleed/poison/lifesteal-against gate per the brief. Burn falls
+	# through normally.
 	# fire_res grants immunity to burn DoT (matches DCSS rF+ stops
 	# being on fire). Resists are wired on every actor; non-bot
 	# actors return [] from combat_defense_tags so this is a no-op
@@ -1617,6 +1632,8 @@ func add_burn(per_tick: int, ticks: int, interval: float, attacker: Actor = null
 func add_poison(per_tick: int, ticks: int, interval: float, attacker: Actor = null) -> void:
 	if "poison_res" in combat_defense_tags():
 		return
+	if _is_mummy_defender():
+		return  # §2.I mummy: poison-immune
 	_apply_dot_status("poisoned", per_tick, _scaled_dot_ticks(ticks, attacker), interval)
 
 func _apply_dot_status(status_id: String, per_tick: int, ticks: int, interval: float) -> void:

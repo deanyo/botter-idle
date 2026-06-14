@@ -906,6 +906,50 @@ func test_s12_halfling_loot_quantity_flat() -> void:
 	var d: Dictionary = StatCalc.compute({}, items_db, _bare_save("halfling"), "halfling", 1, 0, 0)
 	assert_almost_eq(float(d.loot_quantity_pct), 10.0, 0.001, "halfling innate loot_quantity = 10")
 
+func test_s12_mummy_bleed_immune() -> void:
+	# §2.I mummy: add_bloodletting on a Mummy bot is a no-op. Other
+	# species absorb the bleed normally (verified by absence of mummy
+	# species_id on the defender).
+	var _StubBotDefender := preload("res://tests/_stub_bot_defender.gd")
+	var d: Bot = _StubBotDefender.new()
+	d.species_id = "mummy"
+	d.hp = 100
+	d.max_hp = 100
+	d.add_bloodletting(5, null)
+	assert_false(d.has_status("bleeding"), "mummy bot is bleed-immune (no status applied)")
+	# Sanity: a non-mummy bot DOES gain the bleed status.
+	var d2: Bot = _StubBotDefender.new()
+	d2.species_id = "human"
+	d2.hp = 100
+	d2.max_hp = 100
+	d2.add_bloodletting(5, null)
+	assert_true(d2.has_status("bleeding"), "non-mummy bot bleeds normally (control)")
+	d.free()
+	d2.free()
+
+func test_s12_mummy_poison_immune() -> void:
+	var _StubBotDefender := preload("res://tests/_stub_bot_defender.gd")
+	var d: Bot = _StubBotDefender.new()
+	d.species_id = "mummy"
+	d.hp = 100
+	d.max_hp = 100
+	d.add_poison(5, 4, 0.5, null)
+	assert_false(d.has_status("poisoned"), "mummy bot is poison-immune")
+	d.free()
+
+func test_s12_mummy_burn_NOT_immune() -> void:
+	# Mummy is bleed/poison/lifesteal-immune per the brief, but burn
+	# still cooks dry bone — sanity-check that we didn't over-broadly
+	# gate add_burn.
+	var _StubBotDefender := preload("res://tests/_stub_bot_defender.gd")
+	var d: Bot = _StubBotDefender.new()
+	d.species_id = "mummy"
+	d.hp = 100
+	d.max_hp = 100
+	d.add_burn(5, 3, 0.5, null)
+	assert_true(d.has_status("burning"), "mummy bot still burns (NOT immune to fire DoT)")
+	d.free()
+
 func test_s12_first_hit_mark_sums_with_crit_mark_into_marked_amp_lane() -> void:
 	# Both of_hunter_mark (on-crit) and of_vulnerability_mark (first-hit)
 	# write into the marked-amp lane that actor.gd::_apply_typed_damage
