@@ -16,10 +16,18 @@
       "aggro_flat": 0,
       "xp_pct": 5,
       "loot_pct": 0,
-      "innate_tags": ["human"],
+      "innate_tags": [
+        "human"
+      ],
       "str_flat": 1,
       "dex_flat": 1,
-      "int_flat": 1
+      "int_flat": 1,
+      "signature": {
+        "id": "human_flexibility",
+        "kind": "highest_stat_pct",
+        "value": 5,
+        "desc": "+5% to your highest primary stat (auto-detects build)."
+      }
     },
     {
       "id": "spriggan",
@@ -35,10 +43,19 @@
       "aggro_flat": 0,
       "xp_pct": 0,
       "loot_pct": 0,
-      "innate_tags": ["forest", "fae"],
+      "innate_tags": [
+        "forest",
+        "fae"
+      ],
       "str_flat": -2,
       "dex_flat": 5,
-      "int_flat": 1
+      "int_flat": 1,
+      "signature": {
+        "id": "spriggan_quickfoot",
+        "kind": "evasion_flat",
+        "value": 8,
+        "desc": "+8% innate evasion (small-creature dodge)."
+      }
     },
     {
       "id": "minotaur",
@@ -54,7 +71,10 @@
       "aggro_flat": 1,
       "xp_pct": 0,
       "loot_pct": 0,
-      "innate_tags": ["bovine", "champion"],
+      "innate_tags": [
+        "bovine",
+        "champion"
+      ],
       "str_flat": 5,
       "dex_flat": 0,
       "int_flat": -2
@@ -73,13 +93,22 @@
       "aggro_flat": -1,
       "xp_pct": 0,
       "loot_pct": 0,
-      "innate_tags": ["serpentine", "coldblooded"],
+      "innate_tags": [
+        "serpentine",
+        "coldblooded"
+      ],
       "slot_conversions": {
         "boots": "ring"
       },
       "str_flat": 3,
       "dex_flat": -2,
-      "int_flat": 3
+      "int_flat": 3,
+      "signature": {
+        "id": "naga_serpent_blood",
+        "kind": "poison_immune_threshold",
+        "value": 100,
+        "desc": "100% poison resistance threshold + immune to slow."
+      }
     },
     {
       "id": "tengu",
@@ -95,10 +124,19 @@
       "aggro_flat": 1,
       "xp_pct": 0,
       "loot_pct": 0,
-      "innate_tags": ["avian", "windborn"],
+      "innate_tags": [
+        "avian",
+        "windborn"
+      ],
       "str_flat": 0,
       "dex_flat": 4,
-      "int_flat": 0
+      "int_flat": 0,
+      "signature": {
+        "id": "tengu_swift_arrow",
+        "kind": "spell_proj_speed_flat",
+        "value": 25,
+        "desc": "+25% projectile speed for spells (sky-blooded reflexes)."
+      }
     },
     {
       "id": "troll",
@@ -114,7 +152,10 @@
       "aggro_flat": 0,
       "xp_pct": -10,
       "loot_pct": 0,
-      "innate_tags": ["regen", "primal"],
+      "innate_tags": [
+        "regen",
+        "primal"
+      ],
       "str_flat": 5,
       "dex_flat": -2,
       "int_flat": -3
@@ -133,7 +174,10 @@
       "aggro_flat": 0,
       "xp_pct": 0,
       "loot_pct": 20,
-      "innate_tags": ["aquatic", "many-armed"],
+      "innate_tags": [
+        "aquatic",
+        "many-armed"
+      ],
       "slot_conversions": {
         "armor": "ring",
         "boots": "ring",
@@ -162,7 +206,16 @@
       ],
       "str_flat": 2,
       "dex_flat": 1,
-      "int_flat": 1
+      "int_flat": 1,
+      "signature": {
+        "id": "demonspawn_hellfire_pact",
+        "kind": "fire_pact",
+        "value": 25,
+        "params": {
+          "holy_taken_pct": 25
+        },
+        "desc": "+25% fire-spell damage. Take +25% holy damage."
+      }
     },
     {
       "id": "vampire",
@@ -178,10 +231,19 @@
       "aggro_flat": 0,
       "xp_pct": 0,
       "loot_pct": 0,
-      "innate_tags": ["vampiric", "undead"],
+      "innate_tags": [
+        "vampiric",
+        "undead"
+      ],
       "str_flat": 1,
       "dex_flat": 2,
-      "int_flat": 1
+      "int_flat": 1,
+      "signature": {
+        "id": "vampire_blood_thirst",
+        "kind": "lifesteal_cap_bump",
+        "value": 5,
+        "desc": "Lifesteal cap raised from 15% to 20%."
+      }
     },
     {
       "id": "mummy",
@@ -197,7 +259,10 @@
       "aggro_flat": 0,
       "xp_pct": 20,
       "loot_pct": 0,
-      "innate_tags": ["undead", "ancient"],
+      "innate_tags": [
+        "undead",
+        "ancient"
+      ],
       "str_flat": -2,
       "dex_flat": -2,
       "int_flat": 6
@@ -216,7 +281,10 @@
       "aggro_flat": 0,
       "xp_pct": 0,
       "loot_pct": 10,
-      "innate_tags": ["orcish", "raider"],
+      "innate_tags": [
+        "orcish",
+        "raider"
+      ],
       "str_flat": 4,
       "dex_flat": 0,
       "int_flat": 0
@@ -235,10 +303,19 @@
       "aggro_flat": 1,
       "xp_pct": 10,
       "loot_pct": 0,
-      "innate_tags": ["elf", "scholar"],
+      "innate_tags": [
+        "elf",
+        "scholar"
+      ],
       "str_flat": -2,
       "dex_flat": 1,
-      "int_flat": 5
+      "int_flat": 5,
+      "signature": {
+        "id": "deep_elf_scholar",
+        "kind": "spell_damage_cap_bump",
+        "value": 30,
+        "desc": "spell_damage_pct cap raised from 120 to 150."
+      }
     },
     {
       "id": "gargoyle",
@@ -254,7 +331,10 @@
       "aggro_flat": 0,
       "xp_pct": 0,
       "loot_pct": 0,
-      "innate_tags": ["construct", "stone"],
+      "innate_tags": [
+        "construct",
+        "stone"
+      ],
       "str_flat": 3,
       "dex_flat": -2,
       "int_flat": 1
@@ -273,10 +353,19 @@
       "aggro_flat": -1,
       "xp_pct": 0,
       "loot_pct": 15,
-      "innate_tags": ["small", "lucky"],
+      "innate_tags": [
+        "small",
+        "lucky"
+      ],
       "str_flat": -2,
       "dex_flat": 5,
-      "int_flat": 1
+      "int_flat": 1,
+      "signature": {
+        "id": "halfling_lucky_pockets",
+        "kind": "loot_quantity_flat",
+        "value": 10,
+        "desc": "+10% loot quantity (extra-drop chance)."
+      }
     },
     {
       "id": "kobold",
@@ -292,7 +381,10 @@
       "aggro_flat": 0,
       "xp_pct": 0,
       "loot_pct": 20,
-      "innate_tags": ["small", "scavenger"],
+      "innate_tags": [
+        "small",
+        "scavenger"
+      ],
       "str_flat": -2,
       "dex_flat": 4,
       "int_flat": 0

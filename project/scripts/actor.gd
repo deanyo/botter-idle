@@ -1454,6 +1454,12 @@ func _update_hp_bar() -> void:
 func add_status(id: String, duration: float = 1.0) -> void:
 	if not _StatusOverlay.has_status(id):
 		return
+	# §2.I (S12) Naga signature — slow-immune. Short-circuit any
+	# add_status call for "slowed" on a Naga bot. The signature also
+	# routes through stat_calc to push poison_res to 100, but `slowed`
+	# is a status not a damage type so it needs the dispatch here.
+	if id == "slowed" and self is Bot and (self as Bot).species_id == "naga":
+		return
 	# Refresh existing status — bump timer, leave sprite alone.
 	if _statuses.has(id):
 		var existing: Dictionary = _statuses[id]

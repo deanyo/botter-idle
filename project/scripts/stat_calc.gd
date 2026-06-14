@@ -473,6 +473,80 @@ static func compute(
 	# HP rollup with str-mult + species hp_pct + bot upgrade.
 	var max_hp: int = int(round(float(_BASE_HP + (level - 1) * 8 + int(up_hp) + hp_flat) * sp_hp_mult * (1.0 + float(str_excess) * 0.015)))
 
+	# §2.I (S12) — per-species signature passive dispatch. Reads
+	# sp.signature.kind to apply species-specific tweaks BEFORE the
+	# cap-clamp block runs. Stat-shape passives that just bump or
+	# cap-override land here; combat-event passives (mummy immunity,
+	# hill-orc rage, minotaur every-5th-pen, troll regen, gargoyle
+	# armor, octopode ring DR, kobold scavenger) live in actor.gd /
+	# bot.gd hot paths instead. Default = empty dict → no-op.
+	var signature: Dictionary = sp.get("signature", {})
+	var sig_kind: String = String(signature.get("kind", ""))
+	var sig_value: float = float(signature.get("value", 0))
+	# Caps that signatures can override (defaults match the soft caps
+	# below; signatures bump them per-species before the clamp runs).
+	var lifesteal_cap: float = 15.0
+	var spell_dmg_cap: float = 120.0
+	# Apply each kind. Match-block keeps the dispatch local + readable;
+	# each new kind adds one branch.
+	match sig_kind:
+		"highest_stat_pct":
+			# Human flexibility: +N% to whichever primary stat is
+			# currently highest. Auto-detects build — doesn't need
+			# the player to declare ahead of time. Reads STR/DEX/INT
+			# AFTER level + alloc + species_flat have been computed.
+			var hi: int = maxi(maxi(str_stat, dex_stat), int_stat)
+			if str_stat == hi:
+				str_stat = int(round(float(str_stat) * (1.0 + sig_value / 100.0)))
+			elif dex_stat == hi:
+				dex_stat = int(round(float(dex_stat) * (1.0 + sig_value / 100.0)))
+			else:
+				int_stat = int(round(float(int_stat) * (1.0 + sig_value / 100.0)))
+		"evasion_flat":
+			# Spriggan: +N% innate evasion. Routed through the same
+			# evasion_total as worn gear so the 75% cap still bounds
+			# the upper tail (small-creature evasion can't go absurd).
+			evasion_total += sig_value
+		"spell_proj_speed_flat":
+			# Tengu: +N% spell projectile speed. Same lane as
+			# of_velocity so the existing 100% cap still bounds.
+			spell_proj_speed_pct += sig_value
+		"poison_immune_threshold":
+			# Naga: 100% poison resistance threshold. Force the
+			# resistance dict's poison entry to N (clamped to the
+			# +75% normal cap below so resistances stay coherent —
+			# actor.gd's mit lane reads the clamped value).
+			resistances["poison"] = sig_value
+		"fire_pact":
+			# Demonspawn: +N% fire-spell damage; +Y% holy damage
+			# taken (the offsetting downside per A8). Fire boost
+			# composes through spell_element_pct's 100% cap; holy
+			# downside lives in actor.gd elem_mit (signed reads the
+			# resistance lane — negative resist = vulnerability).
+			spell_element_pct["fire"] = float(spell_element_pct["fire"]) + sig_value
+			# Negative holy_res = +X% holy damage taken. Read in
+			# actor.gd's elem_mit branch.
+			var holy_pct: float = float(signature.get("params", {}).get("holy_taken_pct", 0))
+			if holy_pct > 0.0:
+				resistances["holy"] = float(resistances["holy"]) - holy_pct
+		"lifesteal_cap_bump":
+			# Vampire: lifesteal cap raised from 15 to 15+N (default
+			# bump 5 → 20). Local override; the global default is
+			# preserved for non-vampires.
+			lifesteal_cap += sig_value
+		"loot_quantity_flat":
+			# Halfling: +N% loot_quantity_pct innate. Routed through
+			# the same lane as of_abundance affix (cap 50 still
+			# enforced below).
+			loot_quantity_pct += sig_value
+		"spell_damage_cap_bump":
+			# Deep Elf: spell_damage_pct cap raised from 120 to 120+N
+			# (default 30 → 150). Local override; the global default
+			# is preserved for non-deep-elves.
+			spell_dmg_cap += sig_value
+		_:
+			pass  # other kinds (mummy/hill_orc/etc) land in combat hooks
+
 	# Crit / haste / evasion / spell caps. PoE-style soft caps prevent
 	# slot-stuffing strategies from dominating — even with DR-scaled
 	# affix stacks, the totals can still climb above sane levels via
@@ -481,8 +555,8 @@ static func compute(
 	var crit_chance: float = clampf(crit_sum + up_crit, 0.0, 75.0)
 	var haste_pct: float = clampf(haste_sum, 0.0, 200.0)
 	var evasion_capped: float = clampf(evasion_total, 0.0, 75.0)
-	lifesteal_pct = clampf(lifesteal_pct, 0.0, 15.0)
-	spell_damage_pct = clampf(spell_damage_pct, 0.0, 120.0)
+	lifesteal_pct = clampf(lifesteal_pct, 0.0, lifesteal_cap)
+	spell_damage_pct = clampf(spell_damage_pct, 0.0, spell_dmg_cap)
 	# Class-mastery cap (per a06 §3.2) — same shape as spell_element_pct.
 	# Each class lane caps independently so a pure-class build doesn't
 	# trivially eclipse generic spell_damage_pct.
@@ -498,8 +572,19 @@ static func compute(
 	# multiplying chain-jump count and projectile-spawning spells with no
 	# ceiling. Cap at +5 alongside the other spell-stat clamps.
 	spell_proj_bonus = clampi(spell_proj_bonus, 0, 5)
+	# §2.I (S12): Naga's signature `poison_immune_threshold: 100` is a
+	# clamp-bypass marker — the resist cap (+75) is suspended for the
+	# poison element specifically so the species reads as POISON IMMUNE,
+	# not "+75% poison-resist". Other species fall through the standard
+	# clamp.
+	var poison_threshold_bypass: bool = (
+		sig_kind == "poison_immune_threshold" and sig_value >= 100
+	)
 	for elem in resistances.keys():
-		resistances[elem] = clampf(float(resistances[elem]), -100.0, 75.0)
+		if elem == "poison" and poison_threshold_bypass:
+			resistances[elem] = clampf(float(resistances[elem]), -100.0, 100.0)
+		else:
+			resistances[elem] = clampf(float(resistances[elem]), -100.0, 75.0)
 	# Per-element spell damage cap. PoE-style soft ceiling on element
 	# stacking — single-element builds can still climb but can't
 	# trivially eclipse `of_channeling`'s generic boost.

@@ -358,8 +358,13 @@ func test_s5_requires_innate_tag_only_mutes_implicits_not_rolled() -> void:
 		{"amulet": inst}, fake_db, _bare_save("human"), "human", 1, 0, 0, []
 	)
 	# Bare human dex = 6 (5 + species 1). With of_finesse +12 → 18.
-	assert_eq(int(d.dex), 18,
-		"rolled affixes apply on heritage-locked items even when implicits mute")
+	# §2.I human signature: +5% to highest stat AFTER derivations.
+	# DEX 18 > STR 6 = INT 6 → DEX gets the bump (18 × 1.05 = 19).
+	# This test is no longer purely about rolled-affix passthrough; the
+	# signature-affected-build case is covered separately. We pin the
+	# post-signature value so future signature changes catch it.
+	assert_eq(int(d.dex), 19,
+		"rolled affixes apply on heritage-locked items even when implicits mute (post-human-signature 18→19)")
 
 func test_s5_humans_get_no_implicits_on_anchor() -> void:
 	# Sanity-check the new ANCHORS dataset: a human equipping a vampire
@@ -791,6 +796,115 @@ func test_s12_low_hp_dmg_glass_cannon_mutex_larger_wins() -> void:
 		"glass_cannon (25) > desperation (12) → desperation zeroed")
 	assert_almost_eq(float(d_b.get("glass_cannon_dmg_pct", -1.0)), 25.0, 0.001,
 		"glass_cannon (25) > desperation (12) → glass_cannon survives")
+
+# ---------------------------------------------------------------------
+# §2.I — per-species signature passive dispatcher (batch 1: stat-shape).
+# Each test pins one species's signature kind. The dispatcher reads
+# sp.signature.kind from species.json and applies the matching effect
+# in StatCalc.compute. Combat-event passives (mummy / hill_orc /
+# minotaur / troll / gargoyle / octopode / kobold) land in actor.gd
+# hot paths in subsequent batches and are tested separately.
+# ---------------------------------------------------------------------
+
+func test_s12_human_highest_stat_pct_picks_str_when_tied() -> void:
+	# Human innate +5% to highest stat. With base 5/5/5 + flat 1/1/1
+	# (per species.json) + 9 lvl bonus, all three sit at 15/15/15 → STR
+	# wins by tie-break (str_stat == hi check runs first).
+	var d: Dictionary = StatCalc.compute({}, items_db, _bare_save("human"), "human", 10, 0, 0)
+	# +5% on 15 → 16 (round). DEX/INT stay at 15.
+	assert_eq(int(d.str), 16, "human str gets +5%% (15 → 16)")
+	assert_eq(int(d.dex), 15, "human dex unchanged")
+	assert_eq(int(d.int), 15, "human int unchanged")
+
+func test_s12_human_highest_stat_pct_picks_int_when_int_highest() -> void:
+	# Stat-allocate INT to make it the unambiguous highest.
+	var save := _bare_save("human")
+	save.stat_alloc_int = 20
+	var d: Dictionary = StatCalc.compute({}, items_db, save, "human", 10, 0, 0)
+	# Base 5 + flat 1 + lvl 9 + alloc 20 = 35 INT before signature.
+	# +5% → 37 (round). STR/DEX stay at 15.
+	assert_eq(int(d.int), 37, "human int gets +5%% when highest (35 → 37)")
+	assert_eq(int(d.str), 15, "human str unchanged when int is highest")
+
+func test_s12_naga_poison_res_clamps_to_100_not_75() -> void:
+	# Naga signature `poison_immune_threshold: 100` is a clamp-bypass:
+	# resistances.poison reads 100 (not the global 75 cap).
+	var d: Dictionary = StatCalc.compute({}, items_db, _bare_save("naga"), "naga", 1, 0, 0)
+	assert_almost_eq(float(d.resistances.poison), 100.0, 0.001,
+		"naga poison_res clamps to 100 (immune threshold)")
+	# Other resistances stay at the standard 75 cap. Pump fire_res past
+	# 75 to verify the bypass is poison-only.
+	var fake_db: Dictionary = items_db.duplicate(true)
+	fake_db["__naga_test"] = {
+		"id": "__naga_test", "slot": "amulet", "rarity": "legendary",
+		"flavor_tags": [], "implicit_affixes": [],
+	}
+	var saturate: Dictionary = {
+		"amulet": {"base_id": "__naga_test", "rarity": "legendary",
+			"affixes": [{"id": "of_fire_resist", "value": 200}]},
+	}
+	var d2: Dictionary = StatCalc.compute(saturate, fake_db, _bare_save("naga"), "naga", 1, 0, 0)
+	assert_almost_eq(float(d2.resistances.fire), 75.0, 0.001,
+		"naga fire_res still clamps at 75 (only poison bypasses)")
+
+func test_s12_demonspawn_fire_pact_holy_vulnerability() -> void:
+	# Demonspawn signature: +25% fire-spell-element pct, -25% holy_res
+	# (i.e. +25% holy damage taken).
+	var d: Dictionary = StatCalc.compute({}, items_db, _bare_save("demonspawn"), "demonspawn", 1, 0, 0)
+	assert_almost_eq(float(d.spell_element_pct.fire), 25.0, 0.001,
+		"demonspawn fire-spell pct = 25")
+	assert_almost_eq(float(d.resistances.holy), -25.0, 0.001,
+		"demonspawn holy_res = -25 (vulnerability)")
+
+func test_s12_vampire_lifesteal_cap_is_20_not_15() -> void:
+	# Vampire signature bumps the lifesteal cap by 5 (15 → 20). Pin
+	# both vampire (20) AND a human at the same equip (15) so a future
+	# global cap change can't silently regress one half.
+	var fake_db: Dictionary = items_db.duplicate(true)
+	fake_db["__life_test"] = {
+		"id": "__life_test", "slot": "amulet", "rarity": "legendary",
+		"flavor_tags": [], "implicit_affixes": [],
+	}
+	var saturate: Dictionary = {
+		"amulet": {"base_id": "__life_test", "rarity": "legendary",
+			"affixes": [{"id": "of_lifesteal", "value": 100}]},
+	}
+	var d_h: Dictionary = StatCalc.compute(saturate, fake_db, _bare_save("human"), "human", 1, 0, 0)
+	var d_v: Dictionary = StatCalc.compute(saturate, fake_db, _bare_save("vampire"), "vampire", 1, 0, 0)
+	assert_almost_eq(float(d_h.lifesteal_pct), 15.0, 0.001, "human lifesteal cap = 15")
+	assert_almost_eq(float(d_v.lifesteal_pct), 20.0, 0.001, "vampire lifesteal cap = 20")
+
+func test_s12_deep_elf_spell_damage_cap_is_150_not_120() -> void:
+	# Deep Elf signature bumps spell_damage_pct cap by 30 (120 → 150).
+	var fake_db: Dictionary = items_db.duplicate(true)
+	fake_db["__sd_test"] = {
+		"id": "__sd_test", "slot": "amulet", "rarity": "legendary",
+		"flavor_tags": [], "implicit_affixes": [],
+	}
+	var saturate: Dictionary = {
+		"amulet": {"base_id": "__sd_test", "rarity": "legendary",
+			"affixes": [{"id": "of_channeling", "value": 200}]},
+	}
+	var d_h: Dictionary = StatCalc.compute(saturate, fake_db, _bare_save("human"), "human", 1, 0, 0)
+	var d_e: Dictionary = StatCalc.compute(saturate, fake_db, _bare_save("deep_elf"), "deep_elf", 1, 0, 0)
+	assert_almost_eq(float(d_h.spell_damage_pct), 120.0, 0.001, "human spell_dmg cap = 120")
+	assert_almost_eq(float(d_e.spell_damage_pct), 150.0, 0.001, "deep_elf spell_dmg cap = 150")
+
+func test_s12_spriggan_evasion_flat() -> void:
+	# Spriggan: +8% evasion innate. Bare-equip on lvl 1 should read 8
+	# (no other evasion sources).
+	var d: Dictionary = StatCalc.compute({}, items_db, _bare_save("spriggan"), "spriggan", 1, 0, 0)
+	assert_almost_eq(float(d.evasion), 8.0, 0.001, "spriggan innate evasion = 8")
+
+func test_s12_tengu_spell_proj_speed_flat() -> void:
+	# Tengu: +25% spell projectile speed innate.
+	var d: Dictionary = StatCalc.compute({}, items_db, _bare_save("tengu"), "tengu", 1, 0, 0)
+	assert_almost_eq(float(d.spell_proj_speed_pct), 25.0, 0.001, "tengu innate spell_proj_speed = 25")
+
+func test_s12_halfling_loot_quantity_flat() -> void:
+	# Halfling: +10% loot_quantity_pct innate.
+	var d: Dictionary = StatCalc.compute({}, items_db, _bare_save("halfling"), "halfling", 1, 0, 0)
+	assert_almost_eq(float(d.loot_quantity_pct), 10.0, 0.001, "halfling innate loot_quantity = 10")
 
 func test_s12_first_hit_mark_sums_with_crit_mark_into_marked_amp_lane() -> void:
 	# Both of_hunter_mark (on-crit) and of_vulnerability_mark (first-hit)
