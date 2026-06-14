@@ -73,40 +73,36 @@ func test_roll_rarity_seeded_determinism() -> void:
 		var b: String = LootFactory.roll_rarity(rng_b, 3, 5, false, 0.0, 0.0)
 		assert_eq(a, b, "roll %d matches" % i)
 
-func test_roll_rarity_distribution_matches_thresholds() -> void:
-	# At T5/floor 1/no bonuses, baseline thresholds are r<0.02 legendary,
-	# 0.02-0.10 epic, 0.10-0.25 rare, 0.25-0.55 uncommon, else common.
-	# T5 ceiling lets all rarities through. Run N=2000 to bound the
-	# binomial noise: legendary expected ~40 with stddev ~6, so we use
-	# a generous tolerance band.
+func test_roll_rarity_trash_at_t5_caps_at_trash_ceiling() -> void:
+	# §2.A (S12) — roll_rarity is now data-driven via DropTuning.
+	# tier_drop_band[T5][1-3] = [3, 10, 22, 28, 37] (37% legendary
+	# share in the band) BUT trash_ceiling="uncommon" caps trash mobs
+	# at uncommon — so common+uncommon shares dominate. Pinning the
+	# trash_ceiling behavior is the load-bearing assertion: a trash
+	# mob in T5 floor 1 must NEVER drop rare-or-better, regardless
+	# of how rich the underlying band is.
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 12345
 	var counts: Dictionary = {"common": 0, "uncommon": 0, "rare": 0, "epic": 0, "legendary": 0}
 	var n: int = 2000
 	for i in n:
-		# T5, floor 1, no boss, no bonuses → baseline distribution.
-		# floor_bonus is 0 (current_floor=1), tier_bonus is 0.20 (T5).
-		# Effective r = randf() - 0.20, so we expect rarity to skew up
-		# vs the bare table — every random in [0, 0.20) maps to legendary.
 		var rarity: String = LootFactory.roll_rarity(rng, 5, 1, false, 0.0, 0.0)
 		counts[rarity] = int(counts[rarity]) + 1
-	# Expected proportions with floor=1, tier_bonus=0.20:
-	#   legendary: r<0.02+0.20=0.22 → ~22%
-	#   epic:      0.22..0.30        → ~8%
-	#   rare:      0.30..0.45        → ~15%
-	#   uncommon:  0.45..0.75        → ~30%
-	#   common:    0.75..1.0         → ~25% (the remaining 0.25 floor)
-	# Wide tolerance bands (±5%) so flake is kept low.
+	# Legacy bool is_boss=false → "trash" class. trash_ceiling="uncommon"
+	# (per drop_tuning.json) caps the rare/epic/legendary band entries
+	# down to uncommon. Expect 0% rare-or-better, with the
+	# common+uncommon split derived from the band weights. Wide
+	# tolerance bands (±10%) since the cap-compression interacts with
+	# random sampling noise.
 	var p_leg: float = float(counts.legendary) / n
 	var p_epic: float = float(counts.epic) / n
 	var p_rare: float = float(counts.rare) / n
-	var p_unc: float = float(counts.uncommon) / n
-	var p_com: float = float(counts.common) / n
-	assert_almost_eq(p_leg, 0.22, 0.05, "legendary ~22%% (got %.3f)" % p_leg)
-	assert_almost_eq(p_epic, 0.08, 0.04, "epic ~8%% (got %.3f)" % p_epic)
-	assert_almost_eq(p_rare, 0.15, 0.05, "rare ~15%% (got %.3f)" % p_rare)
-	assert_almost_eq(p_unc, 0.30, 0.05, "uncommon ~30%% (got %.3f)" % p_unc)
-	assert_almost_eq(p_com, 0.25, 0.05, "common ~25%% (got %.3f)" % p_com)
+	assert_eq(int(counts.legendary), 0, "trash @ T5 must produce zero legendary (trash_ceiling=uncommon)")
+	assert_eq(int(counts.epic), 0, "trash @ T5 must produce zero epic")
+	assert_eq(int(counts.rare), 0, "trash @ T5 must produce zero rare")
+	# common + uncommon must account for the full sample.
+	var p_low: float = float(counts.common + counts.uncommon) / n
+	assert_almost_eq(p_low, 1.0, 0.001, "common+uncommon = 100%% under trash_ceiling")
 
 func test_roll_rarity_t1_clamps_to_uncommon() -> void:
 	# T1 source-tier should never let anything past uncommon, even with
@@ -120,8 +116,15 @@ func test_roll_rarity_t1_clamps_to_uncommon() -> void:
 			"T1 caps at uncommon (got %s)" % rarity)
 
 func test_roll_rarity_boss_path_skews_high() -> void:
-	# Boss roll: 50% legendary, 35% epic, 15% rare (subject to tier clamp).
-	# At T5 (no clamp) we expect predominantly legendary.
+	# §2.A (S12) — boss path now reads tier_drop_band + applies
+	# boss_step. T5 floor 1-3 band = [3, 10, 22, 28, 37]; boss_step=1
+	# bumps each entry up one rarity:
+	#   common 3   → uncommon
+	#   uncommon 10 → rare
+	#   rare 22    → epic
+	#   epic 28    → legendary
+	#   legendary 37 → legendary (saturates at top)
+	# Result: 0% common, 3% uncommon, 10% rare, 22% epic, 65% legendary.
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 7
 	var leg: int = 0
@@ -129,9 +132,9 @@ func test_roll_rarity_boss_path_skews_high() -> void:
 	for i in n:
 		if LootFactory.roll_rarity(rng, 5, 1, true, 0.0, 0.0) == "legendary":
 			leg += 1
-	# 50% expected; bind to ±10% for stability.
+	# 65% expected (28+37); bind to ±10% for sampling stability.
 	var p: float = float(leg) / n
-	assert_almost_eq(p, 0.5, 0.10, "boss legendary ~50%% (got %.3f)" % p)
+	assert_almost_eq(p, 0.65, 0.10, "boss legendary ~65%% (got %.3f)" % p)
 
 func test_roll_rarity_with_bias_seeded_determinism() -> void:
 	var rng_a := RandomNumberGenerator.new()

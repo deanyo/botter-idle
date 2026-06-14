@@ -340,6 +340,37 @@ const ARCHETYPES := {
 		"element": "thunderous",
 		"projectile_speed": 0.0,
 	},
+	# §3.A (S12) auras — pure-buff totems that follow the bot. Damage = 0
+	# (the zap path no-ops on pure-buff auras). The lifetime is the total
+	# duration of the buff; spell_duration_pct extends it. CDs are long
+	# (10-12s base) so the player can't perma-uptime without commitment;
+	# A11 G3 simultaneous-aura cap = 2 enforced at the cast site.
+	#
+	# spell_aura_grace — DEX. Applies "grace" status: +evasion +
+	# dex_spell_dmg_pct while ticking. Pairs with kiting/dagger DEX
+	# builds.
+	"spell_aura_grace": {
+		"primary_stat": "dex",
+		"cooldown": 11.0,
+		"damage": 0,
+		"range_cells": 3,
+		"projectile": "",
+		"trail_flavor": "footwork",
+		"element": "",
+		"projectile_speed": 0.0,
+	},
+	# spell_aura_wisdom — INT. Applies "wisdom" status: +spell-cdr +
+	# int_spell_dmg_pct while ticking. Pairs with caster INT builds.
+	"spell_aura_wisdom": {
+		"primary_stat": "int",
+		"cooldown": 11.0,
+		"damage": 0,
+		"range_cells": 3,
+		"projectile": "",
+		"trail_flavor": "wisdom",
+		"element": "",
+		"projectile_speed": 0.0,
+	},
 }
 
 static func archetype_def(base_type: String) -> Dictionary:
@@ -467,6 +498,16 @@ static func compute_damage(bot: Node, item: Dictionary, inst: Variant = null) ->
 	# baked at the cast site, of_lingering must NOT extend it.
 	if bot.has_method("has_status") and bot.has_status("wrath"):
 		eph_pct += 20.0
+	# §3.A aura buffs — spell-side legs route through the ephemeral lane
+	# so the +30% per-cast ceiling absorbs them. "grace" pumps DEX-spell
+	# damage; "wisdom" pumps INT-spell damage. Each aura adds +20% in
+	# the eph lane (matches wrath's shape). The CDR leg of wisdom is
+	# applied at compute_cooldown time (separate path).
+	if bot.has_method("has_status"):
+		if bot.has_status("grace") and pstat == "dex":
+			eph_pct += 20.0
+		if bot.has_status("wisdom") and pstat == "int":
+			eph_pct += 20.0
 	# §1.H of_smoldering_step (a02 P-015) — spell damage while moving.
 	# Reads bot._last_move_at_msec stamp set in step_movement; ≤400ms ago
 	# qualifies as "moving" (matches the petrify pattern). Folds through
@@ -524,6 +565,12 @@ static func compute_cooldown(bot: Node, item: Dictionary) -> float:
 			bot._tactician_stacks = 0
 		if int(bot._tactician_stacks) > 0:
 			cdr += tact_pct * float(bot._tactician_stacks)
+	# §3.A spell_aura_wisdom — +15% spell CDR while "wisdom" aura ticks.
+	# Composes into the post-chalice 80-cap on net_cdr (raw 60 + chalice
+	# 20 + wisdom 15 = 95 → clamps 80). Build pivot for sustained-cast
+	# INT loadouts.
+	if bot.has_method("has_status") and bot.has_status("wisdom"):
+		cdr += 15.0
 	# of_tempest cd-penalty leg (a02 P-10): subtracted from cdr — the
 	# affix trades cooldown speed for spell damage. Net cdr can go
 	# negative (longer cooldowns); clamp at -50% so a stacked Tempest

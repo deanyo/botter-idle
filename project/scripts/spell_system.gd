@@ -247,6 +247,10 @@ static func _dispatch_fire(bot: Node, dungeon: Node, item: Dictionary) -> void:
 			fired = _fire_holy_beam(bot, dungeon, item)
 		"spell_static_field":
 			fired = _fire_stormcaller_totem(bot, dungeon, item)
+		"spell_aura_grace":
+			fired = _fire_aura(bot, dungeon, item, "grace")
+		"spell_aura_wisdom":
+			fired = _fire_aura(bot, dungeon, item, "wisdom")
 	if fired:
 		_fire_count += 1
 		_fire_by_arch[base_type] = int(_fire_by_arch.get(base_type, 0)) + 1
@@ -941,6 +945,59 @@ static func _fire_ember_bloom(bot: Node, dungeon: Node, item: Dictionary) -> boo
 	color.a = 0.55
 	SpellCloud.spawn_cloud(dungeon, target_cell, per_tick, dt, radius_cells, lifetime, color, bot)
 	return true
+
+# §3.A aura primitive (S12). Spawn a SpellTotem that follows the bot
+# and applies `aura_buff` as a status. Pure-buff (damage=0); the buff
+# legs read the status in spell_data.compute_damage / compute_cooldown
+# / actor.gd::resolve_swing. Per A11 G3, simultaneous-aura cap = 2 —
+# enforced here by walking dungeon.actor_layer for live SpellTotem
+# instances whose follow_target == bot AND aura_buff != "" (i.e.
+# zap-totems like stormcaller don't count toward the cap). When the
+# cap is hit, the OLDEST aura is despawned so the new cast still lands
+# rather than silently failing — matches the player-feel of "casting
+# a third aura cycles the oldest out."
+const _AURA_CAP: int = 2
+
+static func _fire_aura(bot: Node, dungeon: Node, item: Dictionary, aura_id: String) -> bool:
+	if not is_instance_valid(bot) or dungeon == null:
+		return false
+	var arch: Dictionary = SpellData.archetype_def(String(item.get("base_type", "")))
+	if arch.is_empty():
+		return false
+	# Walk current auras. Identify any aura totem that targets this bot
+	# (follow_target == bot) AND carries an aura_buff (skip stormcaller-
+	# style zap totems which have aura_buff == ""). Sort by spawn order.
+	var existing: Array = []
+	if "actor_layer" in dungeon and is_instance_valid(dungeon.actor_layer):
+		for child in dungeon.actor_layer.get_children():
+			if not (child is SpellTotem):
+				continue
+			var t: SpellTotem = child as SpellTotem
+			if t.follow_target == bot and t.aura_buff != "":
+				existing.append(t)
+	# Same-aura recast: replace the existing one outright (refresh).
+	for t in existing:
+		if (t as SpellTotem).aura_buff == aura_id:
+			t.queue_free()
+			existing.erase(t)
+			break
+	# Cap enforcement: if still at the cap after the same-aura purge,
+	# drop the oldest. Children list is in spawn order so [0] is oldest.
+	while existing.size() >= _AURA_CAP:
+		var oldest: SpellTotem = existing[0] as SpellTotem
+		existing.remove_at(0)
+		oldest.queue_free()
+	# Lifetime + radius scale via the standard spell stat lanes.
+	var lifetime: float = 8.0 * (1.0 + float(bot.spell_duration_pct) / 100.0)
+	var radius_cells: float = float(arch.get("range_cells", 3)) * (1.0 + float(bot.spell_area_pct) / 100.0)
+	var element: String = String(arch.get("element", ""))
+	var dt: String = SpellData.damage_type_for_element(element)
+	var color := _visual_color_for_item(item, String(arch.get("trail_flavor", "footwork")))
+	color.a = 0.55
+	# Pure-buff aura: damage = 0 so the zap path no-ops. zap_interval
+	# kept at 1.0s as a heartbeat for the buff-status refresh tick.
+	var totem := SpellTotem.spawn_aura(dungeon, bot, 0, radius_cells, lifetime, 1.0, dt, color, bot, aura_id)
+	return totem != null
 
 # Resolve the visual color for a spell instance — read flavor_tags
 # from the item def first (so a Blood Arc reads RED even though it

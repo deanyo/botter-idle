@@ -24,6 +24,13 @@ var damage_type: String = "lightning"
 var caster: Node = null
 var dungeon_ref: Node = null
 var visual_color: Color = Color(0.5, 0.8, 1.0, 0.85)
+# §3.A (S12) — aura mode. When `follow_target` is set, the totem snaps
+# its position to the target each frame instead of staying stationary.
+# Used by spell_aura_* to ride at the bot's feet. `aura_buff` is the
+# status_id applied to the follow_target on _ready and removed on free
+# (e.g. "grace" / "wisdom"). Empty string = no buff (vanilla totem).
+var follow_target: Node = null
+var aura_buff: String = ""
 
 var _elapsed: float = 0.0
 var _next_zap: float = 0.0
@@ -51,6 +58,45 @@ static func spawn_totem(dungeon: Node, world_pos: Vector2, damage_v: int,
 	t._next_zap = 0.4  # first zap quickly so totem reads as immediately-active
 	return t
 
+# §3.A aura primitive — spawn a totem that follows `caster_v` (typically
+# the bot) and applies `aura_buff_v` as a status while it ticks. The
+# damage path stays the same as a stationary totem (so a damaging aura
+# IS possible — set damage > 0 for "thorns aura"-style effects). For
+# pure-buff auras (grace/wisdom) pass damage=0 and the zap path no-ops
+# on null targets.
+static func spawn_aura(dungeon: Node, follow_target_v: Node, damage_v: int,
+		radius_cells_v: float, lifetime_v: float, zap_interval_v: float,
+		damage_type_v: String, visual_color_v: Color, caster_v: Node,
+		aura_buff_v: String) -> SpellTotem:
+	if dungeon == null or not is_instance_valid(dungeon):
+		return null
+	if follow_target_v == null or not is_instance_valid(follow_target_v):
+		return null
+	var t := SpellTotem.new()
+	t.position = follow_target_v.position
+	t.damage = damage_v
+	t.radius_cells = radius_cells_v
+	t.lifetime = lifetime_v
+	t.zap_interval = max(0.2, zap_interval_v)
+	t.damage_type = damage_type_v
+	t.visual_color = visual_color_v
+	t.caster = caster_v
+	t.dungeon_ref = dungeon
+	t.follow_target = follow_target_v
+	t.aura_buff = aura_buff_v
+	t.z_index = 7
+	t.draw.connect(t._on_draw)
+	var parent: Node = dungeon.actor_layer if "actor_layer" in dungeon else dungeon
+	parent.add_child(t)
+	# First zap happens after one tick window so the buff has time to
+	# render before any damaging pulse.
+	t._next_zap = max(0.2, zap_interval_v)
+	# Apply the buff status immediately so the player sees the aura
+	# light up on cast. Removed on _exit_tree.
+	if aura_buff_v != "" and follow_target_v.has_method("add_status"):
+		follow_target_v.add_status(aura_buff_v, lifetime_v)
+	return t
+
 
 func _on_draw() -> void:
 	var s: float = 0.7 + 0.3 * sin(_elapsed * 5.0)
@@ -73,11 +119,36 @@ func _process(delta: float) -> void:
 	if _elapsed >= lifetime:
 		queue_free()
 		return
+	# §3.A: snap to follow_target each frame so the aura visual + zap
+	# origin track the bot. Skip if target's been freed (idle-grind
+	# floor teardown) — totem will lifetime-expire naturally next tick.
+	if follow_target != null:
+		if is_instance_valid(follow_target):
+			position = follow_target.position
+		else:
+			follow_target = null  # stop chasing a freed reference
 	_next_zap -= delta
 	if _next_zap <= 0.0:
 		_next_zap = zap_interval
-		_zap_nearest()
+		# Pure-buff auras (damage == 0) skip the zap path entirely so
+		# they don't hit allies that aren't there. The buff itself is
+		# applied at spawn_aura time + refreshed below if lingering.
+		if damage > 0:
+			_zap_nearest()
+	# §3.A: refresh the aura status so it doesn't expire mid-aura if
+	# the totem's lifetime is longer than `add_status`'s default tick.
+	# Cheap — re-applying an existing status updates its expires_at.
+	if aura_buff != "" and follow_target != null and is_instance_valid(follow_target):
+		if follow_target.has_method("add_status"):
+			follow_target.add_status(aura_buff, max(0.5, lifetime - _elapsed))
 	queue_redraw()
+
+# §3.A: clear the aura buff when the totem despawns so the player
+# stops getting the bonus the moment the visual disappears.
+func _exit_tree() -> void:
+	if aura_buff != "" and follow_target != null and is_instance_valid(follow_target):
+		if follow_target.has_method("remove_status"):
+			follow_target.remove_status(aura_buff)
 
 
 func _zap_nearest() -> void:

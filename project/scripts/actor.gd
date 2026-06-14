@@ -282,6 +282,12 @@ func resolve_swing(typed: Dictionary, attacker: Actor = null) -> int:
 	# take_damage gate order (evasion → footwork → reflective).
 	if "evasion" in self:
 		var eva: float = float(self.evasion)
+		# §3.A spell_aura_grace — +10% evasion while "grace" status ticks.
+		# Bot-only; aura applies via SpellTotem.spawn_aura → add_status.
+		# Capped above the legacy 75% evasion ceiling; grace pushes it
+		# to a hard 85%, keeping a 15% floor for hits to land.
+		if has_status("grace"):
+			eva = minf(85.0, eva + 10.0)
 		if eva > 0.0 and randf() * 100.0 < eva:
 			if fx and is_alive:
 				fx.hit_squish()
