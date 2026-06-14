@@ -258,6 +258,70 @@ func _render_stat_table(sp: Dictionary) -> void:
 		spell_lbl.add_theme_font_size_override("font_size", 13)
 		spell_lbl.add_theme_color_override("font_color", UITheme.SPELL_CLASS_COLORS.get(pstat, COL_AMBER))
 		preview_stats.add_child(spell_lbl)
+		# §2.J — surface the cooldown + mana cost so the player can see
+		# what the spell costs before they pick the species. Reads same
+		# fields as format_item_tooltip's spell-stats line.
+		var cd_v: float = float(sp_def.get("spell_cooldown", 0.0))
+		var bt_v: String = String(sp_def.get("base_type", ""))
+		var cost_v: int = int(SpellData._MANA_COST_TABLE.get(bt_v, 6))
+		var spell_cost_lbl := Label.new()
+		var cd_str: String = ("%.1fs CD" % cd_v) if cd_v > 0.0 else ""
+		var cost_str: String = "%d Mana" % cost_v
+		spell_cost_lbl.text = "  " + (cd_str + " · " + cost_str if cd_str != "" else cost_str)
+		spell_cost_lbl.add_theme_font_size_override("font_size", 11)
+		spell_cost_lbl.add_theme_color_override("font_color", Color(0.65, 0.75, 0.95))
+		preview_stats.add_child(spell_cost_lbl)
+	# §2.I (S12) — surface the species's signature passive description.
+	# Without this the entire 15-species mechanic-identity pass is
+	# invisible at character-create. Reads sp.signature.desc (the
+	# one-line player-visible blurb authored per species). Renders in
+	# amber under a "Signature:" header so it stands out from the
+	# numeric stat rows below.
+	var sig: Dictionary = sp.get("signature", {})
+	var sig_desc: String = String(sig.get("desc", ""))
+	if sig_desc != "":
+		var sig_spacer := Control.new()
+		sig_spacer.custom_minimum_size = Vector2(0, 4)
+		preview_stats.add_child(sig_spacer)
+		var sig_header := Label.new()
+		sig_header.text = "Signature:"
+		sig_header.add_theme_font_size_override("font_size", 12)
+		sig_header.add_theme_color_override("font_color", COL_AMBER)
+		preview_stats.add_child(sig_header)
+		var sig_lbl := Label.new()
+		sig_lbl.text = sig_desc
+		sig_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		sig_lbl.custom_minimum_size = Vector2(280, 0)
+		sig_lbl.add_theme_font_size_override("font_size", 11)
+		sig_lbl.add_theme_color_override("font_color", Color(0.95, 0.85, 0.55))
+		preview_stats.add_child(sig_lbl)
+	# Surfacing half of PLAYTEST 2026-06-09 #8 — render slot
+	# conversions (octopode body→ring, naga boots→ring, etc.) so the
+	# player sees the structural identity before committing. Reads
+	# the same SpeciesData lookup the equip path uses, so it's
+	# guaranteed-current.
+	var sp_id: String = String(sp.get("id", ""))
+	var slot_conv: Dictionary = SpeciesData.slot_conversions(sp_id)
+	if not slot_conv.is_empty():
+		var slot_spacer := Control.new()
+		slot_spacer.custom_minimum_size = Vector2(0, 2)
+		preview_stats.add_child(slot_spacer)
+		var slot_header := Label.new()
+		slot_header.text = "Slots:"
+		slot_header.add_theme_font_size_override("font_size", 12)
+		slot_header.add_theme_color_override("font_color", COL_AMBER)
+		preview_stats.add_child(slot_header)
+		var slot_parts: Array = []
+		for src in slot_conv.keys():
+			var dst: String = String(slot_conv[src])
+			slot_parts.append("no %s → +1 %s" % [String(src), dst])
+		var slot_lbl := Label.new()
+		slot_lbl.text = ", ".join(slot_parts)
+		slot_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		slot_lbl.custom_minimum_size = Vector2(280, 0)
+		slot_lbl.add_theme_font_size_override("font_size", 11)
+		slot_lbl.add_theme_color_override("font_color", Color(0.85, 0.95, 0.70))
+		preview_stats.add_child(slot_lbl)
 	# Spacer between primary stats and the modifier rows.
 	var spacer := Control.new()
 	spacer.custom_minimum_size = Vector2(0, 6)
