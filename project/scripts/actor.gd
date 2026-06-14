@@ -578,6 +578,17 @@ func _apply_typed_damage(raw: int, damage_type: String, attacker: Actor, def_tag
 			var bot_ub: Bot = self as Bot
 			if bot_ub.full_hp_armor_pct > 0.0:
 				eff_armor = int(round(float(eff_armor) * (1.0 + bot_ub.full_hp_armor_pct / 100.0)))
+		# §2.I Gargoyle — living-stone armor. Armor scales linearly
+		# with current HP%: at full HP +50%, at 0% HP +0%. The hp_ratio
+		# IS the multiplier scaler so the species's stone-skin identity
+		# is "tougher when fresh, just as fragile when chipped." Sits
+		# alongside of_unbroken's full-HP gate (gargoyle gets BOTH at
+		# full HP — by design; the Stone identity rewards staying topped
+		# off).
+		if self is Bot and (self as Bot).species_id == "gargoyle" and max_hp > 0:
+			var hp_ratio_g: float = clampf(float(hp) / float(max_hp), 0.0, 1.0)
+			var gargoyle_bump: float = 0.50 * hp_ratio_g
+			eff_armor = int(round(float(eff_armor) * (1.0 + gargoyle_bump)))
 		if _sunder_amount > 0:
 			var now_s: float = float(Time.get_ticks_msec()) / 1000.0
 			if now_s > _sunder_expires_at:

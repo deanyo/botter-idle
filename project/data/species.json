@@ -164,7 +164,13 @@
       ],
       "str_flat": 5,
       "dex_flat": -2,
-      "int_flat": -3
+      "int_flat": -3,
+      "signature": {
+        "id": "troll_inverted_regen",
+        "kind": "missing_hp_regen_pct",
+        "value": 4,
+        "desc": "Regen scales with missing HP \u2014 at 0% HP regens at +4\u00d7 base rate (DCSS troll shape)."
+      }
     },
     {
       "id": "octopode",
@@ -360,7 +366,13 @@
       ],
       "str_flat": 3,
       "dex_flat": -2,
-      "int_flat": 1
+      "int_flat": 1,
+      "signature": {
+        "id": "gargoyle_living_stone",
+        "kind": "hp_pct_armor_scaler",
+        "value": 50,
+        "desc": "+50% armor while at full HP, scales down linearly to +0% at 0% HP."
+      }
     },
     {
       "id": "halfling",

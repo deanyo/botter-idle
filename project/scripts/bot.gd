@@ -1034,8 +1034,18 @@ func _play_swing_upward_thrust() -> void:
 func _process(delta: float) -> void:
 	if not is_alive:
 		return
-	if hp_regen_per_sec > 0.0:
-		_regen_accum += delta * hp_regen_per_sec
+	# §2.I Troll — inverted-regen scaler. While species_id == "troll",
+	# the regen-per-sec scales by (1 + missing_hp_ratio × multiplier),
+	# so a troll at 100% HP regens at the base rate, at 0% HP regens
+	# at +4× base, and the curve linearly interpolates. The 4× multiplier
+	# IS the species's signature value (troll DCSS shape, our number-
+	# ceiling re-tier). Other species fall through unchanged.
+	var effective_regen: float = hp_regen_per_sec
+	if species_id == "troll" and max_hp > 0:
+		var missing_ratio: float = 1.0 - clampf(float(hp) / float(max_hp), 0.0, 1.0)
+		effective_regen = hp_regen_per_sec * (1.0 + 4.0 * missing_ratio)
+	if effective_regen > 0.0:
+		_regen_accum += delta * effective_regen
 		if _regen_accum >= 1.0:
 			var ticks: int = int(_regen_accum)
 			_regen_accum -= float(ticks)
