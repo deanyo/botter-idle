@@ -569,6 +569,20 @@ static func format_item_tooltip(item_def: Dictionary, inst: Variant) -> String:
 	var dmax: int = int(item_def.get("damage_max", 0))
 	var armor_v: int = int(item_def.get("armor", 0))
 	var evasion_v: int = int(item_def.get("evasion", 0))
+	# §2.J (S12) — surface spell-tome cooldown + mana cost on the base-
+	# stats line. Without this the player has no way to see that a
+	# tome costs N mana to cast — the entire mana economy reads as
+	# decorative. Pulls cooldown from item.spell_cooldown (authored
+	# per tome) and cost from SpellData._MANA_COST_TABLE keyed on
+	# base_type. Only renders for slot=="spell" items.
+	var slot_v: String = String(item_def.get("slot", ""))
+	if slot_v == "spell":
+		var cd_v: float = float(item_def.get("spell_cooldown", 0.0))
+		if cd_v > 0.0:
+			base_parts.append("%.1fs CD" % cd_v)
+		var base_type_v: String = String(item_def.get("base_type", ""))
+		var cost_v: int = int(SpellData._MANA_COST_TABLE.get(base_type_v, 6))
+		base_parts.append("%d Mana" % cost_v)
 	if dmin > 0 or dmax > 0:
 		base_parts.append("%d-%d Dmg" % [dmin, dmax])
 	if armor_v > 0: base_parts.append("+%d Armor" % armor_v)

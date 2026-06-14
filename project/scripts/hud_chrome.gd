@@ -124,7 +124,7 @@ var _buff_tab_rows: Array = []
 const BUFF_TAB_MAX := 14
 const STATS_TAB_HEADER_H := 28
 const HUD_CLIP_BORDER_COL := Color(0.35, 0.30, 0.18, 0.5)
-const HUD_HEADER_H := 56  # name+lv line + HP bar + HP text rows
+const HUD_HEADER_H := 76  # name+lv line + HP bar + HP text + §2.J mana bar + mana text
 
 # Minimap
 var minimap_root: TextureRect
