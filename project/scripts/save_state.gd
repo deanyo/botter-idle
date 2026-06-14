@@ -540,7 +540,7 @@ static func delete_character(idx: int) -> void:
 # instance of this). Versioned chain replaces probe gating with explicit
 # `if v < N` ordering. Starting at 7 acknowledges the historic bumps so
 # any future references to "older save shapes" use real version numbers.
-const SCHEMA_VERSION := 10
+const SCHEMA_VERSION := 11
 
 # In-place migrations applied on load. Idempotent — once schema_version
 # matches SCHEMA_VERSION, every step short-circuits.
@@ -564,6 +564,9 @@ static func _migrate(state: Dictionary) -> void:
 	if v < 10:
 		_migrate_to_v10(state)
 		v = 10
+	if v < 11:
+		_migrate_to_v11(state)
+		v = 11
 	state["schema_version"] = SCHEMA_VERSION
 
 # v0 → v7: subsumes every historic probe-based migration into one step.
@@ -763,6 +766,17 @@ static func _v10_migrate_inst(inst: Variant) -> void:
 		var id: String = String(af.get("id", ""))
 		if _V10_RENAMES.has(id):
 			af["id"] = String(_V10_RENAMES[id])
+
+# v10 → v11 (S12 §2.J): introduce the mana economy. The character
+# state gains a `mana` field (current pool, save-resident) seeded at
+# 0; first apply_gear pass populates mana_max from stat_calc and
+# dungeon._build_floor's per-floor refill brings the pool to full at
+# floor entry. The migration is save-compat zero-default so no
+# existing v10 character loses anything — mana just appears next
+# load. mana_max is NOT stored on save (recomputed every recompute).
+static func _migrate_to_v11(state: Dictionary) -> void:
+	if not state.has("mana"):
+		state["mana"] = 0
 
 # Flush the underlying user:// filesystem to durable storage. No-op on
 # Steam / desktop / mobile (Godot's FileAccess.flush + close already

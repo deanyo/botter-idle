@@ -596,6 +596,40 @@ static func compute_cooldown(bot: Node, item: Dictionary) -> float:
 	var net_cdr: float = clampf(cdr - penalty, -50.0, 80.0)
 	return max(0.3, base_cd * (1.0 - net_cdr / 100.0))
 
+# §2.J (S12) — per-archetype base mana cost. Centralized table keeps
+# rebalancing local; spell_system reads via compute_mana_cost which
+# applies bot.mana_cost_pct (signed; negative = of_thrift discount).
+# Numbers align with the player's recommended 4-12 range:
+#   cheap fillers (magic_dart) = 4
+#   standard projectiles / chains = 6
+#   bursts / single-target heavies = 7-8
+#   AoE / sustains / auras = 10
+#   long-CD heavy single-shot (bolt_long_cd) = 12
+const _MANA_COST_TABLE := {
+	"spell_magic_dart": 4,
+	"spell_chain_lightning": 6, "spell_drain": 6, "spell_axes": 6,
+	"spell_curse_brittlebone": 6, "spell_echo_lance": 6,
+	"spell_static_field": 6, "spell_blade_dance": 6,
+	"spell_fireball": 7, "spell_holy_beam": 7, "spell_bone_spear": 7,
+	"spell_venom_cloud": 7, "spell_ember_bloom": 7,
+	"spell_choking_cloud": 7, "spell_curse_frailty": 7,
+	"spell_frost_nova": 8, "spell_iron_shot": 8, "spell_sandblast": 8,
+	"spell_stormcaller_totem": 8, "spell_wisp_servant": 8,
+	"spell_shatter": 10, "spell_wrath_charge": 10,
+	"spell_aura_grace": 10, "spell_aura_wisdom": 10, "spell_thorn_aura": 10,
+	"spell_bolt_long_cd": 12,
+}
+
+static func compute_mana_cost(bot: Node, item: Dictionary) -> int:
+	var base_type: String = String(item.get("base_type", ""))
+	var base_cost: int = int(_MANA_COST_TABLE.get(base_type, 6))
+	if bot == null:
+		return base_cost
+	var pct: float = float(bot.get("mana_cost_pct")) if bot.get("mana_cost_pct") != null else 0.0
+	# pct is signed: -25 = 25% off, +25 = 25% surcharge. Floor at 1
+	# so even max-discount casts still cost something.
+	return maxi(1, int(round(float(base_cost) * (1.0 + pct / 100.0))))
+
 # Effective projectile-count: archetype-default + spell_proj_bonus +
 # any per-item override. Each spell archetype interprets this its own
 # way (fireball = N homing balls, axes = N orbiting axes, chain = N+1

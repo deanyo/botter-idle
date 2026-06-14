@@ -163,6 +163,17 @@ static func compute(
 	var dot_duration_pct: float = 0.0
 	var damage_vs_unique_pct: float = 0.0
 	var low_hp_dmg_pct: float = 0.0
+	# §2.J (S12) mana economy. mana_max + mana_regen are derived
+	# (recomputed every apply_gear pass); mana_max_flat / mana_regen_flat
+	# / mana_regen_pct / mana_cost_pct accumulate from affixes. The
+	# bot's `mana` (current pool) lives on save and isn't recomputed
+	# here — only the cap + regen rate are.
+	var mana_max_flat: int = 0
+	var mana_regen_flat: float = 0.0
+	var mana_regen_pct: float = 0.0
+	var mana_cost_pct: float = 0.0
+	var mana_floor_start_flat: int = 0
+	var mana_on_hit_flat: int = 0
 
 	# Bot upgrades — gold-sink purchases. Pre-2026-06-06 combat_training
 	# (atk) and toughening (def) were never read here; players spent gold
@@ -404,6 +415,19 @@ static func compute(
 		dot_duration_pct += float(slot_sums.get("dot_duration_pct", 0))
 		damage_vs_unique_pct += float(slot_sums.get("damage_vs_unique_pct", 0))
 		low_hp_dmg_pct += float(slot_sums.get("low_hp_dmg_pct", 0))
+		# §2.J mana-axis affixes — read via the same DR + qmult pipeline
+		# as every other lane. of_arcane_pool writes mana_max_flat;
+		# of_arcane_flow writes mana_regen_pct; of_thrift writes
+		# mana_cost_pct (signed; negative discounts cost); of_arcane_battery
+		# writes mana_floor_start_flat (consumed in dungeon._build_floor's
+		# per-floor refill pass); of_overflow_strike writes mana_on_hit_flat
+		# (consumed in actor.attempt_attack post dealt > 0).
+		mana_max_flat += int(round(float(slot_sums.get("mana_max_flat", 0))))
+		mana_regen_flat += float(slot_sums.get("mana_regen_flat", 0))
+		mana_regen_pct += float(slot_sums.get("mana_regen_pct", 0))
+		mana_cost_pct += float(slot_sums.get("mana_cost_pct", 0))
+		mana_floor_start_flat += int(round(float(slot_sums.get("mana_floor_start_flat", 0))))
+		mana_on_hit_flat += int(round(float(slot_sums.get("mana_on_hit_flat", 0))))
 		# Per-element spell-damage affixes (of_pyromancer / of_cryomancer
 		# / of_thundercaller / of_zealot / of_pestcaller / of_nightcaller). Each writes to
 		# `<elem>_dmg_pct`; we accumulate into spell_element_pct keyed by
@@ -493,6 +517,33 @@ static func compute(
 	spell_damage_pct += float(int_excess) * 1.0
 	spell_area_pct += float(int_excess) * 0.5
 	spell_duration_pct += float(int_excess) * 0.5
+	# §2.J mana_max + mana_regen rollup. Base 30 + INT × 0.5 (so INT 50
+	# bot has 30 + 22.5 = 52 mana_max, casts ~9× 6-cost spells before
+	# drain). Base regen 1.0/s + INT × 0.05 (INT 50 → 3.5/s, recovers
+	# a 6-cost spell every 1.7s). Affix flat + pct stack on top.
+	# Species cross-links (octopode +50% regen, deep_elf +30% max,
+	# mummy 0 regen, demonspawn -20% regen) fold below.
+	var mana_max: int = int(round(30.0 + float(int_excess) * 0.5)) + mana_max_flat
+	var mana_regen: float = (1.0 + float(int_excess) * 0.05 + mana_regen_flat) \
+		* (1.0 + mana_regen_pct / 100.0)
+	# Species cross-links per §2.J brief.
+	match species_id:
+		"octopode":
+			mana_regen *= 1.5
+		"deep_elf":
+			mana_max = int(round(float(mana_max) * 1.3))
+		"mummy":
+			mana_regen = 0.0  # mummy regens only on kills (actor.gd hook)
+		"demonspawn":
+			mana_regen *= 0.80
+	# Clamps. mana_max has no formula cap (INT scaling + affixes are
+	# self-limiting via per-affix DR). mana_regen soft-cap 8.0/s so
+	# stacking arcane_flow + species + INT can't trivially eclipse.
+	# mana_cost_pct clamps in the negative direction at -50 (cap on
+	# discount magnitude — caster can't free-cast).
+	mana_regen = clampf(mana_regen, 0.0, 8.0)
+	mana_regen_pct = clampf(mana_regen_pct, 0.0, 100.0)
+	mana_cost_pct = clampf(mana_cost_pct, -50.0, 50.0)
 
 	# HP rollup with str-mult + species hp_pct + bot upgrade.
 	var max_hp: int = int(round(float(_BASE_HP + (level - 1) * 8 + int(up_hp) + hp_flat) * sp_hp_mult * (1.0 + float(str_excess) * 0.015)))
@@ -958,6 +1009,13 @@ static func compute(
 	out["dot_duration_pct"] = dot_duration_pct
 	out["damage_vs_unique_pct"] = damage_vs_unique_pct
 	out["low_hp_dmg_pct"] = low_hp_dmg_pct
+	# §2.J mana economy outputs.
+	out["mana_max"] = mana_max
+	out["mana_regen"] = mana_regen
+	out["mana_regen_pct"] = mana_regen_pct
+	out["mana_cost_pct"] = mana_cost_pct
+	out["mana_floor_start_flat"] = mana_floor_start_flat
+	out["mana_on_hit_flat"] = mana_on_hit_flat
 	out["move_speed"] = move_speed
 	out["aggro_bonus"] = vision_count + sp_aggro_flat
 	out["loot_rarity_bonus"] = loot_rarity_bonus
@@ -1012,6 +1070,8 @@ static func _initial_dict() -> Dictionary:
 		"kill_streak_cdr_pct": 0.0, "crit_chain_pct": 0.0, "step_pulse_pct": 0.0,
 		"loot_quantity_pct": 0.0, "damage_taken_pct": 0.0, "dot_duration_pct": 0.0,
 		"damage_vs_unique_pct": 0.0, "low_hp_dmg_pct": 0.0,
+		"mana_max": 30, "mana_regen": 1.0, "mana_regen_pct": 0.0,
+		"mana_cost_pct": 0.0, "mana_floor_start_flat": 0, "mana_on_hit_flat": 0,
 		"move_speed": _BASE_MOVE_SPEED, "aggro_bonus": 0,
 		"loot_rarity_bonus": 0.0, "xp_gain_pct": 0.0,
 		"alloc_str": 0, "alloc_dex": 0, "alloc_int": 0, "unspent_points": 0,

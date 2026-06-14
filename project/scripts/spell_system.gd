@@ -80,7 +80,14 @@ static func process_tick(bot: Node, dungeon: Node, delta: float, items_db: Dicti
 			# 2026-06-06 user catch.
 			var base_cd: float = _base_cooldown_for(item)
 			var skip_no_target: bool = base_cd >= 10.0 and not _has_target_in_range(bot, dungeon)
-			if not skip_no_target:
+			# §2.J (S12) — mana gate. Hold the cast if the bot can't
+			# afford the spell. mana_max == 0 = legacy save with mana
+			# not yet computed; in that case fall through (don't gate)
+			# so a stale recompute can't lock out spell-casting forever.
+			# Active saves always populate mana_max via stat_calc.
+			var mana_cost: int = SpellData.compute_mana_cost(bot, item)
+			var skip_no_mana: bool = "mana_max" in bot and int(bot.mana_max) > 0 and int(bot.mana) < mana_cost
+			if not skip_no_target and not skip_no_mana:
 				# Merge per-instance archetype affix flags into the item view
 				# so dispatch can read e.g. spell_dart_split / spell_drain_buff
 				# off the same dict regardless of whether the flag came from
@@ -95,6 +102,11 @@ static func process_tick(bot: Node, dungeon: Node, delta: float, items_db: Dicti
 				_fold_inst_affixes_into(view, inst)
 				view["_inst"] = inst
 				_dispatch_fire(bot, dungeon, view)
+				# §2.J (S12) — deduct mana cost on successful cast. Floor
+				# at 0 so a partial-mana edge case (mana=4, cost=4 → 0)
+				# doesn't dip negative. Bot's regen tick will refill.
+				if "mana" in bot and int(bot.mana_max) > 0:
+					bot.mana = maxi(0, int(bot.mana) - mana_cost)
 				t = SpellData.compute_cooldown(bot, item)
 			else:
 				# Hold the cast: reset to a short re-check window so we

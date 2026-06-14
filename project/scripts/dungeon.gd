@@ -605,6 +605,15 @@ func _async_build_floor() -> void:
 		bot.hp_per_kill_granted_this_floor = 0
 		# §2.I Hill Orc — reset the once-per-floor rage trigger.
 		bot._hill_orc_rage_used = false
+		# §2.J (S12) — per-floor mana refill. Bot enters each floor at
+		# full mana_max + the of_arcane_battery flat bonus so the
+		# player has ammo for the first pack regardless of how the
+		# previous floor ended (drained from a boss fight, etc).
+		# Mirrors the hp = max_hp pattern (HP doesn't refill per-floor
+		# — that's a deliberate idle-game pacing choice — but mana
+		# does, since it's a soft-resource: spells gate on it but
+		# weapon attacks don't).
+		bot.mana = mini(bot.mana_max + bot.mana_floor_start_flat, bot.mana_max + 25)
 		bot.spell_cast_count = 0
 		# §1.H of_first_strike per-floor reset. Stale instance_ids would
 		# accumulate across floors otherwise; the dictionary is small but

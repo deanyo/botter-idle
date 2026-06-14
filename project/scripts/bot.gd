@@ -150,6 +150,19 @@ var damage_taken_pct: float = 0.0
 var dot_duration_pct: float = 0.0
 var damage_vs_unique_pct: float = 0.0
 var low_hp_dmg_pct: float = 0.0
+# §2.J (S12) mana economy. mana_max + mana_regen are derived in StatCalc
+# every recompute (so they react to INT changes / new affixes / species
+# cross-links). `mana` is the live pool, save-resident, refilled to
+# mana_max on each floor entry. `_mana_accum` is the fractional regen
+# bucket — drains whole points to mana when ≥ 1.0, mirrors _regen_accum.
+var mana: int = 30
+var mana_max: int = 30
+var mana_regen: float = 1.0
+var mana_regen_pct: float = 0.0
+var mana_cost_pct: float = 0.0
+var mana_floor_start_flat: int = 0
+var mana_on_hit_flat: int = 0
+var _mana_accum: float = 0.0
 # §1.H of_warden_step cell-traversal counter. Increments when the bot
 # moves to a new cell (path_index advances in step_movement). Fires
 # the pulse on cell 8 and resets to 0. Independent of frame rate.
@@ -625,6 +638,19 @@ func recompute_stats() -> void:
 	dot_duration_pct = float(d.get("dot_duration_pct", 0.0))
 	damage_vs_unique_pct = float(d.get("damage_vs_unique_pct", 0.0))
 	low_hp_dmg_pct = float(d.get("low_hp_dmg_pct", 0.0))
+	# §2.J mana derived stats. `mana` (current pool) is preserved across
+	# recomputes — only the cap + regen update so re-equipping an
+	# arcane_pool amulet doesn't fill the pool. If the new mana_max is
+	# lower than current `mana` (rare — bot dropping a +mana amulet),
+	# clamp `mana` down so it can't read above-cap.
+	mana_max = int(d.get("mana_max", 30))
+	mana_regen = float(d.get("mana_regen", 1.0))
+	mana_regen_pct = float(d.get("mana_regen_pct", 0.0))
+	mana_cost_pct = float(d.get("mana_cost_pct", 0.0))
+	mana_floor_start_flat = int(d.get("mana_floor_start_flat", 0))
+	mana_on_hit_flat = int(d.get("mana_on_hit_flat", 0))
+	if mana > mana_max:
+		mana = mana_max
 	# anchor_regen folds into hp_regen so the regen tick already in actor.gd
 	# picks it up alongside species + worn-tag regen.
 	hp_regen_per_sec = float(d.hp_regen) + anchor_regen
@@ -1051,6 +1077,17 @@ func _process(delta: float) -> void:
 			_regen_accum -= float(ticks)
 			hp = mini(max_hp, hp + ticks)
 			_update_hp_bar()
+	# §2.J mana regen tick. Mirrors _regen_accum's shape exactly:
+	# accumulate fractional regen per delta, drain whole points when
+	# ≥1.0. mana_regen is already clamped 0-8/s in stat_calc; mummy
+	# species reads 0 here (set in stat_calc cross-link block) so
+	# their pool only refills via on-kill grants.
+	if mana_regen > 0.0 and mana < mana_max:
+		_mana_accum += delta * mana_regen
+		if _mana_accum >= 1.0:
+			var mana_ticks: int = int(_mana_accum)
+			_mana_accum -= float(mana_ticks)
+			mana = mini(mana_max, mana + mana_ticks)
 	# §1.H of_recoup bucket drain. _recoup_window_remaining > 0 means
 	# the 4s heal window is active; drain bucket proportionally each
 	# frame and apply integer HP gain whenever a whole point accumulates.
