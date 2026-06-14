@@ -55,6 +55,8 @@ const STATUSES := {
 		"label": "Grace Aura", "desc": "+evasion + DEX-spell damage while the aura ticks (spell_aura_grace)." },
 	"wisdom":   { "icon": "halo.png",   "tint": Color(0.55, 0.75, 1.00, 0.85), "pulse": true,  "z": 8,
 		"label": "Wisdom Aura", "desc": "+spell-cdr + INT-spell damage while the aura ticks (spell_aura_wisdom)." },
+	"thorn_aura":{ "icon": "rage.png",  "tint": Color(0.85, 0.55, 0.55, 0.85), "pulse": true,  "z": 8,
+		"label": "Thorn Aura", "desc": "Pulses damage to every enemy in radius each second (spell_thorn_aura)." },
 	"shielded": { "icon": "ward.png",   "tint": Color(0.6, 0.85, 1), "pulse": false, "z": 8,
 		"label": "Shielded", "desc": "Reducing or absorbing damage." },
 	"stunned":  { "icon": "rage.png",   "tint": Color(1, 0.9, 0.4), "pulse": true,   "z": 9,

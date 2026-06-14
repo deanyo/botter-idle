@@ -134,7 +134,14 @@ func _process(delta: float) -> void:
 		# they don't hit allies that aren't there. The buff itself is
 		# applied at spawn_aura time + refreshed below if lingering.
 		if damage > 0:
-			_zap_nearest()
+			# §3.B: damaging auras (aura_buff != "" AND damage > 0)
+			# pulse to ALL enemies in radius — flavor is "thorny aura",
+			# not "turret". Stationary totems with aura_buff == ""
+			# keep single-nearest "turret" behavior.
+			if aura_buff != "":
+				_zap_all_in_radius()
+			else:
+				_zap_nearest()
 	# §3.A: refresh the aura status so it doesn't expire mid-aura if
 	# the totem's lifetime is longer than `add_status`'s default tick.
 	# Cheap — re-applying an existing status updates its expires_at.
@@ -177,3 +184,32 @@ func _zap_nearest() -> void:
 	if actor_layer != null:
 		var pts := [position, best.position]
 		SpellAoe.spawn_chain(actor_layer, pts, visual_color)
+
+# §3.B damaging-aura tick. Pulses damage to every enemy inside the
+# radius, not just the nearest. Used by spell_thorn_aura. Visual: a
+# faint expanding ring at the radius edge so the player can see
+# the pulse beat. Cap-respecting via existing damage_type routing
+# (resists / armor / mit all apply on take_damage).
+func _zap_all_in_radius() -> void:
+	if dungeon_ref == null or not is_instance_valid(dungeon_ref):
+		return
+	if not "enemies" in dungeon_ref:
+		return
+	var r_px: float = radius_cells * float(TILE_SIZE)
+	var r_sq: float = r_px * r_px
+	var hit_count: int = 0
+	for e in dungeon_ref.enemies:
+		if not is_instance_valid(e) or not e.is_alive:
+			continue
+		var d: float = position.distance_squared_to(e.position)
+		if d <= r_sq:
+			if e.has_method("take_damage"):
+				e.take_damage(maxi(1, damage), caster, damage_type)
+				hit_count += 1
+	if hit_count == 0:
+		return
+	# Visual: expanding ring pulse at the aura's edge. SpellAoe handles
+	# its own lifetime + cleanup.
+	var actor_layer: Node = dungeon_ref.actor_layer if "actor_layer" in dungeon_ref else null
+	if actor_layer != null:
+		SpellAoe.spawn_ring(actor_layer, position, r_px, visual_color)

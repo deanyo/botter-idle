@@ -251,6 +251,8 @@ static func _dispatch_fire(bot: Node, dungeon: Node, item: Dictionary) -> void:
 			fired = _fire_aura(bot, dungeon, item, "grace")
 		"spell_aura_wisdom":
 			fired = _fire_aura(bot, dungeon, item, "wisdom")
+		"spell_thorn_aura":
+			fired = _fire_aura(bot, dungeon, item, "thorn_aura")
 	if fired:
 		_fire_count += 1
 		_fire_by_arch[base_type] = int(_fire_by_arch.get(base_type, 0)) + 1
@@ -994,9 +996,15 @@ static func _fire_aura(bot: Node, dungeon: Node, item: Dictionary, aura_id: Stri
 	var dt: String = SpellData.damage_type_for_element(element)
 	var color := _visual_color_for_item(item, String(arch.get("trail_flavor", "footwork")))
 	color.a = 0.55
-	# Pure-buff aura: damage = 0 so the zap path no-ops. zap_interval
-	# kept at 1.0s as a heartbeat for the buff-status refresh tick.
-	var totem := SpellTotem.spawn_aura(dungeon, bot, 0, radius_cells, lifetime, 1.0, dt, color, bot, aura_id)
+	# Pure-buff aura → damage=0; damaging aura (e.g. spell_thorn_aura)
+	# → archetype's authored damage scaled through compute_damage. The
+	# zap path no-ops on damage=0 so buff-only auras never search for
+	# targets. zap_interval=1.0s heartbeat for the buff-status refresh
+	# AND the damage tick rate.
+	var damage_v: int = 0
+	if int(arch.get("damage", 0)) > 0:
+		damage_v = SpellData.compute_damage(bot, item, item.get("_inst", null))
+	var totem := SpellTotem.spawn_aura(dungeon, bot, damage_v, radius_cells, lifetime, 1.0, dt, color, bot, aura_id)
 	return totem != null
 
 # Resolve the visual color for a spell instance — read flavor_tags

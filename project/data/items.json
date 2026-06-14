@@ -37446,6 +37446,60 @@
       ],
       "affix_pool": {},
       "vault_drop": "crypt_bone_chamber_5x5"
+    },
+    {
+      "id": "spell_thorn_aura",
+      "name": "Thorn Aura Tome",
+      "slot": "spell",
+      "rarity": "uncommon",
+      "tile": "spells/books/red.png",
+      "base_type": "spell_thorn_aura",
+      "primary_stat": "str",
+      "damage_min": 1,
+      "damage_max": 1,
+      "damage_type": "physical",
+      "spell_cooldown": 12.0,
+      "item_tier": 2,
+      "flavor_tags": [
+        "thorns",
+        "brutal"
+      ],
+      "lore": "A standing field of brambles that drinks blood by the second.",
+      "drop_weights": [
+        40,
+        50,
+        18,
+        4,
+        0
+      ],
+      "unique": false,
+      "enchant_chance": 0.1,
+      "implicit_affixes": [],
+      "affix_pool": {
+        "of_wisdom": 14,
+        "of_quickcast": 22,
+        "of_resonance": 22,
+        "of_lingering": 26,
+        "of_velocity": 12,
+        "of_multicast": 10,
+        "of_channeling": 22,
+        "of_str_mastery": 24,
+        "of_dex_mastery": 8,
+        "of_int_mastery": 8,
+        "of_crit": 12,
+        "of_haste": 12,
+        "of_lifesteal": 6,
+        "of_pyromancer": 8,
+        "of_cryomancer": 8,
+        "of_thundercaller": 8,
+        "of_zealot": 8,
+        "of_pestcaller": 8,
+        "of_nightcaller": 8,
+        "of_sage": 8,
+        "of_hunter": 8,
+        "of_tempest": 8,
+        "of_synergy": 8
+      }
     }
   ]
 }

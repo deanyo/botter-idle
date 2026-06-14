@@ -371,6 +371,23 @@ const ARCHETYPES := {
 		"element": "",
 		"projectile_speed": 0.0,
 	},
+	# §3.B (S12) thorn aura — damaging aura. Pulses periodic damage to
+	# all enemies inside its radius (re-uses SpellTotem zap path with
+	# damage > 0). Distinct from spell_aura_grace/wisdom (pure-buff)
+	# in that this aura DAMAGES rather than BUFFS, but rides the same
+	# follow_target+aura_buff machinery so it counts toward the A11 G3
+	# simultaneous-aura cap. STR-coded (the brutal-axe / thorns build
+	# pivot). status_id="thorn_aura" so the player sees the aura tick.
+	"spell_thorn_aura": {
+		"primary_stat": "str",
+		"cooldown": 12.0,
+		"damage": 6,
+		"range_cells": 3,
+		"projectile": "",
+		"trail_flavor": "thorns",
+		"element": "",
+		"projectile_speed": 0.0,
+	},
 }
 
 static func archetype_def(base_type: String) -> Dictionary:
