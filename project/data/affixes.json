@@ -666,6 +666,37 @@
       "name": "of the Steadfast", "stat": "block_amount",
       "applies_to": ["armor","boots","helm"],
       "tiers": [[1,1],[1,2],[2,4],[4,7],[7,12]]
+    },
+
+    {
+      "id": "of_arcane_pool",    "family": "generic", "kind": "flat",
+      "name": "of the Arcane Pool", "stat": "mana_max_flat",
+      "applies_to": ["spell","amulet","ring"],
+      "tiers": [[3,5],[5,8],[8,12],[12,18],[18,25]]
+    },
+    {
+      "id": "of_arcane_flow",    "family": "generic", "kind": "pct",
+      "name": "of the Arcane Flow", "stat": "mana_regen_pct",
+      "applies_to": ["spell","amulet","ring","helm"],
+      "tiers": [[5,8],[8,12],[12,18],[18,25],[25,35]]
+    },
+    {
+      "id": "of_thrift",         "family": "generic", "kind": "pct",
+      "name": "of Thrift",       "stat": "mana_cost_pct",
+      "applies_to": ["spell","amulet","helm"],
+      "tiers": [[-5,-3],[-8,-5],[-12,-8],[-18,-12],[-25,-18]]
+    },
+    {
+      "id": "of_arcane_battery", "family": "generic", "kind": "flat",
+      "name": "of the Arcane Battery", "stat": "mana_floor_start_flat",
+      "applies_to": ["amulet","ring"],
+      "tiers": [[3,5],[5,8],[8,12],[12,18],[18,25]]
+    },
+    {
+      "id": "of_overflow_strike", "family": "generic", "kind": "flat",
+      "name": "of Overflow Strike", "stat": "mana_on_hit_flat",
+      "applies_to": ["weapon","gloves"],
+      "tiers": [[1,1],[1,2],[2,3],[2,4],[3,5]]
     }
   ]
 }

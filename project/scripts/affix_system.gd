@@ -400,6 +400,12 @@ const _STAT_DESCRIPTIONS := {
 	"dot_duration_pct": "+{N}% duration on damage-over-time effects you apply (bleed, burn, poison, smite). Cap 80.",
 	"damage_vs_unique_pct": "+{N}% damage to rare-tier (named pack) enemies. Cap 40.",
 	"low_hp_dmg_pct": "+{N}% damage while below 40% HP. Cap 30. (Mutex with glass_cannon_dmg_pct.)",
+	# §2.J mana-axis affixes.
+	"mana_max_flat": "+{N} mana_max (raises the spell-cast pool ceiling).",
+	"mana_regen_pct": "+{N}% mana regen rate. Cap 100.",
+	"mana_cost_pct": "{N}% mana cost on every spell cast (negative = discount). Cap -50.",
+	"mana_floor_start_flat": "+{N} mana on every floor entry (extra ammo for the first pack).",
+	"mana_on_hit_flat": "+{N} mana per landed melee hit (caster-melee bridge).",
 }
 
 # Note: of_devastation / of_iron_aegis / of_steadfast write into already-

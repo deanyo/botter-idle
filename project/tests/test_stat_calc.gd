@@ -567,6 +567,10 @@ const _S12_CAPS := {
 	"dot_duration_pct":         80.0,   # of_lingering_pestilence (a06-newstat-019)
 	"damage_vs_unique_pct":     40.0,   # of_unique_slayer    (a06-newstat-016)
 	"low_hp_dmg_pct":           30.0,   # of_desperation      (a06-newstat-014)
+	# §2.J mana axis. mana_regen_pct + mana_cost_pct are signed/clamped;
+	# mana_max_flat / mana_floor_start_flat / mana_on_hit_flat are pure
+	# additive. mana_cost_pct cap is 50 in MAGNITUDE (-50 lower bound).
+	"mana_regen_pct":           100.0,  # of_arcane_flow
 }
 
 # Map each capped stat key to an affix id known to write it. The probe
@@ -603,6 +607,7 @@ const _S12_STAT_TO_AFFIX := {
 	"dot_duration_pct":         "of_lingering_pestilence",
 	"damage_vs_unique_pct":     "of_unique_slayer",
 	"low_hp_dmg_pct":           "of_desperation",
+	"mana_regen_pct":           "of_arcane_flow",
 }
 
 # Slot to use for each affix when stuffing the test loadout. Picked
@@ -640,6 +645,7 @@ const _S12_AFFIX_TEST_SLOT := {
 	"of_lingering_pestilence": "amulet",
 	"of_unique_slayer":       "weapon",
 	"of_desperation":         "weapon",
+	"of_arcane_flow":         "amulet",
 }
 
 # Build a synthetic items_db with one stub-item per slot needed by the
@@ -989,6 +995,79 @@ func test_s12_hill_orc_rage_used_resets_per_floor() -> void:
 	bot._hill_orc_rage_used = false
 	assert_false(bot._hill_orc_rage_used, "floor_started resets rage availability")
 	bot.free()
+
+# ---------------------------------------------------------------------
+# §2.J — mana economy plumbing tests.
+# Pin the INT-scaling formula, species cross-links, and clamps so a
+# future stat_calc edit can't silently change the player-feel of mana
+# pacing.
+# ---------------------------------------------------------------------
+
+func test_s12_2j_mana_max_int_scaling() -> void:
+	# Bare bot at lvl 1 has int_excess = 1 (5 base + flat 1) - 5 = 1
+	# (humans get +1 to all stats per species_data.json), so mana_max
+	# = 30 + int(1 × 0.5) = 31. At lvl 30, int_excess = 30 → 30 + 15 = 45.
+	var d_lvl1: Dictionary = StatCalc.compute({}, items_db, _bare_save("human"), "human", 1, 0, 0)
+	assert_eq(int(d_lvl1.mana_max), 31, "human lvl 1 mana_max = 31 (30 + int_excess 1 × 0.5 round)")
+	var d_lvl30: Dictionary = StatCalc.compute({}, items_db, _bare_save("human"), "human", 30, 0, 0)
+	assert_eq(int(d_lvl30.mana_max), 45, "human lvl 30 mana_max = 45 (30 + int_excess 30 × 0.5)")
+
+func test_s12_2j_mana_regen_int_scaling() -> void:
+	# Bare bot lvl 1 int_excess = 1 → regen 1.0 + 0.05 = 1.05.
+	# Lvl 30 int_excess = 30 → regen 1.0 + 1.5 = 2.5.
+	var d_lvl1: Dictionary = StatCalc.compute({}, items_db, _bare_save("human"), "human", 1, 0, 0)
+	assert_almost_eq(float(d_lvl1.mana_regen), 1.05, 0.001, "human lvl 1 mana_regen = 1.05")
+	var d_lvl30: Dictionary = StatCalc.compute({}, items_db, _bare_save("human"), "human", 30, 0, 0)
+	assert_almost_eq(float(d_lvl30.mana_regen), 2.50, 0.001, "human lvl 30 mana_regen = 2.50")
+
+func test_s12_2j_mana_cost_clamp() -> void:
+	# of_thrift T5 at -25, stack 5 → -125 raw. mana_cost_pct clamps at -50.
+	var fake_db: Dictionary = items_db.duplicate(true)
+	fake_db["__thrift_test"] = {
+		"id": "__thrift_test", "slot": "amulet", "rarity": "legendary",
+		"flavor_tags": [], "implicit_affixes": [],
+	}
+	var saturate: Dictionary = {
+		"amulet": {"base_id": "__thrift_test", "rarity": "legendary",
+			"affixes": [{"id": "of_thrift", "value": -200}]},
+	}
+	var d: Dictionary = StatCalc.compute(saturate, fake_db, _bare_save("human"), "human", 1, 0, 0)
+	assert_almost_eq(float(d.mana_cost_pct), -50.0, 0.001, "of_thrift discount clamps at -50")
+
+func test_s12_2j_octopode_regen_bonus() -> void:
+	# Octopode mana_regen × 1.5. Bare lvl 1: 1.05 × 1.5 = 1.575.
+	var d: Dictionary = StatCalc.compute({}, items_db, _bare_save("octopode"), "octopode", 1, 0, 0)
+	# Octopode int_flat in species.json may differ from human. Compute
+	# the expected from int_excess to keep the test species-data agnostic.
+	var expected_regen: float = (1.0 + float(int(d.int) - 5) * 0.05) * 1.5
+	assert_almost_eq(float(d.mana_regen), expected_regen, 0.01,
+		"octopode mana_regen = base × 1.5 (got %.3f vs expected %.3f)" % [
+			float(d.mana_regen), expected_regen])
+
+func test_s12_2j_deep_elf_max_bonus() -> void:
+	# Deep elf mana_max × 1.3. Bare lvl 1: round(31 × 1.3) = 40 — but
+	# deep_elf has +int_flat in species.json so int_excess differs.
+	# Compute expected from int_excess.
+	var d: Dictionary = StatCalc.compute({}, items_db, _bare_save("deep_elf"), "deep_elf", 1, 0, 0)
+	var expected_max: int = int(round(float(int(round(30.0 + float(int(d.int) - 5) * 0.5))) * 1.3))
+	assert_eq(int(d.mana_max), expected_max,
+		"deep_elf mana_max = (30 + int_excess × 0.5) × 1.3 (got %d vs expected %d)" % [
+			int(d.mana_max), expected_max])
+
+func test_s12_2j_mummy_no_passive_regen() -> void:
+	# Mummy mana_regen = 0 (only on-kill grants).
+	var d: Dictionary = StatCalc.compute({}, items_db, _bare_save("mummy"), "mummy", 30, 0, 0)
+	assert_almost_eq(float(d.mana_regen), 0.0, 0.001, "mummy passive mana_regen = 0")
+	# But mana_max is still positive (non-zero pool, just doesn't refill
+	# passively).
+	assert_gt(int(d.mana_max), 0, "mummy mana_max > 0 (pool exists, just no auto-refill)")
+
+func test_s12_2j_demonspawn_regen_penalty() -> void:
+	# Demonspawn mana_regen × 0.80 (the offsetting downside).
+	var d: Dictionary = StatCalc.compute({}, items_db, _bare_save("demonspawn"), "demonspawn", 30, 0, 0)
+	var expected_regen: float = (1.0 + float(int(d.int) - 5) * 0.05) * 0.80
+	assert_almost_eq(float(d.mana_regen), expected_regen, 0.01,
+		"demonspawn mana_regen = base × 0.80")
 
 func test_s12_octopode_rings_skip_per_affix_dr() -> void:
 	# §2.I octopode: ring affixes ignore per-affix-id DR with each

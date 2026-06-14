@@ -511,7 +511,8 @@
         "of_serrated_edge": 6,
         "of_first_strike": 8,
         "of_hunter_mark": 5,
-        "of_riposte_strike": 6
+        "of_riposte_strike": 6,
+        "of_overflow_strike": 5
       }
     },
     {
@@ -1505,7 +1506,8 @@
         "of_executioner": 8,
         "of_executioner_pact": 8,
         "of_serrated_edge": 10,
-        "of_drainblade": 8
+        "of_drainblade": 8,
+        "of_overflow_strike": 5
       }
     },
     {
@@ -1920,7 +1922,10 @@
         "of_unwavering_focus": 8,
         "of_overflowing_chalice": 6,
         "of_tactician": 6,
-        "of_desperation": 5
+        "of_desperation": 5,
+        "of_arcane_pool": 5,
+        "of_arcane_flow": 5,
+        "of_thrift": 5
       }
     },
     {
@@ -2333,7 +2338,8 @@
         "of_drainblade": 8,
         "of_hunter_mark": 5,
         "of_lingering_pestilence": 6,
-        "of_desperation": 6
+        "of_desperation": 6,
+        "of_overflow_strike": 6
       }
     },
     {
@@ -5487,7 +5493,10 @@
         "of_unwavering_focus": 8,
         "of_recoup": 5,
         "of_obstinance": 5,
-        "of_iron_aegis": 4
+        "of_iron_aegis": 4,
+        "of_arcane_pool": 5,
+        "of_arcane_flow": 5,
+        "of_thrift": 6
       }
     },
     {
@@ -7979,7 +7988,10 @@
         "of_tactician": 5,
         "of_abundance": 6,
         "of_lingering_pestilence": 4,
-        "of_devastation": 5
+        "of_devastation": 5,
+        "of_arcane_pool": 6,
+        "of_arcane_flow": 6,
+        "of_arcane_battery": 5
       }
     },
     {
@@ -9035,7 +9047,10 @@
         "of_lingering_pestilence": 5,
         "of_unique_slayer": 4,
         "of_desperation": 4,
-        "of_devastation": 5
+        "of_devastation": 5,
+        "of_arcane_pool": 8,
+        "of_arcane_flow": 8,
+        "of_arcane_battery": 6
       }
     },
     {
@@ -13117,7 +13132,8 @@
         "of_avenger": 8,
         "of_armor_breaker": 8,
         "of_doomstrike": 12,
-        "of_unique_slayer": 5
+        "of_unique_slayer": 5,
+        "of_overflow_strike": 4
       }
     },
     {
@@ -32479,7 +32495,8 @@
         "of_smoldering_step": 5,
         "of_warden_step": 5,
         "of_abundance": 4,
-        "of_devastation": 4
+        "of_devastation": 4,
+        "of_arcane_flow": 4
       },
       "default_tint": {
         "hue": 270,

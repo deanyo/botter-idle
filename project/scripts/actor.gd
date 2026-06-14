@@ -1219,6 +1219,13 @@ func attempt_attack(other: Actor, delta: float) -> int:
 		if bot_kk.hp_per_kill_flat > 0 and bot_kk.hp < bot_kk.max_hp:
 			bot_kk.hp = mini(bot_kk.hp + bot_kk.hp_per_kill_flat, bot_kk.max_hp)
 			bot_kk._update_hp_bar()
+		# §2.J Mummy signature — mana doesn't regen passively (set to 0
+		# in stat_calc cross-link block); instead, every kill grants
+		# +5 mana. The dry-bone identity: mana flows from the dead, not
+		# from time. 5 mana ≈ 1 cheap spell per kill — INT mummy with a
+		# 6-cost filler casts every kill, sustains spells by killing.
+		if bot_kk.species_id == "mummy" and bot_kk.mana_max > 0:
+			bot_kk.mana = mini(bot_kk.mana_max, bot_kk.mana + 5)
 		# S11 of_polymorph (a07 §6.4 Kirke's Pendant). First kill each
 		# floor splits the kill into a "friendly slime" that strikes the
 		# nearest adjacent live enemy for a flat-50-ATK splash (a10 6.4
@@ -1271,6 +1278,18 @@ func attempt_attack(other: Actor, delta: float) -> int:
 		# tick independently and read separately in the HUD overlay.
 		if bot_se.holy_dot_per_sec > 0:
 			other.add_smite(bot_se.holy_dot_per_sec, self)
+		# §2.J of_overflow_strike (a02 P-029) — flat mana on landed hit.
+		# Cap at mana_max via the existing cap-clamp at write time.
+		if bot_se.mana_on_hit_flat > 0 and bot_se.mana_max > 0:
+			bot_se.mana = mini(bot_se.mana_max, bot_se.mana + bot_se.mana_on_hit_flat)
+		# §2.J Naga signature — poison hits return mana. Reads bot
+		# weapon_damage_type (the swing's primary type via attempt_attack
+		# extra_damage path doesn't surface here cheaply, so gate on
+		# the bot's primary weapon type instead — naga players will
+		# typically wield a poison-element weapon for the synergy).
+		if bot_se.species_id == "naga" and bot_se.mana_max > 0 \
+				and bot_se.weapon_damage_type == "poison":
+			bot_se.mana = mini(bot_se.mana_max, bot_se.mana + 1)
 	# S11 of_bleed_on_miss (a07 §6.1 Sigmund's Sickle). On a missed swing
 	# (dealt == 0 — defender evaded/blocked), apply a 3s bleed (4 dmg/s).
 	# Compensates daggers/scythes for swings that whiff against high-evasion
