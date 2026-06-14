@@ -25,12 +25,15 @@ const COL_GOLD := Color(1.0, 0.85, 0.3)
 # clamps in stat_calc.gd:275-316.
 const COL_AT_CAP := Color(1.00, 0.85, 0.20)
 const COL_NEAR_CAP := Color(1.00, 0.85, 0.55)
+# Mana row color — matches the in-run HUD mana bar so the panel and
+# the bar telegraph the same resource.
+const _MANA_COLOR := Color(0.55, 0.75, 1.00)
 # Hover tooltips for STR/DEX/INT — explain what each stat governs so the
 # player can read "this is the stat for me" at a glance (PLAYTEST #2).
 const _PRIMARY_TOOLTIPS := {
 	"str": "Strength\n+1.5% HP per excess point\nMelee weapon damage scales here",
 	"dex": "Dexterity\n+0.5% Crit per excess point\n+1% Haste per excess point",
-	"int": "Intelligence\n+1% Spell Damage per excess point\n+0.5% Spell Area per excess point\n+0.5% Spell Duration per excess point",
+	"int": "Intelligence\n+1% Spell Damage per excess point\n+0.5% Spell Area per excess point\n+0.5% Spell Duration per excess point\n+0.5 Mana Max per excess point\n+0.05/s Mana Regen per excess point",
 }
 # Always-visible one-liners under each primary stat row. Hover gives
 # the full breakdown (above); this is the "what does it do?" hint
@@ -39,7 +42,7 @@ const _PRIMARY_TOOLTIPS := {
 const _PRIMARY_HINTS := {
 	"str": "+HP, melee damage",
 	"dex": "+Crit, +Haste",
-	"int": "+Spell dmg, area, duration",
+	"int": "+Spell dmg, area, duration, mana",
 }
 # Soft-cap table — stat key → ceiling value used by stat_calc.gd. Row
 # colors lerp toward yellow as the displayed value approaches the cap.
@@ -132,6 +135,12 @@ func _build_layout(stats: Dictionary) -> void:
 	_section("Vitals")
 	_row("max_hp", "HP", UITheme.affix_stat_color("hp"))
 	_row("hp_regen", "Regen / sec", UITheme.affix_stat_color("hp_regen"))
+	# §2.J — mana resource sits with HP since it's the second pool the
+	# player is reading on the HUD bar and INT scales both it and regen.
+	# Caster-blue to match the in-run mana bar fill.
+	_row("mana_max", "Mana", _MANA_COLOR)
+	_row("mana_regen", "Mana Regen / sec", _MANA_COLOR)
+	_row("mana_cost_pct", "Mana Cost", _MANA_COLOR)
 	_row("armor", "Armor", UITheme.affix_stat_color("armor"))
 	_row("evasion", "Evasion", UITheme.affix_stat_color("evasion"))
 	# One row per resistance element — always shown, 0 when unset.
@@ -306,6 +315,17 @@ func _unspent_row() -> void:
 func _apply_values(stats: Dictionary) -> void:
 	_set_text("max_hp", "%d" % int(stats.get("max_hp", 0)))
 	_set_text("hp_regen", _fmt_float(float(stats.get("hp_regen", 0)), 1))
+	# §2.J — INT (and several signature passives + affixes) writes
+	# directly to mana_max / mana_regen. Surfacing them here makes
+	# the link tangible: bumping INT in the alloc UI moves both
+	# numbers immediately. mana_cost_pct shows discount magnitude
+	# (negative = cheaper, signed) so of_thrift / signature reads
+	# legibly.
+	_set_text("mana_max", "%d" % int(stats.get("mana_max", 0)))
+	_set_text("mana_regen", _fmt_float(float(stats.get("mana_regen", 0)), 2) + "/s")
+	var mcost_v: float = float(stats.get("mana_cost_pct", 0))
+	var mcost_str: String = ("%+d%%" % int(round(mcost_v))) if mcost_v != 0.0 else "—"
+	_set_text("mana_cost_pct", mcost_str)
 	_set_text("armor", "%d" % int(stats.get("armor", 0)))
 	var evasion_v: float = float(stats.get("evasion", 0))
 	_set_text("evasion", "%d%%" % int(round(evasion_v)), evasion_v)
